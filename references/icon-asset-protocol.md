@@ -27,7 +27,7 @@ Original icon files may be supplied as the imagegen edit target/reference, but m
 
 ## Imagegen extraction evidence gate
 
-When an original icon asset is unavailable, use the ChatGPT imagegen skill (or an explicitly declared image-generation backend) only for an isolated, frame-excluded icon/decorative asset sheet. The prompt must use the current reference as the edit target and request no ordinary text, frame, card, or background. Do not use code to draw or reconstruct the icon sheet, and do not crop a local screenshot region as a substitute.
+For every icon, decoration and artistic word, use the ChatGPT imagegen skill (or an explicitly declared image-generation backend) to create an isolated, frame-excluded icon/decorative asset sheet. The prompt must use the current reference as the edit target and request no ordinary text, frame, card, or background. Do not use code to draw or reconstruct the icon sheet, and do not crop a local screenshot region as a substitute.
 
 Before composition, every page must contain `imagegen-assets-manifest.json`. For `background`, `frame_raw`, and every `icons_raw_*` layer, record non-empty `generated_source`, `copied_to`, `layer`, `prompt_file`, `backend`, and `key_color`. `backend` must be imagegen-class; `copied_to` and `prompt_file` must resolve inside the unique RUN_ROOT. Missing manifest or missing evidence for any image layer blocks conversion. Run `scripts/validate_imagegen_assets_manifest.py imagegen-assets-manifest.json` before B5.
 
