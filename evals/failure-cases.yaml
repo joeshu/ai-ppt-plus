@@ -40,3 +40,6 @@ cases:
   - {id: icon_edge_touch, signal: cutout_icon_touches_or_is_truncated_at_asset_edge_without_acceptance, expected: blocker_and_recrop_or_regenerate}
   - {id: icon_alpha_failure, signal: residual_background_or_empty_alpha_after_cutout, expected: blocker_and_recutout}
   - {id: decorative_word_art_as_text, signal: artistic_typography_treated_as_formal_text_without_asset_record, expected: classify_as_decorative_art_L2_or_placeholder}
+  - {id: icon_b4_roster_missing, signal: icon_bearing_reference_has_no_source_vs_frame_review_or_roster, expected: blocker_and_reextract}
+  - {id: icon_b5_evidence_missing, signal: icon_manifest_lacks_cutout_method_contact_sheet_or_frame_preview, expected: blocker_and_run_b4_b5_chain}
+  - {id: icon_unassigned_layer, signal: visible_asset_is_in_neither_frame_asset_ids_nor_icon_asset_ids, expected: blocker_and_reconcile_layers}
