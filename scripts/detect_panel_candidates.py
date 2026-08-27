@@ -45,7 +45,20 @@ def peaks(profile: np.ndarray, count: int, margin: int = 4):
     return sorted(found)
 
 
+def _boundary_centers(profile: np.ndarray, expected: int | None, size: int):
+    """Return boundary candidates without inventing a grid when no hint exists."""
+    if expected is not None:
+        return peaks(profile, expected + 1, max(4, size // 10))
+    # Unconstrained mode is deliberately conservative: discover prominent
+    # boundaries, but do not fill the slide with an assumed 2x3 grid.
+    return peaks(profile, min(8, max(2, size // 180)), max(4, size // 14))
+
+
 def detect(image_path: str, rows: int | None, cols: int | None, min_area: float):
+    if rows is not None and rows < 1:
+        raise ValueError("--rows must be >= 1")
+    if cols is not None and cols < 1:
+        raise ValueError("--cols must be >= 1")
     with Image.open(image_path) as image:
         original_w, original_h = image.size
         scale = min(1.0, 1400.0 / max(original_w, original_h))
@@ -64,26 +77,8 @@ def detect(image_path: str, rows: int | None, cols: int | None, min_area: float)
     col_groups = groups(vertical, np.percentile(vertical, 78), gap=max(2, w // 220))
     row_centers = [int((a + b) / 2) for a, b in row_groups]
     col_centers = [int((a + b) / 2) for a, b in col_groups]
-    want_rows, want_cols = rows or 2, cols or 3
-    inferred = rows is None or cols is None
-    if len(row_centers) < want_rows + 1:
-        row_centers = [round(i * h / want_rows) for i in range(want_rows + 1)]
-    if len(col_centers) < want_cols + 1:
-        col_centers = [round(i * w / want_cols) for i in range(want_cols + 1)]
-    # Pick outer/inner boundaries around the strongest evidence, with a safe
-    # fallback to an evenly spaced grid when noisy text dominates the profile.
-    if rows is not None:
-        detected = peaks(horizontal, want_rows + 1, max(4, h // 10))
-        if len(detected) == want_rows + 1:
-            row_centers = detected
-    elif len(row_centers) > want_rows + 1:
-        row_centers = [0] + peaks(horizontal[1:-1], want_rows - 1, max(4, h // 80)) + [h - 1]
-    if cols is not None:
-        detected = peaks(vertical, want_cols + 1, max(4, w // 10))
-        if len(detected) == want_cols + 1:
-            col_centers = detected
-    elif len(col_centers) > want_cols + 1:
-        col_centers = [0] + peaks(vertical[1:-1], want_cols - 1, max(4, w // 100)) + [w - 1]
+    row_centers = _boundary_centers(horizontal, rows, h)
+    col_centers = _boundary_centers(vertical, cols, w)
     row_centers = sorted(set(max(0, min(h - 1, x)) for x in row_centers))
     col_centers = sorted(set(max(0, min(w - 1, x)) for x in col_centers))
     candidates = []
@@ -94,8 +89,8 @@ def detect(image_path: str, rows: int | None, cols: int | None, min_area: float)
             area = (x1 - x0) * (y1 - y0)
             if area / (w * h) < min_area:
                 continue
-            candidates.append({"candidate_id": f"panel-{len(candidates)+1:02d}", "source_bbox": [round(x0 / scale), round(y0 / scale), round((x1 - x0) / scale), round((y1 - y0) / scale)], "row": r + 1, "column": c + 1, "confidence": round(0.48 if inferred else 0.66, 2), "boundary_evidence": {"horizontal_profile_peak": round(float(horizontal[y0:y1].max()), 2), "vertical_profile_peak": round(float(vertical[x0:x1].max()), 2)}})
-    return {"schema": "ai-ppt-plus/panel-candidates/v1", "source": str(Path(image_path).resolve()), "source_size": [original_w, original_h], "analysis_size": [w, h], "inference": {"rows": len(row_centers) - 1, "columns": len(col_centers) - 1, "used_default_grid": inferred}, "status": "needs-human-confirmation", "candidates": candidates, "human_review": ["confirm row/column count", "correct each source_bbox against visible panel borders", "exclude Logo, footer, intro bar and decorative gradients", "only then pass approved bboxes to extract_panels.py"]}
+            candidates.append({"candidate_id": f"panel-{len(candidates)+1:02d}", "source_bbox": [round(x0 / scale), round(y0 / scale), round((x1 - x0) / scale), round((y1 - y0) / scale)], "row": r + 1, "column": c + 1, "confidence": round(0.66 if rows is not None and cols is not None else 0.40, 2), "boundary_evidence": {"horizontal_profile_peak": round(float(horizontal[y0:y1].max()), 2), "vertical_profile_peak": round(float(vertical[x0:x1].max()), 2)}})
+    return {"schema": "ai-ppt-plus/panel-candidates/v1", "source": str(Path(image_path).resolve()), "source_size": [original_w, original_h], "analysis_size": [w, h], "inference": {"rows": len(row_centers) - 1, "columns": len(col_centers) - 1, "rows_hint": rows, "columns_hint": cols, "used_assumed_grid": False}, "status": "needs-human-confirmation", "candidates": candidates, "human_review": ["confirm the detected count and whether the layout is actually a repeated-panel structure", "correct each source_bbox against visible panel borders", "exclude Logo, footer, intro bar and decorative gradients", "only then pass approved bboxes to extract_panels.py"]}
 
 
 def main() -> int:
@@ -106,7 +101,10 @@ def main() -> int:
     ap.add_argument("--min-area", type=float, default=0.015)
     ap.add_argument("--output", required=True)
     args = ap.parse_args()
-    result = detect(args.image, args.rows, args.cols, args.min_area)
+    try:
+        result = detect(args.image, args.rows, args.cols, args.min_area)
+    except ValueError as exc:
+        ap.error(str(exc))
     out = Path(args.output); out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"valid": True, "status": result["status"], "candidates": len(result["candidates"]), "output": str(out)}, ensure_ascii=False))
