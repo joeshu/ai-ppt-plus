@@ -1,0 +1,13 @@
+{
+  "schema": "ai-ppt-plus/slide-object-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "objects": [
+        {"object_id": "background", "role": "background", "object_type": "independent_image", "editability_level": "L2", "required_for_delivery": true, "human_review_required": true, "replaceable": true, "source_ref": "reference.png", "contains_formal_content": false},
+        {"object_id": "panel-01", "role": "semantic-panel", "object_type": "traceable_static_graphic", "editability_level": "L3", "required_for_delivery": true, "human_review_required": true, "reduced_editability_accepted": true, "independent": true, "provenance": "reference.png#panel-01", "contains_formal_content": false},
+        {"object_id": "title", "role": "formal-text", "object_type": "editable_text", "editability_level": "L1", "required_for_delivery": true, "human_review_required": false, "provenance": "outline#title"}
+      ]
+    }
+  ]
+}

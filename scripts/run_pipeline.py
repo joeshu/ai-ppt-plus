@@ -110,6 +110,11 @@ def main() -> int:
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
     parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
     parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
+    parser.add_argument("--object-manifest", help="canonical slide-object-manifest.json")
+    parser.add_argument("--require-object-manifest", action="store_true", help="require and validate the canonical object inventory")
+    parser.add_argument("--require-independent-panels", action="store_true", help="reverse-audit independently movable semantic panels")
+    parser.add_argument("--expected-panel-count", type=int, help="expected semantic panel count")
+    parser.add_argument("--require-text-style-map", action="store_true", help="validate rich text/style records when present")
     parser.add_argument("--dpi", type=int, default=96, help="render DPI; 96 matches common 1536x864 reference images")
     parser.add_argument("--output-dir")
     args = parser.parse_args()
@@ -171,6 +176,12 @@ def main() -> int:
                 font_step["failure"] = "cjk_delivery_unsupported"
         steps.append(font_step)
     layout_path = project / "layout.json"
+    object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
+    if args.require_object_manifest or object_manifest.is_file():
+        object_args = [str(SCRIPT_DIR / "validate_object_manifest.py"), str(object_manifest), "--report", str(run_dir / "object-manifest-validation.json")]
+        if args.require_independent_panels:
+            object_args.append("--require-panels")
+        steps.append(run_step(run_dir, "object-manifest", object_args))
     if args.reference:
         if layout_path.is_file():
             layout_step = run_step(run_dir, "layout-guard", [str(SCRIPT_DIR / "layout_guard.py"), str(Path(args.reference).resolve()), str(layout_path), "--strict"])
@@ -194,6 +205,11 @@ def main() -> int:
     inspection_path = run_dir / "inspection.json"
     render_report_path = run_dir / "render-report.json"
     steps.append(run_step(run_dir, "inspection", [str(SCRIPT_DIR / "inspect_pptx.py"), str(deck), "--report", str(inspection_path)]))
+    if args.require_object_manifest or object_manifest.is_file():
+        audit_args = [str(SCRIPT_DIR / "inspect_editable_objects.py"), str(deck), "--object-manifest", str(object_manifest), "--report", str(run_dir / "editable-object-audit.json")]
+        if args.require_independent_panels:
+            audit_args.append("--require-independent-panels")
+        steps.append(run_step(run_dir, "editable-object-audit", audit_args))
     render_args = [str(SCRIPT_DIR / "render_pptx.py"), str(deck), "--output-dir", str(render_dir), "--dpi", str(args.dpi), "--report", str(render_report_path)]
     if args.font_dir:
         render_args.extend(["--font-dir", str(Path(args.font_dir).resolve())])
@@ -219,6 +235,16 @@ def main() -> int:
         if args.require_ocr:
             ocr_args.append("--require-ocr")
         steps.append(run_step(run_dir, "ocr-text-check", ocr_args))
+    panel_manifest = project / "panel-asset-manifest.json"
+    if panel_manifest.is_file() or args.require_independent_panels:
+        panel_args = [str(SCRIPT_DIR / "validate_panel_assets.py"), str(panel_manifest), "--assets-dir", str(project), "--report", str(run_dir / "panel-assets-validation.json"), "--strict"]
+        if args.require_independent_panels:
+            panel_args.append("--require-independent")
+        if args.expected_panel_count is not None:
+            panel_args.extend(["--expected-count", str(args.expected_panel_count)])
+        steps.append(run_step(run_dir, "panel-assets", panel_args))
+    if args.require_text_style_map and layout_path.is_file():
+        steps.append(run_step(run_dir, "text-style-map", [str(SCRIPT_DIR / "validate_text_style_map.py"), str(layout_path), "--report", str(run_dir / "text-style-map-validation.json")]))
     manifest_args = [str(SCRIPT_DIR / "validate_manifest.py"), str(project / "slide-manifest.json"), "--kind", "slide", "--report", str(run_dir / "manifest-validation.json")]
     if args.require_editability:
         manifest_args.append("--require-editability")
@@ -248,6 +274,15 @@ def main() -> int:
         {"report_type": "manifest-validation", "path": "manifest-validation.json", "required": True, "stage": "validated"},
         {"report_type": "project-validation", "path": "project-validation.json", "required": True, "stage": "validated"},
     ]
+    if args.require_object_manifest or object_manifest.is_file():
+        report_entries.extend([
+            {"report_type": "object-manifest-validation", "path": "object-manifest-validation.json", "required": True, "stage": "validated"},
+            {"report_type": "editable-object-audit", "path": "editable-object-audit.json", "required": True, "stage": "validated"},
+        ])
+    if panel_manifest.is_file() or args.require_independent_panels:
+        report_entries.append({"report_type": "panel-assets-validation", "path": "panel-assets-validation.json", "required": True, "stage": "validated"})
+    if args.require_text_style_map and layout_path.is_file():
+        report_entries.append({"report_type": "text-style-map-validation", "path": "text-style-map-validation.json", "required": True, "stage": "validated"})
     if imagegen_required:
         report_entries.append({"report_type": "imagegen-assets-validation", "path": "imagegen-assets-validation.json", "required": True, "stage": "validated"})
     if icon_required:
@@ -269,7 +304,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "font": "fonts", "environment": "environment", "inspection": "inspection", "render": "render"}.get(entry["report_type"])
+        step_name = {"render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "font": "fonts", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": "validated", "deck_path": str(deck), "deck_sha256": sha256(deck), "reports": report_entries}
@@ -286,6 +321,10 @@ def main() -> int:
         ("imagegen_assets_validation", run_dir / "imagegen-assets-validation.json"),
         ("icon_assets_validation", run_dir / "icon-assets-validation.json"),
         ("icon_layer_audit", run_dir / "icon-layer-audit.json"),
+        ("object_manifest_validation", run_dir / "object-manifest-validation.json"),
+        ("editable_object_audit", run_dir / "editable-object-audit.json"),
+        ("panel_assets_validation", run_dir / "panel-assets-validation.json"),
+        ("text_style_map_validation", run_dir / "text-style-map-validation.json"),
         ("visual_compare_qa", run_dir / "visual-qa/report.json"),
         ("project_report_aggregate", run_dir / "project-report.json"),
     ):

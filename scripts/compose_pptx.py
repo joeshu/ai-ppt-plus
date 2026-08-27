@@ -58,7 +58,7 @@ def _load_deck(path: Path):
     data = json.loads(path.read_text(encoding="utf-8"))
     if "slides" not in data:
         # Treat the whole object as a single slide; lift deck-level keys out.
-        slide_keys = {"background", "frame", "shapes", "icons", "texts"}
+        slide_keys = {"background", "frame", "panels", "shapes", "icons", "texts"}
         slide = {k: data[k] for k in slide_keys if k in data}
         deck = {k: v for k, v in data.items() if k not in slide_keys}
         deck["slides"] = [slide]
@@ -232,14 +232,16 @@ def build_pptx(deck, out_path: Path):
             bg_path = _resolve(assets_dir, bg)
             if not bg_path.exists():
                 _die(f"slide {idx}: background not found: {bg_path}")
-            slide.shapes.add_picture(str(bg_path), 0, 0, width=Emu(sw_emu), height=Emu(sh_emu))
+            picture = slide.shapes.add_picture(str(bg_path), 0, 0, width=Emu(sw_emu), height=Emu(sh_emu))
+            picture.name = str(sl.get("background_object_id", "background"))
 
         frame = sl.get("frame")
         if frame:
             fr_path = _resolve(assets_dir, frame)
             if not fr_path.exists():
                 _die(f"slide {idx}: frame not found: {fr_path}")
-            slide.shapes.add_picture(str(fr_path), 0, 0, width=Emu(sw_emu), height=Emu(sh_emu))
+            picture = slide.shapes.add_picture(str(fr_path), 0, 0, width=Emu(sw_emu), height=Emu(sh_emu))
+            picture.name = str(sl.get("frame_object_id", "frame"))
 
         for shp in sl.get("shapes", []):
             fx = _frac(deck, shp, "x", "x", ref_w)
@@ -299,9 +301,10 @@ def build_pptx(deck, out_path: Path):
             fy = _frac(deck, panel, "y", "y", ref_h)
             fw = _frac(deck, panel, "w", "w", ref_w)
             fh = _frac(deck, panel, "h", "h", ref_h)
-            slide.shapes.add_picture(
+            picture = slide.shapes.add_picture(
                 str(pp), Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu)),
                 width=Emu(int(fw * sw_emu)), height=Emu(int(fh * sh_emu)))
+            picture.name = str(panel.get("object_id") or panel.get("panel_id") or f"panel-{idx}")
 
         for ic in sl.get("icons", []):
             ip = _resolve(assets_dir, ic["file"])
@@ -311,9 +314,11 @@ def build_pptx(deck, out_path: Path):
             fy = _frac(deck, ic, "y", "y", ref_h)
             fw = _frac(deck, ic, "w", "w", ref_w)
             fh = _frac(deck, ic, "h", "h", ref_h)
-            slide.shapes.add_picture(
+            picture = slide.shapes.add_picture(
                 str(ip), Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu)),
                 width=Emu(int(fw * sw_emu)), height=Emu(int(fh * sh_emu)))
+            if ic.get("name") or ic.get("object_id"):
+                picture.name = str(ic.get("name") or ic.get("object_id"))
 
         for tx in sl.get("texts", []):
             fx = _frac(deck, tx, "x", "x", ref_w)
