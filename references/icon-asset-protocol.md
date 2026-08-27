@@ -1,85 +1,76 @@
 # Icon, decoration and word-art asset protocol
 
-Read this protocol for every reference-led page containing icons, badges,
-decorative marks, illustrations, logos, or decorative typography. It adapts
-the B4/B5 extraction and cutout discipline to AI PPT Plus without making
-image-generation mandatory for `reference-reconstruction`: a supplied source
-asset, an approved generated result, or a reliable native/vector replacement
-may be used, but its origin and treatment must be recorded.
+Apply this protocol to every reference-led page containing icons, badges,
+decorations, logos, illustrations, or artistic typography. It adapts the
+GordenImage2PPTX B4/B5 chain while preserving AI PPT Plus routing.
 
-## B4 — inventory and extract
+## B4: extract and exclude
 
-Before engineering the page, create an asset roster from the reference:
+Before PPTX engineering, inspect the reference and create a complete roster:
+every icon, decoration, badge, logo, illustration, artistic word, and any item
+that could be mistaken for a frame element. Separate ordinary editable text
+from artistic typography. For every item record its role, semantic identity,
+source-pixel bbox, whether it belongs to the frame, and whether it must be an
+independent PPT object.
 
-- list every icon, decoration, badge, logo, illustration and decorative word;
-- distinguish ordinary editable text from decorative/artistic typography;
-- mark whether each item belongs to the frame/background or is an independent
-  movable object;
-- compare the roster with the frame layer and record anything accidentally
-  included in both layers;
-- prefer one independently replaceable asset per visible object; use a contact
-  sheet only as an intermediate, never as the delivered PPT object;
-- preserve brand marks and specialized artwork exactly when supplied; do not
-  invent a low-quality substitute.
+Then compare the original reference with the proposed frame preview. Record
+both the full roster and the items accidentally included in the frame. No icon
+may appear in both the frame and icon layers. If image generation is used,
+record the actual generator/backend, prompt file, generated source, and copied
+asset path. The image prompt must request only frame-excluded elements, and a
+contact sheet must have evenly spaced cells with no intentional divider lines.
+Small icons may use a 4x4 sheet; larger decoration, objects, or artistic
+typography should use a 2x2 sheet or a separate sheet. A contact sheet is an
+intermediate, never the delivered PPT object.
 
-Record `asset_id`, `role`, `source_ref`, `source_bbox` in source pixels,
-`extraction_method`, `frame_exclusion`, `editability_level`, and the planned
-PPT object path for every item. `decorative_word_art` belongs to the visual
-asset layer and must not be silently converted into formal text.
+Supplied original icon files may be used directly when their provenance is
+known. A screenshot crop is not an original asset: do not silently promote a
+crop to a high-fidelity extracted asset. If no reliable source asset exists,
+use the approved image-generation extraction route or mark an accurate L4
+placeholder; do not invent a weak branded or complex replacement.
 
-## B5 — cut out, split and inspect
+## B5: cut out, split and inspect
 
-When an asset is delivered on a background, remove only the background using a
-chroma-safe or alpha-preserving method. Preserve source colors, thin lines,
-glows and anti-aliased edges; do not use aggressive color decontamination that
-changes brand colors or erodes small strokes. Split a contact sheet by
-transparency/connected gaps only after background removal. Never crop icons
-directly out of the original slide screenshot as a shortcut.
+For generated or supplied assets on a flat background, use the portable tools:
 
-Every extracted object must pass: non-empty alpha and a valid visible bbox;
-no accidental `edge_touch` or truncation unless explicitly accepted; no
-unintended connected-component merge or residual grid/divider line; no
-duplicate object in frame and icon layers; source-pixel bbox mapped to the
-slide coordinate system; and intentional transparent padding that preserves
-the visual anchor. Run `scripts/validate_icon_assets.py`; a failure blocks the
-affected page. The validator is diagnostic, so rendered visual review remains
-mandatory.
-
-## Placement and editability
-
-Place extracted icons/decorations as independent PPT picture objects unless a
-reliable editable vector/native equivalent is explicitly chosen. Link
-`source_bbox`, `x/y/w/h`, `anchor`, and `asset_id` in the slide manifest. Use
-`L2` for a movable/replaceable extracted image and disclose that its pixels are
-not internally editable. Use `L1` only for a genuinely editable vector/native
-equivalent. Use `L4` for an accurate missing-asset placeholder; use `L5` when
-the visual identity or content cannot be verified. A whole-slide bitmap is
-`L0` and never an icon solution.
-
-Rendered review must check icon count, semantic identity, color, stroke weight,
-size, center point, spacing, layering, crop, and text collisions. Fix placement
-using the source bbox center as anchor; do not shrink or delete an icon merely
-to avoid a collision. Record corrections and reasons.
-
-Minimal manifest shape:
-
-```json
-{
-  "schema": "ai-ppt-plus/icon-assets/v1",
-  "slide_no": 1,
-  "assets": [{
-    "asset_id": "S01-icon-03", "role": "icon",
-    "source_ref": "user-reference#icon-03",
-    "source_bbox": {"x": 1250, "y": 210, "w": 48, "h": 48},
-    "extraction_method": "approved-source-asset",
-    "cutout_method": "none",
-    "prompt_ref": null,
-    "frame_exclusion": "verified-not-in-frame",
-    "asset_path": "assets/icons/icon-03.png",
-    "editability_level": "L2", "replaceable": true,
-    "alpha_quality": "pass", "edge_touch": false,
-    "split_status": "single-object", "duplicate_guard": "pass",
-    "anchor": "center", "review_status": "pending"
-  }]
-}
+```bash
+python3 scripts/probe_palette.py reference/slide-1.png
+python3 scripts/chroma_key.py --input icons_raw.png --out icons_transparent.png --preset icon-safe --scale 2 --force
+python3 scripts/slice_grid.py icons_transparent.png assets/icons --auto --pad 24 --contact-sheet --prefix ic
+python3 scripts/placement_qa.py reference/slide-1.png slide-manifest.json --out-dir qa/icon-placement
+python3 scripts/validate_icon_assets.py icon-asset-manifest.json --report reports/icon-assets.json
+python3 scripts/audit_icon_layers.py icon-asset-manifest.json --report reports/icon-layers.json
 ```
+
+Use `frame-safe` for a frame layer and `icon-safe` for icons, decoration,
+and artistic typography. Preserve RGB colors, thin strokes, glows and
+anti-aliased alpha; do not use aggressive despill/erosion that changes brand
+colors or breaks lines. Split only after transparency is valid. Use automatic
+transparent-gap segmentation for imperfect AI sheets; use component slicing
+for frame parts only when the user explicitly requests movable frame parts.
+Inspect the contact sheet and a frame preview on a neutral/gray background.
+
+Every item must pass: non-empty alpha, valid visible bbox, no unaccepted
+edge-touch/truncation, no residual key color or grid line, no unintended
+connected-component merge, no duplicate frame/icon occurrence, and correct
+source-pixel coordinate mapping. A failed machine check blocks the page;
+rendered visual review remains mandatory.
+
+## Manifest and editability
+
+The page must have an `icon-asset-manifest.json` with schema
+`ai-ppt-plus/icon-assets/v1`, complete B4/B5 evidence, and one record per
+independent icon/decorative asset. Each record includes `asset_id`, `role`,
+`source_ref`, `source_bbox`, `extraction_method`, `frame_exclusion`,
+`asset_path`, `editability_level`, `replaceable`, `alpha_quality`,
+`edge_touch`, `split_status`, `duplicate_guard`, `anchor`, and
+`review_status`. The top level also records `source_vs_frame_review`,
+`frame_asset_ids`, `icon_asset_ids`, `frame_preview`, and
+`contact_sheet`.
+
+Use independent PPT picture objects for extracted icons and decoration unless a
+genuinely editable vector/native equivalent is selected. Extracted icons and
+artistic typography are L2; native vectors are L1; missing assets are L4;
+unverifiable assets are L5; a whole-slide bitmap is L0. Review icon count,
+identity, color, stroke weight, size, center, spacing, layering, crop, and text
+collisions. Record every correction and its reason.
