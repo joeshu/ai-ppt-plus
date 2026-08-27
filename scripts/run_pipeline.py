@@ -65,6 +65,7 @@ def project_mentions_icons(project: Path) -> bool:
     return any(token in raw for token in (
         "extracted_icon", "decorative_art", "decorative_word_art",
         "icon-asset-manifest", "imagegen-assets-manifest",
+        "source_element_id", "source-icons",
     ))
 
 
