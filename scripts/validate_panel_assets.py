@@ -18,6 +18,7 @@ def main() -> None:
     ap.add_argument("manifest")
     ap.add_argument("--require-independent", action="store_true")
     ap.add_argument("--expected-count", type=int, default=None)
+    ap.add_argument("--assets-dir", default=None, help="Resolve panel files relative to this directory.")
     ap.add_argument("--strict", action="store_true")
     ap.add_argument("--report")
     args = ap.parse_args()
@@ -45,6 +46,8 @@ def main() -> None:
         if not file or file in files:
             errors.append(f"panel {i}: missing or duplicate independent file")
         files.add(file)
+        if args.assets_dir and file and not (Path(args.assets_dir) / str(file)).exists():
+            errors.append(f"panel {i} {pid}: asset not found: {Path(args.assets_dir) / str(file)}")
         if not isinstance(panel.get("source_bbox"), list) or len(panel["source_bbox"]) != 4:
             warnings.append(f"panel {i} {pid}: missing source_bbox")
         if panel.get("treatment") not in {"native-shape", "transparent-image", "vector"}:

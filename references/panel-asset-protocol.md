@@ -18,6 +18,16 @@ borders were generated together.
   in the background layer.
 - **Brand/logo**: keep the authoritative logo asset separate from card frames.
 
+Before removing a whole-frame asset, inventory every non-panel component it
+contains (overview badges, intro bars, footer waves and decorative lines). Each
+component must be re-homed as a native shape or independent asset; deleting the
+frame must never silently delete content.
+
+Use `extract_panels.py` with full-resolution `source_bbox` values to produce
+panel files. Do not crop from a palette thumbnail or guessed scaled coordinates.
+The emitted manifest records actual asset sizes and is checked with
+`validate_panel_assets.py --assets-dir ...`.
+
 ## Manifest
 
 Record each panel in `panel-asset-manifest.json` with `panel_id`, `file`,
