@@ -29,6 +29,14 @@ crop to a high-fidelity extracted asset. If no reliable source asset exists,
 use the approved image-generation extraction route or mark an accurate L4
 placeholder; do not invent a weak branded or complex replacement.
 
+## Imagegen extraction evidence gate
+
+When an original icon asset is unavailable, use the ChatGPT imagegen skill (or an explicitly declared image-generation backend) only for an isolated, frame-excluded icon/decorative asset sheet. The prompt must use the current reference as the edit target and request no ordinary text, frame, card, or background. Do not use code to draw or reconstruct the icon sheet, and do not crop a local screenshot region as a substitute.
+
+Before composition, every page must contain `imagegen-assets-manifest.json`. For `background`, `frame_raw`, and every `icons_raw_*` layer, record non-empty `generated_source`, `copied_to`, `layer`, `prompt_file`, `backend`, and `key_color`. `backend` must be imagegen-class; `copied_to` and `prompt_file` must resolve inside the unique RUN_ROOT. Missing manifest or missing evidence for any image layer blocks conversion. Run `scripts/validate_imagegen_assets_manifest.py imagegen-assets-manifest.json` before B5.
+
+This evidence gate is separate from the visual route: reference reconstruction does not generate a new whole-slide visual intermediate, but it may generate an isolated missing icon sheet under this rule. A generated icon sheet is still only an intermediate; after copying it into RUN_ROOT it must pass B5 chroma-key, split, contact-sheet, edge and placement review.
+
 ## B5: cut out, split and inspect
 
 For generated or supplied assets on a flat background, use the portable tools:
