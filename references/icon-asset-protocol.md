@@ -23,11 +23,7 @@ Small icons may use a 4x4 sheet; larger decoration, objects, or artistic
 typography should use a 2x2 sheet or a separate sheet. A contact sheet is an
 intermediate, never the delivered PPT object.
 
-Supplied original icon files may be used directly when their provenance is
-known. A screenshot crop is not an original asset: do not silently promote a
-crop to a high-fidelity extracted asset. If no reliable source asset exists,
-use the approved image-generation extraction route or mark an accurate L4
-placeholder; do not invent a weak branded or complex replacement.
+Original icon files may be supplied as the imagegen edit target/reference, but may not be copied directly into the delivered icon layer. Every icon, decoration and artistic word must pass the same imagegen asset-sheet route, followed by B5 cutout, split and QA. A screenshot crop is never an original asset and may not bypass imagegen. If imagegen is unavailable or fails, block the page; do not silently fall back to direct crops, weak redraws or unproven substitutes.
 
 ## Imagegen extraction evidence gate
 
