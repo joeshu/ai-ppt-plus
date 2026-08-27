@@ -33,6 +33,7 @@ Use for new decks, reference-led decks, outline-only or visual-only work, PPT/PP
 Read `references/narrative-strategy.md` for story decisions, `references/artifact-ownership.md` for authority/conflict rules, and `references/icon-asset-protocol.md` whenever a page contains icons, decorations, logos, illustrations or decorative typography.
 For reference reconstruction with visible text styling, also read `references/text-style-protocol.md` and run `scripts/validate_text_style_map.py`; this is the reusable gate for preserving mixed-color text, emphasized numbers, line breaks and text-box boundaries.
 Record every case-specific workaround in the issue log with its trigger, why the normal path failed, scope, validation evidence and rollback/expiry condition. Promote it into the shared toolchain only when the failure is reproducible across references; otherwise keep it as a documented special attempt.
+Before visual comparison, run `scripts/reference_audit.py REFERENCE CANDIDATE`; distinguish viewer screenshot letterboxing/black bars from actual slide content, and compare at the same aspect ratio and render scale.
 
 ## State machine
 
