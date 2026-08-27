@@ -37,7 +37,7 @@ The `slide-manifest.json` page entry must record `reference_image`, `formal_cont
 
 ## Allowed substitution and degradation
 
-Allowed without redesign: a semantically equivalent generic vector icon; a metrically compatible font when the specified font is unavailable and substitution is disclosed; a traceable static chart image only when editable-chart support is unavailable and the user accepts the explicit `L3` degradation. Independent supplied photos/textures/icons are `L2` only when their provenance and replacement path are recorded. Missing complex assets are `L4` placeholders, not invented artwork.
+Allowed without redesign: a semantically equivalent generic vector icon only after the mandatory imagegen B4/B5 route; a metrically compatible font when the specified font is unavailable and substitution is disclosed; a traceable static chart image only when editable-chart support is unavailable and the user accepts the explicit `L3` degradation. Independent supplied photos/textures/icons are `L2` only when their provenance and replacement path are recorded. Missing complex assets are `L4` placeholders, not invented artwork.
 
 Not allowed: a whole-slide background screenshot as the sole implementation (`L0`); invented complex artwork; low-quality imitation of a missing key visual; silent removal of content; changing the narrative to fit an easier layout; claiming full editability when required text or simple shapes are rasterized; treating a high aggregate editability ratio as permission to ignore an `L0`, `L5` or required `L4` object.
 
