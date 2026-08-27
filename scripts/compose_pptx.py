@@ -571,7 +571,11 @@ def render_previews(deck, preview_dir: Path):
                     except Exception:
                         rfont = ImageFont.load_default()
                     rtext = str(rinfo.get("text", ""))
-                    w = draw.textlength(rtext, font=rfont)
+                    # Pillow cannot measure a multiline string with
+                    # textlength(). Rich-text runs commonly carry line breaks
+                    # between source paragraphs, so use the widest visual line
+                    # for alignment/advance calculation.
+                    w = max((draw.textlength(part, font=rfont) for part in rtext.split("\n")), default=0)
                     segs.append((rtext, rfont, rinfo.get("color", color),
                                  float(rinfo.get("opacity", opacity)), rb, w))
                     total += w
