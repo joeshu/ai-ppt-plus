@@ -288,6 +288,21 @@ def build_pptx(deck, out_path: Path):
             if shp.get("rotation"):
                 shape.rotation = float(shp["rotation"])
 
+        # Semantic panels are independent movable assets. They intentionally
+        # render before icons and text, and are not folded into the full-slide
+        # frame layer.
+        for panel in sl.get("panels", []):
+            pp = _resolve(assets_dir, panel["file"])
+            if not pp.exists():
+                _die(f"slide {idx}: panel not found: {pp}")
+            fx = _frac(deck, panel, "x", "x", ref_w)
+            fy = _frac(deck, panel, "y", "y", ref_h)
+            fw = _frac(deck, panel, "w", "w", ref_w)
+            fh = _frac(deck, panel, "h", "h", ref_h)
+            slide.shapes.add_picture(
+                str(pp), Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu)),
+                width=Emu(int(fw * sw_emu)), height=Emu(int(fh * sh_emu)))
+
         for ic in sl.get("icons", []):
             ip = _resolve(assets_dir, ic["file"])
             if not ip.exists():
@@ -525,6 +540,18 @@ def render_previews(deck, preview_dir: Path):
                 od.rectangle([x0, y0, x1, y1], fill=fill, outline=line, width=lw)
             canvas.alpha_composite(overlay)
 
+        for panel in sl.get("panels", []):
+            pp = _resolve(assets_dir, panel["file"])
+            if not pp.exists():
+                continue
+            fx = _frac(deck, panel, "x", "x", ref_w)
+            fy = _frac(deck, panel, "y", "y", ref_h)
+            fw = _frac(deck, panel, "w", "w", ref_w)
+            fh = _frac(deck, panel, "h", "h", ref_h)
+            with Image.open(pp) as im:
+                panel_im = im.convert("RGBA").resize((max(1, int(fw * CW)), max(1, int(fh * CH))))
+            canvas.alpha_composite(panel_im, (int(fx * CW), int(fy * CH)))
+
         for ic in sl.get("icons", []):
             ip = _resolve(assets_dir, ic["file"])
             if not ip.exists():
@@ -560,8 +587,11 @@ def render_previews(deck, preview_dir: Path):
             line_h = int(px * 1.3)
             runs = tx.get("runs")
             if runs:
-                segs = []
-                total = 0.0
+                # Lay out rich runs character-by-character so wrapping follows
+                # the same visual box as plain text. The previous preview path
+                # drew each run as one unwrapped string, which made a valid
+                # PPTX preview look broken whenever runs crossed a line break.
+                chars = []
                 for rinfo in runs:
                     rb = bool(rinfo.get("bold", bold))
                     rpx = max(8, int(round(_text_size_pt(rinfo, sh_pt, ref_h, default=size_pt) * CH / sh_pt)))
@@ -570,26 +600,35 @@ def render_previews(deck, preview_dir: Path):
                         rfont = ImageFont.truetype(rfp, rpx) if rfp else ImageFont.load_default()
                     except Exception:
                         rfont = ImageFont.load_default()
-                    rtext = str(rinfo.get("text", ""))
-                    # Pillow cannot measure a multiline string with
-                    # textlength(). Rich-text runs commonly carry line breaks
-                    # between source paragraphs, so use the widest visual line
-                    # for alignment/advance calculation.
-                    w = max((draw.textlength(part, font=rfont) for part in rtext.split("\n")), default=0)
-                    segs.append((rtext, rfont, rinfo.get("color", color),
-                                 float(rinfo.get("opacity", opacity)), rb, w))
-                    total += w
-                cx = bx0 + (bw - total if align == "right" else
-                            (bw - total) // 2 if align == "center" else 0)
-                cx = max(bx0, cx)
-                ty = by0 + (max(0, bh - line_h) if valign == "bottom" else
-                            max(0, (bh - line_h) // 2) if valign in ("middle", "center") else 0)
-                for rtext, rfont, rcolor, ropacity, rb, w in segs:
-                    stroke = 1 if rb and not bold_path else 0
-                    fill = _hex_to_rgba(rcolor, ropacity)
-                    draw.text((cx, ty), rtext, fill=fill, font=rfont,
-                              stroke_width=stroke, stroke_fill=fill)
-                    cx += w
+                    for ch in str(rinfo.get("text", "")):
+                        chars.append((ch, rfont, rinfo.get("color", color),
+                                      float(rinfo.get("opacity", opacity)), rb))
+                lines, line = [], []
+                line_width = 0.0
+                for ch, cfont, ccolor, copacity, cbold in chars:
+                    if ch == "\n":
+                        lines.append(line); line = []; line_width = 0.0
+                        continue
+                    cw = draw.textlength(ch, font=cfont)
+                    if line and line_width + cw > bw:
+                        lines.append(line); line = []; line_width = 0.0
+                    line.append((ch, cfont, ccolor, copacity, cbold, cw))
+                    line_width += cw
+                if line or not lines:
+                    lines.append(line)
+                total_h = line_h * len(lines)
+                ty = by0 + (max(0, bh - total_h) if valign == "bottom" else
+                            max(0, (bh - total_h) // 2) if valign in ("middle", "center") else 0)
+                for li, chars_line in enumerate(lines):
+                    total_w = sum(item[5] for item in chars_line)
+                    cx = bx0 + (bw - total_w if align == "right" else
+                                (bw - total_w) / 2 if align == "center" else 0)
+                    for ch, cfont, ccolor, copacity, cbold, cw in chars_line:
+                        stroke = 1 if cbold and not bold_path else 0
+                        fill = _hex_to_rgba(ccolor, copacity)
+                        draw.text((max(bx0, int(cx)), ty + li * line_h), ch, fill=fill,
+                                  font=cfont, stroke_width=stroke, stroke_fill=fill)
+                        cx += cw
             else:
                 lines = _wrap_text(draw, str(tx.get("text", "")), font, max(1, bw))
                 total_h = line_h * max(1, len(lines))
