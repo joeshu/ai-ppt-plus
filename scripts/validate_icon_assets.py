@@ -44,6 +44,24 @@ def main() -> int:
         assets = data.get("assets", [])
     if not isinstance(assets, list):
         add(issues, "blocker", "assets_not_array"); assets = []
+    # B4/B5 evidence is project-level, not optional metadata.
+    top_required = ("source_vs_frame_review", "frame_asset_ids", "icon_asset_ids", "frame_preview", "contact_sheet")
+    for field in top_required:
+        if field not in data or data[field] in (None, ""):
+            add(issues, "blocker", "top_level_evidence_missing", field=field)
+    review = data.get("source_vs_frame_review")
+    review_pass = review == "pass" or (isinstance(review, dict) and review.get("status") == "pass")
+    if not review_pass:
+        add(issues, "blocker", "source_vs_frame_review_failed")
+    for field in ("frame_asset_ids", "icon_asset_ids"):
+        if field in data and not isinstance(data[field], list):
+            add(issues, "blocker", "top_level_id_list_invalid", field=field)
+    for field in ("frame_preview", "contact_sheet"):
+        value = data.get(field)
+        if isinstance(value, str) and value:
+            evidence_path = (manifest_path.parent / value).resolve()
+            if not evidence_path.is_file():
+                add(issues, "blocker", "evidence_file_missing", field=field, path=str(evidence_path))
     seen = set()
     required = ("role", "source_ref", "source_bbox", "extraction_method", "frame_exclusion", "editability_level", "asset_path", "alpha_quality", "edge_touch", "split_status", "duplicate_guard", "anchor", "review_status")
     for index, asset in enumerate(assets):
