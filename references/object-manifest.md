@@ -16,3 +16,9 @@ complex panel whose border, texture or decoration is kept as one movable asset.
 The final deck audit matches object IDs to shape names. Composition helpers
 should name pictures and text boxes with the manifest ID, so a manifest claim
 cannot silently diverge from the PPTX.
+
+Use `scripts/build_object_manifest.py layout.json --panel-manifest
+panel-asset-manifest.json --output slide-object-manifest.json` to create the
+initial inventory. Review Logo and other authoritative brand assets before
+accepting the generated roles; the builder is a deterministic baseline, not a
+visual recognition model.

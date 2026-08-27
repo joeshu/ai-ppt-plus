@@ -243,7 +243,7 @@ def build_pptx(deck, out_path: Path):
             picture = slide.shapes.add_picture(str(fr_path), 0, 0, width=Emu(sw_emu), height=Emu(sh_emu))
             picture.name = str(sl.get("frame_object_id", "frame"))
 
-        for shp in sl.get("shapes", []):
+        for shape_index, shp in enumerate(sl.get("shapes", []), 1):
             fx = _frac(deck, shp, "x", "x", ref_w)
             fy = _frac(deck, shp, "y", "y", ref_h)
             fw = _frac(deck, shp, "w", "w", ref_w)
@@ -258,10 +258,12 @@ def build_pptx(deck, out_path: Path):
                     Emu(int((fy + fh) * sh_emu)))
                 conn.line.color.rgb = _hex_to_rgb(shp.get("line", shp.get("fill", "#FFFFFF")))
                 conn.line.width = Pt(float(shp.get("line_width", 1.5)))
+                conn.name = str(shp.get("object_id") or shp.get("name") or f"shape-{shape_index:02d}")
                 continue
 
             shape = slide.shapes.add_shape(shape_map.get(stype, MSO_SHAPE.ROUNDED_RECTANGLE),
                                            left, top, wid, hei)
+            shape.name = str(shp.get("object_id") or shp.get("name") or f"shape-{shape_index:02d}")
             if stype == "rounded_rect" and "radius" in shp:
                 try:
                     shape.adjustments[0] = float(shp["radius"])
@@ -306,7 +308,7 @@ def build_pptx(deck, out_path: Path):
                 width=Emu(int(fw * sw_emu)), height=Emu(int(fh * sh_emu)))
             picture.name = str(panel.get("object_id") or panel.get("panel_id") or f"panel-{idx}")
 
-        for ic in sl.get("icons", []):
+        for icon_index, ic in enumerate(sl.get("icons", []), 1):
             ip = _resolve(assets_dir, ic["file"])
             if not ip.exists():
                 _die(f"slide {idx}: icon not found: {ip}")
@@ -317,8 +319,7 @@ def build_pptx(deck, out_path: Path):
             picture = slide.shapes.add_picture(
                 str(ip), Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu)),
                 width=Emu(int(fw * sw_emu)), height=Emu(int(fh * sh_emu)))
-            if ic.get("name") or ic.get("object_id"):
-                picture.name = str(ic.get("name") or ic.get("object_id"))
+            picture.name = str(ic.get("name") or ic.get("object_id") or f"icon-{icon_index:02d}")
 
         for tx in sl.get("texts", []):
             fx = _frac(deck, tx, "x", "x", ref_w)
