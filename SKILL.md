@@ -91,6 +91,8 @@ For reference-image reconstruction, plain text transcription is insufficient. Bu
 
 For every reconstructed or repaired deck, also create `slide-object-manifest.json` using the contract in `references/object-manifest.md`. Use `scripts/build_object_manifest.py` for the deterministic baseline, then review Logo and other authoritative assets before composition. `layout.json` owns geometry; the object manifest owns semantic roles, provenance, editability level and expected final shape identity. Run `scripts/validate_object_manifest.py`; then run `scripts/inspect_editable_objects.py` against the final PPTX. A semantic panel, logo, product image or footer component must have its own object record when it is independently movable; a manifest claim is not evidence until the final PPTX shape-name audit confirms it.
 
+When repeated panels are visually obvious but their coordinates are unknown, use `scripts/detect_panel_candidates.py` as a proposal step and read `references/panel-detection.md`. Its result is never authoritative: keep `status: needs-human-confirmation`, manually approve full-resolution bboxes, and exclude logos, intro/footer components and unbounded gradients before extraction.
+
 Use the installed presentation tooling or an explicitly configured compatible executor. If a compatible `ppt-master` installation is available, adapt through its documented paths; never claim it exists when discovery fails and never copy it wholesale. A repeated card grid is not one frame: split semantic panels into native shapes or one transparent image per panel, and keep formal text above them as native text.
 
 ## Render, validation and repair
