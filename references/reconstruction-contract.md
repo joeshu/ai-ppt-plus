@@ -25,11 +25,11 @@ Preserve, in order: information hierarchy → page structure → spatial relatio
 ## Per-page execution protocol
 
 1. **Analyze the reference:** record canvas ratio, margins, major zones, alignment anchors, content hierarchy, reading path, focal point, typography roles, colors and asset bounds.
-2. **Create an object decomposition plan:** map each visible element to one of `editable_text`, `native_shape`, `editable_vector`, `editable_chart`, `independent_image`, `traceable_static_graphic`, or `documented_placeholder`; use `flattened_full_slide` and `unresolved` only to produce a blocking finding. Assign the corresponding `L0`–`L5` level, provenance, required-for-delivery flag and human-review flag. See `references/editability-levels.md`.
+2. **Create an object decomposition plan:** map each visible element to one of `editable_text`, `native_shape`, `editable_vector`, `editable_chart`, `independent_image`, `extracted_icon`, `decorative_art`, `traceable_static_graphic`, or `documented_placeholder`; use `flattened_full_slide` and `unresolved` only to produce a blocking finding. For icons/decorations/artistic typography, first apply `references/icon-asset-protocol.md`, then assign the corresponding `L0`–`L5` level, provenance, required-for-delivery flag and human-review flag. See `references/editability-levels.md`.
 3. **Resolve authority:** take formal text/data from the approved outline; use the image only for visual relationships. Log conflicts before implementation.
 4. **Engineer the page:** reproduce confirmed geometry and layers without substituting a different design system.
 5. **Render and compare:** compare reference and render for hierarchy, page structure, spatial relationships, typography and graphics in the fixed priority order.
-6. **Verify editability and package health:** confirm the file opens, the page renders, text is selectable, simple elements are independent/native, replaceable images are separate, and no required region is silently flattened.
+6. **Verify editability and package health:** confirm the file opens, the page renders, text is selectable, simple elements are independent/native, replaceable images are separate, and no required region is silently flattened. For icon-bearing pages, run `scripts/validate_icon_assets.py icon-asset-manifest.json`, inspect alpha/contact-sheet QA, and compare icon count, edge integrity, centers, size and duplicates in the rendered page.
 
 For a multi-page reference set, keep a one-to-one `slide-N` mapping between each reference image and rendered page. A first-page comparison is never sufficient evidence for a multi-page reconstruction; missing or mismatched reference pages block the batch and must identify the affected slide number.
 
@@ -51,4 +51,4 @@ Input: approved outline or confirmed transcription, design system, approved visu
 
 Positive example: a timeline mockup becomes native text boxes, lines and nodes while its wording comes from the approved outline. Negative example: the mockup is inserted as one full-slide bitmap and called editable.
 
-Common failures are font substitution, grouped raster content, missing provenance, whole-slide flattening, low-quality fake assets and silent redesign. Validate object mix, formal-copy diff, package openability, page renders, reference comparison, placeholder log and user-approved exceptions.
+Common failures are font substitution, grouped raster content, missing provenance, whole-slide flattening, low-quality fake assets, icons swallowed by the frame layer, duplicate frame/icon assets, residual cutout backgrounds, edge-touch truncation and silent redesign. Validate object mix, icon asset roster, alpha/split QA, formal-copy diff, package openability, page renders, reference comparison, placeholder log and user-approved exceptions.

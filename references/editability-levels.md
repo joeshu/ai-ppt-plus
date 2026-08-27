@@ -9,7 +9,7 @@ object, never to the whole page by optimistic average.
 |---|---|---|---|---|
 | `L0` | prohibited flattening: a full-page bitmap or a rasterized required text/simple shape | `flattened_full_slide` | always blocker | rebuild as objects |
 | `L1` | natively or structurally editable | `editable_text`, `native_shape`, `editable_vector`, `editable_chart` | required fields and chart data/provenance | auto-allowed |
-| `L2` | independent image object; movable, crop-able and replaceable, but pixels are not internally editable | `independent_image` | provenance + `replaceable: true`; never formal text/data | allowed with disclosure; human visual review |
+| `L2` | independent image object; movable, crop-able and replaceable, but pixels are not internally editable | `independent_image`, `extracted_icon`, `decorative_art` | provenance + `replaceable: true`; never formal text/data | allowed with disclosure; human visual review |
 | `L3` | verified static graphic whose source/data is traceable but whose internal structure is not editable | `traceable_static_graphic` | provenance/data source + `reduced_editability_accepted: true` | explicit human editability confirmation |
 | `L4` | accurate placeholder for a missing or unsafe-to-recreate material | `documented_placeholder` | reason + exact `material_request` | manual review; blocks if required for delivery |
 | `L5` | unresolved, unverifiable or falsely reconstructed content | `unresolved` | always blocker | do not deliver |
@@ -33,6 +33,12 @@ For `L1` charts, add `data_source` or `provenance`. For `L3`, add
 `data_source` where applicable and set `reduced_editability_accepted` only
 after the source has been checked. For `L4`, add `placeholder_reason` and a
 specific `material_request`; “素材缺失” alone is not sufficient.
+
+For extracted icons, decorations and artistic typography, also record
+`asset_id`, `role`, `source_bbox`, `extraction_method`, `alpha_quality`,
+`edge_touch`, `split_status`, `duplicate_guard`, `anchor`, and `replaceable`.
+Validate these with `scripts/validate_icon_assets.py`; a clean alpha channel
+or valid file is not a substitute for rendered visual review.
 
 The page summary is derived, not hand-waved:
 

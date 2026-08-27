@@ -35,3 +35,8 @@ cases:
   - {id: report_missing, signal: required_child_report_missing_from_project_index, expected: project_aggregate_blocker}
   - {id: report_stale, signal: indexed_report_or_deck_hash_changed_after_aggregation, expected: project_aggregate_blocker}
   - {id: report_hidden_failure, signal: child_report_failed_but_project_aggregate_marks_passed, expected: project_aggregate_blocker}
+  - {id: icon_swallowed_by_frame, signal: icon_roster_item_missing_from_frame_exclusion_or_icon_layer, expected: blocker_and_reextract}
+  - {id: icon_duplicate_layers, signal: same_icon_present_in_frame_and_independent_icon_layer, expected: blocker_and_remove_duplicate}
+  - {id: icon_edge_touch, signal: cutout_icon_touches_or_is_truncated_at_asset_edge_without_acceptance, expected: blocker_and_recrop_or_regenerate}
+  - {id: icon_alpha_failure, signal: residual_background_or_empty_alpha_after_cutout, expected: blocker_and_recutout}
+  - {id: decorative_word_art_as_text, signal: artistic_typography_treated_as_formal_text_without_asset_record, expected: classify_as_decorative_art_L2_or_placeholder}

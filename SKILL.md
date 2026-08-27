@@ -30,7 +30,7 @@ Use for new decks, reference-led decks, outline-only or visual-only work, PPT/PP
 - Complex illustration: generate/extract only if provenance and fidelity are acceptable; otherwise place an explicit, documented placeholder.
 - Incomplete critical input or unresolved conflict: move to `revision-required`, offer no more than three concrete choices, recommend one, and wait.
 
-Read `references/narrative-strategy.md` for story decisions and `references/artifact-ownership.md` for authority/conflict rules.
+Read `references/narrative-strategy.md` for story decisions, `references/artifact-ownership.md` for authority/conflict rules, and `references/icon-asset-protocol.md` whenever a page contains icons, decorations, logos, illustrations or decorative typography.
 
 ## State machine
 
@@ -73,7 +73,7 @@ Target the requested presentation context, such as high-end state-owned-enterpri
 
 ## PPTX reconstruction
 
-Follow `references/reconstruction-contract.md` and `references/editability-levels.md`. Default to 16:9 unless explicitly overridden. Use real text boxes for titles/body/labels/notes/numbers; native shapes for simple geometry; editable or traceable charts; separate image objects for separate assets. Assign every visible object an `editability_level` from `L0` to `L5`, derive the page summary, and never use a whole-slide image as the only slide content. Document placeholders for unreconstructable visuals.
+Follow `references/reconstruction-contract.md`, `references/editability-levels.md`, and—when applicable—`references/icon-asset-protocol.md`. Default to 16:9 unless explicitly overridden. Use real text boxes for titles/body/labels/notes/numbers; native shapes for simple geometry; editable or traceable charts; separate image objects for separate assets. For icons/decorations/artistic typography, inventory every object before implementation, keep them out of the frame layer unless intentionally part of it, use alpha-preserving extraction/splitting, and validate `icon-asset-manifest.json`. Assign every visible object an `editability_level` from `L0` to `L5`, derive the page summary, and never use a whole-slide image as the only slide content. Document placeholders for unreconstructable visuals.
 
 Treat reconstruction as **reference image → editable PowerPoint engineering**, not as a redesign brief. Before the first page, acknowledge the contract and confirm the reference image, formal-text authority and available source assets; if the user explicitly asks to discuss the protocol first, do not generate. For each page, analyze the reference, decompose it into editable text/native shapes/vectors/independent images/placeholders, implement that plan, render the page, compare hierarchy/structure/spatial relationships, and verify that required objects remain editable. Do not improve, simplify or rearrange an approved reference merely because another design seems preferable.
 

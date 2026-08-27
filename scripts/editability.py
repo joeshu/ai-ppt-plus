@@ -15,6 +15,8 @@ TYPE_LEVELS = {
     "editable_vector": "L1",
     "editable_chart": "L1",
     "independent_image": "L2",
+    "extracted_icon": "L2",
+    "decorative_art": "L2",
     "traceable_static_graphic": "L3",
     "documented_placeholder": "L4",
     "flattened_full_slide": "L0",
