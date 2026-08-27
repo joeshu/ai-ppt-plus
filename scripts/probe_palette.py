@@ -57,7 +57,7 @@ def _load_pixels(path: Path, max_side: int = 240):
             im = im.resize((max(1, int(w * scale)), max(1, int(h * scale))))
         raw = im.tobytes()
         pixels = [(raw[i], raw[i + 1], raw[i + 2]) for i in range(0, len(raw), 3)]
-        return pixels, im.size
+        return pixels, im.size, (w, h)
 
 
 def _hue_distance(a: float, b: float) -> float:
@@ -66,7 +66,7 @@ def _hue_distance(a: float, b: float) -> float:
 
 
 def analyze(path: Path):
-    pixels, (w, h) = _load_pixels(path)
+    pixels, (sample_w, sample_h), (source_w, source_h) = _load_pixels(path)
     total = max(1, len(pixels))
     coverage = {name: 0 for name, _, _ in CANDIDATES}
 
@@ -96,7 +96,8 @@ def analyze(path: Path):
 
     return {
         "image": str(path),
-        "size": [w, h],
+        "size": [source_w, source_h],
+        "sample_size": [sample_w, sample_h],
         "coverage_fraction": {k: round(v, 5) for k, v in cov_frac.items()},
         "collision_threshold": COLLISION_FRACTION,
         "recommended_key_name": recommended[0],
@@ -120,7 +121,7 @@ def main() -> None:
         print(json.dumps(result, ensure_ascii=False))
         return
 
-    print(f"image: {result['image']}  size: {result['size'][0]}x{result['size'][1]}")
+    print(f"image: {result['image']}  source_size: {result['size'][0]}x{result['size'][1]}  sample_size: {result['sample_size'][0]}x{result['sample_size'][1]}")
     print("vivid coverage per candidate key color:")
     for name, hexval, _ in CANDIDATES:
         frac = result["coverage_fraction"][name]
