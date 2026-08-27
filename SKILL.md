@@ -79,6 +79,10 @@ Treat reconstruction as **reference image → editable PowerPoint engineering**,
 
 Conflict priority: explicit user requirement > approved outline > approved design system/visual > domain hard constraint > original source > agent preference. Formal text comes from the approved outline; reference/visual images govern layout and visual relationships. Reconstruction priority is information hierarchy > page structure > spatial relationship > typography > graphics/icons > decoration. Record tradeoffs.
 
+### Text-style reconstruction protocol
+
+For reference-image reconstruction, plain text transcription is insufficient. Build a text-style map before composition: each visible text region must record `source_bbox`, font size, weight, color, line spacing, paragraph spacing, alignment, and wrap width. Any sentence containing emphasis must be split into `runs`; preserve color/weight for section labels, bullets, numbers, prices, percentages and redacted placeholders. Do not use literal Markdown markers such as `**元` as visible text unless the reference visibly contains the asterisks; represent redaction with the exact visual glyphs and style. The overview, title accent and footer are also rich-text candidates and must be audited separately. Render once with native text and once with the task-local font, then compare line breaks and emphasis against the reference. A page is not text-faithful when the words are present but emphasis, line breaks, or text-box boundaries materially differ.
+
 Use the installed presentation tooling or an explicitly configured compatible executor. If a compatible `ppt-master` installation is available, adapt through its documented paths; never claim it exists when discovery fails and never copy it wholesale.
 
 ## Render, validation and repair
