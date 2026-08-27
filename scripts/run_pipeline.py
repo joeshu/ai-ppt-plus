@@ -171,8 +171,12 @@ def main() -> int:
                 font_step["failure"] = "cjk_delivery_unsupported"
         steps.append(font_step)
     layout_path = project / "layout.json"
-    if args.reference and layout_path.is_file():
-        layout_step = run_step(run_dir, "layout-guard", [str(SCRIPT_DIR / "layout_guard.py"), str(Path(args.reference).resolve()), str(layout_path), "--strict"])
+    if args.reference:
+        if layout_path.is_file():
+            layout_step = run_step(run_dir, "layout-guard", [str(SCRIPT_DIR / "layout_guard.py"), str(Path(args.reference).resolve()), str(layout_path), "--strict"])
+        else:
+            layout_step = {"name": "layout-guard", "command": [], "exit_code": 2, "ok": False,
+                           "failure": "layout_json_missing", "stdout": "", "stderr": ""}
         (run_dir / "layout-guard.json").write_text(json.dumps({
             "schema": "ai-ppt-plus/layout-guard-run/v1",
             "valid": layout_step["ok"],
