@@ -1,0 +1,30 @@
+{
+  "schema": "ai-ppt-plus/imagegen-assets/v1",
+  "run_root": "/workspace/.../unique-run",
+  "assets": [
+    {
+      "layer": "background",
+      "generated_source": "/imagegen/generated/background.png",
+      "copied_to": "editable/01/background.png",
+      "prompt_file": "editable/01/prompts/background.txt",
+      "backend": "codex-imagegen",
+      "key_color": "#00ff00"
+    },
+    {
+      "layer": "frame_raw",
+      "generated_source": "/imagegen/generated/frame.png",
+      "copied_to": "editable/01/frame_raw.png",
+      "prompt_file": "editable/01/prompts/frame.txt",
+      "backend": "codex-imagegen",
+      "key_color": "#00ff00"
+    },
+    {
+      "layer": "icons_raw_1",
+      "generated_source": "/imagegen/generated/icons.png",
+      "copied_to": "editable/01/icons_raw_1.png",
+      "prompt_file": "editable/01/prompts/icons.txt",
+      "backend": "codex-imagegen",
+      "key_color": "#00ff00"
+    }
+  ]
+}
