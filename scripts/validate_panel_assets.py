@@ -19,6 +19,7 @@ def main() -> None:
     ap.add_argument("--require-independent", action="store_true")
     ap.add_argument("--expected-count", type=int, default=None)
     ap.add_argument("--assets-dir", default=None, help="Resolve panel files relative to this directory.")
+    ap.add_argument("--require-approved", action="store_true", help="Require an explicit human approval record.")
     ap.add_argument("--strict", action="store_true")
     ap.add_argument("--report")
     args = ap.parse_args()
@@ -29,6 +30,18 @@ def main() -> None:
     panels = data.get("panels")
     errors: list[str] = []
     warnings: list[str] = []
+    if args.require_approved or data.get("status") == "approved":
+        if data.get("status") != "approved":
+            errors.append("panel manifest must have status=approved")
+        if not data.get("source_sha256"):
+            errors.append("approved panel manifest must contain source_sha256")
+        approval = data.get("approval")
+        if not isinstance(approval, dict):
+            errors.append("approved panel manifest must contain approval object")
+        else:
+            for field in ("reviewer", "approved_at", "revision", "candidate_manifest_sha256"):
+                if not approval.get(field):
+                    errors.append(f"approval.{field} is required")
     if not isinstance(panels, list):
         errors.append("manifest must contain panels[]")
         panels = []

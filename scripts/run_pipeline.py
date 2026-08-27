@@ -114,6 +114,7 @@ def main() -> int:
     parser.add_argument("--require-object-manifest", action="store_true", help="require and validate the canonical object inventory")
     parser.add_argument("--require-independent-panels", action="store_true", help="reverse-audit independently movable semantic panels")
     parser.add_argument("--expected-panel-count", type=int, help="expected semantic panel count")
+    parser.add_argument("--require-panel-approval", action="store_true", help="require explicit human approval metadata for panel assets")
     parser.add_argument("--require-text-style-map", action="store_true", help="validate rich text/style records when present")
     parser.add_argument("--dpi", type=int, default=96, help="render DPI; 96 matches common 1536x864 reference images")
     parser.add_argument("--output-dir")
@@ -236,8 +237,10 @@ def main() -> int:
             ocr_args.append("--require-ocr")
         steps.append(run_step(run_dir, "ocr-text-check", ocr_args))
     panel_manifest = project / "panel-asset-manifest.json"
-    if panel_manifest.is_file() or args.require_independent_panels:
+    panel_gate_required = panel_manifest.is_file() or args.require_independent_panels or args.require_panel_approval
+    if panel_gate_required:
         panel_args = [str(SCRIPT_DIR / "validate_panel_assets.py"), str(panel_manifest), "--assets-dir", str(project), "--report", str(run_dir / "panel-assets-validation.json"), "--strict"]
+        panel_args.append("--require-approved")
         if args.require_independent_panels:
             panel_args.append("--require-independent")
         if args.expected_panel_count is not None:
@@ -279,7 +282,7 @@ def main() -> int:
             {"report_type": "object-manifest-validation", "path": "object-manifest-validation.json", "required": True, "stage": "validated"},
             {"report_type": "editable-object-audit", "path": "editable-object-audit.json", "required": True, "stage": "validated"},
         ])
-    if panel_manifest.is_file() or args.require_independent_panels:
+    if panel_gate_required:
         report_entries.append({"report_type": "panel-assets-validation", "path": "panel-assets-validation.json", "required": True, "stage": "validated"})
     if args.require_text_style_map and layout_path.is_file():
         report_entries.append({"report_type": "text-style-map-validation", "path": "text-style-map-validation.json", "required": True, "stage": "validated"})
