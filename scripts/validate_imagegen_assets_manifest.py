@@ -35,6 +35,10 @@ def main() -> int:
                   "valid": False, "status": "blocked",
                   "issues": [{"severity": "blocker", "code": "manifest_unreadable",
                               "message": f"{type(exc).__name__}: {exc}"}]}
+        if args.report:
+            report = Path(args.report).resolve()
+            report.parent.mkdir(parents=True, exist_ok=True)
+            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         print(json.dumps(result, ensure_ascii=False))
         return 2
     if not isinstance(data, dict):
