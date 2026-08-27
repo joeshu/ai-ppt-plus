@@ -8,6 +8,9 @@ legally redistributable CJK fallback for rendering and delivery checks. Copy
 `project-fonts/` directory, then pass `--font-dir project-fonts/` to both
 `probe_fonts.py` and `render_pptx.py`.
 
+For a Chinese deck, also copy the bundled font into the task font directory
+before the first font probe; do not rely on the host's installed-font list.
+
 Use this font priority:
 
 1. A user-supplied licensed font explicitly requested for the project.
