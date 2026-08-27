@@ -37,6 +37,7 @@ def main() -> int:
     parser.add_argument("--require-route", action="store_true")
     parser.add_argument("--manifest-validation")
     parser.add_argument("--require-editability", action="store_true")
+    parser.add_argument("--require-embedded-fonts", action="store_true", help="block delivery unless the inspection report detects OOXML embedded fonts")
     parser.add_argument("--project-report")
     parser.add_argument("--require-project-report", action="store_true")
     parser.add_argument("--render-visual-gate")
@@ -76,6 +77,8 @@ def main() -> int:
     current_hash = sha256(args.pptx) if pptx_path.is_file() else None
     check(not inspection or not inspection.get("deck_sha256") or inspection.get("deck_sha256") == current_hash, "stale_inspection_report", "inspection report must describe the current PPTX")
     check(not render or not render.get("deck_sha256") or render.get("deck_sha256") == current_hash, "stale_render_report", "render report must describe the current PPTX")
+    if args.require_embedded_fonts:
+        check(bool((inspection or {}).get("embedded_fonts", {}).get("present")), "embedded_fonts_missing", "Chinese delivery requires verified OOXML embedded font parts")
 
     if args.require_route:
         check(bool(route_report and route_report.get("valid") is True), "route_validation_failed", "a valid route-validation report is required")

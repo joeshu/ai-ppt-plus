@@ -1,0 +1,11 @@
+{
+  "schema": "ai-ppt-plus/font-manifest/v1",
+  "family": "Noto Sans CJK SC",
+  "role": "portable_cjk_fallback",
+  "file": "NotoSansCJKsc-Regular.otf",
+  "source": "https://github.com/notofonts/noto-cjk",
+  "license": "SIL Open Font License 1.1",
+  "license_url": "https://scripts.sil.org/OFL",
+  "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+  "embedding": "must_be_verified_in_final_pptx_or_marked_unsupported"
+}

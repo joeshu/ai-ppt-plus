@@ -30,6 +30,8 @@ def main():
             names=set(z.namelist()); required={'[Content_Types].xml','ppt/presentation.xml'}
             if not required<=names:raise ValueError('required PPTX parts missing')
             pres=ET.fromstring(z.read('ppt/presentation.xml')); size=pres.find('p:sldSz',NS); sw=int(size.get('cx')) if size is not None else 0; sh=int(size.get('cy')) if size is not None else 0
+            embedded_font_parts=sorted(n for n in names if n.startswith('ppt/fonts/') or n.startswith('ppt/font/'))
+            embedded_font_declared=pres.find('.//p:embeddedFontLst',NS) is not None
             slide_names=sorted((n for n in names if re.fullmatch(r'ppt/slides/slide\d+\.xml',n)),key=lambda n:int(re.search(r'\d+',n).group()))
             for n,name in enumerate(slide_names,1):
                 root=ET.fromstring(z.read(name)); shapes=root.findall('.//p:sp',NS); pics=root.findall('.//p:pic',NS); frames=root.findall('.//p:graphicFrame',NS); texts=[''.join(t.itertext()).strip() for t in shapes]; boxes=[]; rec={'slide':n,'shapes':len(shapes)+len(pics)+len(frames),'text_objects':sum(bool(t) for t in texts),'pictures':len(pics),'graphic_frames':len(frames),'charts':0,'tables':0,'off_canvas':0,'overlap_risks':0,'overflow_risks':0,'fonts':sorted({x.get('typeface') for x in root.findall('.//a:latin',NS) if x.get('typeface')})}
@@ -52,7 +54,7 @@ def main():
                 if rec['overlap_risks']:issues.append({'slide':n,'severity':'warning','code':'possible_overlap','count':rec['overlap_risks']})
                 if rec['overflow_risks']:issues.append({'slide':n,'severity':'warning','code':'possible_text_overflow','count':rec['overflow_risks']})
                 slides.append(rec)
-        ratio=sw/sh if sh else None;out={'schema':'ai-ppt-plus/pptx-inspection/v1','ok':not any(i['severity'] in {'blocker','critical'} for i in issues),'file':str(p.resolve()),'slide_count':len(slides),'width_emu':sw,'height_emu':sh,'ratio':ratio,'is_16_9':bool(ratio and abs(ratio-16/9)<.01),'slides':slides,'issues':issues,'limitations':['overlap and text overflow are heuristics; confirm from rendered pages','semantic correctness and native editability require artifact/user review']}
+        ratio=sw/sh if sh else None;out={'schema':'ai-ppt-plus/pptx-inspection/v1','ok':not any(i['severity'] in {'blocker','critical'} for i in issues),'file':str(p.resolve()),'slide_count':len(slides),'width_emu':sw,'height_emu':sh,'ratio':ratio,'is_16_9':bool(ratio and abs(ratio-16/9)<.01),'slides':slides,'embedded_fonts':{'present':bool(embedded_font_parts and embedded_font_declared),'declared':embedded_font_declared,'parts':embedded_font_parts},'issues':issues,'limitations':['overlap and text overflow are heuristics; confirm from renders','semantic correctness and native editability require artifact/user review','embedded font detection follows OOXML font parts/declarations and does not prove every glyph is covered']}
     except Exception as e:out={'schema':'ai-ppt-plus/pptx-inspection/v1','ok':False,'issues':[{'severity':'blocker','code':'inspection_error','message':f'{type(e).__name__}: {e}'}]}
     out['deck_sha256']=sha256(p) if p.is_file() else None
     Path(a.report).parent.mkdir(parents=True,exist_ok=True);Path(a.report).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps({'ok':out['ok'],'issues':len(out['issues'])}));return 0 if out['ok'] else 2
