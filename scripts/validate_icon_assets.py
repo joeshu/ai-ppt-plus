@@ -36,6 +36,9 @@ def main() -> int:
         data = json.loads(manifest_path.read_text(encoding="utf-8"))
     except Exception as exc:
         result = {"schema": "ai-ppt-plus/icon-assets-validation/v1", "valid": False, "status": "invalid", "issues": [{"severity": "blocker", "code": "manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"}], "warnings": []}
+        if args.report:
+            report = Path(args.report).resolve(); report.parent.mkdir(parents=True, exist_ok=True)
+            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         print(json.dumps(result, ensure_ascii=False)); return 2
     if not isinstance(data, dict) or data.get("schema") != "ai-ppt-plus/icon-assets/v1":
         add(issues, "blocker", "schema_missing_or_invalid", expected="ai-ppt-plus/icon-assets/v1")
