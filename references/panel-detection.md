@@ -19,4 +19,6 @@ Approval is explicit and auditable:
 --revision Rn --output panel-asset-manifest.json`. Use `--bbox` to record a
 human correction and `--exclude` to remove a false candidate. The source image
 must exist so the approval manifest can carry a SHA-256; extraction rejects a
-source mismatch.
+source mismatch. `extract_panels.py` writes paths relative to the output
+manifest directory, so validate the result with `--assets-dir` set to the
+project root.

@@ -3,7 +3,8 @@
 
 Reference and rendered directories must contain files named slide-1.png,
 slide-2.png, and so on. The report is a diagnostic evidence layer; it does
-not replace human visual review.
+not replace human visual review. Same-aspect-ratio pages are normalized to the
+reference pixel size; a true aspect-ratio mismatch remains a blocker.
 """
 import argparse
 import json
@@ -23,26 +24,39 @@ def page_number(path: Path) -> int:
 
 
 def compare_page(rendered_path: Path, reference_path: Path, threshold):
-    rendered, rendered_size = array(rendered_path)
-    reference, reference_size = array(reference_path)
+    _, rendered_size = array(rendered_path)
+    _, reference_size = array(reference_path)
     issues = []
     metrics = {}
+    resized_for_comparison = False
     if rendered_size != reference_size:
-        issues.append({"severity": "blocker", "code": "dimension_mismatch", "rendered": rendered_size, "reference": reference_size})
-    else:
-        diff = np.abs(rendered - reference)
-        with Image.open(rendered_path) as rendered_image, Image.open(reference_path) as reference_image:
-            rendered_blur = np.asarray(rendered_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
-            reference_blur = np.asarray(reference_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
-        metrics = {
-            "global_ssim": round(ssim(rendered, reference), 6),
-            "blurred_layout_ssim": round(ssim(rendered_blur[..., None], reference_blur[..., None]), 6),
-            "mean_absolute_error": round(float(diff.mean()), 6),
-            "rmse": round(float(np.sqrt((diff * diff).mean())), 6),
-            "pixel_fidelity_score": round(max(0.0, 1.0 - float(diff.mean())), 6),
-        }
-        if threshold is not None and metrics["blurred_layout_ssim"] < threshold:
-            issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": threshold, "observed": metrics["blurred_layout_ssim"]})
+        rendered_ratio = rendered_size[0] / rendered_size[1] if rendered_size[1] else 0
+        reference_ratio = reference_size[0] / reference_size[1] if reference_size[1] else 0
+        if abs(rendered_ratio - reference_ratio) > 0.01:
+            issues.append({"severity": "blocker", "code": "aspect_ratio_mismatch", "rendered": rendered_size, "reference": reference_size})
+        else:
+            resized_for_comparison = True
+    if issues:
+        return metrics, issues
+    rendered, _ = array(rendered_path, reference_size if resized_for_comparison else None)
+    reference, _ = array(reference_path)
+    diff = np.abs(rendered - reference)
+    with Image.open(rendered_path) as rendered_image, Image.open(reference_path) as reference_image:
+        if resized_for_comparison:
+            rendered_image = rendered_image.convert("RGB").resize(reference_size, Image.Resampling.LANCZOS)
+        rendered_blur = np.asarray(rendered_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
+        reference_blur = np.asarray(reference_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
+    metrics = {
+        "global_ssim": round(ssim(rendered, reference), 6),
+        "blurred_layout_ssim": round(ssim(rendered_blur[..., None], reference_blur[..., None]), 6),
+        "mean_absolute_error": round(float(diff.mean()), 6),
+        "rmse": round(float(np.sqrt((diff * diff).mean())), 6),
+        "pixel_fidelity_score": round(max(0.0, 1.0 - float(diff.mean())), 6),
+        "resized_for_comparison": resized_for_comparison,
+        "comparison_size": reference_size if resized_for_comparison else rendered_size,
+    }
+    if threshold is not None and metrics["blurred_layout_ssim"] < threshold:
+        issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": threshold, "observed": metrics["blurred_layout_ssim"]})
     return metrics, issues
 
 

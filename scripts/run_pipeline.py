@@ -13,6 +13,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
        [--route-decision ROUTE.json] [--require-route] [--require-editability]
        [--dpi N]
+       [--strict-layout]
        [--output-dir RUN_DIR]
 """
 import argparse
@@ -86,6 +87,8 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"route": report.get("route"), "visual_authority": report.get("visual_authority"), "formal_content_authority": report.get("formal_content_authority")})
     elif name == "manifest_validation":
         summary.update({"warnings": report.get("warnings", []), "editability_protocol": report.get("editability_protocol"), "editability": report.get("editability", [])})
+    elif name == "visual_compare_qa":
+        summary.update({"status": report.get("status", "diagnostic"), "ok": report.get("ok"), "resized_for_comparison": report.get("resized_for_comparison"), "preview_size": report.get("preview_size")})
     return summary
 
 
@@ -116,7 +119,8 @@ def main() -> int:
     parser.add_argument("--expected-panel-count", type=int, help="expected semantic panel count")
     parser.add_argument("--require-panel-approval", action="store_true", help="require explicit human approval metadata for panel assets")
     parser.add_argument("--require-text-style-map", action="store_true", help="validate rich text/style records when present")
-    parser.add_argument("--dpi", type=int, default=96, help="render DPI; 96 matches common 1536x864 reference images")
+    parser.add_argument("--dpi", type=int, default=96, help="render DPI; same-ratio reference comparisons are normalized when pixel sizes differ")
+    parser.add_argument("--strict-layout", action="store_true", help="treat layout-audit warnings (such as missing source_bbox) as blockers")
     parser.add_argument("--output-dir")
     args = parser.parse_args()
     project = Path(args.project_dir).resolve()
@@ -185,7 +189,10 @@ def main() -> int:
         steps.append(run_step(run_dir, "object-manifest", object_args))
     if args.reference:
         if layout_path.is_file():
-            layout_step = run_step(run_dir, "layout-guard", [str(SCRIPT_DIR / "layout_guard.py"), str(Path(args.reference).resolve()), str(layout_path), "--strict"])
+            layout_args = [str(SCRIPT_DIR / "layout_guard.py"), str(Path(args.reference).resolve()), str(layout_path)]
+            if args.strict_layout:
+                layout_args.append("--strict")
+            layout_step = run_step(run_dir, "layout-guard", layout_args)
         else:
             layout_step = {"name": "layout-guard", "command": [], "exit_code": 2, "ok": False,
                            "failure": "layout_json_missing", "stdout": "", "stderr": ""}

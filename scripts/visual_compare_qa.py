@@ -27,7 +27,7 @@ def _die(msg: str, code: int = 2):
 
 
 def _fit_source_to_preview(source, preview_size):
-    """Resize source to preview size using the preview aspect as authority."""
+    """Resize a same-aspect source to the preview pixel size."""
     return source.convert("RGB").resize(preview_size)
 
 
@@ -53,6 +53,15 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     with Image.open(source_path) as src_im, Image.open(preview_path) as prv_im:
+        source_size = src_im.size
+        preview_size = prv_im.size
+        source_ratio = source_size[0] / source_size[1] if source_size[1] else 0
+        preview_ratio = preview_size[0] / preview_size[1] if preview_size[1] else 0
+        if abs(source_ratio - preview_ratio) > 0.01:
+            _die(
+                f"aspect_ratio_mismatch: source {source_size} vs preview {preview_size}; "
+                "refusing to stretch a visual comparison"
+            )
         preview = prv_im.convert("RGB")
         source = _fit_source_to_preview(src_im, preview.size)
 
@@ -95,7 +104,11 @@ def main() -> None:
     report = {
         "source": str(source_path),
         "preview": str(preview_path),
+        "status": "diagnostic",
+        "ok": True,
+        "source_original_size": list(source_size),
         "preview_size": list(preview.size),
+        "resized_for_comparison": tuple(source_size) != tuple(preview.size),
         "mean_abs_diff_0_255": round(mean_abs, 4),
         "rms_diff_0_255": round(rms, 4),
         "changed_pixel_fraction_threshold_32": round(changed_32, 6),

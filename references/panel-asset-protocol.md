@@ -25,8 +25,9 @@ frame must never silently delete content.
 
 Use `extract_panels.py` with full-resolution `source_bbox` values to produce
 panel files. Do not crop from a palette thumbnail or guessed scaled coordinates.
-The emitted manifest records actual asset sizes and is checked with
-`validate_panel_assets.py --assets-dir ...`.
+The emitted manifest records actual asset sizes and writes each `file` relative
+to the manifest directory (for example, `panels/panel-01.png`), so the same
+manifest can be checked with `validate_panel_assets.py --assets-dir PROJECT`.
 
 ## Manifest
 
@@ -35,6 +36,11 @@ Record each panel in `panel-asset-manifest.json` with `panel_id`, `file`,
 containers in a six-card reference therefore produce six entries, not one
 `frame` entry. If a whole-frame asset remains, record the exact non-semantic
 regions it covers and why it does not prevent panel movement.
+
+For any independent asset, `source_bbox` is the full placed asset region in
+the source coordinate system, including intentional transparent or background
+padding. A sub-element bbox (for example, only the red symbol inside a full
+Logo wordmark) is not valid evidence for the full asset placement.
 
 ## Gate
 

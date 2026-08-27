@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Extract independent panel assets from a full-resolution frame image."""
 from __future__ import annotations
-import argparse, hashlib, json, sys
+import argparse, hashlib, json, os, sys
 from pathlib import Path
 
 def die(msg: str) -> None:
@@ -37,7 +37,9 @@ def main() -> None:
         die("source image SHA-256 does not match the approved candidate manifest")
     panels = data.get("panels")
     if not isinstance(panels, list) or not panels: die("manifest must contain non-empty panels[]")
-    out_dir = Path(args.out_dir); out_dir.mkdir(parents=True, exist_ok=True); emitted = []
+    out_dir = Path(args.out_dir).resolve(); out_dir.mkdir(parents=True, exist_ok=True); emitted = []
+    out = Path(args.out_manifest).resolve()
+    manifest_root = out.parent
     with Image.open(src) as im:
         rgba = im.convert("RGBA"); sw, sh = rgba.size
         for i, panel in enumerate(panels, 1):
@@ -48,12 +50,19 @@ def main() -> None:
             if w <= 0 or h <= 0 or x < 0 or y < 0 or x + w > sw or y + h > sh:
                 die(f"{pid}: bbox outside source {sw}x{sh}: {bbox}")
             name = Path(str(panel.get("file") or f"{pid}.png")).name
-            rgba.crop((x, y, x + w, y + h)).save(out_dir / name)
-            emitted.append({**panel, "panel_id": pid, "file": name,
+            asset_path = out_dir / name
+            rgba.crop((x, y, x + w, y + h)).save(asset_path)
+            try:
+                file_ref = asset_path.relative_to(manifest_root).as_posix()
+            except ValueError:
+                # Keep extraction usable for an intentionally external asset
+                # directory; validators treat an absolute path as explicit.
+                file_ref = os.fspath(asset_path)
+            emitted.append({**panel, "panel_id": pid, "file": file_ref,
                             "source_bbox": [x, y, w, h], "asset_size": [w, h],
                             "formal_text_baked_in": bool(panel.get("formal_text_baked_in", False))})
     result = {"schema":"ai-ppt-plus/panel-assets/v1", "status":"approved", "source":str(src), "source_size":[sw, sh], "source_sha256":sha256(src), "whole_frame":False, "approval":approval, "panels":emitted}
-    out = Path(args.out_manifest); out.parent.mkdir(parents=True, exist_ok=True)
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"valid":True, "panel_count":len(emitted), "manifest":str(out)}, ensure_ascii=False))
 

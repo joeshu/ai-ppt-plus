@@ -22,3 +22,9 @@ panel-asset-manifest.json --output slide-object-manifest.json` to create the
 initial inventory. Review Logo and other authoritative brand assets before
 accepting the generated roles; the builder is a deterministic baseline, not a
 visual recognition model.
+
+After the object inventory is reviewed, use
+`scripts/build_slide_manifest.py layout.json --object-manifest
+slide-object-manifest.json --output slide-manifest.json` to create the
+project-level slide manifest. Supply the confirmed reference and formal
+content sources; this adapter does not create human approval or sign-off.

@@ -35,7 +35,9 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
     panels_by_file = {}
     for panel in (panel_manifest or {}).get("panels", []):
         if isinstance(panel, dict) and panel.get("file"):
-            panels_by_file[str(panel["file"])] = panel
+            key = str(panel["file"])
+            panels_by_file[key] = panel
+            panels_by_file[Path(key).name] = panel
     output = []
     for slide_no, slide in enumerate(slides, 1):
         objects = []
@@ -47,7 +49,8 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
             objects.append(obj(slide.get("frame_object_id", "frame"), "frame", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, contains_formal_content=False, provenance=str(frame)))
         for i, panel in enumerate(slide.get("panels", []), 1):
             pid = str(panel.get("object_id") or panel.get("panel_id") or f"panel-{i:02d}")
-            evidence = panels_by_file.get(str(panel.get("file")), {})
+            layout_file = str(panel.get("file", ""))
+            evidence = panels_by_file.get(layout_file) or panels_by_file.get(Path(layout_file).name) or {}
             baked = bool(panel.get("formal_text_baked_in", evidence.get("formal_text_baked_in", False)))
             objects.append(obj(pid, "semantic-panel", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, independent=True, contains_formal_content=baked, provenance=str(evidence.get("source") or panel.get("file")), source_bbox=evidence.get("source_bbox")))
         for i, shape in enumerate(slide.get("shapes", []), 1):

@@ -105,6 +105,12 @@ Use `scripts/run_pipeline.py` as the default verification entrypoint for an exis
 
 Require user confirmation for goal/audience/core conclusion, narrative order, visual direction, priority pages, important facts and numbers, unresolved assets, and final value/aesthetic judgment. Never silently change approved narrative or visuals.
 
+Visual comparison note: same-aspect-ratio render/reference images are normalized to a common pixel size before metrics are calculated; a true aspect-ratio mismatch remains a blocker. Metrics are diagnostic and font-sensitive, so they never replace human visual review.
+
+Layout gate note: `run_pipeline.py` records layout warnings without blocking by default; pass `--strict-layout` when missing `source_bbox` or another warning must stop the run. Geometry errors always block. An asset's `source_bbox` describes the full placed asset region, including intentional padding; do not use a logo symbol's sub-crop as the bbox for a full wordmark asset.
+
+Project manifest note: after `slide-object-manifest.json` is reviewed, use `scripts/build_slide_manifest.py` to derive the canonical project `slide-manifest.json`; it copies object-level editability evidence but never invents approval, formal content or human closeout.
+
 ## Cross-session recovery
 
 At every batch boundary save current batch, completed/pending pages, approved outline version, design system, asset and slide manifests, report index and aggregate, known issues, completed checks, contract version and next action. On resume, run consistency checks, verify report and deck hashes, report recovered state, and process only unfinished work. Follow `references/context-handoff.md` and `references/report-protocol.md`.
