@@ -1,0 +1,31 @@
+# Deck Brief
+
+- project_id:
+- revision: 1
+- state: intake
+- batch_id: B01
+- purpose:
+- audience:
+- setting:
+- desired_decision:
+- duration_or_page_target:
+- language: zh-CN
+- output_format: pptx
+- editability: native_text_and_simple_shapes
+- deadline:
+- brand_constraints:
+- authoritative_source_order:
+- core_conclusion:
+- key_pages:
+- known_risks:
+- open_questions:
+- source_inventory_path:
+- environment_report_path:
+- outline_path:
+- design_system_path:
+- asset_manifest_path:
+- slide_manifest_path:
+- contract_version: 1
+- next_action:
+- capability_status: 已创建但未验证
+- approval_status: draft

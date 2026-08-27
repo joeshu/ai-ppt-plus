@@ -1,0 +1,14 @@
+{
+  "schema": "ai-ppt-plus/route-decision/v1",
+  "project_id": "",
+  "route": "visual-creation",
+  "status": "decided",
+  "visual_authority": "generated_visual_intermediate",
+  "formal_content_authority": "approved_outline",
+  "requires_image_generation": true,
+  "reference_roster": [],
+  "visual_intermediate_manifest": "visual-intermediate-manifest.json",
+  "reason": "",
+  "confirmed_by": "",
+  "confirmed_at": ""
+}

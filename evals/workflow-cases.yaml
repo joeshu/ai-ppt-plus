@@ -1,0 +1,18 @@
+cases:
+  - {id: text_only, prompt: "把会议纪要做成10页可编辑PPT", must_stop_before: reconstruction, required_gate: outline-review}
+  - {id: text_reference, prompt: "按材料和参考图布局做汇报", required_artifacts: [outline, design_system, visual_manifest]}
+  - {id: repair, prompt: "检查并修复PPTX", required_outputs: [inspection, render_report, issue_log, delivery_report]}
+  - {id: resume, prompt: "继续上次第7到10页", required_behavior: [verify_handoff_hashes, preserve_approved_pages]}
+  - {id: resume_stale, prompt: "继续上次项目，但PPTX已被替换", required_behavior: [detect_hash_mismatch, stop_before_generation, require_new_revision]}
+  - {id: outline_only, prompt: "只要逐页思路表", terminal_state: narrative-approved}
+  - {id: visual_only, prompt: "只做视觉方案", terminal_state: visual-approved}
+  - {id: premium_soe_visual, prompt: "把这页做成高端大气的国企汇报PPT", required_behavior: [invoke_image_generation_skill_or_tool, persist_visual_image_and_prompt, keep_generated_text_non_authoritative, require_visual_approval_before_reconstruction]}
+  - {id: visual_not_ppt_layout, prompt: "先出视觉中间态再做可编辑PPTX", forbidden_behavior: [label_native_ppt_layout_as_visual_intermediate, label_pptx_render_as_visual_intermediate, skip_image_generation_without_recorded_waiver]}
+  - {id: discuss_then_reconstruct, prompt: "我们先讨论任务，不要立即生成；我会逐页给参考图片", required_behavior: [acknowledge_reconstruction_contract, wait_for_page_reference_or_confirmation, do_not_generate_pptx]}
+  - {id: outline_and_reference, prompt: "按页面大纲文字和参考图布局还原可编辑PPT", required_behavior: [outline_owns_formal_text, reference_owns_layout, create_object_decomposition_plan, render_each_page, verify_editability]}
+  - {id: reference_only_page, prompt: "不要重新设计，把这张参考图还原成一页真正可编辑的PPT", required_behavior: [preserve_hierarchy_structure_spatial_relationships, use_real_text_boxes, use_native_shapes, separate_images, document_placeholders]}
+  - {id: p1_quality_pipeline, prompt: "参考图还原完成后做稳定性验收", required_behavior: [render_every_page, record_render_gate, compare_against_approved_reference_when_present, expose_ocr_availability, require_structured_signoff, aggregate_quality_evidence]}
+  - {id: p2_multipage_reference, prompt: "把三页参考图还原为可编辑PPT并逐页验收", required_behavior: [require_reference_directory, compare_every_rendered_page, report_slide_number_for_failures, preserve_resume_boundary, aggregate_worst_page_metric]}
+  - {id: explicit_route, prompt: "先判断这页是视觉创作还是按参考图重建", required_behavior: [persist_route_decision, validate_route_before_reconstruction, do_not_mix_visual_authorities]}
+  - {id: typed_editability, prompt: "按参考图还原复杂素材并说明哪些可编辑", required_behavior: [assign_each_object_L0_L5, derive_page_summary, disclose_L2, require_acceptance_for_L3, block_L0_L5_required_L4]}
+  - {id: unified_reports, prompt: "完成PPT后输出统一项目级验收报告", required_behavior: [persist_report_index, normalize_child_reports, expose_report_hashes, aggregate_blockers_and_degradations, preserve_human_closeout_boundary]}

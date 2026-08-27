@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.1",
+  "kind": "slide",
+  "project_id": "",
+  "outline_revision": 1,
+  "design_system_revision": 1,
+  "backend": "待验证",
+  "editability_protocol": "L0-L5/v1",
+  "assets": [],
+  "slides": [{
+    "slide_id": "S01",
+    "slide_no": 1,
+    "page_type": "title",
+    "state": "reconstruction",
+    "batch_id": "B01",
+    "formal_content_source": "outline.xlsx#row2",
+    "visual_source": "visual-intermediate-manifest.json#S01",
+    "asset_status": "complete",
+    "placeholder_reason": null,
+    "asset_ids": [],
+    "objects": [],
+    "editability": {
+      "primary_level": null,
+      "delivery_decision": "auto-allowed",
+      "object_count": 0,
+      "counts_by_level": {"L0": 0, "L1": 0, "L2": 0, "L3": 0, "L4": 0, "L5": 0},
+      "fully_editable_object_count": 0,
+      "raster_object_count": 0,
+      "placeholder_count": 0,
+      "blocked_object_count": 0,
+      "fully_editable_ratio": 0.0,
+      "human_review_required": false,
+      "formal_content_rasterized": false
+    },
+    "render_path": null,
+    "checks": [],
+    "issues": []
+  }]
+}

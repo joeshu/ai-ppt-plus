@@ -1,0 +1,59 @@
+# Project report protocol
+
+The project-level report is the authoritative technical roll-up. Child reports
+may retain their native detail and historical schemas, but they must be listed
+in `report-index.json` and normalized into `report-envelope/v1` by
+`aggregate_project_reports.py`.
+
+## Registry
+
+`report-index.json` records `project_id`, `revision`, `stage`, the deck path and
+hash, and every expected report:
+
+```json
+{
+  "schema": "ai-ppt-plus/report-index/v1",
+  "project_id": "month-end-closeout",
+  "revision": "R4",
+  "stage": "validated",
+  "deck_path": "deck.pptx",
+  "deck_sha256": "...",
+  "reports": [
+    {"report_type": "inspection", "path": "inspection.json", "required": true, "stage": "validated"}
+  ]
+}
+```
+
+`required: true` means missing, unreadable or failed reports block the project.
+Optional missing reports produce a `degraded` aggregate and remain visible in
+evidence. The pipeline records the actual step result as `step_ok` when an old
+child report has no `valid` or `ok` field; this compatibility path never turns
+a missing file into a pass.
+
+## Envelope
+
+`project-report.json` uses `ai-ppt-plus/report-envelope/v1` and always exposes:
+
+- identity: `project_id`, `revision`, `stage`, `report_type`;
+- truth: `valid`, `status`, `issues`, `next_state`;
+- freshness: `deck_sha256`, `report_index_sha256`, `input_hashes`;
+- audit: `generated_at`, `tool`, `reports_total` and per-report evidence;
+- honesty: `requires_human_closeout` and `may_claim_complete`.
+
+`status` is `passed`, `degraded` or `failed`. `valid: true` means no required
+technical gate failed; it does not mean the human closeout is complete.
+
+Run:
+
+```bash
+python scripts/aggregate_project_reports.py report-index.json \
+  --report project-report.json
+```
+
+Every downstream project or delivery report must consume this aggregate or
+explicitly state why it is unavailable. A report with a stale deck hash, stale
+index hash, missing required child, or hidden child blocker cannot be used to
+claim delivery.
+
+For a release gate, pass `--project-report project-report.json
+--require-project-report` to `validate_project.py` or `delivery_check.py`.
