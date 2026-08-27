@@ -53,6 +53,21 @@ def load_report(path: Path):
         return {"valid": False, "status": "invalid", "issues": [{"code": "invalid_json", "message": f"{type(exc).__name__}: {exc}"}]}
 
 
+def project_mentions_icons(project: Path) -> bool:
+    """Detect icon-bearing manifests so icon gates cannot be silently skipped."""
+    manifest = project / "slide-manifest.json"
+    if not manifest.is_file():
+        return False
+    try:
+        raw = manifest.read_text(encoding="utf-8").lower()
+    except OSError:
+        return False
+    return any(token in raw for token in (
+        "extracted_icon", "decorative_art", "decorative_word_art",
+        "icon-asset-manifest", "imagegen-assets-manifest",
+    ))
+
+
 def summarize_report(name: str, path: Path, report: dict):
     summary = {
         "report": str(path.resolve()),
@@ -92,6 +107,8 @@ def main() -> int:
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
+    parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
+    parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
     parser.add_argument("--dpi", type=int, default=96, help="render DPI; 96 matches common 1536x864 reference images")
     parser.add_argument("--output-dir")
     args = parser.parse_args()
@@ -133,6 +150,8 @@ def main() -> int:
     run_dir.mkdir()
     render_dir = run_dir / "rendered"
     steps = []
+    icon_required = args.require_icon_assets or project_mentions_icons(project) or (project / "icon-asset-manifest.json").is_file()
+    imagegen_required = args.require_imagegen_assets or icon_required or (project / "imagegen-assets-manifest.json").is_file()
     if args.route_decision:
         route_args = [str(SCRIPT_DIR / "validate_route.py"), str(Path(args.route_decision).resolve()), "--require-files", "--report", str(run_dir / "route-validation.json")]
         steps.append(run_step(run_dir, "route", route_args))
@@ -150,6 +169,23 @@ def main() -> int:
                 font_step["ok"] = False
                 font_step["failure"] = "cjk_delivery_unsupported"
         steps.append(font_step)
+    layout_path = project / "layout.json"
+    if args.reference and layout_path.is_file():
+        layout_step = run_step(run_dir, "layout-guard", [str(SCRIPT_DIR / "layout_guard.py"), str(Path(args.reference).resolve()), str(layout_path), "--strict"])
+        (run_dir / "layout-guard.json").write_text(json.dumps({
+            "schema": "ai-ppt-plus/layout-guard-run/v1",
+            "valid": layout_step["ok"],
+            "status": "passed" if layout_step["ok"] else "blocked",
+            "stdout": layout_step["stdout"],
+            "stderr": layout_step["stderr"],
+            "issues": [] if layout_step["ok"] else [{"code": "layout_guard_failed"}],
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        steps.append(layout_step)
+    if imagegen_required:
+        steps.append(run_step(run_dir, "imagegen-assets", [str(SCRIPT_DIR / "validate_imagegen_assets_manifest.py"), str(project / "imagegen-assets-manifest.json"), "--report", str(run_dir / "imagegen-assets-validation.json")]))
+    if icon_required:
+        steps.append(run_step(run_dir, "icon-assets", [str(SCRIPT_DIR / "validate_icon_assets.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-assets-validation.json")]))
+        steps.append(run_step(run_dir, "icon-layers", [str(SCRIPT_DIR / "audit_icon_layers.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-layer-audit.json")]))
     inspection_path = run_dir / "inspection.json"
     render_report_path = run_dir / "render-report.json"
     steps.append(run_step(run_dir, "inspection", [str(SCRIPT_DIR / "inspect_pptx.py"), str(deck), "--report", str(inspection_path)]))
@@ -171,6 +207,8 @@ def main() -> int:
         if args.visual_threshold is not None:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
         steps.append(run_step(run_dir, "visual-comparison", comparison_args))
+    if args.reference and layout_path.is_file() and (render_dir / "slide-1.png").is_file():
+        steps.append(run_step(run_dir, "visual-compare-qa", [str(SCRIPT_DIR / "visual_compare_qa.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--out-dir", str(run_dir / "visual-qa")]))
     if args.ocr_lang or args.require_ocr:
         ocr_args = [str(SCRIPT_DIR / "ocr_text_check.py"), str(deck), str(render_dir), "--lang", args.ocr_lang or "eng", "--report", str(run_dir / "ocr-text-check.json")]
         if args.require_ocr:
@@ -205,6 +243,17 @@ def main() -> int:
         {"report_type": "manifest-validation", "path": "manifest-validation.json", "required": True, "stage": "validated"},
         {"report_type": "project-validation", "path": "project-validation.json", "required": True, "stage": "validated"},
     ]
+    if imagegen_required:
+        report_entries.append({"report_type": "imagegen-assets-validation", "path": "imagegen-assets-validation.json", "required": True, "stage": "validated"})
+    if icon_required:
+        report_entries.extend([
+            {"report_type": "icon-assets-validation", "path": "icon-assets-validation.json", "required": True, "stage": "validated"},
+            {"report_type": "icon-layer-audit", "path": "icon-layer-audit.json", "required": True, "stage": "validated"},
+        ])
+    if args.reference and layout_path.is_file():
+        report_entries.append({"report_type": "layout-guard", "path": "layout-guard.json", "required": True, "stage": "validated"})
+        if (render_dir / "slide-1.png").is_file():
+            report_entries.append({"report_type": "visual-compare-qa", "path": "visual-qa/report.json", "required": True, "stage": "validated"})
     if args.font_dir or args.require_cjk:
         report_entries.append({"report_type": "font", "path": "font-report.json", "required": True, "stage": "intake"})
     if args.route_decision:
@@ -215,7 +264,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "ocr-text-check": "ocr-text-check", "route-validation": "route", "font": "fonts", "environment": "environment", "inspection": "inspection", "render": "render"}.get(entry["report_type"])
+        step_name = {"render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "font": "fonts", "environment": "environment", "inspection": "inspection", "render": "render"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": "validated", "deck_path": str(deck), "deck_sha256": sha256(deck), "reports": report_entries}
@@ -229,6 +278,10 @@ def main() -> int:
         ("ocr_text_check", run_dir / "ocr-text-check.json"),
         ("route_validation", run_dir / "route-validation.json"),
         ("manifest_validation", run_dir / "manifest-validation.json"),
+        ("imagegen_assets_validation", run_dir / "imagegen-assets-validation.json"),
+        ("icon_assets_validation", run_dir / "icon-assets-validation.json"),
+        ("icon_layer_audit", run_dir / "icon-layer-audit.json"),
+        ("visual_compare_qa", run_dir / "visual-qa/report.json"),
         ("project_report_aggregate", run_dir / "project-report.json"),
     ):
         report = load_report(path)
