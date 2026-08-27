@@ -79,6 +79,8 @@ Follow `references/reconstruction-contract.md`, `references/editability-levels.m
 
 Treat reconstruction as **reference image → editable PowerPoint engineering**, not as a redesign brief. Before the first page, acknowledge the contract and confirm the reference image, formal-text authority and available source assets; if the user explicitly asks to discuss the protocol first, do not generate. For each page, analyze the reference, decompose it into editable text/native shapes/vectors/independent images/placeholders, implement that plan, render the page, compare hierarchy/structure/spatial relationships, and verify that required objects remain editable. Do not improve, simplify or rearrange an approved reference merely because another design seems preferable.
 
+Brand marks and logos are not ordinary editable copy. Keep a logo's complete mark and wordmark as one independent movable image or vector asset from an authoritative source; do not recreate Chinese/English logo lettering as ordinary text unless the user explicitly requests a redesigned or editable logo. Document this as an asset exception to text editability, and verify that no duplicate logo text remains underneath.
+
 Conflict priority: explicit user requirement > approved outline > approved design system/visual > domain hard constraint > original source > agent preference. Formal text comes from the approved outline; reference/visual images govern layout and visual relationships. Reconstruction priority is information hierarchy > page structure > spatial relationship > typography > graphics/icons > decoration. Record tradeoffs.
 
 ### Text-style reconstruction protocol

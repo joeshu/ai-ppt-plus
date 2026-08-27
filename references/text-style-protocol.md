@@ -13,6 +13,10 @@ The first contract can be satisfied while the second is broken. Do not accept
 plain black text as a successful reconstruction when the reference uses colored
 labels or emphasized numbers.
 
+Brand logos are outside the ordinary text contract: preserve the complete logo
+and wordmark as one authoritative image/vector asset. Rebuilding logo lettering
+with a substitute font is a special-case failure, not editable-text success.
+
 ## Required text map
 
 For every visible text region, record:
