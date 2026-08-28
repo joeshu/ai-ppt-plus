@@ -180,7 +180,11 @@ def main() -> int:
     bad_sources = [item.get("slide_no") for item in (manifest or {}).get("slides", []) if not item.get("formal_content_source")]
     check(not bad_sources, "untraceable_formal_content", "formal content source required", bad_sources or None)
     undocumented = [item for item in (manifest or {}).get("slides", []) if item.get("asset_status") == "placeholder" and not item.get("placeholder_reason")]
-    check(not undocumented, "undocumented_placeholders", "placeholder mus…74 tokens truncated…t or {}).get("slides", []):
+    check(not undocumented, "undocumented_placeholders", "placeholder must contain a reason", [item.get("slide_no") for item in undocumented] or None)
+    check(not any(not item.get("provenance") for item in assets.get("assets", [])), "asset_provenance_missing", "every asset needs provenance")
+
+    editability_blockers = []
+    for slide in (manifest or {}).get("slides", []):
         slide_no = slide.get("slide_no")
         objects = slide.get("objects")
         if not isinstance(objects, list):
