@@ -118,7 +118,8 @@ def _expand_components(deck: dict):
                 _die(f"slide {slide_no}: component not found: {component_id}")
             if layout not in definition.get("allowed_layouts", []):
                 _die(f"slide {slide_no}: component {component_id} is not allowed on layout {layout}")
-            primitive = dict(definition.get("defaults", {}))
+            primitive = dict(definition.get("template", {}))
+            primitive.update(definition.get("defaults", {}))
             primitive.update(instance.get("object", {}))
             primitive["object_id"] = str(instance.get("object_id") or primitive.get("object_id") or component_id)
             primitive["component_id"] = component_id

@@ -23,7 +23,7 @@ def main() -> int:
         deck.write_text(json.dumps({
             "slide_width_in": 4, "slide_height_in": 2.25, "units": "fraction", "assets_dir": str(root),
             "theme": {"font": "Noto Sans CJK SC", "text_color": "#222222", "size": 10, "table_header_fill": "#FF0000", "chart_colors": ["#00AAFF"], "layout_name": "Blank"},
-            "component_library": {"schema": "ai-ppt-plus/component-library/v1", "components": [{"component_id": "section-title", "type": "text", "editability_level": "L1", "allowed_layouts": ["Blank"], "defaults": {"size": 14, "bold": True}}]},
+            "component_library": {"schema": "ai-ppt-plus/component-library/v1", "components": [{"component_id": "section-title", "type": "text", "editability_level": "L1", "allowed_layouts": ["Blank"], "defaults": {"size": 14, "bold": True}, "template": {"x": .5, "y": .72, "w": .3, "h": .08}}]},
             "slides": [{
                 "shapes": [{"object_id": "gradient-card", "type": "rounded_rect", "x": .05, "y": .1, "w": .4, "h": .7,
                             "gradient": {"angle": 90, "stops": [{"position": 0, "color": "#FF0000"}, {"position": 1, "color": "#0000FF", "opacity": .8}]},
@@ -36,7 +36,7 @@ def main() -> int:
                 "tables": [{"object_id": "data-table", "x": .05, "y": .02, "w": .35, "h": .06, "rows": [["A", "B"], ["1", "2"]], "data_source": "fixture", "merges": [[0, 0, 0, 1]]}],
                 "charts": [{"object_id": "data-chart", "type": "column", "x": .55, "y": .82, "w": .35, "h": .15, "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, 2]}], "data_source": "fixture", "data_labels": True}],
                 "speaker_notes": "这是演讲者备注。",
-                "components": [{"component_id": "section-title", "object_id": "component-title", "object": {"text": "组件标题", "x": .5, "y": .72, "w": .3, "h": .08}}],
+                "components": [{"component_id": "section-title", "object_id": "component-title", "object": {"text": "组件标题"}}],
                 "texts": [{"object_id": "label", "text": "可编辑", "x": .05, "y": .85, "w": .3, "h": .1, "size": 12}]
             }]
         }, ensure_ascii=False), encoding="utf-8")

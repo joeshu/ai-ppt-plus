@@ -6,6 +6,12 @@ page components. Every component has a stable `component_id`, a supported
 style tokens. A component definition describes defaults; it does not replace
 the page's formal text, source data, geometry, or human review.
 
+Definitions may also include a `template` object containing reusable geometry
+and primitive-specific fields. An instance's `object` fields override the
+template, then defaults, and its `object_id` remains authoritative. This makes
+standard components fast to place while preserving page-level exceptions as
+explicit data.
+
 Use `scripts/validate_component_library.py` before composing a deck. Duplicate
 IDs, missing layout applicability, invalid object types, or missing editability
 levels block the build. Component instances should retain the registry ID in
