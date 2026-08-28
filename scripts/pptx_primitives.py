@@ -358,278 +358,151 @@ def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
                 fill = header_fill if row_index == 0 else body_fill
                 if fill:
                     cell.fill.solid()
-                 …1866 tokens truncated…cation."""
-from __future__ import annotations
-
-import sys
-from io import BytesIO
-from pathlib import Path
-
-from asset_placement import cleanup_temporary_files, svg_to_png
-from atomic_output import atomic_write_bytes
-from component_expander import _frac, _resolve
-from pptx_primitives import _hex_to_rgba, _hex_to_tuple, text_size_pt
-
-
-def find_cjk_font(font_dir=None, bold=False):
-    if font_dir:
-        local = sorted(Path(font_dir).glob("*.ttf")) + sorted(Path(font_dir).glob("*.otf")) + sorted(Path(font_dir).glob("*.ttc"))
-        if local:
-            if bold:
-                bold_local = [path for path in local if any(token in path.stem.casefold() for token in ("bold", "medium", "semibold"))]
-                if bold_local:
-                    return str(bold_local[0])
-            return str(local[0])
-    candidates_bold = [
-        "/System/Library/Fonts/PingFang.ttc",
-        "/System/Library/Fonts/STHeiti Medium.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttc",
-    ]
-    candidates = [
-        "/System/Library/Fonts/PingFang.ttc",
-        "/System/Library/Fonts/STHeiti Light.ttc",
-        "/Library/Fonts/Arial Unicode.ttf",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-    ]
-    for candidate in candidates_bold + candidates if bold else candidates:
-        if Path(candidate).exists():
-            return candidate
-    return None
+                    cell.fill.fore_color.rgb = _hex_to_rgb(fill)
+                for paragraph in cell.text_frame.paragraphs:
+                    for run in paragraph.runs:
+                        _set_run_fonts(run, font)
+                        run.font.size = Pt(float(spec.get("size", theme.get("size", 12))))
+                        if spec.get("color") or theme.get("text_color"):
+                            run.font.color.rgb = _hex_to_rgb(spec.get("color") or theme.get("text_color"))
+                        run.font.bold = bool(row_index == 0 and spec.get("header_bold", True))
+        for merge in spec.get("merges", []):
+            if isinstance(merge, list) and len(merge) == 4:
+                r1, c1, r2, c2 = [int(value) for value in merge]
+                table.cell(r1, c1).merge(table.cell(r2, c2))
+        set_alt_text(graphic_frame, spec.get("alt_text"))
 
 
-def _poly_points(shape_type, x0, y0, x1, y1):
-    """Approximate polygon vertices for preview rendering of non-rect shapes."""
-    width, height = x1 - x0, y1 - y0
-    if shape_type == "triangle":
-        return [(x0 + width / 2, y0), (x1, y1), (x0, y1)]
-    if shape_type == "diamond":
-        return [(x0 + width / 2, y0), (x1, y0 + height / 2), (x0 + width / 2, y1), (x0, y0 + height / 2)]
-    if shape_type == "right_arrow":
-        margin = height * 0.30
-        return [(x0, y0 + margin), (x1 - width * 0.4, y0 + margin), (x1 - width * 0.4, y0), (x1, y0 + height / 2), (x1 - width * 0.4, y1), (x1 - width * 0.4, y1 - margin), (x0, y1 - margin)]
-    if shape_type == "left_arrow":
-        margin = height * 0.30
-        return [(x1, y0 + margin), (x0 + width * 0.4, y0 + margin), (x0 + width * 0.4, y0), (x0, y0 + height / 2), (x0 + width * 0.4, y1), (x0 + width * 0.4, y1 - margin), (x1, y1 - margin)]
-    if shape_type == "up_arrow":
-        margin = width * 0.30
-        return [(x0 + margin, y1), (x0 + margin, y0 + height * 0.4), (x0, y0 + height * 0.4), (x0 + width / 2, y0), (x1, y0 + height * 0.4), (x1 - margin, y0 + height * 0.4), (x1 - margin, y1)]
-    if shape_type == "chevron":
-        notch = width * 0.25
-        return [(x0, y0), (x1 - notch, y0), (x1, y0 + height / 2), (x1 - notch, y1), (x0, y1), (x0 + notch, y0 + height / 2)]
-    if shape_type == "trapezoid":
-        inset = width * 0.22
-        return [(x0 + inset, y0), (x1 - inset, y0), (x1, y1), (x0, y1)]
-    if shape_type == "parallelogram":
-        skew = width * 0.22
-        return [(x0 + skew, y0), (x1, y0), (x1 - skew, y1), (x0, y1)]
-    if shape_type == "pentagon":
-        import math
+def add_charts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, ref_h: float, sw_emu: int, sh_emu: int):
+    from pptx.chart.data import CategoryChartData
+    from pptx.enum.chart import XL_LEGEND_POSITION
+    from pptx.util import Emu
 
-        center_x, center_y = x0 + width / 2, y0 + height / 2
-        radius_x, radius_y = width / 2, height / 2
-        return [(center_x + radius_x * math.sin(2 * math.pi * i / 5), center_y - radius_y * math.cos(2 * math.pi * i / 5)) for i in range(5)]
-    if shape_type == "hexagon":
-        return [(x0 + width * 0.25, y0), (x0 + width * 0.75, y0), (x1, y0 + height / 2), (x0 + width * 0.75, y1), (x0 + width * 0.25, y1), (x0, y0 + height / 2)]
-    return None
-
-
-def _wrap_text(draw, text, font, max_width):
-    output = []
-    for raw in text.split("\n"):
-        if not raw:
-            output.append("")
-            continue
-        line = ""
-        for character in raw:
-            trial = line + character
-            if draw.textlength(trial, font=font) > max_width and line:
-                output.append(line)
-                line = character
-            else:
-                line = trial
-        output.append(line)
-    return output
+    charts = chart_map()
+    for chart_index, spec in enumerate(specs, 1):
+        chart_type = str(spec.get("type", "column")).casefold()
+        if chart_type not in charts:
+            _die(f"unsupported chart type: {chart_type}")
+        data = CategoryChartData()
+        data.categories = [str(value) for value in spec.get("categories", [])]
+        series = spec.get("series", [])
+        if not data.categories or not series:
+            _die("chart requires categories and series")
+        for item in series:
+            data.add_series(str(item.get("name", "Series")), [float(value) for value in item.get("values", [])])
+        graphic_frame = slide.shapes.add_chart(
+            charts[chart_type],
+            Emu(int(_frac(deck, spec, "x", ref_w) * sw_emu)),
+            Emu(int(_frac(deck, spec, "y", ref_h) * sh_emu)),
+            Emu(int(_frac(deck, spec, "w", ref_w) * sw_emu)),
+            Emu(int(_frac(deck, spec, "h", ref_h) * sh_emu)),
+            data,
+        )
+        graphic_frame.name = str(spec.get("object_id") or spec.get("name") or f"chart-{chart_index:02d}")
+        chart = graphic_frame.chart
+        chart.has_title = bool(spec.get("title"))
+        if chart.has_title:
+            chart.chart_title.text_frame.text = str(spec["title"])
+        chart.has_legend = bool(spec.get("legend", len(series) > 1))
+        if chart.has_legend:
+            chart.legend.position = XL_LEGEND_POSITION.BOTTOM
+            chart.legend.include_in_layout = False
+        if spec.get("data_labels"):
+            for series_item in chart.series:
+                series_item.has_data_labels = True
+                series_item.data_labels.show_value = True
+        for series_item, color in zip(chart.series, spec.get("colors") or theme.get("chart_colors") or []):
+            series_item.format.fill.solid()
+            series_item.format.fill.fore_color.rgb = _hex_to_rgb(color)
+        set_alt_text(graphic_frame, spec.get("alt_text"))
 
 
-def _open_asset(path: Path, temporary_files: list[Path]) -> Path:
-    if path.suffix.casefold() == ".svg":
-        raster = svg_to_png(path)
-        temporary_files.append(raster)
-        return raster
-    return path
+def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, ref_h: float, sw_emu: int, sh_emu: int):
+    from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
+    from pptx.util import Emu, Pt
+
+    alignments = {
+        "left": PP_ALIGN.LEFT,
+        "center": PP_ALIGN.CENTER,
+        "right": PP_ALIGN.RIGHT,
+        "justify": PP_ALIGN.JUSTIFY,
+    }
+    anchors = {
+        "top": MSO_ANCHOR.TOP,
+        "middle": MSO_ANCHOR.MIDDLE,
+        "center": MSO_ANCHOR.MIDDLE,
+        "bottom": MSO_ANCHOR.BOTTOM,
+    }
+    slide_height_pt = float(deck["slide_height_in"]) * 72.0
+    for spec in specs:
+        fx = _frac(deck, spec, "x", ref_w)
+        fy = _frac(deck, spec, "y", ref_h)
+        fw = _frac(deck, spec, "w", ref_w)
+        fh = _frac(deck, spec, "h", ref_h)
+        box = slide.shapes.add_textbox(
+            Emu(int(fx * sw_emu)),
+            Emu(int(fy * sh_emu)),
+            Emu(int(fw * sw_emu)),
+            Emu(int(fh * sh_emu)),
+        )
+        frame = box.text_frame
+        frame.word_wrap = True
+        frame.vertical_anchor = anchors.get(spec.get("valign", "top"), MSO_ANCHOR.TOP)
+        frame.margin_left = Pt(float(spec.get("margin_left", 0)))
+        frame.margin_right = Pt(float(spec.get("margin_right", 0)))
+        frame.margin_top = Pt(float(spec.get("margin_top", 0)))
+        frame.margin_bottom = Pt(float(spec.get("margin_bottom", 0)))
+
+        size_pt = text_size_pt(spec, slide_height_pt, ref_h)
+        color = _hex_to_rgb(spec.get("color", theme.get("text_color", "#111111")))
+        font = str(spec.get("font", theme.get("font", "Noto Sans CJK SC")))
+        bold = bool(spec.get("bold", False))
+        italic = bool(spec.get("italic", False))
+        alignment = alignments.get(spec.get("align", "left"), PP_ALIGN.LEFT)
+        line_spacing = spec.get("line_spacing")
+        opacity = float(spec.get("opacity", 1.0))
+        if spec.get("name") or spec.get("object_id"):
+            box.name = str(spec.get("name") or spec["object_id"])
+
+        runs = spec.get("runs")
+        if runs:
+            paragraph = frame.paragraphs[0]
+            paragraph.alignment = alignment
+            if line_spacing:
+                paragraph.line_spacing = float(line_spacing)
+            for run_spec in runs:
+                run = paragraph.add_run()
+                run.text = str(run_spec.get("text", ""))
+                run.font.size = Pt(text_size_pt(run_spec, slide_height_pt, ref_h, default=size_pt))
+                run.font.bold = bool(run_spec.get("bold", bold))
+                run.font.italic = bool(run_spec.get("italic", italic))
+                run.font.color.rgb = _hex_to_rgb(run_spec["color"]) if run_spec.get("color") else color
+                _set_run_fonts(run, str(run_spec.get("font", font)))
+                _set_run_alpha(run, float(run_spec.get("opacity", opacity)))
+        else:
+            for line_index, line in enumerate(str(spec.get("text", "")).split("\n")):
+                paragraph = frame.paragraphs[0] if line_index == 0 else frame.add_paragraph()
+                paragraph.alignment = alignment
+                if line_spacing:
+                    paragraph.line_spacing = float(line_spacing)
+                run = paragraph.add_run()
+                run.text = line
+                run.font.size = Pt(size_pt)
+                run.font.bold = bold
+                run.font.italic = italic
+                run.font.color.rgb = color
+                _set_run_fonts(run, font)
+                _set_run_alpha(run, opacity)
 
 
-def render_previews(deck: dict, preview_dir: Path) -> None:
-    try:
-        from PIL import Image, ImageDraw, ImageFont
-    except ImportError:
-        print("Preview skipped: Pillow not available.", file=sys.stderr)
-        return
+def _frac(deck: dict, item: dict, key: str, reference: float) -> float:
+    value = item[key]
+    if deck["units"] == "px":
+        return value / reference
+    return value
 
-    assets_dir = Path(deck["assets_dir"])
-    slide_width = float(deck["slide_width_in"])
-    slide_height = float(deck["slide_height_in"])
-    ratio = slide_width / slide_height
-    if deck["units"] == "px" and deck.get("ref_width") and deck.get("ref_height"):
-        canvas_width, canvas_height = int(deck["ref_width"]), int(deck["ref_height"])
-    else:
-        canvas_width = 1600
-        canvas_height = int(round(canvas_width / ratio))
-    slide_height_pt = slide_height * 72.0
-    ref_width = float(deck.get("ref_width") or canvas_width)
-    ref_height = float(deck.get("ref_height") or canvas_height)
-    preview_dir.mkdir(parents=True, exist_ok=True)
-    regular_path = find_cjk_font(deck.get("font_dir"), bold=False)
-    bold_path = find_cjk_font(deck.get("font_dir"), bold=True)
-    temporary_files: list[Path] = []
 
-    try:
-        for index, slide_spec in enumerate(deck["slides"], 1):
-            canvas = Image.new("RGBA", (canvas_width, canvas_height), (255, 255, 255, 255))
-            background = slide_spec.get("background")
-            if background:
-                path = _resolve(assets_dir, background)
-                if path.exists():
-                    with Image.open(path) as image:
-                        canvas.paste(image.convert("RGBA").resize((canvas_width, canvas_height)), (0, 0))
-
-            frame = slide_spec.get("frame")
-            if frame:
-                path = _resolve(assets_dir, frame)
-                if path.exists():
-                    with Image.open(path) as image:
-                        canvas.alpha_composite(image.convert("RGBA").resize((canvas_width, canvas_height)), (0, 0))
-
-            for shape_spec in slide_spec.get("shapes", []):
-                fx = _frac(deck, shape_spec, "x", "x", ref_width)
-                fy = _frac(deck, shape_spec, "y", "y", ref_height)
-                fw = _frac(deck, shape_spec, "w", "x", ref_width)
-                fh = _frac(deck, shape_spec, "h", "y", ref_height)
-                x0, y0 = int(fx * canvas_width), int(fy * canvas_height)
-                x1, y1 = int((fx + fw) * canvas_width), int((fy + fh) * canvas_height)
-                overlay = Image.new("RGBA", (canvas_width, canvas_height), (0, 0, 0, 0))
-                draw = ImageDraw.Draw(overlay)
-                shape_type = shape_spec.get("type", "rounded_rect")
-                alpha = int(float(shape_spec.get("opacity", 1.0)) * 255) if shape_spec.get("fill") else 0
-                fill = _hex_to_tuple(shape_spec["fill"]) + (alpha,) if shape_spec.get("fill") else None
-                line = _hex_to_tuple(shape_spec["line"]) + (255,) if shape_spec.get("line") else None
-                line_width = int(round(float(shape_spec.get("line_width", 1.0)) * canvas_height / (slide_height * 72.0)))
-                line_width = max(1, line_width) if line else 0
-                polygon = _poly_points(shape_type, x0, y0, x1, y1)
-                if shape_type == "line":
-                    draw.line([x0, y0, x1, y1], fill=line or (255, 255, 255, 255), width=max(1, line_width or 2))
-                elif shape_type in ("oval", "ellipse"):
-                    draw.ellipse([x0, y0, x1, y1], fill=fill, outline=line, width=line_width)
-                elif shape_type == "rounded_rect":
-                    radius = int(float(shape_spec.get("radius", 0.12)) * min(x1 - x0, y1 - y0))
-                    draw.rounded_rectangle([x0, y0, x1, y1], radius=max(1, radius), fill=fill, outline=line, width=line_width)
-                elif polygon is not None:
-                    draw.polygon(polygon, fill=fill, outline=line, width=line_width)
-                else:
-                    draw.rectangle([x0, y0, x1, y1], fill=fill, outline=line, width=line_width)
-                canvas.alpha_composite(overlay)
-
-            for panel in slide_spec.get("panels", []):
-                path = _resolve(assets_dir, panel["file"])
-                if not path.exists():
-                    continue
-                fx = _frac(deck, panel, "x", "x", ref_width)
-                fy = _frac(deck, panel, "y", "y", ref_height)
-                fw = _frac(deck, panel, "w", "x", ref_width)
-                fh = _frac(deck, panel, "h", "y", ref_height)
-                with Image.open(path) as image:
-                    panel_image = image.convert("RGBA").resize((max(1, int(fw * canvas_width)), max(1, int(fh * canvas_height))))
-                canvas.alpha_composite(panel_image, (int(fx * canvas_width), int(fy * canvas_height)))
-
-            for icon in slide_spec.get("icons", []):
-                path = _resolve(assets_dir, icon["file"])
-                if not path.exists():
-                    continue
-                path = _open_asset(path, temporary_files)
-                fx = _frac(deck, icon, "x", "x", ref_width)
-                fy = _frac(deck, icon, "y", "y", ref_height)
-                fw = _frac(deck, icon, "w", "x", ref_width)
-                fh = _frac(deck, icon, "h", "y", ref_height)
-                with Image.open(path) as image:
-                    icon_image = image.convert("RGBA").resize((max(1, int(fw * canvas_width)), max(1, int(fh * canvas_height))))
-                canvas.alpha_composite(icon_image, (int(fx * canvas_width), int(fy * canvas_height)))
-
-            draw = ImageDraw.Draw(canvas)
-            for text_spec in slide_spec.get("texts", []):
-                fx = _frac(deck, text_spec, "x", "x", ref_width)
-                fy = _frac(deck, text_spec, "y", "y", ref_height)
-                fw = _frac(deck, text_spec, "w", "x", ref_width)
-                size_pt = text_size_pt(text_spec, slide_height_pt, ref_height)
-                pixel_size = max(8, int(round(size_pt * canvas_height / slide_height_pt)))
-                bold = bool(text_spec.get("bold", False))
-                font_path = (bold_path if bold else regular_path) or regular_path
-                try:
-                    font = ImageFont.truetype(font_path, pixel_size) if font_path else ImageFont.load_default()
-                except Exception:
-                    font = ImageFont.load_default()
-                color = text_spec.get("color", "#111111")
-                align = text_spec.get("align", "left")
-                valign = text_spec.get("valign", "top")
-                opacity = float(text_spec.get("opacity", 1.0))
-                box_x, box_y = int(fx * canvas_width), int(fy * canvas_height)
-                box_width = int(fw * canvas_width)
-                box_height = int(_frac(deck, text_spec, "h", "y", ref_height) * canvas_height)
-                line_height = int(pixel_size * 1.3)
-                runs = text_spec.get("runs")
-                if runs:
-                    characters = []
-                    for run_spec in runs:
-                        run_bold = bool(run_spec.get("bold", bold))
-                        run_size = max(8, int(round(text_size_pt(run_spec, slide_height_pt, ref_height, default=size_pt) * canvas_height / slide_height_pt)))
-                        run_path = (bold_path if run_bold else regular_path) or regular_path
-                        try:
-                            run_font = ImageFont.truetype(run_path, run_size) if run_path else ImageFont.load_default()
-                        except Exception:
-                            run_font = ImageFont.load_default()
-                        for character in str(run_spec.get("text", "")):
-                            characters.append((character, run_font, run_spec.get("color", color), float(run_spec.get("opacity", opacity)), run_bold))
-                    lines, line, line_width = [], [], 0.0
-                    for character, character_font, character_color, character_opacity, character_bold in characters:
-                        if character == "\n":
-                            lines.append(line)
-                            line, line_width = [], 0.0
-                            continue
-                        character_width = draw.textlength(character, font=character_font)
-                        if line and line_width + character_width > box_width:
-                            lines.append(line)
-                            line, line_width = [], 0.0
-                        line.append((character, character_font, character_color, character_opacity, character_bold, character_width))
-                        line_width += character_width
-                    if line or not lines:
-                        lines.append(line)
-                    total_height = line_height * len(lines)
-                    text_y = box_y + (max(0, box_height - total_height) if valign == "bottom" else max(0, (box_height - total_height) // 2) if valign in ("middle", "center") else 0)
-                    for line_index, line_items in enumerate(lines):
-                        total_width = sum(item[5] for item in line_items)
-                        cursor_x = box_x + (box_width - total_width if align == "right" else (box_width - total_width) / 2 if align == "center" else 0)
-                        for character, character_font, character_color, character_opacity, character_bold, character_width in line_items:
-                            stroke = 1 if character_bold and not bold_path else 0
-                            fill = _hex_to_rgba(character_color, character_opacity)
-                            draw.text((max(box_x, int(cursor_x)), text_y + line_index * line_height), character, fill=fill, font=character_font, stroke_width=stroke, stroke_fill=fill)
-                            cursor_x += character_width
-                else:
-                    lines = _wrap_text(draw, str(text_spec.get("text", "")), font, max(1, box_width))
-                    total_height = line_height * max(1, len(lines))
-                    text_y = box_y + (max(0, box_height - total_height) if valign == "bottom" else max(0, (box_height - total_height) // 2) if valign in ("middle", "center") else 0)
-                    stroke = 1 if bold and not bold_path else 0
-                    for line_index, line in enumerate(lines):
-                        line_width = draw.textlength(line, font=font)
-                        text_x = box_x + (box_width - line_width if align == "right" else (box_width - line_width) / 2 if align == "center" else 0)
-                        fill = _hex_to_rgba(color, opacity)
-                        draw.text((max(box_x, int(text_x)), text_y + line_index * line_height), line, fill=fill, font=font, stroke_width=stroke, stroke_fill=fill)
-
-            output = preview_dir / f"slide_{index:02d}.png"
-            buffer = BytesIO()
-            canvas.convert("RGB").save(buffer, format="PNG")
-            atomic_write_bytes(output, buffer.getvalue(), suffix=".tmp.png")
-            print(f"Preview: {output}")
-    finally:
-        cleanup_temporary_files(temporary_files)
+# Private aliases preserve imports used by older helper scripts while the
+# public module names describe the primitive responsibilities directly.
+_apply_shape_fill = apply_shape_fill
+_set_alt_text = set_alt_text

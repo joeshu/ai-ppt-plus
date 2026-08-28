@@ -12,8 +12,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import hashlib
+import importlib.metadata
 import json
 import os
+import platform
 from pathlib import Path
 import shutil
 import subprocess
@@ -22,8 +24,11 @@ import time
 from typing import Any, Iterable
 
 
-CACHE_SCHEMA = "ai-ppt-plus/pipeline-cache/v1"
-ENGINE_VERSION = "pipeline-engine-v1"
+CACHE_SCHEMA = "ai-ppt-plus/pipeline-cache/v2"
+ENGINE_VERSION = "pipeline-engine-v2"
+CACHE_EXCLUDED_DIRS = {".git", ".pipeline-cache", "pipeline-runs", "__pycache__"}
+RUNTIME_PACKAGES = ("numpy", "Pillow", "python-pptx", "PyYAML", "cairosvg")
+RUNTIME_BINARIES = ("soffice", "libreoffice", "pdftoppm", "pdftocairo", "inkscape", "fc-match")
 
 
 def sha256(path: Path) -> str:
@@ -41,8 +46,11 @@ def _tree_digest(path: Path) -> dict[str, Any]:
         return {"path": path.name, "kind": "missing"}
     files = []
     for child in sorted((item for item in path.rglob("*") if item.is_file()), key=lambda item: str(item.relative_to(path))):
+        relative = child.relative_to(path)
+        if any(part in CACHE_EXCLUDED_DIRS for part in relative.parts[:-1]):
+            continue
         files.append({
-            "path": str(child.relative_to(path)),
+            "path": str(relative),
             "sha256": sha256(child),
             "size": child.stat().st_size,
         })
@@ -52,6 +60,51 @@ def _tree_digest(path: Path) -> dict[str, Any]:
 def _json_hash(value: Any) -> str:
     encoded = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def _artifact_digest(path: Path) -> str:
+    """Return a content digest for a file or an excluded-tree-aware directory."""
+    path = Path(path)
+    if path.is_file():
+        return sha256(path)
+    return _json_hash(_tree_digest(path))
+
+
+def _local_code_fingerprint() -> str:
+    """Hash all local pipeline modules so imported helper changes invalidate cache."""
+    records = []
+    for path in sorted(Path(__file__).resolve().parent.glob("*.py"), key=str):
+        records.append({"path": path.name, "sha256": sha256(path), "size": path.stat().st_size})
+    return _json_hash(records)
+
+
+def _runtime_fingerprint() -> dict[str, Any]:
+    """Capture versions that can change PPTX reports or rendered pixels."""
+    packages = {}
+    for package in RUNTIME_PACKAGES:
+        try:
+            packages[package] = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            packages[package] = None
+    binaries = {}
+    for name in RUNTIME_BINARIES:
+        binary = shutil.which(name)
+        if not binary:
+            binaries[name] = None
+            continue
+        try:
+            completed = subprocess.run([binary, "--version"], capture_output=True, text=True, timeout=5, check=False)
+            output = (completed.stdout or completed.stderr).strip().splitlines()
+            binaries[name] = output[0] if output else f"exit:{completed.returncode}"
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            binaries[name] = f"unavailable:{type(exc).__name__}"
+    return {
+        "python": platform.python_version(),
+        "implementation": platform.python_implementation(),
+        "platform": platform.platform(),
+        "packages": packages,
+        "binaries": binaries,
+    }
 
 
 def _safe_relative(value: Any) -> Path | None:
@@ -103,6 +156,9 @@ class PipelineExecutor:
         self.max_workers = max(1, int(max_workers)) if mode == "dag" else 1
         self.tasks: list[PipelineTask] = []
         self._task_names: set[str] = set()
+        self.code_fingerprint = _local_code_fingerprint()
+        self.runtime_fingerprint = _runtime_fingerprint()
+        self.last_wall_duration_ms = 0.0
 
     def add(self, task: PipelineTask) -> PipelineTask:
         if task.name in self._task_names:
@@ -141,6 +197,8 @@ class PipelineExecutor:
             "task": task.name,
             "command": [self._normalize_arg(str(value)) for value in task.args],
             "script_sha256": script_hash,
+            "local_code_fingerprint": self.code_fingerprint,
+            "runtime": self.runtime_fingerprint,
             "inputs": inputs,
             "metadata": task.metadata,
         }
@@ -156,7 +214,12 @@ class PipelineExecutor:
             return None
         if not relative.parts:
             return None
-        return {"relative": str(relative), "kind": "directory" if path.is_dir() else "file"}
+        return {
+            "relative": str(relative),
+            "kind": "directory" if path.is_dir() else "file",
+            "sha256": _artifact_digest(path),
+            "size": path.stat().st_size if path.is_file() else None,
+        }
 
     def _cache_entry(self, key: str) -> Path:
         if not self.cache_dir:
@@ -190,6 +253,15 @@ class PipelineExecutor:
             if artifact["kind"] == "directory" and not source.is_dir():
                 return None
             if artifact["kind"] == "file" and not source.is_file():
+                return None
+            recorded_digest = artifact.get("sha256")
+            if not isinstance(recorded_digest, str) or len(recorded_digest) != 64:
+                return None
+            try:
+                current_digest = _artifact_digest(source)
+            except OSError:
+                return None
+            if current_digest != recorded_digest:
                 return None
             safe_artifacts.append((relative, artifact["kind"], source))
         try:
@@ -229,11 +301,14 @@ class PipelineExecutor:
     def _save_cache(self, task: PipelineTask, key: str, result: dict[str, Any]) -> None:
         if self.mode != "dag" or not task.cacheable or not self.cache_dir or not result.get("ok"):
             return
+        if not task.outputs:
+            return
         artifacts = []
         for output in task.outputs:
             record = self._output_record(Path(output))
-            if record:
-                artifacts.append(record)
+            if record is None:
+                return
+            artifacts.append(record)
         entry = self._cache_entry(key)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         temporary = self.cache_dir / f".{key}.tmp-{os.getpid()}-{time.time_ns()}"
@@ -340,6 +415,7 @@ class PipelineExecutor:
         }
 
     def run(self) -> list[dict[str, Any]]:
+        run_started = time.perf_counter()
         by_name = {task.name: task for task in self.tasks}
         missing_deps = {
             task.name: [dep for dep in task.deps if dep not in by_name]
@@ -388,6 +464,7 @@ class PipelineExecutor:
                 for name in cycle:
                     results[name] = self._blocked_result(by_name[name], ["dependency_cycle"])
                 break
+        self.last_wall_duration_ms = round((time.perf_counter() - run_started) * 1000, 3)
         return [results[task.name] for task in self.tasks]
 
 

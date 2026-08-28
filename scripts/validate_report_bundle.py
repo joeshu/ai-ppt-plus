@@ -156,6 +156,9 @@ def validate_bundle(
     check(bool(index), "report_index_object", "report-index.json must contain an object")
     check(bool(project_report), "project_report_object", "project-report.json must contain an object")
 
+    pipeline_result_hash = sha256(pipeline_path) if pipeline_path.is_file() else None
+    check(pipeline_result_hash is not None, "pipeline_result_hash_present", "the final pipeline result must be hashable")
+
     root = Path(__file__).resolve().parents[1]
     if pipeline:
         issues.extend(schema_issues(pipeline, "pipeline-run.schema.json", schema_dir=root / "assets" / "schemas"))
@@ -277,6 +280,15 @@ def validate_bundle(
     check(pipeline.get("valid") is pipeline.get("technical_valid"), "technical_truth_alias", "pipeline valid must equal technical_valid")
     expected_pipeline_status = "passed" if pipeline.get("technical_valid") is True else "failed"
     check(pipeline.get("status") == expected_pipeline_status, "pipeline_status_consistent", "pipeline status must match technical_valid", expected=expected_pipeline_status, observed=pipeline.get("status"))
+    if pipeline.get("release_eligible") is True:
+        release_evidence = pipeline.get("release_evidence") if isinstance(pipeline.get("release_evidence"), dict) else {}
+        check(pipeline.get("technical_valid") is True, "release_requires_technical_valid", "release eligibility requires a passing technical pipeline")
+        check(release_evidence.get("report_bundle_valid") is True, "release_requires_bundle", "release eligibility requires a passing report bundle")
+        check(release_evidence.get("human_signoff_valid") is True, "release_requires_signoff", "release eligibility requires validated human sign-off")
+        check(release_evidence.get("release_check_passed") is True, "release_requires_delivery_check", "release eligibility requires a passing delivery check")
+        finalization = pipeline.get("finalization") if isinstance(pipeline.get("finalization"), dict) else {}
+        bundle_finalization = finalization.get("report_bundle") if isinstance(finalization.get("report_bundle"), dict) else {}
+        check(bundle_finalization.get("status") == "passed", "release_requires_final_bundle", "release eligibility requires a sealed final report bundle")
     aggregate_valid = project_report.get("valid") is True and project_report.get("technical_valid") is True
     if aggregate_valid:
         check("project-report-aggregate" not in declared_technical_failed, "aggregate_step_truth", "a passing aggregate cannot have a failed aggregate step")
@@ -301,6 +313,8 @@ def validate_bundle(
             for label in expected_labels:
                 check(label in review, "review_status_consistent", "review HTML must display the pipeline status", label=label)
 
+    review_html_hash = sha256(review_html_path) if review_html_path and review_html_path.is_file() else None
+
     status = "passed" if not issues else "failed"
     result: dict[str, Any] = {
         "schema": SCHEMA,
@@ -323,7 +337,10 @@ def validate_bundle(
         "report_index_path": str(index_path),
         "report_index_sha256": report_index_hash,
         "pipeline_result_path": str(pipeline_path),
+        "pipeline_result_sha256": pipeline_result_hash,
         "project_report_path": str(project_report_path),
+        "review_html_path": str(review_html_path) if review_html_path else None,
+        "review_html_sha256": review_html_hash,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "tool": "ai-ppt-plus/validate_report_bundle.py",
         "checks": checks,
@@ -332,6 +349,8 @@ def validate_bundle(
             {"source_id": "deck", "path": str(actual_deck), "sha256": observed_deck_hash or pipeline_hash} if actual_deck else {"source_id": "deck", "path": None, "sha256": pipeline_hash},
             {"source_id": "report-index", "path": str(index_path), "sha256": report_index_hash},
             {"source_id": "project-report", "path": str(project_report_path), "sha256": sha256(project_report_path) if project_report_path.is_file() else None},
+            {"source_id": "pipeline-result", "path": str(pipeline_path), "sha256": pipeline_result_hash},
+            *([{"source_id": "review-html", "path": str(review_html_path), "sha256": review_html_hash}] if review_html_path else []),
         ],
     }
     return result
