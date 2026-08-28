@@ -106,9 +106,21 @@ def _expand_components(deck: dict):
     theme = dict(library.get("tokens", {}))
     theme.update(deck.get("theme", {}) if isinstance(deck.get("theme", {}), dict) else {})
     deck["theme"] = theme
+    if isinstance(deck.get("layout_library"), str):
+        layout_path = _resolve(Path(deck["assets_dir"]), deck["layout_library"])
+        if not layout_path.exists():
+            _die(f"layout library not found: {layout_path}")
+        deck["layout_library"] = json.loads(layout_path.read_text(encoding="utf-8"))
     target_arrays = {"text": "texts", "shape": "shapes", "group": "groups", "table": "tables", "chart": "charts", "image": "icons", "vector": "icons"}
     for slide_no, slide in enumerate(deck["slides"], 1):
         layout = slide.get("layout_name", theme.get("layout_name", "Blank"))
+        layout_names = {layout}
+        layout_id = slide.get("layout_id", theme.get("layout_id"))
+        layout_library = deck.get("layout_library")
+        if layout_id and isinstance(layout_library, dict):
+            layout_definition = next((item for item in layout_library.get("layouts", []) if isinstance(item, dict) and item.get("layout_id") == layout_id), None)
+            if layout_definition and layout_definition.get("pptx_layout_name"):
+                layout_names.add(layout_definition["pptx_layout_name"])
         for instance in slide.get("components", []):
             if not isinstance(instance, dict):
                 _die(f"slide {slide_no}: component instance must be an object")
@@ -116,7 +128,7 @@ def _expand_components(deck: dict):
             definition = definitions.get(component_id)
             if definition is None:
                 _die(f"slide {slide_no}: component not found: {component_id}")
-            if layout not in definition.get("allowed_layouts", []):
+            if not layout_names.intersection(definition.get("allowed_layouts", [])):
                 _die(f"slide {slide_no}: component {component_id} is not allowed on layout {layout}")
             primitive = dict(definition.get("template", {}))
             primitive.update(definition.get("defaults", {}))
@@ -376,9 +388,22 @@ def _svg_to_png(svg_path: Path) -> Path:
     return output
 
 
-def _choose_slide_layout(prs, slide_spec: dict, theme: dict):
+def _choose_slide_layout(prs, slide_spec: dict, theme: dict, deck: dict):
     """Select an existing template layout without inventing a new master."""
     requested = slide_spec.get("layout_name", theme.get("layout_name"))
+    layout_id = slide_spec.get("layout_id", theme.get("layout_id"))
+    if layout_id:
+        library = deck.get("layout_library")
+        if isinstance(library, str):
+            path = _resolve(Path(deck["assets_dir"]), library)
+            if not path.exists():
+                _die(f"layout library not found: {path}")
+            library = json.loads(path.read_text(encoding="utf-8"))
+        layouts = {item.get("layout_id"): item for item in (library or {}).get("layouts", []) if isinstance(item, dict)}
+        definition = layouts.get(str(layout_id))
+        if definition is None:
+            _die(f"layout ID not found: {layout_id}")
+        requested = definition.get("pptx_layout_name")
     if requested:
         for layout in prs.slide_layouts:
             if layout.name == str(requested):
@@ -434,7 +459,7 @@ def build_pptx(deck, out_path: Path):
     svg_assets = []
     theme = deck.get("theme", {}) if isinstance(deck.get("theme", {}), dict) else {}
     for idx, sl in enumerate(deck["slides"], 1):
-        slide = prs.slides.add_slide(_choose_slide_layout(prs, sl, theme))
+        slide = prs.slides.add_slide(_choose_slide_layout(prs, sl, theme, deck))
 
         bg = sl.get("background")
         if bg:

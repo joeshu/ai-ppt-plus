@@ -22,7 +22,8 @@ def main() -> int:
         deck = root / "deck.json"
         deck.write_text(json.dumps({
             "slide_width_in": 4, "slide_height_in": 2.25, "units": "fraction", "assets_dir": str(root),
-            "theme": {"font": "Noto Sans CJK SC", "text_color": "#222222", "size": 10, "table_header_fill": "#FF0000", "chart_colors": ["#00AAFF"], "layout_name": "Blank"},
+            "theme": {"font": "Noto Sans CJK SC", "text_color": "#222222", "size": 10, "table_header_fill": "#FF0000", "chart_colors": ["#00AAFF"], "layout_id": "blank-canvas"},
+            "layout_library": {"schema": "ai-ppt-plus/layout-library/v1", "layouts": [{"layout_id": "blank-canvas", "pptx_layout_name": "Blank", "page_family": "freeform", "safe_margins": [.05, .05, .05, .05], "grid": {"columns": 12, "gutter": .01}}]},
             "component_library": {"schema": "ai-ppt-plus/component-library/v1", "components": [{"component_id": "section-title", "type": "text", "editability_level": "L1", "allowed_layouts": ["Blank"], "defaults": {"size": 14, "bold": True}, "template": {"x": .5, "y": .72, "w": .3, "h": .08}}]},
             "slides": [{
                 "shapes": [{"object_id": "gradient-card", "type": "rounded_rect", "x": .05, "y": .1, "w": .4, "h": .7,
