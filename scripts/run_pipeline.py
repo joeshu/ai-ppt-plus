@@ -478,6 +478,94 @@ def main() -> int:
         [run_dir / "ocr-text-check.json"] if args.ocr_lang or args.require_ocr else []
     )
     add_step("project", project_args, deps=project_deps, outputs=[run_dir / "project-validation.json"], inputs=project_inputs, metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
+    def collect_quality_evidence():
+        evidence = {}
+        for name, path in (
+            ("render_visual_gate", run_dir / "render-visual-gate.json"),
+            ("visual_comparison", run_dir / "visual-comparison.json"),
+            ("ocr_text_check", run_dir / "ocr-text-check.json"),
+            ("route_validation", run_dir / "route-validation.json"),
+            ("manifest_validation", run_dir / "manifest-validation.json"),
+            ("manifest_registry_validation", run_dir / "manifest-registry-validation.json"),
+            ("text_layout_validation", run_dir / "text-layout-validation.json"),
+            ("imagegen_assets_validation", run_dir / "imagegen-assets-validation.json"),
+            ("icon_assets_validation", run_dir / "icon-assets-validation.json"),
+            ("icon_layer_audit", run_dir / "icon-layer-audit.json"),
+            ("object_manifest_validation", run_dir / "object-manifest-validation.json"),
+            ("editable_object_audit", run_dir / "editable-object-audit.json"),
+            ("panel_assets_validation", run_dir / "panel-assets-validation.json"),
+            ("text_style_map_validation", run_dir / "text-style-map-validation.json"),
+            ("visual_compare_qa", run_dir / "visual-qa/report.json"),
+            ("project_report_aggregate", run_dir / "project-report.json"),
+            ("report_bundle_validation", run_dir / "report-bundle-validation.json"),
+            ("font_asset_validation", run_dir / "font-asset-validation.json"),
+            ("font_delivery_validation", run_dir / "font-delivery-validation.json"),
+            ("handoff_validation", run_dir / "handoff-validation.json"),
+            ("signoff_validation", run_dir / "signoff-validation.json"),
+            ("release_check", run_dir / "release-check.json"),
+        ):
+            report = load_report(path)
+            if report is not None:
+                evidence[name] = summarize_report(name, path, report)
+        degradations = []
+        ocr_report = evidence.get("ocr_text_check")
+        if ocr_report and (ocr_report.get("native_status") or ocr_report.get("status")) == "unavailable":
+            degradations.append({"code": "ocr_unavailable", "language": ocr_report.get("language"), "requires_human_review": True})
+        return evidence, degradations
+
+    def build_pipeline_result(current_steps, evidence, degradations, release_report=None):
+        failed = [step["name"] for step in current_steps if not step["ok"]]
+        technical_failed = [step["name"] for step in current_steps if not step["ok"] and step["name"] not in {"signoff-validation", "release-check"}]
+        technical_valid = not technical_failed
+        release_eligible = bool(args.release and release_report and release_report.get("status") == "passed")
+        deck_hash = sha256(deck)
+        source_references = [{"source_id": "deck", "path": str(deck), "sha256": deck_hash}]
+        for item in evidence.values():
+            source = item.get("source") if isinstance(item, dict) else None
+            if isinstance(source, dict) and source.get("path"):
+                source_references.append(source)
+        return {
+            "schema": "ai-ppt-plus/pipeline-run/v2",
+            "valid": technical_valid,
+            "status": "passed" if technical_valid else "failed",
+            "technical_valid": technical_valid,
+            "technical_status": "passed" if technical_valid else "failed",
+            "validation_scope": "incremental" if affected_pages else "full",
+            "full_deck_validation_required": bool(affected_pages),
+            "release_profile": "strict" if args.release else "not_run",
+            "release_eligible": release_eligible,
+            "release_status": release_report.get("status") if release_report else "not_run",
+            "human_review_required": True,
+            "human_review_status": "pending",
+            "run_id": run_id,
+            "project": str(project),
+            "deck": str(deck),
+            "deck_sha256": deck_hash,
+            "source": {"deck": str(deck), "deck_sha256": deck_hash, "project": str(project)},
+            "source_references": source_references,
+            "run_dir": str(run_dir),
+            "report_index": str(run_dir / "report-index.json"),
+            "project_report": str(run_dir / "project-report.json"),
+            "execution": {
+                "mode": args.execution_mode,
+                "cache_dir": str(cache_dir) if cache_dir else None,
+                "parallel_workers": executor.max_workers,
+                "tasks_total": len(current_steps),
+                "cache_hits": sum(1 for step in current_steps if step.get("cache_hit") is True),
+                "duration_ms": round(sum(float(step.get("duration_ms", 0) or 0) for step in current_steps), 3),
+                "affected_pages": affected_pages or "all",
+                "affected_regions": list(args.affected_region),
+            },
+            "steps": current_steps,
+            "failed_steps": failed,
+            "technical_failed_steps": technical_failed,
+            "next_state": "delivered" if release_eligible else "validated" if technical_valid else "revision-required",
+            "human_visual_review_required": True,
+            "human_signoff_required": True,
+            "quality_evidence": evidence,
+            "quality_degradations": degradations,
+        }
+
     steps = executor.run()
     if args.require_cjk:
         for step in steps:
@@ -545,6 +633,22 @@ def main() -> int:
     report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": "validated", "validation_scope": "incremental" if affected_pages else "full", "deck_path": str(deck), "deck_sha256": sha256(deck), "source_references": [{"source_id": "deck", "path": str(deck), "sha256": sha256(deck)}], "reports": report_entries}
     (run_dir / "report-index.json").write_text(json.dumps(report_index, ensure_ascii=False, indent=2), encoding="utf-8")
     steps.append(run_step(run_dir, "project-report-aggregate", [str(SCRIPT_DIR / "aggregate_project_reports.py"), str(run_dir / "report-index.json"), "--report", str(run_dir / "project-report.json")]))
+    preliminary_evidence, preliminary_degradations = collect_quality_evidence()
+    preliminary_result = build_pipeline_result(steps, preliminary_evidence, preliminary_degradations)
+    (run_dir / "pipeline-result.json").write_text(json.dumps(preliminary_result, ensure_ascii=False, indent=2), encoding="utf-8")
+    bundle_args = [
+        str(SCRIPT_DIR / "validate_report_bundle.py"),
+        str(run_dir / "pipeline-result.json"),
+        "--report-index", str(run_dir / "report-index.json"),
+        "--project-report", str(run_dir / "project-report.json"),
+        "--deck", str(deck),
+        "--report", str(run_dir / "report-bundle-validation.json"),
+    ]
+    if args.release:
+        bundle_args.append("--require-full")
+    bundle_step = run_step(run_dir, "report-bundle-validation", bundle_args)
+    bundle_step["deps"] = ["project-report-aggregate"]
+    steps.append(bundle_step)
     if args.release:
         signoff_path = Path(args.human_signoff).resolve()
         steps.append(run_step(run_dir, "signoff-validation", [str(SCRIPT_DIR / "validate_signoff.py"), str(signoff_path), "--report", str(run_dir / "signoff-validation.json")]))
@@ -566,6 +670,8 @@ def main() -> int:
             "--require-font-delivery",
             "--project-report", str(run_dir / "project-report.json"),
             "--require-project-report",
+            "--report-bundle-validation", str(run_dir / "report-bundle-validation.json"),
+            "--require-report-bundle",
             "--render-visual-gate", str(run_dir / "render-visual-gate.json"),
             "--expected-slides", str(args.expected_pages),
             "--quality-score", str(args.quality_score),
@@ -581,48 +687,9 @@ def main() -> int:
         if args.ocr_lang or args.require_ocr:
             release_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
         steps.append(run_step(run_dir, "release-check", release_args))
-    failed = [step["name"] for step in steps if not step["ok"]]
-    technical_failed = [step["name"] for step in steps if not step["ok"] and step["name"] not in {"signoff-validation", "release-check"}]
-    technical_valid = not technical_failed
-    quality_evidence = {}
-    for name, path in (
-        ("render_visual_gate", run_dir / "render-visual-gate.json"),
-        ("visual_comparison", run_dir / "visual-comparison.json"),
-        ("ocr_text_check", run_dir / "ocr-text-check.json"),
-        ("route_validation", run_dir / "route-validation.json"),
-        ("manifest_validation", run_dir / "manifest-validation.json"),
-        ("manifest_registry_validation", run_dir / "manifest-registry-validation.json"),
-        ("text_layout_validation", run_dir / "text-layout-validation.json"),
-        ("imagegen_assets_validation", run_dir / "imagegen-assets-validation.json"),
-        ("icon_assets_validation", run_dir / "icon-assets-validation.json"),
-        ("icon_layer_audit", run_dir / "icon-layer-audit.json"),
-        ("object_manifest_validation", run_dir / "object-manifest-validation.json"),
-        ("editable_object_audit", run_dir / "editable-object-audit.json"),
-        ("panel_assets_validation", run_dir / "panel-assets-validation.json"),
-        ("text_style_map_validation", run_dir / "text-style-map-validation.json"),
-        ("visual_compare_qa", run_dir / "visual-qa/report.json"),
-        ("project_report_aggregate", run_dir / "project-report.json"),
-        ("font_asset_validation", run_dir / "font-asset-validation.json"),
-        ("font_delivery_validation", run_dir / "font-delivery-validation.json"),
-        ("handoff_validation", run_dir / "handoff-validation.json"),
-        ("signoff_validation", run_dir / "signoff-validation.json"),
-        ("release_check", run_dir / "release-check.json"),
-    ):
-        report = load_report(path)
-        if report is not None:
-            quality_evidence[name] = summarize_report(name, path, report)
-    quality_degradations = []
-    ocr_report = quality_evidence.get("ocr_text_check")
-    if ocr_report and (ocr_report.get("native_status") or ocr_report.get("status")) == "unavailable":
-        quality_degradations.append({"code": "ocr_unavailable", "language": ocr_report.get("language"), "requires_human_review": True})
     release_report = load_report(run_dir / "release-check.json")
-    release_eligible = bool(args.release and release_report and release_report.get("status") == "passed")
-    source_references = [{"source_id": "deck", "path": str(deck), "sha256": sha256(deck)}]
-    for evidence in quality_evidence.values():
-        source = evidence.get("source") if isinstance(evidence, dict) else None
-        if isinstance(source, dict) and source.get("path"):
-            source_references.append(source)
-    result = {"schema": "ai-ppt-plus/pipeline-run/v2", "valid": technical_valid, "status": "passed" if technical_valid else "failed", "technical_valid": technical_valid, "technical_status": "passed" if technical_valid else "failed", "validation_scope": "incremental" if affected_pages else "full", "full_deck_validation_required": bool(affected_pages), "release_profile": "strict" if args.release else "not_run", "release_eligible": release_eligible, "release_status": release_report.get("status") if release_report else "not_run", "human_review_required": True, "human_review_status": "pending", "run_id": run_id, "project": str(project), "deck": str(deck), "deck_sha256": sha256(deck), "source": {"deck": str(deck), "deck_sha256": sha256(deck), "project": str(project)}, "source_references": source_references, "run_dir": str(run_dir), "execution": {"mode": args.execution_mode, "cache_dir": str(cache_dir) if cache_dir else None, "parallel_workers": executor.max_workers, "tasks_total": len(steps), "cache_hits": sum(1 for step in steps if step.get("cache_hit") is True), "duration_ms": round(sum(float(step.get("duration_ms", 0) or 0) for step in steps), 3), "affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)}, "steps": steps, "failed_steps": failed, "technical_failed_steps": technical_failed, "next_state": "delivered" if release_eligible else "validated" if technical_valid else "revision-required", "human_visual_review_required": True, "human_signoff_required": True, "quality_evidence": quality_evidence, "quality_degradations": quality_degradations}
+    quality_evidence, quality_degradations = collect_quality_evidence()
+    result = build_pipeline_result(steps, quality_evidence, quality_degradations, release_report)
     review_path = run_dir / "review.html"
     try:
         write_review(result, review_path)
@@ -632,8 +699,8 @@ def main() -> int:
         result["quality_degradations"].append({"code": "review_html_generation_failed", "message": f"{type(exc).__name__}: {exc}", "requires_human_review": True})
     (run_dir / "pipeline-result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False))
-    release_blocked = args.release and not release_eligible
-    return 0 if technical_valid and not release_blocked else 2
+    release_blocked = args.release and not result["release_eligible"]
+    return 0 if result["technical_valid"] and not release_blocked else 2
 
 
 if __name__ == "__main__":

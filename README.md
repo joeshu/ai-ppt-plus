@@ -27,8 +27,9 @@ python3 scripts/run_pipeline.py PROJECT --deck deck.pptx --expected-pages 6 \
   --affected-pages 2,5-6 --affected-region hero=80,120,640,260
 ```
 
-每次运行会在输出目录生成 `pipeline-result.json`、`project-report.json` 和
-`review.html`。技术通过、人工待审和可交付状态彼此独立；增量运行仍需在发布
-前执行一次全量验证。
+每次运行会在输出目录生成 `pipeline-result.json`、`project-report.json`、
+`report-bundle-validation.json` 和 `review.html`。报告包门禁会核对 PPTX、索引、
+聚合报告和子报告的 SHA-256 及增量范围；技术通过、人工待审和可交付状态彼此
+独立；增量运行仍需在发布前执行一次全量验证。
 
 主规范见 [`SKILL.md`](SKILL.md)。

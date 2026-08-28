@@ -50,6 +50,9 @@ def main() -> int:
             assert not validate(data, json.loads((ROOT / "assets/schemas/pipeline-run.schema.json").read_text(encoding="utf-8")))
             assert not validate(json.loads((run_dir / "report-index.json").read_text(encoding="utf-8")), json.loads((ROOT / "assets/schemas/report-index.schema.json").read_text(encoding="utf-8")))
             assert (run_dir / "review.html").is_file()
+            bundle = json.loads((run_dir / "report-bundle-validation.json").read_text(encoding="utf-8"))
+            assert bundle["valid"] is True and bundle["status"] == "passed"
+            assert data["quality_evidence"]["report_bundle_validation"]["valid"] is True
             runs.append(data)
         assert runs[1]["execution"]["cache_hits"] > 0, runs[1]["execution"]
         gate = json.loads((Path(runs[1]["run_dir"]) / "render-visual-gate.json").read_text(encoding="utf-8"))

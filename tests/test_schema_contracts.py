@@ -41,6 +41,21 @@ def main() -> int:
     del bad_envelope["technical_valid"]
     assert validate(bad_envelope, read(schemas / "report-envelope.schema.json"))
 
+    bundle = {
+        **envelope,
+        "report_type": "report-bundle-validation",
+        "technical_status": "passed",
+        "validation_scope": "full",
+        "full_deck_validation_required": False,
+        "deck_sha256": "a" * 64,
+        "report_index_sha256": "b" * 64,
+        "checks": [],
+        "pipeline_result_path": "pipeline-result.json",
+        "project_report_path": "project-report.json",
+        "report_index_path": "report-index.json",
+    }
+    assert not validate(bundle, read(schemas / "report-bundle-validation.schema.json"))
+
     pipeline = {
         "schema": "ai-ppt-plus/pipeline-run/v2",
         "valid": True,

@@ -40,6 +40,8 @@ def main() -> int:
     parser.add_argument("--require-embedded-fonts", action="store_true", help="block delivery unless the inspection report detects OOXML embedded fonts")
     parser.add_argument("--project-report")
     parser.add_argument("--require-project-report", action="store_true")
+    parser.add_argument("--report-bundle-validation")
+    parser.add_argument("--require-report-bundle", action="store_true")
     parser.add_argument("--render-visual-gate")
     parser.add_argument("--visual-comparison")
     parser.add_argument("--ocr-report")
@@ -62,6 +64,7 @@ def main() -> int:
     route_report = load(args.route_validation) if args.route_validation else None
     manifest_report = load(args.manifest_validation) if args.manifest_validation else None
     project_report = load(args.project_report) if args.project_report else None
+    report_bundle = load(args.report_bundle_validation) if args.report_bundle_validation else None
     font_delivery = load(args.font_delivery_report) if args.font_delivery_report else None
     handoff = load(args.handoff) if args.handoff else None
     blocking = []
@@ -122,6 +125,21 @@ def main() -> int:
         for child in (project_report.get("evidence") or {}).get("reports", []):
             child_path = Path(child.get("path", ""))
             check(not child.get("sha256") or (child_path.is_file() and sha256(child_path) == child.get("sha256")), "stale_child_report", "project aggregate child report changed after aggregation", child.get("report_type"))
+    if args.require_report_bundle:
+        check(bool(report_bundle and report_bundle.get("valid") is True), "report_bundle_missing_or_failed", "a fresh and consistent report-bundle-validation.json is required")
+    elif report_bundle:
+        check(report_bundle.get("valid") is True, "report_bundle_failed", "report-bundle-validation.json must be valid")
+    if report_bundle:
+        quality_evidence["report_bundle_validation"] = {
+            "valid": report_bundle.get("valid"),
+            "status": report_bundle.get("status"),
+            "validation_scope": report_bundle.get("validation_scope"),
+            "checks": report_bundle.get("checks", []),
+            "issues": report_bundle.get("issues", []),
+        }
+        check(not report_bundle.get("deck_sha256") or report_bundle.get("deck_sha256") == current_hash, "stale_report_bundle_deck", "report-bundle validation must describe the current PPTX")
+        bundle_index_path = Path(report_bundle.get("report_index_path", ""))
+        check(not report_bundle.get("report_index_sha256") or (bundle_index_path.is_file() and sha256(bundle_index_path) == report_bundle.get("report_index_sha256")), "stale_report_bundle_index", "report-bundle validation must describe the current report index")
 
     for option, label in ((args.render_visual_gate, "render-visual-gate"), (args.visual_comparison, "visual-comparison"), (args.ocr_report, "ocr-text-check")):
         report = load(option) if option else None

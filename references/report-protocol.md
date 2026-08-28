@@ -59,6 +59,38 @@ explicitly state why it is unavailable. A report with a stale deck hash, stale
 index hash, missing required child, or hidden child blocker cannot be used to
 claim delivery.
 
+## Bundle freshness gate
+
+The runner writes a provisional `pipeline-result.json` after aggregation and
+then runs `validate_report_bundle.py`. The resulting
+`report-bundle-validation.json` is a meta-gate (it is intentionally not added
+as an indexed child, which would create a self-referential aggregate). It
+checks that:
+
+- the pipeline result, report index, aggregate and current PPTX share one
+  fresh deck SHA-256;
+- the aggregate's report-index hash and every child/source/input hash are
+  current;
+- `full` versus `incremental`, affected pages and full-deck requirements agree;
+- failed steps and technical failed steps are complete and not hidden; and
+- deck/source references and the generated review status are present and
+  consistent when the HTML path is supplied.
+
+Run it directly for a previously generated run:
+
+```bash
+python scripts/validate_report_bundle.py pipeline-result.json \
+  --report-index report-index.json \
+  --project-report project-report.json \
+  --deck deck.pptx \
+  --review-html review.html \
+  --report report-bundle-validation.json
+```
+
+`--require-full` makes an incremental bundle fail. The gate only establishes
+technical evidence freshness; it never supplies human sign-off or release
+eligibility.
+
 The normalized status vocabulary is deliberately separate from a child report's
 native status: `passed`, `degraded`, `failed`, `needs-human-review`, `invalid`,
 or `missing`. A technical pass still has `human_review_status: pending` and
