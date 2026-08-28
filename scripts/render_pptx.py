@@ -452,10 +452,14 @@ def main():
                     if cp.returncode or not pdf.exists():
                         errors.append("LibreOffice conversion failed: " + (cp.stderr or cp.stdout).strip())
                     else:
-                        # A full first render is faster than one Poppler process
-                        # per page. Once only a subset is missing, rasterize just
-                        # those pages and preserve already restored cache hits.
-                        render_selection = None if selected is None and missing_pages == requested_pages else set(missing_pages)
+                        # Render each missing page through the selected-page
+                        # path.  A full pdftoppm stream can return exit code 0
+                        # while a target PNG is still truncated on some
+                        # environments; the per-page path verifies and retries
+                        # each artifact before publishing it.  This is slightly
+                        # slower, but makes the default no-cache render obey the
+                        # same decoded-PNG contract as incremental rendering.
+                        render_selection = set(missing_pages)
                         rendered, renderer, attempts = render_pdf(pdf, out, a.dpi, render_selection)
                         rendered_by_page = {page: path for path in rendered if (page := _page_number(path)) is not None}
                         rendered_missing = missing_pages.intersection(rendered_by_page)
