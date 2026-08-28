@@ -33,7 +33,7 @@ def obj(object_id, role, object_type, level, *, required=True, review=False, **e
 def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> dict:
     slides = layout.get("slides")
     if not isinstance(slides, list):
-        slides = [{k: layout[k] for k in ("background", "frame", "panels", "shapes", "icons", "texts") if k in layout}]
+        slides = [{k: layout[k] for k in ("background", "frame", "panels", "shapes", "groups", "icons", "texts") if k in layout}]
     panels_by_file = {}
     for panel in (panel_manifest or {}).get("panels", []):
         if isinstance(panel, dict) and panel.get("file"):
@@ -58,10 +58,17 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
         for i, shape in enumerate(slide.get("shapes", []), 1):
             sid = str(shape.get("object_id") or shape.get("name") or f"shape-{i:02d}")
             objects.append(obj(sid, "native-shape", "native_shape", "L1", review=False, contains_formal_content=False))
+        for i, group in enumerate(slide.get("groups", []), 1):
+            gid = str(group.get("object_id") or group.get("name") or f"group-{i:02d}")
+            children = [child.get("object_id") or child.get("name") for child in group.get("children", []) if isinstance(child, dict)]
+            objects.append(obj(gid, "component-group", "native_shape", "L1", review=False, contains_formal_content=False, editable_components=True, children=[child for child in children if child]))
         for i, icon in enumerate(slide.get("icons", []), 1):
             iid = str(icon.get("object_id") or icon.get("name") or f"icon-{i:02d}")
             role = str(icon.get("role") or "decorative-art")
-            objects.append(obj(iid, role, "extracted_icon", "L2", review=True, replaceable=True, contains_formal_content=False, source_path=str(icon.get("file", "")), provenance=str(icon.get("file", ""))))
+            icon_file = str(icon.get("file", ""))
+            is_svg = Path(icon_file).suffix.casefold() == ".svg"
+            vector_editable = bool(icon.get("vector_editable", False))
+            objects.append(obj(iid, role, "editable_vector" if vector_editable else "extracted_icon", "L1" if vector_editable else "L2", review=True, replaceable=True, vector_asset=is_svg, contains_formal_content=False, source_path=icon_file, provenance=icon_file))
         for i, text in enumerate(slide.get("texts", []), 1):
             tid = str(text.get("object_id") or text.get("name") or f"text-{i:02d}")
             objects.append(obj(

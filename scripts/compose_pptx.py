@@ -45,8 +45,12 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import posixpath
+import subprocess
 import sys
 import tempfile
+import zipfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 EMU_PER_INCH = 914400
@@ -61,7 +65,7 @@ def _load_deck(path: Path):
     data = json.loads(path.read_text(encoding="utf-8"))
     if "slides" not in data:
         # Treat the whole object as a single slide; lift deck-level keys out.
-        slide_keys = {"background", "frame", "panels", "shapes", "icons", "texts"}
+        slide_keys = {"background", "frame", "panels", "shapes", "groups", "icons", "texts"}
         slide = {k: data[k] for k in slide_keys if k in data}
         deck = {k: v for k, v in data.items() if k not in slide_keys}
         deck["slides"] = [slide]
@@ -193,6 +197,133 @@ def _add_outer_shadow(shape, blur_pt=6.0, dist_pt=3.0, alpha=0.35):
     spPr.append(eff)
 
 
+def _set_gradient_fill(shape, gradient: dict):
+    """Write a deterministic PresentationML linear gradient fill."""
+    from pptx.oxml.ns import qn
+    sp_pr = shape._element.spPr
+    for tag in ("a:solidFill", "a:noFill", "a:gradFill"):
+        old = sp_pr.find(qn(tag))
+        if old is not None:
+            sp_pr.remove(old)
+    stops = gradient.get("stops", []) if isinstance(gradient, dict) else []
+    if len(stops) < 2:
+        _die("gradient fill requires at least two color stops")
+    grad = sp_pr.makeelement(qn("a:gradFill"), {"rotWithShape": "1"})
+    gs_lst = grad.makeelement(qn("a:gsLst"), {})
+    for stop in stops:
+        if not isinstance(stop, dict) or not isinstance(stop.get("color"), str):
+            _die("gradient stops require color fields")
+        raw_pos = float(stop.get("position", stop.get("pos", 0)))
+        pos = max(0, min(100000, int(raw_pos * (100000 if 0 <= raw_pos <= 1 else 1000))))
+        gs = gs_lst.makeelement(qn("a:gs"), {"pos": str(pos)})
+        color = gs.makeelement(qn("a:srgbClr"), {"val": stop["color"].lstrip("#")[:6]})
+        if stop.get("opacity") is not None:
+            color.append(color.makeelement(qn("a:alpha"), {"val": str(int(max(0, min(1, float(stop["opacity"]))) * 100000))}))
+        gs.append(color)
+        gs_lst.append(gs)
+    grad.append(gs_lst)
+    angle = float(gradient.get("angle", 0))
+    grad.append(grad.makeelement(qn("a:lin"), {"ang": str(int(angle * 60000) % 21600000), "scaled": "1"}))
+    line = sp_pr.find(qn("a:ln"))
+    if line is not None:
+        sp_pr.insert(list(sp_pr).index(line), grad)
+    else:
+        sp_pr.append(grad)
+
+
+def _apply_shape_fill(shape, spec: dict):
+    gradient = spec.get("gradient") or spec.get("fill_gradient")
+    if gradient:
+        _set_gradient_fill(shape, gradient)
+    elif spec.get("fill"):
+        shape.fill.solid()
+        shape.fill.fore_color.rgb = _hex_to_rgb(spec["fill"])
+        if spec.get("opacity") is not None:
+            _set_fill_alpha(shape, float(spec["opacity"]))
+    else:
+        shape.fill.background()
+
+
+def _set_alt_text(shape, text: str | None):
+    if not text:
+        return
+    element = shape._element
+    for attr in ("nvSpPr", "nvPicPr", "nvGrpSpPr", "nvGraphicFramePr"):
+        container = getattr(element, attr, None)
+        if container is not None and getattr(container, "cNvPr", None) is not None:
+            container.cNvPr.set("descr", str(text))
+            return
+
+
+def _replace_svg_media(pptx_path: Path, svg_assets: list[tuple[int, str, Path]]):
+    """Replace temporary PNG media with native SVG package parts."""
+    if not svg_assets:
+        return
+    p_ns = "http://schemas.openxmlformats.org/presentationml/2006/main"
+    a_ns = "http://schemas.openxmlformats.org/drawingml/2006/main"
+    r_ns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+    with zipfile.ZipFile(pptx_path, "r") as zin:
+        entries = {name: zin.read(name) for name in zin.namelist()}
+    replacements = []
+    for slide_no, object_name, svg_path in svg_assets:
+        slide_name = f"ppt/slides/slide{slide_no}.xml"
+        rels_name = f"ppt/slides/_rels/slide{slide_no}.xml.rels"
+        root = ET.fromstring(entries[slide_name])
+        rel_root = ET.fromstring(entries[rels_name])
+        target = None
+        for pic in root.findall(f".//{{{p_ns}}}pic"):
+            node = pic.find(f".//{{{p_ns}}}cNvPr")
+            if node is None or node.get("name") != object_name:
+                continue
+            blip = pic.find(f".//{{{a_ns}}}blip")
+            rid = blip.get(f"{{{r_ns}}}embed") if blip is not None else None
+            for rel in rel_root:
+                if rel.get("Id") == rid:
+                    target = posixpath.normpath(posixpath.join("ppt/slides", rel.get("Target")))
+                    rel.set("Target", "../media/" + Path(target).with_suffix(".svg").name)
+                    break
+            break
+        if target is None or target not in entries:
+            _die(f"could not resolve SVG media relationship for {object_name}")
+        new_target = str(Path(target).with_suffix(".svg")).replace("\\", "/")
+        entries[rels_name] = ET.tostring(rel_root, encoding="utf-8", xml_declaration=True)
+        entries[new_target] = svg_path.read_bytes()
+        del entries[target]
+        replacements.append((target, new_target))
+    content = ET.fromstring(entries["[Content_Types].xml"])
+    for old, new in replacements:
+        for override in content:
+            if override.get("PartName") == "/" + old:
+                override.set("PartName", "/" + new)
+                override.set("ContentType", "image/svg+xml")
+    entries["[Content_Types].xml"] = ET.tostring(content, encoding="utf-8", xml_declaration=True)
+    tmp = pptx_path.with_suffix(".svg-rewrite.tmp")
+    with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as zout:
+        for name, data in entries.items():
+            zout.writestr(name, data)
+    tmp.replace(pptx_path)
+
+
+def _svg_to_png(svg_path: Path) -> Path:
+    fd, temp_name = tempfile.mkstemp(suffix=".png")
+    os.close(fd)
+    output = Path(temp_name)
+    try:
+        from cairosvg import svg2png
+        svg2png(url=str(svg_path), write_to=str(output))
+    except ImportError:
+        for command in (("inkscape", str(svg_path), "--export-filename", str(output)), ("convert", str(svg_path), str(output))):
+            try:
+                result = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False)
+            except (FileNotFoundError, subprocess.TimeoutExpired):
+                continue
+            if result.returncode == 0 and output.is_file():
+                return output
+        output.unlink(missing_ok=True)
+        _die(f"SVG asset requires cairosvg, inkscape, or ImageMagick: {svg_path}")
+    return output
+
+
 def build_pptx(deck, out_path: Path):
     from pptx import Presentation
     from pptx.util import Emu, Pt
@@ -227,6 +358,7 @@ def build_pptx(deck, out_path: Path):
     anchor_map = {"top": MSO_ANCHOR.TOP, "middle": MSO_ANCHOR.MIDDLE,
                   "center": MSO_ANCHOR.MIDDLE, "bottom": MSO_ANCHOR.BOTTOM}
 
+    svg_assets = []
     for idx, sl in enumerate(deck["slides"], 1):
         slide = prs.slides.add_slide(blank)
 
@@ -237,6 +369,7 @@ def build_pptx(deck, out_path: Path):
                 _die(f"slide {idx}: background not found: {bg_path}")
             picture = slide.shapes.add_picture(str(bg_path), 0, 0, width=Emu(sw_emu), height=Emu(sh_emu))
             picture.name = str(sl.get("background_object_id", "background"))
+            _set_alt_text(picture, sl.get("background_alt_text"))
 
         frame = sl.get("frame")
         if frame:
@@ -245,6 +378,7 @@ def build_pptx(deck, out_path: Path):
                 _die(f"slide {idx}: frame not found: {fr_path}")
             picture = slide.shapes.add_picture(str(fr_path), 0, 0, width=Emu(sw_emu), height=Emu(sh_emu))
             picture.name = str(sl.get("frame_object_id", "frame"))
+            _set_alt_text(picture, sl.get("frame_alt_text"))
 
         for shape_index, shp in enumerate(sl.get("shapes", []), 1):
             fx = _frac(deck, shp, "x", "x", ref_w)
@@ -273,13 +407,7 @@ def build_pptx(deck, out_path: Path):
                 except Exception:
                     pass
 
-            if shp.get("fill"):
-                shape.fill.solid()
-                shape.fill.fore_color.rgb = _hex_to_rgb(shp["fill"])
-                if shp.get("opacity") is not None:
-                    _set_fill_alpha(shape, float(shp["opacity"]))
-            else:
-                shape.fill.background()
+            _apply_shape_fill(shape, shp)
 
             if shp.get("line"):
                 shape.line.color.rgb = _hex_to_rgb(shp["line"])
@@ -294,6 +422,55 @@ def build_pptx(deck, out_path: Path):
 
             if shp.get("rotation"):
                 shape.rotation = float(shp["rotation"])
+            _set_alt_text(shape, shp.get("alt_text"))
+
+        # Groups preserve a semantic component boundary while retaining
+        # independently editable child shapes. Children use slide coordinates
+        # by default; set children_coordinate_space=local to position them
+        # inside the group's x/y/w/h box using fractional local coordinates.
+        for group_index, group_spec in enumerate(sl.get("groups", []), 1):
+            group = slide.shapes.add_group_shape()
+            group.name = str(group_spec.get("object_id") or group_spec.get("name") or f"group-{group_index:02d}")
+            local = group_spec.get("children_coordinate_space") == "local"
+            gx = _frac(deck, group_spec, "x", "x", ref_w) if all(k in group_spec for k in ("x", "y", "w", "h")) else 0
+            gy = _frac(deck, group_spec, "y", "y", ref_h) if all(k in group_spec for k in ("x", "y", "w", "h")) else 0
+            gw = _frac(deck, group_spec, "w", "w", ref_w) if all(k in group_spec for k in ("x", "y", "w", "h")) else 1
+            gh = _frac(deck, group_spec, "h", "h", ref_h) if all(k in group_spec for k in ("x", "y", "w", "h")) else 1
+            for child_index, child in enumerate(group_spec.get("children", []), 1):
+                if not isinstance(child, dict):
+                    continue
+                child = dict(child)
+                if local:
+                    child["x"] = gx + _frac(deck, child, "x", "x", ref_w) * gw
+                    child["y"] = gy + _frac(deck, child, "y", "y", ref_h) * gh
+                    child["w"] = _frac(deck, child, "w", "w", ref_w) * gw
+                    child["h"] = _frac(deck, child, "h", "h", ref_h) * gh
+                    child_deck = dict(deck, units="fraction")
+                else:
+                    child_deck = deck
+                cfx = _frac(child_deck, child, "x", "x", ref_w)
+                cfy = _frac(child_deck, child, "y", "y", ref_h)
+                cfw = _frac(child_deck, child, "w", "w", ref_w)
+                cfh = _frac(child_deck, child, "h", "h", ref_h)
+                if child.get("type", "rounded_rect") == "line":
+                    conn = group.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Emu(int(cfx * sw_emu)), Emu(int(cfy * sh_emu)), Emu(int((cfx + cfw) * sw_emu)), Emu(int((cfy + cfh) * sh_emu)))
+                    conn.line.color.rgb = _hex_to_rgb(child.get("line", child.get("fill", "#FFFFFF")))
+                    conn.line.width = Pt(float(child.get("line_width", 1.5)))
+                    conn.name = str(child.get("object_id") or child.get("name") or f"{group.name}-child-{child_index:02d}")
+                    continue
+                child_shape = group.shapes.add_shape(shape_map.get(child.get("type", "rounded_rect"), MSO_SHAPE.ROUNDED_RECTANGLE), Emu(int(cfx * sw_emu)), Emu(int(cfy * sh_emu)), Emu(int(cfw * sw_emu)), Emu(int(cfh * sh_emu)))
+                child_shape.name = str(child.get("object_id") or child.get("name") or f"{group.name}-child-{child_index:02d}")
+                _apply_shape_fill(child_shape, child)
+                if child.get("line"):
+                    child_shape.line.color.rgb = _hex_to_rgb(child["line"])
+                    child_shape.line.width = Pt(float(child.get("line_width", 1.0)))
+                else:
+                    child_shape.line.fill.background()
+                if child.get("rotation"):
+                    child_shape.rotation = float(child["rotation"])
+                _set_alt_text(child_shape, child.get("alt_text"))
+            group.shapes._recalculate_extents()
+            _set_alt_text(group, group_spec.get("alt_text"))
 
         # Semantic panels are independent movable assets. They intentionally
         # render before icons and text, and are not folded into the full-slide
@@ -310,6 +487,7 @@ def build_pptx(deck, out_path: Path):
                 str(pp), Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu)),
                 width=Emu(int(fw * sw_emu)), height=Emu(int(fh * sh_emu)))
             picture.name = str(panel.get("object_id") or panel.get("panel_id") or f"panel-{idx}")
+            _set_alt_text(picture, panel.get("alt_text"))
 
         for icon_index, ic in enumerate(sl.get("icons", []), 1):
             ip = _resolve(assets_dir, ic["file"])
@@ -319,10 +497,16 @@ def build_pptx(deck, out_path: Path):
             fy = _frac(deck, ic, "y", "y", ref_h)
             fw = _frac(deck, ic, "w", "w", ref_w)
             fh = _frac(deck, ic, "h", "h", ref_h)
+            source_path = ip
+            if ip.suffix.casefold() == ".svg":
+                source_path = _svg_to_png(ip)
             picture = slide.shapes.add_picture(
-                str(ip), Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu)),
+                str(source_path), Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu)),
                 width=Emu(int(fw * sw_emu)), height=Emu(int(fh * sh_emu)))
             picture.name = str(ic.get("name") or ic.get("object_id") or f"icon-{icon_index:02d}")
+            _set_alt_text(picture, ic.get("alt_text"))
+            if ip.suffix.casefold() == ".svg":
+                svg_assets.append((idx, picture.name, ip))
 
         for tx in sl.get("texts", []):
             fx = _frac(deck, tx, "x", "x", ref_w)
@@ -388,6 +572,7 @@ def build_pptx(deck, out_path: Path):
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(out_path))
+    _replace_svg_media(out_path, svg_assets)
     print(f"Wrote {out_path}  ({len(deck['slides'])} slides)")
 
 
