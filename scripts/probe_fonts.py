@@ -19,7 +19,15 @@ def license_status(font_dir):
         return {'status':'not_applicable','files':[]}
     names={'license','licence','copying','notice','readme'}
     files=sorted(str(x) for x in font_dir.rglob('*') if x.is_file() and x.name.lower().split('.')[0] in names)
-    return {'status':'declared' if files else 'unverified','files':files}
+    manifest = font_dir / 'font-manifest.json'
+    manifest_declared = False
+    if manifest.is_file():
+        try:
+            data = json.loads(manifest.read_text(encoding='utf-8'))
+            manifest_declared = bool(data.get('license') and data.get('license_url')) if isinstance(data, dict) else False
+        except (OSError, ValueError, UnicodeError):
+            manifest_declared = False
+    return {'status':'declared' if files or manifest_declared else 'unverified','files':files,'manifest_declared':manifest_declared}
 def main():
     ap=argparse.ArgumentParser(description=__doc__,formatter_class=argparse.RawDescriptionHelpFormatter);ap.add_argument('--output','-o',required=True);ap.add_argument('--font-dir');ap.add_argument('--font',action='append',default=[]);ap.add_argument('--require-cjk',action='store_true',help='return a failing exit code when no CJK-capable family resolves');a=ap.parse_args(); tool=shutil.which('fc-match')
     if not tool:
