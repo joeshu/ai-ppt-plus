@@ -52,6 +52,7 @@ def main() -> int:
     input_hashes = {}
     required_failures = 0
     optional_failures = 0
+    component_usage = None
     for position, entry in enumerate(reports):
         if not isinstance(entry, dict):
             issues.append({"severity": "blocker", "code": "report_entry_not_object", "index": position})
@@ -97,6 +98,8 @@ def main() -> int:
         child_valid = report.get("valid") if isinstance(report.get("valid"), bool) else report.get("ok") if isinstance(report.get("ok"), bool) else entry.get("step_ok") if isinstance(entry.get("step_ok"), bool) else None
         child_status = report.get("status") or ("passed" if child_valid else "failed" if child_valid is False else "legacy")
         child_issues = report.get("issues", report.get("errors", []))
+        if isinstance(report.get("component_usage"), dict):
+            component_usage = report["component_usage"]
         evidence.update({"present": True, "valid": child_valid, "status": child_status, "schema": report.get("schema"), "sha256": report_hash, "issues": child_issues})
         if child_valid is not True:
             severity = "blocker" if required else "major"
@@ -129,6 +132,7 @@ def main() -> int:
         "reports_total": len(reports),
         "required_failures": required_failures,
         "optional_failures": optional_failures,
+        "component_usage": component_usage,
         "requires_human_closeout": True,
         "may_claim_complete": False,
         "next_state": "validated" if valid else "revision-required",

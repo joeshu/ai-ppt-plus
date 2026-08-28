@@ -14,6 +14,7 @@ TYPE_LEVELS = {
     "native_shape": "L1",
     "editable_vector": "L1",
     "editable_chart": "L1",
+    "editable_table": "L1",
     "independent_image": "L2",
     "extracted_icon": "L2",
     "decorative_art": "L2",
@@ -79,6 +80,8 @@ def validate_objects(objects: Any) -> List[Dict[str, Any]]:
             issues.append(_issue("blocker", "editability_level_blocked", f"{level} is not deliverable", index, obj))
         if level == "L1" and object_type == "editable_chart" and not (_nonempty(obj.get("data_source")) or _nonempty(obj.get("provenance"))):
             issues.append(_issue("blocker", "editable_chart_data_source_missing", "editable charts need traceable data_source or provenance", index, obj))
+        if level == "L1" and object_type == "editable_table" and not (_nonempty(obj.get("data_source")) or _nonempty(obj.get("provenance"))):
+            issues.append(_issue("blocker", "editable_table_data_source_missing", "editable tables need traceable data_source or provenance", index, obj))
         if level == "L2":
             if not (_nonempty(obj.get("provenance")) or _nonempty(obj.get("source_ref")) or _nonempty(obj.get("source_path"))):
                 issues.append(_issue("blocker", "independent_image_provenance_missing", "L2 images need provenance or a source reference", index, obj))

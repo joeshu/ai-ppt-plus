@@ -65,7 +65,7 @@ def main() -> int:
         errors.append({"code": "panels_missing", "message": "at least one semantic panel is required"})
     if args.expected_panel_count is not None and len(panel_ids) != args.expected_panel_count:
         errors.append({"code": "panel_count_mismatch", "expected": args.expected_panel_count, "observed": len(panel_ids)})
-    result = {"schema": "ai-ppt-plus/slide-object-manifest-validation/v1", "valid": not errors and not (args.strict and warnings), "manifest": str(path.resolve()), "slides": slide_summaries, "panel_ids": panel_ids, "errors": errors, "warnings": warnings, "human_visual_review_required": True}
+    result = {"schema": "ai-ppt-plus/slide-object-manifest-validation/v1", "valid": not errors and not (args.strict and warnings), "manifest": str(path.resolve()), "slides": slide_summaries, "panel_ids": panel_ids, "component_usage": data.get("component_usage", {"instances": 0, "distinct_components": 0, "by_component": {}, "reused_component_types": 0}), "errors": errors, "warnings": warnings, "human_visual_review_required": True}
     if args.report:
         out = Path(args.report); out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

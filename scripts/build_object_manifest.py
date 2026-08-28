@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+from collections import Counter
 from pathlib import Path
 
 from text_model import normalize_text_spec
@@ -94,7 +95,9 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
                 ),
             ))
         output.append({"slide_no": slide_no, "objects": objects})
-    return {"schema": "ai-ppt-plus/slide-object-manifest/v1", "project_id": layout.get("project_id", ""), "layout_ref": "layout.json", "slides": output}
+    refs = [item.get("component_ref") for slide in output for item in slide["objects"] if item.get("component_ref")]
+    counts = Counter(refs)
+    return {"schema": "ai-ppt-plus/slide-object-manifest/v1", "project_id": layout.get("project_id", ""), "layout_ref": "layout.json", "slides": output, "component_usage": {"instances": len(refs), "distinct_components": len(counts), "by_component": dict(sorted(counts.items())), "reused_component_types": sum(1 for count in counts.values() if count > 1)}}
 
 
 def main() -> int:
