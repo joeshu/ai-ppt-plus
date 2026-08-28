@@ -33,7 +33,7 @@ def obj(object_id, role, object_type, level, *, required=True, review=False, **e
 def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> dict:
     slides = layout.get("slides")
     if not isinstance(slides, list):
-        slides = [{k: layout[k] for k in ("background", "frame", "panels", "shapes", "groups", "icons", "texts") if k in layout}]
+        slides = [{k: layout[k] for k in ("background", "frame", "panels", "shapes", "groups", "tables", "charts", "speaker_notes", "notes", "icons", "texts") if k in layout}]
     panels_by_file = {}
     for panel in (panel_manifest or {}).get("panels", []):
         if isinstance(panel, dict) and panel.get("file"):
@@ -62,6 +62,12 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
             gid = str(group.get("object_id") or group.get("name") or f"group-{i:02d}")
             children = [child.get("object_id") or child.get("name") for child in group.get("children", []) if isinstance(child, dict)]
             objects.append(obj(gid, "component-group", "native_shape", "L1", review=False, contains_formal_content=False, editable_components=True, children=[child for child in children if child]))
+        for i, table in enumerate(slide.get("tables", []), 1):
+            tid = str(table.get("object_id") or table.get("name") or f"table-{i:02d}")
+            objects.append(obj(tid, "data-table", "editable_table", "L1", review=True, contains_formal_content=True, data_source=table.get("data_source")))
+        for i, chart in enumerate(slide.get("charts", []), 1):
+            cid = str(chart.get("object_id") or chart.get("name") or f"chart-{i:02d}")
+            objects.append(obj(cid, "data-chart", "editable_chart", "L1", review=True, contains_formal_content=True, data_source=chart.get("data_source"), chart_type=chart.get("type", "column")))
         for i, icon in enumerate(slide.get("icons", []), 1):
             iid = str(icon.get("object_id") or icon.get("name") or f"icon-{i:02d}")
             role = str(icon.get("role") or "decorative-art")

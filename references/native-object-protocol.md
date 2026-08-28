@@ -53,3 +53,20 @@ moved as a unit in PowerPoint.
 
 Formal text must remain in `texts[]`; it must not be baked into a shape, SVG,
 or raster asset. The complete brand logo remains a `brand_lockup` asset.
+
+## Tables, charts, themes, and notes
+
+`tables[]` creates an editable native table. It requires `rows`, plus the
+usual `object_id`, `x`, `y`, `w`, and `h`. `columns` is optional when the first
+row establishes the width. `data_source` is required for authoritative data
+in production manifests.
+
+`charts[]` creates an editable chart from `categories` and `series` data.
+Supported types are `column`, `bar`, `line`, `pie`, and `doughnut`. Each
+series has a `name` and numeric `values`; record `data_source` and do not
+invent values during reconstruction.
+
+Deck-level `theme` may provide default `font`, `text_color`, and `size` for
+native text and tables. Explicit object styles override those defaults.
+`speaker_notes` (or `notes`) stores editable presenter notes in the slide's
+notes part; notes are not rendered as slide content.

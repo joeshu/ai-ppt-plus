@@ -65,7 +65,7 @@ def _load_deck(path: Path):
     data = json.loads(path.read_text(encoding="utf-8"))
     if "slides" not in data:
         # Treat the whole object as a single slide; lift deck-level keys out.
-        slide_keys = {"background", "frame", "panels", "shapes", "groups", "icons", "texts"}
+        slide_keys = {"background", "frame", "panels", "shapes", "groups", "tables", "charts", "speaker_notes", "notes", "icons", "texts"}
         slide = {k: data[k] for k in slide_keys if k in data}
         deck = {k: v for k, v in data.items() if k not in slide_keys}
         deck["slides"] = [slide]
@@ -329,6 +329,8 @@ def build_pptx(deck, out_path: Path):
     from pptx.util import Emu, Pt
     from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
     from pptx.enum.shapes import MSO_SHAPE, MSO_CONNECTOR
+    from pptx.chart.data import CategoryChartData
+    from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
 
     shape_map = {"rect": MSO_SHAPE.RECTANGLE, "rounded_rect": MSO_SHAPE.ROUNDED_RECTANGLE,
                  "oval": MSO_SHAPE.OVAL, "ellipse": MSO_SHAPE.OVAL,
@@ -338,6 +340,9 @@ def build_pptx(deck, out_path: Path):
                  "pentagon": MSO_SHAPE.REGULAR_PENTAGON, "hexagon": MSO_SHAPE.HEXAGON,
                  "parallelogram": MSO_SHAPE.PARALLELOGRAM, "trapezoid": MSO_SHAPE.TRAPEZOID,
                  "diamond": MSO_SHAPE.DIAMOND}
+    chart_map = {"bar": XL_CHART_TYPE.BAR_CLUSTERED, "column": XL_CHART_TYPE.COLUMN_CLUSTERED,
+                 "line": XL_CHART_TYPE.LINE_MARKERS, "pie": XL_CHART_TYPE.PIE,
+                 "doughnut": XL_CHART_TYPE.DOUGHNUT}
 
     assets_dir = Path(deck["assets_dir"])
     sw_in = float(deck["slide_width_in"])
@@ -359,6 +364,7 @@ def build_pptx(deck, out_path: Path):
                   "center": MSO_ANCHOR.MIDDLE, "bottom": MSO_ANCHOR.BOTTOM}
 
     svg_assets = []
+    theme = deck.get("theme", {}) if isinstance(deck.get("theme", {}), dict) else {}
     for idx, sl in enumerate(deck["slides"], 1):
         slide = prs.slides.add_slide(blank)
 
@@ -472,6 +478,62 @@ def build_pptx(deck, out_path: Path):
             group.shapes._recalculate_extents()
             _set_alt_text(group, group_spec.get("alt_text"))
 
+        for table_index, table_spec in enumerate(sl.get("tables", []), 1):
+            rows = table_spec.get("rows", [])
+            columns = int(table_spec.get("columns") or (len(rows[0]) if rows and isinstance(rows[0], list) else 0))
+            if not rows or columns <= 0:
+                _die(f"slide {idx}: table requires non-empty rows and columns")
+            table = slide.shapes.add_table(len(rows), columns,
+                Emu(int(_frac(deck, table_spec, "x", "x", ref_w) * sw_emu)),
+                Emu(int(_frac(deck, table_spec, "y", "y", ref_h) * sh_emu)),
+                Emu(int(_frac(deck, table_spec, "w", "w", ref_w) * sw_emu)),
+                Emu(int(_frac(deck, table_spec, "h", "h", ref_h) * sh_emu))).table
+            frame = table._graphic_frame
+            frame.name = str(table_spec.get("object_id") or table_spec.get("name") or f"table-{table_index:02d}")
+            font = str(table_spec.get("font") or theme.get("font") or "Microsoft YaHei")
+            for ri, row in enumerate(rows):
+                for ci in range(columns):
+                    cell = table.cell(ri, ci)
+                    cell.text = str(row[ci]) if ci < len(row) else ""
+                    for para in cell.text_frame.paragraphs:
+                        for run in para.runs:
+                            run.font.name = font
+                            run.font.size = Pt(float(table_spec.get("size", theme.get("size", 12))))
+                            if table_spec.get("color") or theme.get("text_color"):
+                                run.font.color.rgb = _hex_to_rgb(table_spec.get("color") or theme.get("text_color"))
+            _set_alt_text(frame, table_spec.get("alt_text"))
+
+        for chart_index, chart_spec in enumerate(sl.get("charts", []), 1):
+            chart_type = str(chart_spec.get("type", "column")).casefold()
+            if chart_type not in chart_map:
+                _die(f"slide {idx}: unsupported chart type: {chart_type}")
+            data = CategoryChartData()
+            data.categories = [str(value) for value in chart_spec.get("categories", [])]
+            series = chart_spec.get("series", [])
+            if not data.categories or not series:
+                _die(f"slide {idx}: chart requires categories and series")
+            for item in series:
+                data.add_series(str(item.get("name", "Series")), [float(value) for value in item.get("values", [])])
+            frame = slide.shapes.add_chart(chart_map[chart_type],
+                Emu(int(_frac(deck, chart_spec, "x", "x", ref_w) * sw_emu)),
+                Emu(int(_frac(deck, chart_spec, "y", "y", ref_h) * sh_emu)),
+                Emu(int(_frac(deck, chart_spec, "w", "w", ref_w) * sw_emu)),
+                Emu(int(_frac(deck, chart_spec, "h", "h", ref_h) * sh_emu)), data)
+            frame.name = str(chart_spec.get("object_id") or chart_spec.get("name") or f"chart-{chart_index:02d}")
+            chart = frame.chart
+            chart.has_title = bool(chart_spec.get("title"))
+            if chart.has_title:
+                chart.chart_title.text_frame.text = str(chart_spec["title"])
+            chart.has_legend = bool(chart_spec.get("legend", len(series) > 1))
+            if chart.has_legend:
+                chart.legend.position = XL_LEGEND_POSITION.BOTTOM
+                chart.legend.include_in_layout = False
+            _set_alt_text(frame, chart_spec.get("alt_text"))
+
+        notes = sl.get("speaker_notes") or sl.get("notes")
+        if notes:
+            slide.notes_slide.notes_text_frame.text = str(notes)
+
         # Semantic panels are independent movable assets. They intentionally
         # render before icons and text, and are not folded into the full-slide
         # frame layer.
@@ -529,8 +591,8 @@ def build_pptx(deck, out_path: Path):
 
             size_pt = _text_size_pt(tx, sh_pt, ref_h)
 
-            color = _hex_to_rgb(tx.get("color", "#111111"))
-            font = tx.get("font", "Microsoft YaHei")
+            color = _hex_to_rgb(tx.get("color", theme.get("text_color", "#111111")))
+            font = tx.get("font", theme.get("font", "Microsoft YaHei"))
             bold = bool(tx.get("bold", False))
             italic = bool(tx.get("italic", False))
             align = align_map.get(tx.get("align", "left"), PP_ALIGN.LEFT)
