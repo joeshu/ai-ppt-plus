@@ -20,7 +20,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from atomic_output import atomic_write_json
+from atomic_output import atomic_write_json, atomic_write_text
 
 
 PAGE_CACHE_SCHEMA = "ai-ppt-plus/page-render-cache/v1"
@@ -437,9 +437,9 @@ def main():
                     env = os.environ.copy()
                     if font_dir:
                         conf = Path(td) / "fonts.conf"
-                        conf.write_text(
+                        atomic_write_text(
+                            conf,
                             f'<?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "fonts.dtd"><fontconfig><dir>{font_dir}</dir><include ignore_missing="yes">/etc/fonts/fonts.conf</include></fontconfig>',
-                            encoding="utf-8",
                         )
                         env["FONTCONFIG_FILE"] = str(conf)
                     cp = subprocess.run(

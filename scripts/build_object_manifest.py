@@ -29,6 +29,12 @@ def _file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _json_sha256(value: object) -> str:
+    return hashlib.sha256(
+        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
 def _asset_path(layout: dict, value: object) -> Path | None:
     if not isinstance(value, str) or not value:
         return None
@@ -151,10 +157,18 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
             objects.append(obj(gid, "component-group", "native_group", "L1", review=False, contains_formal_content=False, editable_components=True, children=[child for child in children if child], component_ref=group.get("component_id")))
         for i, table in enumerate(slide.get("tables", []), 1):
             tid = str(table.get("object_id") or table.get("name") or f"table-{i:02d}")
-            objects.append(obj(tid, "data-table", "editable_table", "L1", review=True, contains_formal_content=True, data_source=table.get("data_source"), data_snapshot=_table_snapshot(table), **_data_source_fields(layout, table.get("data_source")), component_ref=table.get("component_id")))
+            snapshot = _table_snapshot(table)
+            source_fields = _data_source_fields(layout, table.get("data_source"))
+            if snapshot is not None and "data_source_sha256" not in source_fields:
+                source_fields["data_source_sha256"] = _json_sha256(snapshot)
+            objects.append(obj(tid, "data-table", "editable_table", "L1", review=True, contains_formal_content=True, data_source=table.get("data_source"), data_snapshot=snapshot, **source_fields, component_ref=table.get("component_id")))
         for i, chart in enumerate(slide.get("charts", []), 1):
             cid = str(chart.get("object_id") or chart.get("name") or f"chart-{i:02d}")
-            objects.append(obj(cid, "data-chart", "editable_chart", "L1", review=True, contains_formal_content=True, data_source=chart.get("data_source"), data_snapshot=_chart_snapshot(chart), **_data_source_fields(layout, chart.get("data_source")), chart_type=chart.get("type", "column"), component_ref=chart.get("component_id")))
+            snapshot = _chart_snapshot(chart)
+            source_fields = _data_source_fields(layout, chart.get("data_source"))
+            if snapshot is not None and "data_source_sha256" not in source_fields:
+                source_fields["data_source_sha256"] = _json_sha256(snapshot)
+            objects.append(obj(cid, "data-chart", "editable_chart", "L1", review=True, contains_formal_content=True, data_source=chart.get("data_source"), data_snapshot=snapshot, **source_fields, chart_type=chart.get("type", "column"), component_ref=chart.get("component_id")))
         for i, icon in enumerate(slide.get("icons", []), 1):
             iid = str(icon.get("object_id") or icon.get("name") or f"icon-{i:02d}")
             role = str(icon.get("role") or "decorative-art")

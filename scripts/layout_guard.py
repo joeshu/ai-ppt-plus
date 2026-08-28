@@ -18,6 +18,7 @@ import json
 import math
 import sys
 from pathlib import Path
+from atomic_output import atomic_write_json, atomic_write_text
 
 
 SLIDE_KEYS = {"background", "frame", "shapes", "icons", "texts"}
@@ -40,7 +41,7 @@ def _load_deck(path: Path) -> dict:
 
 
 def _write_deck(path: Path, data: dict) -> None:
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_text(path.resolve(), json.dumps(data, ensure_ascii=False, indent=2) + "\n")
 
 
 def _as_float_list(value, label: str) -> list[float] | None:
@@ -307,8 +308,7 @@ def main() -> None:
     valid = not errors and not (args.strict and warnings)
     if args.report:
         report = Path(args.report)
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps({
+        atomic_write_json(report.resolve(), {
             "schema": "ai-ppt-plus/layout-guard-run/v1",
             "valid": valid,
             "status": "passed" if valid else "blocked",
@@ -320,7 +320,7 @@ def main() -> None:
             "issues": ([{"severity": "blocker", "code": "layout_error", "message": message} for message in errors]
                        + [{"severity": "warning", "code": "layout_warning", "message": message} for message in warnings]),
             "strict": args.strict,
-        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        })
     if not valid:
         raise SystemExit(2)
 

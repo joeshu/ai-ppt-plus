@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 
 from PIL import Image, ImageStat
+from atomic_output import atomic_write_json
 
 
 def region_spec(value):
@@ -70,7 +71,7 @@ def main() -> int:
         if args.report:
             report = Path(args.report)
             report.parent.mkdir(parents=True, exist_ok=True)
-            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+            atomic_write_json(report.resolve(), result)
         print(json.dumps(result, ensure_ascii=False))
         return 2
     pages = sorted(render_dir.glob("slide-*.png"), key=lambda path: int(path.stem.split("-")[-1])) if render_dir.is_dir() else []
@@ -104,7 +105,7 @@ def main() -> int:
     if args.report:
         report = Path(args.report)
         report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(report.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

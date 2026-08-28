@@ -17,6 +17,7 @@ import shutil
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 
 SMOKE_TEXT = "中文联通案例存量双终端优秀方案概述营销重点包装复盘"
@@ -154,8 +155,7 @@ def main() -> int:
         "embedding": manifest.get("embedding") if isinstance(manifest, dict) else None,
     }
     output = Path(args.report)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(output.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

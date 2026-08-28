@@ -6,6 +6,20 @@
   "design_system_revision": 1,
   "backend": "待验证",
   "editability_protocol": "L0-L5/v1",
+  "gate_requirements": {
+    "object_manifest": true,
+    "semantic_object_audit": true,
+    "manifest_registry": true,
+    "text_model": true,
+    "text_style_map": false,
+    "icon_assets": false,
+    "imagegen_assets": false,
+    "panel_assets": false,
+    "panel_approval": false,
+    "gradient_visual": false,
+    "source_image_validation": false,
+    "reference_audit": false
+  },
   "assets": [],
   "slides": [{
     "slide_id": "S01",

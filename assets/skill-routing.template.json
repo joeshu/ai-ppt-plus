@@ -21,5 +21,21 @@
       "forbids": ["narrative-authority", "editability-policy", "release-claim"]
     }
   ],
-  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1"]
+  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1"],
+  "bindings": {
+    "orchestrator": {
+      "skill": "ai-ppt-plus",
+      "entrypoint": "scripts/run_pipeline.py"
+    },
+    "reconstruction": {
+      "skill": "GordenImage2PPTX",
+      "invocation": "external-skill",
+      "required_for": ["reference-reconstruction"]
+    },
+    "authoring": {
+      "backend": "python-pptx",
+      "entrypoint": "scripts/authoring_backend.py",
+      "font_postprocessor": "scripts/embed_fonts.py"
+    }
+  }
 }

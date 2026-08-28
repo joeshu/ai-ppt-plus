@@ -66,15 +66,21 @@ def main() -> None:
         font_manifest = args.font_manifest or deck.get("font_manifest")
         if not font_dir and not font_manifest:
             _die("--embed-fonts requires --font-dir or --font-manifest")
-        build_with_embedded_fonts(
-            deck,
-            output_path,
-            font_dir=font_dir,
-            font_manifest=font_manifest,
-            embedding_report=Path(args.embedding_report).resolve() if args.embedding_report else None,
-        )
+        try:
+            build_with_embedded_fonts(
+                deck,
+                output_path,
+                font_dir=font_dir,
+                font_manifest=font_manifest,
+                embedding_report=Path(args.embedding_report).resolve() if args.embedding_report else None,
+            )
+        except (KeyError, OSError, TypeError, ValueError) as exc:
+            _die(f"authoring failed: {type(exc).__name__}: {exc}")
     else:
-        build_pptx(deck, output_path)
+        try:
+            build_pptx(deck, output_path)
+        except (KeyError, OSError, TypeError, ValueError) as exc:
+            _die(f"authoring failed: {type(exc).__name__}: {exc}")
     if args.preview_dir:
         render_previews(deck, Path(args.preview_dir))
 

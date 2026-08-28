@@ -17,11 +17,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libreoffice poppler-utils inkscape
           python -m pip install --upgrade pip
-          python -m pip install numpy pillow python-pptx pyyaml
+          python -m pip install numpy pillow python-pptx pyyaml openpyxl cairosvg fonttools
       - name: Verify SVG rendering dependency
         run: inkscape --version
       - name: Compile Python sources
         run: python -m py_compile scripts/*.py tests/test_*.py
+      - name: Validate package and routing contracts
+        run: |
+          python scripts/validate_skill_package.py --skill-dir .
+          python scripts/validate_routing_contract.py
       - name: Run schema, DAG, package and golden regressions
         run: python scripts/run_tests.py --report test-report.json
       - name: Check whitespace

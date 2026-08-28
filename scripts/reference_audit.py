@@ -12,6 +12,8 @@ import json
 import sys
 from pathlib import Path
 
+from atomic_output import atomic_write_json
+
 
 def _die(msg: str) -> None:
     print(f"Error: {msg}", file=sys.stderr)
@@ -68,15 +70,15 @@ def main() -> None:
         issues.append("candidate_may_be_letterboxed_or_have_black_bars")
     result = {
         "schema": "ai-ppt-plus/reference-audit/v1",
+        "valid": not issues,
+        "status": "passed" if not issues else "blocked",
         "reference": str(ref), "candidate": str(cand),
         "reference_stats": rs, "candidate_stats": cs,
         "issues": issues,
         "human_visual_review_required": True,
     }
     if args.report:
-        out = Path(args.report)
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
 
 

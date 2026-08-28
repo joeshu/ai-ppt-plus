@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from atomic_output import atomic_write_json
 from editability import compare_summary, summarize_objects, validate_objects
 
 
@@ -46,20 +47,33 @@ def main() -> int:
     warnings = []
     editability_evidence = []
     seen = set()
-    known = {str(item.get("asset_id")) for item in data.get("assets", []) if isinstance(item, dict)}
+    known = {str(item.get("asset_id")) for item in (data.get("assets") or []) if isinstance(item, dict)}
     root_state = data.get("state")
 
     if args.asset_manifest:
         try:
             external = json.loads(Path(args.asset_manifest).read_text(encoding="utf-8"))
-            known |= {str(item.get("asset_id")) for item in external.get("assets", []) if isinstance(item, dict)}
+            known |= {str(item.get("asset_id")) for item in (external.get("assets") or []) if isinstance(item, dict)}
         except Exception as exc:
             issues.append({"severity": "blocker", "code": "asset_manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"})
     if not isinstance(items, list):
         issues.append({"severity": "blocker", "code": "items_not_array"})
         items = []
+    if kind in {"slide", "visual"} and not items:
+        issues.append({"severity": "blocker", "code": "slide_items_missing"})
     if kind in {"slide", "visual"} and args.require_editability and data.get("editability_protocol") != "L0-L5/v1":
         issues.append({"severity": "blocker", "code": "editability_protocol_missing_or_invalid", "expected": "L0-L5/v1", "observed": data.get("editability_protocol")})
+    if kind in {"slide", "visual"} and "gate_requirements" in data:
+        gate_requirements = data.get("gate_requirements")
+        gate_names = ("object_manifest", "semantic_object_audit", "manifest_registry", "text_model", "text_style_map", "icon_assets", "imagegen_assets", "panel_assets", "panel_approval", "gradient_visual", "source_image_validation", "reference_audit")
+        if not isinstance(gate_requirements, dict):
+            issues.append({"severity": "blocker", "code": "gate_requirements_not_object"})
+        else:
+            for name in gate_names:
+                if not isinstance(gate_requirements.get(name), bool):
+                    issues.append({"severity": "blocker", "code": "gate_requirement_not_boolean", "field": name})
+
+    slide_numbers = []
 
     for index, item in enumerate(items):
         if not isinstance(item, dict):
@@ -70,6 +84,14 @@ def main() -> int:
             issues.append({"severity": "blocker", "code": "duplicate_id", "id": ident})
         seen.add(ident)
         if kind in {"slide", "visual"}:
+            if item.get("slide_no") is not None:
+                try:
+                    slide_numbers.append(int(item.get("slide_no")))
+                except (TypeError, ValueError):
+                    issues.append({"severity": "blocker", "code": "invalid_slide_number", "index": index, "value": item.get("slide_no")})
+            for flag in ("requires_icon_assets", "requires_imagegen_assets"):
+                if flag in item and not isinstance(item.get(flag), bool):
+                    issues.append({"severity": "blocker", "code": "slide_gate_requirement_not_boolean", "index": index, "field": flag})
             fields = ("slide_no", "page_type", "formal_content_source", "visual_source")
         elif kind == "asset":
             fields = ("asset_id", "path", "status", "provenance")
@@ -87,7 +109,7 @@ def main() -> int:
                 issues.append({"severity": "blocker", "code": "invalid_state", "index": index, "value": state})
             if item.get("page_type") not in TYPES:
                 issues.append({"severity": "blocker", "code": "invalid_page_type", "index": index})
-            for asset_id in item.get("asset_ids", []):
+            for asset_id in (item.get("asset_ids") or []):
                 if known and str(asset_id) not in known:
                     issues.append({"severity": "blocker", "code": "orphan_asset_reference", "index": index, "asset_id": asset_id})
 
@@ -123,6 +145,13 @@ def main() -> int:
                     issues.append(enriched)
                 editability_evidence.append({"slide_no": item.get("slide_no"), "status": "typed", "summary": summary, "issues": object_issues + summary_issues})
 
+    if kind in {"slide", "visual"} and slide_numbers:
+        if len(slide_numbers) != len(set(slide_numbers)):
+            issues.append({"severity": "blocker", "code": "duplicate_slide_number", "observed": slide_numbers})
+        expected_slide_numbers = list(range(1, len(items) + 1))
+        if sorted(slide_numbers) != expected_slide_numbers:
+            issues.append({"severity": "blocker", "code": "slide_numbers_not_contiguous", "expected": expected_slide_numbers, "observed": sorted(slide_numbers)})
+
     valid = not any(issue.get("severity") == "blocker" for issue in issues)
     output = {
         "schema": "ai-ppt-plus/manifest-validation/v1",
@@ -138,8 +167,7 @@ def main() -> int:
     }
     if args.report:
         report = Path(args.report)
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(report.resolve(), output)
     print(json.dumps(output, ensure_ascii=False))
     return 0 if valid else 2
 

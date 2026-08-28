@@ -12,6 +12,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageFilter
+from atomic_output import atomic_write_json
 
 
 def array(path: Path, target_size=None):
@@ -77,7 +78,7 @@ def main() -> int:
     if args.report:
         report = Path(args.report)
         report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(report.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

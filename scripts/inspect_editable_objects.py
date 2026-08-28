@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 
 def main() -> int:
@@ -52,7 +53,7 @@ def main() -> int:
     result = {"schema": "ai-ppt-plus/editable-object-audit/v1", "valid": not errors, "deck": str(Path(args.deck).resolve()), "slides": slides, "expected_object_count": len(expected), "observed_shape_count": sum(s["shape_count"] for s in slides), "whole_slide_pictures": whole_slide_images, "errors": errors, "warnings": warnings, "human_visual_review_required": True}
     if args.report:
         out = Path(args.report); out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        atomic_write_json(out.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 1
 

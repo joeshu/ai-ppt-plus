@@ -20,6 +20,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from atomic_output import atomic_write_json
+
 try:
     from schema_contract import validate as validate_schema
 except ImportError:  # pragma: no cover - allows embedding the module elsewhere
@@ -397,7 +399,7 @@ def main() -> int:
     if args.report:
         output = Path(args.report).resolve()
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(output.resolve(), report)
     print(json.dumps(report, ensure_ascii=False))
     return 0 if report["valid"] else 2
 

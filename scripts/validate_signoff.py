@@ -10,6 +10,7 @@ implicit yes.
 import argparse
 import json
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 REQUIRED = ("narrative", "facts", "visual", "fidelity", "brand")
 
@@ -53,8 +54,7 @@ def main() -> int:
     }
     if args.report:
         report = Path(args.report)
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

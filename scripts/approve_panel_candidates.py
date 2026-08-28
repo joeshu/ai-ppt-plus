@@ -13,6 +13,7 @@ import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 
 def sha256(path: Path) -> str:
@@ -124,7 +125,7 @@ def main() -> int:
     }
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json(output.resolve(), result)
     print(json.dumps({"valid": True, "status": result["status"], "panel_count": len(panels), "output": str(output)}, ensure_ascii=False))
     return 0
 

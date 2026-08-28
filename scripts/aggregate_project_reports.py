@@ -7,6 +7,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from atomic_output import atomic_write_json
 from report_envelope import normalize_child
 
 
@@ -158,7 +159,7 @@ def main() -> int:
     }
     report_path = Path(args.report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(report_path.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if valid else 2
 

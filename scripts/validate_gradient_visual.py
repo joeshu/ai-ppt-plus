@@ -3,6 +3,8 @@
 import argparse, json
 from pathlib import Path
 
+from atomic_output import atomic_write_json
+
 VALID_ROUTES = {"B2", "B3", "B4", "native"}
 VALID_ROLES = {"background_blend", "frame", "element", "native_gradient"}
 EXPECTED = {"background_blend": "B2", "frame": "B3", "element": "B4", "native_gradient": "native"}
@@ -39,8 +41,7 @@ def main():
     if not regions: issues.append({"code":"no_gradient_regions"})
     report = {"schema":"ai-ppt-plus/gradient-visual-validation/v1","valid":not issues,"status":"passed" if not issues else "blocked","regions":len(regions),"issues":issues}
     if a.report:
-        Path(a.report).parent.mkdir(parents=True, exist_ok=True)
-        Path(a.report).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(Path(a.report).resolve(), report)
     print(json.dumps(report, ensure_ascii=False))
     return 0 if not issues else 2
 

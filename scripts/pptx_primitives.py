@@ -8,6 +8,7 @@ embedding; the authoring backend supplies the slide and coordinate context.
 from __future__ import annotations
 
 import sys
+import math
 
 
 def _die(message: str, code: int = 2):
@@ -18,14 +19,20 @@ def _die(message: str, code: int = 2):
 def text_size_pt(item: dict, slide_height_pt: float, reference_height: float, default=None) -> float:
     """Convert ratio, pixel or absolute text sizes to points."""
     if item.get("size") is not None:
-        return float(item["size"])
-    if item.get("size_ratio") is not None:
-        return float(item["size_ratio"]) * slide_height_pt
-    if item.get("size_pct") is not None:
-        return float(item["size_pct"]) / 100.0 * slide_height_pt
-    if item.get("size_px") is not None and reference_height:
-        return float(item["size_px"]) * slide_height_pt / reference_height
-    return float(default) if default is not None else 18.0
+        value = float(item["size"])
+    elif item.get("size_ratio") is not None:
+        value = float(item["size_ratio"]) * slide_height_pt
+    elif item.get("size_pct") is not None:
+        value = float(item["size_pct"]) / 100.0 * slide_height_pt
+    elif item.get("size_px") is not None:
+        if not reference_height:
+            _die("size_px requires a positive reference height")
+        value = float(item["size_px"]) * slide_height_pt / reference_height
+    else:
+        value = float(default) if default is not None else 18.0
+    if not math.isfinite(value) or value <= 0:
+        _die(f"font size must be a positive finite number: {value}")
+    return value
 
 
 def _set_run_fonts(run, name: str):
@@ -58,23 +65,28 @@ def _set_run_alpha(run, opacity: float):
     srgb.append(srgb.makeelement(qn("a:alpha"), {"val": str(int(opacity * 100000))}))
 
 
-def _hex_to_rgb(value: str):
-    from pptx.dml.color import RGBColor
-
+def _normalized_hex(value: str) -> str:
     raw = str(value).strip().lstrip("#")
     if len(raw) == 3:
         raw = "".join(char * 2 for char in raw)
     if len(raw) != 6:
-        return RGBColor(0x11, 0x11, 0x11)
+        raise ValueError(f"invalid color {value!r}; expected #RRGGBB")
+    try:
+        int(raw, 16)
+    except ValueError as exc:
+        raise ValueError(f"invalid color {value!r}; expected #RRGGBB") from exc
+    return raw.upper()
+
+
+def _hex_to_rgb(value: str):
+    from pptx.dml.color import RGBColor
+
+    raw = _normalized_hex(value)
     return RGBColor(int(raw[0:2], 16), int(raw[2:4], 16), int(raw[4:6], 16))
 
 
 def _hex_to_tuple(value: str):
-    raw = str(value).strip().lstrip("#")
-    if len(raw) == 3:
-        raw = "".join(char * 2 for char in raw)
-    if len(raw) != 6:
-        return (17, 17, 17)
+    raw = _normalized_hex(value)
     return (int(raw[0:2], 16), int(raw[2:4], 16), int(raw[4:6], 16))
 
 
@@ -142,7 +154,7 @@ def _set_gradient_fill(shape, gradient: dict):
         raw_position = float(stop.get("position", stop.get("pos", 0)))
         position = max(0, min(100000, int(raw_position * (100000 if 0 <= raw_position <= 1 else 1000))))
         gradient_stop = stop_list.makeelement(qn("a:gs"), {"pos": str(position)})
-        color = gradient_stop.makeelement(qn("a:srgbClr"), {"val": stop["color"].lstrip("#")[:6]})
+        color = gradient_stop.makeelement(qn("a:srgbClr"), {"val": _normalized_hex(stop["color"])})
         if stop.get("opacity") is not None:
             alpha = int(max(0, min(1, float(stop["opacity"]))) * 100000)
             color.append(color.makeelement(qn("a:alpha"), {"val": str(alpha)}))
@@ -242,13 +254,15 @@ def add_shapes(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
             connector.name = str(spec.get("object_id") or spec.get("name") or f"shape-{index:02d}")
             continue
 
-        shape = slide.shapes.add_shape(shape_types.get(shape_type, MSO_SHAPE.ROUNDED_RECTANGLE), left, top, width, height)
+        if shape_type not in shape_types:
+            _die(f"unsupported shape type: {shape_type}")
+        shape = slide.shapes.add_shape(shape_types[shape_type], left, top, width, height)
         shape.name = str(spec.get("object_id") or spec.get("name") or f"shape-{index:02d}")
         if shape_type == "rounded_rect" and "radius" in spec:
             try:
                 shape.adjustments[0] = float(spec["radius"])
-            except Exception:
-                pass
+            except (TypeError, ValueError, IndexError) as exc:
+                _die(f"rounded_rect radius is invalid: {exc}")
         apply_shape_fill(shape, spec)
         if spec.get("line"):
             shape.line.color.rgb = _hex_to_rgb(spec["line"])
@@ -307,8 +321,11 @@ def add_groups(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
                 connector.line.width = Pt(float(child.get("line_width", 1.5)))
                 connector.name = child_name
                 continue
+            child_type = child.get("type", "rounded_rect")
+            if child_type not in shape_types:
+                _die(f"unsupported group shape type: {child_type}")
             shape = group.shapes.add_shape(
-                shape_types.get(child.get("type", "rounded_rect"), MSO_SHAPE.ROUNDED_RECTANGLE),
+                shape_types[child_type],
                 Emu(int(cfx * sw_emu)),
                 Emu(int(cfy * sh_emu)),
                 Emu(int(cfw * sw_emu)),
@@ -517,9 +534,20 @@ def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, r
 
 
 def _frac(deck: dict, item: dict, key: str, reference: float) -> float:
-    value = item[key]
+    if key not in item:
+        _die(f"object is missing coordinate: {key}")
+    try:
+        value = float(item[key])
+    except (TypeError, ValueError):
+        _die(f"coordinate {key} must be numeric")
     if deck["units"] == "px":
-        return value / reference
+        if not reference or not math.isfinite(reference):
+            _die(f"pixel coordinate {key} requires a positive reference canvas")
+        value = value / reference
+    if not math.isfinite(value):
+        _die(f"coordinate {key} must be finite")
+    if key in {"w", "h"} and value <= 0:
+        _die(f"coordinate {key} must be positive")
     return value
 
 

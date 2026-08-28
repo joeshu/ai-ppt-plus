@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Atomic filesystem primitives used by PPTX authoring and previews."""
+"""Atomic filesystem primitives used by every PPTX artifact writer.
+
+Reports are part of the delivery contract just like the PPTX itself.  Keep
+all JSON/text/byte publication behind these helpers so a cancelled process
+cannot leave a truncated report that a later gate mistakes for evidence.
+"""
 from __future__ import annotations
 
 import json
 import os
+import shutil
 import tempfile
 import zipfile
 from pathlib import Path
@@ -66,6 +72,17 @@ def atomic_write_json(target: str | Path, value, *, suffix: str = ".tmp.json") -
     """Serialize JSON and publish it through the same atomic policy."""
     payload = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
     return atomic_write_text(target, payload, suffix=suffix)
+
+
+def atomic_copy(source: str | Path, target: str | Path, *, suffix: str = ".tmp.copy") -> Path:
+    """Copy a completed artifact into place without exposing a partial file."""
+    source_path = Path(source)
+
+    def write(path: Path) -> None:
+        with source_path.open("rb") as stream, path.open("wb") as destination:
+            shutil.copyfileobj(stream, destination, length=1024 * 1024)
+
+    return atomic_replace(target, write, suffix=suffix)
 
 
 def atomic_rewrite_zip(target: str | Path, entries: dict[str, bytes]) -> Path:

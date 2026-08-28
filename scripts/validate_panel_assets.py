@@ -8,6 +8,8 @@ import json
 import sys
 from pathlib import Path
 
+from atomic_output import atomic_write_json
+
 try:
     from PIL import Image
 except ImportError:  # pragma: no cover - optional quality probe
@@ -30,8 +32,7 @@ def sha256(path: Path) -> str:
 def write_report(path: str | None, result: dict) -> None:
     if path:
         out = Path(path)
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        atomic_write_json(out.resolve(), result)
 
 
 def main() -> None:

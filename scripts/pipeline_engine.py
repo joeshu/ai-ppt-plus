@@ -23,6 +23,8 @@ import sys
 import time
 from typing import Any, Iterable
 
+from atomic_output import atomic_write_json, atomic_write_text
+
 
 CACHE_SCHEMA = "ai-ppt-plus/pipeline-cache/v2"
 ENGINE_VERSION = "pipeline-engine-v2"
@@ -282,8 +284,8 @@ class PipelineExecutor:
         started = time.perf_counter()
         stdout_path = self.run_dir / f"{task.name}.stdout.txt"
         stderr_path = self.run_dir / f"{task.name}.stderr.txt"
-        stdout_path.write_text(f"cache hit: {key}\n", encoding="utf-8")
-        stderr_path.write_text("", encoding="utf-8")
+        atomic_write_text(stdout_path, f"cache hit: {key}\n")
+        atomic_write_text(stderr_path, "")
         result = dict(metadata.get("result") or {})
         result.update({
             "name": task.name,
@@ -299,6 +301,12 @@ class PipelineExecutor:
         return result
 
     def _save_cache(self, task: PipelineTask, key: str, result: dict[str, Any]) -> None:
+        # Static nodes encode a run-time condition (for example, a missing
+        # required manifest) rather than an executable transformation.  Do
+        # not cache them: otherwise a later run could replay an old condition
+        # after the missing artifact has been repaired.
+        if task.static_result is not None:
+            return
         if self.mode != "dag" or not task.cacheable or not self.cache_dir or not result.get("ok"):
             return
         if not task.outputs:
@@ -332,7 +340,7 @@ class PipelineExecutor:
                 "artifacts": artifacts,
                 "result": cache_result,
             }
-            (temporary / "metadata.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+            atomic_write_json(temporary / "metadata.json", metadata)
             if entry.exists():
                 shutil.rmtree(temporary)
             else:
@@ -357,6 +365,29 @@ class PipelineExecutor:
             result.setdefault("exit_code", 0 if result.get("ok") else 2)
             result.setdefault("ok", result.get("exit_code") == 0)
             result.setdefault("timeout_seconds", task.timeout)
+            # A static node is still a real pipeline node.  Materialize its
+            # declared report/output so downstream aggregation cannot mistake
+            # an in-memory failure result for a missing or stale artifact.
+            atomic_write_text(stdout_path, str(result.get("stdout") or ""))
+            atomic_write_text(stderr_path, str(result.get("stderr") or ""))
+            result["stdout"] = str(stdout_path.resolve())
+            result["stderr"] = str(stderr_path.resolve())
+            report = result.get("report")
+            for output in task.outputs:
+                output = Path(output).resolve()
+                if output.suffix.casefold() == ".json":
+                    if not isinstance(report, dict):
+                        report = {
+                            "schema": "ai-ppt-plus/static-task-report/v1",
+                            "task": task.name,
+                            "valid": bool(result.get("ok")),
+                            "status": "passed" if result.get("ok") else "blocked",
+                            "issues": ([{"code": result.get("failure", "static_task_failed")}]
+                                       if not result.get("ok") else []),
+                        }
+                    atomic_write_json(output, report)
+                elif output.suffix:
+                    atomic_write_text(output, str(result.get("failure") or ""))
         else:
             command = [sys.executable, *task.args]
             try:
@@ -370,8 +401,8 @@ class PipelineExecutor:
                 stderr = (exc.stderr or "") + f"\nstep timed out after {task.timeout}s"
                 exit_code = 124
                 failure = "timeout"
-            stdout_path.write_text(stdout, encoding="utf-8")
-            stderr_path.write_text(stderr, encoding="utf-8")
+            atomic_write_text(stdout_path, stdout)
+            atomic_write_text(stderr_path, stderr)
             result = {
                 "name": task.name,
                 "command": command,
@@ -395,8 +426,8 @@ class PipelineExecutor:
     def _blocked_result(self, task: PipelineTask, failed_deps: Iterable[str]) -> dict[str, Any]:
         stdout_path = self.run_dir / f"{task.name}.stdout.txt"
         stderr_path = self.run_dir / f"{task.name}.stderr.txt"
-        stdout_path.write_text("", encoding="utf-8")
-        stderr_path.write_text("dependency failed; task was not executed\n", encoding="utf-8")
+        atomic_write_text(stdout_path, "")
+        atomic_write_text(stderr_path, "dependency failed; task was not executed\n")
         key, _payload = self._cache_key(task)
         return {
             "name": task.name,

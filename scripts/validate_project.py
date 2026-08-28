@@ -17,6 +17,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from atomic_output import atomic_write_json
 from editability import summarize_objects, validate_objects
 
 
@@ -25,7 +26,11 @@ def read_json(path: Path, issues, label):
         issues.append({"severity": "blocker", "code": "missing_artifact", "artifact": label, "path": str(path)})
         return None
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        value = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(value, dict):
+            issues.append({"severity": "blocker", "code": "artifact_not_object", "artifact": label})
+            return None
+        return value
     except Exception as exc:
         issues.append({"severity": "blocker", "code": "invalid_json", "artifact": label, "message": f"{type(exc).__name__}: {exc}"})
         return None
@@ -53,6 +58,8 @@ def main() -> int:
     parser.add_argument("--manifest-validation")
     parser.add_argument("--require-editability", action="store_true")
     parser.add_argument("--semantic-object-audit")
+    parser.add_argument("--object-manifest")
+    parser.add_argument("--require-semantic-object-audit", action="store_true")
     parser.add_argument("--project-report")
     parser.add_argument("--require-project-report", action="store_true")
     parser.add_argument("--expected-ratio", type=float)
@@ -107,6 +114,10 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "route_validation_missing", "artifact": "route-validation"})
     if args.require_editability and manifest_report is None:
         issues.append({"severity": "blocker", "code": "manifest_validation_missing", "artifact": "manifest-validation"})
+    object_manifest_path = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
+    object_manifest = read_json(object_manifest_path, issues, "slide-object-manifest") if args.require_semantic_object_audit or object_manifest_path.is_file() else None
+    if args.require_semantic_object_audit and semantic_report is None:
+        issues.append({"severity": "blocker", "code": "semantic_object_audit_missing", "artifact": "semantic-object-audit"})
     if args.require_project_report and project_report is None:
         issues.append({"severity": "blocker", "code": "project_report_missing", "artifact": "project-report"})
     if render_gate is not None:
@@ -189,7 +200,7 @@ def main() -> int:
     if manifest and handoff:
         if manifest.get("state") and handoff.get("current_stage") and manifest.get("state") != handoff.get("current_stage"):
             issues.append({"severity": "blocker", "code": "state_mismatch", "handoff": handoff.get("current_stage"), "manifest": manifest.get("state")})
-        slides = manifest.get("slides")
+        slides = manifest.get("slides") or []
         if not isinstance(slides, list) or not slides:
             issues.append({"severity": "blocker", "code": "manifest_without_slides"})
 
@@ -203,7 +214,9 @@ def main() -> int:
 
     if inspection and manifest:
         observed_slides = inspection.get("slide_count")
-        declared_slides = manifest.get("slide_count", len(manifest.get("slides", [])))
+        declared_slides = manifest.get("slide_count")
+        if declared_slides is None:
+            declared_slides = len(manifest.get("slides") or [])
         if observed_slides != declared_slides:
             issues.append({"severity": "blocker", "code": "slide_count_mismatch", "inspection": observed_slides, "manifest": declared_slides})
         if args.expected_ratio is not None:
@@ -222,7 +235,7 @@ def main() -> int:
 
     editability_evidence = []
     if manifest:
-        for slide in manifest.get("slides", []):
+        for slide in manifest.get("slides") or []:
             objects = slide.get("objects")
             slide_no = slide.get("slide_no")
             if not isinstance(objects, list):
@@ -248,6 +261,16 @@ def main() -> int:
             "errors": semantic_report.get("errors", []),
             "warnings": semantic_report.get("warnings", []),
         }
+        if object_manifest is not None:
+            expected_object_count = sum(
+                len(slide.get("objects", []))
+                for slide in (object_manifest.get("slides") or [])
+                if isinstance(slide, dict) and isinstance(slide.get("objects"), list)
+            )
+            if semantic_report.get("object_manifest_sha256") and semantic_report.get("object_manifest_sha256") != sha256(object_manifest_path):
+                issues.append({"severity": "blocker", "code": "stale_semantic_object_audit", "expected": sha256(object_manifest_path), "observed": semantic_report.get("object_manifest_sha256")})
+            if semantic_report.get("audited_object_count") != expected_object_count:
+                issues.append({"severity": "blocker", "code": "semantic_object_count_mismatch", "expected": expected_object_count, "observed": semantic_report.get("audited_object_count")})
 
     quality_degradations = []
     if ocr_report is not None and ocr_report.get("status") == "unavailable":
@@ -260,7 +283,7 @@ def main() -> int:
         "deck": str(deck),
         "deck_sha256": current_hash,
         "state": (handoff or {}).get("current_stage"),
-        "asset_count": len((assets or {}).get("assets", [])),
+        "asset_count": len((assets or {}).get("assets") or []),
         "editability": quality_evidence.get("editability", {}).get("slides", []),
         "project_report": {"valid": project_report.get("valid"), "status": project_report.get("status")} if project_report else None,
         "quality_evidence": quality_evidence,
@@ -268,9 +291,7 @@ def main() -> int:
         "issues": issues,
     }
     if args.report:
-        report = Path(args.report)
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

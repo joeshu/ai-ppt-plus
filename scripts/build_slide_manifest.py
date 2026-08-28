@@ -28,22 +28,82 @@ def page_type(slide: dict, default: str) -> str:
     return "title"
 
 
+def _slide_map(data: dict, label: str) -> dict[int, dict]:
+    raw = data.get("slides")
+    if not isinstance(raw, list):
+        raw = [data]
+    result: dict[int, dict] = {}
+    for index, slide in enumerate(raw, 1):
+        if not isinstance(slide, dict):
+            raise ValueError(f"{label} slide {index} must be an object")
+        try:
+            slide_no = int(slide.get("slide_no", index))
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"{label} slide {index} has an invalid slide_no") from exc
+        if slide_no in result:
+            raise ValueError(f"{label} contains duplicate slide_no={slide_no}")
+        result[slide_no] = slide
+    expected = list(range(1, len(result) + 1))
+    if sorted(result) != expected:
+        raise ValueError(f"{label} slide numbers must be contiguous from 1: {sorted(result)}")
+    return result
+
+
+def _gate_requirements(layout: dict, slides: list[dict], args) -> dict[str, bool]:
+    objects = [obj for slide in slides for obj in (slide.get("objects") or []) if isinstance(obj, dict)]
+    icon_objects = [obj for obj in objects if obj.get("object_type") in {"extracted_icon", "editable_vector"} or obj.get("role") in {"icon", "logo", "brand_lockup", "brand-logo", "decorative-art", "illustration", "product-visual", "decoration"}]
+    visual_objects = [obj for obj in objects if obj.get("object_type") in {"extracted_icon", "editable_vector", "independent_image", "decorative_art", "traceable_static_graphic"} or obj in icon_objects]
+    panel_objects = [obj for obj in objects if obj.get("role") in {"semantic-panel", "panel", "frame-panel"} or obj.get("independent") is True]
+
+    def has_gradient(value) -> bool:
+        if isinstance(value, dict):
+            if isinstance(value.get("gradient"), dict):
+                return True
+            return any(has_gradient(child) for child in value.values())
+        if isinstance(value, list):
+            return any(has_gradient(child) for child in value)
+        return False
+
+    has_text = any(obj.get("object_type") == "editable_text" for obj in objects)
+    reference_driven = bool(args.reference or args.visual_source)
+    return {
+        "object_manifest": True,
+        "semantic_object_audit": True,
+        "manifest_registry": True,
+        "text_model": has_text,
+        "text_style_map": bool(args.requires_text_style_map) or (reference_driven and has_text),
+        "icon_assets": bool(icon_objects) or bool(args.requires_icon_assets),
+        "imagegen_assets": bool(args.requires_imagegen_assets) or (reference_driven and bool(visual_objects)),
+        "panel_assets": bool(panel_objects) or bool(args.requires_panel_assets),
+        "panel_approval": bool(panel_objects) or bool(args.requires_panel_approval),
+        "gradient_visual": has_gradient(layout) or bool(args.requires_gradient_visual),
+        "source_image_validation": reference_driven,
+        "reference_audit": reference_driven,
+    }
+
+
 def build(layout: dict, object_manifest: dict, args) -> dict:
-    object_slides = object_manifest.get("slides")
-    if not isinstance(object_slides, list) or not object_slides:
-        raise ValueError("object manifest must contain non-empty slides[]")
-    layout_slides = layout.get("slides")
-    if not isinstance(layout_slides, list):
-        layout_slides = [layout]
+    object_by_no = _slide_map(object_manifest, "object manifest")
+    layout_by_no = _slide_map(layout, "layout")
+    if set(object_by_no) != set(layout_by_no):
+        raise ValueError(f"layout/object manifest slide coverage mismatch: layout={sorted(layout_by_no)}, objects={sorted(object_by_no)}")
     slides = []
-    for index, object_slide in enumerate(object_slides):
-        slide_no = object_slide.get("slide_no", index + 1)
+    for slide_no in sorted(object_by_no):
+        object_slide = object_by_no[slide_no]
         objects = object_slide.get("objects")
         if not isinstance(objects, list):
             raise ValueError(f"object manifest slide {slide_no} must contain objects[]")
         summary = summarize_objects(objects)
         counts = summary["counts_by_level"]
-        layout_slide = layout_slides[index] if index < len(layout_slides) else {}
+        layout_slide = layout_by_no[slide_no]
+        placeholders = [obj for obj in objects if isinstance(obj, dict) and obj.get("editability_level") == "L4"]
+        blockers = [obj for obj in objects if isinstance(obj, dict) and obj.get("editability_level") in {"L0", "L5"}]
+        status = "blocked" if blockers else "placeholder" if placeholders else "complete"
+        placeholder_reasons = [obj.get("placeholder_reason") for obj in placeholders if obj.get("placeholder_reason")]
+        tradeoffs = [
+            {"object_id": obj.get("object_id"), "level": obj.get("editability_level"), "reason": "reduced-editability"}
+            for obj in objects if isinstance(obj, dict) and obj.get("editability_level") == "L3"
+        ]
         slides.append({
             "slide_id": f"S{int(slide_no):02d}",
             "slide_no": slide_no,
@@ -54,8 +114,8 @@ def build(layout: dict, object_manifest: dict, args) -> dict:
             "formal_content_source": args.formal_content_source,
             "visual_source": args.visual_source or args.reference or "layout.json",
             "object_plan": str(Path(args.object_manifest).resolve()),
-            "asset_status": "complete",
-            "placeholder_reason": None,
+            "asset_status": status,
+            "placeholder_reason": "; ".join(str(item) for item in placeholder_reasons) or None,
             "asset_ids": [
                 item.get("object_id") for item in objects
                 if isinstance(item, dict) and item.get("editability_level") in {"L2", "L3"}
@@ -64,13 +124,28 @@ def build(layout: dict, object_manifest: dict, args) -> dict:
             "editability": summary,
             "editable_object_counts": {"L1": counts["L1"]},
             "raster_object_counts": {"L2": counts["L2"], "L3": counts["L3"]},
-            "placeholders": [],
+            "placeholders": [
+                {"object_id": obj.get("object_id"), "reason": obj.get("placeholder_reason"), "material_request": obj.get("material_request")}
+                for obj in placeholders
+            ],
             "substitutions": [],
-            "tradeoffs": [],
+            "tradeoffs": tradeoffs,
             "render_path": args.render_path,
             "checks": [],
             "issues": [],
             "review_status": args.review_status,
+            "requires_icon_assets": any(
+                obj.get("object_type") in {"extracted_icon", "editable_vector"}
+                or obj.get("role") in {"icon", "logo", "brand_lockup", "brand-logo", "decorative-art", "illustration", "product-visual", "decoration"}
+                for obj in objects if isinstance(obj, dict)
+            ),
+            "requires_imagegen_assets": bool(args.requires_imagegen_assets) or (
+                bool(args.reference or args.visual_source) and any(
+                    obj.get("object_type") in {"extracted_icon", "editable_vector", "independent_image", "decorative_art", "traceable_static_graphic"}
+                    or obj.get("role") in {"icon", "logo", "brand_lockup", "brand-logo", "decorative-art", "illustration", "product-visual", "decoration"}
+                    for obj in objects if isinstance(obj, dict)
+                )
+            ),
         })
     return {
         "schema_version": "1.1",
@@ -83,6 +158,7 @@ def build(layout: dict, object_manifest: dict, args) -> dict:
         "backend": args.backend,
         "editability_protocol": "L0-L5/v1",
         "assets": [],
+        "gate_requirements": _gate_requirements(layout, slides, args),
         "slides": slides,
     }
 
@@ -101,7 +177,13 @@ def main() -> int:
     ap.add_argument("--visual-source")
     ap.add_argument("--render-path")
     ap.add_argument("--review-status", default="pending-human-closeout")
-    ap.add_argument("--backend", default="host-presentation-runtime")
+    ap.add_argument("--backend", default="python-pptx")
+    ap.add_argument("--requires-icon-assets", action="store_true")
+    ap.add_argument("--requires-imagegen-assets", action="store_true")
+    ap.add_argument("--requires-panel-assets", action="store_true")
+    ap.add_argument("--requires-panel-approval", action="store_true")
+    ap.add_argument("--requires-text-style-map", action="store_true")
+    ap.add_argument("--requires-gradient-visual", action="store_true")
     args = ap.parse_args()
     try:
         layout = read(Path(args.layout))

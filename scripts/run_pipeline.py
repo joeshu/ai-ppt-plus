@@ -29,6 +29,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+from atomic_output import atomic_write_json, atomic_write_text
 from pipeline_engine import PipelineExecutor, PipelineTask
 from report_envelope import normalize_child
 from render_review_html import write_review
@@ -43,18 +44,6 @@ def sha256(path: Path) -> str:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
-
-
-def write_json_atomic(path: Path, value: dict) -> None:
-    """Write a run contract atomically so readers never see partial JSON."""
-    path = Path(path)
-    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
-    try:
-        temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        os.replace(temporary, path)
-    finally:
-        if temporary.exists():
-            temporary.unlink()
 
 
 STEP_TIMEOUT_SECONDS = 600
@@ -99,8 +88,8 @@ def run_step(run_dir: Path, name: str, args, timeout: int = STEP_TIMEOUT_SECONDS
         stderr = (exc.stderr or "") + f"\nstep timed out after {timeout}s"
         exit_code = 124
         failure = "timeout"
-    stdout_path.write_text(stdout, encoding="utf-8")
-    stderr_path.write_text(stderr, encoding="utf-8")
+    atomic_write_text(stdout_path, stdout)
+    atomic_write_text(stderr_path, stderr)
     result = {"name": name, "command": command, "exit_code": exit_code, "ok": exit_code == 0, "stdout": str(stdout_path.resolve()), "stderr": str(stderr_path.resolve()), "timeout_seconds": timeout, "cache_key": None, "cache_hit": False, "deps": [], "duration_ms": None}
     if failure:
         result["failure"] = failure
@@ -111,26 +100,120 @@ def load_report(path: Path):
     if not path.is_file():
         return None
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        value = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(value, dict):
+            return {"valid": False, "status": "invalid", "issues": [{"code": "report_not_object"}]}
+        return value
     except Exception as exc:
         return {"valid": False, "status": "invalid", "issues": [{"code": "invalid_json", "message": f"{type(exc).__name__}: {exc}"}]}
 
 
-def project_asset_requirements(project: Path) -> tuple[bool, bool]:
-    """Read explicit icon/imagegen requirements without substring heuristics."""
+def project_gate_requirements(project: Path) -> dict:
+    """Read explicit per-project gate requirements and report their origin."""
     manifest = project / "slide-manifest.json"
     if not manifest.is_file():
-        return False, False
+        return {"declared": False, "issues": ["slide_manifest_missing"]}
     try:
         data = json.loads(manifest.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        return False, False
+        return {"declared": False, "issues": ["slide_manifest_unreadable"]}
     if not isinstance(data, dict):
-        return False, False
-    slides = [slide for slide in data.get("slides", []) if isinstance(slide, dict)]
-    requires_icon = data.get("requires_icon_assets") is True or any(slide.get("requires_icon_assets") is True for slide in slides)
-    requires_imagegen = data.get("requires_imagegen_assets") is True or any(slide.get("requires_imagegen_assets") is True for slide in slides)
-    return requires_icon, requires_imagegen
+        return {"declared": False, "issues": ["slide_manifest_not_object"]}
+    slides = [slide for slide in (data.get("slides") or []) if isinstance(slide, dict)]
+    raw = data.get("gate_requirements")
+    if not isinstance(raw, dict):
+        legacy_icon = data.get("requires_icon_assets") is True or any(slide.get("requires_icon_assets") is True for slide in slides)
+        legacy_imagegen = data.get("requires_imagegen_assets") is True or any(slide.get("requires_imagegen_assets") is True for slide in slides)
+        return {
+            "declared": False,
+            "issues": ["gate_requirements_missing"],
+            "requirements": {"icon_assets": legacy_icon, "imagegen_assets": legacy_imagegen},
+            "manifest": data,
+        }
+    names = (
+        "object_manifest", "semantic_object_audit", "manifest_registry", "text_model",
+        "text_style_map", "icon_assets", "imagegen_assets", "panel_assets",
+        "panel_approval", "gradient_visual", "source_image_validation", "reference_audit",
+    )
+    requirements = {}
+    issues = []
+    for name in names:
+        value = raw.get(name)
+        if not isinstance(value, bool):
+            issues.append(f"gate_requirements.{name}_must_be_boolean")
+        else:
+            requirements[name] = value
+    return {"declared": not issues, "issues": issues, "requirements": requirements, "manifest": data}
+
+
+def project_asset_requirements(project: Path) -> tuple[bool, bool]:
+    """Compatibility helper for callers that only need icon/imagegen flags."""
+    gates = project_gate_requirements(project)
+    requirements = gates.get("requirements", {})
+    return bool(requirements.get("icon_assets")), bool(requirements.get("imagegen_assets"))
+
+
+def inferred_gate_requirements(project: Path, object_manifest: Path, route_data: dict | None) -> dict[str, bool]:
+    """Infer gates from declared content so a manifest cannot under-declare QA.
+
+    These values are policy checks, not a replacement for the explicit
+    ``slide-manifest.json`` declaration.  Release mode requires the explicit
+    declaration to cover every inferred requirement; this closes the old gap
+    where a project could contain icons, panels or gradients while advertising
+    only the core object-count checks.
+    """
+    objects: list[dict] = []
+    if object_manifest.is_file():
+        try:
+            data = json.loads(object_manifest.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            data = {}
+        for slide in (data.get("slides") or []) if isinstance(data, dict) else []:
+            if isinstance(slide, dict) and isinstance(slide.get("objects"), list):
+                objects.extend(item for item in slide["objects"] if isinstance(item, dict))
+
+    icon_types = {"extracted_icon", "editable_vector"}
+    visual_asset_types = {"extracted_icon", "editable_vector", "independent_image", "decorative_art", "traceable_static_graphic"}
+    icon_roles = {"icon", "logo", "brand_lockup", "brand-logo", "decorative-art", "illustration", "product-visual", "decoration"}
+    icon_objects = [item for item in objects if item.get("object_type") in icon_types or item.get("role") in icon_roles]
+    visual_objects = [item for item in objects if item.get("object_type") in visual_asset_types or item.get("role") in icon_roles]
+    panel_objects = [item for item in objects if item.get("role") in {"semantic-panel", "panel", "frame-panel"} or item.get("independent") is True]
+    has_text = any(item.get("object_type") == "editable_text" for item in objects)
+    reference_route = isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction"
+
+    has_gradient = False
+    layout_path = project / "layout.json"
+    if layout_path.is_file():
+        try:
+            layout = json.loads(layout_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            layout = {}
+
+        def contains_gradient(value) -> bool:
+            if isinstance(value, dict):
+                if isinstance(value.get("gradient"), dict):
+                    return True
+                return any(contains_gradient(child) for child in value.values())
+            if isinstance(value, list):
+                return any(contains_gradient(child) for child in value)
+            return False
+
+        has_gradient = contains_gradient(layout)
+
+    return {
+        "object_manifest": True,
+        "semantic_object_audit": True,
+        "manifest_registry": True,
+        "text_model": has_text,
+        "text_style_map": reference_route and has_text,
+        "icon_assets": bool(icon_objects),
+        "imagegen_assets": reference_route and bool(visual_objects),
+        "panel_assets": bool(panel_objects),
+        "panel_approval": bool(panel_objects),
+        "gradient_visual": has_gradient,
+        "source_image_validation": reference_route,
+        "reference_audit": reference_route,
+    }
 
 
 def summarize_report(name: str, path: Path, report: dict):
@@ -171,6 +254,8 @@ def main() -> int:
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
+    parser.add_argument("--routing-contract", help="skill-routing contract; defaults to the checked-in contract")
+    parser.add_argument("--require-formal-content", action="store_true", help="require approved formal text authority in the route decision")
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
     parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
     parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
@@ -185,6 +270,8 @@ def main() -> int:
     parser.add_argument("--asset-manifest", action="append", default=[], help="asset manifest used for semantic object provenance checks")
     parser.add_argument("--manifest-registry", help="canonical cross-manifest registry.json")
     parser.add_argument("--require-manifest-registry", action="store_true", help="require and validate the cross-manifest registry")
+    parser.add_argument("--require-source-hashes", action="store_true", help="require declared source hashes for raster/data assets")
+    parser.add_argument("--require-gradient-visual", action="store_true", help="require and validate the gradient visual manifest")
     parser.add_argument("--release", action="store_true", help="run the strict release gate after technical validation")
     parser.add_argument("--handoff", help="handoff.json; required by --release")
     parser.add_argument("--human-signoff", help="human-closeout.json; required by --release")
@@ -213,6 +300,11 @@ def main() -> int:
         args.require_editability = True
         args.require_embedded_fonts = True
         args.require_cjk = True
+        args.require_object_manifest = True
+        args.require_manifest_registry = True
+        args.require_text_model = True
+        args.require_source_hashes = True
+        args.require_formal_content = True
         missing = []
         if not args.font_dir:
             missing.append("--font-dir")
@@ -260,6 +352,45 @@ def main() -> int:
             route_data = json.loads(Path(args.route_decision).read_text(encoding="utf-8"))
         except Exception:
             route_data = None
+    if args.require_route and (not isinstance(route_data, dict) or route_data.get("status") != "decided"):
+        result = {
+            "schema": "ai-ppt-plus/pipeline-run/v2",
+            "valid": False,
+            "technical_valid": False,
+            "release_eligible": False,
+            "code": "route_not_ready",
+            "message": "route status must be decided before downstream pipeline execution",
+            "observed_status": route_data.get("status") if isinstance(route_data, dict) else None,
+        }
+        print(json.dumps(result, ensure_ascii=False))
+        return 2
+    gate_info = project_gate_requirements(project)
+    gate_requirements = gate_info.get("requirements", {})
+    if args.release:
+        core_required = ("object_manifest", "semantic_object_audit", "manifest_registry", "text_model")
+        missing_gate_declarations = [name for name in core_required if gate_info.get("requirements", {}).get(name) is not True]
+        policy_object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
+        inferred_requirements = inferred_gate_requirements(project, policy_object_manifest, route_data)
+        underdeclared_gates = [name for name, required in inferred_requirements.items() if required and gate_requirements.get(name) is not True]
+        if gate_info.get("issues") or missing_gate_declarations or underdeclared_gates:
+            result = {
+                "schema": "ai-ppt-plus/pipeline-run/v2",
+                "valid": False,
+                "technical_valid": False,
+                "release_eligible": False,
+                "code": "release_gate_requirements_missing",
+                "issues": gate_info.get("issues", []),
+                "missing_required_gates": missing_gate_declarations,
+                "underdeclared_gates": underdeclared_gates,
+            }
+            print(json.dumps(result, ensure_ascii=False))
+            return 2
+        args.require_panel_approval = args.require_panel_approval or gate_requirements.get("panel_approval", False)
+        args.require_independent_panels = args.require_independent_panels or gate_requirements.get("panel_assets", False)
+        args.require_icon_assets = args.require_icon_assets or gate_requirements.get("icon_assets", False)
+        args.require_imagegen_assets = args.require_imagegen_assets or gate_requirements.get("imagegen_assets", False)
+        args.require_text_style_map = args.require_text_style_map or gate_requirements.get("text_style_map", False)
+        args.require_gradient_visual = args.require_gradient_visual or gate_requirements.get("gradient_visual", False)
     if args.require_route and isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction":
         if not (args.reference or args.reference_dir):
             result = {"schema": "ai-ppt-plus/pipeline-run/v1", "valid": False, "code": "reference_route_without_reference", "message": "reference-reconstruction requires --reference or --reference-dir for visual comparison"}
@@ -270,6 +401,12 @@ def main() -> int:
             result = {"schema": "ai-ppt-plus/pipeline-run/v1", "valid": False, "code": "route_reference_page_count_mismatch", "expected_pages": args.expected_pages, "route_reference_pages": len(roster)}
             print(json.dumps(result, ensure_ascii=False))
             return 2
+        if args.release and not gate_requirements.get("source_image_validation"):
+            print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "reference_source_gate_not_declared"}, ensure_ascii=False))
+            return 2
+        if args.release:
+            args.require_text_style_map = True
+            args.require_gradient_visual = args.require_gradient_visual or gate_requirements.get("gradient_visual", False)
     run_id = datetime.now(timezone.utc).strftime("run-%Y%m%dT%H%M%S.%fZ") + "-" + uuid.uuid4().hex[:8]
     run_dir = Path(args.output_dir).resolve() if args.output_dir else project / "pipeline-runs" / run_id
     if run_dir.exists():
@@ -299,12 +436,75 @@ def main() -> int:
             static_result=static_result,
         ))
 
+    routing_contract = Path(args.routing_contract).resolve() if args.routing_contract else SCRIPT_DIR.parent / "assets" / "skill-routing.template.json"
+    package_args = [str(SCRIPT_DIR / "validate_skill_package.py"), "--skill-dir", str(SCRIPT_DIR.parent), "--report", str(run_dir / "skill-package-validation.json")]
+    runtime_skill_dir = os.environ.get("AI_PPT_PLUS_RUNTIME_SKILL_DIR")
+    if runtime_skill_dir:
+        package_args.extend(["--runtime-skill-dir", str(Path(runtime_skill_dir).resolve())])
+    package_inputs = [SCRIPT_DIR.parent / "assets" / "skill-package.json"]
+    try:
+        package_data = json.loads((SCRIPT_DIR.parent / "assets" / "skill-package.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        package_data = {}
+    for relative in package_data.get("required_files", []) if isinstance(package_data, dict) else []:
+        if isinstance(relative, str):
+            package_inputs.append(SCRIPT_DIR.parent / relative)
+    for pattern in package_data.get("managed_globs", []) if isinstance(package_data, dict) else []:
+        if isinstance(pattern, str):
+            package_inputs.extend(path for path in SCRIPT_DIR.parent.glob(pattern) if path.is_file())
+    if runtime_skill_dir:
+        package_inputs.append(Path(runtime_skill_dir).resolve())
+    add_step("skill-package", package_args, outputs=[run_dir / "skill-package-validation.json"], inputs=list(dict.fromkeys(package_inputs)))
+    add_step("routing-contract", [str(SCRIPT_DIR / "validate_routing_contract.py"), str(routing_contract), "--report", str(run_dir / "routing-contract-validation.json")], outputs=[run_dir / "routing-contract-validation.json"], inputs=[routing_contract], deps=["skill-package"])
+    if args.route_decision:
+        route_args = [str(SCRIPT_DIR / "validate_route.py"), str(Path(args.route_decision).resolve()), "--require-files", "--expected-pages", str(args.expected_pages), "--require-confirmation", "--report", str(run_dir / "route-validation.json")]
+        if args.require_formal_content:
+            route_args.append("--require-formal-content")
+        if args.reference:
+            route_args.extend(["--reference", str(Path(args.reference).resolve())])
+        elif args.reference_dir:
+            route_args.extend(["--reference-dir", str(Path(args.reference_dir).resolve())])
+        route_inputs = [Path(args.route_decision).resolve()]
+        if isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction":
+            route_base = Path(args.route_decision).resolve().parent
+            route_inputs.extend(
+                (route_base / item["path"]).resolve()
+                for item in (route_data.get("reference_roster") or [])
+                if isinstance(item, dict) and isinstance(item.get("path"), str) and item.get("path")
+            )
+        if args.reference:
+            route_inputs.append(Path(args.reference).resolve())
+        elif args.reference_dir:
+            route_inputs.extend(Path(args.reference_dir).resolve() / f"slide-{index}.png" for index in range(1, args.expected_pages + 1))
+        add_step("route", route_args, deps=["routing-contract"], outputs=[run_dir / "route-validation.json"], inputs=list(dict.fromkeys(route_inputs)))
+
     manifest_icon_required, manifest_imagegen_required = project_asset_requirements(project)
     icon_required = args.require_icon_assets or manifest_icon_required or (project / "icon-asset-manifest.json").is_file()
     imagegen_required = args.require_imagegen_assets or manifest_imagegen_required or (project / "imagegen-assets-manifest.json").is_file()
-    if args.route_decision:
-        route_args = [str(SCRIPT_DIR / "validate_route.py"), str(Path(args.route_decision).resolve()), "--require-files", "--report", str(run_dir / "route-validation.json")]
-        add_step("route", route_args, outputs=[run_dir / "route-validation.json"], inputs=[Path(args.route_decision).resolve()])
+    route_deps = ["route"] if args.route_decision else []
+    reference_sources: list[Path] = []
+    if isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction":
+        route_base = Path(args.route_decision).resolve().parent if args.route_decision else project
+        for item in (route_data.get("reference_roster") or []):
+            if isinstance(item, dict) and isinstance(item.get("path"), str) and item.get("path"):
+                reference_sources.append((route_base / item["path"]).resolve())
+    if args.reference:
+        reference_sources.append(Path(args.reference).resolve())
+    elif args.reference_dir:
+        reference_sources.extend((Path(args.reference_dir).resolve() / f"slide-{index}.png") for index in range(1, args.expected_pages + 1))
+    unique_reference_sources = list(dict.fromkeys(reference_sources))
+    if unique_reference_sources:
+        source_args = [str(SCRIPT_DIR / "validate_source_images.py"), *[str(path) for path in unique_reference_sources], "--report", str(run_dir / "source-image-validation.json")]
+        add_step("source-images", source_args, deps=route_deps, outputs=[run_dir / "source-image-validation.json"], inputs=unique_reference_sources)
+    gradient_manifest = project / "gradient-visual-manifest.json"
+    gradient_required = args.require_gradient_visual or gradient_manifest.is_file()
+    if args.require_gradient_visual and not gradient_manifest.is_file():
+        add_step("gradient-visual", static_result={"name": "gradient-visual", "command": [], "exit_code": 2, "ok": False, "failure": "gradient_manifest_missing", "stdout": "", "stderr": ""}, cacheable=False, deps=route_deps, outputs=[run_dir / "gradient-visual-validation.json"])
+    elif gradient_required:
+        gradient_args = [str(SCRIPT_DIR / "validate_gradient_visual.py"), str(gradient_manifest), "--report", str(run_dir / "gradient-visual-validation.json")]
+        if args.release:
+            gradient_args.append("--require-verified")
+        add_step("gradient-visual", gradient_args, deps=route_deps, outputs=[run_dir / "gradient-visual-validation.json"], inputs=[gradient_manifest])
     if args.handoff:
         add_step("handoff", [str(SCRIPT_DIR / "validate_handoff.py"), str(Path(args.handoff).resolve()), "--report", str(run_dir / "handoff-validation.json")], outputs=[run_dir / "handoff-validation.json"], inputs=[Path(args.handoff).resolve(), deck])
     if args.revision_label:
@@ -326,14 +526,14 @@ def main() -> int:
     layout_path = project / "layout.json"
     object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
     if args.require_object_manifest or object_manifest.is_file():
-        object_args = [str(SCRIPT_DIR / "validate_object_manifest.py"), str(object_manifest), "--report", str(run_dir / "object-manifest-validation.json")]
+        object_args = [str(SCRIPT_DIR / "validate_object_manifest.py"), str(object_manifest), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "object-manifest-validation.json")]
         if args.require_independent_panels:
             object_args.append("--require-panels")
         add_step("object-manifest", object_args, outputs=[run_dir / "object-manifest-validation.json"], inputs=[object_manifest, deck])
     registry_path = Path(args.manifest_registry).resolve() if args.manifest_registry else project / "manifest-registry.json"
     registry_enabled = bool(args.manifest_registry or registry_path.is_file())
     if args.require_manifest_registry and not registry_path.is_file():
-        add_step("manifest-registry", static_result={"name": "manifest-registry", "command": [], "exit_code": 2, "ok": False, "failure": "manifest_registry_missing", "stdout": "", "stderr": ""}, cacheable=False)
+        add_step("manifest-registry", static_result={"name": "manifest-registry", "command": [], "exit_code": 2, "ok": False, "failure": "manifest_registry_missing", "stdout": "", "stderr": ""}, cacheable=False, outputs=[run_dir / "manifest-registry-validation.json"])
     elif registry_enabled:
         registry_args = [str(SCRIPT_DIR / "manifest_registry.py"), "validate", str(registry_path), "--deck", str(deck), "--report", str(run_dir / "manifest-registry-validation.json")]
         if args.require_manifest_registry:
@@ -347,12 +547,6 @@ def main() -> int:
             layout_args.extend(["--report", str(run_dir / "layout-guard.json")])
             add_step("layout-guard", layout_args, outputs=[run_dir / "layout-guard.json"], inputs=[Path(args.reference).resolve(), layout_path])
         else:
-            (run_dir / "layout-guard.json").write_text(json.dumps({
-                "schema": "ai-ppt-plus/layout-guard-run/v1",
-                "valid": False,
-                "status": "blocked",
-                "issues": [{"code": "layout_json_missing"}],
-            }, ensure_ascii=False, indent=2), encoding="utf-8")
             add_step("layout-guard", static_result={"name": "layout-guard", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""}, outputs=[run_dir / "layout-guard.json"], cacheable=False)
     if imagegen_required:
         add_step("imagegen-assets", [str(SCRIPT_DIR / "validate_imagegen_assets_manifest.py"), str(project / "imagegen-assets-manifest.json"), "--report", str(run_dir / "imagegen-assets-validation.json")], outputs=[run_dir / "imagegen-assets-validation.json"], inputs=[project / "imagegen-assets-manifest.json"])
@@ -389,6 +583,10 @@ def main() -> int:
         for asset_manifest in semantic_asset_manifests:
             semantic_args.extend(["--asset-manifest", str(asset_manifest)])
             semantic_inputs.append(asset_manifest)
+        if args.require_source_hashes:
+            semantic_args.append("--require-source-hashes")
+        if args.release:
+            semantic_args.append("--require-independent-text-manifest")
         add_step("semantic-object-audit", semantic_args, deps=["editable-object-audit"], outputs=[run_dir / "semantic-object-audit.json"], inputs=semantic_inputs)
     render_args = [str(SCRIPT_DIR / "render_pptx.py"), str(deck), "--output-dir", str(render_dir), "--dpi", str(args.dpi), "--report", str(render_report_path)]
     if args.font_dir:
@@ -427,6 +625,14 @@ def main() -> int:
         if affected_pages:
             comparison_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir, Path(args.reference_dir).resolve()], metadata={"affected_pages": affected_pages or "all"})
+    if args.reference:
+        reference_audit_args = [str(SCRIPT_DIR / "reference_audit.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--report", str(run_dir / "reference-audit.json")]
+        add_step("reference-audit", reference_audit_args, deps=["render"] + (["source-images"] if "source-images" in {task.name for task in executor.tasks} else []), outputs=[run_dir / "reference-audit.json"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
+    elif args.reference_dir:
+        reference_audit_args = [str(SCRIPT_DIR / "reference_audit_deck.py"), str(Path(args.reference_dir).resolve()), str(render_dir), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "reference-audit.json")]
+        if affected_pages:
+            reference_audit_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+        add_step("reference-audit", reference_audit_args, deps=["render"] + (["source-images"] if "source-images" in {task.name for task in executor.tasks} else []), outputs=[run_dir / "reference-audit.json"], inputs=[Path(args.reference_dir).resolve(), render_dir])
     if args.reference and layout_path.is_file():
         add_step("visual-compare-qa", [str(SCRIPT_DIR / "visual_compare_qa.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--out-dir", str(run_dir / "visual-qa")], deps=["render"], outputs=[run_dir / "visual-qa"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
     if args.ocr_lang or args.require_ocr:
@@ -444,15 +650,17 @@ def main() -> int:
         if args.expected_panel_count is not None:
             panel_args.extend(["--expected-count", str(args.expected_panel_count)])
         add_step("panel-assets", panel_args, outputs=[run_dir / "panel-assets-validation.json"], inputs=[panel_manifest])
-    if args.require_text_style_map and layout_path.is_file():
+    if args.require_text_style_map and not layout_path.is_file():
+        add_step("text-style-map", static_result={"name": "text-style-map", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""}, cacheable=False, deps=route_deps, outputs=[run_dir / "text-style-map-validation.json"])
+    elif args.require_text_style_map and layout_path.is_file():
         text_style_args = [str(SCRIPT_DIR / "validate_text_style_map.py"), str(layout_path), "--report", str(run_dir / "text-style-map-validation.json")]
         if args.strict_layout or args.release:
             text_style_args.extend(["--strict", "--require-source-bbox"])
-        add_step("text-style-map", text_style_args, outputs=[run_dir / "text-style-map-validation.json"], inputs=[layout_path])
+        add_step("text-style-map", text_style_args, deps=route_deps, outputs=[run_dir / "text-style-map-validation.json"], inputs=[layout_path])
     text_manifest = Path(args.text_manifest).resolve() if args.text_manifest else project / "text-layout-manifest.json"
     text_model_enabled = bool(args.text_manifest or text_manifest.is_file())
     if args.require_text_model and not text_manifest.is_file():
-        add_step("text-model", static_result={"name": "text-model", "command": [], "exit_code": 2, "ok": False, "failure": "text_manifest_missing", "stdout": "", "stderr": ""}, cacheable=False)
+        add_step("text-model", static_result={"name": "text-model", "command": [], "exit_code": 2, "ok": False, "failure": "text_manifest_missing", "stdout": "", "stderr": ""}, cacheable=False, outputs=[run_dir / "text-layout-validation.json"])
     elif text_model_enabled:
         text_model_args = [str(SCRIPT_DIR / "text_model.py"), "validate", str(text_manifest), "--report", str(run_dir / "text-layout-validation.json")]
         if args.require_text_model:
@@ -469,7 +677,9 @@ def main() -> int:
     if args.require_editability:
         project_args.append("--require-editability")
     if args.require_object_manifest or object_manifest.is_file():
-        project_args.extend(["--semantic-object-audit", str(run_dir / "semantic-object-audit.json")])
+        project_args.extend(["--semantic-object-audit", str(run_dir / "semantic-object-audit.json"), "--object-manifest", str(object_manifest)])
+        if args.require_object_manifest:
+            project_args.append("--require-semantic-object-audit")
     if args.route_decision:
         project_args.extend(["--route-validation", str(run_dir / "route-validation.json")])
     if args.require_route:
@@ -532,6 +742,8 @@ def main() -> int:
         evidence = {}
         bundle_path = Path(bundle_path) if bundle_path else run_dir / "report-bundle-validation.json"
         for name, path in (
+            ("skill_package_validation", run_dir / "skill-package-validation.json"),
+            ("routing_contract_validation", run_dir / "routing-contract-validation.json"),
             ("render", run_dir / "render-report.json"),
             ("render_visual_gate", run_dir / "render-visual-gate.json"),
             ("visual_comparison", run_dir / "visual-comparison.json"),
@@ -548,6 +760,9 @@ def main() -> int:
             ("semantic_object_audit", run_dir / "semantic-object-audit.json"),
             ("panel_assets_validation", run_dir / "panel-assets-validation.json"),
             ("text_style_map_validation", run_dir / "text-style-map-validation.json"),
+            ("source_image_validation", run_dir / "source-image-validation.json"),
+            ("gradient_visual_validation", run_dir / "gradient-visual-validation.json"),
+            ("reference_audit", run_dir / "reference-audit.json"),
             ("visual_compare_qa", run_dir / "visual-qa/report.json"),
             ("project_report_aggregate", run_dir / "project-report.json"),
             (bundle_key, bundle_path),
@@ -639,8 +854,18 @@ def main() -> int:
             },
         }
 
+    # The route and package contracts are true prerequisites, not just
+    # informational reports.  A failed decision must block every downstream
+    # gate so a parallel DAG cannot continue with an unapproved authority.
+    prerequisite = "route" if args.route_decision else "routing-contract"
+    for task in executor.tasks:
+        if task.name in {"skill-package", "routing-contract", "route"}:
+            continue
+        task.deps = tuple(dict.fromkeys((*task.deps, prerequisite)))
     steps = executor.run()
     report_entries = [
+        {"report_type": "skill-package-validation", "path": "skill-package-validation.json", "required": True, "stage": "intake"},
+        {"report_type": "routing-contract-validation", "path": "routing-contract-validation.json", "required": True, "stage": "intake"},
         {"report_type": "environment", "path": "environment-report.json", "required": True, "stage": "intake"},
         {"report_type": "inspection", "path": "inspection.json", "required": True, "stage": "validated"},
         {"report_type": "render", "path": "render-report.json", "required": True, "stage": "rendered"},
@@ -673,6 +898,12 @@ def main() -> int:
         report_entries.append({"report_type": "layout-guard", "path": "layout-guard.json", "required": True, "stage": "validated"})
         if (render_dir / "slide-1.png").is_file():
             report_entries.append({"report_type": "visual-compare-qa", "path": "visual-qa/report.json", "required": True, "stage": "validated"})
+    if unique_reference_sources:
+        report_entries.append({"report_type": "source-image-validation", "path": "source-image-validation.json", "required": True, "stage": "source-analyzed"})
+    if gradient_required:
+        report_entries.append({"report_type": "gradient-visual-validation", "path": "gradient-visual-validation.json", "required": True, "stage": "validated"})
+    if args.reference or args.reference_dir:
+        report_entries.append({"report_type": "reference-audit", "path": "reference-audit.json", "required": True, "stage": "validated"})
     if args.font_dir or args.require_cjk:
         report_entries.append({"report_type": "font", "path": "font-report.json", "required": True, "stage": "intake"})
     if (run_dir / "font-asset-validation.json").is_file():
@@ -689,17 +920,18 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
-    report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": "validated", "validation_scope": "incremental" if affected_pages else "full", "deck_path": str(deck), "deck_sha256": sha256(deck), "source_references": [{"source_id": "deck", "path": str(deck), "sha256": sha256(deck)}], "reports": report_entries}
-    (run_dir / "report-index.json").write_text(json.dumps(report_index, ensure_ascii=False, indent=2), encoding="utf-8")
+    stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
+    report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": stage, "validation_scope": "incremental" if affected_pages else "full", "deck_path": str(deck), "deck_sha256": sha256(deck), "source_references": [{"source_id": "deck", "path": str(deck), "sha256": sha256(deck)}], "reports": report_entries}
+    atomic_write_json(run_dir / "report-index.json", report_index)
     steps.append(run_step(run_dir, "project-report-aggregate", [str(SCRIPT_DIR / "aggregate_project_reports.py"), str(run_dir / "report-index.json"), "--report", str(run_dir / "project-report.json")]))
     preflight_bundle_path = run_dir / "report-bundle-preflight.json"
     final_bundle_path = run_dir / "report-bundle-validation.json"
     preliminary_evidence, preliminary_degradations = collect_quality_evidence()
     preliminary_result = build_pipeline_result(steps, preliminary_evidence, preliminary_degradations)
-    write_json_atomic(run_dir / "pipeline-result.json", preliminary_result)
+    atomic_write_json(run_dir / "pipeline-result.json", preliminary_result)
     bundle_args = [
         str(SCRIPT_DIR / "validate_report_bundle.py"),
         str(run_dir / "pipeline-result.json"),
@@ -729,6 +961,13 @@ def main() -> int:
             "--require-route",
             "--manifest-validation", str(run_dir / "manifest-validation.json"),
             "--require-editability",
+            "--object-manifest", str(object_manifest),
+            "--semantic-object-audit", str(run_dir / "semantic-object-audit.json"),
+            "--require-semantic-object-audit",
+            "--manifest-registry-validation", str(run_dir / "manifest-registry-validation.json"),
+            "--require-manifest-registry",
+            "--text-layout-validation", str(run_dir / "text-layout-validation.json"),
+            "--require-text-model",
             "--require-embedded-fonts",
             "--font-delivery-report", str(run_dir / "font-delivery-validation.json"),
             "--require-font-delivery",
@@ -748,8 +987,19 @@ def main() -> int:
             release_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.reference or args.reference_dir:
             release_args.extend(["--visual-comparison", str(run_dir / "visual-comparison.json")])
+            release_args.extend(["--source-image-validation", str(run_dir / "source-image-validation.json"), "--require-source-image-validation", "--reference-audit", str(run_dir / "reference-audit.json"), "--require-reference-audit"])
         if args.ocr_lang or args.require_ocr:
             release_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
+        if args.require_text_style_map:
+            release_args.extend(["--text-style-map-validation", str(run_dir / "text-style-map-validation.json"), "--require-text-style-map"])
+        if gradient_required:
+            release_args.extend(["--gradient-visual-validation", str(run_dir / "gradient-visual-validation.json"), "--require-gradient-visual"])
+        if icon_required:
+            release_args.extend(["--icon-assets-validation", str(run_dir / "icon-assets-validation.json"), "--require-icon-assets"])
+        if imagegen_required:
+            release_args.extend(["--imagegen-assets-validation", str(run_dir / "imagegen-assets-validation.json"), "--require-imagegen-assets"])
+        if panel_gate_required:
+            release_args.extend(["--panel-assets-validation", str(run_dir / "panel-assets-validation.json"), "--require-panel-assets"])
         steps.append(run_step(run_dir, "release-check", release_args))
     release_report = load_report(run_dir / "release-check.json")
     preflight_report = load_report(preflight_bundle_path)
@@ -759,13 +1009,13 @@ def main() -> int:
     review_path = run_dir / "review.html"
     result["review_html"] = str(review_path)
     result["finalization"] = {"report_bundle": {"path": str(final_bundle_path), "status": "pending"}}
-    write_json_atomic(run_dir / "pipeline-result.json", result)
+    atomic_write_json(run_dir / "pipeline-result.json", result)
     try:
         write_review(result, review_path)
     except Exception as exc:
         result["review_html"] = None
         result["quality_degradations"].append({"code": "review_html_generation_failed", "message": f"{type(exc).__name__}: {exc}", "requires_human_review": True})
-        write_json_atomic(run_dir / "pipeline-result.json", result)
+        atomic_write_json(run_dir / "pipeline-result.json", result)
 
     def run_final_bundle() -> tuple[dict, dict | None]:
         final_bundle_args = [
@@ -791,14 +1041,14 @@ def main() -> int:
         result["release_eligible"] = False
         result["release_status"] = "blocked-final-report-bundle"
         result["next_state"] = "validated" if result.get("technical_valid") else "revision-required"
-    write_json_atomic(run_dir / "pipeline-result.json", result)
+    atomic_write_json(run_dir / "pipeline-result.json", result)
     if result.get("review_html"):
         try:
             write_review(result, review_path)
         except Exception as exc:
             result["review_html"] = None
             result["quality_degradations"].append({"code": "review_html_generation_failed", "message": f"{type(exc).__name__}: {exc}", "requires_human_review": True})
-            write_json_atomic(run_dir / "pipeline-result.json", result)
+            atomic_write_json(run_dir / "pipeline-result.json", result)
 
     # The final bundle is checked again after the final result and review page
     # have been sealed. This keeps the bundle's source hashes authoritative.
@@ -809,13 +1059,13 @@ def main() -> int:
         result["release_eligible"] = False
         result["release_status"] = "blocked-final-report-bundle"
         result["next_state"] = "validated" if result.get("technical_valid") else "revision-required"
-        write_json_atomic(run_dir / "pipeline-result.json", result)
+        atomic_write_json(run_dir / "pipeline-result.json", result)
         if result.get("review_html"):
             try:
                 write_review(result, review_path)
             except Exception:
                 result["review_html"] = None
-                write_json_atomic(run_dir / "pipeline-result.json", result)
+                atomic_write_json(run_dir / "pipeline-result.json", result)
         final_bundle_step, final_bundle_report = run_final_bundle()
         final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
     print(json.dumps(result, ensure_ascii=False))

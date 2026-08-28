@@ -481,21 +481,44 @@ def _expected_chart_values(obj: dict[str, Any], base: Path) -> dict[str, Any] | 
     return source if isinstance(source, dict) else None
 
 
-def _data_source_evidence(obj: dict[str, Any], base: Path) -> dict[str, Any]:
+def _data_source_evidence(obj: dict[str, Any], base: Path, *, inline_source: Any = None) -> dict[str, Any]:
     explicit_value = obj.get("data_source_path") or obj.get("data_source")
     source = _resolve(base, explicit_value)
-    declared = obj.get("data_source_sha256")
+    details = obj.get("details") if isinstance(obj.get("details"), dict) else {}
+    declared = None
+    declared_key = None
+    invalid_declared_hashes: list[str] = []
+    for container in (obj, details):
+        for key in ("data_source_sha256", "data_snapshot_sha256", *SOURCE_HASH_KEYS):
+            value = container.get(key)
+            if value in (None, ""):
+                continue
+            if isinstance(value, str) and SHA256.fullmatch(value):
+                declared = value.lower()
+                declared_key = key
+                break
+            invalid_declared_hashes.append(f"{key}={value}")
+        if declared is not None:
+            break
+    inline = source is None and inline_source is not None
+    observed = _digest(source) if source and source.is_file() else _json_digest(inline_source) if inline else None
     evidence = {
-        "declared_sha256": declared.lower() if isinstance(declared, str) and SHA256.fullmatch(declared) else None,
+        "declared_sha256": declared,
+        "declared_key": declared_key,
+        "invalid_declared_hashes": invalid_declared_hashes,
         "path": str(source.resolve()) if source is not None else None,
         "available": bool(source and source.is_file()),
-        "explicit_path": bool(obj.get("data_source_path")),
-        "observed_sha256": _digest(source) if source and source.is_file() else None,
+        "inline": inline,
+        "explicit_path": bool(explicit_value),
+        "observed_sha256": observed,
     }
     evidence["hash_match"] = (
-        evidence["declared_sha256"] is None
+        not invalid_declared_hashes
+        and (
+            evidence["declared_sha256"] is None
         or evidence["observed_sha256"] is None
         or evidence["declared_sha256"] == evidence["observed_sha256"].lower()
+        )
     )
     return evidence
 
@@ -576,21 +599,42 @@ def audit(
     object_manifest_path: Path,
     text_manifest_path: Path | None = None,
     asset_manifest_paths: list[Path] | None = None,
+    *,
+    require_source_hashes: bool = False,
+    require_independent_text_manifest: bool = False,
 ) -> dict[str, Any]:
     from pptx import Presentation
 
     object_manifest = _read(object_manifest_path)
     text_specs: dict[str, dict[str, Any]] = {}
+    text_specs_by_slide: dict[tuple[int, str], dict[str, Any]] = {}
     text_manifest_entries: list[dict[str, Any]] = []
+    text_manifest_data: dict[str, Any] | None = None
+    text_manifest_parse_errors: list[dict[str, Any]] = []
     if text_manifest_path and text_manifest_path.is_file():
-        text_manifest = _read(text_manifest_path)
-        for slide_index, slide in enumerate(text_manifest.get("slides", []), 1):
-            for spec in slide.get("text_specs", []) if isinstance(slide, dict) else []:
+        text_manifest_data = _read(text_manifest_path)
+        raw_text_slides = text_manifest_data.get("slides")
+        if not isinstance(raw_text_slides, list):
+            raise ValueError(f"text manifest slides must be an array: {text_manifest_path}")
+        for slide_index, slide in enumerate(raw_text_slides, 1):
+            raw_specs = slide.get("text_specs", []) if isinstance(slide, dict) else []
+            if not isinstance(raw_specs, list):
+                raise ValueError(f"text manifest slide {slide_index} text_specs must be an array")
+            raw_slide_no = slide.get("slide_no", slide_index) if isinstance(slide, dict) else slide_index
+            try:
+                slide_no = int(raw_slide_no)
+            except (TypeError, ValueError):
+                text_manifest_parse_errors.append({"code": "text_manifest_slide_number_invalid", "index": slide_index, "value": raw_slide_no})
+                slide_no = slide_index
+            for spec in raw_specs:
                 if isinstance(spec, dict):
-                    text_manifest_entries.append({"slide_no": int(slide.get("slide_no", slide_index)), **spec})
+                    entry = dict(spec)
+                    entry["slide_no"] = slide_no
+                    text_manifest_entries.append(entry)
                     for key in (spec.get("text_id"), spec.get("object_id")):
                         if key:
-                            text_specs[str(key)] = spec
+                            text_specs[str(key)] = entry
+                            text_specs_by_slide[(slide_no, str(key))] = entry
     asset_records: list[dict[str, Any]] = []
     for path in asset_manifest_paths or []:
         if path.is_file():
@@ -598,12 +642,60 @@ def audit(
 
     prs = Presentation(str(deck_path))
     errors: list[dict[str, Any]] = []
+    errors.extend(text_manifest_parse_errors)
     warnings: list[dict[str, Any]] = []
     audited: list[dict[str, Any]] = []
     coverage: list[dict[str, Any]] = []
     expected_count = 0
 
-    for slide_index, slide_spec in enumerate(object_manifest.get("slides", []), 1):
+    manifest_slides = object_manifest.get("slides")
+    if not isinstance(manifest_slides, list) or not manifest_slides:
+        errors.append({"code": "object_manifest_slides_missing"})
+        manifest_slides = []
+    manifest_numbers: list[int] = []
+    for index, slide_spec in enumerate(manifest_slides, 1):
+        if not isinstance(slide_spec, dict):
+            errors.append({"code": "object_manifest_slide_invalid", "index": index})
+            continue
+        try:
+            manifest_numbers.append(int(slide_spec.get("slide_no", index)))
+        except (TypeError, ValueError):
+            errors.append({"code": "object_manifest_slide_number_invalid", "index": index})
+    expected_numbers = list(range(1, len(prs.slides) + 1))
+    if len(manifest_slides) != len(prs.slides):
+        errors.append({"code": "object_manifest_slide_count_mismatch", "manifest": len(manifest_slides), "pptx": len(prs.slides)})
+    if sorted(manifest_numbers) != expected_numbers:
+        errors.append({"code": "object_manifest_slide_coverage_mismatch", "manifest": sorted(manifest_numbers), "pptx": expected_numbers})
+    if len(manifest_numbers) != len(set(manifest_numbers)):
+        errors.append({"code": "object_manifest_slide_number_duplicate"})
+    if require_independent_text_manifest:
+        if text_manifest_path is None or not text_manifest_path.is_file():
+            errors.append({"code": "independent_text_manifest_missing"})
+        else:
+            text_manifest_numbers = []
+            raw_text_slides = text_manifest_data.get("slides", []) if isinstance(text_manifest_data, dict) else []
+            for index, slide in enumerate(raw_text_slides, 1):
+                if isinstance(slide, dict):
+                    try:
+                        text_manifest_numbers.append(int(slide.get("slide_no", index)))
+                    except (TypeError, ValueError):
+                        errors.append({"code": "text_manifest_slide_number_invalid", "index": index})
+            if len(text_manifest_numbers) != len(set(text_manifest_numbers)):
+                errors.append({"code": "text_manifest_slide_number_duplicate", "observed": text_manifest_numbers})
+            if sorted(set(text_manifest_numbers)) != sorted(set(manifest_numbers)):
+                errors.append({"code": "text_manifest_slide_coverage_mismatch", "manifest": sorted(set(text_manifest_numbers)), "object_manifest": sorted(set(manifest_numbers))})
+
+    text_manifest_keys: set[tuple[int, str]] = set()
+    for spec in text_manifest_entries:
+        slide_no = spec.get("slide_no")
+        keys = {str(value) for value in (spec.get("object_id"), spec.get("text_id")) if value}
+        for key in keys:
+            marker = (int(slide_no), key) if isinstance(slide_no, int) else (0, key)
+            if marker in text_manifest_keys:
+                errors.append({"code": "text_manifest_spec_duplicate", "slide_no": slide_no, "object_id": key})
+            text_manifest_keys.add(marker)
+
+    for slide_index, slide_spec in enumerate(manifest_slides, 1):
         if not isinstance(slide_spec, dict):
             continue
         slide_no = int(slide_spec.get("slide_no", slide_index))
@@ -677,7 +769,16 @@ def audit(
                 record["semantic_checks"]["native_textbox"] = native_textbox
                 if not native_textbox:
                     _append_error(errors, "editable_text_not_native_textbox", slide_no, object_id, actual=actual)
+                independent_spec = text_specs_by_slide.get((slide_no, object_id)) or text_specs_by_slide.get((slide_no, str(obj.get("text_id"))))
+                if require_independent_text_manifest and independent_spec is None:
+                    _append_error(errors, "independent_text_spec_missing", slide_no, object_id)
                 expected_text = _expected_text(obj, text_specs)
+                if independent_spec is not None:
+                    independent_text = _normal_text(independent_spec.get("content"))
+                    object_text = _normal_text(expected_text)
+                    if expected_text is not None and independent_text != object_text:
+                        _append_error(errors, "text_manifest_authority_mismatch", slide_no, object_id, object_manifest_text=object_text, text_manifest_text=independent_text)
+                    expected_text = independent_text
                 if expected_text is None:
                     record["semantic_checks"]["text_exact"] = False
                     _append_error(errors, "text_manifest_evidence_missing", slide_no, object_id)
@@ -696,7 +797,11 @@ def audit(
                 table = _table_evidence(shape)
                 expected_values = _expected_table_values(obj, object_manifest_path.parent)
                 data_match = expected_values is not None and expected_values == table["values"]
-                source_evidence = _data_source_evidence(obj, object_manifest_path.parent)
+                source_evidence = _data_source_evidence(
+                    obj,
+                    object_manifest_path.parent,
+                    inline_source=obj.get("data_snapshot") or obj.get("table_data") or obj.get("data") or obj.get("rows"),
+                )
                 record["table"] = {"observed": table, "expected_values": expected_values, "expected_values_sha256": _json_digest(expected_values) if expected_values is not None else None, "data_source": source_evidence}
                 record["semantic_checks"]["native_table"] = True
                 record["semantic_checks"]["native_table_data"] = bool(table["rows"] and table["columns"] and table["rectangular"] and table["nonempty_cells"])
@@ -706,12 +811,18 @@ def audit(
                     _append_error(errors, "table_source_data_missing", slide_no, object_id)
                 elif not data_match:
                     _append_error(errors, "table_data_mismatch", slide_no, object_id, expected=expected_values, observed=table["values"])
-                if source_evidence["available"] and source_evidence["declared_sha256"] is None:
+                if source_evidence["invalid_declared_hashes"]:
+                    _append_error(errors, "table_data_source_hash_invalid", slide_no, object_id, values=source_evidence["invalid_declared_hashes"])
+                elif source_evidence["available"] and source_evidence["declared_sha256"] is None:
                     _append_error(errors, "table_data_source_hash_missing", slide_no, object_id)
                 elif source_evidence["available"] and not source_evidence["hash_match"]:
                     _append_error(errors, "table_data_source_hash_mismatch", slide_no, object_id, evidence=source_evidence)
+                elif source_evidence["inline"] and source_evidence["declared_sha256"] is not None and not source_evidence["hash_match"]:
+                    _append_error(errors, "table_data_source_hash_mismatch", slide_no, object_id, evidence=source_evidence)
                 elif source_evidence["explicit_path"] and not source_evidence["available"]:
                     _append_error(errors, "table_data_source_unavailable", slide_no, object_id, evidence=source_evidence)
+                elif require_source_hashes and source_evidence["declared_sha256"] is None:
+                    _append_error(errors, "table_data_source_hash_missing", slide_no, object_id)
                 if not table["nonempty_cells"]:
                     _append_error(errors, "native_table_empty", slide_no, object_id)
 
@@ -720,7 +831,11 @@ def audit(
                 expected_values = _expected_chart_values(obj, object_manifest_path.parent)
                 chart_match = expected_values is not None and expected_values == chart["chart_data"]
                 workbook_match = expected_values is not None and expected_values == chart["workbook_data"]
-                source_evidence = _data_source_evidence(obj, object_manifest_path.parent)
+                source_evidence = _data_source_evidence(
+                    obj,
+                    object_manifest_path.parent,
+                    inline_source=obj.get("data_snapshot") or obj.get("chart_data") or obj.get("data") or ({"categories": obj.get("categories"), "series": obj.get("series")} if "categories" in obj and "series" in obj else None),
+                )
                 chart_ok = bool(
                     chart["series"]
                     and chart["nonempty_series"]
@@ -739,12 +854,18 @@ def audit(
                 record["semantic_checks"]["chart_data_matches_source"] = bool(chart_match and workbook_match)
                 if expected_values is None:
                     _append_error(errors, "chart_source_data_missing", slide_no, object_id)
-                if source_evidence["available"] and source_evidence["declared_sha256"] is None:
+                if source_evidence["invalid_declared_hashes"]:
+                    _append_error(errors, "chart_data_source_hash_invalid", slide_no, object_id, values=source_evidence["invalid_declared_hashes"])
+                elif source_evidence["available"] and source_evidence["declared_sha256"] is None:
                     _append_error(errors, "chart_data_source_hash_missing", slide_no, object_id)
                 elif source_evidence["available"] and not source_evidence["hash_match"]:
                     _append_error(errors, "chart_data_source_hash_mismatch", slide_no, object_id, evidence=source_evidence)
+                elif source_evidence["inline"] and source_evidence["declared_sha256"] is not None and not source_evidence["hash_match"]:
+                    _append_error(errors, "chart_data_source_hash_mismatch", slide_no, object_id, evidence=source_evidence)
                 elif source_evidence["explicit_path"] and not source_evidence["available"]:
                     _append_error(errors, "chart_data_source_unavailable", slide_no, object_id, evidence=source_evidence)
+                elif require_source_hashes and source_evidence["declared_sha256"] is None:
+                    _append_error(errors, "chart_data_source_hash_missing", slide_no, object_id)
                 if not chart_ok:
                     _append_error(errors, "native_chart_data_invalid", slide_no, object_id, evidence=chart)
 
@@ -788,14 +909,14 @@ def audit(
                 record["declared_source_sha256"] = sorted(declared_hashes)
                 record["source_file_sha256"] = sorted(source_hashes)
                 record["expected_source_sha256"] = sorted(expected_hashes)
-                source_required = _requires_source_hash(obj, brand)
+                source_required = _requires_source_hash(obj, brand) or require_source_hashes
                 record["semantic_checks"]["source_hash_format"] = not invalid_hashes
                 if invalid_hashes:
                     _append_error(errors, "source_hash_invalid", slide_no, object_id, values=invalid_hashes)
-                declaration_ok = not declared_hashes or source_hashes <= declared_hashes
+                declaration_ok = bool(declared_hashes) and (not source_hashes or source_hashes <= declared_hashes) if require_source_hashes else (not declared_hashes or source_hashes <= declared_hashes)
                 record["semantic_checks"]["source_declaration_hash"] = declaration_ok
                 if not declaration_ok:
-                    _append_error(errors, "source_manifest_hash_mismatch", slide_no, object_id, declared=sorted(declared_hashes), observed=sorted(source_hashes))
+                    _append_error(errors, "source_manifest_hash_missing_or_mismatch" if require_source_hashes and not declared_hashes else "source_manifest_hash_mismatch", slide_no, object_id, declared=sorted(declared_hashes), observed=sorted(source_hashes))
                 if missing_sources:
                     record["semantic_checks"]["source_files_available"] = False
                     if source_required:
@@ -833,7 +954,7 @@ def audit(
         coverage.append(coverage_record)
 
     text_refs_by_slide: dict[int, set[str]] = {}
-    for slide_index, slide_spec in enumerate(object_manifest.get("slides", []), 1):
+    for slide_index, slide_spec in enumerate(object_manifest.get("slides") or [], 1):
         if not isinstance(slide_spec, dict):
             continue
         slide_no = int(slide_spec.get("slide_no", slide_index))
@@ -864,7 +985,13 @@ def audit(
         "audited_object_count": len(audited),
         "observed_top_level_shape_count": sum(item["observed_top_level_shape_count"] for item in coverage),
         "undeclared_shape_count": sum(item["undeclared_shape_count"] for item in coverage),
-        "text_manifest_coverage": {"declared": len(text_manifest_entries), "orphan_count": len(orphan_text_specs), "orphans": orphan_text_specs},
+        "text_manifest_coverage": {
+            "required": require_independent_text_manifest,
+            "declared": len(text_manifest_entries),
+            "slide_numbers": sorted({item["slide_no"] for item in text_manifest_entries if isinstance(item.get("slide_no"), int)}),
+            "orphan_count": len(orphan_text_specs),
+            "orphans": orphan_text_specs,
+        },
         "coverage": coverage,
         "objects": audited,
         "errors": errors,
@@ -880,6 +1007,8 @@ def main() -> int:
     parser.add_argument("--object-manifest", required=True)
     parser.add_argument("--text-manifest")
     parser.add_argument("--asset-manifest", action="append", default=[])
+    parser.add_argument("--require-source-hashes", action="store_true", help="require declared hashes for every raster/data source")
+    parser.add_argument("--require-independent-text-manifest", action="store_true", help="require an independent text-layout manifest for every editable text object")
     parser.add_argument("--report")
     args = parser.parse_args()
     try:
@@ -888,6 +1017,8 @@ def main() -> int:
             Path(args.object_manifest).resolve(),
             Path(args.text_manifest).resolve() if args.text_manifest else None,
             [Path(path).resolve() for path in args.asset_manifest],
+            require_source_hashes=args.require_source_hashes,
+            require_independent_text_manifest=args.require_independent_text_manifest,
         )
     except Exception as exc:
         result = {"schema": SCHEMA, "valid": False, "status": "invalid", "errors": [{"code": "runtime_error", "message": f"{type(exc).__name__}: {exc}"}]}

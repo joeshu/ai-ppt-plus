@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import copy
+import hashlib
 import json
 import subprocess
 import sys
@@ -20,6 +21,10 @@ PNG_1X1 = base64.b64decode(
 
 def write(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def json_digest(value) -> str:
+    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
 def run(*args: str):
@@ -66,6 +71,19 @@ def main() -> int:
         assert records["logo"]["semantic_checks"]["brand_lockup_whole_asset"] is True
         assert records["logo"]["semantic_checks"]["source_hash"] is True
         good_manifest = json.loads(object_manifest.read_text(encoding="utf-8"))
+
+        strict_manifest = copy.deepcopy(good_manifest)
+        for item in strict_manifest["slides"][0]["objects"]:
+            if item["object_id"] in {"table", "chart"}:
+                item["data_source_sha256"] = json_digest(item["data_snapshot"])
+            if item["object_id"] == "logo":
+                item["source_sha256"] = hashlib.sha256(PNG_1X1).hexdigest()
+        write(object_manifest, strict_manifest)
+        strict = run(
+            "scripts/semantic_object_audit.py", str(deck), "--object-manifest", str(object_manifest),
+            "--require-source-hashes",
+        )
+        assert strict.returncode == 0, strict.stdout + strict.stderr
 
         bad_table = copy.deepcopy(good_manifest)
         bad_table["slides"][0]["objects"][1]["data_snapshot"]["values"][1][1] = "999"

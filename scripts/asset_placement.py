@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import math
 import posixpath
 import subprocess
 import sys
@@ -26,9 +27,20 @@ def _resolve(assets_dir: Path, file: str) -> Path:
 
 
 def _frac(deck: dict, item: dict, key: str, reference: float) -> float:
-    value = item[key]
+    if key not in item:
+        _die(f"asset is missing coordinate: {key}")
+    try:
+        value = float(item[key])
+    except (TypeError, ValueError):
+        _die(f"asset coordinate {key} must be numeric")
     if deck["units"] == "px":
-        return value / reference
+        if not reference or not math.isfinite(reference):
+            _die(f"pixel asset coordinate {key} requires a positive reference canvas")
+        value /= reference
+    if not math.isfinite(value):
+        _die(f"asset coordinate {key} must be finite")
+    if key in {"w", "h"} and value <= 0:
+        _die(f"asset coordinate {key} must be positive")
     return value
 
 

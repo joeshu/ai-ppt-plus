@@ -15,6 +15,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from atomic_output import atomic_write_json
+
 
 def yaml_check(root: Path) -> dict:
     files = sorted((root / "evals").glob("*.yaml"))
@@ -81,8 +83,7 @@ def main() -> int:
     }
     if args.report:
         report = Path(args.report)
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(report.resolve(), output)
     print(json.dumps(output, ensure_ascii=False))
     return 0 if output["valid"] else 2
 

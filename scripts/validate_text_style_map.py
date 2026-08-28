@@ -18,6 +18,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 SLIDE_KEYS = {"background", "frame", "shapes", "icons", "texts"}
 # Do not encode one source deck's Chinese labels here.  Model-specific or
@@ -119,8 +120,7 @@ def main() -> None:
         die(f"invalid JSON: {exc}")
     result = audit(data, args.require_source_bbox)
     if args.report:
-        Path(args.report).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.report).write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     if result["errors"] or (args.strict and result["warnings"]):
         raise SystemExit(1)

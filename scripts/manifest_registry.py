@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from atomic_output import atomic_write_json
 from manifest_contract import (
     EDITABILITY_LEVELS,
     MODEL_NAME,
@@ -283,7 +284,7 @@ def build(args: argparse.Namespace) -> int:
         },
     }
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(registry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json(output.resolve(), registry)
     print(json.dumps({"schema": SCHEMA, "output": str(output), "slides": len(slides), "assets": len(assets), "model": MODEL_NAME}, ensure_ascii=False))
     return 0
 
@@ -681,8 +682,7 @@ def validate(args: argparse.Namespace) -> int:
     }
     if args.report:
         report = Path(args.report).resolve()
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        atomic_write_json(report.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

@@ -13,6 +13,7 @@ import subprocess
 import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
+from atomic_output import atomic_write_json
 
 NS = {"a": "http://schemas.openxmlformats.org/drawingml/2006/main"}
 
@@ -69,8 +70,7 @@ def main() -> int:
         result = {"schema": "ai-ppt-plus/ocr-text-check/v1", "valid": False, "status": "failed", "deck": str(Path(args.deck).resolve()), "render_dir": str(Path(args.render_dir).resolve()), "language": args.lang, "slides": [], "issues": [{"severity": "blocker", "code": "invalid_pages", "message": str(exc)}], "human_visual_review_required": True}
         if args.report:
             report = Path(args.report)
-            report.parent.mkdir(parents=True, exist_ok=True)
-            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+            atomic_write_json(report.resolve(), result)
         print(json.dumps(result, ensure_ascii=False))
         return 2
     deck = Path(args.deck)
@@ -88,8 +88,7 @@ def main() -> int:
         result = {"schema": "ai-ppt-plus/ocr-text-check/v1", "valid": not issues, "status": "unavailable", "deck": str(deck.resolve()), "render_dir": str(render_dir.resolve()), "language": args.lang, "selected_pages": sorted(selected_pages) if selected_pages is not None else "all", "slides": [], "issues": issues, "human_visual_review_required": True}
         if args.report:
             report = Path(args.report)
-            report.parent.mkdir(parents=True, exist_ok=True)
-            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+            atomic_write_json(report.resolve(), result)
         print(json.dumps(result, ensure_ascii=False))
         return 0 if result["valid"] else 2
 
@@ -115,8 +114,7 @@ def main() -> int:
     result = {"schema": "ai-ppt-plus/ocr-text-check/v1", "valid": not issues, "status": "passed" if not issues else "failed", "deck": str(deck.resolve()), "render_dir": str(render_dir.resolve()), "language": args.lang, "selected_pages": sorted(selected_pages) if selected_pages is not None else "all", "slides": slide_results, "issues": issues, "human_visual_review_required": True, "limitation": "OCR can miss small, stylized, or overlapping text; use it as a diagnostic, not as formal content authority"}
     if args.report:
         report = Path(args.report)
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(report.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

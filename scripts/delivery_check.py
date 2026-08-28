@@ -7,11 +7,18 @@ import json
 import zipfile
 from pathlib import Path
 
+from atomic_output import atomic_write_json
 from editability import summarize_objects, validate_objects
 
 
 def load(path):
-    return json.loads(Path(path).read_text(encoding="utf-8")) if path and Path(path).exists() else None
+    if not path or not Path(path).exists():
+        return None
+    try:
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    return value if isinstance(value, dict) else None
 
 
 def sha256(path):
@@ -35,6 +42,27 @@ def main() -> int:
     parser.add_argument("--signoff-report")
     parser.add_argument("--route-validation")
     parser.add_argument("--require-route", action="store_true")
+    parser.add_argument("--object-manifest")
+    parser.add_argument("--semantic-object-audit")
+    parser.add_argument("--require-semantic-object-audit", action="store_true")
+    parser.add_argument("--manifest-registry-validation")
+    parser.add_argument("--require-manifest-registry", action="store_true")
+    parser.add_argument("--source-image-validation")
+    parser.add_argument("--require-source-image-validation", action="store_true")
+    parser.add_argument("--reference-audit")
+    parser.add_argument("--require-reference-audit", action="store_true")
+    parser.add_argument("--gradient-visual-validation")
+    parser.add_argument("--require-gradient-visual", action="store_true")
+    parser.add_argument("--icon-assets-validation")
+    parser.add_argument("--require-icon-assets", action="store_true")
+    parser.add_argument("--imagegen-assets-validation")
+    parser.add_argument("--require-imagegen-assets", action="store_true")
+    parser.add_argument("--panel-assets-validation")
+    parser.add_argument("--require-panel-assets", action="store_true")
+    parser.add_argument("--text-layout-validation")
+    parser.add_argument("--require-text-model", action="store_true")
+    parser.add_argument("--text-style-map-validation")
+    parser.add_argument("--require-text-style-map", action="store_true")
     parser.add_argument("--manifest-validation")
     parser.add_argument("--require-editability", action="store_true")
     parser.add_argument("--require-embedded-fonts", action="store_true", help="block delivery unless the inspection report detects OOXML embedded fonts")
@@ -63,10 +91,22 @@ def main() -> int:
     signoff_report = load(args.signoff_report) if args.signoff_report else None
     route_report = load(args.route_validation) if args.route_validation else None
     manifest_report = load(args.manifest_validation) if args.manifest_validation else None
+    semantic_report = load(args.semantic_object_audit) if args.semantic_object_audit else None
+    registry_report = load(args.manifest_registry_validation) if args.manifest_registry_validation else None
+    source_image_report = load(args.source_image_validation) if args.source_image_validation else None
+    reference_audit_report = load(args.reference_audit) if args.reference_audit else None
+    gradient_report = load(args.gradient_visual_validation) if args.gradient_visual_validation else None
+    icon_report = load(args.icon_assets_validation) if args.icon_assets_validation else None
+    imagegen_report = load(args.imagegen_assets_validation) if args.imagegen_assets_validation else None
+    panel_report = load(args.panel_assets_validation) if args.panel_assets_validation else None
+    text_model_report = load(args.text_layout_validation) if args.text_layout_validation else None
+    text_style_report = load(args.text_style_map_validation) if args.text_style_map_validation else None
     project_report = load(args.project_report) if args.project_report else None
     report_bundle = load(args.report_bundle_validation) if args.report_bundle_validation else None
     font_delivery = load(args.font_delivery_report) if args.font_delivery_report else None
     handoff = load(args.handoff) if args.handoff else None
+    manifest_slides = (manifest or {}).get("slides") or []
+    asset_items = (assets or {}).get("assets") or []
     blocking = []
     passed = []
     quality_evidence = {}
@@ -104,6 +144,34 @@ def main() -> int:
         for reference in (route_report.get("evidence") or {}).get("reference_files", []):
             reference_path = Path(reference.get("path", ""))
             check(not reference.get("sha256") or (reference_path.is_file() and sha256(reference_path) == reference.get("sha256")), "stale_reference_validation", "route reference hash must match the current reference file", reference.get("slide_no"))
+
+    def required_quality(report, required: bool, code: str, label: str):
+        if required:
+            check(bool(report and report.get("valid") is True), code, f"{label} report must be present and valid")
+        elif report:
+            check(report.get("valid") is True, code, f"{label} report must be valid")
+
+    required_quality(semantic_report, args.require_semantic_object_audit, "semantic_object_audit_failed", "semantic object audit")
+    required_quality(registry_report, args.require_manifest_registry, "manifest_registry_failed", "manifest registry")
+    required_quality(source_image_report, args.require_source_image_validation, "source_image_validation_failed", "source image validation")
+    required_quality(reference_audit_report, args.require_reference_audit, "reference_audit_failed", "reference audit")
+    required_quality(gradient_report, args.require_gradient_visual, "gradient_visual_validation_failed", "gradient visual validation")
+    required_quality(icon_report, args.require_icon_assets, "icon_assets_validation_failed", "icon asset validation")
+    required_quality(imagegen_report, args.require_imagegen_assets, "imagegen_assets_validation_failed", "imagegen asset validation")
+    required_quality(panel_report, args.require_panel_assets, "panel_assets_validation_failed", "panel asset validation")
+    required_quality(text_model_report, args.require_text_model, "text_model_validation_failed", "text model validation")
+    required_quality(text_style_report, args.require_text_style_map, "text_style_map_validation_failed", "text style map validation")
+    if args.require_semantic_object_audit and args.object_manifest:
+        object_path = Path(args.object_manifest)
+        object_data = load(args.object_manifest)
+        expected_objects = sum(
+            len(slide.get("objects", []))
+            for slide in (object_data or {}).get("slides", []) or []
+            if isinstance(slide, dict) and isinstance(slide.get("objects"), list)
+        )
+        if semantic_report:
+            check(semantic_report.get("object_manifest_sha256") == sha256(object_path), "stale_semantic_object_audit", "semantic audit must describe the current object manifest")
+            check(semantic_report.get("audited_object_count") == expected_objects, "semantic_object_count_mismatch", "semantic audit must cover every manifest object")
 
     if args.manifest_validation:
         check(bool(manifest_report and manifest_report.get("valid") is True), "manifest_validation_failed", "manifest-validation report must be present and valid")
@@ -176,15 +244,15 @@ def main() -> int:
         ratio_ok = bool(inspection and inspection.get("is_16_9")) if abs(args.expected_ratio - 16 / 9) < 0.01 else bool(inspection and inspection.get("ratio") is not None and abs(inspection.get("ratio") - args.expected_ratio) < 0.01)
         check(ratio_ok, "ratio_mismatch", f"expected {args.expected_ratio}, observed {(inspection or {}).get('ratio')}")
     check(not (render and inspection and len(render.get("pages", [])) != inspection.get("slide_count")), "render_count_mismatch", "rendered page count must match inspected slide count")
-    check(bool(manifest and len(manifest.get("slides", [])) == (inspection or {}).get("slide_count")), "manifest_slide_count_mismatch", "manifest page count must match inspected slide count")
-    bad_sources = [item.get("slide_no") for item in (manifest or {}).get("slides", []) if not item.get("formal_content_source")]
+    check(bool(manifest and len(manifest_slides) == (inspection or {}).get("slide_count")), "manifest_slide_count_mismatch", "manifest page count must match inspected slide count")
+    bad_sources = [item.get("slide_no") for item in manifest_slides if not item.get("formal_content_source")]
     check(not bad_sources, "untraceable_formal_content", "formal content source required", bad_sources or None)
-    undocumented = [item for item in (manifest or {}).get("slides", []) if item.get("asset_status") == "placeholder" and not item.get("placeholder_reason")]
+    undocumented = [item for item in manifest_slides if item.get("asset_status") == "placeholder" and not item.get("placeholder_reason")]
     check(not undocumented, "undocumented_placeholders", "placeholder must contain a reason", [item.get("slide_no") for item in undocumented] or None)
-    check(not any(not item.get("provenance") for item in assets.get("assets", [])), "asset_provenance_missing", "every asset needs provenance")
+    check(not any(not item.get("provenance") for item in asset_items), "asset_provenance_missing", "every asset needs provenance")
 
     editability_blockers = []
-    for slide in (manifest or {}).get("slides", []):
+    for slide in manifest_slides:
         slide_no = slide.get("slide_no")
         objects = slide.get("objects")
         if not isinstance(objects, list):
@@ -221,7 +289,7 @@ def main() -> int:
         check(False, "human_signoff_incomplete", "human narrative/facts/visual/fidelity/brand sign-off required", missing_signoff)
     else:
         passed.append({"type": "human_signoff_complete", "severity": "passed", "slide": None, "detail": "narrative/facts/visual/fidelity/brand sign-off recorded"})
-    editability_confirmation_needed = [item.get("slide_no") for item in (manifest or {}).get("slides", []) if isinstance(item.get("objects"), list) and any(isinstance(obj, dict) and obj.get("editability_level") in {"L3", "L4"} for obj in item.get("objects", []))]
+    editability_confirmation_needed = [item.get("slide_no") for item in manifest_slides if isinstance(item.get("objects"), list) and any(isinstance(obj, dict) and obj.get("editability_level") in {"L3", "L4"} for obj in item.get("objects", []))]
     if editability_confirmation_needed and sign.get("editability") is not True:
         check(False, "editability_signoff_incomplete", "L3/L4 objects require explicit editability acceptance", editability_confirmation_needed)
     else:
@@ -248,8 +316,7 @@ def main() -> int:
         "quality_degradations": quality_degradations,
     }
     output_path = Path(args.output)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(output_path.resolve(), output)
     print(json.dumps(output, ensure_ascii=False))
     return 0 if not blocking else 2
 

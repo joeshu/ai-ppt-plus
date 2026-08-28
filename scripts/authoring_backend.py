@@ -20,6 +20,7 @@ from pptx_primitives import add_charts, add_groups, add_shapes, add_tables, add_
 
 
 DEFAULT_FONT_FAMILY = "Noto Sans CJK SC"
+BACKEND_ID = "python-pptx"
 
 
 def _die(message: str, code: int = 2):

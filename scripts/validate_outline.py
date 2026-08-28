@@ -7,6 +7,7 @@ XLSX requires openpyxl. Example: python validate_outline.py outline.csv
 """
 import argparse,csv,json,re
 from pathlib import Path
+from atomic_output import atomic_write_json
 FIELDS=['slide_no','section','title','core_message','purpose','body_content','data_sources','visual_type','audience_takeaway','owner_notes','status','revision_reason']
 TYPES={'title','agenda','section','comparison','timeline','process','framework','matrix','funnel','pyramid','map','chart','table','infographic','scene','quote','summary','appendix'}
 STATES={'draft','needs_user','approved','blocked','superseded'}
@@ -44,6 +45,6 @@ def main():
     if len(nums)!=len(set(nums)):issues.append({'severity':'blocker','code':'duplicate_slide_no','observed':nums})
     if nums and sorted(nums)!=list(range(1,max(nums)+1)):issues.append({'severity':'blocker','code':'non_contiguous_slide_no','observed':nums})
     valid=bool(rows) and not any(i['severity'] in {'blocker','critical'} for i in issues); out={'schema':'ai-ppt-plus/outline-validation/v1','valid':valid,'rows':len(rows),'issues':issues}
-    if a.report:Path(a.report).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+    if a.report:atomic_write_json(Path(a.report).resolve(), out)
     print(json.dumps(out,ensure_ascii=False));return 0 if valid else 2
 if __name__=='__main__':raise SystemExit(main())

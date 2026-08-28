@@ -30,6 +30,8 @@ import json
 import sys
 from pathlib import Path
 
+from atomic_output import atomic_write_json
+
 
 def _parse_grid(value: str):
     try:
@@ -289,8 +291,7 @@ def main() -> None:
                 "aspect": round(cutout.size[0] / cutout.size[1], 4),
                 "bbox": list(bbox), "area": area,
                 "edge_touch": edge_touch})
-        (out_dir / "icons_manifest.json").write_text(
-            json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(out_dir / "icons_manifest.json", manifest)
         if args.contact_sheet:
             _write_contact_sheet(saved, out_dir / "icons_contact_sheet.png")
             print(f"Contact sheet: {out_dir/'icons_contact_sheet.png'}")
@@ -326,8 +327,7 @@ def main() -> None:
                 "aspect": round(icon.size[0] / icon.size[1], 4),
                 "bbox": list(bbox),
                 "edge_touch": edge_touch})
-        (out_dir / "icons_manifest.json").write_text(
-            json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(out_dir / "icons_manifest.json", manifest)
         if args.contact_sheet:
             _write_contact_sheet(saved, out_dir / "icons_contact_sheet.png")
             print(f"Contact sheet: {out_dir/'icons_contact_sheet.png'}")
@@ -398,8 +398,7 @@ def main() -> None:
             })
 
     manifest["skipped_empty_cells"] = skipped
-    (out_dir / "icons_manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(out_dir / "icons_manifest.json", manifest)
     if args.contact_sheet:
         _write_contact_sheet(saved, out_dir / "icons_contact_sheet.png")
         print(f"Contact sheet: {out_dir/'icons_contact_sheet.png'}")

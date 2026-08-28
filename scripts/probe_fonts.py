@@ -9,7 +9,7 @@ Example: probe_fonts.py -o font-report.json --font "Noto Sans CJK SC"
 import argparse, json, os, shutil, subprocess, tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from atomic_output import atomic_write_json
+from atomic_output import atomic_write_json, atomic_write_text
 # Keep the probe's implicit route on redistributable/open families.  A
 # proprietary family can still be requested explicitly with --font after the
 # caller has established its license and device availability.
@@ -29,7 +29,7 @@ def main():
     if font_dir and font_dir.is_dir():
         temp_config=tempfile.TemporaryDirectory(prefix='ai-ppt-fontconfig-')
         config=Path(temp_config.name)/'fonts.conf'
-        config.write_text(f'<?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "fonts.dtd"><fontconfig><dir>{font_dir}</dir><include ignore_missing="yes">/etc/fonts/fonts.conf</include></fontconfig>',encoding='utf-8')
+        atomic_write_text(config, f'<?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "fonts.dtd"><fontconfig><dir>{font_dir}</dir><include ignore_missing="yes">/etc/fonts/fonts.conf</include></fontconfig>')
         font_env['FONTCONFIG_FILE']=str(config)
     local_files=sorted(str(x) for x in font_dir.rglob('*') if x.suffix.lower() in {'.ttf','.otf','.ttc'} ) if font_dir and font_dir.is_dir() else []
     local_families=[]

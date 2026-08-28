@@ -14,6 +14,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image
+from atomic_output import atomic_write_json
 
 
 def groups(values: np.ndarray, threshold: float, gap: int = 3):
@@ -106,7 +107,7 @@ def main() -> int:
     except ValueError as exc:
         ap.error(str(exc))
     out = Path(args.output); out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json(out.resolve(), result)
     print(json.dumps({"valid": True, "status": result["status"], "candidates": len(result["candidates"]), "output": str(out)}, ensure_ascii=False))
     return 0
 

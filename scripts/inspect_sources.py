@@ -9,6 +9,7 @@ PyMuPDF, python-docx, openpyxl and Pillow. Example/test: python inspect_sources.
 import argparse, hashlib, json, mimetypes, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 def sha256(path):
     h=hashlib.sha256()
@@ -59,6 +60,6 @@ def main():
     for x in records:hashes.setdefault(x['sha256'],[]).append(x['path'])
     duplicates=[v for v in hashes.values() if len(v)>1]
     out={'schema_version':'1.1','generated_at':datetime.now(timezone.utc).isoformat(),'files':records,'duplicates':duplicates,'summary':{'count':len(records),'readable':sum(x['readable'] for x in records),'unreadable':sum(not x['readable'] for x in records),'empty':sum(x['empty'] for x in records),'missing':missing}}
-    Path(a.output).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+    atomic_write_json(Path(a.output).resolve(), out)
     print(json.dumps(out['summary'],ensure_ascii=False)); return 2 if missing or out['summary']['unreadable'] else 0
 if __name__=='__main__': raise SystemExit(main())

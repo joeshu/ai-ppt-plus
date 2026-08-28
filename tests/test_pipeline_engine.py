@@ -54,6 +54,8 @@ def main() -> int:
         missing_output.add(PipelineTask("incomplete", outputs=(root / "missing-output/result.json",), static_result={"ok": True}))
         incomplete = missing_output.run()
         assert incomplete[0]["ok"] is True and not (cache / incomplete[0]["cache_key"]).exists()
+        assert (root / "missing-output/result.json").is_file()
+        assert json.loads((root / "missing-output/result.json").read_text(encoding="utf-8"))["valid"] is True
 
         parallel = PipelineExecutor(root / "parallel", mode="dag", cache_dir=root / "parallel-cache", max_workers=2)
         parallel.add(PipelineTask("a", [str(ROOT / "scripts/probe_environment.py"), "--output", str(root / "parallel/a.json")], outputs=(root / "parallel/a.json",)))

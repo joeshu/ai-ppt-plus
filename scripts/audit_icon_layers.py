@@ -7,6 +7,8 @@ import argparse
 import json
 from pathlib import Path
 
+from atomic_output import atomic_write_json
+
 
 def issue(items, severity, code, **extra):
     row = {"severity": severity, "code": code}
@@ -33,8 +35,7 @@ def main() -> int:
                   "code": "manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"}],
                   "warnings": []}
         if args.report:
-            report = Path(args.report).resolve(); report.parent.mkdir(parents=True, exist_ok=True)
-            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+            atomic_write_json(Path(args.report).resolve(), result)
         print(json.dumps(result, ensure_ascii=False))
         return 2
     if not isinstance(data, dict) or data.get("schema") != "ai-ppt-plus/icon-assets/v1":
@@ -102,9 +103,7 @@ def main() -> int:
         "human_visual_review_required": True,
     }
     if args.report:
-        report = Path(args.report).resolve()
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

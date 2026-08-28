@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse, hashlib, json, os, sys
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 def die(msg: str) -> None:
     print(f"Error: {msg}", file=sys.stderr); raise SystemExit(2)
@@ -63,7 +64,7 @@ def main() -> None:
                             "formal_text_baked_in": bool(panel.get("formal_text_baked_in", False))})
     result = {"schema":"ai-ppt-plus/panel-assets/v1", "status":"approved", "source":str(src), "source_size":[sw, sh], "source_sha256":sha256(src), "whole_frame":False, "approval":approval, "panels":emitted}
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json(out.resolve(), result)
     print(json.dumps({"valid":True, "panel_count":len(emitted), "manifest":str(out)}, ensure_ascii=False))
 
 if __name__ == "__main__": main()

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 try:
     from PIL import Image
@@ -37,8 +38,7 @@ def main() -> int:
     except Exception as exc:
         result = {"schema": "ai-ppt-plus/icon-assets-validation/v1", "valid": False, "status": "invalid", "issues": [{"severity": "blocker", "code": "manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"}], "warnings": []}
         if args.report:
-            report = Path(args.report).resolve(); report.parent.mkdir(parents=True, exist_ok=True)
-            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+            report = Path(args.report).resolve(); atomic_write_json(report, result)
         print(json.dumps(result, ensure_ascii=False)); return 2
     if not isinstance(data, dict) or data.get("schema") != "ai-ppt-plus/icon-assets/v1":
         add(issues, "blocker", "schema_missing_or_invalid", expected="ai-ppt-plus/icon-assets/v1")
@@ -103,7 +103,7 @@ def main() -> int:
             else: warnings.append({"severity": "major", "code": "pillow_unavailable_for_alpha_check", "asset_index": index})
     result = {"schema": "ai-ppt-plus/icon-assets-validation/v1", "valid": not any(x.get("severity") == "blocker" for x in issues), "status": "passed" if not issues else "blocked", "manifest": str(manifest_path), "asset_count": len(assets), "issues": issues, "warnings": warnings, "human_visual_review_required": True}
     if args.report:
-        report = Path(args.report).resolve(); report.parent.mkdir(parents=True, exist_ok=True); report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        report = Path(args.report).resolve(); atomic_write_json(report, result)
     print(json.dumps(result, ensure_ascii=False)); return 0 if result["valid"] else 2
 
 

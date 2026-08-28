@@ -8,6 +8,7 @@ must be confirmed from renders. Example/test: python inspect_pptx.py deck.pptx -
 """
 import argparse,hashlib,json,posixpath,re,zipfile
 from pathlib import Path
+from atomic_output import atomic_write_json
 from xml.etree import ElementTree as ET
 NS={'p':'http://schemas.openxmlformats.org/presentationml/2006/main','a':'http://schemas.openxmlformats.org/drawingml/2006/main','r':'http://schemas.openxmlformats.org/officeDocument/2006/relationships','pr':'http://schemas.openxmlformats.org/package/2006/relationships'}
 def box(node):
@@ -165,5 +166,5 @@ def main():
         ratio=sw/sh if sh else None;out={'schema':'ai-ppt-plus/pptx-inspection/v1','ok':not any(i['severity'] in {'blocker','critical'} for i in issues),'file':str(p.resolve()),'slide_count':len(slides),'width_emu':sw,'height_emu':sh,'ratio':ratio,'is_16_9':bool(ratio and abs(ratio-16/9)<.01),'slides':slides,'vector_assets':vector_assets,'embedded_fonts':{'present':embedded_font_present,'declared':embedded_font_declared,'parts':embedded_font_parts,'declared_relationship_ids':sorted(set(declared_font_relationships)),'resolved_parts':resolved_declared_fonts,'part_evidence':embedded_font_parts_evidence,'content_types':font_part_content_types,'invalid_content_types':invalid_font_content_types,'missing_relationship_ids':missing_font_relationships,'missing_parts':missing_font_parts,'orphan_parts':orphan_font_parts},'issues':issues,'limitations':['overlap and text overflow are heuristics; confirm from renders','semantic correctness and native editability require artifact/user review','embedded font detection verifies declaration, font relationships, content types, EOT envelopes and package parts; it does not prove every glyph is covered or that a target application will honor embedding']}
     except Exception as e:out={'schema':'ai-ppt-plus/pptx-inspection/v1','ok':False,'issues':[{'severity':'blocker','code':'inspection_error','message':f'{type(e).__name__}: {e}'}]}
     out['deck_sha256']=sha256(p) if p.is_file() else None
-    Path(a.report).parent.mkdir(parents=True,exist_ok=True);Path(a.report).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps({'ok':out['ok'],'issues':len(out['issues'])}));return 0 if out['ok'] else 2
+    atomic_write_json(Path(a.report).resolve(), out);print(json.dumps({'ok':out['ok'],'issues':len(out['issues'])}));return 0 if out['ok'] else 2
 if __name__=='__main__':raise SystemExit(main())

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 
 def load(value, base):
@@ -58,7 +59,7 @@ def main():
     except Exception as exc:
         issues, usage = [{"severity": "blocker", "code": "validation_error", "message": f"{type(exc).__name__}: {exc}"}], {}
     result = {"schema": "ai-ppt-plus/component-instance-validation/v1", "valid": not issues, "usage": usage, "issues": issues}
-    report = Path(args.report); report.parent.mkdir(parents=True, exist_ok=True); report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"); print(json.dumps(result, ensure_ascii=False)); return 0 if not issues else 2
+    report = Path(args.report); atomic_write_json(report.resolve(), result); print(json.dumps(result, ensure_ascii=False)); return 0 if not issues else 2
 
 
 if __name__ == "__main__":

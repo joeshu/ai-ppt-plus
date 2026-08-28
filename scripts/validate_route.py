@@ -4,12 +4,16 @@
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
+
+from atomic_output import atomic_write_json
 
 
 ROUTES = {"visual-creation", "reference-reconstruction"}
 STATUSES = {"decided", "needs_user", "blocked"}
 AUTHORITIES = {"approved_outline", "user_transcription", "transcription_pending_confirmation"}
+SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 
 
 def sha256(path: Path) -> str:
@@ -24,6 +28,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("route_json")
     parser.add_argument("--require-files", action="store_true", help="require visual manifest/reference files and verify hashes")
+    parser.add_argument("--expected-pages", type=int, help="require the roster to cover exactly this many pages")
+    reference_group = parser.add_mutually_exclusive_group()
+    reference_group.add_argument("--reference", help="compare the route roster with one external reference file")
+    reference_group.add_argument("--reference-dir", help="compare the route roster with slide-N files in a reference directory")
+    parser.add_argument("--require-confirmation", action="store_true", help="require confirmer identity/time for a decided route")
+    parser.add_argument("--require-formal-content", action="store_true", help="block transcription-pending formal content")
     parser.add_argument("--report")
     args = parser.parse_args()
     route_path = Path(args.route_json).resolve()
@@ -37,7 +47,7 @@ def main() -> int:
     if not isinstance(data, dict):
         issues.append({"severity": "blocker", "code": "route_not_object"})
         data = {}
-    if data.get("schema") not in {None, "ai-ppt-plus/route-decision/v1"}:
+    if data.get("schema") != "ai-ppt-plus/route-decision/v1":
         issues.append({"severity": "blocker", "code": "route_schema_invalid", "value": data.get("schema")})
     route = data.get("route")
     status = data.get("status")
@@ -53,13 +63,31 @@ def main() -> int:
     if expected_authority and authority != expected_authority:
         issues.append({"severity": "blocker", "code": "visual_authority_route_conflict", "expected": expected_authority, "observed": authority})
     expected_generation = route == "visual-creation"
-    if data.get("requires_image_generation") is not expected_generation:
+    if not isinstance(data.get("requires_image_generation"), bool) or data.get("requires_image_generation") is not expected_generation:
         issues.append({"severity": "blocker", "code": "image_generation_requirement_conflict", "expected": expected_generation, "observed": data.get("requires_image_generation")})
     base = route_path.parent
-    evidence = {"route_file": str(route_path), "reference_files": [], "visual_intermediate_manifest": None}
+    evidence = {"route_file": str(route_path), "reference_files": [], "external_reference_files": [], "visual_intermediate_manifest": None}
+    formal_content_ready = formal_authority in {"approved_outline", "user_transcription"}
+    if status in {"needs_user", "blocked"}:
+        issues.append({"severity": "blocker", "code": "route_not_ready", "status": status, "reason": data.get("reason")})
     if status in {"needs_user", "blocked"} and (not isinstance(data.get("reason"), str) or not data.get("reason", "").strip()):
         issues.append({"severity": "blocker", "code": "route_reason_missing"})
+    if status == "decided":
+        if not isinstance(data.get("project_id"), str) or not data.get("project_id", "").strip():
+            issues.append({"severity": "blocker", "code": "project_id_missing"})
+        if args.require_confirmation or status == "decided":
+            for field in ("confirmed_by", "confirmed_at"):
+                if not isinstance(data.get(field), str) or not data.get(field, "").strip():
+                    issues.append({"severity": "blocker", "code": "route_confirmation_missing", "field": field})
+        if not formal_content_ready:
+            evidence["formal_content_ready"] = False
+            if args.require_formal_content:
+                issues.append({"severity": "blocker", "code": "formal_content_confirmation_pending", "authority": formal_authority})
+        else:
+            evidence["formal_content_ready"] = True
     if route == "visual-creation" and status == "decided":
+        if data.get("reference_roster") not in (None, []):
+            issues.append({"severity": "blocker", "code": "visual_route_reference_roster_conflict"})
         manifest = data.get("visual_intermediate_manifest")
         if not isinstance(manifest, str) or not manifest.strip():
             issues.append({"severity": "blocker", "code": "visual_intermediate_manifest_missing"})
@@ -107,7 +135,7 @@ def main() -> int:
             ref_path = (base / ref).resolve()
             record = {"slide_no": slide_no, "path": str(ref_path), "sha256": item.get("sha256")}
             evidence["reference_files"].append(record)
-            if not isinstance(item.get("sha256"), str) or not item.get("sha256"):
+            if not isinstance(item.get("sha256"), str) or not SHA256_RE.fullmatch(item.get("sha256", "")):
                 issues.append({"severity": "blocker", "code": "reference_hash_missing", "slide_no": slide_no})
             if args.require_files:
                 if not ref_path.is_file():
@@ -116,12 +144,34 @@ def main() -> int:
                     issues.append({"severity": "blocker", "code": "reference_hash_mismatch", "slide_no": slide_no})
         if slide_numbers and sorted(slide_numbers) != list(range(1, max(slide_numbers) + 1)):
             issues.append({"severity": "blocker", "code": "reference_slide_numbers_not_contiguous", "observed": sorted(slide_numbers)})
+        if args.expected_pages is not None and len(roster) != args.expected_pages:
+            issues.append({"severity": "blocker", "code": "reference_page_count_mismatch", "expected": args.expected_pages, "observed": len(roster)})
+        external_paths: list[tuple[int, Path]] = []
+        if args.reference:
+            external_paths = [(1, Path(args.reference).resolve())]
+        elif args.reference_dir:
+            root = Path(args.reference_dir).resolve()
+            count = args.expected_pages or len(roster)
+            external_paths = [(index, root / f"slide-{index}.png") for index in range(1, count + 1)]
+        roster_by_slide = {item.get("slide_no"): item for item in roster if isinstance(item, dict)}
+        for external_slide, external_path in external_paths:
+            external_record = {"slide_no": external_slide, "path": str(external_path), "exists": external_path.is_file(), "sha256": sha256(external_path) if external_path.is_file() else None}
+            evidence["external_reference_files"].append(external_record)
+            item = roster_by_slide.get(external_slide)
+            if item is None:
+                issues.append({"severity": "blocker", "code": "external_reference_not_rostered", "slide_no": external_slide, "path": str(external_path)})
+                continue
+            roster_path = (base / str(item.get("path"))).resolve()
+            if not external_path.is_file():
+                issues.append({"severity": "blocker", "code": "external_reference_missing", "slide_no": external_slide, "path": str(external_path)})
+            elif not roster_path.is_file():
+                issues.append({"severity": "blocker", "code": "rostered_reference_missing", "slide_no": external_slide, "path": str(roster_path)})
+            elif sha256(external_path) != sha256(roster_path):
+                issues.append({"severity": "blocker", "code": "external_reference_hash_mismatch", "slide_no": external_slide, "roster_path": str(roster_path), "external_path": str(external_path)})
     valid = not any(issue.get("severity") == "blocker" for issue in issues)
-    result = {"schema": "ai-ppt-plus/route-validation/v1", "valid": valid, "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "requires_image_generation": data.get("requires_image_generation"), "issues": issues, "evidence": evidence}
+    result = {"schema": "ai-ppt-plus/route-validation/v1", "valid": valid, "ready_for_delivery": valid and formal_content_ready and status == "decided", "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "formal_content_ready": formal_content_ready, "requires_image_generation": data.get("requires_image_generation"), "issues": issues, "evidence": evidence}
     if args.report:
-        report = Path(args.report)
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if valid else 2
 

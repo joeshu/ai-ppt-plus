@@ -10,6 +10,7 @@ Example/test: python probe_environment.py --output environment-report.json
 import argparse, importlib.util, json, os, shutil, sys
 from datetime import datetime, timezone
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 def command(name):
     path=shutil.which(name)
@@ -52,12 +53,12 @@ def main():
         backend='python-pptx'
         backend_reason='authoring_backend.py uses the installed python-pptx module; embed_fonts.py is the OOXML font post-processor when requested'
     elif caps['pptx_authoring_runtime']['available']:
-        backend='artifact-tool'
-        backend_reason='artifact-tool runtime discovered; an adapter must be selected before authoring'
+        backend='interface_only'
+        backend_reason='artifact-tool runtime discovered, but this repository has no verified artifact-tool authoring adapter'
     else:
         backend='interface_only'
         backend_reason='no verified PPTX authoring backend discovered'
     rendering='libreoffice+poppler' if caps['libreoffice_renderer']['available'] and caps['poppler_renderer']['available'] else 'unavailable'
     out={'schema':'ai-ppt-plus/environment-report/v1','generated_at':datetime.now(timezone.utc).isoformat(),'python':sys.version.split()[0],'capabilities':caps,'selection':{'authoring_backend':backend,'authoring_backend_reason':backend_reason,'font_embedding_backend':'pptx-font-embedding-postprocessor' if caps['pptx_font_embedding_adapter']['available'] else 'unsupported','rendering_backend':rendering,'ppt_master_adapter':'enabled' if caps['ppt_master']['available'] else 'not_selected','active_backend':backend+' + '+rendering},'rules':['Use only capabilities marked available.','The selected authoring backend must match the backend used by the composer.','Use the font embedding adapter only after font license, SFNT and final OOXML checks pass.','Use PPT Master only after explicit directory discovery and its own documented integrity check.','Unavailable capability requires compatible adapter, declared fallback, or blocked/interface-only state.']}
-    Path(a.output).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(out,ensure_ascii=False));return 0
+    atomic_write_json(Path(a.output).resolve(), out);print(json.dumps(out,ensure_ascii=False));return 0
 if __name__=='__main__':raise SystemExit(main())

@@ -16,6 +16,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 
 def _die(msg: str) -> None:
@@ -104,7 +105,7 @@ def main() -> None:
         })
 
     out_path = Path(args.out) if args.out else manifest_path.parent / "frame_parts_layout_icons.json"
-    out_path.write_text(json.dumps(icons, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(out_path.resolve(), icons)
     print(f"Wrote {len(icons)} frame_part icon entries to {out_path}")
 
 

@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from atomic_output import atomic_write_text
+
 
 def _escape(value: Any) -> str:
     return html.escape("" if value is None else str(value))
@@ -168,8 +170,7 @@ a {{ color: #2563eb; }} @media (max-width: 720px) {{ body {{ padding: 14px; }} .
 
 def write_review(result: dict[str, Any], output: Path) -> Path:
     output = Path(output).resolve()
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(build_html(result, output), encoding="utf-8")
+    atomic_write_text(output, build_html(result, output))
     return output
 
 

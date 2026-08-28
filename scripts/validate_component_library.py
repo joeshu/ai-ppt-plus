@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 SCHEMA = "ai-ppt-plus/component-library/v1"
 LEVELS = {"L0", "L1", "L2", "L3", "L4", "L5"}
@@ -53,7 +54,7 @@ def main() -> int:
     except Exception as exc:
         issues = [{"severity": "blocker", "code": "manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"}]
     result = {"schema": "ai-ppt-plus/component-library-validation/v1", "valid": not issues, "manifest": str(path.resolve()), "component_count": len(data.get("components", [])) if isinstance(data, dict) else 0, "issues": issues}
-    report = Path(args.report); report.parent.mkdir(parents=True, exist_ok=True); report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    report = Path(args.report); atomic_write_json(report.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if not issues else 2
 

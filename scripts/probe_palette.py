@@ -22,6 +22,7 @@ import colorsys
 import json
 import sys
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 # Candidate key colors in priority order. Green first (best matte behaviour in
 # remove_chroma_key.py), then magenta, orange, red, cyan. Each entry is
@@ -122,7 +123,7 @@ def main() -> None:
     if args.output:
         output = Path(args.output)
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        atomic_write_json(output.resolve(), result)
     if args.json:
         print(json.dumps(result, ensure_ascii=False))
         return

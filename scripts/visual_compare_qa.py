@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 
 def _die(msg: str, code: int = 2):
@@ -125,7 +126,7 @@ def main() -> None:
             "of source vs preview for text/icon position, size, and overlap."
         ),
     }
-    (out_dir / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json((out_dir / "report.json").resolve(), report)
 
     print(f"Wrote {out_dir / 'side_by_side.png'}")
     print(f"Wrote {out_dir / 'blend.png'}")

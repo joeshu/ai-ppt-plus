@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 from typing import Any
+from atomic_output import atomic_write_json
 
 
 def polygon_area(points: list[list[float]]) -> float:
@@ -101,8 +102,7 @@ def main() -> int:
     except Exception as exc:
         result = {"schema": "ai-ppt-plus/region-validation/v1", "valid": False, "status": "invalid", "issues": [{"severity": "blocker", "code": "manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"}], "warnings": []}
     report = Path(args.report)
-    report.parent.mkdir(parents=True, exist_ok=True)
-    report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json(report.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["valid"] else 2
 

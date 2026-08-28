@@ -1,0 +1,35 @@
+{
+  "schema": "ai-ppt-plus/skill-package/v1",
+  "skill": "ai-ppt-plus",
+  "package_revision": "2026.08.28.2",
+  "source_of_truth": "git",
+  "entrypoint": "SKILL.md",
+  "managed_globs": [
+    "SKILL.md",
+    "agents/*.yaml",
+    "assets/*.json",
+    "assets/*.yaml",
+    "assets/schemas/*.json",
+    "references/*.md",
+    "scripts/*.py"
+  ],
+  "required_files": [
+    "SKILL.md",
+    "agents/openai.yaml",
+    "assets/skill-package.json",
+    "assets/skill-routing.template.json",
+    "assets/schemas/skill-routing.schema.json",
+    "scripts/run_pipeline.py",
+    "scripts/validate_route.py",
+    "scripts/validate_routing_contract.py",
+    "scripts/semantic_object_audit.py",
+    "scripts/authoring_backend.py",
+    "scripts/atomic_output.py",
+    "references/skill-routing.md"
+  ],
+  "runtime_sync": {
+    "required": true,
+    "comparison": "sha256",
+    "operator": "refresh the installed skill from the same git revision before use"
+  }
+}

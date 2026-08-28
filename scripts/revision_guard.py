@@ -19,9 +19,10 @@ overwritten.
 import argparse
 import hashlib
 import json
-import shutil
 from datetime import datetime, timezone
 from pathlib import Path
+
+from atomic_output import atomic_copy, atomic_write_json, atomic_write_text
 
 
 FILES = (
@@ -84,7 +85,7 @@ def _write_checksums(directory: Path, records: list[dict]) -> None:
     manifest = directory / "baseline-manifest.json"
     entries.append((manifest.name, digest(manifest)))
     content = "".join(f"{sha}  {path}\n" for path, sha in sorted(entries))
-    (directory / "SHA256SUMS").write_text(content, encoding="utf-8")
+    atomic_write_text(directory / "SHA256SUMS", content)
 
 
 def _read_checksums(path: Path) -> dict[str, str]:
@@ -149,7 +150,7 @@ def freeze_baseline(root: Path, output: Path, revision: str, source_case: str,
         for destination, source in sources:
             target = output / destination
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source, target)
+            atomic_copy(source, target)
             records.append({
                 "path": destination.as_posix(),
                 "source": _source_reference(source, root),
@@ -171,9 +172,7 @@ def freeze_baseline(root: Path, output: Path, revision: str, source_case: str,
             "checksum_file": "SHA256SUMS",
             "verification": "python scripts/revision_guard.py verify <baseline-dir>",
         }
-        (output / "baseline-manifest.json").write_text(
-            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-        )
+        atomic_write_json(output / "baseline-manifest.json", manifest)
         _write_checksums(output, records)
     except Exception as exc:
         print(json.dumps({"valid": False, "code": "baseline_write_failed", "message": f"{type(exc).__name__}: {exc}", "path": str(output)}, ensure_ascii=False))
@@ -273,10 +272,10 @@ def prepare(project: Path, deck: Path, label: str) -> int:
     records = []
     for source, name in snapshot_files(project, deck):
         destination = target / name
-        shutil.copy2(source, destination)
+        atomic_copy(source, destination)
         records.append({"name": name, "source": str(source.resolve()), "snapshot": str(destination.resolve()), "sha256": digest(destination), "size": destination.stat().st_size})
     metadata = {"schema": "ai-ppt-plus/revision-snapshot/v1", "label": label, "created_at": datetime.now(timezone.utc).isoformat(), "project": str(project), "files": records, "immutable_source": True}
-    (target / "snapshot.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(target / "snapshot.json", metadata)
     print(json.dumps({"valid": True, "operation": "prepare", "snapshot": str(target.resolve()), "files": len(records)}, ensure_ascii=False))
     return 0
 
@@ -314,10 +313,10 @@ def materialize(snapshot: Path, output: Path) -> int:
     for record in metadata["files"]:
         source = Path(record["snapshot"])
         destination = output / record["name"]
-        shutil.copy2(source, destination)
+        atomic_copy(source, destination)
         records.append({"name": record["name"], "path": str(destination.resolve()), "sha256": digest(destination)})
     handoff = {"schema": "ai-ppt-plus/rollback-materialization/v1", "source_snapshot": str(snapshot.resolve()), "created_at": datetime.now(timezone.utc).isoformat(), "files": records, "requires_review": True}
-    (output / "rollback-materialization.json").write_text(json.dumps(handoff, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(output / "rollback-materialization.json", handoff)
     print(json.dumps({"valid": True, "operation": "materialize", "output": str(output.resolve()), "files": len(records), "requires_review": True}, ensure_ascii=False))
     return 0
 

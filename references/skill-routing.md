@@ -39,3 +39,37 @@ These contracts are project-level and must be consumed by all routes:
 The machine-readable ownership map is kept in
 `assets/skill-routing.template.json` so a future adapter can validate its
 declared scope before it is selected.
+
+## Executable contract
+
+The checked-in package is the source of truth for the orchestrator and its
+managed routing rules. Validate both contracts before intake or authoring:
+
+```bash
+python scripts/validate_skill_package.py --skill-dir .
+python scripts/validate_routing_contract.py
+```
+
+`validate_skill_package.py` checks the package revision and SHA-256 of every
+managed file. When a runtime-installed copy is known, pass
+`--runtime-skill-dir RUNTIME_DIR`; a missing or stale runtime file is a
+blocking drift, not a warning. `run_pipeline.py` runs this contract as its
+first prerequisite and includes the managed files in cache inputs.
+
+The route graph is intentionally small and explicit:
+
+```mermaid
+flowchart TD
+    A[ai-ppt-plus intake] --> B{route decision}
+    B -->|visual-creation| C[visual intermediate]
+    B -->|reference-reconstruction| D[GordenImage2PPTX decomposition]
+    C --> E[Presentations authoring adapter]
+    D --> E
+    E --> F[ai-ppt-plus QA and release gates]
+```
+
+The route validator rejects undeclared ownership, missing backend bindings,
+and a non-`decided` route. The pipeline also binds a reference roster to its
+source hashes and makes the supplied route a prerequisite for every
+downstream task; an invalid route therefore cannot be treated as advisory
+metadata.

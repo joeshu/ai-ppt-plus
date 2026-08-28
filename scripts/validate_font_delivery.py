@@ -16,6 +16,7 @@ import argparse
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from atomic_output import atomic_write_json
 
 
 def load(path: str | None) -> dict | None:
@@ -84,8 +85,7 @@ def main() -> int:
         "issues": issues,
     }
     report = Path(args.report)
-    report.parent.mkdir(parents=True, exist_ok=True)
-    report.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(report.resolve(), output)
     print(json.dumps(output, ensure_ascii=False))
     return 0 if output["valid"] else 2
 
