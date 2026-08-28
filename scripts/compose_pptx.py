@@ -491,16 +491,30 @@ def build_pptx(deck, out_path: Path):
             frame = table._graphic_frame
             frame.name = str(table_spec.get("object_id") or table_spec.get("name") or f"table-{table_index:02d}")
             font = str(table_spec.get("font") or theme.get("font") or "Microsoft YaHei")
+            header_fill = table_spec.get("header_fill") or theme.get("table_header_fill")
+            body_fill = table_spec.get("fill") or theme.get("table_fill")
+            widths = table_spec.get("column_widths") or []
+            for ci, width in enumerate(widths[:columns]):
+                table.columns[ci].width = Emu(int(float(width) * sw_emu)) if deck["units"] == "fraction" else int(width)
             for ri, row in enumerate(rows):
                 for ci in range(columns):
                     cell = table.cell(ri, ci)
                     cell.text = str(row[ci]) if ci < len(row) else ""
+                    fill = header_fill if ri == 0 else body_fill
+                    if fill:
+                        cell.fill.solid()
+                        cell.fill.fore_color.rgb = _hex_to_rgb(fill)
                     for para in cell.text_frame.paragraphs:
                         for run in para.runs:
                             run.font.name = font
                             run.font.size = Pt(float(table_spec.get("size", theme.get("size", 12))))
                             if table_spec.get("color") or theme.get("text_color"):
                                 run.font.color.rgb = _hex_to_rgb(table_spec.get("color") or theme.get("text_color"))
+                            run.font.bold = bool(ri == 0 and table_spec.get("header_bold", True))
+            for merge in table_spec.get("merges", []):
+                if isinstance(merge, list) and len(merge) == 4:
+                    r1, c1, r2, c2 = [int(value) for value in merge]
+                    table.cell(r1, c1).merge(table.cell(r2, c2))
             _set_alt_text(frame, table_spec.get("alt_text"))
 
         for chart_index, chart_spec in enumerate(sl.get("charts", []), 1):
@@ -528,6 +542,14 @@ def build_pptx(deck, out_path: Path):
             if chart.has_legend:
                 chart.legend.position = XL_LEGEND_POSITION.BOTTOM
                 chart.legend.include_in_layout = False
+            if chart_spec.get("data_labels"):
+                for series_item in chart.series:
+                    series_item.has_data_labels = True
+                    series_item.data_labels.show_value = True
+            palette = chart_spec.get("colors") or theme.get("chart_colors") or []
+            for series_item, color in zip(chart.series, palette):
+                series_item.format.fill.solid()
+                series_item.format.fill.fore_color.rgb = _hex_to_rgb(color)
             _set_alt_text(frame, chart_spec.get("alt_text"))
 
         notes = sl.get("speaker_notes") or sl.get("notes")

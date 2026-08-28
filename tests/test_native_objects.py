@@ -22,7 +22,7 @@ def main() -> int:
         deck = root / "deck.json"
         deck.write_text(json.dumps({
             "slide_width_in": 4, "slide_height_in": 2.25, "units": "fraction", "assets_dir": str(root),
-            "theme": {"font": "Noto Sans CJK SC", "text_color": "#222222", "size": 10},
+            "theme": {"font": "Noto Sans CJK SC", "text_color": "#222222", "size": 10, "table_header_fill": "#FF0000", "chart_colors": ["#00AAFF"]},
             "slides": [{
                 "shapes": [{"object_id": "gradient-card", "type": "rounded_rect", "x": .05, "y": .1, "w": .4, "h": .7,
                             "gradient": {"angle": 90, "stops": [{"position": 0, "color": "#FF0000"}, {"position": 1, "color": "#0000FF", "opacity": .8}]},
@@ -32,8 +32,8 @@ def main() -> int:
                                 {"object_id": "component-bg", "type": "rect", "x": 0, "y": 0, "w": 1, "h": .5, "fill": "#FFFFFF"},
                                 {"object_id": "component-dot", "type": "oval", "x": .1, "y": .5, "w": .3, "h": .4, "fill": "#00FF00"}]}],
                 "icons": [{"object_id": "vector-icon", "file": "icon.svg", "x": .85, "y": .05, "w": .1, "h": .1, "alt_text": "矢量图标"}],
-                "tables": [{"object_id": "data-table", "x": .05, "y": .02, "w": .35, "h": .06, "rows": [["A", "B"], ["1", "2"]], "data_source": "fixture"}],
-                "charts": [{"object_id": "data-chart", "type": "column", "x": .55, "y": .82, "w": .35, "h": .15, "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, 2]}], "data_source": "fixture"}],
+                "tables": [{"object_id": "data-table", "x": .05, "y": .02, "w": .35, "h": .06, "rows": [["A", "B"], ["1", "2"]], "data_source": "fixture", "merges": [[0, 0, 0, 1]]}],
+                "charts": [{"object_id": "data-chart", "type": "column", "x": .55, "y": .82, "w": .35, "h": .15, "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, 2]}], "data_source": "fixture", "data_labels": True}],
                 "speaker_notes": "这是演讲者备注。",
                 "texts": [{"object_id": "label", "text": "可编辑", "x": .05, "y": .85, "w": .3, "h": .1, "size": 12}]
             }]
