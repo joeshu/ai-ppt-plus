@@ -7,6 +7,7 @@ identity/provenance/editability inventory consumed by the release gates.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 from pathlib import Path
 
@@ -31,6 +32,10 @@ def obj(object_id, role, object_type, level, *, required=True, review=False, **e
 
 
 def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> dict:
+    has_components = bool(layout.get("components")) or any(isinstance(slide, dict) and slide.get("components") for slide in layout.get("slides", []))
+    if has_components:
+        from compose_pptx import _expand_components
+        layout = _expand_components(copy.deepcopy(layout))
     slides = layout.get("slides")
     if not isinstance(slides, list):
         slides = [{k: layout[k] for k in ("background", "frame", "panels", "shapes", "groups", "tables", "charts", "speaker_notes", "notes", "icons", "texts") if k in layout}]
@@ -57,30 +62,30 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
             objects.append(obj(pid, "semantic-panel", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, independent=True, contains_formal_content=baked, provenance=str(evidence.get("source") or panel.get("file")), source_bbox=evidence.get("source_bbox")))
         for i, shape in enumerate(slide.get("shapes", []), 1):
             sid = str(shape.get("object_id") or shape.get("name") or f"shape-{i:02d}")
-            objects.append(obj(sid, "native-shape", "native_shape", "L1", review=False, contains_formal_content=False))
+            objects.append(obj(sid, "native-shape", "native_shape", "L1", review=False, contains_formal_content=False, component_ref=shape.get("component_id")))
         for i, group in enumerate(slide.get("groups", []), 1):
             gid = str(group.get("object_id") or group.get("name") or f"group-{i:02d}")
             children = [child.get("object_id") or child.get("name") for child in group.get("children", []) if isinstance(child, dict)]
-            objects.append(obj(gid, "component-group", "native_shape", "L1", review=False, contains_formal_content=False, editable_components=True, children=[child for child in children if child]))
+            objects.append(obj(gid, "component-group", "native_shape", "L1", review=False, contains_formal_content=False, editable_components=True, children=[child for child in children if child], component_ref=group.get("component_id")))
         for i, table in enumerate(slide.get("tables", []), 1):
             tid = str(table.get("object_id") or table.get("name") or f"table-{i:02d}")
-            objects.append(obj(tid, "data-table", "editable_table", "L1", review=True, contains_formal_content=True, data_source=table.get("data_source")))
+            objects.append(obj(tid, "data-table", "editable_table", "L1", review=True, contains_formal_content=True, data_source=table.get("data_source"), component_ref=table.get("component_id")))
         for i, chart in enumerate(slide.get("charts", []), 1):
             cid = str(chart.get("object_id") or chart.get("name") or f"chart-{i:02d}")
-            objects.append(obj(cid, "data-chart", "editable_chart", "L1", review=True, contains_formal_content=True, data_source=chart.get("data_source"), chart_type=chart.get("type", "column")))
+            objects.append(obj(cid, "data-chart", "editable_chart", "L1", review=True, contains_formal_content=True, data_source=chart.get("data_source"), chart_type=chart.get("type", "column"), component_ref=chart.get("component_id")))
         for i, icon in enumerate(slide.get("icons", []), 1):
             iid = str(icon.get("object_id") or icon.get("name") or f"icon-{i:02d}")
             role = str(icon.get("role") or "decorative-art")
             icon_file = str(icon.get("file", ""))
             is_svg = Path(icon_file).suffix.casefold() == ".svg"
             vector_editable = bool(icon.get("vector_editable", False))
-            objects.append(obj(iid, role, "editable_vector" if vector_editable else "extracted_icon", "L1" if vector_editable else "L2", review=True, replaceable=True, vector_asset=is_svg, contains_formal_content=False, source_path=icon_file, provenance=icon_file))
+            objects.append(obj(iid, role, "editable_vector" if vector_editable else "extracted_icon", "L1" if vector_editable else "L2", review=True, replaceable=True, vector_asset=is_svg, contains_formal_content=False, source_path=icon_file, provenance=icon_file, component_ref=icon.get("component_id")))
         for i, text in enumerate(slide.get("texts", []), 1):
             tid = str(text.get("object_id") or text.get("name") or f"text-{i:02d}")
             objects.append(obj(
                 tid, "formal-text", "editable_text", "L1", review=False,
                 contains_formal_content=False,
-                provenance=str(text.get("source_ref") or "layout.json"),
+                provenance=str(text.get("source_ref") or "layout.json"), component_ref=text.get("component_id"),
                 text_spec=normalize_text_spec(
                     text, slide_no, i,
                     units=str(layout.get("units", "fraction")),

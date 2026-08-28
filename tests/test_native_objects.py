@@ -23,6 +23,7 @@ def main() -> int:
         deck.write_text(json.dumps({
             "slide_width_in": 4, "slide_height_in": 2.25, "units": "fraction", "assets_dir": str(root),
             "theme": {"font": "Noto Sans CJK SC", "text_color": "#222222", "size": 10, "table_header_fill": "#FF0000", "chart_colors": ["#00AAFF"], "layout_name": "Blank"},
+            "component_library": {"schema": "ai-ppt-plus/component-library/v1", "components": [{"component_id": "section-title", "type": "text", "editability_level": "L1", "allowed_layouts": ["Blank"], "defaults": {"size": 14, "bold": True}}]},
             "slides": [{
                 "shapes": [{"object_id": "gradient-card", "type": "rounded_rect", "x": .05, "y": .1, "w": .4, "h": .7,
                             "gradient": {"angle": 90, "stops": [{"position": 0, "color": "#FF0000"}, {"position": 1, "color": "#0000FF", "opacity": .8}]},
@@ -35,6 +36,7 @@ def main() -> int:
                 "tables": [{"object_id": "data-table", "x": .05, "y": .02, "w": .35, "h": .06, "rows": [["A", "B"], ["1", "2"]], "data_source": "fixture", "merges": [[0, 0, 0, 1]]}],
                 "charts": [{"object_id": "data-chart", "type": "column", "x": .55, "y": .82, "w": .35, "h": .15, "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, 2]}], "data_source": "fixture", "data_labels": True}],
                 "speaker_notes": "这是演讲者备注。",
+                "components": [{"component_id": "section-title", "object_id": "component-title", "object": {"text": "组件标题", "x": .5, "y": .72, "w": .3, "h": .08}}],
                 "texts": [{"object_id": "label", "text": "可编辑", "x": .05, "y": .85, "w": .3, "h": .1, "size": 12}]
             }]
         }, ensure_ascii=False), encoding="utf-8")
@@ -50,6 +52,7 @@ def main() -> int:
             assert b' descr="%E6' not in slide_xml  # XML stores UTF-8 text, not URL encoding.
             assert any(name.casefold().endswith(".svg") for name in names)
             assert b"data-table" in slide_xml and b"data-chart" in slide_xml
+            assert b"component-title" in slide_xml
             assert "演讲者备注".encode() in b"".join(package.read(name) for name in names if "notesSlides/notesSlide" in name)
         report = root / "inspect.json"
         inspected = subprocess.run([sys.executable, "scripts/inspect_pptx.py", str(output), "--report", str(report)], cwd=ROOT, capture_output=True, text=True)
@@ -66,6 +69,7 @@ def main() -> int:
         assert objects["vector-icon"]["editability_level"] == "L2"
         assert objects["data-table"]["object_type"] == "editable_table"
         assert objects["data-chart"]["object_type"] == "editable_chart"
+        assert objects["component-title"]["component_ref"] == "section-title"
     print("native objects contract: ok")
     return 0
 

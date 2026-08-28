@@ -65,7 +65,7 @@ def _load_deck(path: Path):
     data = json.loads(path.read_text(encoding="utf-8"))
     if "slides" not in data:
         # Treat the whole object as a single slide; lift deck-level keys out.
-        slide_keys = {"background", "frame", "panels", "shapes", "groups", "tables", "charts", "speaker_notes", "notes", "icons", "texts"}
+        slide_keys = {"background", "frame", "panels", "shapes", "groups", "tables", "charts", "components", "speaker_notes", "notes", "icons", "texts"}
         slide = {k: data[k] for k in slide_keys if k in data}
         deck = {k: v for k, v in data.items() if k not in slide_keys}
         deck["slides"] = [slide]
@@ -75,6 +75,57 @@ def _load_deck(path: Path):
     data.setdefault("units", "fraction")
     data.setdefault("assets_dir", str(path.parent))
     return data
+
+
+def _expand_components(deck: dict):
+    """Expand validated component instances into the existing object arrays."""
+    if not isinstance(deck.get("slides"), list):
+        keys = {"background", "frame", "panels", "shapes", "groups", "tables", "charts", "components", "speaker_notes", "notes", "icons", "texts"}
+        slide = {key: deck[key] for key in keys if key in deck}
+        deck = dict(deck)
+        deck["slides"] = [slide]
+    has_instances = any(isinstance(sl, dict) and sl.get("components") for sl in deck.get("slides", []))
+    if not has_instances:
+        return deck
+    source = deck.get("component_library") or deck.get("component_library_path")
+    if not source:
+        _die("component instances require component_library")
+    if isinstance(source, dict):
+        library = source
+    else:
+        path = _resolve(Path(deck["assets_dir"]), str(source))
+        if not path.exists():
+            _die(f"component library not found: {path}")
+        try:
+            library = json.loads(path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            _die(f"component library is not valid JSON: {exc}")
+    if library.get("schema") != "ai-ppt-plus/component-library/v1":
+        _die("component library schema is invalid")
+    definitions = {item.get("component_id"): item for item in library.get("components", []) if isinstance(item, dict)}
+    theme = dict(library.get("tokens", {}))
+    theme.update(deck.get("theme", {}) if isinstance(deck.get("theme", {}), dict) else {})
+    deck["theme"] = theme
+    target_arrays = {"text": "texts", "shape": "shapes", "group": "groups", "table": "tables", "chart": "charts", "image": "icons", "vector": "icons"}
+    for slide_no, slide in enumerate(deck["slides"], 1):
+        layout = slide.get("layout_name", theme.get("layout_name", "Blank"))
+        for instance in slide.get("components", []):
+            if not isinstance(instance, dict):
+                _die(f"slide {slide_no}: component instance must be an object")
+            component_id = str(instance.get("component_id", ""))
+            definition = definitions.get(component_id)
+            if definition is None:
+                _die(f"slide {slide_no}: component not found: {component_id}")
+            if layout not in definition.get("allowed_layouts", []):
+                _die(f"slide {slide_no}: component {component_id} is not allowed on layout {layout}")
+            primitive = dict(definition.get("defaults", {}))
+            primitive.update(instance.get("object", {}))
+            primitive["object_id"] = str(instance.get("object_id") or primitive.get("object_id") or component_id)
+            primitive["component_id"] = component_id
+            target = target_arrays[definition["type"]]
+            slide.setdefault(target, []).append(primitive)
+        slide.pop("components", None)
+    return deck
 
 
 def _resolve(assets_dir: Path, file: str) -> Path:
@@ -636,8 +687,8 @@ def build_pptx(deck, out_path: Path):
             align = align_map.get(tx.get("align", "left"), PP_ALIGN.LEFT)
             line_spacing = tx.get("line_spacing")
             opacity = float(tx.get("opacity", 1.0))
-            if tx.get("name"):
-                box.name = str(tx["name"])
+            if tx.get("name") or tx.get("object_id"):
+                box.name = str(tx.get("name") or tx["object_id"])
 
             runs = tx.get("runs")
             if runs:
@@ -956,7 +1007,7 @@ def main() -> None:
     lp = Path(args.layout)
     if not lp.exists():
         _die(f"layout file not found: {lp}")
-    deck = _load_deck(lp)
+    deck = _expand_components(_load_deck(lp))
     out_path = Path(args.out).resolve()
     if args.font_dir:
         deck["font_dir"] = str(Path(args.font_dir).resolve())
