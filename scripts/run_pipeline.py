@@ -12,8 +12,10 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--visual-threshold N]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
        [--route-decision ROUTE.json] [--require-route] [--require-editability]
-       [--dpi N]
-       [--strict-layout]
+       [--dpi N] [--strict-layout]
+       [--execution-mode dag|linear] [--cache-dir DIR] [--no-cache]
+       [--parallel-workers N] [--affected-pages 1,3-4]
+       [--affected-region name=x,y,w,h]
        [--output-dir RUN_DIR]
 """
 import argparse
@@ -24,6 +26,10 @@ import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+
+from pipeline_engine import PipelineExecutor, PipelineTask
+from report_envelope import normalize_child
+from render_review_html import write_review
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -38,6 +44,30 @@ def sha256(path: Path) -> str:
 
 
 STEP_TIMEOUT_SECONDS = 600
+
+
+def parse_page_selection(expression: str | None, expected_pages: int) -> list[int] | None:
+    """Parse and bounds-check a comma/range page selection."""
+    if not expression:
+        return None
+    selected: set[int] = set()
+    try:
+        for part in expression.split(","):
+            token = part.strip()
+            if not token:
+                raise ValueError
+            if "-" in token:
+                lo, hi = (int(value.strip()) for value in token.split("-", 1))
+                if lo > hi:
+                    raise ValueError
+                selected.update(range(lo, hi + 1))
+            else:
+                selected.add(int(token))
+    except (TypeError, ValueError):
+        raise ValueError("pages must be a comma-separated list of positive integers/ranges")
+    if not selected or min(selected) < 1 or max(selected) > expected_pages:
+        raise ValueError(f"pages must be between 1 and {expected_pages}")
+    return sorted(selected)
 
 
 def run_step(run_dir: Path, name: str, args, timeout: int = STEP_TIMEOUT_SECONDS):
@@ -57,7 +87,7 @@ def run_step(run_dir: Path, name: str, args, timeout: int = STEP_TIMEOUT_SECONDS
         failure = "timeout"
     stdout_path.write_text(stdout, encoding="utf-8")
     stderr_path.write_text(stderr, encoding="utf-8")
-    result = {"name": name, "command": command, "exit_code": exit_code, "ok": exit_code == 0, "stdout": str(stdout_path.resolve()), "stderr": str(stderr_path.resolve()), "timeout_seconds": timeout}
+    result = {"name": name, "command": command, "exit_code": exit_code, "ok": exit_code == 0, "stdout": str(stdout_path.resolve()), "stderr": str(stderr_path.resolve()), "timeout_seconds": timeout, "cache_key": None, "cache_hit": False, "deps": [], "duration_ms": None}
     if failure:
         result["failure"] = failure
     return result
@@ -90,12 +120,8 @@ def project_asset_requirements(project: Path) -> tuple[bool, bool]:
 
 
 def summarize_report(name: str, path: Path, report: dict):
-    summary = {
-        "report": str(path.resolve()),
-        "valid": report.get("valid"),
-        "status": report.get("status"),
-        "issues": report.get("issues", []),
-    }
+    summary = normalize_child(name, path, report, required=True, stage=None, deck_sha256=report.get("deck_sha256"))
+    summary["report"] = str(path.resolve())
     if name == "render_visual_gate":
         summary.update({"expected_pages": report.get("expected_pages"), "observed_pages": len(report.get("pages", []))})
     elif name == "visual_comparison":
@@ -107,7 +133,7 @@ def summarize_report(name: str, path: Path, report: dict):
     elif name == "manifest_validation":
         summary.update({"warnings": report.get("warnings", []), "editability_protocol": report.get("editability_protocol"), "editability": report.get("editability", [])})
     elif name == "visual_compare_qa":
-        summary.update({"status": report.get("status", "diagnostic"), "ok": report.get("ok"), "resized_for_comparison": report.get("resized_for_comparison"), "preview_size": report.get("preview_size")})
+        summary.update({"native_status": report.get("status", "diagnostic"), "ok": report.get("ok"), "resized_for_comparison": report.get("resized_for_comparison"), "preview_size": report.get("preview_size")})
     return summary
 
 
@@ -152,6 +178,12 @@ def main() -> int:
     parser.add_argument("--target-review", help="WPS target-device review JSON; required by --release")
     parser.add_argument("--dpi", type=int, default=96, help="render DPI; same-ratio reference comparisons are normalized when pixel sizes differ")
     parser.add_argument("--strict-layout", action="store_true", help="treat layout-audit warnings (such as missing source_bbox) as blockers")
+    parser.add_argument("--execution-mode", choices=["dag", "linear"], default="dag", help="DAG execution with caching, or the compatibility linear runner")
+    parser.add_argument("--cache-dir", help="content-addressed pipeline cache directory; defaults to PROJECT_DIR/.pipeline-cache in DAG mode")
+    parser.add_argument("--no-cache", action="store_true", help="disable successful-task cache restores/writes")
+    parser.add_argument("--parallel-workers", type=int, default=4, help="maximum independent DAG checks to run concurrently")
+    parser.add_argument("--affected-pages", help="only render and compare selected pages, e.g. 1,3-4")
+    parser.add_argument("--affected-region", action="append", default=[], help="critical region affected by the change: name=x,y,w,h; checked by the render QA gate")
     parser.add_argument("--output-dir")
     args = parser.parse_args()
     project = Path(args.project_dir).resolve()
@@ -192,6 +224,17 @@ def main() -> int:
         result = {"schema": "ai-ppt-plus/pipeline-run/v1", "valid": False, "code": "single_reference_for_multipage", "message": "Use --reference-dir with slide-N.png files for multi-page decks"}
         print(json.dumps(result, ensure_ascii=False))
         return 2
+    try:
+        affected_pages = parse_page_selection(args.affected_pages, args.expected_pages)
+    except ValueError as exc:
+        print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "affected_pages_invalid", "message": str(exc)}, ensure_ascii=False))
+        return 2
+    if args.parallel_workers < 1:
+        print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "parallel_workers_invalid"}, ensure_ascii=False))
+        return 2
+    if args.release and affected_pages:
+        print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "release_requires_full_deck", "message": "--release requires a full-deck render; omit --affected-pages"}, ensure_ascii=False))
+        return 2
     if args.require_route and not args.route_decision:
         result = {"schema": "ai-ppt-plus/pipeline-run/v1", "valid": False, "code": "route_decision_missing", "message": "--require-route needs --route-decision"}
         print(json.dumps(result, ensure_ascii=False))
@@ -220,116 +263,134 @@ def main() -> int:
     run_dir.parent.mkdir(parents=True, exist_ok=True)
     run_dir.mkdir()
     render_dir = run_dir / "rendered"
-    steps = []
+    cache_dir = None
+    if args.execution_mode == "dag" and not args.no_cache:
+        cache_dir = Path(args.cache_dir).resolve() if args.cache_dir else project / ".pipeline-cache"
+    executor = PipelineExecutor(run_dir, mode=args.execution_mode, cache_dir=cache_dir, max_workers=args.parallel_workers)
+
+    def add_step(name, command=None, *, deps=(), outputs=(), inputs=(), metadata=None, cacheable=True, static_result=None):
+        return executor.add(PipelineTask(
+            name=name,
+            args=list(command or []),
+            deps=tuple(deps),
+            outputs=tuple(Path(path).resolve() for path in outputs),
+            inputs=tuple(Path(path).resolve() for path in inputs),
+            metadata=dict(metadata or {}),
+            timeout=STEP_TIMEOUT_SECONDS,
+            cacheable=cacheable,
+            static_result=static_result,
+        ))
+
     manifest_icon_required, manifest_imagegen_required = project_asset_requirements(project)
     icon_required = args.require_icon_assets or manifest_icon_required or (project / "icon-asset-manifest.json").is_file()
     imagegen_required = args.require_imagegen_assets or manifest_imagegen_required or (project / "imagegen-assets-manifest.json").is_file()
     if args.route_decision:
         route_args = [str(SCRIPT_DIR / "validate_route.py"), str(Path(args.route_decision).resolve()), "--require-files", "--report", str(run_dir / "route-validation.json")]
-        steps.append(run_step(run_dir, "route", route_args))
+        add_step("route", route_args, outputs=[run_dir / "route-validation.json"], inputs=[Path(args.route_decision).resolve()])
     if args.handoff:
-        steps.append(run_step(run_dir, "handoff", [str(SCRIPT_DIR / "validate_handoff.py"), str(Path(args.handoff).resolve()), "--report", str(run_dir / "handoff-validation.json")]))
+        add_step("handoff", [str(SCRIPT_DIR / "validate_handoff.py"), str(Path(args.handoff).resolve()), "--report", str(run_dir / "handoff-validation.json")], outputs=[run_dir / "handoff-validation.json"], inputs=[Path(args.handoff).resolve(), deck])
     if args.revision_label:
-        steps.append(run_step(run_dir, "revision-prepare", [str(SCRIPT_DIR / "revision_guard.py"), "prepare", str(project), "--deck", str(deck), "--label", args.revision_label]))
-    steps.append(run_step(run_dir, "environment", [str(SCRIPT_DIR / "probe_environment.py"), "--output", str(run_dir / "environment-report.json")]))
+        add_step("revision-prepare", [str(SCRIPT_DIR / "revision_guard.py"), "prepare", str(project), "--deck", str(deck), "--label", args.revision_label], inputs=[project, deck], metadata={"revision_label": args.revision_label}, cacheable=False)
+    add_step("environment", [str(SCRIPT_DIR / "probe_environment.py"), "--output", str(run_dir / "environment-report.json")], outputs=[run_dir / "environment-report.json"])
     if args.font_dir or args.require_cjk:
         font_args = [str(SCRIPT_DIR / "probe_fonts.py"), "--output", str(run_dir / "font-report.json")]
         if args.font_dir:
             font_args.extend(["--font-dir", str(Path(args.font_dir).resolve())])
-        font_step = run_step(run_dir, "fonts", font_args)
-        if args.require_cjk and font_step["ok"]:
-            font_report = json.loads((run_dir / "font-report.json").read_text(encoding="utf-8"))
-            if not font_report.get("cjk_delivery_supported"):
-                font_step["ok"] = False
-                font_step["failure"] = "cjk_delivery_unsupported"
-        steps.append(font_step)
+        add_step("fonts", font_args, outputs=[run_dir / "font-report.json"], inputs=[Path(args.font_dir).resolve()] if args.font_dir else [], metadata={"require_cjk": args.require_cjk})
         font_manifest = Path(args.font_dir).resolve() / "font-manifest.json" if args.font_dir else None
         if args.font_dir and (font_manifest.is_file() or args.require_cjk):
             font_asset_args = [str(SCRIPT_DIR / "validate_font_asset.py"), "--font-dir", str(Path(args.font_dir).resolve()), "--report", str(run_dir / "font-asset-validation.json")]
             if args.require_cjk:
                 font_asset_args.append("--require-cjk")
-            steps.append(run_step(run_dir, "font-asset", font_asset_args))
+            add_step("font-asset", font_asset_args, deps=["fonts"], outputs=[run_dir / "font-asset-validation.json"], inputs=[Path(args.font_dir).resolve()])
     layout_path = project / "layout.json"
     object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
     if args.require_object_manifest or object_manifest.is_file():
         object_args = [str(SCRIPT_DIR / "validate_object_manifest.py"), str(object_manifest), "--report", str(run_dir / "object-manifest-validation.json")]
         if args.require_independent_panels:
             object_args.append("--require-panels")
-        steps.append(run_step(run_dir, "object-manifest", object_args))
+        add_step("object-manifest", object_args, outputs=[run_dir / "object-manifest-validation.json"], inputs=[object_manifest, deck])
     registry_path = Path(args.manifest_registry).resolve() if args.manifest_registry else project / "manifest-registry.json"
     registry_enabled = bool(args.manifest_registry or registry_path.is_file())
     if args.require_manifest_registry and not registry_path.is_file():
-        steps.append({"name": "manifest-registry", "command": [], "exit_code": 2, "ok": False, "failure": "manifest_registry_missing", "stdout": "", "stderr": ""})
+        add_step("manifest-registry", static_result={"name": "manifest-registry", "command": [], "exit_code": 2, "ok": False, "failure": "manifest_registry_missing", "stdout": "", "stderr": ""}, cacheable=False)
     elif registry_enabled:
         registry_args = [str(SCRIPT_DIR / "manifest_registry.py"), "validate", str(registry_path), "--deck", str(deck), "--report", str(run_dir / "manifest-registry-validation.json")]
         if args.require_manifest_registry:
             registry_args.append("--require-gates")
-        steps.append(run_step(run_dir, "manifest-registry", registry_args))
+        add_step("manifest-registry", registry_args, outputs=[run_dir / "manifest-registry-validation.json"], inputs=[registry_path, deck, project / "slide-manifest.json"] + ([object_manifest] if object_manifest.is_file() else []))
     if args.reference:
         if layout_path.is_file():
             layout_args = [str(SCRIPT_DIR / "layout_guard.py"), str(Path(args.reference).resolve()), str(layout_path)]
             if args.strict_layout:
                 layout_args.append("--strict")
-            layout_step = run_step(run_dir, "layout-guard", layout_args)
+            layout_args.extend(["--report", str(run_dir / "layout-guard.json")])
+            add_step("layout-guard", layout_args, outputs=[run_dir / "layout-guard.json"], inputs=[Path(args.reference).resolve(), layout_path])
         else:
-            layout_step = {"name": "layout-guard", "command": [], "exit_code": 2, "ok": False,
-                           "failure": "layout_json_missing", "stdout": "", "stderr": ""}
-        (run_dir / "layout-guard.json").write_text(json.dumps({
-            "schema": "ai-ppt-plus/layout-guard-run/v1",
-            "valid": layout_step["ok"],
-            "status": "passed" if layout_step["ok"] else "blocked",
-            "stdout": layout_step["stdout"],
-            "stderr": layout_step["stderr"],
-            "issues": [] if layout_step["ok"] else [{"code": "layout_guard_failed"}],
-        }, ensure_ascii=False, indent=2), encoding="utf-8")
-        steps.append(layout_step)
+            (run_dir / "layout-guard.json").write_text(json.dumps({
+                "schema": "ai-ppt-plus/layout-guard-run/v1",
+                "valid": False,
+                "status": "blocked",
+                "issues": [{"code": "layout_json_missing"}],
+            }, ensure_ascii=False, indent=2), encoding="utf-8")
+            add_step("layout-guard", static_result={"name": "layout-guard", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""}, outputs=[run_dir / "layout-guard.json"], cacheable=False)
     if imagegen_required:
-        steps.append(run_step(run_dir, "imagegen-assets", [str(SCRIPT_DIR / "validate_imagegen_assets_manifest.py"), str(project / "imagegen-assets-manifest.json"), "--report", str(run_dir / "imagegen-assets-validation.json")]))
+        add_step("imagegen-assets", [str(SCRIPT_DIR / "validate_imagegen_assets_manifest.py"), str(project / "imagegen-assets-manifest.json"), "--report", str(run_dir / "imagegen-assets-validation.json")], outputs=[run_dir / "imagegen-assets-validation.json"], inputs=[project / "imagegen-assets-manifest.json"])
     if icon_required:
-        steps.append(run_step(run_dir, "icon-assets", [str(SCRIPT_DIR / "validate_icon_assets.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-assets-validation.json")]))
-        steps.append(run_step(run_dir, "icon-layers", [str(SCRIPT_DIR / "audit_icon_layers.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-layer-audit.json")]))
+        add_step("icon-assets", [str(SCRIPT_DIR / "validate_icon_assets.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-assets-validation.json")], outputs=[run_dir / "icon-assets-validation.json"], inputs=[project / "icon-asset-manifest.json"])
+        add_step("icon-layers", [str(SCRIPT_DIR / "audit_icon_layers.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-layer-audit.json")], outputs=[run_dir / "icon-layer-audit.json"], inputs=[project / "icon-asset-manifest.json"])
     inspection_path = run_dir / "inspection.json"
     render_report_path = run_dir / "render-report.json"
-    steps.append(run_step(run_dir, "inspection", [str(SCRIPT_DIR / "inspect_pptx.py"), str(deck), "--report", str(inspection_path)]))
+    add_step("inspection", [str(SCRIPT_DIR / "inspect_pptx.py"), str(deck), "--report", str(inspection_path)], outputs=[inspection_path], inputs=[deck])
     if args.require_object_manifest or object_manifest.is_file():
         audit_args = [str(SCRIPT_DIR / "inspect_editable_objects.py"), str(deck), "--object-manifest", str(object_manifest), "--report", str(run_dir / "editable-object-audit.json")]
         if args.require_independent_panels:
             audit_args.append("--require-independent-panels")
-        steps.append(run_step(run_dir, "editable-object-audit", audit_args))
+        add_step("editable-object-audit", audit_args, outputs=[run_dir / "editable-object-audit.json"], inputs=[deck, object_manifest])
     render_args = [str(SCRIPT_DIR / "render_pptx.py"), str(deck), "--output-dir", str(render_dir), "--dpi", str(args.dpi), "--report", str(render_report_path)]
     if args.font_dir:
         render_args.extend(["--font-dir", str(Path(args.font_dir).resolve())])
-    steps.append(run_step(run_dir, "render", render_args))
-    visual_args = [str(SCRIPT_DIR / "validate_render.py"), str(render_dir), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "render-visual-gate.json")]
-    for region in args.region:
+    if affected_pages:
+        render_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+    add_step("render", render_args, deps=["environment"], outputs=[render_dir, render_report_path], inputs=[deck] + ([Path(args.font_dir).resolve()] if args.font_dir else []), metadata={"affected_pages": affected_pages or "all", "dpi": args.dpi})
+    selected_count = len(affected_pages) if affected_pages else args.expected_pages
+    visual_args = [str(SCRIPT_DIR / "validate_render.py"), str(render_dir), "--expected-pages", str(selected_count), "--report", str(run_dir / "render-visual-gate.json")]
+    if affected_pages:
+        visual_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+    for region in list(args.region) + list(args.affected_region):
         visual_args.extend(["--region", region])
-    steps.append(run_step(run_dir, "render-visual-gate", visual_args))
+    add_step("render-visual-gate", visual_args, deps=["render"], outputs=[run_dir / "render-visual-gate.json"], inputs=[render_dir], metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
     if args.font_dir or args.require_cjk:
         font_delivery_args = [str(SCRIPT_DIR / "validate_font_delivery.py"), "--font-report", str(run_dir / "font-report.json"), "--inspection", str(inspection_path), "--render-report", str(render_report_path), "--render-visual-gate", str(run_dir / "render-visual-gate.json"), "--profile", "wps", "--report", str(run_dir / "font-delivery-validation.json")]
-        if (run_dir / "font-asset-validation.json").is_file():
+        if args.font_dir and (font_manifest.is_file() or args.require_cjk):
             font_delivery_args.extend(["--font-asset-report", str(run_dir / "font-asset-validation.json")])
         if args.target_review:
             font_delivery_args.extend(["--target-review", str(Path(args.target_review).resolve())])
         if args.release:
             font_delivery_args.extend(["--require-embedded", "--require-target-review"])
-        steps.append(run_step(run_dir, "font-delivery", font_delivery_args))
+        font_deps = ["fonts", "inspection", "render", "render-visual-gate"]
+        if args.font_dir and (font_manifest.is_file() or args.require_cjk):
+            font_deps.append("font-asset")
+        add_step("font-delivery", font_delivery_args, deps=font_deps, outputs=[run_dir / "font-delivery-validation.json"], inputs=[run_dir / "font-report.json", inspection_path, render_report_path, run_dir / "render-visual-gate.json"] + ([run_dir / "font-asset-validation.json"] if args.font_dir and (font_manifest.is_file() or args.require_cjk) else []), metadata={"require_embedded": args.release, "target_review": bool(args.target_review)})
     if args.reference:
         comparison_args = [str(SCRIPT_DIR / "compare_visual.py"), str(render_dir / "slide-1.png"), str(Path(args.reference).resolve()), "--report", str(run_dir / "visual-comparison.json")]
         if args.visual_threshold is not None:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
-        steps.append(run_step(run_dir, "visual-comparison", comparison_args))
+        add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
     elif args.reference_dir:
         comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--report", str(run_dir / "visual-comparison.json")]
         if args.visual_threshold is not None:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
-        steps.append(run_step(run_dir, "visual-comparison", comparison_args))
-    if args.reference and layout_path.is_file() and (render_dir / "slide-1.png").is_file():
-        steps.append(run_step(run_dir, "visual-compare-qa", [str(SCRIPT_DIR / "visual_compare_qa.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--out-dir", str(run_dir / "visual-qa")]))
+        if affected_pages:
+            comparison_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+        add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir, Path(args.reference_dir).resolve()], metadata={"affected_pages": affected_pages or "all"})
+    if args.reference and layout_path.is_file():
+        add_step("visual-compare-qa", [str(SCRIPT_DIR / "visual_compare_qa.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--out-dir", str(run_dir / "visual-qa")], deps=["render"], outputs=[run_dir / "visual-qa"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
     if args.ocr_lang or args.require_ocr:
         ocr_args = [str(SCRIPT_DIR / "ocr_text_check.py"), str(deck), str(render_dir), "--lang", args.ocr_lang or "eng", "--report", str(run_dir / "ocr-text-check.json")]
         if args.require_ocr:
             ocr_args.append("--require-ocr")
-        steps.append(run_step(run_dir, "ocr-text-check", ocr_args))
+        add_step("ocr-text-check", ocr_args, deps=["render"], outputs=[run_dir / "ocr-text-check.json"], inputs=[deck, render_dir], metadata={"language": args.ocr_lang or "eng", "affected_pages": affected_pages or "all"})
     panel_manifest = project / "panel-asset-manifest.json"
     panel_gate_required = panel_manifest.is_file() or args.require_independent_panels or args.require_panel_approval
     if panel_gate_required:
@@ -339,28 +400,28 @@ def main() -> int:
             panel_args.append("--require-independent")
         if args.expected_panel_count is not None:
             panel_args.extend(["--expected-count", str(args.expected_panel_count)])
-        steps.append(run_step(run_dir, "panel-assets", panel_args))
+        add_step("panel-assets", panel_args, outputs=[run_dir / "panel-assets-validation.json"], inputs=[panel_manifest])
     if args.require_text_style_map and layout_path.is_file():
         text_style_args = [str(SCRIPT_DIR / "validate_text_style_map.py"), str(layout_path), "--report", str(run_dir / "text-style-map-validation.json")]
         if args.strict_layout or args.release:
             text_style_args.extend(["--strict", "--require-source-bbox"])
-        steps.append(run_step(run_dir, "text-style-map", text_style_args))
+        add_step("text-style-map", text_style_args, outputs=[run_dir / "text-style-map-validation.json"], inputs=[layout_path])
     text_manifest = Path(args.text_manifest).resolve() if args.text_manifest else project / "text-layout-manifest.json"
     text_model_enabled = bool(args.text_manifest or text_manifest.is_file())
     if args.require_text_model and not text_manifest.is_file():
-        steps.append({"name": "text-model", "command": [], "exit_code": 2, "ok": False, "failure": "text_manifest_missing", "stdout": "", "stderr": ""})
+        add_step("text-model", static_result={"name": "text-model", "command": [], "exit_code": 2, "ok": False, "failure": "text_manifest_missing", "stdout": "", "stderr": ""}, cacheable=False)
     elif text_model_enabled:
         text_model_args = [str(SCRIPT_DIR / "text_model.py"), "validate", str(text_manifest), "--report", str(run_dir / "text-layout-validation.json")]
         if args.require_text_model:
             text_model_args.extend(["--strict", "--require-source-bbox"])
-        steps.append(run_step(run_dir, "text-model", text_model_args))
+        add_step("text-model", text_model_args, outputs=[run_dir / "text-layout-validation.json"], inputs=[text_manifest])
     manifest_args = [str(SCRIPT_DIR / "validate_manifest.py"), str(project / "slide-manifest.json"), "--kind", "slide", "--report", str(run_dir / "manifest-validation.json")]
     if args.require_editability:
         manifest_args.append("--require-editability")
     asset_manifest = project / "asset-manifest.json"
     if asset_manifest.is_file():
         manifest_args.extend(["--asset-manifest", str(asset_manifest)])
-    steps.append(run_step(run_dir, "manifest", manifest_args))
+    add_step("manifest", manifest_args, outputs=[run_dir / "manifest-validation.json"], inputs=[project / "slide-manifest.json"] + ([asset_manifest] if asset_manifest.is_file() else []))
     project_args = [str(SCRIPT_DIR / "validate_project.py"), str(project), "--deck", str(deck), "--inspection", str(inspection_path), "--render-report", str(render_report_path), "--render-visual-gate", str(run_dir / "render-visual-gate.json"), "--manifest-validation", str(run_dir / "manifest-validation.json"), "--report", str(run_dir / "project-validation.json")]
     if args.require_editability:
         project_args.append("--require-editability")
@@ -374,7 +435,62 @@ def main() -> int:
         project_args.extend(["--visual-comparison", str(run_dir / "visual-comparison.json")])
     if args.ocr_lang or args.require_ocr:
         project_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
-    steps.append(run_step(run_dir, "project", project_args))
+    project_deps = ["inspection", "render", "render-visual-gate", "manifest"]
+    for candidate in ("route", "visual-comparison", "ocr-text-check"):
+        if any(task.name == candidate for task in executor.tasks):
+            project_deps.append(candidate)
+    project_inputs = [
+        deck,
+        project / "slide-manifest.json",
+        inspection_path,
+        render_report_path,
+        run_dir / "render-visual-gate.json",
+        run_dir / "manifest-validation.json",
+    ]
+    for candidate in (
+        "asset-manifest.json",
+        "layout.json",
+        "slide-object-manifest.json",
+        "manifest-registry.json",
+        "panel-asset-manifest.json",
+        "icon-asset-manifest.json",
+        "imagegen-assets-manifest.json",
+        "text-layout-manifest.json",
+        "handoff.json",
+        "validation-report.json",
+        "issue-log.json",
+    ):
+        path = project / candidate
+        if path.is_file():
+            project_inputs.append(path)
+    for candidate in (args.handoff, args.issue_log, args.route_decision):
+        if candidate:
+            path = Path(candidate).resolve()
+            if path.is_file():
+                project_inputs.append(path)
+    project_inputs.extend(
+        [run_dir / "route-validation.json"] if args.route_decision else []
+    )
+    project_inputs.extend(
+        [run_dir / "visual-comparison.json"] if args.reference or args.reference_dir else []
+    )
+    project_inputs.extend(
+        [run_dir / "ocr-text-check.json"] if args.ocr_lang or args.require_ocr else []
+    )
+    add_step("project", project_args, deps=project_deps, outputs=[run_dir / "project-validation.json"], inputs=project_inputs, metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
+    steps = executor.run()
+    if args.require_cjk:
+        for step in steps:
+            if step["name"] != "fonts" or not step.get("ok"):
+                continue
+            try:
+                font_report = json.loads((run_dir / "font-report.json").read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                font_report = {}
+            if not font_report.get("cjk_delivery_supported"):
+                step["ok"] = False
+                step["exit_code"] = 2
+                step["failure"] = "cjk_delivery_unsupported"
     report_entries = [
         {"report_type": "environment", "path": "environment-report.json", "required": True, "stage": "intake"},
         {"report_type": "inspection", "path": "inspection.json", "required": True, "stage": "validated"},
@@ -426,7 +542,7 @@ def main() -> int:
         step_name = {"render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
-    report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": "validated", "deck_path": str(deck), "deck_sha256": sha256(deck), "reports": report_entries}
+    report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": "validated", "validation_scope": "incremental" if affected_pages else "full", "deck_path": str(deck), "deck_sha256": sha256(deck), "source_references": [{"source_id": "deck", "path": str(deck), "sha256": sha256(deck)}], "reports": report_entries}
     (run_dir / "report-index.json").write_text(json.dumps(report_index, ensure_ascii=False, indent=2), encoding="utf-8")
     steps.append(run_step(run_dir, "project-report-aggregate", [str(SCRIPT_DIR / "aggregate_project_reports.py"), str(run_dir / "report-index.json"), "--report", str(run_dir / "project-report.json")]))
     if args.release:
@@ -467,6 +583,7 @@ def main() -> int:
         steps.append(run_step(run_dir, "release-check", release_args))
     failed = [step["name"] for step in steps if not step["ok"]]
     technical_failed = [step["name"] for step in steps if not step["ok"] and step["name"] not in {"signoff-validation", "release-check"}]
+    technical_valid = not technical_failed
     quality_evidence = {}
     for name, path in (
         ("render_visual_gate", run_dir / "render-visual-gate.json"),
@@ -496,14 +613,27 @@ def main() -> int:
             quality_evidence[name] = summarize_report(name, path, report)
     quality_degradations = []
     ocr_report = quality_evidence.get("ocr_text_check")
-    if ocr_report and ocr_report.get("status") == "unavailable":
+    if ocr_report and (ocr_report.get("native_status") or ocr_report.get("status")) == "unavailable":
         quality_degradations.append({"code": "ocr_unavailable", "language": ocr_report.get("language"), "requires_human_review": True})
     release_report = load_report(run_dir / "release-check.json")
     release_eligible = bool(args.release and release_report and release_report.get("status") == "passed")
-    result = {"schema": "ai-ppt-plus/pipeline-run/v2", "valid": not failed, "technical_valid": not technical_failed, "release_profile": "strict" if args.release else "not_run", "release_eligible": release_eligible, "release_status": release_report.get("status") if release_report else "not_run", "run_id": run_id, "project": str(project), "deck": str(deck), "deck_sha256": sha256(deck), "run_dir": str(run_dir), "steps": steps, "failed_steps": failed, "technical_failed_steps": technical_failed, "next_state": "delivered" if release_eligible else "validated" if not failed else "revision-required", "human_visual_review_required": True, "human_signoff_required": True, "quality_evidence": quality_evidence, "quality_degradations": quality_degradations}
+    source_references = [{"source_id": "deck", "path": str(deck), "sha256": sha256(deck)}]
+    for evidence in quality_evidence.values():
+        source = evidence.get("source") if isinstance(evidence, dict) else None
+        if isinstance(source, dict) and source.get("path"):
+            source_references.append(source)
+    result = {"schema": "ai-ppt-plus/pipeline-run/v2", "valid": technical_valid, "status": "passed" if technical_valid else "failed", "technical_valid": technical_valid, "technical_status": "passed" if technical_valid else "failed", "validation_scope": "incremental" if affected_pages else "full", "full_deck_validation_required": bool(affected_pages), "release_profile": "strict" if args.release else "not_run", "release_eligible": release_eligible, "release_status": release_report.get("status") if release_report else "not_run", "human_review_required": True, "human_review_status": "pending", "run_id": run_id, "project": str(project), "deck": str(deck), "deck_sha256": sha256(deck), "source": {"deck": str(deck), "deck_sha256": sha256(deck), "project": str(project)}, "source_references": source_references, "run_dir": str(run_dir), "execution": {"mode": args.execution_mode, "cache_dir": str(cache_dir) if cache_dir else None, "parallel_workers": executor.max_workers, "tasks_total": len(steps), "cache_hits": sum(1 for step in steps if step.get("cache_hit") is True), "duration_ms": round(sum(float(step.get("duration_ms", 0) or 0) for step in steps), 3), "affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)}, "steps": steps, "failed_steps": failed, "technical_failed_steps": technical_failed, "next_state": "delivered" if release_eligible else "validated" if technical_valid else "revision-required", "human_visual_review_required": True, "human_signoff_required": True, "quality_evidence": quality_evidence, "quality_degradations": quality_degradations}
+    review_path = run_dir / "review.html"
+    try:
+        write_review(result, review_path)
+        result["review_html"] = str(review_path)
+    except Exception as exc:
+        result["review_html"] = None
+        result["quality_degradations"].append({"code": "review_html_generation_failed", "message": f"{type(exc).__name__}: {exc}", "requires_human_review": True})
     (run_dir / "pipeline-result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False))
-    return 0 if result["valid"] else 2
+    release_blocked = args.release and not release_eligible
+    return 0 if technical_valid and not release_blocked else 2
 
 
 if __name__ == "__main__":

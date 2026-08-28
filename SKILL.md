@@ -145,6 +145,38 @@ Before `run_pipeline.py --release`, produce the final file with the embedding
 adapter when font embedding is required; the pipeline must inspect and render
 that final output, never the staging PPTX.
 
+### Pipeline performance and review artifacts
+
+`run_pipeline.py` uses the dependency-aware DAG executor by default. Independent
+intake, manifest and QA checks run concurrently; successful nodes are stored in
+the project content-addressed cache and restored only when their command,
+script hash, declared inputs and configuration still match. Use
+`--execution-mode linear` for compatibility diagnosis, `--no-cache` to force a
+fresh execution, and `--parallel-workers N` to bound concurrency. A cache hit is
+evidence reuse, not a new human review.
+
+For a targeted repair, pass `--affected-pages 2,5-6` and one or more
+`--affected-region name=x,y,w,h`. The renderer, render gate, visual comparison
+and OCR preserve actual slide numbers and record `validation_scope: incremental`;
+strict release always requires a full-deck run. A partial run must not be
+described as full-deck validation.
+
+Every run writes `review.html` beside `pipeline-result.json`. Reports use the
+common technical/human/release vocabulary through the project aggregate:
+technical pass, human review pending and release eligibility are separate
+states. See `references/pipeline-performance.md`,
+`references/report-protocol.md` and `references/skill-routing.md`.
+
+### Skill ownership
+
+`ai-ppt-plus` owns orchestration, narrative, route decisions, manifests, quality
+gates, report aggregation and release policy. `GordenImage2PPTX` owns the
+reference-image decomposition engine. `Presentations` owns low-level PPTX
+creation/editing/rendering adapters. All three consume the shared L0-L5,
+font-evidence and report contracts; child skills do not redefine editability,
+backend selection or release eligibility. The machine-readable map is
+`assets/skill-routing.template.json`.
+
 For strict release, run `run_pipeline.py --release` with a task-local
 `--font-dir`, `--route-decision`, `--handoff`, `--human-signoff`,
 `--target-review` and `--quality-score`. This profile implies CJK asset

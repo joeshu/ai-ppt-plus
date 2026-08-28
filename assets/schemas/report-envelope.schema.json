@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "report_type", "valid", "status", "technical_valid", "human_review_required", "human_review_status", "release_eligible", "release_status", "issues", "source_references"],
+  "properties": {
+    "schema": {"type": "string", "enum": ["ai-ppt-plus/report-envelope/v1"]},
+    "report_type": {"type": "string"},
+    "project_id": {"type": "string"},
+    "revision": {"type": "string"},
+    "stage": {"type": "string"},
+    "valid": {"type": "boolean"},
+    "status": {"type": "string", "enum": ["passed", "degraded", "failed", "invalid", "missing", "needs-human-review"]},
+    "technical_valid": {"type": "boolean"},
+    "human_review_required": {"type": "boolean"},
+    "human_review_status": {"type": "string"},
+    "release_eligible": {"type": "boolean"},
+    "release_status": {"type": "string"},
+    "issues": {"type": "array"},
+    "source_references": {"type": "array"}
+  }
+}

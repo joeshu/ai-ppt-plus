@@ -7,6 +7,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from report_envelope import normalize_child
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -76,7 +78,7 @@ def main() -> int:
         if not report_path.is_file():
             issue = {"severity": "blocker" if required else "major", "code": "report_missing", "report_type": report_type, "path": str(report_path)}
             issues.append(issue)
-            evidence.update({"present": False, "valid": False, "status": "missing"})
+            evidence.update(normalize_child(report_type, report_path, None, required=required, stage=entry.get("stage"), deck_sha256=index.get("deck_sha256")))
             if required:
                 required_failures += 1
             else:
@@ -88,19 +90,25 @@ def main() -> int:
         input_hashes[report_type] = report_hash
         if error or not isinstance(report, dict):
             issues.append({"severity": "blocker" if required else "major", "code": "report_invalid", "report_type": report_type, "message": error or "report must be an object"})
-            evidence.update({"present": True, "valid": False, "status": "invalid", "sha256": report_hash})
+            evidence.update(normalize_child(report_type, report_path, None, required=required, stage=entry.get("stage"), deck_sha256=index.get("deck_sha256")))
+            evidence.update({"present": True, "valid": False, "status": "invalid", "native_status": "invalid", "sha256": report_hash})
             if required:
                 required_failures += 1
             else:
                 optional_failures += 1
             report_evidence.append(evidence)
             continue
-        child_valid = report.get("valid") if isinstance(report.get("valid"), bool) else report.get("ok") if isinstance(report.get("ok"), bool) else entry.get("step_ok") if isinstance(entry.get("step_ok"), bool) else None
+        if entry.get("step_ok") is False:
+            child_valid = False
+        else:
+            child_valid = report.get("valid") if isinstance(report.get("valid"), bool) else report.get("ok") if isinstance(report.get("ok"), bool) else entry.get("step_ok") if isinstance(entry.get("step_ok"), bool) else None
         child_status = report.get("status") or ("passed" if child_valid else "failed" if child_valid is False else "legacy")
         child_issues = report.get("issues", report.get("errors", []))
         if isinstance(report.get("component_usage"), dict):
             component_usage = report["component_usage"]
-        evidence.update({"present": True, "valid": child_valid, "status": child_status, "schema": report.get("schema"), "sha256": report_hash, "issues": child_issues})
+        normalized_report = report if isinstance(report.get("valid"), bool) or isinstance(report.get("ok"), bool) else {**report, "valid": child_valid}
+        evidence.update(normalize_child(report_type, report_path, normalized_report, required=required, stage=entry.get("stage"), deck_sha256=index.get("deck_sha256")))
+        evidence.update({"present": True, "valid": child_valid, "native_status": report.get("status"), "schema": report.get("schema"), "sha256": report_hash, "issues": child_issues})
         if child_valid is not True:
             severity = "blocker" if required else "major"
             issues.append({"severity": severity, "code": "required_report_failed" if required else "optional_report_failed", "report_type": report_type, "path": str(report_path), "child_status": child_status, "child_issues": child_issues})
@@ -120,8 +128,16 @@ def main() -> int:
         "project_id": index.get("project_id"),
         "revision": index.get("revision"),
         "stage": index.get("stage", "validated"),
+        "validation_scope": index.get("validation_scope", "full"),
+        "full_deck_validation_required": index.get("validation_scope", "full") != "full",
         "valid": valid,
         "status": status,
+        "technical_valid": valid,
+        "technical_status": "passed" if valid else "failed",
+        "human_review_required": True,
+        "human_review_status": "pending",
+        "release_eligible": False,
+        "release_status": "blocked-pending-signoff",
         "deck_path": index.get("deck_path"),
         "deck_sha256": index.get("deck_sha256"),
         "report_index_path": str(index_path),
@@ -138,6 +154,7 @@ def main() -> int:
         "next_state": "validated" if valid else "revision-required",
         "issues": issues,
         "evidence": {"reports": report_evidence},
+        "source_references": list(index.get("source_references") or []) + [item.get("source") for item in report_evidence if isinstance(item, dict) and item.get("source")],
     }
     report_path = Path(args.report)
     report_path.parent.mkdir(parents=True, exist_ok=True)

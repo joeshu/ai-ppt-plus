@@ -1,0 +1,25 @@
+{
+  "schema": "ai-ppt-plus/skill-routing/v1",
+  "orchestrator": "ai-ppt-plus",
+  "skills": [
+    {
+      "name": "ai-ppt-plus",
+      "role": "orchestrator",
+      "owns": ["intake", "narrative", "route", "design-system", "manifests", "qa", "reports", "release-gates"],
+      "forbids": ["silent-backend-substitution", "human-signoff-claim"]
+    },
+    {
+      "name": "GordenImage2PPTX",
+      "role": "reconstruction-engine",
+      "owns": ["reference-decomposition", "editable-layer-plan", "image-to-pptx-object-mapping"],
+      "forbids": ["narrative-redesign", "release-eligibility", "human-signoff"]
+    },
+    {
+      "name": "Presentations",
+      "role": "authoring-adapter",
+      "owns": ["pptx-create", "pptx-edit", "pptx-render", "ooxml-package-operations"],
+      "forbids": ["narrative-authority", "editability-policy", "release-claim"]
+    }
+  ],
+  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1"]
+}

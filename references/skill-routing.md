@@ -1,0 +1,41 @@
+# Skill routing and ownership
+
+The project has one orchestration owner and two capability layers. A request
+may pass through several layers, but each contract has one source of truth.
+
+| Skill | Owns | Does not own |
+|---|---|---|
+| `ai-ppt-plus` | intake, source authority, narrative/outline, route decision, design system, manifests, QA orchestration, report aggregation, human closeout and release gates | low-level shape-writing implementation details or image-only reconstruction internals |
+| `GordenImage2PPTX` | image/screenshot/reference decomposition into background, frame, icon/asset and formal-text layers; reconstruction-specific object plan and editable PPTX output | narrative redesign, release eligibility, human sign-off, or a second definition of the backend contract |
+| `Presentations` | low-level PPTX/Google Slides creation, mutation, rendering and package manipulation through the selected authoring adapter | choosing the story, deciding the visual route, defining editability policy, or claiming QA/release completion |
+
+## Routing rules
+
+1. A topic, outline, source bundle, or existing deck starts in
+   `ai-ppt-plus`.
+2. A fixed slide image or screenshot that must be reconstructed is delegated to
+   `GordenImage2PPTX` for decomposition. The formal text authority remains the
+   approved outline or user transcription, not generated pixels.
+3. PPTX object creation/editing is performed through the presentation
+   capability exposed by `Presentations` or the explicitly selected adapter.
+4. The result returns to `ai-ppt-plus` for manifest reconciliation, rendering,
+   structural/visual checks, report aggregation, human review and release.
+5. No child skill may silently replace the selected authoring backend, lower the
+   L0-L5 editability standard, or turn an automated pass into a delivery claim.
+
+## Shared contracts
+
+These contracts are project-level and must be consumed by all routes:
+
+- `references/editability-levels.md` defines L0-L5 and the distinction between
+  editable content, movable assets and component editability.
+- `references/native-object-protocol.md` defines native shapes, groups, tables,
+  charts and vector asset evidence.
+- `references/report-protocol.md` defines the normalized report envelope and
+  the technical/human/release state split.
+- `references/font-embedding.md` and `references/font-portability.md` define
+  the font evidence and delivery restrictions.
+
+The machine-readable ownership map is kept in
+`assets/skill-routing.template.json` so a future adapter can validate its
+declared scope before it is selected.

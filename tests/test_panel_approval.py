@@ -23,7 +23,7 @@ def main() -> int:
         root = Path(tmp)
         image = root / "source.png"
         Image.new("RGB", (1200, 1200), "white").save(image)
-        for count in (1, 2, 4, 6, 8):
+        for count in range(1, 10):
             candidates = []
             for i in range(count):
                 y = 20 + i * 135
@@ -45,7 +45,7 @@ def main() -> int:
             assert all(str(panel["file"]).startswith(f"assets-{count}/") for panel in extracted_data["panels"])
             check = run("scripts/validate_panel_assets.py", str(extracted), "--assets-dir", str(root), "--require-approved", "--expected-count", str(count), "--strict")
             assert check.returncode == 0, check.stderr
-    print("panel approval counts 1/2/4/6/8: ok")
+    print("panel approval counts arbitrary N=1..9: ok")
     return 0
 
 

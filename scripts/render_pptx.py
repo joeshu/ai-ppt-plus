@@ -27,12 +27,52 @@ def png_decodable(path: Path) -> bool:
         return False
 
 
-def render_pdf(pdf: Path, out: Path, dpi: int):
+def _render_selected_pages(pdf: Path, out: Path, dpi: int, selected: set[int], binary: str, backend: str):
+    rendered = {}
+    attempts = []
+    for page in sorted(selected):
+        prefix = out / f".selected-{page}"
+        for stale in out.glob(f".selected-{page}*"):
+            stale.unlink()
+        command = [binary, "-png", "-r", str(dpi), "-f", str(page), "-l", str(page), "-singlefile", str(pdf), str(prefix)]
+        cp = subprocess.run(command, capture_output=True, text=True)
+        candidates = [prefix.with_suffix(".png"), *sorted(out.glob(f".selected-{page}*.png"))]
+        candidate = next((path for path in candidates if path.is_file()), None)
+        decoded = bool(candidate and png_decodable(candidate))
+        attempts.append({"backend": backend, "page": page, "exit_code": cp.returncode, "decoded": decoded, "stderr": cp.stderr.strip()})
+        if cp.returncode == 0 and decoded:
+            target = out / f"slide-{page}.png"
+            if target.exists():
+                target.unlink()
+            candidate.replace(target)
+            rendered[page] = target
+        else:
+            for stale in out.glob(f".selected-{page}*"):
+                stale.unlink()
+    return rendered, attempts
+
+
+def render_pdf(pdf: Path, out: Path, dpi: int, selected: set[int] | None = None):
     attempts = []
     for old in out.glob("slide-*.png"):
         old.unlink()
     pdftoppm = shutil.which("pdftoppm")
     pdftocairo = shutil.which("pdftocairo")
+    if selected:
+        rendered = {}
+        backends = [(pdftoppm, "pdftoppm"), (pdftocairo, "pdftocairo")]
+        for binary, backend in backends:
+            if not binary:
+                continue
+            remaining = set(selected) - set(rendered)
+            if not remaining:
+                break
+            page_results, page_attempts = _render_selected_pages(pdf, out, dpi, remaining, binary, backend)
+            rendered.update(page_results)
+            attempts.extend(page_attempts)
+        files = [rendered[page] for page in sorted(rendered)]
+        backends_used = sorted({item["backend"] for item in attempts if item.get("decoded")})
+        return files, "+".join(backends_used) if backends_used else None, attempts
     if pdftoppm:
         cp = subprocess.run([pdftoppm, "-png", "-r", str(dpi), str(pdf), str(out / "slide")], capture_output=True, text=True)
         files = sorted(out.glob("slide-*.png"), key=lambda x: int(x.stem.split("-")[-1]))
@@ -91,10 +131,10 @@ def main():
             if cp.returncode or not pdf.exists():
                 errors.append("LibreOffice conversion failed: " + (cp.stderr or cp.stdout).strip())
             else:
-                all_pages, renderer, attempts = render_pdf(pdf, out, a.dpi)
+                all_pages, renderer, attempts = render_pdf(pdf, out, a.dpi, selected)
                 if not all_pages:
                     errors.append("Poppler rendering failed or produced undecodable PNG output")
-                pages = [str(x.resolve()) for i, x in enumerate(all_pages, 1) if selected is None or i in selected]
+                pages = [str(x.resolve()) for x in all_pages]
                 if selected and len(pages) != len(selected): errors.append("one or more requested pages do not exist")
     digest = None
     if src.is_file():

@@ -34,15 +34,48 @@ def image_stats(image):
     return {"mean": round(mean, 3), "stddev": round(std, 3), "min": extrema[0], "max": extrema[1], "nonuniform": std >= 2.0 and extrema[1] - extrema[0] >= 8}
 
 
+def parse_pages(value: str | None) -> set[int] | None:
+    if not value:
+        return None
+    selected: set[int] = set()
+    for part in value.split(","):
+        part = part.strip()
+        if not part:
+            raise ValueError("empty page selector")
+        if "-" in part:
+            lo, hi = (int(item.strip()) for item in part.split("-", 1))
+            if lo > hi:
+                raise ValueError("page range is reversed")
+            selected.update(range(lo, hi + 1))
+        else:
+            selected.add(int(part))
+    if not selected or min(selected) < 1:
+        raise ValueError("pages must be positive")
+    return selected
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("render_dir")
     parser.add_argument("--expected-pages", type=int, required=True)
     parser.add_argument("--region", action="append", type=region_spec, default=[])
+    parser.add_argument("--pages", help="only validate selected slide numbers, e.g. 1,3-4")
     parser.add_argument("--report")
     args = parser.parse_args()
     render_dir = Path(args.render_dir)
+    try:
+        selected_pages = parse_pages(args.pages)
+    except (TypeError, ValueError) as exc:
+        result = {"schema": "ai-ppt-plus/render-visual-gate/v1", "valid": False, "render_dir": str(render_dir.resolve()), "expected_pages": args.expected_pages, "pages": [], "issues": [{"severity": "blocker", "code": "invalid_pages", "message": str(exc)}], "human_visual_review_required": True}
+        if args.report:
+            report = Path(args.report)
+            report.parent.mkdir(parents=True, exist_ok=True)
+            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(json.dumps(result, ensure_ascii=False))
+        return 2
     pages = sorted(render_dir.glob("slide-*.png"), key=lambda path: int(path.stem.split("-")[-1])) if render_dir.is_dir() else []
+    if selected_pages is not None:
+        pages = [page for page in pages if int(page.stem.split("-")[-1]) in selected_pages]
     issues = []
     if len(pages) != args.expected_pages:
         issues.append({"severity": "blocker", "code": "page_count_mismatch", "expected": args.expected_pages, "observed": len(pages)})
@@ -67,7 +100,7 @@ def main() -> int:
                 page_results.append(result)
         except Exception as exc:
             issues.append({"severity": "blocker", "code": "render_read_error", "page": page.name, "message": f"{type(exc).__name__}: {exc}"})
-    result = {"schema": "ai-ppt-plus/render-visual-gate/v1", "valid": not any(item["severity"] == "blocker" for item in issues), "render_dir": str(render_dir.resolve()), "expected_pages": args.expected_pages, "pages": page_results, "issues": issues, "human_visual_review_required": True, "limitation": "non-blank checks do not prove semantic text correctness or reference fidelity"}
+    result = {"schema": "ai-ppt-plus/render-visual-gate/v1", "valid": not any(item["severity"] == "blocker" for item in issues), "render_dir": str(render_dir.resolve()), "expected_pages": args.expected_pages, "selected_pages": sorted(selected_pages) if selected_pages is not None else "all", "pages": page_results, "issues": issues, "human_visual_review_required": True, "limitation": "non-blank checks do not prove semantic text correctness or reference fidelity"}
     if args.report:
         report = Path(args.report)
         report.parent.mkdir(parents=True, exist_ok=True)

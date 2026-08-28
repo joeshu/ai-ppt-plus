@@ -3,8 +3,10 @@
   "project_id": "",
   "revision": "R1",
   "stage": "validated",
+  "validation_scope": "full",
   "deck_path": "deck.pptx",
   "deck_sha256": "",
+  "source_references": [],
   "reports": [
     {
       "report_type": "inspection",

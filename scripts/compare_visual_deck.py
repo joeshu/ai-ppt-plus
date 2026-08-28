@@ -23,6 +23,26 @@ def page_number(path: Path) -> int:
         return 10**9
 
 
+def parse_pages(value: str | None) -> set[int] | None:
+    if not value:
+        return None
+    selected: set[int] = set()
+    for part in value.split(","):
+        part = part.strip()
+        if not part:
+            raise ValueError("empty page selector")
+        if "-" in part:
+            lo, hi = (int(item.strip()) for item in part.split("-", 1))
+            if lo > hi:
+                raise ValueError("page range is reversed")
+            selected.update(range(lo, hi + 1))
+        else:
+            selected.add(int(part))
+    if not selected or min(selected) < 1:
+        raise ValueError("pages must be positive")
+    return selected
+
+
 def compare_page(rendered_path: Path, reference_path: Path, threshold):
     _, rendered_size = array(rendered_path)
     _, reference_size = array(reference_path)
@@ -65,14 +85,28 @@ def main() -> int:
     parser.add_argument("rendered_dir")
     parser.add_argument("reference_dir")
     parser.add_argument("--threshold", type=float)
+    parser.add_argument("--pages", help="only compare selected slide numbers, e.g. 1,3-4")
     parser.add_argument("--report")
     args = parser.parse_args()
+    try:
+        selected_pages = parse_pages(args.pages)
+    except (TypeError, ValueError) as exc:
+        result = {"schema": "ai-ppt-plus/visual-deck-comparison/v1", "valid": False, "rendered_dir": str(Path(args.rendered_dir).resolve()), "reference_dir": str(Path(args.reference_dir).resolve()), "pages": [], "issues": [{"severity": "blocker", "code": "invalid_pages", "message": str(exc)}], "human_visual_review_required": True}
+        if args.report:
+            report = Path(args.report)
+            report.parent.mkdir(parents=True, exist_ok=True)
+            report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(json.dumps(result, ensure_ascii=False))
+        return 2
     rendered_dir = Path(args.rendered_dir)
     reference_dir = Path(args.reference_dir)
     rendered_pages = sorted(rendered_dir.glob("slide-*.png"), key=page_number) if rendered_dir.is_dir() else []
     reference_pages = sorted(reference_dir.glob("slide-*.png"), key=page_number) if reference_dir.is_dir() else []
     rendered_by_number = {page_number(path): path for path in rendered_pages}
     reference_by_number = {page_number(path): path for path in reference_pages}
+    if selected_pages is not None:
+        rendered_by_number = {number: path for number, path in rendered_by_number.items() if number in selected_pages}
+        reference_by_number = {number: path for number, path in reference_by_number.items() if number in selected_pages}
     issues = []
     page_results = []
     all_numbers = sorted(set(rendered_by_number) | set(reference_by_number))
@@ -98,6 +132,7 @@ def main() -> int:
         "reference_dir": str(reference_dir.resolve()),
         "expected_pages": len(rendered_pages),
         "reference_pages": len(reference_pages),
+        "selected_pages": sorted(selected_pages) if selected_pages is not None else "all",
         "pages": page_results,
         "aggregate": {
             "compared_pages": len(valid_pages),

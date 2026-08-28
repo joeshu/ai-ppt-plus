@@ -202,6 +202,7 @@ def main() -> None:
                     help="Warn when computed text size falls below this point size unless small_text_ok is true.")
     ap.add_argument("--max-bold-ratio", type=float, default=0.85,
                     help="Warn when a slide with 6+ text boxes exceeds this all-bold ratio unless allow_all_bold_text is true.")
+    ap.add_argument("--report", help="Write a machine-readable layout guard report.")
     args = ap.parse_args()
 
     source = Path(args.source)
@@ -303,7 +304,24 @@ def main() -> None:
         print(f"Error: {msg}", file=sys.stderr)
 
     print(f"Checked {layout} against source {src_w}x{src_h}; warnings={len(warnings)} errors={len(errors)}")
-    if errors or (args.strict and warnings):
+    valid = not errors and not (args.strict and warnings)
+    if args.report:
+        report = Path(args.report)
+        report.parent.mkdir(parents=True, exist_ok=True)
+        report.write_text(json.dumps({
+            "schema": "ai-ppt-plus/layout-guard-run/v1",
+            "valid": valid,
+            "status": "passed" if valid else "blocked",
+            "source": str(source.resolve()),
+            "layout": str(layout.resolve()),
+            "source_size": [src_w, src_h],
+            "warnings": warnings,
+            "errors": errors,
+            "issues": ([{"severity": "blocker", "code": "layout_error", "message": message} for message in errors]
+                       + [{"severity": "warning", "code": "layout_warning", "message": message} for message in warnings]),
+            "strict": args.strict,
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+    if not valid:
         raise SystemExit(2)
 
 
