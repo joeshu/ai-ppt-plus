@@ -22,7 +22,7 @@ def main() -> int:
         deck = root / "deck.json"
         deck.write_text(json.dumps({
             "slide_width_in": 4, "slide_height_in": 2.25, "units": "fraction", "assets_dir": str(root),
-            "theme": {"font": "Noto Sans CJK SC", "text_color": "#222222", "size": 10, "table_header_fill": "#FF0000", "chart_colors": ["#00AAFF"]},
+            "theme": {"font": "Noto Sans CJK SC", "text_color": "#222222", "size": 10, "table_header_fill": "#FF0000", "chart_colors": ["#00AAFF"], "layout_name": "Blank"},
             "slides": [{
                 "shapes": [{"object_id": "gradient-card", "type": "rounded_rect", "x": .05, "y": .1, "w": .4, "h": .7,
                             "gradient": {"angle": 90, "stops": [{"position": 0, "color": "#FF0000"}, {"position": 1, "color": "#0000FF", "opacity": .8}]},

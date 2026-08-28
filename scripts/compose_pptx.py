@@ -324,6 +324,22 @@ def _svg_to_png(svg_path: Path) -> Path:
     return output
 
 
+def _choose_slide_layout(prs, slide_spec: dict, theme: dict):
+    """Select an existing template layout without inventing a new master."""
+    requested = slide_spec.get("layout_name", theme.get("layout_name"))
+    if requested:
+        for layout in prs.slide_layouts:
+            if layout.name == str(requested):
+                return layout
+        _die(f"slide layout not found: {requested}")
+    if slide_spec.get("layout_index") is not None:
+        index = int(slide_spec["layout_index"])
+        if index < 0 or index >= len(prs.slide_layouts):
+            _die(f"slide layout index out of range: {index}")
+        return prs.slide_layouts[index]
+    return prs.slide_layouts[6]
+
+
 def build_pptx(deck, out_path: Path):
     from pptx import Presentation
     from pptx.util import Emu, Pt
@@ -366,7 +382,7 @@ def build_pptx(deck, out_path: Path):
     svg_assets = []
     theme = deck.get("theme", {}) if isinstance(deck.get("theme", {}), dict) else {}
     for idx, sl in enumerate(deck["slides"], 1):
-        slide = prs.slides.add_slide(blank)
+        slide = prs.slides.add_slide(_choose_slide_layout(prs, sl, theme))
 
         bg = sl.get("background")
         if bg:

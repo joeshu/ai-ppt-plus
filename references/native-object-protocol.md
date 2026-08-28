@@ -70,3 +70,12 @@ Deck-level `theme` may provide default `font`, `text_color`, and `size` for
 native text and tables. Explicit object styles override those defaults.
 `speaker_notes` (or `notes`) stores editable presenter notes in the slide's
 notes part; notes are not rendered as slide content.
+
+## Master and layout reuse
+
+The composer uses the default PowerPoint template unless a slide selects an
+existing layout with `layout_name` or `layout_index`. A deck-level
+`theme.layout_name` supplies the default for slides that do not override it.
+The selected layout is reused as-is; content remains explicitly positioned by
+the layout contract, and unused placeholders are not treated as generated
+content. An unknown name or out-of-range index is a blocking error.
