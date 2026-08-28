@@ -26,13 +26,14 @@ def main():
         slide = root / "slide-manifest.json"; write(slide, {"slides": [{"slide_no": 1, "slide_id": "S01", "asset_ids": ["panel-01"]}]})
         objects = root / "slide-object-manifest.json"; write(objects, {"slides": [{"slide_no": 1, "objects": [{"object_id": "panel-01", "role": "semantic-panel", "object_type": "traceable_static_graphic", "editability_level": "L3", "independent": True}, {"object_id": "title", "object_type": "editable_text", "editability_level": "L1", "runs": [{"text": "标题"}]}]}]})
         layout = root / "layout.json"; write(layout, {"slides": [{"slide_no": 1, "regions": [{"region_id": "panel-01", "bbox": [0, 0, 1, 1], "independent": True}]}]})
+        text_manifest = root / "text-layout-manifest.json"; write(text_manifest, {"schema": "ai-ppt-plus/text-layout-manifest/v1", "units": "fraction", "reference_size": {"width": 1, "height": 1}, "slides": [{"slide_no": 1, "text_specs": [{"text_id": "title", "content": "标题", "style": {"font_family": "Noto Sans CJK SC", "size_pt": 24}, "runs": []}]}]})
         assets = root / "panel-asset-manifest.json"; write(assets, {"panels": [{"panel_id": "panel-01", "role": "semantic-panel", "path": "panel.png"}]})
         report = root / "report-index.json"; write(report, {"reports": [{"report_type": "qa", "path": "qa.json", "required": True}]}); write(root / "qa.json", {"valid": True})
         registry = root / "manifest-registry.json"
-        built = run("build", "--output", registry, "--project-id", "demo", "--deck", deck, "--slide-manifest", slide, "--object-manifest", objects, "--layout", layout, "--asset-manifest", assets, "--report-index", report)
+        built = run("build", "--output", registry, "--project-id", "demo", "--deck", deck, "--slide-manifest", slide, "--object-manifest", objects, "--layout", layout, "--text-manifest", text_manifest, "--asset-manifest", assets, "--report-index", report)
         assert built.returncode == 0, built.stderr
         data = json.loads(registry.read_text(encoding="utf-8"))
-        assert data["schema"] == "ai-ppt-plus/manifest-registry/v1" and data["slides"][0]["regions"][0]["region_id"] == "panel-01"
+        assert data["schema"] == "ai-ppt-plus/manifest-registry/v1" and data["slides"][0]["regions"][0]["region_id"] == "panel-01" and data["slides"][0]["text_specs"][0]["text_id"] == "title"
         validation = root / "validation.json"
         checked = run("validate", registry, "--deck", deck, "--report", validation, "--require-gates")
         assert checked.returncode == 0, checked.stdout

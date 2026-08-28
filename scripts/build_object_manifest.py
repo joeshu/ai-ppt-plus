@@ -10,6 +10,8 @@ import argparse
 import json
 from pathlib import Path
 
+from text_model import normalize_text_spec
+
 
 def read(path: str | None):
     return json.loads(Path(path).read_text(encoding="utf-8")) if path else {}
@@ -62,7 +64,17 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
             objects.append(obj(iid, role, "extracted_icon", "L2", review=True, replaceable=True, contains_formal_content=False, source_path=str(icon.get("file", "")), provenance=str(icon.get("file", ""))))
         for i, text in enumerate(slide.get("texts", []), 1):
             tid = str(text.get("object_id") or text.get("name") or f"text-{i:02d}")
-            objects.append(obj(tid, "formal-text", "editable_text", "L1", review=False, contains_formal_content=False, provenance=str(text.get("source_ref") or "layout.json")))
+            objects.append(obj(
+                tid, "formal-text", "editable_text", "L1", review=False,
+                contains_formal_content=False,
+                provenance=str(text.get("source_ref") or "layout.json"),
+                text_spec=normalize_text_spec(
+                    text, slide_no, i,
+                    units=str(layout.get("units", "fraction")),
+                    ref_width=layout.get("ref_width"),
+                    ref_height=layout.get("ref_height"),
+                ),
+            ))
         output.append({"slide_no": slide_no, "objects": objects})
     return {"schema": "ai-ppt-plus/slide-object-manifest/v1", "project_id": layout.get("project_id", ""), "layout_ref": "layout.json", "slides": output}
 

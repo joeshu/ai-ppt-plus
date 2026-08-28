@@ -52,6 +52,13 @@ leaving each domain manifest authoritative for its own fields. Validate it
 before project or delivery checks with `scripts/manifest_registry.py`; use
 `--require-gates` when QA report evidence is required.
 
+For pages containing formal text, also build `text-layout-manifest.json` with
+`scripts/text_model.py build`. `TextSpec.content` is the formal string and
+`TextSpec.runs[]` preserves mixed styling and line breaks; validate it before
+composition with `scripts/text_model.py validate`. Keep logos as
+`brand_lockup` assets, not TextSpecs, and do not change historical R13 files
+just to add the new sidecar manifest.
+
 ## State machine
 
 Persist `state`, `batch_id`, artifact paths, approvals, blockers and next action in the handoff file. A small task may merge adjacent states only when the merge reason and unchanged gates are recorded.

@@ -138,6 +138,8 @@ def main() -> int:
     parser.add_argument("--expected-panel-count", type=int, help="expected semantic panel count")
     parser.add_argument("--require-panel-approval", action="store_true", help="require explicit human approval metadata for panel assets")
     parser.add_argument("--require-text-style-map", action="store_true", help="validate rich text/style records when present")
+    parser.add_argument("--text-manifest", help="canonical text-layout-manifest.json")
+    parser.add_argument("--require-text-model", action="store_true", help="require and validate the canonical text layout manifest")
     parser.add_argument("--manifest-registry", help="canonical cross-manifest registry.json")
     parser.add_argument("--require-manifest-registry", action="store_true", help="require and validate the cross-manifest registry")
     parser.add_argument("--release", action="store_true", help="run the strict release gate after technical validation")
@@ -343,6 +345,15 @@ def main() -> int:
         if args.strict_layout or args.release:
             text_style_args.extend(["--strict", "--require-source-bbox"])
         steps.append(run_step(run_dir, "text-style-map", text_style_args))
+    text_manifest = Path(args.text_manifest).resolve() if args.text_manifest else project / "text-layout-manifest.json"
+    text_model_enabled = bool(args.text_manifest or text_manifest.is_file())
+    if args.require_text_model and not text_manifest.is_file():
+        steps.append({"name": "text-model", "command": [], "exit_code": 2, "ok": False, "failure": "text_manifest_missing", "stdout": "", "stderr": ""})
+    elif text_model_enabled:
+        text_model_args = [str(SCRIPT_DIR / "text_model.py"), "validate", str(text_manifest), "--report", str(run_dir / "text-layout-validation.json")]
+        if args.require_text_model:
+            text_model_args.extend(["--strict", "--require-source-bbox"])
+        steps.append(run_step(run_dir, "text-model", text_model_args))
     manifest_args = [str(SCRIPT_DIR / "validate_manifest.py"), str(project / "slide-manifest.json"), "--kind", "slide", "--report", str(run_dir / "manifest-validation.json")]
     if args.require_editability:
         manifest_args.append("--require-editability")
@@ -383,6 +394,8 @@ def main() -> int:
         report_entries.append({"report_type": "panel-assets-validation", "path": "panel-assets-validation.json", "required": True, "stage": "validated"})
     if args.require_text_style_map and layout_path.is_file():
         report_entries.append({"report_type": "text-style-map-validation", "path": "text-style-map-validation.json", "required": True, "stage": "validated"})
+    if text_model_enabled or args.require_text_model:
+        report_entries.append({"report_type": "text-layout-validation", "path": "text-layout-validation.json", "required": args.require_text_model, "stage": "validated"})
     if imagegen_required:
         report_entries.append({"report_type": "imagegen-assets-validation", "path": "imagegen-assets-validation.json", "required": True, "stage": "validated"})
     if icon_required:
@@ -410,7 +423,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map"}.get(entry["report_type"])
+        step_name = {"render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": "validated", "deck_path": str(deck), "deck_sha256": sha256(deck), "reports": report_entries}
@@ -462,6 +475,7 @@ def main() -> int:
         ("route_validation", run_dir / "route-validation.json"),
         ("manifest_validation", run_dir / "manifest-validation.json"),
         ("manifest_registry_validation", run_dir / "manifest-registry-validation.json"),
+        ("text_layout_validation", run_dir / "text-layout-validation.json"),
         ("imagegen_assets_validation", run_dir / "imagegen-assets-validation.json"),
         ("icon_assets_validation", run_dir / "icon-assets-validation.json"),
         ("icon_layer_audit", run_dir / "icon-layer-audit.json"),

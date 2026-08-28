@@ -6,6 +6,8 @@ import json
 import sys
 from pathlib import Path
 
+from text_model import build_manifest as build_text_manifest, validate_manifest as validate_text_manifest
+
 
 SCHEMA = "ai-ppt-plus/manifest-registry/v1"
 VALIDATION_SCHEMA = "ai-ppt-plus/manifest-registry-validation/v1"
@@ -95,10 +97,12 @@ def build(args):
     slide_data = load(args.slide_manifest)
     object_data = load(args.object_manifest) if args.object_manifest else {}
     layout_data = load(args.layout) if args.layout else {}
+    text_data = load(args.text_manifest) if args.text_manifest else (build_text_manifest(layout_data) if layout_data else {})
     objects_by_slide = {}
     for slide in object_data.get("slides", []):
         objects_by_slide[slide.get("slide_no")] = slide.get("objects", [])
     layout_by_slide = {slide.get("slide_no"): slide for slide in layout_data.get("slides", [])}
+    text_by_slide = {slide.get("slide_no"): slide.get("text_specs", []) for slide in text_data.get("slides", [])}
 
     assets = []
     asset_ids = set()
@@ -133,11 +137,13 @@ def build(args):
                 })
         slide_objects = slide.get("objects") or objects_by_slide.get(number, [])
         normalized_objects = [normalize_object(item, "slide-object-manifest.json") for item in slide_objects if isinstance(item, dict)]
-        text_runs = []
-        for obj in normalized_objects:
-            if obj.get("object_type") == "editable_text":
-                details = obj.get("details", {})
-                text_runs.extend(details.get("runs", []))
+        text_specs = text_by_slide.get(number, [])
+        text_runs = [run for spec in text_specs for run in spec.get("runs", [])]
+        if not text_specs:
+            for obj in normalized_objects:
+                if obj.get("object_type") == "editable_text":
+                    details = obj.get("details", {})
+                    text_runs.extend(details.get("runs", []))
         slides.append({
             "slide_id": first(slide, "slide_id", "id") or f"S{int(number):02d}",
             "slide_no": number,
@@ -145,12 +151,13 @@ def build(args):
             "geometry_ref": first(slide, "layout_ref", "reference_image") or "layout.json",
             "regions": regions,
             "objects": normalized_objects,
+            "text_specs": text_specs,
             "text_runs": text_runs,
             "asset_ids": slide.get("asset_ids", []),
             "gate_refs": slide.get("gate_refs", []),
         })
     sources = []
-    for name, path in (("slide_manifest", args.slide_manifest), ("object_manifest", args.object_manifest), ("layout", args.layout), ("report_index", args.report_index)):
+    for name, path in (("slide_manifest", args.slide_manifest), ("object_manifest", args.object_manifest), ("layout", args.layout), ("text_manifest", args.text_manifest), ("report_index", args.report_index)):
         if path:
             sources.append({"source_id": name, "path": path_ref(path, base), "sha256": digest(path)})
     registry = {
@@ -164,7 +171,7 @@ def build(args):
         "slides": slides,
         "assets": assets,
         "gates": [],
-        "evidence": {"slide_manifest": path_ref(args.slide_manifest, base), "object_manifest": path_ref(args.object_manifest, base) if args.object_manifest else None, "asset_manifests": [path_ref(p, base) for p in args.asset_manifest], "report_index": path_ref(args.report_index, base) if args.report_index else None},
+        "evidence": {"slide_manifest": path_ref(args.slide_manifest, base), "object_manifest": path_ref(args.object_manifest, base) if args.object_manifest else None, "text_manifest": path_ref(args.text_manifest, base) if args.text_manifest else None, "asset_manifests": [path_ref(p, base) for p in args.asset_manifest], "report_index": path_ref(args.report_index, base) if args.report_index else None},
     }
     if args.report_index:
         report_data = load(args.report_index)
@@ -195,19 +202,48 @@ def validate(args):
             issues.append({"code": "deck_hash_mismatch", "expected": data.get("deck", {}).get("sha256"), "actual": actual})
     elif deck_path:
         issues.append({"code": "deck_missing", "path": str(deck_path)})
+    for source in data.get("sources", []):
+        if not isinstance(source, dict) or not source.get("path"):
+            continue
+        source_path = Path(source["path"])
+        if not source_path.is_absolute():
+            source_path = path.parent / source_path
+        if not source_path.is_file():
+            warnings.append({"code": "source_manifest_missing", "path": str(source_path)})
+        elif source.get("sha256") and digest(source_path) != source.get("sha256"):
+            issues.append({"code": "source_manifest_hash_mismatch", "source_id": source.get("source_id"), "path": str(source_path)})
     slides = data.get("slides", []) if isinstance(data.get("slides"), list) else []
     slide_nos = [s.get("slide_no") for s in slides if isinstance(s, dict)]
     if len(slide_nos) != len(set(slide_nos)):
         issues.append({"code": "duplicate_slide_number"})
     object_ids, asset_ids = set(), {a.get("asset_id") for a in data.get("assets", []) if isinstance(a, dict)}
     for slide in slides:
+        slide_object_ids = set()
         for obj in slide.get("objects", []):
             oid = obj.get("object_id")
             if oid in object_ids:
                 issues.append({"code": "duplicate_object_id", "object_id": oid})
             object_ids.add(oid)
+            slide_object_ids.add(oid)
             if obj.get("object_type") in {"independent_image", "traceable_static_graphic", "extracted_icon"} and obj.get("details", {}).get("contains_formal_content") is True:
                 issues.append({"code": "formal_content_in_raster_asset", "object_id": oid})
+        text_specs = slide.get("text_specs", [])
+        if text_specs:
+            text_check = validate_text_manifest({
+                "schema": "ai-ppt-plus/text-layout-manifest/v1",
+                "units": "fraction",
+                "reference_size": {},
+                "slides": [{"slide_no": slide.get("slide_no"), "text_specs": text_specs}],
+            })
+            for issue in text_check.get("issues", []):
+                issues.append({"code": "text_model_" + str(issue.get("code", "invalid")), "slide_no": slide.get("slide_no"), **{key: value for key, value in issue.items() if key != "code"}})
+            warnings.extend({"code": "text_model_" + str(warning.get("code", "warning")), "slide_no": slide.get("slide_no"), **{key: value for key, value in warning.items() if key != "code"}} for warning in text_check.get("warnings", []))
+        for spec in text_specs:
+            tid = spec.get("text_id") if isinstance(spec, dict) else None
+            if tid not in slide_object_ids:
+                issues.append({"code": "text_spec_without_editable_object", "text_id": tid, "slide_no": slide.get("slide_no")})
+            elif not any(obj.get("object_id") == tid and obj.get("object_type") == "editable_text" for obj in slide.get("objects", [])):
+                issues.append({"code": "text_spec_object_not_editable_text", "text_id": tid, "slide_no": slide.get("slide_no")})
         for aid in slide.get("asset_ids", []):
             if aid not in asset_ids and aid not in object_ids:
                 warnings.append({"code": "unresolved_asset_reference", "asset_id": aid, "slide_no": slide.get("slide_no")})
@@ -251,7 +287,7 @@ def main():
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
     build_parser = sub.add_parser("build")
-    build_parser.add_argument("--output", required=True); build_parser.add_argument("--project-id", required=True); build_parser.add_argument("--revision", default="working"); build_parser.add_argument("--state", default="validated"); build_parser.add_argument("--deck", required=True); build_parser.add_argument("--slide-manifest", required=True); build_parser.add_argument("--object-manifest"); build_parser.add_argument("--layout"); build_parser.add_argument("--asset-manifest", action="append", default=[]); build_parser.add_argument("--report-index"); build_parser.add_argument("--formal-content-source", default="slide-manifest.json"); build_parser.add_argument("--visual-source", default="reference image / visual manifest"); build_parser.set_defaults(func=build)
+    build_parser.add_argument("--output", required=True); build_parser.add_argument("--project-id", required=True); build_parser.add_argument("--revision", default="working"); build_parser.add_argument("--state", default="validated"); build_parser.add_argument("--deck", required=True); build_parser.add_argument("--slide-manifest", required=True); build_parser.add_argument("--object-manifest"); build_parser.add_argument("--layout"); build_parser.add_argument("--text-manifest"); build_parser.add_argument("--asset-manifest", action="append", default=[]); build_parser.add_argument("--report-index"); build_parser.add_argument("--formal-content-source", default="slide-manifest.json"); build_parser.add_argument("--visual-source", default="reference image / visual manifest"); build_parser.set_defaults(func=build)
     validate_parser = sub.add_parser("validate")
     validate_parser.add_argument("registry"); validate_parser.add_argument("--deck"); validate_parser.add_argument("--report"); validate_parser.add_argument("--require-gates", action="store_true"); validate_parser.set_defaults(func=validate)
     parsed = parser.parse_args()

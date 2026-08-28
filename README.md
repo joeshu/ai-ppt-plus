@@ -13,6 +13,7 @@
 - `python-pptx` 后处理嵌入 OOXML 字体与 `.fntdata` 部件
 - 渲染、视觉对比、报告注册和交付前复验
 - 统一 Manifest Registry：关联页面、区域、对象、资产与 QA 门禁，并校验最终 deck 哈希
+- TextSpec/TextRunSpec 文本版式契约：统一内容、字体、字号、Run、换行与源坐标校验
 - R13 等回归案例的不可变基线归档与 SHA-256 校验
 
 主规范见 [`SKILL.md`](SKILL.md)。
