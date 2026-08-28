@@ -17,6 +17,7 @@ icons/texts becomes a full-bleed image slide.
 Usage:
     python3 scripts/compose_pptx.py deck.json out.pptx
     python3 scripts/compose_pptx.py deck.json out.pptx --preview-dir out/preview
+    python3 scripts/compose_pptx.py deck.json out.pptx --font-dir project-fonts --embed-fonts
 
 Layout schema: see references/image-to-pptx.md. Quick form:
 {
@@ -43,7 +44,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+import tempfile
 from pathlib import Path
 
 EMU_PER_INCH = 914400
@@ -659,13 +662,43 @@ def main() -> None:
     ap.add_argument("layout", help="deck.json / layout.json path.")
     ap.add_argument("out", help="Output .pptx path.")
     ap.add_argument("--preview-dir", help="If set, also render PNG previews here for QA.")
+    ap.add_argument("--font-dir", help="Task-local licensed font directory; also used by previews.")
+    ap.add_argument("--font-manifest", help="Font manifest; defaults to FONT_DIR/font-manifest.json.")
+    ap.add_argument("--embed-fonts", action="store_true", help="Post-process the generated PPTX with OOXML font parts.")
+    ap.add_argument("--embedding-report", help="JSON report for the OOXML font embedding step.")
     args = ap.parse_args()
 
     lp = Path(args.layout)
     if not lp.exists():
         _die(f"layout file not found: {lp}")
     deck = _load_deck(lp)
-    build_pptx(deck, Path(args.out))
+    out_path = Path(args.out).resolve()
+    if args.font_dir:
+        deck["font_dir"] = str(Path(args.font_dir).resolve())
+    if args.embed_fonts:
+        font_dir = args.font_dir or deck.get("font_dir")
+        manifest = args.font_manifest or deck.get("font_manifest")
+        if not font_dir and not manifest:
+            _die("--embed-fonts requires --font-dir or --font-manifest")
+        from embed_fonts import embed_pptx_fonts, load_specs
+        try:
+            specs, _ = load_specs(font_dir, manifest, [])
+        except Exception as exc:
+            _die(f"font embedding input invalid: {exc}")
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(prefix=f".{out_path.stem}-", suffix=".pptx", dir=out_path.parent, delete=False) as temporary:
+            staging_path = Path(temporary.name)
+        try:
+            build_pptx(deck, staging_path)
+            report_path = Path(args.embedding_report).resolve() if args.embedding_report else out_path.with_name(f"{out_path.stem}.font-embedding.json")
+            result = embed_pptx_fonts(staging_path, out_path, specs, report_path, overwrite=True)
+            if not result.get("valid"):
+                _die(f"font embedding failed; see {report_path}")
+        finally:
+            if staging_path.exists():
+                os.unlink(staging_path)
+    else:
+        build_pptx(deck, out_path)
     if args.preview_dir:
         render_previews(deck, Path(args.preview_dir))
 

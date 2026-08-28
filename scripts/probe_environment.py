@@ -17,6 +17,9 @@ def command(name):
 def module(name):
     spec=importlib.util.find_spec(name)
     return {'available':spec is not None,'path':getattr(spec,'origin',None),'evidence':'Python import discovery'}
+def local_script(name):
+    path=Path(__file__).with_name(name)
+    return {'available':path.is_file(),'path':str(path),'evidence':'repository script existence'}
 def ppt_master():
     raw=os.environ.get('PPT_MASTER_SKILL_DIR')
     path=Path(raw).expanduser() if raw else None
@@ -35,13 +38,26 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__,formatter_class=argparse.RawDescriptionHelpFormatter);ap.add_argument('--output','-o',required=True);a=ap.parse_args()
     caps={
       'pptx_authoring_runtime': authoring_runtime(),
+      'python_pptx': module('pptx'),
+      'pptx_font_embedding_adapter': local_script('embed_fonts.py'),
       'libreoffice_renderer': command('soffice'),
       'poppler_renderer': command('pdftoppm'),
       'pdf_text_extractor': command('pdftotext'),
       'pandoc_converter': command('pandoc'),
       'pymupdf': module('fitz'), 'docx_reader': module('docx'), 'xlsx_reader': module('openpyxl'), 'image_reader': module('PIL'), 'ppt_master':ppt_master()}
-    backend='artifact-tool' if caps['pptx_authoring_runtime']['available'] else 'interface_only'
+    # Keep the selected backend truthful: the repository's deterministic
+    # composer currently imports python-pptx.  The artifact-tool runtime is a
+    # capability, not evidence that this project actually used it.
+    if caps['python_pptx']['available']:
+        backend='python-pptx'
+        backend_reason='compose_pptx.py imports the installed pptx module; embed_fonts.py is the OOXML font post-processor when requested'
+    elif caps['pptx_authoring_runtime']['available']:
+        backend='artifact-tool'
+        backend_reason='artifact-tool runtime discovered; an adapter must be selected before authoring'
+    else:
+        backend='interface_only'
+        backend_reason='no verified PPTX authoring backend discovered'
     rendering='libreoffice+poppler' if caps['libreoffice_renderer']['available'] and caps['poppler_renderer']['available'] else 'unavailable'
-    out={'schema':'ai-ppt-plus/environment-report/v1','generated_at':datetime.now(timezone.utc).isoformat(),'python':sys.version.split()[0],'capabilities':caps,'selection':{'authoring_backend':backend,'rendering_backend':rendering,'ppt_master_adapter':'enabled' if caps['ppt_master']['available'] else 'not_selected','active_backend':backend+' + '+rendering},'rules':['Use only capabilities marked available.','Use PPT Master only after explicit directory discovery and its own documented integrity check.','Unavailable capability requires compatible adapter, declared fallback, or blocked/interface-only state.']}
+    out={'schema':'ai-ppt-plus/environment-report/v1','generated_at':datetime.now(timezone.utc).isoformat(),'python':sys.version.split()[0],'capabilities':caps,'selection':{'authoring_backend':backend,'authoring_backend_reason':backend_reason,'font_embedding_backend':'pptx-font-embedding-postprocessor' if caps['pptx_font_embedding_adapter']['available'] else 'unsupported','rendering_backend':rendering,'ppt_master_adapter':'enabled' if caps['ppt_master']['available'] else 'not_selected','active_backend':backend+' + '+rendering},'rules':['Use only capabilities marked available.','The selected authoring backend must match the backend used by the composer.','Use the font embedding adapter only after font license, SFNT and final OOXML checks pass.','Use PPT Master only after explicit directory discovery and its own documented integrity check.','Unavailable capability requires compatible adapter, declared fallback, or blocked/interface-only state.']}
     Path(a.output).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(out,ensure_ascii=False));return 0
 if __name__=='__main__':raise SystemExit(main())

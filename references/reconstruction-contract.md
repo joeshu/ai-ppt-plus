@@ -43,9 +43,20 @@ Not allowed: a whole-slide background screenshot as the sole implementation (`L0
 
 When reliable reconstruction is impossible, stop the affected object—not the whole project when isolation is safe—place an accurate placeholder, record the blocking reason and request the exact missing asset. Do not manufacture a pass.
 
-Discover PPT Master only through `scripts/probe_environment.py` and an explicit `PPT_MASTER_SKILL_DIR` containing `SKILL.md`. Run its documented integrity guard before its scripts. Prefer its SVG-to-PPTX, image analysis, finalization, visual review, and postflight capabilities only after each selected script and `--help` is verified. When probe returns unavailable, select the host `artifact-tool + LibreOffice/Poppler` backend and record the limitation.
+Discover PPT Master only through `scripts/probe_environment.py` and an explicit `PPT_MASTER_SKILL_DIR` containing `SKILL.md`. Run its documented integrity guard before its scripts. Prefer its SVG-to-PPTX, image analysis, finalization, visual review, and postflight capabilities only after each selected script and `--help` is verified.
 
-If unavailable, use the host presentation runtime for native PPTX authoring and LibreOffice only when its executable is actually discovered for rendering. Do not use `python-pptx`. This fallback does not claim identical SVG mapping, animation, narration, or exact reconstruction fidelity. Mark unsupported capabilities `待验证` or `manual_required`.
+The selected authoring backend must be the backend actually used by the
+composer, and the environment report must record both. Merely discovering an
+`artifact-tool` package is not evidence that the project used it. In this
+repository the deterministic composer currently uses the installed
+`python-pptx` module as a declared fallback; this limits exact SVG mapping,
+animation, narration, native chart fidelity and OOXML font embedding. When an
+artifact-tool adapter is implemented, select it only through that adapter and
+add a backend-specific integration test. For `python-pptx`, use the repository
+`scripts/embed_fonts.py` post-processor when the licensed font asset is
+available, then inspect and render the post-processed output. If neither the
+authoring backend nor this adapter can embed fonts, record
+`embedding: unsupported` and block strict delivery.
 
 Input: approved outline or confirmed transcription, design system, approved visual/reference manifest, assets and provenance. Output: editable PPTX, object-level slide manifest, placeholder/material requests, render comparison and tradeoff log.
 

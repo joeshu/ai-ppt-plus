@@ -1,0 +1,10 @@
+{
+  "schema": "ai-ppt-plus/manifest-registry/v1",
+  "project_id": "",
+  "revision": "working",
+  "state": "validated",
+  "deck": {"path": "deck.pptx", "sha256": ""},
+  "authority": {"formal_content": "slide-manifest.json", "visual": "reference image / visual manifest"},
+  "sources": [], "slides": [], "assets": [], "gates": [],
+  "evidence": {"slide_manifest": "slide-manifest.json", "object_manifest": "slide-object-manifest.json", "asset_manifests": [], "report_index": "report-index.json"}
+}

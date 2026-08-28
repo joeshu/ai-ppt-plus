@@ -20,7 +20,10 @@ import sys
 from pathlib import Path
 
 SLIDE_KEYS = {"background", "frame", "shapes", "icons", "texts"}
-EMPHASIS_RE = re.compile(r"(\d+(?:\.\d+)?%?|\d+元|\*\*|(?:营销场景|推荐次序|一句话卖点|基础档|家庭高配版|找痛点引入方案|打消用户涨价顾虑|每日标准动作|双终端成单形成案例档案))")
+# Do not encode one source deck's Chinese labels here.  Model-specific or
+# source-specific emphasis is declared as ``emphasis_expected`` in the layout;
+# this regex only catches broadly observable numeric/redaction candidates.
+EMPHASIS_RE = re.compile(r"(\d+(?:\.\d+)?%?|\d+元|[¥￥]\s*\d+|\*\*)")
 
 
 def die(message: str) -> None:
@@ -66,7 +69,7 @@ def audit(data: dict, require_bbox: bool) -> dict:
             if require_bbox and not isinstance(item.get("source_bbox"), list):
                 warnings.append(f"slide {si} {label}: missing source_bbox")
 
-            candidate = bool(EMPHASIS_RE.search(txt))
+            candidate = bool(item.get("emphasis_expected")) or bool(EMPHASIS_RE.search(txt))
             if candidate:
                 emphasis_candidates += 1
             runs = item.get("runs")

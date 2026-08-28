@@ -14,3 +14,11 @@ R13 freezes the reconstruction behavior before later font experiments. It is the
 - final PPTX render verification with decoded-PNG checking and pdftocairo fallback.
 
 Known open issue intentionally excluded from the R13 baseline: cross-device font parity between desktop WPS and iPhone WPS. R14/R15 font experiments are not part of this baseline.
+
+## Freeze rule
+
+The accepted R13 artifact set is frozen outside the skill source tree with
+`scripts/revision_guard.py freeze`. It includes the authoritative PPTX, the
+original source/reference image, the preview rendered from that PPTX, the
+approved manifests, quality reports, supporting assets and SHA-256 evidence.
+Later repairs must use a new revision and must not overwrite the R13 archive.

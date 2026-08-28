@@ -43,6 +43,8 @@ def main() -> int:
     parser.add_argument("--render-visual-gate")
     parser.add_argument("--visual-comparison")
     parser.add_argument("--ocr-report")
+    parser.add_argument("--font-delivery-report")
+    parser.add_argument("--require-font-delivery", action="store_true")
     parser.add_argument("--expected-slides", type=int)
     parser.add_argument("--expected-ratio", type=float)
     parser.add_argument("--quality-score", type=float)
@@ -60,6 +62,7 @@ def main() -> int:
     route_report = load(args.route_validation) if args.route_validation else None
     manifest_report = load(args.manifest_validation) if args.manifest_validation else None
     project_report = load(args.project_report) if args.project_report else None
+    font_delivery = load(args.font_delivery_report) if args.font_delivery_report else None
     handoff = load(args.handoff) if args.handoff else None
     blocking = []
     passed = []
@@ -79,6 +82,13 @@ def main() -> int:
     check(not render or not render.get("deck_sha256") or render.get("deck_sha256") == current_hash, "stale_render_report", "render report must describe the current PPTX")
     if args.require_embedded_fonts:
         check(bool((inspection or {}).get("embedded_fonts", {}).get("present")), "embedded_fonts_missing", "Chinese delivery requires verified OOXML embedded font parts")
+    if args.require_font_delivery:
+        if font_delivery and font_delivery.get("valid") is True:
+            passed.append({"type": "font_delivery_validation_passed", "severity": "passed", "slide": None, "detail": "font declaration, resolution and final-render evidence passed"})
+        else:
+            blocking.append({"type": "font_delivery_validation_failed", "severity": "blocking", "slide": None, "detail": "font declaration, resolution and final-render evidence must pass", "report_issues": (font_delivery or {}).get("issues", [])})
+    if font_delivery:
+        quality_evidence["font_delivery"] = {"valid": font_delivery.get("valid"), "status": font_delivery.get("status"), "profile": font_delivery.get("profile"), "declared_font": font_delivery.get("declared_font"), "resolved_font": font_delivery.get("resolved_font"), "render_visible": font_delivery.get("render_visible"), "embedded_font": font_delivery.get("embedded_font"), "target_review": font_delivery.get("target_review"), "issues": font_delivery.get("issues", [])}
 
     if args.require_route:
         check(bool(route_report and route_report.get("valid") is True), "route_validation_failed", "a valid route-validation report is required")

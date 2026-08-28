@@ -43,4 +43,7 @@ cases:
   - {id: icon_b4_roster_missing, signal: icon_bearing_reference_has_no_source_vs_frame_review_or_roster, expected: blocker_and_reextract}
   - {id: icon_b5_evidence_missing, signal: icon_manifest_lacks_cutout_method_contact_sheet_or_frame_preview, expected: blocker_and_run_b4_b5_chain}
   - {id: icon_unassigned_layer, signal: visible_asset_is_in_neither_frame_asset_ids_nor_icon_asset_ids, expected: blocker_and_reconcile_layers}
-  - {id: imagegen_manifest_missing, signal: imagegen_asset_layer_has_no_per_page_provenance_manifest, expected: blocker_before_composition}\n  - {id: imagegen_provenance_incomplete, signal: imagegen_manifest_missing_generated_source_prompt_file_or_non_imagegen_backend, expected: blocker_and_regenerate_asset}\n  - {id: icon_direct_asset_bypass, signal: icon_or_decoration_copied_directly_without_imagegen_asset_record, expected: blocker_and_run_imagegen_b4_b5}\n  - {id: icon_partial_imagegen, signal: reference_reconstruction_imagegen_manifest_covers_only_problem_icons, expected: blocker_and_regenerate_all_icon_layers}\n
+  - {id: imagegen_manifest_missing, signal: imagegen_asset_layer_has_no_per_page_provenance_manifest, expected: blocker_before_composition}
+  - {id: imagegen_provenance_incomplete, signal: imagegen_manifest_missing_generated_source_prompt_file_or_non_imagegen_backend, expected: blocker_and_regenerate_asset}
+  - {id: icon_direct_asset_bypass, signal: icon_or_decoration_copied_directly_without_imagegen_asset_record, expected: blocker_and_run_imagegen_b4_b5}
+  - {id: icon_partial_imagegen, signal: reference_reconstruction_imagegen_manifest_covers_only_problem_icons, expected: blocker_and_regenerate_all_icon_layers}

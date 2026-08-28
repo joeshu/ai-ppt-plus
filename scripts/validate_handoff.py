@@ -16,6 +16,13 @@ REQUIRED = (
     "repair_round", "latest_checks", "backend", "next_action", "updated_at",
 )
 
+STATES = {
+    "intake", "source-analyzed", "outline-draft", "outline-review",
+    "narrative-approved", "design-system-ready", "visual-draft",
+    "visual-approved", "reconstruction", "rendered", "validated",
+    "revision-required", "human-closeout", "delivered",
+}
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -39,6 +46,13 @@ def main() -> int:
         if field not in data or data[field] in (None, ""):
             issues.append({"severity": "blocker", "code": "missing_field", "field": field})
     approved = data.get("approved_artifacts") or {}
+    current_stage = data.get("current_stage")
+    if current_stage not in STATES:
+        issues.append({"severity": "blocker", "code": "invalid_state", "state": current_stage, "allowed": sorted(STATES)})
+    if current_stage == "delivered" and data.get("gate_status") not in {"delivered", "release-passed"}:
+        issues.append({"severity": "blocker", "code": "delivered_gate_status_invalid", "gate_status": data.get("gate_status")})
+    if current_stage == "human-closeout" and not data.get("capability_status", {}).get("human_signoff") in {"pending", "passed", "approved"}:
+        issues.append({"severity": "blocker", "code": "human_closeout_status_invalid"})
     for key, value in approved.items():
         if key.endswith("_sha256"):
             continue

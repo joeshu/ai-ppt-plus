@@ -18,6 +18,12 @@ Use this font priority:
    authoring/rendering device; never package or redistribute it.
 3. The bundled Noto Sans CJK SC fallback.
 
+After copying a task-local font, run
+`scripts/validate_font_asset.py --font-dir project-fonts/ --require-cjk
+--report font-asset-validation.json`. This validates the manifest Hash, the
+declared family, a representative CJK glyph set and the license declaration;
+font discovery alone is not asset-integrity evidence.
+
 ## Hard gates
 
 - Never generate a Chinese PPTX with an unresolved font family.
@@ -28,10 +34,11 @@ Use this font priority:
   used during authoring. Record the family, file, SHA-256 and license source
   in the delivery report.
 - If the authoring backend supports OOXML font embedding, embed the declared
-  font and verify the embedded font parts in the final PPTX. If it does not,
-  report `embedding: unsupported` and stop final delivery until the user
-  accepts a non-embedded delivery; do not claim that a sidecar font is an
-  embedded font.
+  font and verify the embedded font parts in the final PPTX. With this
+  repository's `python-pptx` composer, use `scripts/embed_fonts.py` as the
+  post-processor. If neither the composer nor the adapter can embed, report
+  `embedding: unsupported` and stop final delivery until the user accepts a
+  non-embedded delivery; do not claim that a sidecar font is an embedded font.
 
 ## Device compatibility
 
@@ -39,3 +46,10 @@ Desktop WPS and iPhone WPS may substitute fonts differently. Therefore,
 validate the final PPTX render in the requested target environment(s), and
 keep text as native text so it remains editable. A font report alone is not
 evidence that the PPTX is portable.
+
+For WPS-targeted work, combine `font-report.json`,
+`font-asset-validation.json`, the final `inspection.json`,
+`render-report.json` and `render-visual-gate.json` with
+`scripts/validate_font_delivery.py`. The resulting `declared_font`,
+`resolved_font` and `render_visible` fields are separate gates. See
+`references/wps-compatibility.md` for the desktop-WPS/iPhone-WPS review file.
