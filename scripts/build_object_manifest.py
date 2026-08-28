@@ -8,15 +8,96 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 from collections import Counter
 from pathlib import Path
 
+from atomic_output import atomic_write_json
 from text_model import normalize_text_spec
 
 
 def read(path: str | None):
     return json.loads(Path(path).read_text(encoding="utf-8")) if path else {}
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _asset_path(layout: dict, value: object) -> Path | None:
+    if not isinstance(value, str) or not value:
+        return None
+    candidate = Path(value.split("#", 1)[0].strip())
+    if not str(candidate):
+        return None
+    if not candidate.is_absolute():
+        candidate = Path(layout.get("assets_dir") or ".") / candidate
+    return candidate.resolve()
+
+
+def _source_fields(layout: dict, value: object) -> dict:
+    """Return reproducible source evidence when a referenced file is present."""
+    path = _asset_path(layout, value)
+    if path is None or not path.is_file():
+        return {}
+    return {"source_sha256": _file_sha256(path)}
+
+
+def _data_source_fields(layout: dict, value: object) -> dict:
+    path = _asset_path(layout, value)
+    if path is None or not path.is_file():
+        return {}
+    return {"data_source_path": str(path), "data_source_sha256": _file_sha256(path)}
+
+
+def _rectangular_rows(rows: object, columns: int | None = None) -> list[list[object]] | None:
+    if not isinstance(rows, list) or not rows or any(not isinstance(row, list) for row in rows):
+        return None
+    width = columns or max((len(row) for row in rows), default=0)
+    if width <= 0:
+        return None
+    return [[row[index] if index < len(row) else "" for index in range(width)] for row in rows]
+
+
+def _table_snapshot(spec: dict) -> dict | None:
+    rows = _rectangular_rows(spec.get("rows"), int(spec["columns"]) if spec.get("columns") is not None else None)
+    if rows is None:
+        return None
+    # A merged cell has one authoritative top-left value.  Blank the covered
+    # cells in the manifest so the expected snapshot matches PowerPoint's
+    # native table model after the merge is applied.
+    for merge in spec.get("merges", []):
+        if not isinstance(merge, list) or len(merge) != 4:
+            continue
+        r1, c1, r2, c2 = [int(value) for value in merge]
+        for row in range(max(0, r1), min(len(rows), r2 + 1)):
+            for column in range(max(0, c1), min(len(rows[row]), c2 + 1)):
+                if row != r1 or column != c1:
+                    rows[row][column] = ""
+    return {"kind": "table", "values": rows, "rows": len(rows), "columns": len(rows[0])}
+
+
+def _chart_snapshot(spec: dict) -> dict | None:
+    categories = spec.get("categories")
+    series = spec.get("series")
+    if not isinstance(categories, list) or not categories or not isinstance(series, list) or not series:
+        return None
+    values = []
+    for item in series:
+        if not isinstance(item, dict) or not isinstance(item.get("values"), list):
+            return None
+        if len(item["values"]) != len(categories):
+            return None
+        values.append({
+            "name": str(item.get("name", "Series")),
+            "values": list(item["values"]),
+        })
+    return {"kind": "category_chart", "categories": list(categories), "series": values}
 
 
 def obj(object_id, role, object_type, level, *, required=True, review=False, **extra):
@@ -51,36 +132,37 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
         objects = []
         bg = slide.get("background")
         if bg:
-            objects.append(obj(slide.get("background_object_id", "background"), "background", "independent_image", "L2", review=True, replaceable=True, contains_formal_content=False, source_path=str(bg)))
+            objects.append(obj(slide.get("background_object_id", "background"), "background", "independent_image", "L2", review=True, replaceable=True, contains_formal_content=False, source_path=str(bg), **_source_fields(layout, bg)))
         frame = slide.get("frame")
         if frame:
-            objects.append(obj(slide.get("frame_object_id", "frame"), "frame", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, contains_formal_content=False, provenance=str(frame)))
+            objects.append(obj(slide.get("frame_object_id", "frame"), "frame", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, contains_formal_content=False, provenance=str(frame), source_path=str(frame), **_source_fields(layout, frame)))
         for i, panel in enumerate(slide.get("panels", []), 1):
             pid = str(panel.get("object_id") or panel.get("panel_id") or f"panel-{i:02d}")
             layout_file = str(panel.get("file", ""))
             evidence = panels_by_file.get(layout_file) or panels_by_file.get(Path(layout_file).name) or {}
             baked = bool(panel.get("formal_text_baked_in", evidence.get("formal_text_baked_in", False)))
-            objects.append(obj(pid, "semantic-panel", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, independent=True, contains_formal_content=baked, provenance=str(evidence.get("source") or panel.get("file")), source_bbox=evidence.get("source_bbox")))
+            objects.append(obj(pid, "semantic-panel", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, independent=True, contains_formal_content=baked, provenance=str(evidence.get("source") or panel.get("file")), source_path=layout_file, source_bbox=evidence.get("source_bbox"), **_source_fields(layout, layout_file)))
         for i, shape in enumerate(slide.get("shapes", []), 1):
             sid = str(shape.get("object_id") or shape.get("name") or f"shape-{i:02d}")
             objects.append(obj(sid, "native-shape", "native_shape", "L1", review=False, contains_formal_content=False, component_ref=shape.get("component_id")))
         for i, group in enumerate(slide.get("groups", []), 1):
             gid = str(group.get("object_id") or group.get("name") or f"group-{i:02d}")
             children = [child.get("object_id") or child.get("name") for child in group.get("children", []) if isinstance(child, dict)]
-            objects.append(obj(gid, "component-group", "native_shape", "L1", review=False, contains_formal_content=False, editable_components=True, children=[child for child in children if child], component_ref=group.get("component_id")))
+            objects.append(obj(gid, "component-group", "native_group", "L1", review=False, contains_formal_content=False, editable_components=True, children=[child for child in children if child], component_ref=group.get("component_id")))
         for i, table in enumerate(slide.get("tables", []), 1):
             tid = str(table.get("object_id") or table.get("name") or f"table-{i:02d}")
-            objects.append(obj(tid, "data-table", "editable_table", "L1", review=True, contains_formal_content=True, data_source=table.get("data_source"), component_ref=table.get("component_id")))
+            objects.append(obj(tid, "data-table", "editable_table", "L1", review=True, contains_formal_content=True, data_source=table.get("data_source"), data_snapshot=_table_snapshot(table), **_data_source_fields(layout, table.get("data_source")), component_ref=table.get("component_id")))
         for i, chart in enumerate(slide.get("charts", []), 1):
             cid = str(chart.get("object_id") or chart.get("name") or f"chart-{i:02d}")
-            objects.append(obj(cid, "data-chart", "editable_chart", "L1", review=True, contains_formal_content=True, data_source=chart.get("data_source"), chart_type=chart.get("type", "column"), component_ref=chart.get("component_id")))
+            objects.append(obj(cid, "data-chart", "editable_chart", "L1", review=True, contains_formal_content=True, data_source=chart.get("data_source"), data_snapshot=_chart_snapshot(chart), **_data_source_fields(layout, chart.get("data_source")), chart_type=chart.get("type", "column"), component_ref=chart.get("component_id")))
         for i, icon in enumerate(slide.get("icons", []), 1):
             iid = str(icon.get("object_id") or icon.get("name") or f"icon-{i:02d}")
             role = str(icon.get("role") or "decorative-art")
             icon_file = str(icon.get("file", ""))
             is_svg = Path(icon_file).suffix.casefold() == ".svg"
             vector_editable = bool(icon.get("vector_editable", False))
-            objects.append(obj(iid, role, "editable_vector" if vector_editable else "extracted_icon", "L1" if vector_editable else "L2", review=True, replaceable=True, vector_asset=is_svg, contains_formal_content=False, source_path=icon_file, provenance=icon_file, component_ref=icon.get("component_id")))
+            brand = role in {"brand_lockup", "logo", "brand-logo"} or icon.get("asset_policy") == "brand_lockup"
+            objects.append(obj(iid, role, "editable_vector" if vector_editable else "extracted_icon", "L1" if vector_editable else "L2", review=True, replaceable=True, vector_asset=is_svg, contains_formal_content=False, source_path=icon_file, provenance=icon_file, asset_policy="brand_lockup" if brand else icon.get("asset_policy", "normal_asset"), brand_asset_contract={"whole_asset": True, "allow_crop": False} if brand else None, **_source_fields(layout, icon_file), component_ref=icon.get("component_id")))
         for i, text in enumerate(slide.get("texts", []), 1):
             tid = str(text.get("object_id") or text.get("name") or f"text-{i:02d}")
             objects.append(obj(
@@ -108,8 +190,8 @@ def main() -> int:
     ap.add_argument("--output", required=True)
     args = ap.parse_args()
     data = build(read(args.layout), read(args.panel_manifest) if args.panel_manifest else None, read(args.imagegen_manifest) if args.imagegen_manifest else None)
-    out = Path(args.output); out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out = Path(args.output)
+    atomic_write_json(out, data)
     print(json.dumps({"valid": True, "slides": len(data["slides"]), "objects": sum(len(s["objects"]) for s in data["slides"]), "output": str(out)}, ensure_ascii=False))
     return 0
 

@@ -2,6 +2,7 @@
 """Atomic filesystem primitives used by PPTX authoring and previews."""
 from __future__ import annotations
 
+import json
 import os
 import tempfile
 import zipfile
@@ -22,7 +23,23 @@ def atomic_replace(target: str | Path, writer: Callable[[Path], None], *, suffix
     temporary = _temporary_path(destination, suffix)
     try:
         writer(temporary)
+        # The writer may be a library call (python-pptx, Pillow, or ZIP).  By
+        # the time it returns the file should be complete; flush it before the
+        # rename so a successful command cannot publish an unwritten buffer.
+        with temporary.open("rb") as stream:
+            os.fsync(stream.fileno())
         os.replace(temporary, destination)
+        # A rename is atomic, but the directory entry itself is not durable
+        # until the parent directory is flushed on POSIX filesystems.
+        try:
+            directory_fd = os.open(destination.parent, os.O_RDONLY)
+        except OSError:
+            directory_fd = None
+        if directory_fd is not None:
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
     finally:
         temporary.unlink(missing_ok=True)
     return destination
@@ -38,6 +55,17 @@ def atomic_write_bytes(target: str | Path, payload: bytes, *, suffix: str = ".tm
         path.write_bytes(payload)
 
     return atomic_replace(target, write, suffix=suffix)
+
+
+def atomic_write_text(target: str | Path, payload: str, *, suffix: str = ".tmp", encoding: str = "utf-8") -> Path:
+    """Write a text artifact without exposing a partial target."""
+    return atomic_write_bytes(target, payload.encode(encoding), suffix=suffix)
+
+
+def atomic_write_json(target: str | Path, value, *, suffix: str = ".tmp.json") -> Path:
+    """Serialize JSON and publish it through the same atomic policy."""
+    payload = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
+    return atomic_write_text(target, payload, suffix=suffix)
 
 
 def atomic_rewrite_zip(target: str | Path, entries: dict[str, bytes]) -> Path:

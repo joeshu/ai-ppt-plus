@@ -15,7 +15,9 @@
           "human_review_required": true,
           "replaceable": true,
           "contains_formal_content": false,
-          "source_ref": "reference.png"
+          "source_ref": "reference.png",
+          "source_path": "reference.png",
+          "source_sha256": "<sha256-of-reference.png>"
         },
         {
           "object_id": "panel-01",
@@ -27,7 +29,9 @@
           "reduced_editability_accepted": true,
           "independent": true,
           "contains_formal_content": false,
-          "provenance": "reference.png#panel-01"
+          "provenance": "reference.png#panel-01",
+          "source_path": "panels/panel-01.png",
+          "source_sha256": "<sha256-of-panels/panel-01.png>"
         },
         {
           "object_id": "title",
@@ -36,7 +40,9 @@
           "editability_level": "L1",
           "required_for_delivery": true,
           "human_review_required": false,
-          "provenance": "outline#title"
+          "provenance": "outline#title",
+          "text_id": "title",
+          "text_spec": {"content": "<approved text>"}
         }
       ]
     }

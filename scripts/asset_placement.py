@@ -79,8 +79,13 @@ def replace_svg_media(pptx_path: Path, svg_assets: list[tuple[int, str, Path]]) 
     atomic_rewrite_zip(pptx_path, entries)
 
 
-def svg_to_png(svg_path: Path) -> Path:
-    """Rasterize an SVG into a uniquely named temporary PNG."""
+def svg_to_png(svg_path: Path, temporary_files: list[Path] | None = None) -> Path:
+    """Rasterize an SVG and optionally register its temporary PNG.
+
+    The returned file is owned by the caller.  Passing ``temporary_files``
+    transfers cleanup registration to the surrounding authoring/preview
+    transaction, which removes every registered file in ``finally``.
+    """
     handle, name = tempfile.mkstemp(prefix="ai-ppt-svg-", suffix=".png")
     os.close(handle)
     output = Path(name)
@@ -88,6 +93,8 @@ def svg_to_png(svg_path: Path) -> Path:
         from cairosvg import svg2png
 
         svg2png(url=str(svg_path), write_to=str(output))
+        if temporary_files is not None:
+            temporary_files.append(output)
         return output
     except ImportError:
         for command in (
@@ -99,6 +106,8 @@ def svg_to_png(svg_path: Path) -> Path:
             except (FileNotFoundError, subprocess.TimeoutExpired):
                 continue
             if result.returncode == 0 and output.is_file():
+                if temporary_files is not None:
+                    temporary_files.append(output)
                 return output
         output.unlink(missing_ok=True)
         _die(f"SVG asset requires cairosvg, inkscape, or ImageMagick: {svg_path}")
@@ -176,8 +185,7 @@ def add_icons(slide, specs: list[dict], assets_dir: Path, deck: dict, ref_w: flo
         fh = _frac(deck, icon, "h", ref_h)
         source_path = path
         if path.suffix.casefold() == ".svg":
-            source_path = svg_to_png(path)
-            temporary_files.append(source_path)
+            source_path = svg_to_png(path, temporary_files)
         picture = slide.shapes.add_picture(
             str(source_path),
             Emu(int(fx * sw_emu)),

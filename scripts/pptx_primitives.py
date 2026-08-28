@@ -336,6 +336,10 @@ def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
         columns = int(spec.get("columns") or (len(rows[0]) if rows and isinstance(rows[0], list) else 0))
         if not rows or columns <= 0:
             _die(f"table {table_index} requires non-empty rows and columns")
+        if any(not isinstance(row, list) or len(row) > columns for row in rows):
+            _die(f"table {table_index} rows must be lists no wider than columns")
+        if not any(cell is not None and str(cell).strip() for row in rows for cell in row):
+            _die(f"table {table_index} requires at least one non-empty cell")
         table = slide.shapes.add_table(
             len(rows),
             columns,
@@ -354,7 +358,8 @@ def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
         for row_index, row in enumerate(rows):
             for column_index in range(columns):
                 cell = table.cell(row_index, column_index)
-                cell.text = str(row[column_index]) if column_index < len(row) else ""
+                value = row[column_index] if column_index < len(row) else ""
+                cell.text = "" if value is None else str(value)
                 fill = header_fill if row_index == 0 else body_fill
                 if fill:
                     cell.fill.solid()
@@ -374,6 +379,8 @@ def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
 
 
 def add_charts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, ref_h: float, sw_emu: int, sh_emu: int):
+    import math
+
     from pptx.chart.data import CategoryChartData
     from pptx.enum.chart import XL_LEGEND_POSITION
     from pptx.util import Emu
@@ -389,7 +396,21 @@ def add_charts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
         if not data.categories or not series:
             _die("chart requires categories and series")
         for item in series:
-            data.add_series(str(item.get("name", "Series")), [float(value) for value in item.get("values", [])])
+            if not isinstance(item, dict):
+                _die("chart series entries must be objects")
+            raw_values = item.get("values", [])
+            if len(raw_values) != len(data.categories):
+                _die("chart series length must match categories")
+            values = []
+            for value in raw_values:
+                try:
+                    number = float(value)
+                except (TypeError, ValueError):
+                    _die("chart values must be numeric")
+                if not math.isfinite(number):
+                    _die("chart values must be finite")
+                values.append(number)
+            data.add_series(str(item.get("name", "Series")), values)
         graphic_frame = slide.shapes.add_chart(
             charts[chart_type],
             Emu(int(_frac(deck, spec, "x", ref_w) * sw_emu)),

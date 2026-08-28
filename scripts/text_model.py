@@ -14,6 +14,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from atomic_output import atomic_write_json
+
 
 SCHEMA = "ai-ppt-plus/text-layout-manifest/v1"
 VALIDATION_SCHEMA = "ai-ppt-plus/text-layout-validation/v1"
@@ -307,17 +309,14 @@ def main() -> int:
         if args.command_func == "build":
             result = build_manifest(data)
             output = Path(args.output)
-            output.parent.mkdir(parents=True, exist_ok=True)
-            output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            atomic_write_json(output, result)
             print(json.dumps({"schema": SCHEMA, "valid": True, "slides": len(result["slides"]), "text_count": sum(len(slide["text_specs"]) for slide in result["slides"]), "output": str(output)}, ensure_ascii=False))
             return 0
         result = validate_manifest(data, strict=args.strict, require_source_bbox=args.require_source_bbox)
         result["input"] = str(source.resolve())
         result["content_manifest_sha256"] = _digest(data)
         if args.report:
-            report = Path(args.report)
-            report.parent.mkdir(parents=True, exist_ok=True)
-            report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            atomic_write_json(Path(args.report), result)
         print(json.dumps(result, ensure_ascii=False))
         return 0 if result["valid"] else 2
     except (OSError, ValueError, json.JSONDecodeError) as exc:

@@ -14,13 +14,21 @@ into an image. `traceable_static_graphic`/L3 is the explicit exception for a
 complex panel whose border, texture or decoration is kept as one movable asset.
 
 The legacy final deck audit matches object IDs to shape names. The semantic
-audit goes further and reads the final PPTX object model: formal text must have
-a native text container, tables must be native tables, charts must have real
-series/cache data and an embedded workbook, and `brand_lockup` must remain one
-independent picture. When text and asset manifests are supplied, it also
-compares final text exactly and checks embedded media hashes against the
-declared source. A semantic mismatch is a technical blocker; human visual
-review is still required for appearance and fidelity.
+audit goes further and reads the final PPTX object model: formal text must be a
+non-placeholder native text box, tables must be native tables with a non-empty
+value snapshot, charts must have real series/cache data, a readable embedded
+workbook, and matching source values, and `brand_lockup` must remain one
+uncropped top-level picture with no overlapping duplicate text. It also checks
+that every visible top-level shape is declared (or explicitly allow-listed),
+compares final text exactly, records manifest/deck hashes, and verifies
+embedded media hashes against the declared source. A semantic mismatch is a
+technical blocker; human visual review is still required for appearance and
+fidelity.
+
+The object builder records `data_snapshot` for inline tables/charts and
+`source_sha256` for locally available image assets. A production manifest must
+retain those fields (or a resolvable `data_source`/source hash); otherwise the
+semantic gate cannot prove source identity and blocks the affected object.
 
 Run it directly after the object inventory is reviewed:
 

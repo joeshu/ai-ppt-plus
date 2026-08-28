@@ -9,7 +9,11 @@ Example: probe_fonts.py -o font-report.json --font "Noto Sans CJK SC"
 import argparse, json, os, shutil, subprocess, tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-DEFAULT=['Noto Sans CJK SC','Noto Sans SC','Microsoft YaHei','SimHei','WenQuanYi Zen Hei']
+from atomic_output import atomic_write_json
+# Keep the probe's implicit route on redistributable/open families.  A
+# proprietary family can still be requested explicitly with --font after the
+# caller has established its license and device availability.
+DEFAULT=['Noto Sans CJK SC','Noto Sans SC','WenQuanYi Zen Hei']
 def license_status(font_dir):
     if not font_dir or not font_dir.is_dir():
         return {'status':'not_applicable','files':[]}
@@ -19,7 +23,7 @@ def license_status(font_dir):
 def main():
     ap=argparse.ArgumentParser(description=__doc__,formatter_class=argparse.RawDescriptionHelpFormatter);ap.add_argument('--output','-o',required=True);ap.add_argument('--font-dir');ap.add_argument('--font',action='append',default=[]);ap.add_argument('--require-cjk',action='store_true',help='return a failing exit code when no CJK-capable family resolves');a=ap.parse_args(); tool=shutil.which('fc-match')
     if not tool:
-        out={'schema':'ai-ppt-plus/font-report/v1','ok':False,'error':'fc-match not found','fonts':[]};Path(a.output).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(out,ensure_ascii=False));return 2
+        out={'schema':'ai-ppt-plus/font-report/v1','ok':False,'error':'fc-match not found','fonts':[]};atomic_write_json(Path(a.output), out);print(json.dumps(out,ensure_ascii=False));return 2
     font_dir=Path(a.font_dir).resolve() if a.font_dir else None
     font_env=os.environ.copy(); temp_config=None
     if font_dir and font_dir.is_dir():
@@ -48,7 +52,7 @@ def main():
     if a.require_cjk and not cjk_supported:
         out['ok']=False
         out['error']='cjk_font_unresolved'
-    Path(a.output).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(out,ensure_ascii=False));
+    atomic_write_json(Path(a.output), out);print(json.dumps(out,ensure_ascii=False));
     if temp_config: temp_config.cleanup()
     return 0 if out.get('ok') is True else 2
 if __name__=='__main__':raise SystemExit(main())

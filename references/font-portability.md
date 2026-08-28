@@ -14,9 +14,10 @@ before the first font probe; do not rely on the host's installed-font list.
 Use this font priority:
 
 1. A user-supplied licensed font explicitly requested for the project.
-2. Microsoft YaHei only when it is already licensed and available on the
-   authoring/rendering device; never package or redistribute it.
-3. The bundled Noto Sans CJK SC fallback.
+2. The bundled Noto Sans CJK SC fallback.
+3. Microsoft YaHei only when explicitly requested, already licensed and
+   available on the authoring/rendering device; never select or package it
+   implicitly.
 
 After copying a task-local font, run
 `scripts/validate_font_asset.py --font-dir project-fonts/ --require-cjk

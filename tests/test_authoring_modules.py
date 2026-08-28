@@ -59,9 +59,11 @@ def main() -> int:
 
         svg = work / "icon.svg"
         svg.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#ff0000"/></svg>', encoding="utf-8")
-        raster = svg_to_png(svg)
+        registered = []
+        raster = svg_to_png(svg, registered)
         assert raster.is_file()
-        cleanup_temporary_files([raster])
+        assert registered == [raster]
+        cleanup_temporary_files(registered)
         assert not raster.exists()
 
         svg_spec = work / "svg-deck.json"

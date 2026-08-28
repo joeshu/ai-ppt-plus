@@ -69,7 +69,10 @@ def main() -> int:
         assert objects["vector-icon"]["vector_asset"] is True
         assert objects["vector-icon"]["editability_level"] == "L2"
         assert objects["data-table"]["object_type"] == "editable_table"
+        assert objects["data-table"]["data_snapshot"]["values"] == [["A", ""], ["1", "2"]]
         assert objects["data-chart"]["object_type"] == "editable_chart"
+        assert objects["data-chart"]["data_snapshot"]["series"][0]["values"] == [1, 2]
+        assert objects["component-1"]["object_type"] == "native_group"
         assert objects["component-title"]["component_ref"] == "section-title"
     print("native objects contract: ok")
     return 0

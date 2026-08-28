@@ -23,7 +23,7 @@ store repeated regions in `regions[]`/`objects[]` and validate any positive N.
 | Level | Meaning | Typical object types | Machine rule | Delivery rule |
 |---|---|---|---|---|
 | `L0` | prohibited flattening: a full-page bitmap or a rasterized required text/simple shape | `flattened_full_slide` | always blocker | rebuild as objects |
-| `L1` | natively or structurally editable | `editable_text`, `native_shape`, `editable_vector`, `editable_chart`, `editable_table` | required fields and chart/table data/provenance | auto-allowed |
+| `L1` | natively or structurally editable | `editable_text`, `native_shape`, `native_group`, `editable_vector`, `editable_chart`, `editable_table` | required fields and chart/table data/provenance | auto-allowed |
 | `L2` | independent image object; movable, crop-able and replaceable, but pixels are not internally editable | `independent_image`, `extracted_icon`, `decorative_art` | provenance + `replaceable: true`; never formal text/data | allowed with disclosure; human visual review |
 | `L3` | verified static graphic whose source/data is traceable but whose internal structure is not editable | `traceable_static_graphic` | provenance/data source + `reduced_editability_accepted: true` | explicit human editability confirmation |
 | `L4` | accurate placeholder for a missing or unsafe-to-recreate material | `documented_placeholder` | reason + exact `material_request` | manual review; blocks if required for delivery |
@@ -44,7 +44,8 @@ Each `objects[]` record must include:
 }
 ```
 
-For `L1` charts, add `data_source` or `provenance`. For `L3`, add
+For `L1` charts and tables, add `data_source`, `provenance` or a canonical
+`data_snapshot`. For `L3`, add
 `data_source` where applicable and set `reduced_editability_accepted` only
 after the source has been checked. For `L4`, add `placeholder_reason` and a
 specific `material_request`; “素材缺失” alone is not sufficient.

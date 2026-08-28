@@ -97,9 +97,7 @@ def _wrap_text(draw, text, font, max_width):
 
 def _open_asset(path: Path, temporary_files: list[Path]) -> Path:
     if path.suffix.casefold() == ".svg":
-        raster = svg_to_png(path)
-        temporary_files.append(raster)
-        return raster
+        return svg_to_png(path, temporary_files)
     return path
 
 

@@ -31,8 +31,11 @@ availability, CJK coverage and delivery embedding remain separate gates; this
 module does not claim delivery merely because a font name was written into a
 run.
 
-Every PPTX and preview is first written to a sibling temporary file. SVG
-conversion files are registered by the placement layer and removed in a
+Every PPTX, preview, render report, font report and manifest emitted by the
+authoring path is first written to a sibling temporary file. `atomic_replace`
+flushes the completed file before rename and never deletes the previous
+artifact before replacement. SVG conversion files are registered by the
+placement layer (`svg_to_png(..., temporary_files=...)`) and removed in a
 `finally` cleanup. When SVGs are present, the native SVG rewrite happens on the
 temporary package before the final output is published, so a failed rewrite
 does not replace an existing PPTX with a partial result.

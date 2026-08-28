@@ -34,6 +34,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
+from atomic_output import atomic_write_json
+
 
 P_NS = "http://schemas.openxmlformats.org/presentationml/2006/main"
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
@@ -584,8 +586,9 @@ def embed_pptx_fonts(
                         target.writestr(name, data)
             if not zipfile.is_zipfile(temporary_path):
                 raise EmbeddingError("post-processed output is not a valid zip package")
-            if output_path.exists() and overwrite:
-                output_path.unlink()
+            # os.replace() atomically replaces an existing destination.  Do
+            # not unlink it first: a failed post-process must leave the last
+            # valid delivery artifact available to callers.
             os.replace(temporary_path, output_path)
         finally:
             if temporary_path.exists():
@@ -602,8 +605,7 @@ def embed_pptx_fonts(
     except Exception as exc:
         issues.append({"severity": "blocker", "code": "font_embedding_failed", "message": f"{type(exc).__name__}: {exc}"})
     if report_path:
-        report_path.parent.mkdir(parents=True, exist_ok=True)
-        report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(report_path, result)
     return result
 
 
@@ -622,7 +624,7 @@ def main() -> int:
         result = embed_pptx_fonts(Path(args.input_pptx), Path(args.output_pptx), specs, Path(args.report), args.force)
         if manifest_path:
             result["manifest"] = str(manifest_path)
-            Path(args.report).write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+            atomic_write_json(Path(args.report), result)
     except Exception as exc:
         result = {
             "schema": "ai-ppt-plus/font-embedding/v1",
@@ -631,9 +633,7 @@ def main() -> int:
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "issues": [{"severity": "blocker", "code": "font_embedding_failed", "message": f"{type(exc).__name__}: {exc}"}],
         }
-        report = Path(args.report)
-        report.parent.mkdir(parents=True, exist_ok=True)
-        report.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(Path(args.report), result)
         print(json.dumps(result, ensure_ascii=False))
         return 2
     print(json.dumps(result, ensure_ascii=False))

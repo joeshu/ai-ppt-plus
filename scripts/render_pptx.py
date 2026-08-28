@@ -20,6 +20,8 @@ import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from atomic_output import atomic_write_json
+
 
 PAGE_CACHE_SCHEMA = "ai-ppt-plus/page-render-cache/v1"
 PAGE_CACHE_ENGINE = "render-pptx-page-cache-v1"
@@ -509,8 +511,7 @@ def main():
         "errors": errors,
     }
     if a.report:
-        Path(a.report).parent.mkdir(parents=True, exist_ok=True)
-        Path(a.report).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(Path(a.report), report)
     print(json.dumps(report, ensure_ascii=False))
     return 0 if report["ok"] else 2
 

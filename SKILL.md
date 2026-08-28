@@ -149,9 +149,11 @@ Use `scripts/run_pipeline.py` as the default verification entrypoint for an exis
 
 When a canonical object manifest is present, `run_pipeline.py` also runs
 `semantic_object_audit.py` against the final PPTX. This semantic gate checks
-native text/table/chart objects, chart data, whole brand assets, exact text
-content and embedded media hashes when evidence is available; it complements
-the existing identity/geometry audit and does not replace human visual review.
+manifest coverage, non-placeholder native text boxes, native table values,
+chart cache/workbook/source-data equality, uncropped independent brand assets,
+exact text content and embedded media hashes. Missing source evidence is a
+blocker for source-bound assets; it complements the existing identity/geometry
+audit and does not replace human visual review.
 
 Before `run_pipeline.py --release`, produce the final file with the embedding
 adapter when font embedding is required; the pipeline must inspect and render

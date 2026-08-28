@@ -12,6 +12,7 @@ import argparse
 import json
 from pathlib import Path
 
+from atomic_output import atomic_write_json
 from editability import summarize_objects
 
 
@@ -110,8 +111,7 @@ def main() -> int:
         print(f"Error: {type(exc).__name__}: {exc}")
         return 2
     output = Path(args.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json(output, result)
     print(json.dumps({"valid": True, "slides": len(result["slides"]), "output": str(output)}, ensure_ascii=False))
     return 0
 
