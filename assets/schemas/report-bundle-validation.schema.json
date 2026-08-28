@@ -16,6 +16,7 @@
     "human_review_status",
     "deck_sha256",
     "report_index_sha256",
+    "pipeline_result_sha256",
     "checks",
     "issues",
     "source_references"
@@ -41,7 +42,10 @@
     "report_index_path": {"type": "string"},
     "report_index_sha256": {"type": ["string", "null"]},
     "pipeline_result_path": {"type": "string"},
+    "pipeline_result_sha256": {"type": ["string", "null"]},
     "project_report_path": {"type": "string"},
+    "review_html_path": {"type": ["string", "null"]},
+    "review_html_sha256": {"type": ["string", "null"]},
     "checks": {"type": "array", "items": {"type": "object"}},
     "issues": {"type": "array", "items": {"type": "object"}},
     "source_references": {"type": "array", "items": {"type": "object"}}

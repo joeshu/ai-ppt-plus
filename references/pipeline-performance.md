@@ -36,6 +36,28 @@ name=x,y,w,h` adds a critical pixel region to the render QA gate. Results record
 the page/region scope and set `validation_scope: incremental`; a full release
 run must omit `--affected-pages`.
 
+### Page artifact cache
+
+The DAG runner passes a stable page cache directory to `render_pptx.py`; the
+default is `.pipeline-cache/render-pages`, and `--page-cache-dir PATH` overrides
+it. The renderer fingerprints pages in presentation order from their slide XML,
+relationship closure and referenced assets, plus shared presentation,
+theme/master/layout and content-type parts. The cache namespace also includes
+the DPI, renderer contract version and task-local font-directory digest.
+
+Each cached PNG is decoded before use and written atomically. A corrupt or
+missing entry is treated as a miss. If every requested page is a valid hit,
+LibreOffice and Poppler are skipped. If only some pages miss, LibreOffice may
+still convert the whole deck to PDF, but Poppler rasterizes only the missing
+pages and preserves the restored images. The render report records
+`page_fingerprints`, `page_cache.hits/misses/stored` and
+`conversion.attempted/skipped`; this is artifact reuse evidence, not human
+visual approval.
+
+`--no-cache` disables both the task cache and page artifact cache. A linear run
+does not enable the default page cache; pass `--page-cache-dir` explicitly if a
+linear diagnostic run should reuse page artifacts.
+
 ## Measurement
 
 Each step records `deps`, `duration_ms`, `cache_key` and `cache_hit`. The

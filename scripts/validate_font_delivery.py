@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Combine font declaration, resolution and final-render evidence.
+"""Combine portable font declaration, resolution and final-render evidence.
 
 The three signals are intentionally separate. Font discovery alone cannot
 prove that the final PPTX rendered visibly, and a sidecar font cannot prove
@@ -9,8 +9,7 @@ Usage: validate_font_delivery.py --font-report font-report.json
        --inspection inspection.json --render-report render-report.json
        --render-visual-gate render-visual-gate.json --report report.json
        [--font-asset-report font-asset-validation.json]
-       [--target-review wps-target-review.json]
-       [--profile wps|portable] [--require-embedded] [--require-target-review]
+       [--profile portable] [--require-embedded]
 """
 
 import argparse
@@ -36,10 +35,8 @@ def main() -> int:
     parser.add_argument("--inspection", required=True)
     parser.add_argument("--render-report", required=True)
     parser.add_argument("--render-visual-gate", required=True)
-    parser.add_argument("--target-review")
-    parser.add_argument("--profile", choices=["wps", "portable"], default="wps")
+    parser.add_argument("--profile", choices=["portable"], default="portable")
     parser.add_argument("--require-embedded", action="store_true")
-    parser.add_argument("--require-target-review", action="store_true")
     parser.add_argument("--report", required=True)
     args = parser.parse_args()
 
@@ -48,7 +45,6 @@ def main() -> int:
     inspection = load(args.inspection)
     render = load(args.render_report)
     visual = load(args.render_visual_gate)
-    target = load(args.target_review)
     issues: list[dict] = []
 
     records = font.get("fonts", []) if font else []
@@ -75,13 +71,6 @@ def main() -> int:
     if args.require_embedded and not embedded:
         issues.append({"severity": "blocker", "code": "embedded_font_missing", "message": "strict delivery requires verified OOXML embedded fonts"})
 
-    device_results = (target or {}).get("devices", {}) if isinstance(target, dict) else {}
-    desktop_wps = bool(device_results.get("desktop_wps") is True)
-    iphone_wps = bool(device_results.get("iphone_wps") is True)
-    target_review_pass = desktop_wps and iphone_wps
-    if args.require_target_review and not target_review_pass:
-        issues.append({"severity": "blocker", "code": "target_review_missing", "message": "desktop WPS and iPhone WPS review evidence is required"})
-
     output = {
         "schema": "ai-ppt-plus/font-delivery-validation/v1",
         "valid": not issues,
@@ -92,7 +81,6 @@ def main() -> int:
         "resolved_font": {"pass": resolved_pass, "families": resolved_values, "cjk_delivery_supported": bool(font and font.get("cjk_delivery_supported"))},
         "render_visible": {"pass": render_visible_pass, "rendered_pages": len(rendered_pages), "visible_pages": sum(visible_page_stats)},
         "embedded_font": {"pass": embedded, "required": args.require_embedded, "evidence": (inspection or {}).get("embedded_fonts", {})},
-        "target_review": {"pass": target_review_pass, "required": args.require_target_review, "devices": device_results},
         "issues": issues,
     }
     report = Path(args.report)

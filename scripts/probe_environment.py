@@ -46,11 +46,11 @@ def main():
       'pandoc_converter': command('pandoc'),
       'pymupdf': module('fitz'), 'docx_reader': module('docx'), 'xlsx_reader': module('openpyxl'), 'image_reader': module('PIL'), 'ppt_master':ppt_master()}
     # Keep the selected backend truthful: the repository's deterministic
-    # composer currently imports python-pptx.  The artifact-tool runtime is a
+    # authoring backend imports python-pptx. The artifact-tool runtime is a
     # capability, not evidence that this project actually used it.
     if caps['python_pptx']['available']:
         backend='python-pptx'
-        backend_reason='compose_pptx.py imports the installed pptx module; embed_fonts.py is the OOXML font post-processor when requested'
+        backend_reason='authoring_backend.py uses the installed python-pptx module; embed_fonts.py is the OOXML font post-processor when requested'
     elif caps['pptx_authoring_runtime']['available']:
         backend='artifact-tool'
         backend_reason='artifact-tool runtime discovered; an adapter must be selected before authoring'

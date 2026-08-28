@@ -40,16 +40,14 @@ font discovery alone is not asset-integrity evidence.
   `embedding: unsupported` and stop final delivery until the user accepts a
   non-embedded delivery; do not claim that a sidecar font is an embedded font.
 
-## Device compatibility
+## Portable delivery
 
-Desktop WPS and iPhone WPS may substitute fonts differently. Therefore,
-validate the final PPTX render in the requested target environment(s), and
-keep text as native text so it remains editable. A font report alone is not
-evidence that the PPTX is portable.
-
-For WPS-targeted work, combine `font-report.json`,
-`font-asset-validation.json`, the final `inspection.json`,
+The final PPTX must be checked from the exact task-local font directory used
+during authoring. Keep formal text as native text so it remains editable. A
+font report alone is not evidence that the PPTX is portable: combine
+`font-report.json`, `font-asset-validation.json`, the final `inspection.json`,
 `render-report.json` and `render-visual-gate.json` with
 `scripts/validate_font_delivery.py`. The resulting `declared_font`,
-`resolved_font` and `render_visible` fields are separate gates. See
-`references/wps-compatibility.md` for the desktop-WPS/iPhone-WPS review file.
+`resolved_font`, `render_visible` and (when required) `embedded_font` fields
+are separate gates. Device-specific compatibility claims are outside this
+skill's automatic release contract and remain human review items.

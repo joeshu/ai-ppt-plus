@@ -17,7 +17,7 @@ def license_status(font_dir):
     files=sorted(str(x) for x in font_dir.rglob('*') if x.is_file() and x.name.lower().split('.')[0] in names)
     return {'status':'declared' if files else 'unverified','files':files}
 def main():
-    ap=argparse.ArgumentParser(description=__doc__,formatter_class=argparse.RawDescriptionHelpFormatter);ap.add_argument('--output','-o',required=True);ap.add_argument('--font-dir');ap.add_argument('--font',action='append',default=[]);a=ap.parse_args(); tool=shutil.which('fc-match')
+    ap=argparse.ArgumentParser(description=__doc__,formatter_class=argparse.RawDescriptionHelpFormatter);ap.add_argument('--output','-o',required=True);ap.add_argument('--font-dir');ap.add_argument('--font',action='append',default=[]);ap.add_argument('--require-cjk',action='store_true',help='return a failing exit code when no CJK-capable family resolves');a=ap.parse_args(); tool=shutil.which('fc-match')
     if not tool:
         out={'schema':'ai-ppt-plus/font-report/v1','ok':False,'error':'fc-match not found','fonts':[]};Path(a.output).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(out,ensure_ascii=False));return 2
     font_dir=Path(a.font_dir).resolve() if a.font_dir else None
@@ -45,7 +45,10 @@ def main():
     cjk_supported=any(x['cjk_ready'] for x in records)
     license_info=license_status(font_dir)
     out={'schema':'ai-ppt-plus/font-report/v1','ok':True,'generated_at':datetime.now(timezone.utc).isoformat(),'font_dir':str(font_dir) if font_dir else None,'local_font_files':local_files,'local_font_families':sorted(set(local_families)),'fonts':records,'cjk_delivery_supported':cjk_supported,'font_status':{'files_found':bool(local_files),'family_discovered':bool(local_families),'glyph_route_available':cjk_supported,'render_review':'required','license':license_info['status'],'license_files':license_info['files'],'redistribution':'unverified' if license_info['status']!='declared' else 'requires_project_review'},'rule':'Do not declare Chinese render validation passed unless cjk_delivery_supported is true and rendered pages are visually reviewed. Do not imply redistribution permission from font discovery.'}
+    if a.require_cjk and not cjk_supported:
+        out['ok']=False
+        out['error']='cjk_font_unresolved'
     Path(a.output).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(out,ensure_ascii=False));
     if temp_config: temp_config.cleanup()
-    return 0
+    return 0 if out.get('ok') is True else 2
 if __name__=='__main__':raise SystemExit(main())

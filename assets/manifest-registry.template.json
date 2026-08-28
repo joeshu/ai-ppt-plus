@@ -1,10 +1,31 @@
 {
-  "schema": "ai-ppt-plus/manifest-registry/v1",
+  "schema": "ai-ppt-plus/manifest-registry/v2",
+  "model": {
+    "name": "SlideSpec/RegionSpec/ObjectSpec/AssetSpec",
+    "version": "2.0",
+    "legacy_inputs": ["ai-ppt-plus/manifest-registry/v1"]
+  },
   "project_id": "",
   "revision": "working",
   "state": "validated",
   "deck": {"path": "deck.pptx", "sha256": ""},
-  "authority": {"formal_content": "slide-manifest.json", "visual": "reference image / visual manifest"},
-  "sources": [], "slides": [], "assets": [], "gates": [],
-  "evidence": {"slide_manifest": "slide-manifest.json", "object_manifest": "slide-object-manifest.json", "asset_manifests": [], "report_index": "report-index.json"}
+  "authority": {
+    "formal_content": "slide-manifest.json",
+    "visual": "reference image / visual manifest",
+    "geometry": "layout.json",
+    "semantic_objects": "slide-object-manifest.json",
+    "assets": []
+  },
+  "sources": [],
+  "slides": [],
+  "assets": [],
+  "gates": [],
+  "evidence": {
+    "slide_manifest": "slide-manifest.json",
+    "object_manifest": "slide-object-manifest.json",
+    "layout": "layout.json",
+    "text_manifest": "text-layout-manifest.json",
+    "asset_manifests": [],
+    "report_index": "report-index.json"
+  }
 }

@@ -54,6 +54,12 @@ transparent-gap segmentation for imperfect AI sheets; use component slicing
 for frame parts only when the user explicitly requests movable frame parts.
 Inspect the contact sheet and a frame preview on a neutral/gray background.
 
+Generated neon green or magenta backgrounds can contaminate anti-aliased
+edges. If the composite shows black, green, or magenta fringes, retry with an
+explicit key color and conservative hard-key settings such as
+`--no-despill --no-edge-recover`, then composite the result over the generated
+background before accepting it. A successful command exit is not visual proof.
+
 Every item must pass: non-empty alpha, valid visible bbox, no unaccepted
 edge-touch/truncation, no residual key color or grid line, no unintended
 connected-component merge, no duplicate frame/icon occurrence, and correct

@@ -22,6 +22,8 @@ def main() -> int:
     assert not validate(report_index, read(schemas / "report-index.schema.json"))
     routing = read(ROOT / "assets/skill-routing.template.json")
     assert not validate(routing, read(schemas / "skill-routing.schema.json"))
+    manifest_registry = read(ROOT / "assets/manifest-registry.template.json")
+    assert not validate(manifest_registry, read(schemas / "manifest-registry.schema.json"))
 
     envelope = {
         "schema": "ai-ppt-plus/report-envelope/v1",
@@ -51,6 +53,7 @@ def main() -> int:
         "report_index_sha256": "b" * 64,
         "checks": [],
         "pipeline_result_path": "pipeline-result.json",
+        "pipeline_result_sha256": "c" * 64,
         "project_report_path": "project-report.json",
         "report_index_path": "report-index.json",
     }

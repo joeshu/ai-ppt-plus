@@ -10,6 +10,7 @@ and prints the first safe one.
 Usage:
     python3 scripts/probe_palette.py SLIDE.png
     python3 scripts/probe_palette.py SLIDE.png --json
+    python3 scripts/probe_palette.py SLIDE.png --json --output palette-report.json
 
 Output (human): a recommendation line `recommended_key: #ff00ff` plus per-candidate
 coverage. With --json: a single machine-readable JSON line.
@@ -109,6 +110,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("image", help="Slide image to probe.")
     ap.add_argument("--json", action="store_true", help="Emit a single JSON line.")
+    ap.add_argument("--output", help="Also write the machine-readable report to this path.")
     args = ap.parse_args()
 
     path = Path(args.image)
@@ -117,6 +119,10 @@ def main() -> None:
         raise SystemExit(2)
 
     result = analyze(path)
+    if args.output:
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if args.json:
         print(json.dumps(result, ensure_ascii=False))
         return

@@ -1,4 +1,4 @@
-"""Regression test for the WPS three-signal font delivery gate."""
+"""Regression test for the portable three-signal font delivery gate."""
 
 import json
 import subprocess
@@ -20,23 +20,20 @@ def main() -> None:
         write(work / "inspection.json", {"embedded_fonts": {"present": True}})
         write(work / "render.json", {"ok": True, "pages": ["slide-1.png"]})
         write(work / "visual.json", {"valid": True, "pages": [{"stats": {"nonuniform": True}}]})
-        write(work / "target.json", {"devices": {"desktop_wps": True, "iphone_wps": True}})
         report = work / "report.json"
-        command = [sys.executable, str(root / "scripts/validate_font_delivery.py"), "--font-report", str(work / "font.json"), "--font-asset-report", str(work / "asset.json"), "--inspection", str(work / "inspection.json"), "--render-report", str(work / "render.json"), "--render-visual-gate", str(work / "visual.json"), "--target-review", str(work / "target.json"), "--require-embedded", "--require-target-review", "--report", str(report)]
+        command = [sys.executable, str(root / "scripts/validate_font_delivery.py"), "--font-report", str(work / "font.json"), "--font-asset-report", str(work / "asset.json"), "--inspection", str(work / "inspection.json"), "--render-report", str(work / "render.json"), "--render-visual-gate", str(work / "visual.json"), "--require-embedded", "--report", str(report)]
         completed = subprocess.run(command, cwd=root, capture_output=True, text=True, check=False)
         assert completed.returncode == 0, completed.stdout + completed.stderr
         assert json.loads(report.read_text(encoding="utf-8"))["valid"] is True
         write(work / "inspection-bad.json", {"embedded_fonts": {"present": False}})
-        write(work / "target-bad.json", {"devices": {"desktop_wps": False, "iphone_wps": False}})
         bad_command = [item if item != str(work / "inspection.json") else str(work / "inspection-bad.json") for item in command]
-        bad_command = [item if item != str(work / "target.json") else str(work / "target-bad.json") for item in bad_command]
         bad_report = work / "bad-report.json"
         bad_command[bad_command.index("--report") + 1] = str(bad_report)
         failed = subprocess.run(bad_command, cwd=root, capture_output=True, text=True, check=False)
         assert failed.returncode == 2
         bad_data = json.loads(bad_report.read_text(encoding="utf-8"))
-        assert {item["code"] for item in bad_data["issues"]} >= {"embedded_font_missing", "target_review_missing"}
-    print("font delivery triple gate: ok")
+        assert "embedded_font_missing" in {item["code"] for item in bad_data["issues"]}
+    print("portable font delivery triple gate: ok")
 
 
 if __name__ == "__main__":

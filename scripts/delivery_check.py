@@ -91,7 +91,7 @@ def main() -> int:
         else:
             blocking.append({"type": "font_delivery_validation_failed", "severity": "blocking", "slide": None, "detail": "font declaration, resolution and final-render evidence must pass", "report_issues": (font_delivery or {}).get("issues", [])})
     if font_delivery:
-        quality_evidence["font_delivery"] = {"valid": font_delivery.get("valid"), "status": font_delivery.get("status"), "profile": font_delivery.get("profile"), "declared_font": font_delivery.get("declared_font"), "resolved_font": font_delivery.get("resolved_font"), "render_visible": font_delivery.get("render_visible"), "embedded_font": font_delivery.get("embedded_font"), "target_review": font_delivery.get("target_review"), "issues": font_delivery.get("issues", [])}
+        quality_evidence["font_delivery"] = {"valid": font_delivery.get("valid"), "status": font_delivery.get("status"), "profile": font_delivery.get("profile"), "declared_font": font_delivery.get("declared_font"), "resolved_font": font_delivery.get("resolved_font"), "render_visible": font_delivery.get("render_visible"), "embedded_font": font_delivery.get("embedded_font"), "issues": font_delivery.get("issues", [])}
 
     if args.require_route:
         check(bool(route_report and route_report.get("valid") is True), "route_validation_failed", "a valid route-validation report is required")
@@ -140,6 +140,10 @@ def main() -> int:
         check(not report_bundle.get("deck_sha256") or report_bundle.get("deck_sha256") == current_hash, "stale_report_bundle_deck", "report-bundle validation must describe the current PPTX")
         bundle_index_path = Path(report_bundle.get("report_index_path", ""))
         check(not report_bundle.get("report_index_sha256") or (bundle_index_path.is_file() and sha256(bundle_index_path) == report_bundle.get("report_index_sha256")), "stale_report_bundle_index", "report-bundle validation must describe the current report index")
+        bundle_pipeline_path = Path(report_bundle.get("pipeline_result_path", ""))
+        check(not report_bundle.get("pipeline_result_sha256") or (bundle_pipeline_path.is_file() and sha256(bundle_pipeline_path) == report_bundle.get("pipeline_result_sha256")), "stale_report_bundle_pipeline", "report-bundle validation must describe the current pipeline result")
+        bundle_review_path = Path(report_bundle.get("review_html_path", "")) if report_bundle.get("review_html_path") else None
+        check(not report_bundle.get("review_html_sha256") or (bundle_review_path is not None and bundle_review_path.is_file() and sha256(bundle_review_path) == report_bundle.get("review_html_sha256")), "stale_report_bundle_review", "report-bundle validation must describe the current review HTML")
 
     for option, label in ((args.render_visual_gate, "render-visual-gate"), (args.visual_comparison, "visual-comparison"), (args.ocr_report, "ocr-text-check")):
         report = load(option) if option else None
@@ -176,11 +180,7 @@ def main() -> int:
     bad_sources = [item.get("slide_no") for item in (manifest or {}).get("slides", []) if not item.get("formal_content_source")]
     check(not bad_sources, "untraceable_formal_content", "formal content source required", bad_sources or None)
     undocumented = [item for item in (manifest or {}).get("slides", []) if item.get("asset_status") == "placeholder" and not item.get("placeholder_reason")]
-    check(not undocumented, "undocumented_placeholders", "placeholder must contain a reason", [item.get("slide_no") for item in undocumented] or None)
-    check(not any(not item.get("provenance") for item in assets.get("assets", [])), "asset_provenance_missing", "every asset needs provenance")
-
-    editability_blockers = []
-    for slide in (manifest or {}).get("slides", []):
+    check(not undocumented, "undocumented_placeholders", "placeholder mus…74 tokens truncated…t or {}).get("slides", []):
         slide_no = slide.get("slide_no")
         objects = slide.get("objects")
         if not isinstance(objects, list):

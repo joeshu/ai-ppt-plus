@@ -13,9 +13,29 @@ layer gets a unique `object_id`, `role`, `object_type`, `editability_level`,
 into an image. `traceable_static_graphic`/L3 is the explicit exception for a
 complex panel whose border, texture or decoration is kept as one movable asset.
 
-The final deck audit matches object IDs to shape names. Composition helpers
-should name pictures and text boxes with the manifest ID, so a manifest claim
-cannot silently diverge from the PPTX.
+The legacy final deck audit matches object IDs to shape names. The semantic
+audit goes further and reads the final PPTX object model: formal text must have
+a native text container, tables must be native tables, charts must have real
+series/cache data and an embedded workbook, and `brand_lockup` must remain one
+independent picture. When text and asset manifests are supplied, it also
+compares final text exactly and checks embedded media hashes against the
+declared source. A semantic mismatch is a technical blocker; human visual
+review is still required for appearance and fidelity.
+
+Run it directly after the object inventory is reviewed:
+
+```bash
+python scripts/semantic_object_audit.py deck.pptx \
+  --object-manifest slide-object-manifest.json \
+  --text-manifest text-layout-manifest.json \
+  --asset-manifest panel-asset-manifest.json \
+  --report semantic-object-audit.json
+```
+
+`run_pipeline.py` runs this audit automatically whenever a canonical object
+manifest is present. It retains `inspect_editable_objects.py` for the simpler
+identity/geometry audit, while the semantic report is included in project
+quality evidence and blocks the project gate when invalid.
 
 Use `scripts/build_object_manifest.py layout.json --panel-manifest
 panel-asset-manifest.json --output slide-object-manifest.json` to create the

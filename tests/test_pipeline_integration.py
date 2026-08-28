@@ -46,13 +46,18 @@ def main() -> int:
             assert completed.returncode == 0, completed.stdout + completed.stderr
             data = json.loads(completed.stdout.strip().splitlines()[-1])
             assert data["valid"] is True and data["technical_valid"] is True and data["execution"]["affected_pages"] == [1]
+            assert data["execution"]["page_cache"]["enabled"] is True
             assert data["source_references"]
             assert not validate(data, json.loads((ROOT / "assets/schemas/pipeline-run.schema.json").read_text(encoding="utf-8")))
             assert not validate(json.loads((run_dir / "report-index.json").read_text(encoding="utf-8")), json.loads((ROOT / "assets/schemas/report-index.schema.json").read_text(encoding="utf-8")))
             assert (run_dir / "review.html").is_file()
             bundle = json.loads((run_dir / "report-bundle-validation.json").read_text(encoding="utf-8"))
             assert bundle["valid"] is True and bundle["status"] == "passed"
-            assert data["quality_evidence"]["report_bundle_validation"]["valid"] is True
+            assert data["quality_evidence"]["report_bundle_preflight"]["valid"] is True
+            semantic = json.loads((run_dir / "semantic-object-audit.json").read_text(encoding="utf-8"))
+            assert semantic["valid"] is True
+            assert data["quality_evidence"]["semantic_object_audit"]["valid"] is True
+            assert data["finalization"]["report_bundle"]["status"] == "passed"
             runs.append(data)
         assert runs[1]["execution"]["cache_hits"] > 0, runs[1]["execution"]
         gate = json.loads((Path(runs[1]["run_dir"]) / "render-visual-gate.json").read_text(encoding="utf-8"))

@@ -61,14 +61,18 @@ claim delivery.
 
 ## Bundle freshness gate
 
-The runner writes a provisional `pipeline-result.json` after aggregation and
-then runs `validate_report_bundle.py`. The resulting
-`report-bundle-validation.json` is a meta-gate (it is intentionally not added
-as an indexed child, which would create a self-referential aggregate). It
+The runner first writes a provisional `pipeline-result.json` and a
+`report-bundle-preflight.json` for release prerequisites. After sign-off and
+release checks, it writes the final `pipeline-result.json`, generates the
+review page, and runs `validate_report_bundle.py` again to produce the final
+`report-bundle-validation.json`. The final bundle is intentionally not added
+as an indexed child, which would create a self-referential aggregate. It
 checks that:
 
-- the pipeline result, report index, aggregate and current PPTX share one
+- the final pipeline result, report index, aggregate and current PPTX share one
   fresh deck SHA-256;
+- the final pipeline result and review HTML have current content hashes in the
+  bundle source evidence;
 - the aggregate's report-index hash and every child/source/input hash are
   current;
 - `full` versus `incremental`, affected pages and full-deck requirements agree;

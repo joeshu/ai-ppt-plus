@@ -41,9 +41,19 @@ def main() -> int:
         assert second[0]["ok"] is True and second[0]["cache_hit"] is True
         assert json.loads((root / "run-2/probe.json").read_text(encoding="utf-8"))["schema"] == "ai-ppt-plus/environment-report/v1"
 
+        cache_artifact = cache / first[0]["cache_key"] / "artifacts" / "probe.json"
+        cache_artifact.write_text(cache_artifact.read_text(encoding="utf-8") + "\ncorrupted", encoding="utf-8")
+        corrupted = run_probe(root / "run-corrupted", cache, source)
+        assert corrupted[0]["ok"] is True and corrupted[0]["cache_hit"] is False
+
         source.write_text("v2", encoding="utf-8")
         third = run_probe(root / "run-3", cache, source)
         assert third[0]["ok"] is True and third[0]["cache_hit"] is False
+
+        missing_output = PipelineExecutor(root / "missing-output", mode="dag", cache_dir=cache, max_workers=1)
+        missing_output.add(PipelineTask("incomplete", outputs=(root / "missing-output/result.json",), static_result={"ok": True}))
+        incomplete = missing_output.run()
+        assert incomplete[0]["ok"] is True and not (cache / incomplete[0]["cache_key"]).exists()
 
         parallel = PipelineExecutor(root / "parallel", mode="dag", cache_dir=root / "parallel-cache", max_workers=2)
         parallel.add(PipelineTask("a", [str(ROOT / "scripts/probe_environment.py"), "--output", str(root / "parallel/a.json")], outputs=(root / "parallel/a.json",)))
