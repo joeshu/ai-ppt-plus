@@ -1,0 +1,40 @@
+{
+  "schema": "ai-ppt-plus/handoff/v1",
+  "project_id": "unicom-dual-terminal-case-53-5",
+  "revision": "R1_20260828_53_5",
+  "current_stage": "human-closeout",
+  "gate_status": "technical-gates-passed-pending-human-closeout",
+  "approved_artifacts": {
+    "pptx": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+    "pptx_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+    "slide_manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-manifest.json",
+    "object_manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-object-manifest.json",
+    "panel_manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/panel-asset-manifest.json",
+    "manifest_registry": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/manifest-registry.json",
+    "preview": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/qa-visual/final-render-patched/slide-1.png"
+  },
+  "completed_slides": [1],
+  "active_batch": "R1_20260828_53_5",
+  "remaining_slides": [],
+  "open_blockers": ["ISSUE-R1-004"],
+  "repair_round": 1,
+  "latest_checks": [
+    "source image full-decode gate",
+    "B4/B5 imagegen provenance and icon layer audit",
+    "approved six independent panel assets",
+    "strict layout and text-style map",
+    "native object manifest and semantic object audit",
+    "embedded Noto Sans CJK SC and final decoded render",
+    "same-ratio visual comparison and report bundle"
+  ],
+  "backend": "python-pptx+LibreOffice",
+  "backend_version": "ai-ppt-plus",
+  "environment_report_path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/environment-report.json",
+  "capability_status": {
+    "technical_validation": "passed",
+    "human_visual_review": "required",
+    "human_signoff": "pending"
+  },
+  "next_action": "human-closeout: confirm literal **元, visual fidelity, and independent movement in WPS",
+  "updated_at": "2026-08-28T12:45:00Z"
+}

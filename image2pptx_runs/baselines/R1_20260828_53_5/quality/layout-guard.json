@@ -1,0 +1,15 @@
+{
+  "schema": "ai-ppt-plus/layout-guard-run/v1",
+  "valid": true,
+  "status": "passed",
+  "source": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+  "layout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/layout.json",
+  "source_size": [
+    1536,
+    864
+  ],
+  "warnings": [],
+  "errors": [],
+  "issues": [],
+  "strict": true
+}

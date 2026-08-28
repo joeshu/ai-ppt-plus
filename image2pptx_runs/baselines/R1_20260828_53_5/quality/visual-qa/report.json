@@ -1,0 +1,27 @@
+{
+  "source": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+  "preview": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/rendered/slide-1.png",
+  "status": "diagnostic",
+  "ok": true,
+  "source_original_size": [
+    1536,
+    864
+  ],
+  "preview_size": [
+    1920,
+    1080
+  ],
+  "resized_for_comparison": true,
+  "mean_abs_diff_0_255": 30.7499,
+  "rms_diff_0_255": 64.5716,
+  "changed_pixel_fraction_threshold_32": 0.229379,
+  "changed_pixel_fraction_threshold_64": 0.179517,
+  "artifacts": {
+    "source_resized": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/source_resized.png",
+    "preview": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/preview.png",
+    "side_by_side": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/side_by_side.png",
+    "blend": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/blend.png",
+    "diff_heatmap": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/diff_heatmap.png"
+  },
+  "note": "Metrics are diagnostic only. Final pass/fail requires visual review of source vs preview for text/icon position, size, and overlap."
+}

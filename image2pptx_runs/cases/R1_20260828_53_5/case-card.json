@@ -1,0 +1,68 @@
+{
+  "schema": "ai-ppt-plus/regression-case/v1",
+  "case_id": "unicom-dual-terminal-53-5",
+  "title": "存量双终端优秀案例（手机+FTTR）",
+  "source_filename": "53(5).jpeg",
+  "revision": "R1_20260828_53_5",
+  "baseline_path": "image2pptx_runs/baselines/R1_20260828_53_5",
+  "frozen_at": "2026-08-28T13:31:20.542570+00:00",
+  "status": "technical-baseline-pending-human-closeout",
+  "immutable_baseline": true,
+  "artifacts": {
+    "source": {
+      "path": "image2pptx_runs/baselines/R1_20260828_53_5/source/reference-01.jpeg",
+      "sha256": "a7392cd8a0da177a9dd57e72bf76929a66b366036ff6c20d1cd8c35ab107e6a5"
+    },
+    "editable_pptx": {
+      "path": "image2pptx_runs/baselines/R1_20260828_53_5/deck/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+      "sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    "preview": {
+      "path": "image2pptx_runs/baselines/R1_20260828_53_5/preview/final-render-patched-slide-1.png",
+      "sha256": "103120e28a5d8323faf729f458e691c2607a30018d227d07318b8f9382e7fbb5"
+    },
+    "baseline_manifest": {
+      "path": "image2pptx_runs/baselines/R1_20260828_53_5/baseline-manifest.json",
+      "sha256": "da1255f663b0fbd89ec27781b54aed07862219d99f6c57a21abb95b07bd861b9"
+    },
+    "checksum_file": "image2pptx_runs/baselines/R1_20260828_53_5/SHA256SUMS"
+  },
+  "quality_evidence": {
+    "pipeline_status": "passed",
+    "technical_valid": true,
+    "next_state": "validated",
+    "human_review_status": "pending",
+    "object_count": 44,
+    "native_text_boxes": 25,
+    "native_shapes": 1,
+    "independent_media_objects": 18,
+    "independent_panels": 6,
+    "embedded_font": "Noto Sans CJK SC",
+    "visual_metrics": {
+      "global_ssim": 0.625378,
+      "blurred_layout_ssim": 0.910982,
+      "pixel_fidelity_score": 0.87911
+    },
+    "all_dag_steps_passed": true
+  },
+  "content_contract": {
+    "preserve_text_verbatim": true,
+    "preserve_literal_placeholder": "**元",
+    "brand_logo_whole_asset": true,
+    "panels_independently_movable": true
+  },
+  "excluded_experiments": [
+    "panel-04/icon pre-repair artifacts",
+    "render-retry and selected preview experiments",
+    "malformed normalized PNG attempt"
+  ],
+  "known_open_issues": [
+    "ISSUE-R1-004: literal **元 remains preserved in source-faithful text; human confirmation is pending",
+    "ISSUE-R1-002: chi_sim OCR language data unavailable; visual transcription requires human confirmation",
+    "Human/WPS closeout signoff is pending; frozen baseline is technical, not release signoff"
+  ],
+  "verification": {
+    "command": "python3 scripts/revision_guard.py verify image2pptx_runs/baselines/R1_20260828_53_5",
+    "result": "valid"
+  }
+}

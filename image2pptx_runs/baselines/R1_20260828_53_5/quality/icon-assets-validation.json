@@ -1,0 +1,10 @@
+{
+  "schema": "ai-ppt-plus/icon-assets-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/icon-asset-manifest.json",
+  "asset_count": 10,
+  "issues": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

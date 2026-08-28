@@ -1,0 +1,96 @@
+{
+  "schema": "ai-ppt-plus/issue-log/v1",
+  "project_id": "unicom-dual-terminal-case-53-5",
+  "revision": "R1_20260828_53_5",
+  "issues": [
+    {
+      "issue_id": "ISSUE-R1-001",
+      "stage": "source-analysis",
+      "severity": "major",
+      "status": "workaround-applied",
+      "summary": "analyze_source.py emitted a malformed/truncated normalized PNG while the supplied JPEG decoded correctly",
+      "evidence": "source/source-001.png failed PIL load with image file is truncated; source/reference-01.jpeg decoded at 1536x864",
+      "impact": "palette and evidence operations cannot safely trust the normalized output",
+      "workaround": "used the original run-local JPEG for palette, source regions, panel coordinates and visual authority",
+      "skill_feedback": "add a byte-decodability gate immediately after normalization and block downstream stages when a normalized image cannot be fully loaded",
+      "promotion": "shared-toolchain"
+    },
+    {
+      "issue_id": "ISSUE-R1-002",
+      "stage": "ocr",
+      "severity": "major",
+      "status": "degraded-review-required",
+      "summary": "requested chi_sim OCR language data was unavailable; installed languages were eng and osd",
+      "impact": "OCR cannot be treated as authoritative for Chinese formal text",
+      "workaround": "used GPT visual transcription, preserved visible punctuation and masked amount, and marked the outline transcription pending confirmation",
+      "skill_feedback": "surface unavailable OCR language as a formal degradation and require visual/human transcription review",
+      "promotion": "shared-toolchain"
+    },
+    {
+      "issue_id": "ISSUE-R1-003",
+      "stage": "B3/B5",
+      "severity": "minor",
+      "status": "repair-applied",
+      "summary": "generated frame rendered the lower-left panel border gray instead of the source green accent",
+      "impact": "panel-04 would visibly diverge from the reference",
+      "workaround": "repaired the generated blank panel asset border color and recorded the pre-repair asset; formal text remains excluded",
+      "skill_feedback": "add an accent-color replay check to frame/panel QA, not only alpha and geometry checks",
+      "promotion": "shared-toolchain"
+    },
+    {
+      "issue_id": "ISSUE-R1-004",
+      "stage": "formal-text",
+      "severity": "blocker-until-confirmed",
+      "status": "preserved-pending-human-confirmation",
+      "summary": "source visibly contains the literal masked amount **元",
+      "impact": "silently inferring the hidden amount would fabricate business data",
+      "workaround": "kept **元 byte-for-byte in outline, layout and text manifests; highlighted in the report",
+      "skill_feedback": "keep literal redactions in semantic text checks and require explicit closeout confirmation",
+      "promotion": "shared-toolchain"
+    },
+    {
+      "issue_id": "ISSUE-R1-005",
+      "stage": "tool-routing",
+      "severity": "minor",
+      "status": "workaround-applied",
+      "summary": "B5 helper paths are owned by GordenImage2PPTX while the ai-ppt-plus repository owns orchestration",
+      "impact": "relative skill-root commands can fail when copied between workflows",
+      "workaround": "used explicit GORDEN_SKILL_DIR and repository paths for every B5 command",
+      "skill_feedback": "document explicit skill-root variables in the reconstruction command examples",
+      "promotion": "shared-toolchain"
+    },
+    {
+      "issue_id": "ISSUE-R1-006",
+      "stage": "source-normalization",
+      "severity": "major",
+      "status": "fixed-in-skill",
+      "summary": "normalized PNG passed metadata inspection but failed complete pixel decoding",
+      "impact": "downstream OCR and image analysis could consume a corrupted source artifact",
+      "workaround": "blocked the normalized PNG with the new full-decode gate and used the verified run-local JPEG as visual authority",
+      "skill_feedback": "run validate_source_images.py immediately after normalization and block any non-decodable source",
+      "promotion": "shared-toolchain"
+    },
+    {
+      "issue_id": "ISSUE-R1-007",
+      "stage": "render",
+      "severity": "major",
+      "status": "fixed-in-skill",
+      "summary": "full-stream pdftoppm reported success while a rendered PNG could later be observed as truncated",
+      "impact": "a corrupt preview could be treated as a valid final render",
+      "workaround": "rendered each missing page through the verified selected-page path and reran the visual gate",
+      "skill_feedback": "make every published render page pass full decode verification before it is accepted",
+      "promotion": "shared-toolchain"
+    },
+    {
+      "issue_id": "ISSUE-R1-008",
+      "stage": "project-closeout",
+      "severity": "major",
+      "status": "fixed-in-run",
+      "summary": "project validation required persisted handoff, validation report and issue log artifacts that were not scaffolded by the reconstruction run",
+      "impact": "all technical child gates could pass while the project aggregate failed",
+      "workaround": "created the three artifacts in the editable project directory without fabricating human sign-off",
+      "skill_feedback": "scaffold and validate required project-closeout artifacts before invoking the aggregate pipeline",
+      "promotion": "shared-toolchain"
+    }
+  ]
+}

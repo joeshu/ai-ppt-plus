@@ -1,0 +1,1409 @@
+{
+  "schema": "ai-ppt-plus/report-envelope/v1",
+  "report_type": "report-bundle-validation",
+  "project_id": "01",
+  "revision": "working",
+  "stage": "validated",
+  "validation_scope": "full",
+  "full_deck_validation_required": false,
+  "valid": true,
+  "status": "passed",
+  "technical_valid": true,
+  "technical_status": "passed",
+  "human_review_required": true,
+  "human_review_status": "pending",
+  "release_eligible": false,
+  "release_status": "blocked-pending-bundle-and-human-gates",
+  "deck_path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+  "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+  "report_index_path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json",
+  "report_index_sha256": "f64dbb4ba556df87b41e492a4ac052733d36a3462b4dcb790402fbea0e9839e1",
+  "pipeline_result_path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/pipeline-result.json",
+  "pipeline_result_sha256": "ffa2ed949a18aca53764ddccfc1a6693c2155009356238e7bce078fbea9fbef1",
+  "project_report_path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json",
+  "review_html_path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/review.html",
+  "review_html_sha256": "9365655ace41dd2584435539668d479c3dfb8b1fd32fb34c9e095b776745d58a",
+  "generated_at": "2026-08-28T12:47:37.093933+00:00",
+  "tool": "ai-ppt-plus/validate_report_bundle.py",
+  "checks": [
+    {
+      "code": "pipeline_result_present",
+      "status": "passed",
+      "message": "pipeline-result.json must exist",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/pipeline-result.json"
+    },
+    {
+      "code": "report_index_present",
+      "status": "passed",
+      "message": "report-index.json must exist",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json"
+    },
+    {
+      "code": "project_report_present",
+      "status": "passed",
+      "message": "project-report.json must exist",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json"
+    },
+    {
+      "code": "pipeline_result_object",
+      "status": "passed",
+      "message": "pipeline-result.json must contain an object"
+    },
+    {
+      "code": "report_index_object",
+      "status": "passed",
+      "message": "report-index.json must contain an object"
+    },
+    {
+      "code": "project_report_object",
+      "status": "passed",
+      "message": "project-report.json must contain an object"
+    },
+    {
+      "code": "pipeline_result_hash_present",
+      "status": "passed",
+      "message": "the final pipeline result must be hashable"
+    },
+    {
+      "code": "deck_hash_format",
+      "status": "passed",
+      "message": "pipeline deck_sha256 must be a lowercase SHA-256",
+      "artifact": "pipeline",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "deck_hash_format",
+      "status": "passed",
+      "message": "report_index deck_sha256 must be a lowercase SHA-256",
+      "artifact": "report_index",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "deck_hash_format",
+      "status": "passed",
+      "message": "project_report deck_sha256 must be a lowercase SHA-256",
+      "artifact": "project_report",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "deck_present",
+      "status": "passed",
+      "message": "the referenced PPTX must exist",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx"
+    },
+    {
+      "code": "deck_hash_fresh",
+      "status": "passed",
+      "message": "pipeline must describe the current PPTX",
+      "artifact": "pipeline",
+      "expected": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "deck_hash_fresh",
+      "status": "passed",
+      "message": "report_index must describe the current PPTX",
+      "artifact": "report_index",
+      "expected": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "deck_hash_fresh",
+      "status": "passed",
+      "message": "project_report must describe the current PPTX",
+      "artifact": "project_report",
+      "expected": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "deck_hash_consistent",
+      "status": "passed",
+      "message": "pipeline, index, and aggregate must share one deck hash",
+      "values": {
+        "pipeline": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+        "report_index": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+        "project_report": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+      }
+    },
+    {
+      "code": "validation_scope_format",
+      "status": "passed",
+      "message": "all reports must declare full or incremental validation",
+      "values": {
+        "pipeline": "full",
+        "report_index": "full",
+        "project_report": "full"
+      }
+    },
+    {
+      "code": "validation_scope_consistent",
+      "status": "passed",
+      "message": "pipeline, index, and aggregate validation scopes must agree",
+      "values": {
+        "pipeline": "full",
+        "report_index": "full",
+        "project_report": "full"
+      }
+    },
+    {
+      "code": "pipeline_scope_flag",
+      "status": "passed",
+      "message": "pipeline full_deck_validation_required must match its validation scope",
+      "observed": false,
+      "expected": false
+    },
+    {
+      "code": "aggregate_scope_flag",
+      "status": "passed",
+      "message": "aggregate full_deck_validation_required must match its validation scope",
+      "observed": false,
+      "expected": false
+    },
+    {
+      "code": "full_scope_pages",
+      "status": "passed",
+      "message": "full bundles must not masquerade as a page subset",
+      "observed": "all"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "environment",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/environment-report.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "environment"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "environment",
+      "expected": "6047fd5d340854db73b27222b80e2e731b399de22eae55b718ebfea862fb502e",
+      "observed": "6047fd5d340854db73b27222b80e2e731b399de22eae55b718ebfea862fb502e"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "environment",
+      "expected": "6047fd5d340854db73b27222b80e2e731b399de22eae55b718ebfea862fb502e",
+      "observed": "6047fd5d340854db73b27222b80e2e731b399de22eae55b718ebfea862fb502e"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "environment",
+      "expected": "6047fd5d340854db73b27222b80e2e731b399de22eae55b718ebfea862fb502e",
+      "observed": "6047fd5d340854db73b27222b80e2e731b399de22eae55b718ebfea862fb502e"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "inspection",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/inspection.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "inspection"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "inspection",
+      "expected": "ed2524cd1d96bfb7297fd47466eccc142c30484ae2d28d692f4a80bba9ea1fc0",
+      "observed": "ed2524cd1d96bfb7297fd47466eccc142c30484ae2d28d692f4a80bba9ea1fc0"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "inspection",
+      "expected": "ed2524cd1d96bfb7297fd47466eccc142c30484ae2d28d692f4a80bba9ea1fc0",
+      "observed": "ed2524cd1d96bfb7297fd47466eccc142c30484ae2d28d692f4a80bba9ea1fc0"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "inspection",
+      "expected": "ed2524cd1d96bfb7297fd47466eccc142c30484ae2d28d692f4a80bba9ea1fc0",
+      "observed": "ed2524cd1d96bfb7297fd47466eccc142c30484ae2d28d692f4a80bba9ea1fc0"
+    },
+    {
+      "code": "child_deck_hash_consistent",
+      "status": "passed",
+      "message": "child report deck hash must match the index",
+      "report_type": "inspection",
+      "expected": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "render",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-report.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "render"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "render",
+      "expected": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76",
+      "observed": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "render",
+      "expected": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76",
+      "observed": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "render",
+      "expected": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76",
+      "observed": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76"
+    },
+    {
+      "code": "child_deck_hash_consistent",
+      "status": "passed",
+      "message": "child report deck hash must match the index",
+      "report_type": "render",
+      "expected": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "render-visual-gate",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "render-visual-gate"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "render-visual-gate",
+      "expected": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994",
+      "observed": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "render-visual-gate",
+      "expected": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994",
+      "observed": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "render-visual-gate",
+      "expected": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994",
+      "observed": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "manifest-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "manifest-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "manifest-validation",
+      "expected": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16",
+      "observed": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "manifest-validation",
+      "expected": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16",
+      "observed": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "manifest-validation",
+      "expected": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16",
+      "observed": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "project-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "project-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "project-validation",
+      "expected": "c557494c5a116a0541413f4293cf7a38867d87b81e256e5dcf067a4aa215a7bd",
+      "observed": "c557494c5a116a0541413f4293cf7a38867d87b81e256e5dcf067a4aa215a7bd"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "project-validation",
+      "expected": "c557494c5a116a0541413f4293cf7a38867d87b81e256e5dcf067a4aa215a7bd",
+      "observed": "c557494c5a116a0541413f4293cf7a38867d87b81e256e5dcf067a4aa215a7bd"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "project-validation",
+      "expected": "c557494c5a116a0541413f4293cf7a38867d87b81e256e5dcf067a4aa215a7bd",
+      "observed": "c557494c5a116a0541413f4293cf7a38867d87b81e256e5dcf067a4aa215a7bd"
+    },
+    {
+      "code": "child_deck_hash_consistent",
+      "status": "passed",
+      "message": "child report deck hash must match the index",
+      "report_type": "project-validation",
+      "expected": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed optional child report must exist",
+      "report_type": "manifest-registry-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-registry-validation.json",
+      "required": false
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "manifest-registry-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "manifest-registry-validation",
+      "expected": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe",
+      "observed": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "manifest-registry-validation",
+      "expected": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe",
+      "observed": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "manifest-registry-validation",
+      "expected": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe",
+      "observed": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe"
+    },
+    {
+      "code": "child_deck_hash_consistent",
+      "status": "passed",
+      "message": "child report deck hash must match the index",
+      "report_type": "manifest-registry-validation",
+      "expected": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "object-manifest-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/object-manifest-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "object-manifest-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "object-manifest-validation",
+      "expected": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d",
+      "observed": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "object-manifest-validation",
+      "expected": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d",
+      "observed": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "object-manifest-validation",
+      "expected": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d",
+      "observed": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "editable-object-audit",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/editable-object-audit.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "editable-object-audit"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "editable-object-audit",
+      "expected": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751",
+      "observed": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "editable-object-audit",
+      "expected": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751",
+      "observed": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "editable-object-audit",
+      "expected": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751",
+      "observed": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "semantic-object-audit",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/semantic-object-audit.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "semantic-object-audit"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "semantic-object-audit",
+      "expected": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7",
+      "observed": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "semantic-object-audit",
+      "expected": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7",
+      "observed": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "semantic-object-audit",
+      "expected": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7",
+      "observed": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7"
+    },
+    {
+      "code": "child_deck_hash_consistent",
+      "status": "passed",
+      "message": "child report deck hash must match the index",
+      "report_type": "semantic-object-audit",
+      "expected": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "observed": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "panel-assets-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/panel-assets-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "panel-assets-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "panel-assets-validation",
+      "expected": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043",
+      "observed": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "panel-assets-validation",
+      "expected": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043",
+      "observed": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "panel-assets-validation",
+      "expected": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043",
+      "observed": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "text-style-map-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-style-map-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "text-style-map-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "text-style-map-validation",
+      "expected": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2",
+      "observed": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "text-style-map-validation",
+      "expected": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2",
+      "observed": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "text-style-map-validation",
+      "expected": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2",
+      "observed": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "text-layout-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-layout-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "text-layout-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "text-layout-validation",
+      "expected": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443",
+      "observed": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "text-layout-validation",
+      "expected": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443",
+      "observed": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "text-layout-validation",
+      "expected": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443",
+      "observed": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "imagegen-assets-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/imagegen-assets-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "imagegen-assets-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "imagegen-assets-validation",
+      "expected": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f",
+      "observed": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "imagegen-assets-validation",
+      "expected": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f",
+      "observed": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "imagegen-assets-validation",
+      "expected": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f",
+      "observed": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "icon-assets-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-assets-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "icon-assets-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "icon-assets-validation",
+      "expected": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de",
+      "observed": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "icon-assets-validation",
+      "expected": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de",
+      "observed": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "icon-assets-validation",
+      "expected": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de",
+      "observed": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "icon-layer-audit",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-layer-audit.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "icon-layer-audit"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "icon-layer-audit",
+      "expected": "f423128d117c08e75858f047c6b33bd8491fc2e2ed5e330649c4e1e10086f24e",
+      "observed": "f423128d117c08e75858f047c6b33bd8491fc2e2ed5e330649c4e1e10086f24e"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "icon-layer-audit",
+      "expected": "f423128d117c08e75858f047c6b33bd8491fc2e2ed5e330649c4e1e10086f24e",
+      "observed": "f423128d117c08e75858f047c6b33bd8491fc2e2ed5e330649c4e1e10086f24e"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "icon-layer-audit",
+      "expected": "f423128d117c08e75858f047c6b33bd8491fc2e2ed5e330649c4e1e10086f24e",
+      "observed": "f423128d117c08e75858f047c6b33bd8491fc2e2ed5e330649c4e1e10086f24e"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "layout-guard",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/layout-guard.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "layout-guard"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "layout-guard",
+      "expected": "26c3979399392eb297f66c06ef74e2d65dd84f74599a951975e796b4247b1bb8",
+      "observed": "26c3979399392eb297f66c06ef74e2d65dd84f74599a951975e796b4247b1bb8"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "layout-guard",
+      "expected": "26c3979399392eb297f66c06ef74e2d65dd84f74599a951975e796b4247b1bb8",
+      "observed": "26c3979399392eb297f66c06ef74e2d65dd84f74599a951975e796b4247b1bb8"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "layout-guard",
+      "expected": "26c3979399392eb297f66c06ef74e2d65dd84f74599a951975e796b4247b1bb8",
+      "observed": "26c3979399392eb297f66c06ef74e2d65dd84f74599a951975e796b4247b1bb8"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "visual-compare-qa",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/report.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "visual-compare-qa"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "visual-compare-qa",
+      "expected": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9",
+      "observed": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "visual-compare-qa",
+      "expected": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9",
+      "observed": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "visual-compare-qa",
+      "expected": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9",
+      "observed": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "font",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-report.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "font"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "font",
+      "expected": "8d69a1b03dfcf90237ec6779da7a197f8c7d97dae167ee3598dec7032688a9d8",
+      "observed": "8d69a1b03dfcf90237ec6779da7a197f8c7d97dae167ee3598dec7032688a9d8"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "font",
+      "expected": "8d69a1b03dfcf90237ec6779da7a197f8c7d97dae167ee3598dec7032688a9d8",
+      "observed": "8d69a1b03dfcf90237ec6779da7a197f8c7d97dae167ee3598dec7032688a9d8"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "font",
+      "expected": "8d69a1b03dfcf90237ec6779da7a197f8c7d97dae167ee3598dec7032688a9d8",
+      "observed": "8d69a1b03dfcf90237ec6779da7a197f8c7d97dae167ee3598dec7032688a9d8"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "font-asset-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-asset-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "font-asset-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "font-asset-validation",
+      "expected": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018",
+      "observed": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "font-asset-validation",
+      "expected": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018",
+      "observed": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "font-asset-validation",
+      "expected": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018",
+      "observed": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "font-delivery-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-delivery-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "font-delivery-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "font-delivery-validation",
+      "expected": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685",
+      "observed": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "font-delivery-validation",
+      "expected": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685",
+      "observed": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "font-delivery-validation",
+      "expected": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685",
+      "observed": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "route-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/route-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "route-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "route-validation",
+      "expected": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b",
+      "observed": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "route-validation",
+      "expected": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b",
+      "observed": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "route-validation",
+      "expected": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b",
+      "observed": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "handoff-validation",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/handoff-validation.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "handoff-validation"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "handoff-validation",
+      "expected": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf",
+      "observed": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "handoff-validation",
+      "expected": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf",
+      "observed": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "handoff-validation",
+      "expected": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf",
+      "observed": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf"
+    },
+    {
+      "code": "child_report_present",
+      "status": "passed",
+      "message": "indexed required child report must exist",
+      "report_type": "visual-comparison",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-comparison.json",
+      "required": true
+    },
+    {
+      "code": "child_evidence_present",
+      "status": "passed",
+      "message": "every indexed child report must appear in aggregate evidence",
+      "report_type": "visual-comparison"
+    },
+    {
+      "code": "child_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child evidence must match the current child report",
+      "report_type": "visual-comparison",
+      "expected": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f",
+      "observed": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f"
+    },
+    {
+      "code": "child_source_hash_fresh",
+      "status": "passed",
+      "message": "aggregate child source reference must match the current child report",
+      "report_type": "visual-comparison",
+      "expected": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f",
+      "observed": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f"
+    },
+    {
+      "code": "child_input_hash_fresh",
+      "status": "passed",
+      "message": "aggregate input_hashes must match the current child report",
+      "report_type": "visual-comparison",
+      "expected": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f",
+      "observed": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f"
+    },
+    {
+      "code": "aggregate_index_path_consistent",
+      "status": "passed",
+      "message": "aggregate must point to the supplied report index",
+      "expected": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json",
+      "observed": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json"
+    },
+    {
+      "code": "aggregate_index_present",
+      "status": "passed",
+      "message": "aggregate report index path must exist",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json"
+    },
+    {
+      "code": "report_index_hash_format",
+      "status": "passed",
+      "message": "aggregate report_index_sha256 must be a lowercase SHA-256",
+      "observed": "f64dbb4ba556df87b41e492a4ac052733d36a3462b4dcb790402fbea0e9839e1"
+    },
+    {
+      "code": "report_index_hash_fresh",
+      "status": "passed",
+      "message": "aggregate must describe the current report index",
+      "expected": "f64dbb4ba556df87b41e492a4ac052733d36a3462b4dcb790402fbea0e9839e1",
+      "observed": "f64dbb4ba556df87b41e492a4ac052733d36a3462b4dcb790402fbea0e9839e1"
+    },
+    {
+      "code": "pipeline_deck_source",
+      "status": "passed",
+      "message": "pipeline source references must include the current deck"
+    },
+    {
+      "code": "index_deck_source",
+      "status": "passed",
+      "message": "report index source references must include the current deck"
+    },
+    {
+      "code": "aggregate_deck_source",
+      "status": "passed",
+      "message": "aggregate source references must include the current deck"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "environment"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "inspection"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "render"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "render-visual-gate"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "manifest-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "project-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "manifest-registry-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "object-manifest-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "editable-object-audit"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "semantic-object-audit"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "panel-assets-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "text-style-map-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "text-layout-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "imagegen-assets-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "icon-assets-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "icon-layer-audit"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "layout-guard"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "visual-compare-qa"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "font"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "font-asset-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "font-delivery-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "route-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "handoff-validation"
+    },
+    {
+      "code": "aggregate_child_source",
+      "status": "passed",
+      "message": "aggregate source references must retain each child source",
+      "report_type": "visual-comparison"
+    },
+    {
+      "code": "failed_step_name_present",
+      "status": "passed",
+      "message": "every failed pipeline step must have a name"
+    },
+    {
+      "code": "failed_steps_complete",
+      "status": "passed",
+      "message": "failed_steps must list every failed pipeline step",
+      "expected": [],
+      "observed": []
+    },
+    {
+      "code": "technical_failed_steps_complete",
+      "status": "passed",
+      "message": "technical_failed_steps must not hide a failed technical step",
+      "expected": [],
+      "observed": []
+    },
+    {
+      "code": "technical_truth_alias",
+      "status": "passed",
+      "message": "pipeline valid must equal technical_valid"
+    },
+    {
+      "code": "pipeline_status_consistent",
+      "status": "passed",
+      "message": "pipeline status must match technical_valid",
+      "expected": "passed",
+      "observed": "passed"
+    },
+    {
+      "code": "aggregate_step_truth",
+      "status": "passed",
+      "message": "a passing aggregate cannot have a failed aggregate step"
+    },
+    {
+      "code": "aggregate_truth_alias",
+      "status": "passed",
+      "message": "aggregate valid must equal technical_valid"
+    },
+    {
+      "code": "aggregate_release_honesty",
+      "status": "passed",
+      "message": "project aggregate must not claim release eligibility before final release gates"
+    },
+    {
+      "code": "aggregate_completion_honesty",
+      "status": "passed",
+      "message": "project aggregate must not claim human closeout completion"
+    },
+    {
+      "code": "review_html_present",
+      "status": "passed",
+      "message": "requested review HTML must exist",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/review.html"
+    },
+    {
+      "code": "review_status_consistent",
+      "status": "passed",
+      "message": "review HTML must display the pipeline status",
+      "label": "技术通过"
+    },
+    {
+      "code": "review_status_consistent",
+      "status": "passed",
+      "message": "review HTML must display the pipeline status",
+      "label": "未放行"
+    },
+    {
+      "code": "review_status_consistent",
+      "status": "passed",
+      "message": "review HTML must display the pipeline status",
+      "label": "人工待审"
+    }
+  ],
+  "issues": [],
+  "source_references": [
+    {
+      "source_id": "deck",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+      "sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "source_id": "report-index",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json",
+      "sha256": "f64dbb4ba556df87b41e492a4ac052733d36a3462b4dcb790402fbea0e9839e1"
+    },
+    {
+      "source_id": "project-report",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json",
+      "sha256": "ff43caba15b294e24d09a28aee563342e5220394a3eeedba09fcc618b3eb8cac"
+    },
+    {
+      "source_id": "pipeline-result",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/pipeline-result.json",
+      "sha256": "ffa2ed949a18aca53764ddccfc1a6693c2155009356238e7bce078fbea9fbef1"
+    },
+    {
+      "source_id": "review-html",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/review.html",
+      "sha256": "9365655ace41dd2584435539668d479c3dfb8b1fd32fb34c9e095b776745d58a"
+    }
+  ]
+}

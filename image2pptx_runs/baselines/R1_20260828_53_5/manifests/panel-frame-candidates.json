@@ -1,0 +1,28 @@
+{
+  "schema": "ai-ppt-plus/panel-candidates/v1",
+  "source": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/frame_1536.png",
+  "source_size": [1536, 864],
+  "analysis_size": [1536, 864],
+  "inference": {
+    "rows": 2,
+    "columns": 3,
+    "rows_hint": 2,
+    "columns_hint": 3,
+    "used_assumed_grid": false,
+    "basis": "visual-review-of-generated-frame"
+  },
+  "status": "needs-human-confirmation",
+  "candidates": [
+    {"candidate_id": "panel-01", "source_bbox": [40, 208, 484, 329], "row": 1, "column": 1, "confidence": 0.98},
+    {"candidate_id": "panel-02", "source_bbox": [539, 208, 386, 329], "row": 1, "column": 2, "confidence": 0.98},
+    {"candidate_id": "panel-03", "source_bbox": [938, 208, 553, 329], "row": 1, "column": 3, "confidence": 0.98},
+    {"candidate_id": "panel-04", "source_bbox": [40, 549, 484, 246], "row": 2, "column": 1, "confidence": 0.98},
+    {"candidate_id": "panel-05", "source_bbox": [543, 553, 461, 242], "row": 2, "column": 2, "confidence": 0.98},
+    {"candidate_id": "panel-06", "source_bbox": [1021, 555, 470, 240], "row": 2, "column": 3, "confidence": 0.98}
+  ],
+  "human_review": [
+    "generated frame contains no formal text or icon pixels",
+    "bboxes were checked against the six visible source panel borders",
+    "each panel is independent; no whole-frame panel entry is used"
+  ]
+}

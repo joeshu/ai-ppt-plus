@@ -1,0 +1,64 @@
+{
+  "schema": "ai-ppt-plus/font-delivery-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-08-28T12:47:36.678458+00:00",
+  "profile": "portable",
+  "declared_font": {
+    "pass": true,
+    "families": [
+      "Noto Sans CJK SC",
+      "Noto Sans SC",
+      "WenQuanYi Zen Hei"
+    ]
+  },
+  "resolved_font": {
+    "pass": true,
+    "families": [
+      "Noto Sans CJK SC"
+    ],
+    "cjk_delivery_supported": true
+  },
+  "render_visible": {
+    "pass": true,
+    "rendered_pages": 1,
+    "visible_pages": 1
+  },
+  "embedded_font": {
+    "pass": true,
+    "required": false,
+    "evidence": {
+      "present": true,
+      "declared": true,
+      "parts": [
+        "ppt/fonts/font1.fntdata"
+      ],
+      "declared_relationship_ids": [
+        "rId9"
+      ],
+      "resolved_parts": [
+        "ppt/fonts/font1.fntdata"
+      ],
+      "part_evidence": [
+        {
+          "path": "ppt/fonts/font1.fntdata",
+          "valid": true,
+          "version": "0x20001",
+          "eot_size": 16437642,
+          "font_data_size": 16437364,
+          "font_data_offset": 278,
+          "font_data_signature": "4f54544f",
+          "issues": []
+        }
+      ],
+      "content_types": {
+        "ppt/fonts/font1.fntdata": "application/x-fontdata"
+      },
+      "invalid_content_types": {},
+      "missing_relationship_ids": [],
+      "missing_parts": [],
+      "orphan_parts": []
+    }
+  },
+  "issues": []
+}

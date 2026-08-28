@@ -1,0 +1,14 @@
+{
+  "schema": "ai-ppt-plus/text-layout-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "strict": true,
+  "text_count": 25,
+  "run_count": 36,
+  "issues": [],
+  "warnings": [],
+  "slides": 1,
+  "text_manifest_schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "input": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/text-layout-manifest.json",
+  "content_manifest_sha256": "73ad94e30dcac9b7dcf15e19d06e1cd248ed5bcf163a4ecd84fc45e12de4d4dd"
+}

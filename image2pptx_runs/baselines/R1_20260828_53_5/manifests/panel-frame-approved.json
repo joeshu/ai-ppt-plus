@@ -1,0 +1,112 @@
+{
+  "schema": "ai-ppt-plus/panel-assets/v1",
+  "status": "approved",
+  "source": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/frame_1536.png",
+  "source_size": [
+    1536,
+    864
+  ],
+  "source_sha256": "de2c05ad5f98c5324212cc4c2b9e6b01348d901a181d3dba0a4bfb8c6e5daa48",
+  "whole_frame": false,
+  "approval": {
+    "reviewer": "codex-visual-review",
+    "approved_at": "2026-08-28T12:05:00Z",
+    "revision": "R1_20260828_53_5",
+    "candidate_manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/panel-frame-candidates.json",
+    "candidate_manifest_sha256": "49aacd42304638e03b11b59e19f33b86748b5b0c586e2fee68c957c10ceb1666",
+    "excluded_candidate_ids": [],
+    "corrected_candidate_ids": []
+  },
+  "panels": [
+    {
+      "panel_id": "panel-01",
+      "file": "panel-01.png",
+      "source_bbox": [
+        40,
+        208,
+        484,
+        329
+      ],
+      "treatment": "transparent-image",
+      "formal_text_baked_in": false,
+      "candidate_id": "panel-01",
+      "candidate_confidence": 0.98,
+      "human_corrected": false
+    },
+    {
+      "panel_id": "panel-02",
+      "file": "panel-02.png",
+      "source_bbox": [
+        539,
+        208,
+        386,
+        329
+      ],
+      "treatment": "transparent-image",
+      "formal_text_baked_in": false,
+      "candidate_id": "panel-02",
+      "candidate_confidence": 0.98,
+      "human_corrected": false
+    },
+    {
+      "panel_id": "panel-03",
+      "file": "panel-03.png",
+      "source_bbox": [
+        938,
+        208,
+        553,
+        329
+      ],
+      "treatment": "transparent-image",
+      "formal_text_baked_in": false,
+      "candidate_id": "panel-03",
+      "candidate_confidence": 0.98,
+      "human_corrected": false
+    },
+    {
+      "panel_id": "panel-04",
+      "file": "panel-04.png",
+      "source_bbox": [
+        40,
+        549,
+        484,
+        246
+      ],
+      "treatment": "transparent-image",
+      "formal_text_baked_in": false,
+      "candidate_id": "panel-04",
+      "candidate_confidence": 0.98,
+      "human_corrected": false
+    },
+    {
+      "panel_id": "panel-05",
+      "file": "panel-05.png",
+      "source_bbox": [
+        543,
+        553,
+        461,
+        242
+      ],
+      "treatment": "transparent-image",
+      "formal_text_baked_in": false,
+      "candidate_id": "panel-05",
+      "candidate_confidence": 0.98,
+      "human_corrected": false
+    },
+    {
+      "panel_id": "panel-06",
+      "file": "panel-06.png",
+      "source_bbox": [
+        1021,
+        555,
+        470,
+        240
+      ],
+      "treatment": "transparent-image",
+      "formal_text_baked_in": false,
+      "candidate_id": "panel-06",
+      "candidate_confidence": 0.98,
+      "human_corrected": false
+    }
+  ]
+}

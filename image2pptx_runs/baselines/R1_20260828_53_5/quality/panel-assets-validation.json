@@ -1,0 +1,9 @@
+{
+  "schema": "ai-ppt-plus/panel-assets-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "panel_count": 6,
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

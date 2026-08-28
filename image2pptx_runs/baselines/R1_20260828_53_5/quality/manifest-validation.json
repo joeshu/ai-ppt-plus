@@ -1,0 +1,38 @@
+{
+  "schema": "ai-ppt-plus/manifest-validation/v1",
+  "manifest_path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-manifest.json",
+  "manifest_sha256": "649bb4d8f444eb051668d0f4f7c6330e91d042888bdbe6c122542d9e3c88ca45",
+  "kind": "slide",
+  "valid": true,
+  "items": 1,
+  "issues": [],
+  "warnings": [],
+  "editability_protocol": "L0-L5/v1",
+  "editability": [
+    {
+      "slide_no": 1,
+      "status": "typed",
+      "summary": {
+        "object_count": 44,
+        "counts_by_level": {
+          "L0": 0,
+          "L1": 26,
+          "L2": 11,
+          "L3": 7,
+          "L4": 0,
+          "L5": 0
+        },
+        "primary_level": "L3",
+        "fully_editable_object_count": 26,
+        "raster_object_count": 18,
+        "placeholder_count": 0,
+        "blocked_object_count": 0,
+        "fully_editable_ratio": 0.5909,
+        "human_review_required": true,
+        "formal_content_rasterized": false,
+        "delivery_decision": "human-confirmation-required"
+      },
+      "issues": []
+    }
+  ]
+}

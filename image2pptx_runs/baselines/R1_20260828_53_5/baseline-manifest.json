@@ -1,0 +1,824 @@
+{
+  "schema": "ai-ppt-plus/baseline/v1",
+  "revision": "R1_20260828_53_5",
+  "source_case": "存量双终端优秀案例（手机+FTTR）/53(5).jpeg",
+  "status": "frozen",
+  "immutable": true,
+  "created_at": "2026-08-28T13:31:20.542570+00:00",
+  "artifact_count": 89,
+  "artifacts": [
+    {
+      "path": "assets/background_gen.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/background_gen.png"
+      },
+      "sha256": "3f3635257613e91ff27d43593246dd9a3dacbf3e95886b781b1339e05bee25c2",
+      "size": 918513
+    },
+    {
+      "path": "assets/frame.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/frame.png"
+      },
+      "sha256": "7634994e967f72dded13e4f1d274c6f45b516238ec8715e2f0427a8441fafe99",
+      "size": 1445657
+    },
+    {
+      "path": "assets/frame_1536.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/frame_1536.png"
+      },
+      "sha256": "de2c05ad5f98c5324212cc4c2b9e6b01348d901a181d3dba0a4bfb8c6e5daa48",
+      "size": 792104
+    },
+    {
+      "path": "assets/frame_raw.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/frame_raw.png"
+      },
+      "sha256": "8d11021231a6a6b9a1309bb2746cec4a34b12d051124f9aaf63698ef0ddb5d83",
+      "size": 894235
+    },
+    {
+      "path": "assets/icons/ic_r1c1.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r1c1.png"
+      },
+      "sha256": "1d6cf65084aed50e624c07155e9a01dc6194e6f3622c1e111c08ae473c82dd54",
+      "size": 284682
+    },
+    {
+      "path": "assets/icons/ic_r1c2.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r1c2.png"
+      },
+      "sha256": "f9f644fb609cd3319c2aca5b766ab921366cbe12c8e11bfeae046a29d466f944",
+      "size": 120804
+    },
+    {
+      "path": "assets/icons/ic_r1c3.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r1c3.png"
+      },
+      "sha256": "6b9bad4d1934f93810696a4762846f27a2964ae717babb21b86943a2e4f2fce3",
+      "size": 240690
+    },
+    {
+      "path": "assets/icons/ic_r2c1.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r2c1.png"
+      },
+      "sha256": "f77cdeb5c7c40783d73b07d4a41577cab1fac781144dd1fbb45a0e422f4c82f9",
+      "size": 97126
+    },
+    {
+      "path": "assets/icons/ic_r2c2.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r2c2.png"
+      },
+      "sha256": "6700810547d8fdf644517857064a7e56ca9fb952dd9eb4036d70123f20537dc8",
+      "size": 106078
+    },
+    {
+      "path": "assets/icons/ic_r2c3.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r2c3.png"
+      },
+      "sha256": "d0b2ebbd3a45d719b753f784a92a8fa2e667b2c6d6d417bc3f3d50d77cf4dc72",
+      "size": 98531
+    },
+    {
+      "path": "assets/icons/ic_r2c4.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r2c4.png"
+      },
+      "sha256": "f0f6a2536768dd897e05a736e1ec0c8dc5b966db8790b312fe28ad441c0415f4",
+      "size": 48633
+    },
+    {
+      "path": "assets/icons/ic_r2c5.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r2c5.png"
+      },
+      "sha256": "fe8825056afc16ca490452b1216303e488b1f179393684659556c7fa6d74e658",
+      "size": 96216
+    },
+    {
+      "path": "assets/icons/ic_r2c6.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r2c6.png"
+      },
+      "sha256": "000637841cbfa06d515d3943a325be0439b588c6662378379d86ceb50e45d385",
+      "size": 87721
+    },
+    {
+      "path": "assets/icons/ic_r3c1.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/ic_r3c1.png"
+      },
+      "sha256": "e8b6343c3c3c92f82048b3e6e09d8ca261e72ed86d5ef70fb54b72e274f53d4b",
+      "size": 248237
+    },
+    {
+      "path": "assets/icons/icons_contact_sheet.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/icons_contact_sheet.png"
+      },
+      "sha256": "3d41c6edbb4e131a7c1d4091c57d5e156a2f1187fbcb5f33791547ce3bfef26f",
+      "size": 180652
+    },
+    {
+      "path": "assets/icons/icons_manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/icons_manifest.json"
+      },
+      "sha256": "800301d832f00d68f79c5f1e9a125be4692f636736aa8b5d0ae1893b47d24db3",
+      "size": 3587
+    },
+    {
+      "path": "assets/icons_raw_1.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons_raw_1.png"
+      },
+      "sha256": "835868bffd8346a463b47b7cb66f443df3981fb4e04f94d84fb7cbfc0912dfb2",
+      "size": 1193031
+    },
+    {
+      "path": "assets/icons_t_1.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons_t_1.png"
+      },
+      "sha256": "e43a581467db854b941b9cbf1c3e954de927883a69da56f579bd9250ece091fe",
+      "size": 2248386
+    },
+    {
+      "path": "assets/panels/panel-01.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/panels/panel-01.png"
+      },
+      "sha256": "745a3c5893ac41cc0a4598518734972342d5c6dec9dea030114cbf815cbb5555",
+      "size": 99356
+    },
+    {
+      "path": "assets/panels/panel-02.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/panels/panel-02.png"
+      },
+      "sha256": "64d5e85a8c99d4e81f151088b2d9d01f80ab1e5c1acc41693bbcb8ced4bad08d",
+      "size": 79211
+    },
+    {
+      "path": "assets/panels/panel-03.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/panels/panel-03.png"
+      },
+      "sha256": "47e849e9b4305e40bfa39ea1279a1927298b654f554a1fd4f4846b3225f77dfa",
+      "size": 111876
+    },
+    {
+      "path": "assets/panels/panel-04.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/panels/panel-04.png"
+      },
+      "sha256": "5a853e2ceceab4811fa1e91bc2acbffc62b349e4b866e25aa985d35c6a79bf0a",
+      "size": 70097
+    },
+    {
+      "path": "assets/panels/panel-05.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/panels/panel-05.png"
+      },
+      "sha256": "682680ef84d798adb238785d2118cffee04f9f6bee8edd94d98368c25087495a",
+      "size": 68556
+    },
+    {
+      "path": "assets/panels/panel-06.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/panels/panel-06.png"
+      },
+      "sha256": "b5d5f24bc1e607d0b68abcfe496bdab42c3b614fd898b32435c7e43b17e5278f",
+      "size": 69639
+    },
+    {
+      "path": "deck/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx"
+      },
+      "sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+      "size": 17887779
+    },
+    {
+      "path": "fonts/NotoSansCJKsc-Regular.otf",
+      "source": {
+        "scope": "root",
+        "path": "project-fonts/NotoSansCJKsc-Regular.otf"
+      },
+      "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+      "size": 16437364
+    },
+    {
+      "path": "fonts/font-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "project-fonts/font-manifest.json"
+      },
+      "sha256": "357bc25fd873ba2f43bfe4ad275a484559e2abc744384dabfc59c30236370aa5",
+      "size": 447
+    },
+    {
+      "path": "manifests/b1-palette.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/b1-palette.json"
+      },
+      "sha256": "1511e659a97bdad7d9f6372c705f64a478d0dff0eaca539bb42d33b944824de8",
+      "size": 342
+    },
+    {
+      "path": "manifests/evidence-regions.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/evidence-regions.json"
+      },
+      "sha256": "7b6df4042952eeb24ed09a494b2bf0c506442e439b6ac1fbf1cdb187457fec8e",
+      "size": 2022
+    },
+    {
+      "path": "manifests/handoff.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/handoff.json"
+      },
+      "sha256": "64fc74de08ba107e6fc4798561138bbb06e74caaee4cac8291f037e92510053f",
+      "size": 2151
+    },
+    {
+      "path": "manifests/icon-asset-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/icon-asset-manifest.json"
+      },
+      "sha256": "7ef19007bada3e712b25eb63290e79f26b05ec7c9309dd5f17225f3c60411677",
+      "size": 8553
+    },
+    {
+      "path": "manifests/icons-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/assets/icons/icons_manifest.json"
+      },
+      "sha256": "800301d832f00d68f79c5f1e9a125be4692f636736aa8b5d0ae1893b47d24db3",
+      "size": 3587
+    },
+    {
+      "path": "manifests/imagegen-assets-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/imagegen-assets-manifest.json"
+      },
+      "sha256": "1c7e41d5362d09a42cae6e31bf65be2239979322bc45d9bc1cc2457dcfbf9afa",
+      "size": 1343
+    },
+    {
+      "path": "manifests/issue-log.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/issue-log.json"
+      },
+      "sha256": "bea49ad4da2cc2c1e1d3524c42f95883bf3e93b83f1cf5cea1fab08faf96a781",
+      "size": 5337
+    },
+    {
+      "path": "manifests/layout.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/layout.json"
+      },
+      "sha256": "d8edc39fa2a5b5b9c6623875722cb661851ccdf00fdf94ec75b55260c576104d",
+      "size": 28943
+    },
+    {
+      "path": "manifests/manifest-registry.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/manifest-registry.json"
+      },
+      "sha256": "915185dabeeb92d0d2288d904958f465cb9fa773316fc5c58b7625a9275f00a1",
+      "size": 173689
+    },
+    {
+      "path": "manifests/panel-asset-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/panel-asset-manifest.json"
+      },
+      "sha256": "a94b50f36c471c516d2b7fa52679862588483e58318f19288796da74a3bebefc",
+      "size": 3222
+    },
+    {
+      "path": "manifests/panel-candidates.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/panel-candidates.json"
+      },
+      "sha256": "9f007aeedeac0bb965e4406ff60a503dc107fd71d9a1b697207b94dbfb0a2a47",
+      "size": 2590
+    },
+    {
+      "path": "manifests/panel-frame-approved.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/panel-frame-approved.json"
+      },
+      "sha256": "b1d0de8612ae69898248bdf68f8e1c2b7cf3a406806f71bec38cc41496746ed1",
+      "size": 2802
+    },
+    {
+      "path": "manifests/panel-frame-candidates.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/panel-frame-candidates.json"
+      },
+      "sha256": "49aacd42304638e03b11b59e19f33b86748b5b0c586e2fee68c957c10ceb1666",
+      "size": 1377
+    },
+    {
+      "path": "manifests/prompts/B2_background.txt",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/prompts/B2_background.txt"
+      },
+      "sha256": "bef37ea0ae1f058e112f2ca1ba2ca6db40fbf06409dd149915943808a973cc7f",
+      "size": 849
+    },
+    {
+      "path": "manifests/prompts/B3_frame.txt",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/prompts/B3_frame.txt"
+      },
+      "sha256": "a7560cac1a10efc82bea722a560c6a3176dcfb61b589d1f021b07cc46fd707e2",
+      "size": 1003
+    },
+    {
+      "path": "manifests/prompts/B4_assets.txt",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/prompts/B4_assets.txt"
+      },
+      "sha256": "d73d6c07bffbdadf7d565c89d63c0642c6724e0858a65961103a36168016564f",
+      "size": 1067
+    },
+    {
+      "path": "manifests/regions.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/regions.json"
+      },
+      "sha256": "ce94a81f452dd550eeb5f73086c8820fe9626b7ecce616642a4799546cb69bf3",
+      "size": 2049
+    },
+    {
+      "path": "manifests/registry-frame-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/registry-frame-manifest.json"
+      },
+      "sha256": "8640e86f83628bc1afd9d602168e3ab418050d1ada387512b59d63f1613163d1",
+      "size": 341
+    },
+    {
+      "path": "manifests/slide-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/slide-manifest.json"
+      },
+      "sha256": "649bb4d8f444eb051668d0f4f7c6330e91d042888bdbe6c122542d9e3c88ca45",
+      "size": 69110
+    },
+    {
+      "path": "manifests/slide-object-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/slide-object-manifest.json"
+      },
+      "sha256": "6064d320baa24eca9e53dc048c5ad79a60debe3b6fb9d2c742f1bf2aa853908d",
+      "size": 66926
+    },
+    {
+      "path": "manifests/text-layout-manifest.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/text-layout-manifest.json"
+      },
+      "sha256": "7885b51f69dd6404e8e7c140ef8d0ee4054bfdf339b24ea1b8e418a63224c705",
+      "size": 41637
+    },
+    {
+      "path": "manifests/validation-report.json",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/validation-report.json"
+      },
+      "sha256": "aed06fb2e70252af19fcb83e55febf5f3896fb4d8168dde413ce02774fdac6f4",
+      "size": 792
+    },
+    {
+      "path": "preview/final-render-patched-slide-1.png",
+      "source": {
+        "scope": "root",
+        "path": "editable/01/qa-visual/final-render-patched/slide-1.png"
+      },
+      "sha256": "103120e28a5d8323faf729f458e691c2607a30018d227d07318b8f9382e7fbb5",
+      "size": 1113483
+    },
+    {
+      "path": "project/deck-brief.md",
+      "source": {
+        "scope": "root",
+        "path": "deck-brief.md"
+      },
+      "sha256": "5a00c1151dfce16440aa4e54334c226af310db867abf98b750305d75d6fc47a7",
+      "size": 1413
+    },
+    {
+      "path": "project/design-system.yaml",
+      "source": {
+        "scope": "root",
+        "path": "design-system.yaml"
+      },
+      "sha256": "885e7456af9d20f8ced505cc70c6f0e11fb03dd4be1e3793f51ff23bfc94a201",
+      "size": 781
+    },
+    {
+      "path": "project/outline.csv",
+      "source": {
+        "scope": "root",
+        "path": "outline.csv"
+      },
+      "sha256": "ae49d52b9c76a20ea9bb0b37f02bea3faa182d4b59189a83e7a2e9e20af07648",
+      "size": 3348
+    },
+    {
+      "path": "project/route-decision.json",
+      "source": {
+        "scope": "root",
+        "path": "route-decision.json"
+      },
+      "sha256": "c71e9dc7cd01c88c0e51d2e6746e95279f9b63d587f6a83b25566e854a42c80d",
+      "size": 894
+    },
+    {
+      "path": "project/source-analysis.json",
+      "source": {
+        "scope": "root",
+        "path": "source/source-analysis.json"
+      },
+      "sha256": "110b2fabe682c3e786772d38aebb6e3f7bef017f68ce758c410c574cbbcb0584",
+      "size": 52750
+    },
+    {
+      "path": "project/source-inventory.json",
+      "source": {
+        "scope": "root",
+        "path": "source-inventory.json"
+      },
+      "sha256": "fb21ea18437be3f4a1dafc70d228068f45fad2aba64c35aee27fd4f20b730c94",
+      "size": 781
+    },
+    {
+      "path": "quality/editable-object-audit.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/editable-object-audit.json"
+      },
+      "sha256": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751",
+      "size": 14021
+    },
+    {
+      "path": "quality/font-asset-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/font-asset-validation.json"
+      },
+      "sha256": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018",
+      "size": 990
+    },
+    {
+      "path": "quality/font-delivery-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/font-delivery-validation.json"
+      },
+      "sha256": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685",
+      "size": 1431
+    },
+    {
+      "path": "quality/font-report.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/font-report.json"
+      },
+      "sha256": "8d69a1b03dfcf90237ec6779da7a197f8c7d97dae167ee3598dec7032688a9d8",
+      "size": 1490
+    },
+    {
+      "path": "quality/handoff-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/handoff-validation.json"
+      },
+      "sha256": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf",
+      "size": 304
+    },
+    {
+      "path": "quality/icon-assets-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/icon-assets-validation.json"
+      },
+      "sha256": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de",
+      "size": 309
+    },
+    {
+      "path": "quality/imagegen-assets-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/imagegen-assets-validation.json"
+      },
+      "sha256": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f",
+      "size": 299
+    },
+    {
+      "path": "quality/inspection.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/inspection.json"
+      },
+      "sha256": "ed2524cd1d96bfb7297fd47466eccc142c30484ae2d28d692f4a80bba9ea1fc0",
+      "size": 2171
+    },
+    {
+      "path": "quality/layout-guard.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/layout-guard.json"
+      },
+      "sha256": "26c3979399392eb297f66c06ef74e2d65dd84f74599a951975e796b4247b1bb8",
+      "size": 409
+    },
+    {
+      "path": "quality/manifest-registry-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/manifest-registry-validation.json"
+      },
+      "sha256": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe",
+      "size": 4834
+    },
+    {
+      "path": "quality/manifest-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/manifest-validation.json"
+      },
+      "sha256": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16",
+      "size": 1053
+    },
+    {
+      "path": "quality/object-manifest-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/object-manifest-validation.json"
+      },
+      "sha256": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d",
+      "size": 1104
+    },
+    {
+      "path": "quality/panel-assets-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/panel-assets-validation.json"
+      },
+      "sha256": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043",
+      "size": 190
+    },
+    {
+      "path": "quality/pipeline-result.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/pipeline-result.json"
+      },
+      "sha256": "ffa2ed949a18aca53764ddccfc1a6693c2155009356238e7bce078fbea9fbef1",
+      "size": 60552
+    },
+    {
+      "path": "quality/project-report.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/project-report.json"
+      },
+      "sha256": "ff43caba15b294e24d09a28aee563342e5220394a3eeedba09fcc618b3eb8cac",
+      "size": 36559
+    },
+    {
+      "path": "quality/project-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/project-validation.json"
+      },
+      "sha256": "c557494c5a116a0541413f4293cf7a38867d87b81e256e5dcf067a4aa215a7bd",
+      "size": 3889
+    },
+    {
+      "path": "quality/render-report.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/render-report.json"
+      },
+      "sha256": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76",
+      "size": 1321
+    },
+    {
+      "path": "quality/render-visual-gate.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/render-visual-gate.json"
+      },
+      "sha256": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994",
+      "size": 655
+    },
+    {
+      "path": "quality/report-bundle-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/report-bundle-validation.json"
+      },
+      "sha256": "e6964175e82d058f367e4f2d37209f392bb387bd3b1b75218f23499a84704c3f",
+      "size": 58604
+    },
+    {
+      "path": "quality/report-index.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/report-index.json"
+      },
+      "sha256": "f64dbb4ba556df87b41e492a4ac052733d36a3462b4dcb790402fbea0e9839e1",
+      "size": 4840
+    },
+    {
+      "path": "quality/route-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/route-validation.json"
+      },
+      "sha256": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b",
+      "size": 926
+    },
+    {
+      "path": "quality/semantic-object-audit.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/semantic-object-audit.json"
+      },
+      "sha256": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7",
+      "size": 48215
+    },
+    {
+      "path": "quality/source-image-validation-final.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/source-image-validation-final.json"
+      },
+      "sha256": "b51a6a0f94ee444da7c3a0a71850e172a461bd686090291b21368b9a1aff15a1",
+      "size": 543
+    },
+    {
+      "path": "quality/text-layout-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/text-layout-validation.json"
+      },
+      "sha256": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443",
+      "size": 481
+    },
+    {
+      "path": "quality/text-style-map-validation.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/text-style-map-validation.json"
+      },
+      "sha256": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2",
+      "size": 212
+    },
+    {
+      "path": "quality/visual-comparison.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/visual-comparison.json"
+      },
+      "sha256": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f",
+      "size": 854
+    },
+    {
+      "path": "quality/visual-qa/blend.png",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/visual-qa/blend.png"
+      },
+      "sha256": "febda9920f8d9929cee653fcb67d99980d27d62a4bfda044d7196f34365da526",
+      "size": 2116514
+    },
+    {
+      "path": "quality/visual-qa/diff_heatmap.png",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/visual-qa/diff_heatmap.png"
+      },
+      "sha256": "af81a8ac2110a2e749d5102183b90a65d036066aae9cf57e5d6a02c23dbb0efb",
+      "size": 2518068
+    },
+    {
+      "path": "quality/visual-qa/preview.png",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/visual-qa/preview.png"
+      },
+      "sha256": "cd3972b6df72410c2130ea892ab530f7a93d3ce91e84d00e056984506f76b71f",
+      "size": 1171999
+    },
+    {
+      "path": "quality/visual-qa/report.json",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/visual-qa/report.json"
+      },
+      "sha256": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9",
+      "size": 1428
+    },
+    {
+      "path": "quality/visual-qa/side_by_side.png",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/visual-qa/side_by_side.png"
+      },
+      "sha256": "e38b44aa849bdbe2ae11b06c0b7dcf651b22a3aa39d77b33ff085ee4724bfd1c",
+      "size": 3287380
+    },
+    {
+      "path": "quality/visual-qa/source_resized.png",
+      "source": {
+        "scope": "root",
+        "path": "reports/pipeline-final-r3/visual-qa/source_resized.png"
+      },
+      "sha256": "494b95640770274befe1670f158a8044ca6501b44359360d2a2d9ec4b2b080c3",
+      "size": 2054961
+    },
+    {
+      "path": "source/reference-01.jpeg",
+      "source": {
+        "scope": "root",
+        "path": "source/reference-01.jpeg"
+      },
+      "sha256": "a7392cd8a0da177a9dd57e72bf76929a66b366036ff6c20d1cd8c35ab107e6a5",
+      "size": 530208
+    }
+  ],
+  "excluded_revisions": [
+    "panel-04/icon pre-repair artifacts",
+    "render-retry and selected preview experiments",
+    "malformed normalized PNG attempt"
+  ],
+  "known_open_issues": [
+    "ISSUE-R1-004: literal **元 remains preserved in source-faithful text; human confirmation is pending",
+    "ISSUE-R1-002: chi_sim OCR language data unavailable; visual transcription requires human confirmation",
+    "Human/WPS closeout signoff is pending; frozen baseline is technical, not release signoff"
+  ],
+  "checksum_file": "SHA256SUMS",
+  "verification": "python scripts/revision_guard.py verify <baseline-dir>"
+}

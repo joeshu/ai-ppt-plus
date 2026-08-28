@@ -1,0 +1,14 @@
+{
+  "schema": "ai-ppt-plus/asset-manifest/v1",
+  "assets": [
+    {
+      "asset_id": "frame",
+      "role": "frame",
+      "source_ref": "../../source/reference-01.jpeg#panel-frame",
+      "asset_path": "assets/frame.png",
+      "editability_level": "L2",
+      "required_for_delivery": true,
+      "validation_status": "passed"
+    }
+  ]
+}

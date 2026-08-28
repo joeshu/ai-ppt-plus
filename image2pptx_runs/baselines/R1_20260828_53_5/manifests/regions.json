@@ -1,0 +1,27 @@
+{
+  "schema": "ai-ppt-plus/regions/v1",
+  "source": "../../source/reference-01.jpeg",
+  "source_size": [1536, 864],
+  "regions": [
+    {"region_id": "header", "bbox": [0, 0, 1536, 96], "object_id": "frame"},
+    {"region_id": "brand-logo", "bbox": [25, 18, 205, 62], "object_id": "brand-logo"},
+    {"region_id": "title", "bbox": [298, 18, 900, 56], "object_id": "title"},
+    {"region_id": "product-visuals", "bbox": [1115, 22, 380, 190], "object_id": "product-fttr"},
+    {"region_id": "overview-badge", "bbox": [40, 111, 100, 58], "object_id": "overview-badge"},
+    {"region_id": "overview-text", "bbox": [160, 111, 1320, 75], "object_id": "overview-line-1"},
+    {"region_id": "panel-01", "bbox": [40, 208, 484, 329], "object_id": "panel-01", "independent": true},
+    {"region_id": "panel-02", "bbox": [539, 208, 386, 329], "object_id": "panel-02", "independent": true},
+    {"region_id": "panel-03", "bbox": [938, 208, 553, 329], "object_id": "panel-03", "independent": true},
+    {"region_id": "panel-04", "bbox": [40, 549, 484, 246], "object_id": "panel-04", "independent": true},
+    {"region_id": "panel-05", "bbox": [543, 553, 461, 242], "object_id": "panel-05", "independent": true},
+    {"region_id": "panel-06", "bbox": [1021, 555, 470, 240], "object_id": "panel-06", "independent": true},
+    {"region_id": "panel-01-body", "bbox": [55, 272, 455, 254], "object_id": "p1-body"},
+    {"region_id": "panel-02-body", "bbox": [555, 272, 357, 245], "object_id": "p2-body"},
+    {"region_id": "panel-03-body", "bbox": [960, 274, 510, 247], "object_id": "p3-body"},
+    {"region_id": "panel-04-body", "bbox": [55, 606, 455, 184], "object_id": "p4-body"},
+    {"region_id": "panel-05-body", "bbox": [558, 638, 260, 125], "object_id": "p5-body"},
+    {"region_id": "panel-05-illustration", "bbox": [836, 630, 147, 134], "object_id": "interview-illustration"},
+    {"region_id": "panel-06-body", "bbox": [1038, 606, 440, 180], "object_id": "p6-body"},
+    {"region_id": "footer", "bbox": [0, 815, 1536, 49], "object_id": "footer-slogan"}
+  ]
+}

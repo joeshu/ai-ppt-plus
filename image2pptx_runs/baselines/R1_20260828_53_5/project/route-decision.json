@@ -1,0 +1,20 @@
+{
+  "schema": "ai-ppt-plus/route-decision/v1",
+  "project_id": "unicom-dual-terminal-case-53-5",
+  "route": "reference-reconstruction",
+  "status": "decided",
+  "visual_authority": "approved_reference_image",
+  "formal_content_authority": "transcription_pending_confirmation",
+  "requires_image_generation": false,
+  "reference_roster": [
+    {
+      "slide_no": 1,
+      "path": "source/reference-01.jpeg",
+      "sha256": "a7392cd8a0da177a9dd57e72bf76929a66b366036ff6c20d1cd8c35ab107e6a5"
+    }
+  ],
+  "visual_intermediate_manifest": null,
+  "reason": "用户提供固定参考图，视觉结构、字号层级和原文以参考图为准；B2/B3/B4 仅用于生成可替换的背景、框架和独立资产证据，不进行整页视觉重设计。图片中掩码金额 **元 按原样保留，待人工确认。",
+  "confirmed_by": "user-request",
+  "confirmed_at": "2026-08-28T12:05:00Z"
+}

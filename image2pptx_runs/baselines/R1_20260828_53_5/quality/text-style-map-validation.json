@@ -1,0 +1,10 @@
+{
+  "schema": "ai-ppt-plus/text-style-map-validation/v1",
+  "valid": true,
+  "text_count": 25,
+  "rich_text_count": 14,
+  "emphasis_candidates": 14,
+  "emphasis_with_runs": 14,
+  "errors": [],
+  "warnings": []
+}

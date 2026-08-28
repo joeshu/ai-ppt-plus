@@ -1,0 +1,29 @@
+{
+  "schema": "ai-ppt-plus/validation-report/v1",
+  "status": "human-closeout",
+  "valid": true,
+  "revision": "R1_20260828_53_5",
+  "technical_gates": {
+    "source_image_decode": true,
+    "panel_approval": true,
+    "panel_assets": true,
+    "imagegen_assets": true,
+    "icon_assets": true,
+    "strict_layout": true,
+    "text_style_map": true,
+    "text_model": true,
+    "object_manifest": true,
+    "editable_object_audit": true,
+    "semantic_object_audit": true,
+    "manifest_registry": true,
+    "render": true,
+    "render_visual_gate": true,
+    "font_asset": true,
+    "font_delivery": true,
+    "visual_comparison": true
+  },
+  "human_visual_review_required": true,
+  "human_signoff_required": true,
+  "human_signoff_status": "pending",
+  "open_issue_ids": ["ISSUE-R1-004"]
+}

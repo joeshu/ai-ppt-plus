@@ -1,0 +1,19 @@
+{
+  "schema": "ai-ppt-plus/font-asset-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-08-28T12:47:27.788021+00:00",
+  "font_dir": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts",
+  "manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts/font-manifest.json",
+  "file": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts/NotoSansCJKsc-Regular.otf",
+  "family": "Noto Sans CJK SC",
+  "declared_family": "Noto Sans CJK SC",
+  "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+  "expected_sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+  "cjk_smoke_text": "中文联通案例存量双终端优秀方案概述营销重点包装复盘",
+  "cjk_coverage_verified": true,
+  "missing_cjk_characters": [],
+  "issues": [],
+  "warnings": [],
+  "embedding": "must_be_verified_in_final_pptx_or_marked_unsupported"
+}

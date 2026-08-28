@@ -1,0 +1,8 @@
+image: /workspace/scratch/c3c8193ca370/upload/53(5).jpeg  source_size: 1536x864  sample_size: 240x135
+vivid coverage per candidate key color:
+  green    #00ff00    0.07%  ok
+  magenta  #ff00ff    0.01%  ok
+  orange   #ff7a00    0.89%  ok
+  red      #ff0033    6.10%  COLLIDES
+  cyan     #00ffff    0.70%  ok
+recommended_key: #00ff00  (green)

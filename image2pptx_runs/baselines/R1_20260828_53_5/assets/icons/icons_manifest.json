@@ -1,0 +1,210 @@
+{
+  "source": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons_t_1.png",
+  "mode": "auto",
+  "size": [
+    3352,
+    1890
+  ],
+  "icons": [
+    {
+      "file": "ic_r1c1.png",
+      "row": 1,
+      "col": 1,
+      "width": 842,
+      "height": 294,
+      "aspect": 2.8639,
+      "bbox": [
+        374,
+        250,
+        1216,
+        544
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r1c2.png",
+      "row": 1,
+      "col": 2,
+      "width": 358,
+      "height": 438,
+      "aspect": 0.8174,
+      "bbox": [
+        1890,
+        254,
+        2248,
+        692
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r1c3.png",
+      "row": 1,
+      "col": 3,
+      "width": 757,
+      "height": 570,
+      "aspect": 1.3281,
+      "bbox": [
+        2311,
+        119,
+        3068,
+        689
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r2c1.png",
+      "row": 2,
+      "col": 1,
+      "width": 342,
+      "height": 341,
+      "aspect": 1.0029,
+      "bbox": [
+        347,
+        791,
+        689,
+        1132
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r2c2.png",
+      "row": 2,
+      "col": 2,
+      "width": 336,
+      "height": 338,
+      "aspect": 0.9941,
+      "bbox": [
+        825,
+        794,
+        1161,
+        1132
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r2c3.png",
+      "row": 2,
+      "col": 3,
+      "width": 338,
+      "height": 338,
+      "aspect": 1.0,
+      "bbox": [
+        1304,
+        794,
+        1642,
+        1132
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r2c4.png",
+      "row": 2,
+      "col": 4,
+      "width": 331,
+      "height": 333,
+      "aspect": 0.994,
+      "bbox": [
+        1792,
+        799,
+        2123,
+        1132
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r2c5.png",
+      "row": 2,
+      "col": 5,
+      "width": 334,
+      "height": 337,
+      "aspect": 0.9911,
+      "bbox": [
+        2284,
+        801,
+        2618,
+        1138
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r2c6.png",
+      "row": 2,
+      "col": 6,
+      "width": 345,
+      "height": 344,
+      "aspect": 1.0029,
+      "bbox": [
+        2752,
+        800,
+        3097,
+        1144
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    },
+    {
+      "file": "ic_r3c1.png",
+      "row": 3,
+      "col": 1,
+      "width": 594,
+      "height": 583,
+      "aspect": 1.0189,
+      "bbox": [
+        1326,
+        1209,
+        1920,
+        1792
+      ],
+      "edge_touch": {
+        "left": false,
+        "top": false,
+        "right": false,
+        "bottom": false
+      }
+    }
+  ]
+}

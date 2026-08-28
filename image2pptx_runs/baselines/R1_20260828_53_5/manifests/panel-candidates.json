@@ -1,0 +1,124 @@
+{
+  "schema": "ai-ppt-plus/panel-candidates/v1",
+  "source": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+  "source_size": [
+    1536,
+    864
+  ],
+  "analysis_size": [
+    1400,
+    788
+  ],
+  "inference": {
+    "rows": 2,
+    "columns": 3,
+    "rows_hint": 2,
+    "columns_hint": 3,
+    "used_assumed_grid": false
+  },
+  "status": "needs-human-confirmation",
+  "candidates": [
+    {
+      "candidate_id": "panel-01",
+      "source_bbox": [
+        42,
+        210,
+        481,
+        122
+      ],
+      "row": 1,
+      "column": 1,
+      "confidence": 0.66,
+      "boundary_evidence": {
+        "horizontal_profile_peak": 88.96,
+        "vertical_profile_peak": 66.63
+      }
+    },
+    {
+      "candidate_id": "panel-02",
+      "source_bbox": [
+        522,
+        210,
+        416,
+        122
+      ],
+      "row": 1,
+      "column": 2,
+      "confidence": 0.66,
+      "boundary_evidence": {
+        "horizontal_profile_peak": 88.96,
+        "vertical_profile_peak": 79.32
+      }
+    },
+    {
+      "candidate_id": "panel-03",
+      "source_bbox": [
+        938,
+        210,
+        552,
+        122
+      ],
+      "row": 1,
+      "column": 3,
+      "confidence": 0.66,
+      "boundary_evidence": {
+        "horizontal_profile_peak": 88.96,
+        "vertical_profile_peak": 75.46
+      }
+    },
+    {
+      "candidate_id": "panel-04",
+      "source_bbox": [
+        42,
+        331,
+        481,
+        463
+      ],
+      "row": 2,
+      "column": 1,
+      "confidence": 0.66,
+      "boundary_evidence": {
+        "horizontal_profile_peak": 94.94,
+        "vertical_profile_peak": 66.63
+      }
+    },
+    {
+      "candidate_id": "panel-05",
+      "source_bbox": [
+        522,
+        331,
+        416,
+        463
+      ],
+      "row": 2,
+      "column": 2,
+      "confidence": 0.66,
+      "boundary_evidence": {
+        "horizontal_profile_peak": 94.94,
+        "vertical_profile_peak": 79.32
+      }
+    },
+    {
+      "candidate_id": "panel-06",
+      "source_bbox": [
+        938,
+        331,
+        552,
+        463
+      ],
+      "row": 2,
+      "column": 3,
+      "confidence": 0.66,
+      "boundary_evidence": {
+        "horizontal_profile_peak": 94.94,
+        "vertical_profile_peak": 75.46
+      }
+    }
+  ],
+  "human_review": [
+    "confirm the detected count and whether the layout is actually a repeated-panel structure",
+    "correct each source_bbox against visible panel borders",
+    "exclude Logo, footer, intro bar and decorative gradients",
+    "only then pass approved bboxes to extract_panels.py"
+  ]
+}

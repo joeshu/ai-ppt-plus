@@ -1,0 +1,200 @@
+{
+  "schema": "ai-ppt-plus/manifest-registry-validation/v2",
+  "valid": true,
+  "status": "passed",
+  "registry": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/manifest-registry.json",
+  "model": {
+    "name": "SlideSpec/RegionSpec/ObjectSpec/AssetSpec",
+    "version": "2.0",
+    "legacy_inputs": [
+      "ai-ppt-plus/manifest-registry/v1"
+    ]
+  },
+  "issues": [],
+  "warnings": [
+    {
+      "code": "asset_source_ref_missing",
+      "asset_id": "panel-01"
+    },
+    {
+      "code": "asset_source_ref_missing",
+      "asset_id": "panel-02"
+    },
+    {
+      "code": "asset_source_ref_missing",
+      "asset_id": "panel-03"
+    },
+    {
+      "code": "asset_source_ref_missing",
+      "asset_id": "panel-04"
+    },
+    {
+      "code": "asset_source_ref_missing",
+      "asset_id": "panel-05"
+    },
+    {
+      "code": "asset_source_ref_missing",
+      "asset_id": "panel-06"
+    },
+    {
+      "code": "region_geometry_missing",
+      "slide_no": 1,
+      "region_id": "panel-01"
+    },
+    {
+      "code": "region_geometry_missing",
+      "slide_no": 1,
+      "region_id": "panel-02"
+    },
+    {
+      "code": "region_geometry_missing",
+      "slide_no": 1,
+      "region_id": "panel-03"
+    },
+    {
+      "code": "region_geometry_missing",
+      "slide_no": 1,
+      "region_id": "panel-04"
+    },
+    {
+      "code": "region_geometry_missing",
+      "slide_no": 1,
+      "region_id": "panel-05"
+    },
+    {
+      "code": "region_geometry_missing",
+      "slide_no": 1,
+      "region_id": "panel-06"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "title"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "overview-badge-label"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "overview-line-1"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "overview-line-2"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p1-title"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p1-b1"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p1-b2"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p1-b3"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p1-b4"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p2-title"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p2-b1"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p2-b2"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p3-title"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p3-intro"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p3-b1"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p3-b2"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p4-title"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p4-b1"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p4-b2"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p5-title"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p5-body"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p6-title"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p6-b1"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "p6-b2"
+    },
+    {
+      "code": "text_model_text_bbox_fraction_outside_unit",
+      "slide_no": 1,
+      "text_id": "footer-slogan"
+    }
+  ],
+  "slide_count": 1,
+  "object_count": 44,
+  "asset_count": 20,
+  "registry_sha256": "915185dabeeb92d0d2288d904958f465cb9fa773316fc5c58b7625a9275f00a1",
+  "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+}

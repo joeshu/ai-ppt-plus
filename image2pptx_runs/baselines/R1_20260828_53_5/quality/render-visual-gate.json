@@ -1,0 +1,25 @@
+{
+  "schema": "ai-ppt-plus/render-visual-gate/v1",
+  "valid": true,
+  "render_dir": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/rendered",
+  "expected_pages": 1,
+  "selected_pages": "all",
+  "pages": [
+    {
+      "page": "slide-1.png",
+      "width": 1920,
+      "height": 1080,
+      "stats": {
+        "mean": 205.991,
+        "stddev": 74.666,
+        "min": 0,
+        "max": 255,
+        "nonuniform": true
+      },
+      "regions": []
+    }
+  ],
+  "issues": [],
+  "human_visual_review_required": true,
+  "limitation": "non-blank checks do not prove semantic text correctness or reference fidelity"
+}

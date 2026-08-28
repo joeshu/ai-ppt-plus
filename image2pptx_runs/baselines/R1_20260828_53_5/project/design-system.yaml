@@ -1,0 +1,30 @@
+schema: ai-ppt-plus/design-system/v1
+project_id: unicom-dual-terminal-case-53-5
+aspect_ratio: 16:9
+reference_size: [1536, 864]
+font_family: Noto Sans CJK SC
+font_asset: project-fonts/NotoSansCJKsc-Regular.otf
+colors:
+  navy: "#0D2E60"
+  title_white: "#FFFFFF"
+  accent_yellow: "#FFD33D"
+  body: "#333333"
+  red: "#C51E2E"
+  orange: "#E87912"
+  blue: "#1558A6"
+  green: "#398B50"
+  purple: "#6C4BB0"
+  teal: "#188FA0"
+  footer_red: "#D91420"
+layout:
+  outer_margin_px: 40
+  panel_gap_px: 16
+  top_panels_y_px: 208
+  bottom_panels_y_px: 549
+  panel_mode: six-independent-assets
+  text_mode: native-text
+asset_policy:
+  brand_lockup: complete-independent-uncropped
+  product_visuals: independent-replaceable-image
+  formal_text: native-text-only
+  source_image: visual-authority-only

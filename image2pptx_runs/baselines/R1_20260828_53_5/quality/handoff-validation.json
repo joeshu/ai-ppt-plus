@@ -1,0 +1,9 @@
+{
+  "schema": "ai-ppt-plus/handoff-validation/v1",
+  "valid": true,
+  "handoff": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/handoff.json",
+  "project_id": "unicom-dual-terminal-case-53-5",
+  "revision": "R1_20260828_53_5",
+  "state": "human-closeout",
+  "issues": []
+}

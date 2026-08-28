@@ -1,0 +1,1306 @@
+{
+  "schema": "ai-ppt-plus/pipeline-run/v2",
+  "valid": true,
+  "status": "passed",
+  "technical_valid": true,
+  "technical_status": "passed",
+  "validation_scope": "full",
+  "full_deck_validation_required": false,
+  "release_profile": "not_run",
+  "release_eligible": false,
+  "release_status": "not_run",
+  "human_review_required": true,
+  "human_review_status": "pending",
+  "run_id": "run-20260828T124726.800514Z-e0331a8b",
+  "project": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01",
+  "deck": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+  "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+  "source": {
+    "deck": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+    "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+    "project": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01"
+  },
+  "source_references": [
+    {
+      "source_id": "deck",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+      "sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-report.json",
+      "sha256": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76",
+      "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.json",
+      "sha256": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-comparison.json",
+      "sha256": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/route-validation.json",
+      "sha256": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-validation.json",
+      "sha256": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-registry-validation.json",
+      "sha256": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe",
+      "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-layout-validation.json",
+      "sha256": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/imagegen-assets-validation.json",
+      "sha256": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-assets-validation.json",
+      "sha256": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-layer-audit.json",
+      "sha256": "f423128d117c08e75858f047c6b33bd8491fc2e2ed5e330649c4e1e10086f24e",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/object-manifest-validation.json",
+      "sha256": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/editable-object-audit.json",
+      "sha256": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/semantic-object-audit.json",
+      "sha256": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7",
+      "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/panel-assets-validation.json",
+      "sha256": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-style-map-validation.json",
+      "sha256": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/report.json",
+      "sha256": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json",
+      "sha256": "ff43caba15b294e24d09a28aee563342e5220394a3eeedba09fcc618b3eb8cac",
+      "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-bundle-preflight.json",
+      "sha256": "483e64a5c739a690899ec47942121b882658ba7c2bfe16239825ff0cb093ed2d",
+      "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-asset-validation.json",
+      "sha256": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-delivery-validation.json",
+      "sha256": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685",
+      "deck_sha256": null
+    },
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/handoff-validation.json",
+      "sha256": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf",
+      "deck_sha256": null
+    }
+  ],
+  "run_dir": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3",
+  "report_index": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json",
+  "project_report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json",
+  "execution": {
+    "mode": "dag",
+    "cache_dir": null,
+    "parallel_workers": 4,
+    "tasks_total": 26,
+    "cache_hits": 0,
+    "duration_ms": 9670.429,
+    "task_duration_ms_sum": 12106.026,
+    "affected_pages": "all",
+    "affected_regions": [],
+    "page_cache": {
+      "enabled": false,
+      "hits": 0,
+      "misses": 0,
+      "stored": 0
+    },
+    "render_conversion_skipped": false
+  },
+  "steps": [
+    {
+      "name": "route",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_route.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/route-decision.json",
+        "--require-files",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/route-validation.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/route.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/route.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "90b1ae66c8a8e6f82fea49549671e3012a5199e8a76e1a97bbd8cb8925a3b42e",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 69.061
+    },
+    {
+      "name": "handoff",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_handoff.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/handoff.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/handoff-validation.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/handoff.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/handoff.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "9919a19a9afc8ca71f37951277f6b8a88755c19ad77dbab8ad43b79fd3da3080",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 59.109
+    },
+    {
+      "name": "environment",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/probe_environment.py",
+        "--output",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/environment-report.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/environment.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/environment.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "de97f0104e2763cbe9d6b3745d61e0e1f6499d9807e5b78f801605c1546b603c",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 38.26
+    },
+    {
+      "name": "fonts",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/probe_fonts.py",
+        "--output",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-report.json",
+        "--font-dir",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts",
+        "--require-cjk"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/fonts.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/fonts.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "d5dc203ed53c1139611b21e645f77b0facabc32c8547b6aaf91d3c3060dc2385",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 134.657
+    },
+    {
+      "name": "font-asset",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_font_asset.py",
+        "--font-dir",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-asset-validation.json",
+        "--require-cjk"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-asset.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-asset.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "b1dd74084484b7f46bb62e7a452bcaee08caf0ec6eb5c971cec97a2e98f290dc",
+      "cache_hit": false,
+      "deps": [
+        "fonts"
+      ],
+      "duration_ms": 91.244
+    },
+    {
+      "name": "object-manifest",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_object_manifest.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-object-manifest.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/object-manifest-validation.json",
+        "--require-panels"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/object-manifest.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/object-manifest.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "bc0ceb298e106d91ba9e3e8b49178e3be2f43aff30b4d29a3c1d945f1a922495",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 55.383
+    },
+    {
+      "name": "manifest-registry",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/manifest_registry.py",
+        "validate",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/manifest-registry.json",
+        "--deck",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-registry-validation.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-registry.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-registry.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "c0b97da74c017067484d479d177327710fceb9db48572dc1df5bb77d2796bf89",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 113.96
+    },
+    {
+      "name": "layout-guard",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/layout_guard.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/layout.json",
+        "--strict",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/layout-guard.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/layout-guard.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/layout-guard.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "08bc2bbd54a1e9f7ded48279f05fe6a131e338abdf65d18210724feee03a069c",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 87.488
+    },
+    {
+      "name": "imagegen-assets",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_imagegen_assets_manifest.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/imagegen-assets-manifest.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/imagegen-assets-validation.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/imagegen-assets.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/imagegen-assets.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "051b8ce4c767c6330a141e67ca81bfbd9fffdc2352b3c8f24f55eecc9943e31e",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 60.437
+    },
+    {
+      "name": "icon-assets",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_icon_assets.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/icon-asset-manifest.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-assets-validation.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-assets.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-assets.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "5008d618c16268ca9d82316d13060d87c21f54390871ac4339929cc579835fd5",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 146.909
+    },
+    {
+      "name": "icon-layers",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/audit_icon_layers.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/icon-asset-manifest.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-layer-audit.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-layers.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-layers.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "453b5d6d5fe849dfd843c2f854d087043daff8e963c70349d926e7b06bea602d",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 43.428
+    },
+    {
+      "name": "inspection",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/inspect_pptx.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/inspection.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/inspection.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/inspection.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "4fabd93985bc29347138a0b06f2a33802a57e27fae1dde03699188b0eabd4e70",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 190.197
+    },
+    {
+      "name": "editable-object-audit",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/inspect_editable_objects.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+        "--object-manifest",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-object-manifest.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/editable-object-audit.json",
+        "--require-independent-panels"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/editable-object-audit.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/editable-object-audit.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "68e111855612d6231b7d4059b94bd9ab3e1a8d8ae9af147241b84ac6d7a6b622",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 368.635
+    },
+    {
+      "name": "semantic-object-audit",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/semantic_object_audit.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+        "--object-manifest",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-object-manifest.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/semantic-object-audit.json",
+        "--text-manifest",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/text-layout-manifest.json",
+        "--asset-manifest",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/panel-asset-manifest.json",
+        "--asset-manifest",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/icon-asset-manifest.json",
+        "--asset-manifest",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/imagegen-assets-manifest.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/semantic-object-audit.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/semantic-object-audit.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "8d3c23836bf090f78498671590b480ea3c7088deccbaddb978043f7e615abfcc",
+      "cache_hit": false,
+      "deps": [
+        "editable-object-audit"
+      ],
+      "duration_ms": 406.686
+    },
+    {
+      "name": "render",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/render_pptx.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+        "--output-dir",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/rendered",
+        "--dpi",
+        "144",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-report.json",
+        "--font-dir",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "36743723e5906741d0c643784d8328d12c8b2107d3f2129f4e2e3b5b8a9dca18",
+      "cache_hit": false,
+      "deps": [
+        "environment"
+      ],
+      "duration_ms": 6074.655
+    },
+    {
+      "name": "render-visual-gate",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_render.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/rendered",
+        "--expected-pages",
+        "1",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "e84311a99e978c5d034f5574de9a43dca4029b0d01f08986c82a946f1a022940",
+      "cache_hit": false,
+      "deps": [
+        "render"
+      ],
+      "duration_ms": 121.785
+    },
+    {
+      "name": "font-delivery",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_font_delivery.py",
+        "--font-report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-report.json",
+        "--inspection",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/inspection.json",
+        "--render-report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-report.json",
+        "--render-visual-gate",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.json",
+        "--profile",
+        "portable",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-delivery-validation.json",
+        "--font-asset-report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-asset-validation.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-delivery.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-delivery.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "9b0cc8200e698b0b9652f7609889ff5a20760c272715830353215ac6d07cf7bb",
+      "cache_hit": false,
+      "deps": [
+        "fonts",
+        "inspection",
+        "render",
+        "render-visual-gate",
+        "font-asset"
+      ],
+      "duration_ms": 34.076
+    },
+    {
+      "name": "visual-comparison",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/compare_visual.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/rendered/slide-1.png",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-comparison.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-comparison.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-comparison.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "a4062bdce657038fdb10cf05b9d99da6ef671e3106cf17a2ff4a7ef07f999e76",
+      "cache_hit": false,
+      "deps": [
+        "render"
+      ],
+      "duration_ms": 804.131
+    },
+    {
+      "name": "visual-compare-qa",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/visual_compare_qa.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/rendered/slide-1.png",
+        "--out-dir",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-compare-qa.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-compare-qa.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "c75ce0b358f3ba680caa61c805069168aec946a880d65a341038b76f595a2ede",
+      "cache_hit": false,
+      "deps": [
+        "render"
+      ],
+      "duration_ms": 2832.04
+    },
+    {
+      "name": "panel-assets",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_panel_assets.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/panel-asset-manifest.json",
+        "--assets-dir",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/panel-assets-validation.json",
+        "--strict",
+        "--require-approved",
+        "--require-independent",
+        "--expected-count",
+        "6"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/panel-assets.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/panel-assets.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "692d3a7cf34df3bac6907b7e65d1574f2121e5dd5a2d490e57bbeaafb824b0ad",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 88.043
+    },
+    {
+      "name": "text-style-map",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_text_style_map.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/layout.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-style-map-validation.json",
+        "--strict",
+        "--require-source-bbox"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-style-map.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-style-map.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "c30eee7e79ce496728770e68565f30419c77dfb3eebb86f36d6d9ee63da85c8b",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 59.677
+    },
+    {
+      "name": "text-model",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/text_model.py",
+        "validate",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/text-layout-manifest.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-layout-validation.json",
+        "--strict",
+        "--require-source-bbox"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-model.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-model.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "25689243f8d489a545ab9a67a0dab59e435180450c17955a26ef4ab572f2e560",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 85.3
+    },
+    {
+      "name": "manifest",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_manifest.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-manifest.json",
+        "--kind",
+        "slide",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-validation.json",
+        "--require-editability"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "5e7f4f48690107307a16f00a42e07d4b8bb80102612b49610c1b4981e5cefa87",
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": 67.247
+    },
+    {
+      "name": "project",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_project.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01",
+        "--deck",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+        "--inspection",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/inspection.json",
+        "--render-report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-report.json",
+        "--render-visual-gate",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.json",
+        "--manifest-validation",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-validation.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-validation.json",
+        "--require-editability",
+        "--semantic-object-audit",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/semantic-object-audit.json",
+        "--route-validation",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/route-validation.json",
+        "--require-route",
+        "--expected-ratio",
+        "1.7777778",
+        "--visual-comparison",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-comparison.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": "5b33642f02cfaea6476780f9a11040a9ee24c3e430d968fdd8e63e32f0160f2d",
+      "cache_hit": false,
+      "deps": [
+        "inspection",
+        "render",
+        "render-visual-gate",
+        "manifest",
+        "semantic-object-audit",
+        "route",
+        "visual-comparison"
+      ],
+      "duration_ms": 73.618
+    },
+    {
+      "name": "project-report-aggregate",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/aggregate_project_reports.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report-aggregate.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report-aggregate.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": null,
+      "cache_hit": false,
+      "deps": [],
+      "duration_ms": null
+    },
+    {
+      "name": "report-bundle-preflight",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/e183fb102ff2/ai-ppt-plus/scripts/validate_report_bundle.py",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/pipeline-result.json",
+        "--report-index",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-index.json",
+        "--project-report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json",
+        "--deck",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+        "--report",
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-bundle-preflight.json"
+      ],
+      "exit_code": 0,
+      "ok": true,
+      "stdout": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-bundle-preflight.stdout.txt",
+      "stderr": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-bundle-preflight.stderr.txt",
+      "timeout_seconds": 600,
+      "cache_key": null,
+      "cache_hit": false,
+      "deps": [
+        "project-report-aggregate"
+      ],
+      "duration_ms": null
+    }
+  ],
+  "failed_steps": [],
+  "technical_failed_steps": [],
+  "next_state": "validated",
+  "human_visual_review_required": true,
+  "human_signoff_required": true,
+  "quality_evidence": {
+    "render": {
+      "report_type": "render",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": null,
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-report.json",
+        "sha256": "0a8c31ffae895b71b2bbe690e9a32d885345ad6fbf869f49bf2fa308e5141e76",
+        "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+      },
+      "schema": "ai-ppt-plus/render/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-report.json",
+      "renderer": "LibreOffice+pdftoppm",
+      "dpi": 144,
+      "conversion": {
+        "attempted": true,
+        "skipped": false,
+        "reason": "cache_disabled"
+      },
+      "page_cache": {
+        "schema": "ai-ppt-plus/page-render-cache/v1",
+        "enabled": false,
+        "dir": null,
+        "namespace": null,
+        "requested": 1,
+        "hits": 0,
+        "misses": 0,
+        "stored": 0,
+        "warnings": []
+      },
+      "page_fingerprints": [
+        {
+          "page": 1,
+          "part": "ppt/slides/slide1.xml",
+          "fingerprint": "318fe23d86373bf2e0784e45780767aa19961e04b0d3eb7eeb5893438610caf7",
+          "selected": true,
+          "cache_hit": false
+        }
+      ]
+    },
+    "render_visual_gate": {
+      "report_type": "render_visual_gate",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": null,
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.json",
+        "sha256": "d0789eed1b54bdd969e5d7913ff0b04745c7f2a933436f53b8117d8e30c11994",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/render-visual-gate/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/render-visual-gate.json",
+      "expected_pages": 1,
+      "observed_pages": 1
+    },
+    "visual_comparison": {
+      "report_type": "visual_comparison",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": null,
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-comparison.json",
+        "sha256": "b2694dbfd76806b5e1b4cb97f194cbe70cf936cbe24d8cce037ed77517f7ae7f",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/visual-comparison/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-comparison.json",
+      "reference": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+      "reference_dir": null,
+      "metrics": {
+        "global_ssim": 0.625378,
+        "blurred_layout_ssim": 0.910982,
+        "mean_absolute_error": 0.12089,
+        "rmse": 0.252151,
+        "pixel_fidelity_score": 0.87911
+      },
+      "aggregate": {},
+      "compared_pages": 0,
+      "human_visual_review_required": true
+    },
+    "route_validation": {
+      "report_type": "route_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "decided",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/route-validation.json",
+        "sha256": "654a92d5d4f86769e981b489a34240af486fd67b96eb87d24222a9c58919339b",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/route-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/route-validation.json",
+      "route": "reference-reconstruction",
+      "visual_authority": "approved_reference_image",
+      "formal_content_authority": "transcription_pending_confirmation"
+    },
+    "manifest_validation": {
+      "report_type": "manifest_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": null,
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-validation.json",
+        "sha256": "d9bc0b00327804ccb5bd2152dd0fce6545ec7ec0f032f86babcd0b9228953c16",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/manifest-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-validation.json",
+      "warnings": [],
+      "editability_protocol": "L0-L5/v1",
+      "editability": [
+        {
+          "slide_no": 1,
+          "status": "typed",
+          "summary": {
+            "object_count": 44,
+            "counts_by_level": {
+              "L0": 0,
+              "L1": 26,
+              "L2": 11,
+              "L3": 7,
+              "L4": 0,
+              "L5": 0
+            },
+            "primary_level": "L3",
+            "fully_editable_object_count": 26,
+            "raster_object_count": 18,
+            "placeholder_count": 0,
+            "blocked_object_count": 0,
+            "fully_editable_ratio": 0.5909,
+            "human_review_required": true,
+            "formal_content_rasterized": false,
+            "delivery_decision": "human-confirmation-required"
+          },
+          "issues": []
+        }
+      ]
+    },
+    "manifest_registry_validation": {
+      "report_type": "manifest_registry_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-registry-validation.json",
+        "sha256": "d927496d339ae8ad83517b8c5299203feb52168ccbb1abcb30130b77462a15fe",
+        "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+      },
+      "schema": "ai-ppt-plus/manifest-registry-validation/v2",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/manifest-registry-validation.json"
+    },
+    "text_layout_validation": {
+      "report_type": "text_layout_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-layout-validation.json",
+        "sha256": "016f1194fe32c317b95ea64d5f21234e79466eca690cfad9a059183e3b64c443",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/text-layout-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-layout-validation.json"
+    },
+    "imagegen_assets_validation": {
+      "report_type": "imagegen_assets_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/imagegen-assets-validation.json",
+        "sha256": "bb005402f95016ef4c65e8143b611b6278493874bd85e0ed43ab18229234099f",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/imagegen-assets-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/imagegen-assets-validation.json"
+    },
+    "icon_assets_validation": {
+      "report_type": "icon_assets_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-assets-validation.json",
+        "sha256": "1d359ba0cd45ae663f62004fb6673910d3f9962f3309d69d646f4fc728ced2de",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/icon-assets-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-assets-validation.json"
+    },
+    "icon_layer_audit": {
+      "report_type": "icon_layer_audit",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-layer-audit.json",
+        "sha256": "f423128d117c08e75858f047c6b33bd8491fc2e2ed5e330649c4e1e10086f24e",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/icon-layer-audit/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/icon-layer-audit.json"
+    },
+    "object_manifest_validation": {
+      "report_type": "object_manifest_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": null,
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/object-manifest-validation.json",
+        "sha256": "460b7ae201c7077d7b98f046d81f22b42a9fba10173f41813eeadc24fe6c3c0d",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/slide-object-manifest-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/object-manifest-validation.json"
+    },
+    "editable_object_audit": {
+      "report_type": "editable_object_audit",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": null,
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/editable-object-audit.json",
+        "sha256": "941de7f3b040ec16c7be42ce7b9c9e209c816f5f0a9daa994e7a70fbec201751",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/editable-object-audit/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/editable-object-audit.json"
+    },
+    "semantic_object_audit": {
+      "report_type": "semantic_object_audit",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/semantic-object-audit.json",
+        "sha256": "2b1900bb2dfc48d2606119acf13c85a7be62dd8430b4e7a1d655c23fefe2e7d7",
+        "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+      },
+      "schema": "ai-ppt-plus/semantic-object-audit/v2",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/semantic-object-audit.json"
+    },
+    "panel_assets_validation": {
+      "report_type": "panel_assets_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/panel-assets-validation.json",
+        "sha256": "51b8251e0d237ab71c17cf1c9d12d223e2d347e1f0e3faa4a3eb91f82cf28043",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/panel-assets-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/panel-assets-validation.json"
+    },
+    "text_style_map_validation": {
+      "report_type": "text_style_map_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": null,
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-style-map-validation.json",
+        "sha256": "e3c0d09d0c614cfcef34b3e1c2f023d099fe5836ffcf06c9fbb1d0f418a45ed2",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/text-style-map-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/text-style-map-validation.json"
+    },
+    "visual_compare_qa": {
+      "report_type": "visual_compare_qa",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "needs-human-review",
+      "native_status": "diagnostic",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/report.json",
+        "sha256": "d7316f75b7359ff8bb1fae8902722483d5e99f5e7bf69162fd08bcb9f2c112b9",
+        "deck_sha256": null
+      },
+      "schema": null,
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/visual-qa/report.json",
+      "ok": true,
+      "resized_for_comparison": true,
+      "preview_size": [
+        1920,
+        1080
+      ]
+    },
+    "project_report_aggregate": {
+      "report_type": "project_report_aggregate",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json",
+        "sha256": "ff43caba15b294e24d09a28aee563342e5220394a3eeedba09fcc618b3eb8cac",
+        "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+      },
+      "schema": "ai-ppt-plus/report-envelope/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/project-report.json"
+    },
+    "report_bundle_preflight": {
+      "report_type": "report_bundle_preflight",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-bundle-preflight.json",
+        "sha256": "483e64a5c739a690899ec47942121b882658ba7c2bfe16239825ff0cb093ed2d",
+        "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+      },
+      "schema": "ai-ppt-plus/report-envelope/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-bundle-preflight.json"
+    },
+    "font_asset_validation": {
+      "report_type": "font_asset_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-asset-validation.json",
+        "sha256": "dfa9122f1d42de42f6eb9e19b3e5b84e35b6348a1c0820b25cb29f28e02ea018",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/font-asset-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-asset-validation.json"
+    },
+    "font_delivery_validation": {
+      "report_type": "font_delivery_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": "passed",
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-delivery-validation.json",
+        "sha256": "131fa34baf75775ab26587a622169ae24a59d4c9611a34d03606164548b42685",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/font-delivery-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/font-delivery-validation.json"
+    },
+    "handoff_validation": {
+      "report_type": "handoff_validation",
+      "stage": null,
+      "required": true,
+      "present": true,
+      "valid": true,
+      "technical_valid": true,
+      "status": "passed",
+      "native_status": null,
+      "human_review_required": true,
+      "human_review_status": "pending",
+      "release_eligible": false,
+      "issues": [],
+      "source": {
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/handoff-validation.json",
+        "sha256": "65a1429711f4788479ce062547608ee724491d42e865feefd06954a0e1456edf",
+        "deck_sha256": null
+      },
+      "schema": "ai-ppt-plus/handoff-validation/v1",
+      "report": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/handoff-validation.json"
+    }
+  },
+  "quality_degradations": [],
+  "release_evidence": {
+    "technical_valid": true,
+    "report_bundle_valid": false,
+    "human_signoff_valid": false,
+    "release_check_passed": false
+  },
+  "review_html": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/review.html",
+  "finalization": {
+    "report_bundle": {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/report-bundle-validation.json",
+      "status": "passed"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "ai-ppt-plus/route-validation/v1",
+  "valid": true,
+  "route_file": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/route-decision.json",
+  "route_sha256": "c71e9dc7cd01c88c0e51d2e6746e95279f9b63d587f6a83b25566e854a42c80d",
+  "route": "reference-reconstruction",
+  "status": "decided",
+  "visual_authority": "approved_reference_image",
+  "formal_content_authority": "transcription_pending_confirmation",
+  "requires_image_generation": false,
+  "issues": [],
+  "evidence": {
+    "route_file": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/route-decision.json",
+    "reference_files": [
+      {
+        "slide_no": 1,
+        "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+        "sha256": "a7392cd8a0da177a9dd57e72bf76929a66b366036ff6c20d1cd8c35ab107e6a5"
+      }
+    ],
+    "visual_intermediate_manifest": null
+  }
+}

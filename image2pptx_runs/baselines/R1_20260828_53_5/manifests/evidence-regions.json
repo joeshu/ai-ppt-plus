@@ -1,0 +1,23 @@
+{
+  "regions": [
+    {"id": "header", "kind": "frame", "bboxPx": {"x": 0, "y": 0, "w": 1536, "h": 96}},
+    {"id": "brand-logo", "kind": "brand", "critical": true, "bboxPx": {"x": 25, "y": 18, "w": 205, "h": 62}},
+    {"id": "title", "kind": "title", "critical": true, "bboxPx": {"x": 298, "y": 18, "w": 900, "h": 56}},
+    {"id": "product-visuals", "kind": "product", "critical": true, "bboxPx": {"x": 1115, "y": 22, "w": 380, "h": 190}},
+    {"id": "overview", "kind": "intro", "critical": true, "bboxPx": {"x": 40, "y": 111, "w": 1440, "h": 78}},
+    {"id": "panel-01", "kind": "panel", "critical": true, "bboxPx": {"x": 40, "y": 208, "w": 484, "h": 329}},
+    {"id": "panel-02", "kind": "panel", "critical": true, "bboxPx": {"x": 539, "y": 208, "w": 386, "h": 329}},
+    {"id": "panel-03", "kind": "panel", "critical": true, "bboxPx": {"x": 938, "y": 208, "w": 553, "h": 329}},
+    {"id": "panel-04", "kind": "panel", "critical": true, "bboxPx": {"x": 40, "y": 549, "w": 484, "h": 246}},
+    {"id": "panel-05", "kind": "panel", "critical": true, "bboxPx": {"x": 543, "y": 553, "w": 461, "h": 242}},
+    {"id": "panel-06", "kind": "panel", "critical": true, "bboxPx": {"x": 1021, "y": 555, "w": 470, "h": 240}},
+    {"id": "p1-body", "kind": "formal-text", "bboxPx": {"x": 55, "y": 272, "w": 455, "h": 254}},
+    {"id": "p2-body", "kind": "formal-text", "bboxPx": {"x": 555, "y": 272, "w": 357, "h": 245}},
+    {"id": "p3-body", "kind": "formal-text", "bboxPx": {"x": 960, "y": 274, "w": 510, "h": 247}},
+    {"id": "p4-body", "kind": "formal-text", "bboxPx": {"x": 55, "y": 606, "w": 455, "h": 184}},
+    {"id": "p5-body", "kind": "formal-text", "bboxPx": {"x": 558, "y": 638, "w": 260, "h": 125}},
+    {"id": "p5-illustration", "kind": "illustration", "critical": true, "bboxPx": {"x": 836, "y": 630, "w": 147, "h": 134}},
+    {"id": "p6-body", "kind": "formal-text", "bboxPx": {"x": 1038, "y": 606, "w": 440, "h": 180}},
+    {"id": "footer", "kind": "footer", "bboxPx": {"x": 0, "y": 815, "w": 1536, "h": 49}}
+  ]
+}

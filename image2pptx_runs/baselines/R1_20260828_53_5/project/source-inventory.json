@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.1",
+  "generated_at": "2026-08-28T11:57:07.020297+00:00",
+  "files": [
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+      "name": "reference-01.jpeg",
+      "size": 530208,
+      "empty": false,
+      "sha256": "a7392cd8a0da177a9dd57e72bf76929a66b366036ff6c20d1cd8c35ab107e6a5",
+      "kind": "jpeg",
+      "mime": "image/jpeg",
+      "readable": true,
+      "details": {
+        "width": 1536,
+        "height": 864,
+        "mode": "RGB",
+        "frames": 1
+      },
+      "needs_ocr": false,
+      "sensitive_signals": [],
+      "errors": []
+    }
+  ],
+  "duplicates": [],
+  "summary": {
+    "count": 1,
+    "readable": 1,
+    "unreadable": 0,
+    "empty": 0,
+    "missing": []
+  }
+}

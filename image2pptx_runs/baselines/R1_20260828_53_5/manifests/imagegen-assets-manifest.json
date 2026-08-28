@@ -1,0 +1,36 @@
+{
+  "schema": "ai-ppt-plus/imagegen-assets/v1",
+  "run_root": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5",
+  "assets": [
+    {
+      "layer": "background",
+      "generated_source": "/workspace/scratch/c3c8193ca370/generated_images/exec-d7113c4a-ea33-47e0-9407-046126b7cc85.png",
+      "copied_to": "assets/background_gen.png",
+      "prompt_file": "prompts/B2_background.txt",
+      "backend": "codex-imagegen",
+      "key_color": "#00ff00",
+      "key_color_applied": false,
+      "review_status": "visual-reviewed"
+    },
+    {
+      "layer": "frame_raw",
+      "generated_source": "/workspace/scratch/c3c8193ca370/generated_images/exec-d83c8a13-03c6-45e1-8704-cff2a17d9c77.png",
+      "copied_to": "assets/frame_raw.png",
+      "prompt_file": "prompts/B3_frame.txt",
+      "backend": "codex-imagegen",
+      "key_color": "#00ff00",
+      "key_color_applied": true,
+      "review_status": "visual-reviewed"
+    },
+    {
+      "layer": "icons_raw_1",
+      "generated_source": "/workspace/scratch/c3c8193ca370/generated_images/exec-88137ab8-c772-4940-ad14-f935c0432d3e.png",
+      "copied_to": "assets/icons_raw_1.png",
+      "prompt_file": "prompts/B4_assets.txt",
+      "backend": "codex-imagegen",
+      "key_color": "#00ff00",
+      "key_color_applied": true,
+      "review_status": "visual-reviewed"
+    }
+  ]
+}

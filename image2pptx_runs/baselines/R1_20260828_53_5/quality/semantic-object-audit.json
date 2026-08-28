@@ -1,0 +1,1365 @@
+{
+  "schema": "ai-ppt-plus/semantic-object-audit/v2",
+  "valid": true,
+  "status": "passed",
+  "deck": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+  "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+  "object_manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-object-manifest.json",
+  "object_manifest_sha256": "6064d320baa24eca9e53dc048c5ad79a60debe3b6fb9d2c742f1bf2aa853908d",
+  "text_manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/text-layout-manifest.json",
+  "text_manifest_sha256": "7885b51f69dd6404e8e7c140ef8d0ee4054bfdf339b24ea1b8e418a63224c705",
+  "expected_object_count": 44,
+  "audited_object_count": 44,
+  "observed_top_level_shape_count": 44,
+  "undeclared_shape_count": 0,
+  "text_manifest_coverage": {
+    "declared": 25,
+    "orphan_count": 0,
+    "orphans": []
+  },
+  "coverage": [
+    {
+      "slide_no": 1,
+      "declared_object_count": 44,
+      "observed_top_level_shape_count": 44,
+      "audited_object_count": 44,
+      "undeclared_shape_count": 0,
+      "undeclared_shapes": [],
+      "complete": true
+    }
+  ],
+  "objects": [
+    {
+      "slide_no": 1,
+      "object_id": "background",
+      "role": "background",
+      "expected_type": "independent_image",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image1.png",
+      "embedded_sha256": "3f3635257613e91ff27d43593246dd9a3dacbf3e95886b781b1339e05bee25c2",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/background_gen.png"
+      ],
+      "declared_source_sha256": [
+        "3f3635257613e91ff27d43593246dd9a3dacbf3e95886b781b1339e05bee25c2"
+      ],
+      "source_file_sha256": [
+        "3f3635257613e91ff27d43593246dd9a3dacbf3e95886b781b1339e05bee25c2"
+      ],
+      "expected_source_sha256": [
+        "3f3635257613e91ff27d43593246dd9a3dacbf3e95886b781b1339e05bee25c2"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "frame",
+      "role": "frame",
+      "expected_type": "traceable_static_graphic",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image2.png",
+      "embedded_sha256": "7634994e967f72dded13e4f1d274c6f45b516238ec8715e2f0427a8441fafe99",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/frame.png"
+      ],
+      "declared_source_sha256": [
+        "7634994e967f72dded13e4f1d274c6f45b516238ec8715e2f0427a8441fafe99"
+      ],
+      "source_file_sha256": [
+        "7634994e967f72dded13e4f1d274c6f45b516238ec8715e2f0427a8441fafe99"
+      ],
+      "expected_source_sha256": [
+        "7634994e967f72dded13e4f1d274c6f45b516238ec8715e2f0427a8441fafe99"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-01",
+      "role": "semantic-panel",
+      "expected_type": "traceable_static_graphic",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image3.png",
+      "embedded_sha256": "745a3c5893ac41cc0a4598518734972342d5c6dec9dea030114cbf815cbb5555",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/panels/panel-01.png"
+      ],
+      "declared_source_sha256": [
+        "745a3c5893ac41cc0a4598518734972342d5c6dec9dea030114cbf815cbb5555"
+      ],
+      "source_file_sha256": [
+        "745a3c5893ac41cc0a4598518734972342d5c6dec9dea030114cbf815cbb5555"
+      ],
+      "expected_source_sha256": [
+        "745a3c5893ac41cc0a4598518734972342d5c6dec9dea030114cbf815cbb5555"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-02",
+      "role": "semantic-panel",
+      "expected_type": "traceable_static_graphic",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image4.png",
+      "embedded_sha256": "64d5e85a8c99d4e81f151088b2d9d01f80ab1e5c1acc41693bbcb8ced4bad08d",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/panels/panel-02.png"
+      ],
+      "declared_source_sha256": [
+        "64d5e85a8c99d4e81f151088b2d9d01f80ab1e5c1acc41693bbcb8ced4bad08d"
+      ],
+      "source_file_sha256": [
+        "64d5e85a8c99d4e81f151088b2d9d01f80ab1e5c1acc41693bbcb8ced4bad08d"
+      ],
+      "expected_source_sha256": [
+        "64d5e85a8c99d4e81f151088b2d9d01f80ab1e5c1acc41693bbcb8ced4bad08d"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-03",
+      "role": "semantic-panel",
+      "expected_type": "traceable_static_graphic",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image5.png",
+      "embedded_sha256": "47e849e9b4305e40bfa39ea1279a1927298b654f554a1fd4f4846b3225f77dfa",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/panels/panel-03.png"
+      ],
+      "declared_source_sha256": [
+        "47e849e9b4305e40bfa39ea1279a1927298b654f554a1fd4f4846b3225f77dfa"
+      ],
+      "source_file_sha256": [
+        "47e849e9b4305e40bfa39ea1279a1927298b654f554a1fd4f4846b3225f77dfa"
+      ],
+      "expected_source_sha256": [
+        "47e849e9b4305e40bfa39ea1279a1927298b654f554a1fd4f4846b3225f77dfa"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-04",
+      "role": "semantic-panel",
+      "expected_type": "traceable_static_graphic",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image6.png",
+      "embedded_sha256": "5a853e2ceceab4811fa1e91bc2acbffc62b349e4b866e25aa985d35c6a79bf0a",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/panels/panel-04.png"
+      ],
+      "declared_source_sha256": [
+        "5a853e2ceceab4811fa1e91bc2acbffc62b349e4b866e25aa985d35c6a79bf0a"
+      ],
+      "source_file_sha256": [
+        "5a853e2ceceab4811fa1e91bc2acbffc62b349e4b866e25aa985d35c6a79bf0a"
+      ],
+      "expected_source_sha256": [
+        "5a853e2ceceab4811fa1e91bc2acbffc62b349e4b866e25aa985d35c6a79bf0a"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-05",
+      "role": "semantic-panel",
+      "expected_type": "traceable_static_graphic",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image7.png",
+      "embedded_sha256": "682680ef84d798adb238785d2118cffee04f9f6bee8edd94d98368c25087495a",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/panels/panel-05.png"
+      ],
+      "declared_source_sha256": [
+        "682680ef84d798adb238785d2118cffee04f9f6bee8edd94d98368c25087495a"
+      ],
+      "source_file_sha256": [
+        "682680ef84d798adb238785d2118cffee04f9f6bee8edd94d98368c25087495a"
+      ],
+      "expected_source_sha256": [
+        "682680ef84d798adb238785d2118cffee04f9f6bee8edd94d98368c25087495a"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-06",
+      "role": "semantic-panel",
+      "expected_type": "traceable_static_graphic",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image8.png",
+      "embedded_sha256": "b5d5f24bc1e607d0b68abcfe496bdab42c3b614fd898b32435c7e43b17e5278f",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/panels/panel-06.png"
+      ],
+      "declared_source_sha256": [
+        "b5d5f24bc1e607d0b68abcfe496bdab42c3b614fd898b32435c7e43b17e5278f"
+      ],
+      "source_file_sha256": [
+        "b5d5f24bc1e607d0b68abcfe496bdab42c3b614fd898b32435c7e43b17e5278f"
+      ],
+      "expected_source_sha256": [
+        "b5d5f24bc1e607d0b68abcfe496bdab42c3b614fd898b32435c7e43b17e5278f"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "overview-badge",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "brand-logo",
+      "role": "brand_lockup",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "brand_lockup_whole_asset": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "brand": {
+        "crop": {
+          "values": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+          },
+          "cropped": false
+        },
+        "duplicate_text_shapes": [],
+        "whole_asset_contract": {
+          "whole_asset": true,
+          "allow_crop": false
+        }
+      },
+      "media_part": "ppt/media/image9.png",
+      "embedded_sha256": "1d6cf65084aed50e624c07155e9a01dc6194e6f3622c1e111c08ae473c82dd54",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r1c1.png"
+      ],
+      "declared_source_sha256": [
+        "1d6cf65084aed50e624c07155e9a01dc6194e6f3622c1e111c08ae473c82dd54"
+      ],
+      "source_file_sha256": [
+        "1d6cf65084aed50e624c07155e9a01dc6194e6f3622c1e111c08ae473c82dd54"
+      ],
+      "expected_source_sha256": [
+        "1d6cf65084aed50e624c07155e9a01dc6194e6f3622c1e111c08ae473c82dd54"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "product-phone",
+      "role": "product-visual",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image10.png",
+      "embedded_sha256": "f9f644fb609cd3319c2aca5b766ab921366cbe12c8e11bfeae046a29d466f944",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r1c2.png"
+      ],
+      "declared_source_sha256": [
+        "f9f644fb609cd3319c2aca5b766ab921366cbe12c8e11bfeae046a29d466f944"
+      ],
+      "source_file_sha256": [
+        "f9f644fb609cd3319c2aca5b766ab921366cbe12c8e11bfeae046a29d466f944"
+      ],
+      "expected_source_sha256": [
+        "f9f644fb609cd3319c2aca5b766ab921366cbe12c8e11bfeae046a29d466f944"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "product-fttr",
+      "role": "product-visual",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image11.png",
+      "embedded_sha256": "6b9bad4d1934f93810696a4762846f27a2964ae717babb21b86943a2e4f2fce3",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r1c3.png"
+      ],
+      "declared_source_sha256": [
+        "6b9bad4d1934f93810696a4762846f27a2964ae717babb21b86943a2e4f2fce3"
+      ],
+      "source_file_sha256": [
+        "6b9bad4d1934f93810696a4762846f27a2964ae717babb21b86943a2e4f2fce3"
+      ],
+      "expected_source_sha256": [
+        "6b9bad4d1934f93810696a4762846f27a2964ae717babb21b86943a2e4f2fce3"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-01-icon",
+      "role": "panel-icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image12.png",
+      "embedded_sha256": "f77cdeb5c7c40783d73b07d4a41577cab1fac781144dd1fbb45a0e422f4c82f9",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r2c1.png"
+      ],
+      "declared_source_sha256": [
+        "f77cdeb5c7c40783d73b07d4a41577cab1fac781144dd1fbb45a0e422f4c82f9"
+      ],
+      "source_file_sha256": [
+        "f77cdeb5c7c40783d73b07d4a41577cab1fac781144dd1fbb45a0e422f4c82f9"
+      ],
+      "expected_source_sha256": [
+        "f77cdeb5c7c40783d73b07d4a41577cab1fac781144dd1fbb45a0e422f4c82f9"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-02-icon",
+      "role": "panel-icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image13.png",
+      "embedded_sha256": "6700810547d8fdf644517857064a7e56ca9fb952dd9eb4036d70123f20537dc8",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r2c2.png"
+      ],
+      "declared_source_sha256": [
+        "6700810547d8fdf644517857064a7e56ca9fb952dd9eb4036d70123f20537dc8"
+      ],
+      "source_file_sha256": [
+        "6700810547d8fdf644517857064a7e56ca9fb952dd9eb4036d70123f20537dc8"
+      ],
+      "expected_source_sha256": [
+        "6700810547d8fdf644517857064a7e56ca9fb952dd9eb4036d70123f20537dc8"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-03-icon",
+      "role": "panel-icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image14.png",
+      "embedded_sha256": "d0b2ebbd3a45d719b753f784a92a8fa2e667b2c6d6d417bc3f3d50d77cf4dc72",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r2c3.png"
+      ],
+      "declared_source_sha256": [
+        "d0b2ebbd3a45d719b753f784a92a8fa2e667b2c6d6d417bc3f3d50d77cf4dc72"
+      ],
+      "source_file_sha256": [
+        "d0b2ebbd3a45d719b753f784a92a8fa2e667b2c6d6d417bc3f3d50d77cf4dc72"
+      ],
+      "expected_source_sha256": [
+        "d0b2ebbd3a45d719b753f784a92a8fa2e667b2c6d6d417bc3f3d50d77cf4dc72"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-04-icon",
+      "role": "panel-icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image15.png",
+      "embedded_sha256": "f0f6a2536768dd897e05a736e1ec0c8dc5b966db8790b312fe28ad441c0415f4",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r2c4.png"
+      ],
+      "declared_source_sha256": [
+        "f0f6a2536768dd897e05a736e1ec0c8dc5b966db8790b312fe28ad441c0415f4"
+      ],
+      "source_file_sha256": [
+        "f0f6a2536768dd897e05a736e1ec0c8dc5b966db8790b312fe28ad441c0415f4"
+      ],
+      "expected_source_sha256": [
+        "f0f6a2536768dd897e05a736e1ec0c8dc5b966db8790b312fe28ad441c0415f4"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-05-icon",
+      "role": "panel-icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image16.png",
+      "embedded_sha256": "fe8825056afc16ca490452b1216303e488b1f179393684659556c7fa6d74e658",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r2c5.png"
+      ],
+      "declared_source_sha256": [
+        "fe8825056afc16ca490452b1216303e488b1f179393684659556c7fa6d74e658"
+      ],
+      "source_file_sha256": [
+        "fe8825056afc16ca490452b1216303e488b1f179393684659556c7fa6d74e658"
+      ],
+      "expected_source_sha256": [
+        "fe8825056afc16ca490452b1216303e488b1f179393684659556c7fa6d74e658"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "panel-06-icon",
+      "role": "panel-icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image17.png",
+      "embedded_sha256": "000637841cbfa06d515d3943a325be0439b588c6662378379d86ceb50e45d385",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r2c6.png"
+      ],
+      "declared_source_sha256": [
+        "000637841cbfa06d515d3943a325be0439b588c6662378379d86ceb50e45d385"
+      ],
+      "source_file_sha256": [
+        "000637841cbfa06d515d3943a325be0439b588c6662378379d86ceb50e45d385"
+      ],
+      "expected_source_sha256": [
+        "000637841cbfa06d515d3943a325be0439b588c6662378379d86ceb50e45d385"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "interview-illustration",
+      "role": "illustration",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image18.png",
+      "embedded_sha256": "e8b6343c3c3c92f82048b3e6e09d8ca261e72ed86d5ef70fb54b72e274f53d4b",
+      "source_paths": [
+        "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/assets/icons/ic_r3c1.png"
+      ],
+      "declared_source_sha256": [
+        "e8b6343c3c3c92f82048b3e6e09d8ca261e72ed86d5ef70fb54b72e274f53d4b"
+      ],
+      "source_file_sha256": [
+        "e8b6343c3c3c92f82048b3e6e09d8ca261e72ed86d5ef70fb54b72e274f53d4b"
+      ],
+      "expected_source_sha256": [
+        "e8b6343c3c3c92f82048b3e6e09d8ca261e72ed86d5ef70fb54b72e274f53d4b"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "案例｜存量双终端优秀案例（手机+FTTR）",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "案例｜存量双终端优秀案例（手机+FTTR）",
+      "observed_text_sha256": "80c3a59279ca15d402d80dc95c437086a0e4ead81e177fe136f2a08968699a81",
+      "text_runs": {
+        "count": 3,
+        "values": [
+          "案例｜存量双终端优秀案例（",
+          "手机+FTTR",
+          "）"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "overview-badge-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "概述",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "概述",
+      "observed_text_sha256": "3d1f5e3875134458b5b41cb5f5a537ca5cc6a423e970387eee71b69589d61454",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "概述"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "overview-line-1",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "7月份智家畅越存量金融双终端（手机+FTTR），共办理464户，双终端占比15.6%，",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "7月份智家畅越存量金融双终端（手机+FTTR），共办理464户，双终端占比15.6%，",
+      "observed_text_sha256": "a51aea456e33977a16756f3efefe39773f556d909928e8c46485112e94280795",
+      "text_runs": {
+        "count": 5,
+        "values": [
+          "7月份智家畅越存量金融双终端（手机+FTTR），共办理",
+          "464户",
+          "，双终端占比",
+          "15.6%",
+          "，"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "overview-line-2",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "南召黄洋路、邓州团结路、内乡菊潭大街等网格办理较突出，现将优秀案例总结如下：",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "南召黄洋路、邓州团结路、内乡菊潭大街等网格办理较突出，现将优秀案例总结如下：",
+      "observed_text_sha256": "e7023ce21c9753e4def3aed5638782240ad5cd580bffb5ae3de0acfff93e2506",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "南召黄洋路、邓州团结路、内乡菊潭大街等网格办理较突出，现将优秀案例总结如下："
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p1-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "一、客户来源",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "一、客户来源",
+      "observed_text_sha256": "335c83697c4bce32081ab80cb79da05074ffa925eeb907830b9383f43f03faea",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "一、客户来源"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p1-b1",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 营销场景：回访邀约+进厅用户查比算。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 营销场景：回访邀约+进厅用户查比算。",
+      "observed_text_sha256": "11fc5a44df295201acce27dbf5bbccfacbecee4a60cc4b792a84c0e9887f6a76",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 营销场景：",
+          "回访邀约+进厅用户查比算。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p1-b2",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 端网侧适配用户：以开展客户家庭网络使用情况为开头，提前预约上门服务；或现场展示 FTTR、手机实物，直观为用户核算综合优惠，以手机终端+终端升级FTTR+千兆提速+金融包装降门槛打动用户。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 端网侧适配用户：以开展客户家庭网络使用情况为开头，提前预约上门服务；或现场展示 FTTR、手机实物，直观为用户核算综合优惠，以手机终端+终端升级FTTR+千兆提速+金融包装降门槛打动用户。",
+      "observed_text_sha256": "6f803d325f3452fde8cd66a54116af116ffdc929b5075ab399e1bb9ffedb3b35",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 端网侧适配用户：",
+          "以开展客户家庭网络使用情况为开头，提前预约上门服务；或现场展示 FTTR、手机实物，直观为用户核算综合优惠，以手机终端+终端升级FTTR+千兆提速+金融包装降门槛打动用户。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p1-b3",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 套餐低无宽带用户、合约到期：以服务回访为开头，逐步引入送手机送FTTR业务，通过赠送小礼品，邀约用户到厅查比算。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 套餐低无宽带用户、合约到期：以服务回访为开头，逐步引入送手机送FTTR业务，通过赠送小礼品，邀约用户到厅查比算。",
+      "observed_text_sha256": "de971f557e3dccf60dc8beeb2af96bf83125da30049ca18b78126e8d312e4187",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 套餐低无宽带用户、合约到期：",
+          "以服务回访为开头，逐步引入送手机送FTTR业务，通过赠送小礼品，邀约用户到厅查比算。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p1-b4",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 进厅用户：查用户弹窗，纸质罗列新旧套餐对比清单，清晰核算设备、手机、直降三重优惠。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 进厅用户：查用户弹窗，纸质罗列新旧套餐对比清单，清晰核算设备、手机、直降三重优惠。",
+      "observed_text_sha256": "a393ab2fb8d92485ff3ce3078fce1e2872f4f1e319535c78c279f2082a9b085c",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 进厅用户：",
+          "查用户弹窗，纸质罗列新旧套餐对比清单，清晰核算设备、手机、直降三重优惠。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p2-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "二、营销要点",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "二、营销要点",
+      "observed_text_sha256": "ffa8918d7c8be6116ce9815e186f4b68deeb9f2ed4976ae10ddc5cf33b6f4f5f",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "二、营销要点"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p2-b1",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 推荐次序：面客时要从高往低进行推荐，双终端--重金融或FTTR--畅越兜底",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 推荐次序：面客时要从高往低进行推荐，双终端--重金融或FTTR--畅越兜底",
+      "observed_text_sha256": "14ea458792698a6b43dc5f9285c36ea90109c08eea7146e68997f4181e1a2415",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 推荐次序：",
+          "面客时要从高往低进行推荐，双终端--重金融或FTTR--畅越兜底"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p2-b2",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 一句话卖点：咱现在把套餐升级到**元，全家共同消费，一套价值三千多元的品牌手机和超级WIFI大礼包仅需399元就可带走。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 一句话卖点：咱现在把套餐升级到**元，全家共同消费，一套价值三千多元的品牌手机和超级WIFI大礼包仅需399元就可带走。",
+      "observed_text_sha256": "715e5487930b40fb09f23a678ebedad0bef45ee599be22ca7e0d10b4f2946f08",
+      "text_runs": {
+        "count": 6,
+        "values": [
+          "• 一句话卖点：",
+          "咱现在把套餐升级到",
+          "**元",
+          "，全家共同消费，一套价值三千多元的品牌手机和超级WIFI大礼包仅需",
+          "399元",
+          "就可带走。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p3-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "三、包装预案",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "三、包装预案",
+      "observed_text_sha256": "6e5eb8d750d65f0bc69fb49be4bda8808611bca4136622f9eb70e5288aba56f5",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "三、包装预案"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p3-intro",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "借助畅越购物车，提前规划产品包装方案。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "借助畅越购物车，提前规划产品包装方案。",
+      "observed_text_sha256": "4b39f67585a8f20e3757d35ab77d826ee345274a8da234e1d3ed88d01786f739",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "借助畅越购物车，提前规划产品包装方案。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p3-b1",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "① 基础档：根据弹窗画像定策略，提值30元为FTTR，提值30元购物车金融870元包装空间（vivo Y60手机），用户需补差价428元。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "① 基础档：根据弹窗画像定策略，提值30元为FTTR，提值30元购物车金融870元包装空间（vivo Y60手机），用户需补差价428元。",
+      "observed_text_sha256": "0e210b690ae14ffd758b2bd557abfcb06910e589c95cb8f71f08ba55aadee769",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "① 基础档：",
+          "根据弹窗画像定策略，提值30元为FTTR，提值30元购物车金融870元包装空间（vivo Y60手机），用户需补差价428元。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p3-b2",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "② 家庭高配版：基础档上再提值10元，可降低用户补差价的金额，办理1张免费副卡，降低人均消费缓解用户消费感知。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "② 家庭高配版：基础档上再提值10元，可降低用户补差价的金额，办理1张免费副卡，降低人均消费缓解用户消费感知。",
+      "observed_text_sha256": "13215cc3e18b5ce0a0997cfea667e21780a13320e458338b41f217e73e47b76a",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "② 家庭高配版：",
+          "基础档上再提值10元，可降低用户补差价的金额，办理1张免费副卡，降低人均消费缓解用户消费感知。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p4-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "四、怎么搞定用户",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "四、怎么搞定用户",
+      "observed_text_sha256": "7f78dac6046c3788907a2bbe25fea4fcb5a82d867481aa5267ec354b1c3bdee5",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "四、怎么搞定用户"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p4-b1",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 找痛点引入方案：不直接推销高价套餐，立足用户现有使用情况切入，核消费，主动询问家庭宽带使用体验、家中上网人数、日常用网痛点，从“解决家庭网络不好”这个刚需作为沟通突破口，引入梯度金融优惠方案。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 找痛点引入方案：不直接推销高价套餐，立足用户现有使用情况切入，核消费，主动询问家庭宽带使用体验、家中上网人数、日常用网痛点，从“解决家庭网络不好”这个刚需作为沟通突破口，引入梯度金融优惠方案。",
+      "observed_text_sha256": "d7112c64e525472d191332bb07f7abb9c51bde0c91ffeeb567b023a5af2420f2",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 找痛点引入方案：",
+          "不直接推销高价套餐，立足用户现有使用情况切入，核消费，主动询问家庭宽带使用体验、家中上网人数、日常用网痛点，从“解决家庭网络不好”这个刚需作为沟通突破口，引入梯度金融优惠方案。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p4-b2",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 打消用户涨价顾虑：通过资费对比、权益对比、实物价值核算，让用户渐感知两套方案的优惠力度、性价比差异，耐心解答用户对月交费、合约周期、流量通话、设备质保、手机权益等各类疑问，打消用户涨价顾虑，引导选择适配自身家庭最优方案。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 打消用户涨价顾虑：通过资费对比、权益对比、实物价值核算，让用户渐感知两套方案的优惠力度、性价比差异，耐心解答用户对月交费、合约周期、流量通话、设备质保、手机权益等各类疑问，打消用户涨价顾虑，引导选择适配自身家庭最优方案。",
+      "observed_text_sha256": "d515bbb3a71f4a6bf2f5d13d399edee45e953bebdae6289c69976f9ce91ee45c",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 打消用户涨价顾虑：",
+          "通过资费对比、权益对比、实物价值核算，让用户渐感知两套方案的优惠力度、性价比差异，耐心解答用户对月交费、合约周期、流量通话、设备质保、手机权益等各类疑问，打消用户涨价顾虑，引导选择适配自身家庭最优方案。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p5-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "五、面客促单",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "五、面客促单",
+      "observed_text_sha256": "e548be890c6747a1b424c71cc6849538a6bb88e7e807ae483fff725a05bc26b9",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "五、面客促单"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p5-body",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "犹豫不决用户，借助外出上门面对面沟通优势，逐条耐心解读政策，结合用户家庭实际使用场景推荐适配方案，给予自主选择空间，耐心讲解建信任促成交。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "犹豫不决用户，借助外出上门面对面沟通优势，逐条耐心解读政策，结合用户家庭实际使用场景推荐适配方案，给予自主选择空间，耐心讲解建信任促成交。",
+      "observed_text_sha256": "808c4d226760b63c93d2f327423cb5e24823f31fe6fcfc36862670d622bb8626",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "犹豫不决用户，借助外出上门面对面沟通优势，逐条耐心解读政策，结合用户家庭实际使用场景推荐适配方案，给予自主选择空间，耐心讲解建信任促成交。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p6-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "六、事后复盘",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "六、事后复盘",
+      "observed_text_sha256": "9e0cb46e9e4c752b80721439cf4eb325f2cb55fe74c7bed23eb41f77f67a51ce",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "六、事后复盘"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p6-b1",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 每日标准动作：晨会做情境演练，优秀人员点评，现场纠偏。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 每日标准动作：晨会做情境演练，优秀人员点评，现场纠偏。",
+      "observed_text_sha256": "5fa94071a65e07cf96c3f1ad72b848f6956141107d3e8bb559489ee09c14d869",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 每日标准动作：",
+          "晨会做情境演练，优秀人员点评，现场纠偏。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "p6-b2",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "• 双终端形成案例档案：引导营业员总结双终端成功案例，分享包装方案、成交点、营销场景。整理成经验案例材料，文字不变。",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "• 双终端形成案例档案：引导营业员总结双终端成功案例，分享包装方案、成交点、营销场景。整理成经验案例材料，文字不变。",
+      "observed_text_sha256": "d7bddb2df6a51f7dbab81434184be79a0442baf18dc84bc6a99ebe60e07427f1",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "• 双终端形成案例档案：",
+          "引导营业员总结双终端成功案例，分享包装方案、成交点、营销场景。整理成经验案例材料，文字不变。"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "footer-slogan",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "用心服务　创造价值　智家畅越　联通美好生活",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "用心服务　创造价值　智家畅越　联通美好生活",
+      "observed_text_sha256": "d837ccfe9609414a4d8e0f2c6d1890777c252ca4d2a4478b5d2f3faf0aa1fb13",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "用心服务　创造价值　智家畅越　联通美好生活"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

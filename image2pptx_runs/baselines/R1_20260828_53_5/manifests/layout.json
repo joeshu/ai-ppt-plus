@@ -1,0 +1,1026 @@
+{
+  "schema": "ai-ppt-plus/layout/v1",
+  "project_id": "unicom-dual-terminal-case-53-5",
+  "units": "px",
+  "ref_width": 1536,
+  "ref_height": 864,
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "assets_dir": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01",
+  "font_family": "Noto Sans CJK SC",
+  "font_dir": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts",
+  "font_manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts/font-manifest.json",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#333333",
+    "layout_name": "Blank"
+  },
+  "slides": [
+    {
+      "slide_no": 1,
+      "layout_index": 6,
+      "background": "assets/background_gen.png",
+      "background_object_id": "background",
+      "background_alt_text": "generated light blue and white infographic background",
+      "frame": "assets/frame.png",
+      "frame_object_id": "frame",
+      "frame_alt_text": "generated navy header, panel atmosphere and red footer frame; formal text excluded",
+      "shapes": [
+        {
+          "object_id": "overview-badge",
+          "name": "overview-badge",
+          "type": "rounded_rect",
+          "x": 40,
+          "y": 112,
+          "w": 98,
+          "h": 56,
+          "fill": "#D71920",
+          "line": "#D71920",
+          "line_width": 0.5,
+          "radius": 0.18,
+          "alt_text": "red overview label background"
+        }
+      ],
+      "panels": [
+        {
+          "object_id": "panel-01",
+          "panel_id": "panel-01",
+          "file": "assets/panels/panel-01.png",
+          "x": 40,
+          "y": 208,
+          "w": 484,
+          "h": 329,
+          "alt_text": "independent panel-01 frame without formal text"
+        },
+        {
+          "object_id": "panel-02",
+          "panel_id": "panel-02",
+          "file": "assets/panels/panel-02.png",
+          "x": 539,
+          "y": 208,
+          "w": 386,
+          "h": 329,
+          "alt_text": "independent panel-02 frame without formal text"
+        },
+        {
+          "object_id": "panel-03",
+          "panel_id": "panel-03",
+          "file": "assets/panels/panel-03.png",
+          "x": 938,
+          "y": 208,
+          "w": 553,
+          "h": 329,
+          "alt_text": "independent panel-03 frame without formal text"
+        },
+        {
+          "object_id": "panel-04",
+          "panel_id": "panel-04",
+          "file": "assets/panels/panel-04.png",
+          "x": 40,
+          "y": 549,
+          "w": 484,
+          "h": 246,
+          "alt_text": "independent panel-04 frame without formal text"
+        },
+        {
+          "object_id": "panel-05",
+          "panel_id": "panel-05",
+          "file": "assets/panels/panel-05.png",
+          "x": 543,
+          "y": 553,
+          "w": 461,
+          "h": 242,
+          "alt_text": "independent panel-05 frame without formal text"
+        },
+        {
+          "object_id": "panel-06",
+          "panel_id": "panel-06",
+          "file": "assets/panels/panel-06.png",
+          "x": 1021,
+          "y": 555,
+          "w": 470,
+          "h": 240,
+          "alt_text": "independent panel-06 frame without formal text"
+        }
+      ],
+      "icons": [
+        {
+          "object_id": "brand-logo",
+          "name": "brand-logo",
+          "role": "brand_lockup",
+          "asset_policy": "brand_lockup",
+          "file": "assets/icons/ic_r1c1.png",
+          "x": 25,
+          "y": 18,
+          "w": 205,
+          "h": 62,
+          "source_bbox": [
+            25,
+            18,
+            205,
+            62
+          ],
+          "alt_text": "complete China Unicom logo lockup; uncropped and replaceable"
+        },
+        {
+          "object_id": "product-phone",
+          "name": "product-phone",
+          "role": "product-visual",
+          "file": "assets/icons/ic_r1c2.png",
+          "x": 1119,
+          "y": 78,
+          "w": 107,
+          "h": 131,
+          "source_bbox": [
+            1119,
+            78,
+            107,
+            131
+          ],
+          "alt_text": "independent smartphone product visual"
+        },
+        {
+          "object_id": "product-fttr",
+          "name": "product-fttr",
+          "role": "product-visual",
+          "file": "assets/icons/ic_r1c3.png",
+          "x": 1263,
+          "y": 26,
+          "w": 228,
+          "h": 184,
+          "source_bbox": [
+            1263,
+            26,
+            228,
+            184
+          ],
+          "alt_text": "independent FTTR equipment and Wi-Fi visual"
+        },
+        {
+          "object_id": "panel-01-icon",
+          "name": "panel-01-icon",
+          "role": "panel-icon",
+          "file": "assets/icons/ic_r2c1.png",
+          "x": 50,
+          "y": 217,
+          "w": 51,
+          "h": 51,
+          "source_bbox": [
+            50,
+            217,
+            51,
+            51
+          ],
+          "alt_text": "panel-01 source icon"
+        },
+        {
+          "object_id": "panel-02-icon",
+          "name": "panel-02-icon",
+          "role": "panel-icon",
+          "file": "assets/icons/ic_r2c2.png",
+          "x": 550,
+          "y": 217,
+          "w": 51,
+          "h": 51,
+          "source_bbox": [
+            550,
+            217,
+            51,
+            51
+          ],
+          "alt_text": "panel-02 source icon"
+        },
+        {
+          "object_id": "panel-03-icon",
+          "name": "panel-03-icon",
+          "role": "panel-icon",
+          "file": "assets/icons/ic_r2c3.png",
+          "x": 950,
+          "y": 217,
+          "w": 51,
+          "h": 51,
+          "source_bbox": [
+            950,
+            217,
+            51,
+            51
+          ],
+          "alt_text": "panel-03 source icon"
+        },
+        {
+          "object_id": "panel-04-icon",
+          "name": "panel-04-icon",
+          "role": "panel-icon",
+          "file": "assets/icons/ic_r2c4.png",
+          "x": 50,
+          "y": 559,
+          "w": 51,
+          "h": 51,
+          "source_bbox": [
+            50,
+            559,
+            51,
+            51
+          ],
+          "alt_text": "panel-04 source icon"
+        },
+        {
+          "object_id": "panel-05-icon",
+          "name": "panel-05-icon",
+          "role": "panel-icon",
+          "file": "assets/icons/ic_r2c5.png",
+          "x": 554,
+          "y": 561,
+          "w": 51,
+          "h": 51,
+          "source_bbox": [
+            554,
+            561,
+            51,
+            51
+          ],
+          "alt_text": "panel-05 source icon"
+        },
+        {
+          "object_id": "panel-06-icon",
+          "name": "panel-06-icon",
+          "role": "panel-icon",
+          "file": "assets/icons/ic_r2c6.png",
+          "x": 1034,
+          "y": 563,
+          "w": 51,
+          "h": 51,
+          "source_bbox": [
+            1034,
+            563,
+            51,
+            51
+          ],
+          "alt_text": "panel-06 source icon"
+        },
+        {
+          "object_id": "interview-illustration",
+          "name": "interview-illustration",
+          "role": "illustration",
+          "file": "assets/icons/ic_r3c1.png",
+          "x": 836,
+          "y": 630,
+          "w": 147,
+          "h": 134,
+          "source_bbox": [
+            836,
+            630,
+            147,
+            134
+          ],
+          "alt_text": "independent purple face-to-face interview illustration"
+        }
+      ],
+      "texts": [
+        {
+          "object_id": "title",
+          "x": 298.0,
+          "y": 18.0,
+          "w": 900.0,
+          "h": 56.0,
+          "font": "Noto Sans CJK SC",
+          "size": 27,
+          "bold": true,
+          "color": "#FFFFFF",
+          "valign": "middle",
+          "source_ref": "../../source/reference-01.jpeg#title",
+          "source_bbox": [
+            298,
+            18,
+            900,
+            56
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "案例｜存量双终端优秀案例（",
+              "font": "Noto Sans CJK SC",
+              "size": 27,
+              "bold": true,
+              "color": "#FFFFFF"
+            },
+            {
+              "text": "手机+FTTR",
+              "font": "Noto Sans CJK SC",
+              "size": 27,
+              "bold": true,
+              "color": "#FFD33D"
+            },
+            {
+              "text": "）",
+              "font": "Noto Sans CJK SC",
+              "size": 27,
+              "bold": true,
+              "color": "#FFFFFF"
+            }
+          ]
+        },
+        {
+          "object_id": "overview-badge-label",
+          "x": 40.0,
+          "y": 111.0,
+          "w": 100.0,
+          "h": 58.0,
+          "font": "Noto Sans CJK SC",
+          "size": 22,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center",
+          "valign": "middle",
+          "source_ref": "../../source/reference-01.jpeg#overview-badge",
+          "source_bbox": [
+            40,
+            111,
+            100,
+            58
+          ],
+          "text": "概述"
+        },
+        {
+          "object_id": "overview-line-1",
+          "x": 160,
+          "y": 113,
+          "w": 1320,
+          "h": 28,
+          "font": "Noto Sans CJK SC",
+          "size": 13.1,
+          "color": "#222222",
+          "source_ref": "../../source/reference-01.jpeg#overview-line-1",
+          "source_bbox": [
+            160,
+            111,
+            1320,
+            28
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "7月份智家畅越存量金融双终端（手机+FTTR），共办理",
+              "font": "Noto Sans CJK SC",
+              "size": 13.1,
+              "color": "#222222"
+            },
+            {
+              "text": "464户",
+              "font": "Noto Sans CJK SC",
+              "size": 13.1,
+              "bold": true,
+              "color": "#C51E2E"
+            },
+            {
+              "text": "，双终端占比",
+              "font": "Noto Sans CJK SC",
+              "size": 13.1,
+              "color": "#222222"
+            },
+            {
+              "text": "15.6%",
+              "font": "Noto Sans CJK SC",
+              "size": 13.1,
+              "bold": true,
+              "color": "#C51E2E"
+            },
+            {
+              "text": "，",
+              "font": "Noto Sans CJK SC",
+              "size": 13.1,
+              "color": "#222222"
+            }
+          ]
+        },
+        {
+          "object_id": "overview-line-2",
+          "x": 160.0,
+          "y": 141.0,
+          "w": 1320.0,
+          "h": 37.0,
+          "font": "Noto Sans CJK SC",
+          "size": 13.1,
+          "color": "#222222",
+          "source_ref": "../../source/reference-01.jpeg#overview-line-2",
+          "source_bbox": [
+            160,
+            141,
+            1320,
+            37
+          ],
+          "text": "南召黄洋路、邓州团结路、内乡菊潭大街等网格办理较突出，现将优秀案例总结如下："
+        },
+        {
+          "object_id": "p1-title",
+          "x": 115.0,
+          "y": 233.0,
+          "w": 250.0,
+          "h": 33.0,
+          "font": "Noto Sans CJK SC",
+          "size": 17.2,
+          "bold": true,
+          "color": "#C51E2E",
+          "source_ref": "../../source/reference-01.jpeg#p1-title",
+          "source_bbox": [
+            115,
+            233,
+            250,
+            33
+          ],
+          "text": "一、客户来源"
+        },
+        {
+          "object_id": "p1-b1",
+          "x": 55.0,
+          "y": 273.0,
+          "w": 450.0,
+          "h": 28.0,
+          "font": "Noto Sans CJK SC",
+          "size": 10.5,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p1-b1",
+          "source_bbox": [
+            55,
+            273,
+            450,
+            28
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 营销场景：",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "bold": true,
+              "color": "#C51E2E"
+            },
+            {
+              "text": "回访邀约+进厅用户查比算。",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p1-b2",
+          "x": 57,
+          "y": 304,
+          "w": 455,
+          "h": 82,
+          "font": "Noto Sans CJK SC",
+          "size": 10.5,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p1-b2",
+          "source_bbox": [
+            55,
+            303,
+            455,
+            83
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 端网侧适配用户：",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "bold": true,
+              "color": "#C51E2E"
+            },
+            {
+              "text": "以开展客户家庭网络使用情况为开头，提前预约上门服务；或现场展示 FTTR、手机实物，直观为用户核算综合优惠，以手机终端+终端升级FTTR+千兆提速+金融包装降门槛打动用户。",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p1-b3",
+          "x": 57,
+          "y": 386,
+          "w": 455,
+          "h": 78,
+          "font": "Noto Sans CJK SC",
+          "size": 10.5,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p1-b3",
+          "source_bbox": [
+            55,
+            386,
+            455,
+            78
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 套餐低无宽带用户、合约到期：",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "bold": true,
+              "color": "#C51E2E"
+            },
+            {
+              "text": "以服务回访为开头，逐步引入送手机送FTTR业务，通过赠送小礼品，邀约用户到厅查比算。",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p1-b4",
+          "x": 57,
+          "y": 465,
+          "w": 455,
+          "h": 58,
+          "font": "Noto Sans CJK SC",
+          "size": 10.5,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p1-b4",
+          "source_bbox": [
+            55,
+            465,
+            455,
+            60
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 进厅用户：",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "bold": true,
+              "color": "#C51E2E"
+            },
+            {
+              "text": "查用户弹窗，纸质罗列新旧套餐对比清单，清晰核算设备、手机、直降三重优惠。",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p2-title",
+          "x": 616.0,
+          "y": 233.0,
+          "w": 270.0,
+          "h": 33.0,
+          "font": "Noto Sans CJK SC",
+          "size": 17.2,
+          "bold": true,
+          "color": "#E87912",
+          "source_ref": "../../source/reference-01.jpeg#p2-title",
+          "source_bbox": [
+            616,
+            233,
+            270,
+            33
+          ],
+          "text": "二、营销要点"
+        },
+        {
+          "object_id": "p2-b1",
+          "x": 556,
+          "y": 277,
+          "w": 355,
+          "h": 84,
+          "font": "Noto Sans CJK SC",
+          "size": 12.0,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p2-b1",
+          "source_bbox": [
+            555,
+            278,
+            355,
+            82
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 推荐次序：",
+              "font": "Noto Sans CJK SC",
+              "size": 12.0,
+              "bold": true,
+              "color": "#E87912"
+            },
+            {
+              "text": "面客时要从高往低进行推荐，双终端--重金融或FTTR--畅越兜底",
+              "font": "Noto Sans CJK SC",
+              "size": 12.0,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p2-b2",
+          "x": 556,
+          "y": 374,
+          "w": 355,
+          "h": 144,
+          "font": "Noto Sans CJK SC",
+          "size": 12.0,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p2-b2",
+          "source_bbox": [
+            555,
+            374,
+            355,
+            145
+          ],
+          "emphasis_expected": true,
+          "literal_redaction": true,
+          "runs": [
+            {
+              "text": "• 一句话卖点：",
+              "font": "Noto Sans CJK SC",
+              "size": 12.0,
+              "bold": true,
+              "color": "#E87912"
+            },
+            {
+              "text": "咱现在把套餐升级到",
+              "font": "Noto Sans CJK SC",
+              "size": 12.0,
+              "color": "#333333"
+            },
+            {
+              "text": "**元",
+              "font": "Noto Sans CJK SC",
+              "size": 12.0,
+              "bold": true,
+              "color": "#C51E2E",
+              "literal_redaction": true
+            },
+            {
+              "text": "，全家共同消费，一套价值三千多元的品牌手机和超级WIFI大礼包仅需",
+              "font": "Noto Sans CJK SC",
+              "size": 12.0,
+              "color": "#333333"
+            },
+            {
+              "text": "399元",
+              "font": "Noto Sans CJK SC",
+              "size": 12.0,
+              "bold": true,
+              "color": "#C51E2E"
+            },
+            {
+              "text": "就可带走。",
+              "font": "Noto Sans CJK SC",
+              "size": 12.0,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p3-title",
+          "x": 1015.0,
+          "y": 233.0,
+          "w": 300.0,
+          "h": 33.0,
+          "font": "Noto Sans CJK SC",
+          "size": 17.2,
+          "bold": true,
+          "color": "#1558A6",
+          "source_ref": "../../source/reference-01.jpeg#p3-title",
+          "source_bbox": [
+            1015,
+            233,
+            300,
+            33
+          ],
+          "text": "三、包装预案"
+        },
+        {
+          "object_id": "p3-intro",
+          "x": 962,
+          "y": 278,
+          "w": 510,
+          "h": 28,
+          "font": "Noto Sans CJK SC",
+          "size": 11.5,
+          "color": "#333333",
+          "source_ref": "../../source/reference-01.jpeg#p3-intro",
+          "source_bbox": [
+            962,
+            278,
+            510,
+            27
+          ],
+          "text": "借助畅越购物车，提前规划产品包装方案。"
+        },
+        {
+          "object_id": "p3-b1",
+          "x": 962,
+          "y": 319,
+          "w": 510,
+          "h": 83,
+          "font": "Noto Sans CJK SC",
+          "size": 12.5,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p3-b1",
+          "source_bbox": [
+            962,
+            319,
+            510,
+            84
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "① 基础档：",
+              "font": "Noto Sans CJK SC",
+              "size": 12.5,
+              "bold": true,
+              "color": "#1558A6"
+            },
+            {
+              "text": "根据弹窗画像定策略，提值30元为FTTR，提值30元购物车金融870元包装空间（vivo Y60手机），用户需补差价428元。",
+              "font": "Noto Sans CJK SC",
+              "size": 12.5,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p3-b2",
+          "x": 962.0,
+          "y": 404.0,
+          "w": 510.0,
+          "h": 108.0,
+          "font": "Noto Sans CJK SC",
+          "size": 12.5,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p3-b2",
+          "source_bbox": [
+            962,
+            404,
+            510,
+            108
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "② 家庭高配版：",
+              "font": "Noto Sans CJK SC",
+              "size": 12.5,
+              "bold": true,
+              "color": "#1558A6"
+            },
+            {
+              "text": "基础档上再提值10元，可降低用户补差价的金额，办理1张免费副卡，降低人均消费缓解用户消费感知。",
+              "font": "Noto Sans CJK SC",
+              "size": 12.5,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p4-title",
+          "x": 115.0,
+          "y": 574.0,
+          "w": 300.0,
+          "h": 33.0,
+          "font": "Noto Sans CJK SC",
+          "size": 17.2,
+          "bold": true,
+          "color": "#398B50",
+          "source_ref": "../../source/reference-01.jpeg#p4-title",
+          "source_bbox": [
+            115,
+            574,
+            300,
+            33
+          ],
+          "text": "四、怎么搞定用户"
+        },
+        {
+          "object_id": "p4-b1",
+          "x": 57,
+          "y": 611,
+          "w": 455,
+          "h": 82,
+          "font": "Noto Sans CJK SC",
+          "size": 10.5,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p4-b1",
+          "source_bbox": [
+            55,
+            610,
+            455,
+            83
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 找痛点引入方案：",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "bold": true,
+              "color": "#398B50"
+            },
+            {
+              "text": "不直接推销高价套餐，立足用户现有使用情况切入，核消费，主动询问家庭宽带使用体验、家中上网人数、日常用网痛点，从“解决家庭网络不好”这个刚需作为沟通突破口，引入梯度金融优惠方案。",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p4-b2",
+          "x": 55.0,
+          "y": 698.0,
+          "w": 455.0,
+          "h": 91.0,
+          "font": "Noto Sans CJK SC",
+          "size": 10.5,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p4-b2",
+          "source_bbox": [
+            55,
+            698,
+            455,
+            91
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 打消用户涨价顾虑：",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "bold": true,
+              "color": "#398B50"
+            },
+            {
+              "text": "通过资费对比、权益对比、实物价值核算，让用户渐感知两套方案的优惠力度、性价比差异，耐心解答用户对月交费、合约周期、流量通话、设备质保、手机权益等各类疑问，打消用户涨价顾虑，引导选择适配自身家庭最优方案。",
+              "font": "Noto Sans CJK SC",
+              "size": 10.5,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p5-title",
+          "x": 616.0,
+          "y": 578.0,
+          "w": 270.0,
+          "h": 33.0,
+          "font": "Noto Sans CJK SC",
+          "size": 17.2,
+          "bold": true,
+          "color": "#6C4BB0",
+          "source_ref": "../../source/reference-01.jpeg#p5-title",
+          "source_bbox": [
+            616,
+            578,
+            270,
+            33
+          ],
+          "text": "五、面客促单"
+        },
+        {
+          "object_id": "p5-body",
+          "x": 558,
+          "y": 638,
+          "w": 260,
+          "h": 126,
+          "font": "Noto Sans CJK SC",
+          "size": 10.0,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p5-body",
+          "source_bbox": [
+            558,
+            638,
+            260,
+            126
+          ],
+          "text": "犹豫不决用户，借助外出上门面对面沟通优势，逐条耐心解读政策，结合用户家庭实际使用场景推荐适配方案，给予自主选择空间，耐心讲解建信任促成交。"
+        },
+        {
+          "object_id": "p6-title",
+          "x": 1090.0,
+          "y": 580.0,
+          "w": 300.0,
+          "h": 33.0,
+          "font": "Noto Sans CJK SC",
+          "size": 17.2,
+          "bold": true,
+          "color": "#188FA0",
+          "source_ref": "../../source/reference-01.jpeg#p6-title",
+          "source_bbox": [
+            1090,
+            580,
+            300,
+            33
+          ],
+          "text": "六、事后复盘"
+        },
+        {
+          "object_id": "p6-b1",
+          "x": 1038,
+          "y": 611,
+          "w": 440,
+          "h": 54,
+          "font": "Noto Sans CJK SC",
+          "size": 11.2,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p6-b1",
+          "source_bbox": [
+            1038,
+            611,
+            440,
+            53
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 每日标准动作：",
+              "font": "Noto Sans CJK SC",
+              "size": 11.2,
+              "bold": true,
+              "color": "#188FA0"
+            },
+            {
+              "text": "晨会做情境演练，优秀人员点评，现场纠偏。",
+              "font": "Noto Sans CJK SC",
+              "size": 11.2,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "p6-b2",
+          "x": 1038,
+          "y": 671,
+          "w": 440,
+          "h": 111,
+          "font": "Noto Sans CJK SC",
+          "size": 11.2,
+          "color": "#333333",
+          "line_spacing": 1.0,
+          "source_ref": "../../source/reference-01.jpeg#p6-b2",
+          "source_bbox": [
+            1038,
+            671,
+            440,
+            113
+          ],
+          "emphasis_expected": true,
+          "runs": [
+            {
+              "text": "• 双终端形成案例档案：",
+              "font": "Noto Sans CJK SC",
+              "size": 11.2,
+              "bold": true,
+              "color": "#188FA0"
+            },
+            {
+              "text": "引导营业员总结双终端成功案例，分享包装方案、成交点、营销场景。整理成经验案例材料，文字不变。",
+              "font": "Noto Sans CJK SC",
+              "size": 11.2,
+              "color": "#333333"
+            }
+          ]
+        },
+        {
+          "object_id": "footer-slogan",
+          "x": 430,
+          "y": 823,
+          "w": 680,
+          "h": 33,
+          "font": "Noto Sans CJK SC",
+          "size": 17.0,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center",
+          "valign": "middle",
+          "source_ref": "../../source/reference-01.jpeg#footer",
+          "source_bbox": [
+            430,
+            823,
+            680,
+            34
+          ],
+          "text": "用心服务　创造价值　智家畅越　联通美好生活"
+        }
+      ],
+      "speaker_notes": "Reference reconstruction R1. Source image is visual authority. Formal text is native and was transcribed visually; the literal masked amount **元 is intentionally preserved and requires business confirmation. Six panels, logo, product visuals and interview illustration are independent replaceable objects."
+    }
+  ]
+}

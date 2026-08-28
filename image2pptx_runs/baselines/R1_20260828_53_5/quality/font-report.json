@@ -1,0 +1,49 @@
+{
+  "schema": "ai-ppt-plus/font-report/v1",
+  "ok": true,
+  "generated_at": "2026-08-28T12:47:27.307563+00:00",
+  "font_dir": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts",
+  "local_font_files": [
+    "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/project-fonts/NotoSansCJKsc-Regular.otf"
+  ],
+  "local_font_families": [
+    "Noto Sans CJK SC"
+  ],
+  "fonts": [
+    {
+      "requested": "Noto Sans CJK SC",
+      "resolved": "Noto Sans CJK SC",
+      "exact_or_family_match": true,
+      "cjk_ready": true
+    },
+    {
+      "requested": "Noto Sans CJK SC",
+      "resolved": "Noto Sans CJK SC",
+      "exact_or_family_match": true,
+      "cjk_ready": true
+    },
+    {
+      "requested": "Noto Sans SC",
+      "resolved": "DejaVu Sans",
+      "exact_or_family_match": false,
+      "cjk_ready": false
+    },
+    {
+      "requested": "WenQuanYi Zen Hei",
+      "resolved": "DejaVu Sans",
+      "exact_or_family_match": false,
+      "cjk_ready": false
+    }
+  ],
+  "cjk_delivery_supported": true,
+  "font_status": {
+    "files_found": true,
+    "family_discovered": true,
+    "glyph_route_available": true,
+    "render_review": "required",
+    "license": "unverified",
+    "license_files": [],
+    "redistribution": "unverified"
+  },
+  "rule": "Do not declare Chinese render validation passed unless cjk_delivery_supported is true and rendered pages are visually reviewed. Do not imply redistribution permission from font discovery."
+}

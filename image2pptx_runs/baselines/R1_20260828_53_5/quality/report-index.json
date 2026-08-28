@@ -1,0 +1,186 @@
+{
+  "schema": "ai-ppt-plus/report-index/v1",
+  "project_id": "01",
+  "revision": "working",
+  "stage": "validated",
+  "validation_scope": "full",
+  "deck_path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+  "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+  "source_references": [
+    {
+      "source_id": "deck",
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+      "sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd"
+    }
+  ],
+  "reports": [
+    {
+      "report_type": "environment",
+      "path": "environment-report.json",
+      "required": true,
+      "stage": "intake",
+      "step_ok": true
+    },
+    {
+      "report_type": "inspection",
+      "path": "inspection.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "render",
+      "path": "render-report.json",
+      "required": true,
+      "stage": "rendered",
+      "step_ok": true
+    },
+    {
+      "report_type": "render-visual-gate",
+      "path": "render-visual-gate.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "manifest-validation",
+      "path": "manifest-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "project-validation",
+      "path": "project-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "manifest-registry-validation",
+      "path": "manifest-registry-validation.json",
+      "required": false,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "object-manifest-validation",
+      "path": "object-manifest-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "editable-object-audit",
+      "path": "editable-object-audit.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "semantic-object-audit",
+      "path": "semantic-object-audit.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "panel-assets-validation",
+      "path": "panel-assets-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "text-style-map-validation",
+      "path": "text-style-map-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "text-layout-validation",
+      "path": "text-layout-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "imagegen-assets-validation",
+      "path": "imagegen-assets-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "icon-assets-validation",
+      "path": "icon-assets-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "icon-layer-audit",
+      "path": "icon-layer-audit.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "layout-guard",
+      "path": "layout-guard.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "visual-compare-qa",
+      "path": "visual-qa/report.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "font",
+      "path": "font-report.json",
+      "required": true,
+      "stage": "intake",
+      "step_ok": true
+    },
+    {
+      "report_type": "font-asset-validation",
+      "path": "font-asset-validation.json",
+      "required": true,
+      "stage": "intake",
+      "step_ok": true
+    },
+    {
+      "report_type": "font-delivery-validation",
+      "path": "font-delivery-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "route-validation",
+      "path": "route-validation.json",
+      "required": true,
+      "stage": "design-system-ready",
+      "step_ok": true
+    },
+    {
+      "report_type": "handoff-validation",
+      "path": "handoff-validation.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    },
+    {
+      "report_type": "visual-comparison",
+      "path": "visual-comparison.json",
+      "required": true,
+      "stage": "validated",
+      "step_ok": true
+    }
+  ]
+}

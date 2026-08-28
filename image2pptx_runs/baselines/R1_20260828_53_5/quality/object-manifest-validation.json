@@ -1,0 +1,46 @@
+{
+  "schema": "ai-ppt-plus/slide-object-manifest-validation/v1",
+  "valid": true,
+  "manifest": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/slide-object-manifest.json",
+  "slides": [
+    {
+      "slide": 1,
+      "object_count": 44,
+      "counts_by_level": {
+        "L0": 0,
+        "L1": 26,
+        "L2": 11,
+        "L3": 7,
+        "L4": 0,
+        "L5": 0
+      },
+      "primary_level": "L3",
+      "fully_editable_object_count": 26,
+      "raster_object_count": 18,
+      "placeholder_count": 0,
+      "blocked_object_count": 0,
+      "fully_editable_ratio": 0.5909,
+      "human_review_required": true,
+      "formal_content_rasterized": false,
+      "delivery_decision": "human-confirmation-required",
+      "issues": []
+    }
+  ],
+  "panel_ids": [
+    "panel-01",
+    "panel-02",
+    "panel-03",
+    "panel-04",
+    "panel-05",
+    "panel-06"
+  ],
+  "component_usage": {
+    "instances": 0,
+    "distinct_components": 0,
+    "by_component": {},
+    "reused_component_types": 0
+  },
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

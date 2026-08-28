@@ -1,0 +1,20 @@
+{
+  "schema": "ai-ppt-plus/source-image-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-08-28T12:39:14.942436+00:00",
+  "images": [
+    {
+      "path": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+      "exists": true,
+      "decoded": true,
+      "bytes": 530208,
+      "sha256": "a7392cd8a0da177a9dd57e72bf76929a66b366036ff6c20d1cd8c35ab107e6a5",
+      "format": "JPEG",
+      "mode": "RGB",
+      "width": 1536,
+      "height": 864
+    }
+  ],
+  "issues": []
+}

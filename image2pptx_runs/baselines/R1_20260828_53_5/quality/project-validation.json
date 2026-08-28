@@ -1,0 +1,136 @@
+{
+  "schema": "ai-ppt-plus/project-validation/v1",
+  "valid": true,
+  "project_dir": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01",
+  "deck": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+  "deck_sha256": "139e63060af477899cdf56312991d6364d45ce66cb3a69f9cd5102169df939cd",
+  "state": "human-closeout",
+  "asset_count": 0,
+  "editability": [
+    {
+      "slide_no": 1,
+      "status": "typed",
+      "summary": {
+        "object_count": 44,
+        "counts_by_level": {
+          "L0": 0,
+          "L1": 26,
+          "L2": 11,
+          "L3": 7,
+          "L4": 0,
+          "L5": 0
+        },
+        "primary_level": "L3",
+        "fully_editable_object_count": 26,
+        "raster_object_count": 18,
+        "placeholder_count": 0,
+        "blocked_object_count": 0,
+        "fully_editable_ratio": 0.5909,
+        "human_review_required": true,
+        "formal_content_rasterized": false,
+        "delivery_decision": "human-confirmation-required"
+      },
+      "issues": []
+    }
+  ],
+  "project_report": null,
+  "quality_evidence": {
+    "render_visual_gate": {
+      "valid": true,
+      "expected_pages": 1,
+      "observed_pages": 1,
+      "issues": []
+    },
+    "visual_comparison": {
+      "valid": true,
+      "reference": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+      "metrics": {
+        "global_ssim": 0.625378,
+        "blurred_layout_ssim": 0.910982,
+        "mean_absolute_error": 0.12089,
+        "rmse": 0.252151,
+        "pixel_fidelity_score": 0.87911
+      },
+      "issues": [],
+      "human_visual_review_required": true
+    },
+    "route_validation": {
+      "valid": true,
+      "route": "reference-reconstruction",
+      "visual_authority": "approved_reference_image",
+      "formal_content_authority": "transcription_pending_confirmation",
+      "issues": []
+    },
+    "manifest_validation": {
+      "valid": true,
+      "issues": [],
+      "warnings": [],
+      "editability": [
+        {
+          "slide_no": 1,
+          "status": "typed",
+          "summary": {
+            "object_count": 44,
+            "counts_by_level": {
+              "L0": 0,
+              "L1": 26,
+              "L2": 11,
+              "L3": 7,
+              "L4": 0,
+              "L5": 0
+            },
+            "primary_level": "L3",
+            "fully_editable_object_count": 26,
+            "raster_object_count": 18,
+            "placeholder_count": 0,
+            "blocked_object_count": 0,
+            "fully_editable_ratio": 0.5909,
+            "human_review_required": true,
+            "formal_content_rasterized": false,
+            "delivery_decision": "human-confirmation-required"
+          },
+          "issues": []
+        }
+      ]
+    },
+    "editability": {
+      "protocol": "L0-L5/v1",
+      "slides": [
+        {
+          "slide_no": 1,
+          "status": "typed",
+          "summary": {
+            "object_count": 44,
+            "counts_by_level": {
+              "L0": 0,
+              "L1": 26,
+              "L2": 11,
+              "L3": 7,
+              "L4": 0,
+              "L5": 0
+            },
+            "primary_level": "L3",
+            "fully_editable_object_count": 26,
+            "raster_object_count": 18,
+            "placeholder_count": 0,
+            "blocked_object_count": 0,
+            "fully_editable_ratio": 0.5909,
+            "human_review_required": true,
+            "formal_content_rasterized": false,
+            "delivery_decision": "human-confirmation-required"
+          },
+          "issues": []
+        }
+      ]
+    },
+    "semantic_object_audit": {
+      "valid": true,
+      "status": "passed",
+      "audited_object_count": 44,
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "quality_degradations": [],
+  "issues": []
+}

@@ -1,0 +1,2551 @@
+{
+  "schemaVersion": "1.0",
+  "slides": [
+    {
+      "index": 1,
+      "sourcePath": "/workspace/scratch/c3c8193ca370/upload/53(5).jpeg",
+      "normalizedPath": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/source-001.png",
+      "originalWidthPx": 1536,
+      "originalHeightPx": 864,
+      "widthPx": 1536,
+      "heightPx": 864,
+      "aspectRatio": 1.77777778,
+      "orientation": "landscape",
+      "contentBBoxPx": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 864
+      },
+      "trim": {
+        "applied": false,
+        "cropPx": {
+          "x": 0,
+          "y": 0,
+          "w": 1536,
+          "h": 864
+        },
+        "matchedAspectRatio": "16:9",
+        "removedAreaFraction": 0
+      },
+      "palette": [
+        {
+          "color": "#FEFEFE",
+          "coverage": 0.167708
+        },
+        {
+          "color": "#FFFFFF",
+          "coverage": 0.129045
+        },
+        {
+          "color": "#958E97",
+          "coverage": 0.122101
+        },
+        {
+          "color": "#F3F5F9",
+          "coverage": 0.119549
+        },
+        {
+          "color": "#632842",
+          "coverage": 0.118681
+        },
+        {
+          "color": "#BEC7CC",
+          "coverage": 0.113385
+        },
+        {
+          "color": "#E8E1E1",
+          "coverage": 0.104653
+        },
+        {
+          "color": "#FCFBFC",
+          "coverage": 0.054149
+        },
+        {
+          "color": "#FEFEFF",
+          "coverage": 0.024583
+        },
+        {
+          "color": "#FEFEFD",
+          "coverage": 0.019132
+        },
+        {
+          "color": "#FEFBFA",
+          "coverage": 0.015087
+        },
+        {
+          "color": "#FFFEFE",
+          "coverage": 0.011927
+        }
+      ],
+      "meanLuminance": 204.7375,
+      "luminanceStdDev": 76.6531,
+      "ocr": [
+        {
+          "text": "pei",
+          "confidence": 0.3822,
+          "bboxPx": {
+            "x": 27,
+            "y": 20,
+            "w": 194,
+            "h": 58
+          },
+          "block": 1,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "§",
+          "confidence": 0.2839,
+          "bboxPx": {
+            "x": 270,
+            "y": 18,
+            "w": 12,
+            "h": 70
+          },
+          "block": 1,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "Seb",
+          "confidence": 0.3005,
+          "bboxPx": {
+            "x": 301,
+            "y": 22,
+            "w": 95,
+            "h": 49
+          },
+          "block": 1,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "|",
+          "confidence": 0.8828,
+          "bboxPx": {
+            "x": 418,
+            "y": 24,
+            "w": 5,
+            "h": 46
+          },
+          "block": 1,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "FEMS",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 444,
+            "y": 22,
+            "w": 448,
+            "h": 50
+          },
+          "block": 1,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "(-",
+          "confidence": 0.6266,
+          "bboxPx": {
+            "x": 928,
+            "y": 56,
+            "w": 15,
+            "h": 1
+          },
+          "block": 1,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "HER",
+          "confidence": 0.237,
+          "bboxPx": {
+            "x": 58,
+            "y": 115,
+            "w": 67,
+            "h": 44
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "TAAERUBFSEMMAG",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 164,
+            "y": 116,
+            "w": 283,
+            "h": 20
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "(FP+FTTR)",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 461,
+            "y": 116,
+            "w": 120,
+            "h": 20
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": ",",
+          "confidence": 0.8576,
+          "bboxPx": {
+            "x": 598,
+            "y": 132,
+            "w": 2,
+            "h": 6
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "HPB464P,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 616,
+            "y": 116,
+            "w": 140,
+            "h": 22
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "WA",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 776,
+            "y": 116,
+            "w": 36,
+            "h": 20
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "ot15.6%,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 813,
+            "y": 116,
+            "w": 144,
+            "h": 22
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "Aa",
+          "confidence": 0.5449,
+          "bboxPx": {
+            "x": 164,
+            "y": 150,
+            "w": 34,
+            "h": 20
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "wits.",
+          "confidence": 0.2739,
+          "bboxPx": {
+            "x": 211,
+            "y": 148,
+            "w": 64,
+            "h": 31
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "WNBA.",
+          "confidence": 0.3052,
+          "bboxPx": {
+            "x": 289,
+            "y": 150,
+            "w": 110,
+            "h": 20
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "ASHRAHSMRDBRAL,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 415,
+            "y": 150,
+            "w": 297,
+            "h": 22
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "MERBRAOAUT:",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 728,
+            "y": 150,
+            "w": 214,
+            "h": 20
+          },
+          "block": 2,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "&",
+          "confidence": 0.205,
+          "bboxPx": {
+            "x": 50,
+            "y": 214,
+            "w": 52,
+            "h": 52
+          },
+          "block": 5,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "-.",
+          "confidence": 0.5013,
+          "bboxPx": {
+            "x": 116,
+            "y": 238,
+            "w": 38,
+            "h": 16
+          },
+          "block": 5,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "PRR",
+          "confidence": 0.0947,
+          "bboxPx": {
+            "x": 172,
+            "y": 226,
+            "w": 109,
+            "h": 28
+          },
+          "block": 5,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "°BBAR:",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 53,
+            "y": 276,
+            "w": 97,
+            "h": 17
+          },
+          "block": 6,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "OisA+KTAPaLR.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 174,
+            "y": 276,
+            "w": 206,
+            "h": 17
+          },
+          "block": 6,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "eo",
+          "confidence": 0.357,
+          "bboxPx": {
+            "x": 53,
+            "y": 311,
+            "w": 9,
+            "h": 9
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "im",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 72,
+            "y": 304,
+            "w": 16,
+            "h": 26
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "RSRAP:",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 90,
+            "y": 306,
+            "w": 112,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "UT",
+          "confidence": 0.0582,
+          "bboxPx": {
+            "x": 225,
+            "y": 306,
+            "w": 26,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "RRPREMAERERARS,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 254,
+            "y": 306,
+            "w": 243,
+            "h": 17
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "A",
+          "confidence": 0.0461,
+          "bboxPx": {
+            "x": 71,
+            "y": 330,
+            "w": 30,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "MALMARS;",
+          "confidence": 0.0461,
+          "bboxPx": {
+            "x": 104,
+            "y": 330,
+            "w": 105,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "LMG",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 222,
+            "y": 330,
+            "w": 82,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "FIR,",
+          "confidence": 0.0114,
+          "bboxPx": {
+            "x": 312,
+            "y": 331,
+            "w": 44,
+            "h": 14
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "FNL,",
+          "confidence": 0.1505,
+          "bboxPx": {
+            "x": 368,
+            "y": 330,
+            "w": 71,
+            "h": 17
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "BMA",
+          "confidence": 0.7343,
+          "bboxPx": {
+            "x": 452,
+            "y": 330,
+            "w": 48,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "FAPRRESERE,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 71,
+            "y": 354,
+            "w": 138,
+            "h": 17
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "UF",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 228,
+            "y": 354,
+            "w": 24,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "MRi+",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 260,
+            "y": 354,
+            "w": 53,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "Rie",
+          "confidence": 0.0022,
+          "bboxPx": {
+            "x": 320,
+            "y": 352,
+            "w": 36,
+            "h": 26
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "RETIR+",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 368,
+            "y": 352,
+            "w": 60,
+            "h": 26
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "FIG",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 434,
+            "y": 354,
+            "w": 28,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "IE+",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 474,
+            "y": 354,
+            "w": 30,
+            "h": 16
+          },
+          "block": 6,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "@",
+          "confidence": 0.8943,
+          "bboxPx": {
+            "x": 556,
+            "y": 216,
+            "w": 53,
+            "h": 53
+          },
+          "block": 7,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "=.",
+          "confidence": 0.9468,
+          "bboxPx": {
+            "x": 628,
+            "y": 232,
+            "w": 36,
+            "h": 24
+          },
+          "block": 7,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "sues",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 683,
+            "y": 228,
+            "w": 108,
+            "h": 28
+          },
+          "block": 7,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "RBRE:",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 561,
+            "y": 290,
+            "w": 115,
+            "h": 19
+          },
+          "block": 8,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "HENEMSER",
+          "confidence": 0.0333,
+          "bboxPx": {
+            "x": 697,
+            "y": 291,
+            "w": 150,
+            "h": 18
+          },
+          "block": 8,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "HTH,",
+          "confidence": 0.2754,
+          "bboxPx": {
+            "x": 584,
+            "y": 320,
+            "w": 90,
+            "h": 19
+          },
+          "block": 8,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "MAwm--BS",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 690,
+            "y": 320,
+            "w": 157,
+            "h": 18
+          },
+          "block": 8,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "AY",
+          "confidence": 0.2455,
+          "bboxPx": {
+            "x": 809,
+            "y": 318,
+            "w": 40,
+            "h": 28
+          },
+          "block": 8,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "FTTR--#",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 584,
+            "y": 350,
+            "w": 128,
+            "h": 17
+          },
+          "block": 8,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "i",
+          "confidence": 0.127,
+          "bboxPx": {
+            "x": 660,
+            "y": 347,
+            "w": 10,
+            "h": 28
+          },
+          "block": 8,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "2",
+          "confidence": 0.3851,
+          "bboxPx": {
+            "x": 685,
+            "y": 347,
+            "w": 28,
+            "h": 28
+          },
+          "block": 8,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "€>",
+          "confidence": 0.1928,
+          "bboxPx": {
+            "x": 954,
+            "y": 216,
+            "w": 52,
+            "h": 53
+          },
+          "block": 9,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "=.",
+          "confidence": 0.9322,
+          "bboxPx": {
+            "x": 1022,
+            "y": 230,
+            "w": 36,
+            "h": 24
+          },
+          "block": 9,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "aemz",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1076,
+            "y": 228,
+            "w": 108,
+            "h": 28
+          },
+          "block": 9,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "SPMRUMs,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 967,
+            "y": 283,
+            "w": 130,
+            "h": 18
+          },
+          "block": 9,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "RAMU",
+          "confidence": 0.2515,
+          "bboxPx": {
+            "x": 1115,
+            "y": 283,
+            "w": 65,
+            "h": 18
+          },
+          "block": 9,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "mBRAR.",
+          "confidence": 0.2515,
+          "bboxPx": {
+            "x": 1208,
+            "y": 283,
+            "w": 89,
+            "h": 18
+          },
+          "block": 9,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "CQ)",
+          "confidence": 0.292,
+          "bboxPx": {
+            "x": 964,
+            "y": 318,
+            "w": 26,
+            "h": 30
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "Bik:",
+          "confidence": 0.1847,
+          "bboxPx": {
+            "x": 996,
+            "y": 322,
+            "w": 69,
+            "h": 18
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "REAM",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1086,
+            "y": 323,
+            "w": 86,
+            "h": 17
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "RERB,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1180,
+            "y": 323,
+            "w": 69,
+            "h": 18
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "AZOTHFTIR,",
+          "confidence": 0.0976,
+          "bboxPx": {
+            "x": 1262,
+            "y": 323,
+            "w": 139,
+            "h": 18
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "i",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 996,
+            "y": 353,
+            "w": 12,
+            "h": 17
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "{B307TMMFEMS70TARSIA",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1014,
+            "y": 352,
+            "w": 263,
+            "h": 18
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "(vivo",
+          "confidence": 0.9034,
+          "bboxPx": {
+            "x": 1290,
+            "y": 353,
+            "w": 40,
+            "h": 17
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "YOFM)",
+          "confidence": 0.1156,
+          "bboxPx": {
+            "x": 1335,
+            "y": 353,
+            "w": 74,
+            "h": 17
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": ",",
+          "confidence": 0.9066,
+          "bboxPx": {
+            "x": 1423,
+            "y": 366,
+            "w": 2,
+            "h": 5
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "FAP",
+          "confidence": 0.9137,
+          "bboxPx": {
+            "x": 996,
+            "y": 380,
+            "w": 29,
+            "h": 26
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "Mth2et42870..",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1032,
+            "y": 382,
+            "w": 126,
+            "h": 18
+          },
+          "block": 10,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "(2)",
+          "confidence": 0.6496,
+          "bboxPx": {
+            "x": 964,
+            "y": 416,
+            "w": 27,
+            "h": 29
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "REBAR:",
+          "confidence": 0.1654,
+          "bboxPx": {
+            "x": 997,
+            "y": 422,
+            "w": 104,
+            "h": 18
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "BUY",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1124,
+            "y": 422,
+            "w": 48,
+            "h": 18
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "LBRAT,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1179,
+            "y": 422,
+            "w": 110,
+            "h": 19
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "TRAPS",
+          "confidence": 0.1159,
+          "bboxPx": {
+            "x": 1302,
+            "y": 422,
+            "w": 123,
+            "h": 18
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "PHSM,",
+          "confidence": 0.2725,
+          "bboxPx": {
+            "x": 996,
+            "y": 452,
+            "w": 78,
+            "h": 18
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "DAKE,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1088,
+            "y": 452,
+            "w": 142,
+            "h": 18
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "RRAHHRERAP",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1245,
+            "y": 452,
+            "w": 180,
+            "h": 18
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "#2",
+          "confidence": 0.5138,
+          "bboxPx": {
+            "x": 995,
+            "y": 476,
+            "w": 14,
+            "h": 28
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "FASO.",
+          "confidence": 0.3922,
+          "bboxPx": {
+            "x": 1014,
+            "y": 482,
+            "w": 60,
+            "h": 18
+          },
+          "block": 11,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "SRaZe",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 71,
+            "y": 376,
+            "w": 190,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "iT",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 175,
+            "y": 374,
+            "w": 28,
+            "h": 26
+          },
+          "block": 14,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "AAP.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 209,
+            "y": 376,
+            "w": 52,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "e",
+          "confidence": 0.4886,
+          "bboxPx": {
+            "x": 53,
+            "y": 410,
+            "w": 9,
+            "h": 8
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "BREARBAP.",
+          "confidence": 0.5276,
+          "bboxPx": {
+            "x": 71,
+            "y": 404,
+            "w": 147,
+            "h": 17
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "GHB:",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 230,
+            "y": 404,
+            "w": 76,
+            "h": 17
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "VARSEGARS,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 325,
+            "y": 404,
+            "w": 135,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "is",
+          "confidence": 0.4514,
+          "bboxPx": {
+            "x": 472,
+            "y": 404,
+            "w": 31,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "SIAKSFUUAFTIRLS,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 72,
+            "y": 428,
+            "w": 180,
+            "h": 18
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "WTR",
+          "confidence": 0.3538,
+          "bboxPx": {
+            "x": 266,
+            "y": 428,
+            "w": 60,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "4a,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 348,
+            "y": 428,
+            "w": 40,
+            "h": 17
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "BAR",
+          "confidence": 0.1702,
+          "bboxPx": {
+            "x": 406,
+            "y": 428,
+            "w": 43,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "PRT",
+          "confidence": 0.1702,
+          "bboxPx": {
+            "x": 454,
+            "y": 428,
+            "w": 47,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "Bite.",
+          "confidence": 0.4889,
+          "bboxPx": {
+            "x": 71,
+            "y": 452,
+            "w": 56,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "eHTAP:",
+          "confidence": 0.6369,
+          "bboxPx": {
+            "x": 53,
+            "y": 480,
+            "w": 94,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 3,
+          "line": 1
+        },
+        {
+          "text": "SHAPE,",
+          "confidence": 0.1047,
+          "bboxPx": {
+            "x": 164,
+            "y": 480,
+            "w": 88,
+            "h": 17
+          },
+          "block": 14,
+          "paragraph": 3,
+          "line": 1
+        },
+        {
+          "text": "SRSUMABRNKAS,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 266,
+            "y": 480,
+            "w": 206,
+            "h": 18
+          },
+          "block": 14,
+          "paragraph": 3,
+          "line": 1
+        },
+        {
+          "text": "MAGS.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 71,
+            "y": 504,
+            "w": 89,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 3,
+          "line": 2
+        },
+        {
+          "text": "FU.",
+          "confidence": 0.3957,
+          "bboxPx": {
+            "x": 172,
+            "y": 504,
+            "w": 38,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 3,
+          "line": 2
+        },
+        {
+          "text": "BRSGKA.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 222,
+            "y": 504,
+            "w": 106,
+            "h": 16
+          },
+          "block": 14,
+          "paragraph": 3,
+          "line": 2
+        },
+        {
+          "text": "@Q",
+          "confidence": 0.5013,
+          "bboxPx": {
+            "x": 52,
+            "y": 554,
+            "w": 46,
+            "h": 46
+          },
+          "block": 15,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "a.",
+          "confidence": 0.2191,
+          "bboxPx": {
+            "x": 114,
+            "y": 566,
+            "w": 32,
+            "h": 22
+          },
+          "block": 15,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "s4wERP",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 162,
+            "y": 564,
+            "w": 144,
+            "h": 24
+          },
+          "block": 15,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "©",
+          "confidence": 0.9605,
+          "bboxPx": {
+            "x": 557,
+            "y": 564,
+            "w": 48,
+            "h": 48
+          },
+          "block": 15,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "a.",
+          "confidence": 0.6223,
+          "bboxPx": {
+            "x": 623,
+            "y": 576,
+            "w": 35,
+            "h": 24
+          },
+          "block": 15,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "meee",
+          "confidence": 0.345,
+          "bboxPx": {
+            "x": 676,
+            "y": 574,
+            "w": 104,
+            "h": 26
+          },
+          "block": 15,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "o",
+          "confidence": 0.1592,
+          "bboxPx": {
+            "x": 54,
+            "y": 612,
+            "w": 8,
+            "h": 8
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "RMATIAGE:",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 79,
+            "y": 598,
+            "w": 115,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "TARHANRE,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 214,
+            "y": 608,
+            "w": 135,
+            "h": 15
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "WEAPRAGMIOR",
+          "confidence": 0.1475,
+          "bboxPx": {
+            "x": 366,
+            "y": 598,
+            "w": 145,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "DA,",
+          "confidence": 0.9435,
+          "bboxPx": {
+            "x": 71,
+            "y": 630,
+            "w": 34,
+            "h": 15
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "GAR,",
+          "confidence": 0.7125,
+          "bboxPx": {
+            "x": 122,
+            "y": 630,
+            "w": 42,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "EHIRERAERAR,",
+          "confidence": 0.1626,
+          "bboxPx": {
+            "x": 180,
+            "y": 630,
+            "w": 164,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "RPLMAM.",
+          "confidence": 0.3622,
+          "bboxPx": {
+            "x": 364,
+            "y": 630,
+            "w": 86,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "BRA",
+          "confidence": 0.4328,
+          "bboxPx": {
+            "x": 465,
+            "y": 630,
+            "w": 38,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "FAG,",
+          "confidence": 0.4593,
+          "bboxPx": {
+            "x": 70,
+            "y": 642,
+            "w": 50,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "MARRS",
+          "confidence": 0.1391,
+          "bboxPx": {
+            "x": 134,
+            "y": 653,
+            "w": 75,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "MAA",
+          "confidence": 0.2097,
+          "bboxPx": {
+            "x": 217,
+            "y": 653,
+            "w": 40,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "ARID",
+          "confidence": 0.3896,
+          "bboxPx": {
+            "x": 284,
+            "y": 652,
+            "w": 82,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "IOMARO,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 372,
+            "y": 642,
+            "w": 77,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "SAH",
+          "confidence": 0.2129,
+          "bboxPx": {
+            "x": 461,
+            "y": 653,
+            "w": 42,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "RBRARP",
+          "confidence": 0.5034,
+          "bboxPx": {
+            "x": 559,
+            "y": 644,
+            "w": 274,
+            "h": 17
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": ",",
+          "confidence": 0.5034,
+          "bboxPx": {
+            "x": 658,
+            "y": 642,
+            "w": 8,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "febiohh",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 672,
+            "y": 642,
+            "w": 64,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "Texte",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 748,
+            "y": 642,
+            "w": 67,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "a",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 822,
+            "y": 642,
+            "w": 12,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "SSBRUDR.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 70,
+            "y": 675,
+            "w": 111,
+            "h": 15
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 4
+        },
+        {
+          "text": "HRS,",
+          "confidence": 0.4332,
+          "bboxPx": {
+            "x": 558,
+            "y": 672,
+            "w": 54,
+            "h": 17
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 4
+        },
+        {
+          "text": "REWORRU,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 624,
+            "y": 671,
+            "w": 208,
+            "h": 17
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 4
+        },
+        {
+          "text": "SOAP",
+          "confidence": 0.4374,
+          "bboxPx": {
+            "x": 778,
+            "y": 662,
+            "w": 55,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 1,
+          "line": 4
+        },
+        {
+          "text": "©",
+          "confidence": 0.8364,
+          "bboxPx": {
+            "x": 54,
+            "y": 704,
+            "w": 8,
+            "h": 8
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "STP",
+          "confidence": 0.2348,
+          "bboxPx": {
+            "x": 72,
+            "y": 700,
+            "w": 62,
+            "h": 16
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "RRR:",
+          "confidence": 0.2369,
+          "bboxPx": {
+            "x": 138,
+            "y": 700,
+            "w": 70,
+            "h": 16
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "MAS",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 224,
+            "y": 689,
+            "w": 24,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "AERILL.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 252,
+            "y": 689,
+            "w": 64,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "ALERT.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 326,
+            "y": 689,
+            "w": 66,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "SMUT,",
+          "confidence": 0.1953,
+          "bboxPx": {
+            "x": 404,
+            "y": 700,
+            "w": 94,
+            "h": 16
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "RELGTEBARRBERHE,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 558,
+            "y": 698,
+            "w": 274,
+            "h": 17
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "AF",
+          "confidence": 0.7552,
+          "bboxPx": {
+            "x": 809,
+            "y": 689,
+            "w": 25,
+            "h": 30
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "LAPRHRUREDEORENE.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 71,
+            "y": 722,
+            "w": 244,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "HOLES,",
+          "confidence": 0.3056,
+          "bboxPx": {
+            "x": 332,
+            "y": 722,
+            "w": 72,
+            "h": 15
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "ORS",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 426,
+            "y": 722,
+            "w": 76,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "SEVEEZIG,",
+          "confidence": 0.0297,
+          "bboxPx": {
+            "x": 559,
+            "y": 712,
+            "w": 100,
+            "h": 32
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "mtCnHRRRIS",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 670,
+            "y": 712,
+            "w": 96,
+            "h": 32
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "LIRA.",
+          "confidence": 0.0932,
+          "bboxPx": {
+            "x": 776,
+            "y": 712,
+            "w": 62,
+            "h": 32
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "HATH.",
+          "confidence": 0.447,
+          "bboxPx": {
+            "x": 70,
+            "y": 744,
+            "w": 64,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "SHBG,",
+          "confidence": 0.2924,
+          "bboxPx": {
+            "x": 150,
+            "y": 744,
+            "w": 58,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "AGS,",
+          "confidence": 0.1089,
+          "bboxPx": {
+            "x": 224,
+            "y": 744,
+            "w": 59,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "SRR",
+          "confidence": 0.4643,
+          "bboxPx": {
+            "x": 304,
+            "y": 744,
+            "w": 52,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "FUSS,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 367,
+            "y": 744,
+            "w": 138,
+            "h": 15
+          },
+          "block": 16,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "|",
+          "confidence": 0.6481,
+          "bboxPx": {
+            "x": 42,
+            "y": 785,
+            "w": 8,
+            "h": 9
+          },
+          "block": 16,
+          "paragraph": 3,
+          "line": 1
+        },
+        {
+          "text": "TARP",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 74,
+            "y": 766,
+            "w": 54,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 3,
+          "line": 1
+        },
+        {
+          "text": "RNS,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 134,
+            "y": 766,
+            "w": 60,
+            "h": 15
+          },
+          "block": 16,
+          "paragraph": 3,
+          "line": 1
+        },
+        {
+          "text": "ISRAERE",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 208,
+            "y": 766,
+            "w": 98,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 3,
+          "line": 1
+        },
+        {
+          "text": "ARERR.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 313,
+            "y": 766,
+            "w": 104,
+            "h": 14
+          },
+          "block": 16,
+          "paragraph": 3,
+          "line": 1
+        },
+        {
+          "text": "iia:",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 561,
+            "y": 396,
+            "w": 128,
+            "h": 18
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "BMEPERHR",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 708,
+            "y": 397,
+            "w": 142,
+            "h": 18
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "BI**3t,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 581,
+            "y": 428,
+            "w": 58,
+            "h": 18
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "2RHOBR,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 652,
+            "y": 427,
+            "w": 112,
+            "h": 19
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "—BIME",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 779,
+            "y": 427,
+            "w": 71,
+            "h": 18
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "SFSrhmeFRABRWIFI",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 581,
+            "y": 458,
+            "w": 268,
+            "h": 18
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 3
+        },
+        {
+          "text": "KALA",
+          "confidence": 0.0806,
+          "bboxPx": {
+            "x": 582,
+            "y": 488,
+            "w": 222,
+            "h": 18
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 4
+        },
+        {
+          "text": "399",
+          "confidence": 0.5258,
+          "bboxPx": {
+            "x": 674,
+            "y": 486,
+            "w": 30,
+            "h": 27
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 4
+        },
+        {
+          "text": "TCHO)",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 710,
+            "y": 486,
+            "w": 48,
+            "h": 27
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 4
+        },
+        {
+          "text": "HE.",
+          "confidence": 0.8283,
+          "bboxPx": {
+            "x": 766,
+            "y": 486,
+            "w": 38,
+            "h": 27
+          },
+          "block": 17,
+          "paragraph": 1,
+          "line": 4
+        },
+        {
+          "text": "@",
+          "confidence": 0.8559,
+          "bboxPx": {
+            "x": 1034,
+            "y": 564,
+            "w": 52,
+            "h": 52
+          },
+          "block": 22,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "x*.",
+          "confidence": 0.541,
+          "bboxPx": {
+            "x": 1104,
+            "y": 578,
+            "w": 36,
+            "h": 26
+          },
+          "block": 22,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "#588",
+          "confidence": 0.5,
+          "bboxPx": {
+            "x": 1158,
+            "y": 577,
+            "w": 107,
+            "h": 27
+          },
+          "block": 22,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "eSAREMT:",
+          "confidence": 0.1568,
+          "bboxPx": {
+            "x": 1039,
+            "y": 631,
+            "w": 140,
+            "h": 17
+          },
+          "block": 23,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "RERGRRA,",
+          "confidence": 0.2474,
+          "bboxPx": {
+            "x": 1196,
+            "y": 631,
+            "w": 134,
+            "h": 18
+          },
+          "block": 23,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "MEARA",
+          "confidence": 0.1023,
+          "bboxPx": {
+            "x": 1346,
+            "y": 631,
+            "w": 90,
+            "h": 17
+          },
+          "block": 23,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "iF,",
+          "confidence": 0.434,
+          "bboxPx": {
+            "x": 1058,
+            "y": 659,
+            "w": 22,
+            "h": 17
+          },
+          "block": 23,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "WinAlte.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1094,
+            "y": 658,
+            "w": 76,
+            "h": 18
+          },
+          "block": 23,
+          "paragraph": 1,
+          "line": 2
+        },
+        {
+          "text": "oMARNAH",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1039,
+            "y": 692,
+            "w": 130,
+            "h": 10
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "MRR:",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1178,
+            "y": 688,
+            "w": 98,
+            "h": 17
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "SISSWASEM",
+          "confidence": 0.6001,
+          "bboxPx": {
+            "x": 1295,
+            "y": 688,
+            "w": 141,
+            "h": 17
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 1
+        },
+        {
+          "text": "RieKVNRS,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1058,
+            "y": 716,
+            "w": 107,
+            "h": 18
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "PRWRAR,",
+          "confidence": 0.0779,
+          "bboxPx": {
+            "x": 1178,
+            "y": 716,
+            "w": 108,
+            "h": 17
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "MR.",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1298,
+            "y": 716,
+            "w": 56,
+            "h": 17
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "BAR.",
+          "confidence": 0.4079,
+          "bboxPx": {
+            "x": 1366,
+            "y": 716,
+            "w": 74,
+            "h": 18
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 2
+        },
+        {
+          "text": "BEKSRRIMA,",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 1058,
+            "y": 744,
+            "w": 157,
+            "h": 18
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "MFRR.",
+          "confidence": 0.0603,
+          "bboxPx": {
+            "x": 1228,
+            "y": 744,
+            "w": 74,
+            "h": 17
+          },
+          "block": 23,
+          "paragraph": 2,
+          "line": 3
+        },
+        {
+          "text": "vy,",
+          "confidence": 0.0504,
+          "bboxPx": {
+            "x": 515,
+            "y": 784,
+            "w": 10,
+            "h": 10
+          },
+          "block": 30,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "FAD",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 480,
+            "y": 821,
+            "w": 48,
+            "h": 43
+          },
+          "block": 31,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "ARS",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 538,
+            "y": 821,
+            "w": 51,
+            "h": 43
+          },
+          "block": 31,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "ehh",
+          "confidence": 0.5395,
+          "bboxPx": {
+            "x": 646,
+            "y": 823,
+            "w": 82,
+            "h": 32
+          },
+          "block": 35,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "Hxme",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 760,
+            "y": 823,
+            "w": 110,
+            "h": 32
+          },
+          "block": 35,
+          "paragraph": 1,
+          "line": 1
+        },
+        {
+          "text": "RBSGEE",
+          "confidence": 0.0,
+          "bboxPx": {
+            "x": 901,
+            "y": 823,
+            "w": 168,
+            "h": 32
+          },
+          "block": 35,
+          "paragraph": 1,
+          "line": 1
+        }
+      ],
+      "ocrQuality": {
+        "requestedLanguages": [
+          "chi_sim",
+          "eng"
+        ],
+        "usedLanguages": [
+          "eng"
+        ],
+        "recognizedTokenCount": 188,
+        "meanConfidence": 0.2142,
+        "reliable": false
+      }
+    }
+  ],
+  "ocrLanguagesInstalled": [
+    "eng",
+    "osd"
+  ],
+  "warnings": [
+    "Requested OCR language data is unavailable: chi_sim. Installed languages: eng, osd.",
+    "Slide 1: OCR is incomplete or low confidence; verify text visually and do not treat OCR as truth."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema": "ai-ppt-plus/visual-comparison/v1",
+  "valid": true,
+  "rendered": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/reports/pipeline-final-r3/rendered/slide-1.png",
+  "reference": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/source/reference-01.jpeg",
+  "original_sizes": {
+    "rendered": [
+      1920,
+      1080
+    ],
+    "reference": [
+      1536,
+      864
+    ]
+  },
+  "comparison_size": [
+    1536,
+    864
+  ],
+  "resized_for_comparison": true,
+  "metrics": {
+    "global_ssim": 0.625378,
+    "blurred_layout_ssim": 0.910982,
+    "mean_absolute_error": 0.12089,
+    "rmse": 0.252151,
+    "pixel_fidelity_score": 0.87911
+  },
+  "issues": [],
+  "human_visual_review_required": true,
+  "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"
+}

@@ -1,0 +1,459 @@
+{
+  "schema": "ai-ppt-plus/editable-object-audit/v1",
+  "valid": true,
+  "deck": "/workspace/scratch/c3c8193ca370/ai_ppt_plus_runs/R1_20260828_53_5/editable/01/R1_20260828_53_5_unicom_dual_terminal_editable.pptx",
+  "slides": [
+    {
+      "slide": 1,
+      "shape_count": 44,
+      "shapes": [
+        {
+          "name": "background",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000
+        },
+        {
+          "name": "frame",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000
+        },
+        {
+          "name": "overview-badge",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 317492,
+          "top": 889000,
+          "width": 777855,
+          "height": 444500
+        },
+        {
+          "name": "panel-01",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 317492,
+          "top": 1651000,
+          "width": 3841653,
+          "height": 2611437
+        },
+        {
+          "name": "panel-02",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 4278205,
+          "top": 1651000,
+          "width": 3063798,
+          "height": 2611437
+        },
+        {
+          "name": "panel-03",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 7445188,
+          "top": 1651000,
+          "width": 4389327,
+          "height": 2611437
+        },
+        {
+          "name": "panel-04",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 317492,
+          "top": 4357687,
+          "width": 3841653,
+          "height": 1952625
+        },
+        {
+          "name": "panel-05",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 4309954,
+          "top": 4389437,
+          "width": 3659095,
+          "height": 1920875
+        },
+        {
+          "name": "panel-06",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 8103984,
+          "top": 4405312,
+          "width": 3730531,
+          "height": 1905000
+        },
+        {
+          "name": "brand-logo",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 198432,
+          "top": 142875,
+          "width": 1627146,
+          "height": 492125
+        },
+        {
+          "name": "product-phone",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 8881840,
+          "top": 619125,
+          "width": 849291,
+          "height": 1039812
+        },
+        {
+          "name": "product-fttr",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 10024811,
+          "top": 206375,
+          "width": 1809704,
+          "height": 1460500
+        },
+        {
+          "name": "panel-01-icon",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 396865,
+          "top": 1722437,
+          "width": 404802,
+          "height": 404812
+        },
+        {
+          "name": "panel-02-icon",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 4365515,
+          "top": 1722437,
+          "width": 404802,
+          "height": 404812
+        },
+        {
+          "name": "panel-03-icon",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 7540436,
+          "top": 1722437,
+          "width": 404802,
+          "height": 404812
+        },
+        {
+          "name": "panel-04-icon",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 396865,
+          "top": 4437062,
+          "width": 404802,
+          "height": 404812
+        },
+        {
+          "name": "panel-05-icon",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 4397264,
+          "top": 4452937,
+          "width": 404802,
+          "height": 404812
+        },
+        {
+          "name": "panel-06-icon",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 8207169,
+          "top": 4468812,
+          "width": 404802,
+          "height": 404812
+        },
+        {
+          "name": "interview-illustration",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 6635583,
+          "top": 5000625,
+          "width": 1166783,
+          "height": 1063625
+        },
+        {
+          "name": "title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "案例｜存量双终端优秀案例（手机+FTTR）",
+          "left": 2365315,
+          "top": 142875,
+          "width": 7143571,
+          "height": 444500
+        },
+        {
+          "name": "overview-badge-label",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "概述",
+          "left": 317492,
+          "top": 881062,
+          "width": 793730,
+          "height": 460375
+        },
+        {
+          "name": "overview-line-1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "7月份智家畅越存量金融双终端（手机+FTTR），共办理464户，双终端占比15.6%，",
+          "left": 1269968,
+          "top": 896937,
+          "width": 10477237,
+          "height": 222250
+        },
+        {
+          "name": "overview-line-2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "南召黄洋路、邓州团结路、内乡菊潭大街等网格办理较突出，现将优秀案例总结如下：",
+          "left": 1269968,
+          "top": 1119187,
+          "width": 10477237,
+          "height": 293687
+        },
+        {
+          "name": "p1-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "一、客户来源",
+          "left": 912789,
+          "top": 1849437,
+          "width": 1984325,
+          "height": 261937
+        },
+        {
+          "name": "p1-b1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 营销场景：回访邀约+进厅用户查比算。",
+          "left": 436551,
+          "top": 2166937,
+          "width": 3571785,
+          "height": 222250
+        },
+        {
+          "name": "p1-b2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 端网侧适配用户：以开展客户家庭网络使用情况为开头，提前预约上门服务；或现场展示 FTTR、手机实物，直观为用户核算综合优惠，以手机终端+终端升级FTTR+千兆提速+金融包装降门槛打动用户。",
+          "left": 452426,
+          "top": 2413000,
+          "width": 3611472,
+          "height": 650875
+        },
+        {
+          "name": "p1-b3",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 套餐低无宽带用户、合约到期：以服务回访为开头，逐步引入送手机送FTTR业务，通过赠送小礼品，邀约用户到厅查比算。",
+          "left": 452426,
+          "top": 3063875,
+          "width": 3611472,
+          "height": 619125
+        },
+        {
+          "name": "p1-b4",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 进厅用户：查用户弹窗，纸质罗列新旧套餐对比清单，清晰核算设备、手机、直降三重优惠。",
+          "left": 452426,
+          "top": 3690937,
+          "width": 3611472,
+          "height": 460375
+        },
+        {
+          "name": "p2-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "二、营销要点",
+          "left": 4889377,
+          "top": 1849437,
+          "width": 2143071,
+          "height": 261937
+        },
+        {
+          "name": "p2-b1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 推荐次序：面客时要从高往低进行推荐，双终端--重金融或FTTR--畅越兜底",
+          "left": 4413139,
+          "top": 2198687,
+          "width": 2817742,
+          "height": 666750
+        },
+        {
+          "name": "p2-b2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 一句话卖点：咱现在把套餐升级到**元，全家共同消费，一套价值三千多元的品牌手机和超级WIFI大礼包仅需399元就可带走。",
+          "left": 4413139,
+          "top": 2968625,
+          "width": 2817742,
+          "height": 1143000
+        },
+        {
+          "name": "p3-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "三、包装预案",
+          "left": 8056360,
+          "top": 1849437,
+          "width": 2381190,
+          "height": 261937
+        },
+        {
+          "name": "p3-intro",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "借助畅越购物车，提前规划产品包装方案。",
+          "left": 7635683,
+          "top": 2206625,
+          "width": 4048023,
+          "height": 222250
+        },
+        {
+          "name": "p3-b1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "① 基础档：根据弹窗画像定策略，提值30元为FTTR，提值30元购物车金融870元包装空间（vivo Y60手机），用户需补差价428元。",
+          "left": 7635683,
+          "top": 2532062,
+          "width": 4048023,
+          "height": 658812
+        },
+        {
+          "name": "p3-b2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "② 家庭高配版：基础档上再提值10元，可降低用户补差价的金额，办理1张免费副卡，降低人均消费缓解用户消费感知。",
+          "left": 7635683,
+          "top": 3206750,
+          "width": 4048023,
+          "height": 857250
+        },
+        {
+          "name": "p4-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "四、怎么搞定用户",
+          "left": 912789,
+          "top": 4556125,
+          "width": 2381190,
+          "height": 261937
+        },
+        {
+          "name": "p4-b1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 找痛点引入方案：不直接推销高价套餐，立足用户现有使用情况切入，核消费，主动询问家庭宽带使用体验、家中上网人数、日常用网痛点，从“解决家庭网络不好”这个刚需作为沟通突破口，引入梯度金融优惠方案。",
+          "left": 452426,
+          "top": 4849812,
+          "width": 3611472,
+          "height": 650875
+        },
+        {
+          "name": "p4-b2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 打消用户涨价顾虑：通过资费对比、权益对比、实物价值核算，让用户渐感知两套方案的优惠力度、性价比差异，耐心解答用户对月交费、合约周期、流量通话、设备质保、手机权益等各类疑问，打消用户涨价顾虑，引导选择适配自身家庭最优方案。",
+          "left": 436551,
+          "top": 5540375,
+          "width": 3611472,
+          "height": 722312
+        },
+        {
+          "name": "p5-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "五、面客促单",
+          "left": 4889377,
+          "top": 4587875,
+          "width": 2143071,
+          "height": 261937
+        },
+        {
+          "name": "p5-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "犹豫不决用户，借助外出上门面对面沟通优势，逐条耐心解读政策，结合用户家庭实际使用场景推荐适配方案，给予自主选择空间，耐心讲解建信任促成交。",
+          "left": 4429014,
+          "top": 5064125,
+          "width": 2063698,
+          "height": 1000125
+        },
+        {
+          "name": "p6-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "六、事后复盘",
+          "left": 8651658,
+          "top": 4603750,
+          "width": 2381190,
+          "height": 261937
+        },
+        {
+          "name": "p6-b1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 每日标准动作：晨会做情境演练，优秀人员点评，现场纠偏。",
+          "left": 8238918,
+          "top": 4849812,
+          "width": 3492412,
+          "height": 428625
+        },
+        {
+          "name": "p6-b2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "• 双终端形成案例档案：引导营业员总结双终端成功案例，分享包装方案、成交点、营销场景。整理成经验案例材料，文字不变。",
+          "left": 8238918,
+          "top": 5326062,
+          "width": 3492412,
+          "height": 881062
+        },
+        {
+          "name": "footer-slogan",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "用心服务　创造价值　智家畅越　联通美好生活",
+          "left": 3413039,
+          "top": 6532562,
+          "width": 5397364,
+          "height": 261937
+        }
+      ]
+    }
+  ],
+  "expected_object_count": 44,
+  "observed_shape_count": 44,
+  "whole_slide_pictures": [],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}
