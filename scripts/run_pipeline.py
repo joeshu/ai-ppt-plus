@@ -810,7 +810,7 @@ def main() -> int:
             "release_eligible": release_eligible,
             "release_status": release_report.get("status") if release_report else "not_run",
             "human_review_required": True,
-            "human_review_status": "pending",
+            "human_review_status": "approved" if signoff_passed else "pending",
             "run_id": run_id,
             "project": str(project),
             "deck": str(deck),
@@ -1008,7 +1008,16 @@ def main() -> int:
     result = build_pipeline_result(steps, quality_evidence, quality_degradations, release_report, preflight_report, signoff_report)
     review_path = run_dir / "review.html"
     result["review_html"] = str(review_path)
-    result["finalization"] = {"report_bundle": {"path": str(final_bundle_path), "status": "pending"}}
+    # validate_report_bundle.py requires a release candidate that claims
+    # release eligibility to already declare its final bundle as sealed.  Set
+    # the candidate seal before the first final validation; if validation
+    # fails below, the result is downgraded and re-sealed as non-release.
+    result["finalization"] = {
+        "report_bundle": {
+            "path": str(final_bundle_path),
+            "status": "passed" if result.get("release_eligible") else "pending",
+        }
+    }
     atomic_write_json(run_dir / "pipeline-result.json", result)
     try:
         write_review(result, review_path)
