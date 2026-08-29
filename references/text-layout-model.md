@@ -2,7 +2,7 @@
 
 `text-layout-manifest.json` is the canonical text and typography contract for a page. It uses `TextSpec` records for text boxes and `TextRunSpec` records for mixed styling. The formal string is `content`; when `runs[]` exists, concatenating their `text` values must reproduce it exactly, including line breaks and literal redaction tokens.
 
-Each `TextSpec` records a stable `text_id`, source reference, source-coordinate `source_bbox`, final `bbox`, coordinate space, base typography, wrapping behavior and optional `emphasis_expected`. `style` may use `font_family`/`font`, `size_pt`, `size_px`, `size_ratio` or `size_pct`, color, weight, alignment, line spacing and margins. A Run contains only its text and style overrides.
+Each `TextSpec` records a stable `text_id`, source reference, optional source-coordinate `source_bbox`, final `bbox`, coordinate space, base typography, wrapping behavior and optional `emphasis_expected`. `style` may use `font_family`/`font`, `size_pt`, `size_px`, `size_ratio` or `size_pct`, color, weight, alignment, line spacing and margins. A Run contains only its text and style overrides. `source_bbox` is required for reference-reconstruction because it replays a source viewport; it is not required for visual-creation, where the generated visual intermediate has no formal text geometry.
 
 Create and validate it with the standard-library tool:
 

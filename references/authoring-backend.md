@@ -36,7 +36,10 @@ The default family is `Noto Sans CJK SC`, matching the bundled
 override it through the deck theme or an explicitly licensed font. Font
 availability, CJK coverage and delivery embedding remain separate gates; this
 module does not claim delivery merely because a font name was written into a
-run.
+run. A slide-level `background_color` is a native editable slide background;
+when `assets_dir` is set, relative `component_library`, `layout_library`, and
+`font_manifest` paths are resolved from that directory and should not repeat
+the directory prefix.
 
 Every PPTX, preview, render report, font report and manifest emitted by the
 authoring path is first written to a sibling temporary file. `atomic_replace`
