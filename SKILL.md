@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Turn PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, images, existing PPT/PPTX, or approved outlines into narrative-coherent, visually consistent, editable, renderable, quality-checked PowerPoint deliverables. Trigger for “做PPT/幻灯片/演示稿/路演稿/汇报材料”, outline-first deck planning, image-model-generated high-end visual-intermediate design, slide reconstruction, PPTX redesign/inspection/repair, or resuming a multi-session deck. Outputs structured briefs, source inventories, outline tables, design systems, generated visual drafts, manifests, editable PPTX, validation and delivery reports. Do not trigger for a prose-only summary, a standalone image, spreadsheet-only analysis, or image-to-PPT reconstruction when the dedicated reconstruction skill is the narrower fit.
 metadata:
- package_revision: 2026.08.29.12
+ package_revision: 2026.08.29.13
 ---
 
 # AI PPT Plus
@@ -171,11 +171,21 @@ The image-slide path follows a bounded A1–A5 contract inspired by
    image tool, then `unavailable`/blocked. Never substitute SVG, HTML, Canvas,
    Pillow/ImageMagick drawing or code-patched text for raster generation.
    Keep the original generated source, copy the selected image into the
-   project, and record both paths, prompt file, actual backend/model and
-   SHA-256 values in `visual-generation-manifest.json`.
-5. A5 is the visual review handoff. The image is reviewed as a visual
-   intermediate; formal PPTX text still comes from the approved outline, not
-   OCR or generated pixels.
+   project, and record both paths, the exact prompt-file SHA-256, actual
+   backend/model and image SHA-256 values in `visual-generation-manifest.json`.
+5. A5 is the visual review handoff. Build a neutral deck strip from the
+   manifest-listed copied images before individual page approval:
+
+   ```bash
+   python3 scripts/build_visual_generation_strip.py \
+     visual-generation-manifest.json \
+     --output qa/visual-deck-strip.png \
+     --expected-pages N --record-in-manifest
+   ```
+
+   The strip is QA evidence, not a slide or a source for reconstruction. The
+   image is reviewed as a visual intermediate; formal PPTX text still comes
+   from the approved outline, not OCR or generated pixels.
 
 Run `scripts/validate_visual_generation_plan.py` for the plan/evidence gate.
 The default `dense` profile requires enough structured modules and information

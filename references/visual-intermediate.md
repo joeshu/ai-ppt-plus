@@ -74,10 +74,14 @@ For new image-slide work, borrow the useful A1–A5 discipline from
   wording, but must preserve the generated formal-copy block verbatim.
 - A4 records one real raster-generation event per page. The evidence manifest
   retains `generated_source` and `copied_to`, prompt file, backend, model/tool,
-  canvas and current SHA-256 values. Both image paths are fully decoded during
-  technical validation; metadata-only file checks are insufficient.
+  prompt-file SHA-256, canvas and current image SHA-256 values. Both image
+  paths and the prompt file are checked during technical validation;
+  metadata-only file checks are insufficient.
 - A5 compares the generated pages as a deck strip before approving individual
-  pages. A visual typo is repaired by regenerating the page prompt/image; it
+  pages. Build it with
+  `scripts/build_visual_generation_strip.py --record-in-manifest`; the helper
+  creates only a neutral QA contact sheet from the manifest-listed copied
+  images. A visual typo is repaired by regenerating the page prompt/image; it
   is never patched onto the bitmap with code.
 
 The dense content baseline is four or more modules, normally two or more

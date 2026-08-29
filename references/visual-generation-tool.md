@@ -35,10 +35,12 @@ must declare:
 - `no_code_overlay: true`.
 
 Each slide record then retains the actual `backend`, `model_or_tool`,
-`prompt_file`, original `generated_source`, project `copied_to`, canvas ratio
-and SHA-256 values. The source and project copy must be distinct, fully
-decodable raster files with the planned ratio. A missing or mismatched record
-blocks the visual-generation gate.
+`prompt_file`, its SHA-256, original `generated_source`, project `copied_to`, canvas ratio
+and image SHA-256 values. The source and project copy must be distinct, fully
+decodable raster files with the planned ratio. In strict evidence mode, the
+manifest also retains a `deck_strip` built from every manifest-listed copied
+image; its output hash and source-image hashes are checked against the
+manifest. A missing or mismatched record blocks the visual-generation gate.
 
 ## Ownership boundary
 
@@ -72,3 +74,16 @@ Run the visual-generation validator after materialization. The prompt file
 is the exact A3 handoff for A4; if a designer manually revises visual wording,
 the complete formal-copy block and anti-fabrication/no-code policies must
 remain intact.
+
+After A4, create and record the A5 deck strip:
+
+```bash
+python3 scripts/build_visual_generation_strip.py \
+  visual-generation-manifest.json \
+  --output qa/visual-deck-strip.png \
+  --expected-pages N --record-in-manifest
+```
+
+The result is a neutral contact sheet for deck-rhythm review. It is QA
+evidence only; it is not a generated slide, a replacement for human review,
+or an input to the downstream image-to-editable-PPTX engine.

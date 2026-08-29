@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -34,6 +35,10 @@ MATERIALIZATION_SCHEMA = "ai-ppt-plus/visual-prompt-materialization/v1"
 
 def read_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def text_sha256(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
 def visible_scalar(value) -> str:
@@ -432,6 +437,7 @@ def main() -> int:
             "path": str(target),
             "characters": len(prompt),
             "text_items": len(all_visible_text(slide)),
+            "prompt_sha256": text_sha256(prompt + "\n"),
         })
 
     if issues:

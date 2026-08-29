@@ -248,6 +248,12 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
             for entry in formal_text_entries(plan_slide):
                 if entry["text"] and entry["text"] not in prompt_text:
                     add_issue(issues, "blocker", "generation_prompt_copy_mismatch", slide_no=slide_no, text_id=entry["id"])
+            if plan.get("mode") == "image-slide":
+                declared_prompt_hash = record.get("prompt_sha256")
+                if not isinstance(declared_prompt_hash, str) or not SHA256_RE.fullmatch(declared_prompt_hash):
+                    add_issue(issues, "blocker" if require else "warning", "generation_prompt_hash_missing", slide_no=slide_no)
+                elif sha256(prompt_path) != declared_prompt_hash:
+                    add_issue(issues, "blocker", "generation_prompt_hash_mismatch", slide_no=slide_no, expected=sha256(prompt_path), observed=declared_prompt_hash)
         record_canvas = record.get("canvas")
         expected_ratio = text_value((plan.get("canvas") or {}).get("ratio")) if isinstance(plan.get("canvas"), dict) else ""
         if isinstance(record_canvas, dict) and expected_ratio and record_canvas.get("ratio") != expected_ratio:
@@ -281,8 +287,65 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
         add_issue(issues, "blocker", "generation_manifest_slide_missing", slide_no=slide_no)
     for slide_no in sorted(set(observed) - set(expected_slides)):
         add_issue(issues, "blocker", "generation_manifest_slide_unexpected", slide_no=slide_no)
+    deck_strip = manifest.get("deck_strip")
+    if plan.get("mode") == "image-slide":
+        if not isinstance(deck_strip, dict):
+            add_issue(issues, "blocker" if require else "warning", "generation_deck_strip_missing")
+        else:
+            strip_path = resolve_path(manifest_path.parent, deck_strip.get("path"))
+            if strip_path is None or not strip_path.is_file():
+                add_issue(issues, "blocker", "generation_deck_strip_file_missing", path=str(strip_path) if strip_path else None)
+            else:
+                valid_strip, _strip_size, strip_error = validate_image(strip_path)
+                if not valid_strip:
+                    add_issue(issues, "blocker", "generation_deck_strip_decode_failed", message=strip_error)
+                declared_strip_hash = deck_strip.get("sha256")
+                if not isinstance(declared_strip_hash, str) or not SHA256_RE.fullmatch(declared_strip_hash):
+                    add_issue(issues, "blocker", "generation_deck_strip_hash_missing")
+                else:
+                    actual_strip_hash = sha256(strip_path)
+                    if actual_strip_hash != declared_strip_hash:
+                        add_issue(issues, "blocker", "generation_deck_strip_hash_mismatch", expected=actual_strip_hash, observed=declared_strip_hash)
+            strip_sources = deck_strip.get("source_slides")
+            if not isinstance(strip_sources, list):
+                add_issue(issues, "blocker", "generation_deck_strip_sources_missing")
+            else:
+                expected_numbers = set(expected_slides)
+                strip_numbers = []
+                manifest_by_number = {record.get("slide_no"): record for record in records if isinstance(record, dict)}
+                for index, source in enumerate(strip_sources):
+                    if not isinstance(source, dict) or not isinstance(source.get("slide_no"), int):
+                        add_issue(issues, "blocker", "generation_deck_strip_source_invalid", index=index)
+                        continue
+                    strip_slide_no = source["slide_no"]
+                    strip_numbers.append(strip_slide_no)
+                    manifest_record = manifest_by_number.get(strip_slide_no)
+                    if manifest_record is None:
+                        add_issue(issues, "blocker", "generation_deck_strip_source_unexpected", slide_no=strip_slide_no)
+                        continue
+                    expected_image = resolve_path(manifest_path.parent, manifest_record.get("copied_to"))
+                    observed_image = resolve_path(manifest_path.parent, source.get("image"))
+                    if expected_image is None or observed_image is None or expected_image != observed_image:
+                        add_issue(issues, "blocker", "generation_deck_strip_source_mismatch", slide_no=strip_slide_no)
+                    source_hash = source.get("sha256")
+                    if observed_image and observed_image.is_file():
+                        if not isinstance(source_hash, str) or not SHA256_RE.fullmatch(source_hash):
+                            add_issue(issues, "blocker", "generation_deck_strip_source_hash_missing", slide_no=strip_slide_no)
+                        elif sha256(observed_image) != source_hash:
+                            add_issue(issues, "blocker", "generation_deck_strip_source_hash_mismatch", slide_no=strip_slide_no)
+                if len(strip_numbers) != len(set(strip_numbers)) or set(strip_numbers) != expected_numbers:
+                    add_issue(issues, "blocker", "generation_deck_strip_slide_coverage_mismatch", expected=sorted(expected_numbers), observed=sorted(strip_numbers))
+            if not text_value(deck_strip.get("review_status")):
+                add_issue(issues, "blocker", "generation_deck_strip_review_status_missing")
     evidence["plan_sha256"] = actual_plan_hash
     evidence["record_count"] = len(records)
+    if isinstance(deck_strip, dict):
+        strip_path = resolve_path(manifest_path.parent, deck_strip.get("path"))
+        evidence["deck_strip"] = {
+            "path": str(strip_path) if strip_path else None,
+            "review_status": text_value(deck_strip.get("review_status")),
+            "slide_count": len(deck_strip.get("source_slides") or []) if isinstance(deck_strip.get("source_slides"), list) else 0,
+        }
     return evidence
 
 

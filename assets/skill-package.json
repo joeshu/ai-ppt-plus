@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v1",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.08.29.12",
+  "package_revision": "2026.08.29.13",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "managed_globs": [
@@ -40,6 +40,7 @@
     "assets/schemas/visual-generation-manifest.schema.json",
     "scripts/validate_visual_generation_plan.py",
     "scripts/materialize_visual_generation_prompts.py",
+    "scripts/build_visual_generation_strip.py",
     "references/visual-intermediate.md",
     "references/visual-generation-tool.md"
   ],

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 import sys
 import tempfile
@@ -15,6 +16,10 @@ from test_visual_generation_contract import build_plan  # noqa: E402
 
 def write_json(path: Path, value) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def run(*args: str) -> subprocess.CompletedProcess[str]:
@@ -58,6 +63,7 @@ def main() -> int:
         assert updated_slide["prompt_file"] == "prompts/01-slide.md"
         prompt_path = root / updated_slide["prompt_file"]
         prompt = prompt_path.read_text(encoding="utf-8")
+        assert result["slides"][0]["prompt_sha256"] == digest(prompt_path)
         assert updated_slide["production_prompt"] in prompt
         for value in (
             "海南旅行攻略",

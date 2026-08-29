@@ -11,6 +11,7 @@
     {
       "slide_no": 1,
       "prompt_file": "prompts/01-slide.md",
+      "prompt_sha256": "<sha256 of prompts/01-slide.md>",
       "generated_source": "/path/to/generated_images/source.png",
       "copied_to": "slides/01-slide.png",
       "generated_source_sha256": "<sha256>",
@@ -19,5 +20,16 @@
       "model_or_tool": "Codex built-in image_gen",
       "canvas": {"width_px": 2048, "height_px": 1152, "ratio": "16:9"}
     }
-  ]
+  ],
+  "deck_strip": {
+    "path": "qa/visual-deck-strip.png",
+    "source_slides": [
+      {"slide_no": 1, "image": "slides/01-slide.png", "sha256": "<sha256 of slides/01-slide.png>"}
+    ],
+    "columns": 3,
+    "thumbnail_width": 512,
+    "sha256": "<sha256 of qa/visual-deck-strip.png>",
+    "generated_by": "scripts/build_visual_generation_strip.py",
+    "review_status": "pending-human-review"
+  }
 }

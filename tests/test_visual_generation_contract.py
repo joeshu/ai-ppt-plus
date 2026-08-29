@@ -123,6 +123,7 @@ def main() -> int:
             "slides": [{
                 "slide_no": 1,
                 "prompt_file": "prompts/slide-1.md",
+                "prompt_sha256": digest(prompt),
                 "generated_source": "generated-source.png",
                 "copied_to": "project-copy.png",
                 "generated_source_sha256": digest(source),
@@ -132,6 +133,12 @@ def main() -> int:
                 "canvas": {"ratio": "16:9"},
             }],
         })
+        strip = run(
+            "scripts/build_visual_generation_strip.py", str(manifest),
+            "--output", str(root / "qa" / "visual-deck-strip.png"),
+            "--expected-pages", "1", "--record-in-manifest",
+        )
+        assert strip.returncode == 0, strip.stdout + strip.stderr
         valid = run(
             "scripts/validate_visual_generation_plan.py", str(plan),
             "--manifest", str(manifest), "--expected-pages", "1", "--require-evidence",
@@ -139,6 +146,17 @@ def main() -> int:
         assert valid.returncode == 0, valid.stdout + valid.stderr
         result = json.loads(valid.stdout)
         assert result["valid"] is True and result["evidence"]["record_count"] == 1, result
+        assert result["evidence"]["deck_strip"]["slide_count"] == 1, result
+
+        bad_manifest = root / "bad-prompt-hash-manifest.json"
+        bad_manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
+        bad_manifest_data["slides"][0]["prompt_sha256"] = "0" * 64
+        write_json(bad_manifest, bad_manifest_data)
+        bad_hash = run(
+            "scripts/validate_visual_generation_plan.py", str(plan),
+            "--manifest", str(bad_manifest), "--expected-pages", "1", "--require-evidence",
+        )
+        assert bad_hash.returncode == 2 and "generation_prompt_hash_mismatch" in bad_hash.stdout, bad_hash.stdout
 
         route = root / "route.json"
         visual_manifest = root / "visual-intermediate-manifest.json"
