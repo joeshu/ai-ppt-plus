@@ -23,7 +23,15 @@ Small icons may use a 4x4 sheet; larger decoration, objects, or artistic
 typography should use a 2x2 sheet or a separate sheet. A contact sheet is an
 intermediate, never the delivered PPT object.
 
-Original icon files may be supplied as the imagegen edit target/reference, but may not be copied directly into the delivered icon layer. Every icon, decoration and artistic word must pass the same imagegen asset-sheet route, followed by B5 cutout, split and QA. A screenshot crop is never an original asset and may not bypass imagegen. If imagegen is unavailable or fails, block the page; do not silently fall back to direct crops, weak redraws or unproven substitutes.
+Original icon files may be supplied as the authoritative source for a
+deterministic `source_reuse` asset when the pixels are already complete and
+only crop/alpha treatment is required. Missing, ambiguous or reconstructive
+assets use the imagegen asset-sheet route. Both routes require source-vs-frame
+evidence, B5 cutout/split QA where applicable, an independent delivered asset
+and provenance hashes. A screenshot crop is not an original asset unless its
+source bbox and source hash are recorded; a phone/viewer letterbox crop is
+never a slide asset. If neither route can preserve fidelity, block the object
+and request the source instead of inventing a substitute.
 
 Complete brand lockups are an exception to grid splitting: keep the logo mark
 and wordmark together as one `brand_lockup`/`role: logo` asset. Do not pass a
@@ -35,9 +43,26 @@ separate delivered assets.
 
 ## Imagegen extraction evidence gate
 
-For every icon, decoration and artistic word, use the ChatGPT imagegen skill (or an explicitly declared image-generation backend) to create an isolated, frame-excluded icon/decorative asset sheet. The prompt must use the current reference as the edit target and request no ordinary text, frame, card, or background. Do not use code to draw or reconstruct the icon sheet, and do not crop a local screenshot region as a substitute.
+For every icon, decoration and artistic word, first select and record one
+provenance mode. In `imagegen` mode, use the ChatGPT imagegen skill (or an
+explicitly declared image-generation backend) to create an isolated,
+frame-excluded icon/decorative asset sheet. The prompt must use the current
+reference as the edit target and request no ordinary text, frame, card, or
+background. Do not use code to draw or reconstruct a missing asset. In
+`source_reuse` mode, copy/crop the authoritative source deterministically and
+record its source bbox/hash; this is the fast path for exact supplied assets
+and does not need a redundant generation call.
 
-Before composition, every page must contain `imagegen-assets-manifest.json`. For `background`, `frame_raw`, and every `icons_raw_*` layer, record non-empty `generated_source`, `copied_to`, `layer`, `prompt_file`, `backend`, and `key_color`. `backend` must be imagegen-class; `copied_to` and `prompt_file` must resolve inside the unique RUN_ROOT. Missing manifest or missing evidence for any image layer blocks conversion. Run `scripts/validate_imagegen_assets_manifest.py imagegen-assets-manifest.json` before B5.
+Before composition, every page must contain `imagegen-assets-manifest.json`,
+which is the backwards-compatible visual-asset provenance manifest. For
+`provenance_mode: imagegen`, record non-empty `generated_source`, `copied_to`,
+`layer`, `prompt_file`, `backend`, and `key_color`. For
+`provenance_mode: source_reuse`, record `source_ref`, `source_bbox`,
+`source_sha256`, `copied_to`, `layer`, and `extraction_method`. Copied assets
+remain inside the unique RUN_ROOT and must pass current SHA-256 validation.
+Missing provenance or a stale hash blocks conversion. Run
+`scripts/validate_imagegen_assets_manifest.py imagegen-assets-manifest.json`
+before B5; the validator accepts both modes and reports which one was used.
 
 This evidence gate is separate from the visual route: reference reconstruction does not generate a new whole-slide visual intermediate, but it may generate an isolated missing icon sheet under this rule. A generated icon sheet is still only an intermediate; after copying it into RUN_ROOT it must pass B5 chroma-key, split, contact-sheet, edge and placement review.
 

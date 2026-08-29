@@ -250,6 +250,8 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"expected_pages": report.get("expected_pages"), "selected_pages": report.get("selected_pages"), "pages": len(report.get("pages", [])), "strict": report.get("strict"), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "preview_consistency":
         summary.update({"expected_pages": report.get("expected_pages"), "aggregate": report.get("aggregate", {}), "threshold": report.get("threshold"), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "typography_calibration":
+        summary.update({"sample_count": report.get("sample_count"), "max_drift": report.get("max_drift"), "samples": report.get("samples", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
     return summary
 
 
@@ -305,6 +307,8 @@ def main() -> int:
     parser.add_argument("--preview-dir", help="Pillow authoring previews to compare with final rendered PNGs")
     parser.add_argument("--preview-threshold", type=float, help="minimum blurred SSIM for preview/final-render consistency")
     parser.add_argument("--require-preview-consistency", action="store_true", help="require an exact preview page set and valid preview/final-render comparison")
+    parser.add_argument("--typography-calibration", help="prominent-text calibration manifest; defaults to project/typography-calibration.json")
+    parser.add_argument("--require-typography-calibration", action="store_true", help="require a valid prominent-text calibration manifest")
     parser.add_argument("--execution-mode", choices=["dag", "linear"], default="dag", help="DAG execution with caching, or the compatibility linear runner")
     parser.add_argument("--cache-dir", help="content-addressed pipeline cache directory; defaults to PROJECT_DIR/.pipeline-cache in DAG mode")
     parser.add_argument("--no-cache", action="store_true", help="disable successful-task cache restores/writes")
@@ -395,6 +399,26 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False))
         return 2
     reference_route = isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction"
+    # Reference reconstruction is the route where a technically valid deck
+    # can still fail visibly because the chosen font has different metrics.
+    # Make the lightweight calibration evidence non-optional here, and also
+    # for strict releases that compare against an approved reference. This
+    # prevents a green pixel score from silently accepting a shrunk title.
+    if reference_route or (args.release and (args.reference or args.reference_dir)):
+        args.require_typography_calibration = True
+    typography_calibration = Path(args.typography_calibration).resolve() if args.typography_calibration else project / "typography-calibration.json"
+    if args.require_typography_calibration and not typography_calibration.is_file():
+        result = {
+            "schema": "ai-ppt-plus/pipeline-run/v2",
+            "valid": False,
+            "technical_valid": False,
+            "release_eligible": False,
+            "code": "typography_calibration_missing",
+            "path": str(typography_calibration),
+            "message": "reference reconstruction/release requires measured typography-calibration.json before render",
+        }
+        print(json.dumps(result, ensure_ascii=False))
+        return 2
     if args.release and reference_route:
         # A fixed reference contains visible information that cannot be
         # inferred from object counts alone.  Release therefore requires an
@@ -574,6 +598,7 @@ def main() -> int:
                 font_asset_args.append("--require-cjk")
             add_step("font-asset", font_asset_args, deps=["fonts"], outputs=[run_dir / "font-asset-validation.json"], inputs=[Path(args.font_dir).resolve()])
     layout_path = project / "layout.json"
+    typography_enabled = args.require_typography_calibration or typography_calibration.is_file()
     object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
     content_inventory = Path(args.content_inventory).resolve() if args.content_inventory else project / "content-inventory.json"
     content_inventory_required = bool(args.require_content_inventory)
@@ -734,6 +759,21 @@ def main() -> int:
     if affected_pages:
         render_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
     add_step("render", render_args, deps=["environment"], outputs=[render_dir, render_report_path], inputs=[deck] + ([Path(args.font_dir).resolve()] if args.font_dir else []), metadata={"affected_pages": affected_pages or "all", "dpi": args.dpi, "page_cache_enabled": bool(page_cache_dir), "page_cache_dir": str(page_cache_dir) if page_cache_dir else None})
+    if args.require_typography_calibration and not typography_calibration.is_file():
+        add_step(
+            "typography-calibration",
+            static_result={"name": "typography-calibration", "command": [], "exit_code": 2, "ok": False, "failure": "typography_calibration_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            outputs=[run_dir / "typography-calibration-validation.json"],
+        )
+    elif typography_calibration.is_file():
+        add_step(
+            "typography-calibration",
+            [str(SCRIPT_DIR / "validate_typography_calibration.py"), str(typography_calibration), "--report", str(run_dir / "typography-calibration-validation.json")],
+            deps=["render"],
+            outputs=[run_dir / "typography-calibration-validation.json"],
+            inputs=[typography_calibration, render_dir],
+        )
     selected_count = len(affected_pages) if affected_pages else args.expected_pages
     visual_args = [str(SCRIPT_DIR / "validate_render.py"), str(render_dir), "--expected-pages", str(selected_count), "--report", str(run_dir / "render-visual-gate.json")]
     if affected_pages:
@@ -753,11 +793,15 @@ def main() -> int:
         add_step("font-delivery", font_delivery_args, deps=font_deps, outputs=[run_dir / "font-delivery-validation.json"], inputs=[run_dir / "font-report.json", inspection_path, render_report_path, run_dir / "render-visual-gate.json"] + ([run_dir / "font-asset-validation.json"] if args.font_dir and (font_manifest.is_file() or args.require_cjk) else []), metadata={"require_embedded": args.release})
     if args.reference:
         comparison_args = [str(SCRIPT_DIR / "compare_visual.py"), str(render_dir / "slide-1.png"), str(Path(args.reference).resolve()), "--report", str(run_dir / "visual-comparison.json")]
+        if args.expected_ratio is not None:
+            comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.visual_threshold is not None:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
     elif args.reference_dir:
         comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "visual-comparison.json")]
+        if args.expected_ratio is not None:
+            comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.visual_threshold is not None:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
         if affected_pages:
@@ -786,14 +830,21 @@ def main() -> int:
         )
     if args.reference:
         reference_audit_args = [str(SCRIPT_DIR / "reference_audit.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--report", str(run_dir / "reference-audit.json")]
+        if args.expected_ratio is not None:
+            reference_audit_args.extend(["--expected-ratio", str(args.expected_ratio)])
         add_step("reference-audit", reference_audit_args, deps=["render"] + (["source-images"] if "source-images" in {task.name for task in executor.tasks} else []), outputs=[run_dir / "reference-audit.json"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
     elif args.reference_dir:
         reference_audit_args = [str(SCRIPT_DIR / "reference_audit_deck.py"), str(Path(args.reference_dir).resolve()), str(render_dir), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "reference-audit.json")]
+        if args.expected_ratio is not None:
+            reference_audit_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if affected_pages:
             reference_audit_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
         add_step("reference-audit", reference_audit_args, deps=["render"] + (["source-images"] if "source-images" in {task.name for task in executor.tasks} else []), outputs=[run_dir / "reference-audit.json"], inputs=[Path(args.reference_dir).resolve(), render_dir])
     if args.reference and layout_path.is_file():
-        add_step("visual-compare-qa", [str(SCRIPT_DIR / "visual_compare_qa.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--out-dir", str(run_dir / "visual-qa")], deps=["render"], outputs=[run_dir / "visual-qa"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
+        visual_qa_args = [str(SCRIPT_DIR / "visual_compare_qa.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--out-dir", str(run_dir / "visual-qa")]
+        if args.expected_ratio is not None:
+            visual_qa_args.extend(["--expected-ratio", str(args.expected_ratio)])
+        add_step("visual-compare-qa", visual_qa_args, deps=["render"], outputs=[run_dir / "visual-qa"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
     if args.ocr_lang or args.require_ocr:
         ocr_args = [str(SCRIPT_DIR / "ocr_text_check.py"), str(deck), str(render_dir), "--lang", args.ocr_lang or "eng", "--report", str(run_dir / "ocr-text-check.json")]
         if args.require_ocr:
@@ -870,7 +921,7 @@ def main() -> int:
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "visual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency"):
+    for candidate in ("route", "visual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     if content_inventory_enabled:
@@ -897,6 +948,7 @@ def main() -> int:
         "handoff.json",
         "validation-report.json",
         "issue-log.json",
+        "typography-calibration.json",
     ):
         path = project / candidate
         if path.is_file():
@@ -930,6 +982,9 @@ def main() -> int:
     project_inputs.extend(
         [run_dir / "semantic-object-audit.json"] if args.require_object_manifest or object_manifest.is_file() else []
     )
+    project_inputs.extend(
+        [run_dir / "typography-calibration-validation.json"] if typography_enabled else []
+    )
     add_step("project", project_args, deps=project_deps, outputs=[run_dir / "project-validation.json"], inputs=project_inputs, metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
     def collect_quality_evidence(bundle_path=None, bundle_key="report_bundle_preflight"):
         evidence = {}
@@ -941,6 +996,7 @@ def main() -> int:
             ("asset_hash_validation", run_dir / "asset-hash-validation.json"),
             ("multipage_layout_guard", run_dir / "multipage-layout-guard.json"),
             ("preview_consistency", run_dir / "preview-consistency-validation.json"),
+            ("typography_calibration", run_dir / "typography-calibration-validation.json"),
             ("render", run_dir / "render-report.json"),
             ("render_visual_gate", run_dir / "render-visual-gate.json"),
             ("visual_comparison", run_dir / "visual-comparison.json"),
@@ -1101,6 +1157,8 @@ def main() -> int:
         report_entries.append({"report_type": "multipage-layout-guard", "path": "multipage-layout-guard.json", "required": True, "stage": "validated"})
     if args.preview_dir:
         report_entries.append({"report_type": "preview-consistency", "path": "preview-consistency-validation.json", "required": bool(args.require_preview_consistency or args.release), "stage": "validated"})
+    if typography_enabled:
+        report_entries.append({"report_type": "typography-calibration-validation", "path": "typography-calibration-validation.json", "required": True, "stage": "validated"})
     if unique_reference_sources:
         report_entries.append({"report_type": "source-image-validation", "path": "source-image-validation.json", "required": True, "stage": "source-analyzed"})
     if gradient_required:
@@ -1127,7 +1185,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"

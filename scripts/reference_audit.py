@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 from atomic_output import atomic_write_json
+from image_viewport import detect_viewer_crop
 
 
 def _die(msg: str) -> None:
@@ -20,7 +21,7 @@ def _die(msg: str) -> None:
     raise SystemExit(2)
 
 
-def _stats(path: Path) -> dict:
+def _stats(path: Path, expected_ratio: float | None = None) -> dict:
     try:
         from PIL import Image, ImageStat
     except ImportError:
@@ -39,14 +40,27 @@ def _stats(path: Path) -> dict:
         dark = 0
         total = 0
         for band in bands:
-            px = list(band.getdata())
+            # Pillow 14 deprecates getdata(); keep a fallback for older
+            # runtimes without adding a noisy warning to every audit.
+            if hasattr(band, "get_flattened_data"):
+                px = list(band.get_flattened_data())
+            else:
+                px = list(band.getdata())
             dark += sum(1 for r, g, b in px if max(r, g, b) < 20)
             total += len(px)
+        viewer_crop = detect_viewer_crop(rgb, expected_ratio=expected_ratio)
+        normalized = rgb.crop(tuple(viewer_crop["crop_box"])) if viewer_crop["detected"] else rgb
+        normalized_w, normalized_h = normalized.size
+        normalized_stat = ImageStat.Stat(normalized)
         return {
             "size": [w, h],
             "ratio": round(w / h, 7) if h else None,
             "mean_rgb": [round(x, 2) for x in stat.mean],
             "edge_dark_fraction": round(dark / max(1, total), 5),
+            "normalized_size": [normalized_w, normalized_h],
+            "normalized_ratio": round(normalized_w / normalized_h, 7) if normalized_h else None,
+            "normalized_mean_rgb": [round(x, 2) for x in normalized_stat.mean],
+            "viewer_crop": viewer_crop,
         }
 
 
@@ -60,13 +74,15 @@ def main() -> None:
     ref, cand = Path(args.reference), Path(args.candidate)
     if not ref.exists() or not cand.exists():
         _die("reference and candidate must both exist")
-    rs, cs = _stats(ref), _stats(cand)
+    rs = _stats(ref, args.expected_ratio)
+    candidate_ratio = rs["normalized_ratio"] or args.expected_ratio
+    cs = _stats(cand, candidate_ratio)
     issues = []
-    if abs(rs["ratio"] - args.expected_ratio) > .02:
+    if abs(rs["normalized_ratio"] - args.expected_ratio) > .02:
         issues.append("reference_ratio_unexpected")
-    if abs(cs["ratio"] - args.expected_ratio) > .02:
+    if abs(cs["normalized_ratio"] - args.expected_ratio) > .02:
         issues.append("candidate_ratio_unexpected")
-    if cs["edge_dark_fraction"] > .25:
+    if cs["edge_dark_fraction"] > .25 and not cs["viewer_crop"]["detected"]:
         issues.append("candidate_may_be_letterboxed_or_have_black_bars")
     result = {
         "schema": "ai-ppt-plus/reference-audit/v1",

@@ -20,6 +20,7 @@ import json
 from pathlib import Path
 from atomic_output import atomic_write_json
 from compare_visual import ASPECT_RATIO_TOLERANCE
+from image_viewport import load_viewport
 
 
 def _die(msg: str, code: int = 2):
@@ -37,6 +38,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("source", help="Original slide image.")
     ap.add_argument("preview", help="Composed PPTX preview image.")
+    ap.add_argument("--expected-ratio", type=float, help="optional slide ratio used to validate viewer-capture crops")
     ap.add_argument("--out-dir", required=True, help="Directory for QA artifacts.")
     args = ap.parse_args()
 
@@ -54,18 +56,20 @@ def main() -> None:
         _die(f"preview not found: {preview_path}")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    with Image.open(source_path) as src_im, Image.open(preview_path) as prv_im:
-        source_size = src_im.size
-        preview_size = prv_im.size
-        source_ratio = source_size[0] / source_size[1] if source_size[1] else 0
-        preview_ratio = preview_size[0] / preview_size[1] if preview_size[1] else 0
-        if abs(source_ratio - preview_ratio) > ASPECT_RATIO_TOLERANCE:
-            _die(
-                f"aspect_ratio_mismatch: source {source_size} vs preview {preview_size}; "
-                "refusing to stretch a visual comparison"
-            )
-        preview = prv_im.convert("RGB")
-        source = _fit_source_to_preview(src_im, preview.size)
+    source_image, source_viewport = load_viewport(source_path, expected_ratio=args.expected_ratio)
+    preview, preview_viewport = load_viewport(preview_path)
+    source_normalized_size = source_image.size
+    source_ratio = source_image.width / source_image.height if source_image.height else 0
+    if source_viewport["detected"]:
+        preview, preview_viewport = load_viewport(preview_path, expected_ratio=source_ratio)
+    preview_ratio = preview.width / preview.height if preview.height else 0
+    aspect_ratio_delta = abs(source_ratio - preview_ratio)
+    if aspect_ratio_delta > ASPECT_RATIO_TOLERANCE:
+        _die(
+            f"aspect_ratio_mismatch: source {source_image.size} vs preview {preview.size}; "
+            "refusing to stretch a visual comparison"
+        )
+    source = _fit_source_to_preview(source_image, preview.size)
 
     source.save(out_dir / "source_resized.png")
     preview.save(out_dir / "preview.png")
@@ -108,9 +112,14 @@ def main() -> None:
         "preview": str(preview_path),
         "status": "diagnostic",
         "ok": True,
-        "source_original_size": list(source_size),
+        "source_original_size": source_viewport["original_size"],
+        "source_normalized_size": list(source_normalized_size),
+        "preview_original_size": preview_viewport["original_size"],
         "preview_size": list(preview.size),
-        "resized_for_comparison": tuple(source_size) != tuple(preview.size),
+        "resized_for_comparison": tuple(source_normalized_size) != tuple(preview.size),
+        "aspect_ratio_delta": round(aspect_ratio_delta, 6),
+        "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE,
+        "viewer_crops": {"source": source_viewport, "preview": preview_viewport},
         "mean_abs_diff_0_255": round(mean_abs, 4),
         "rms_diff_0_255": round(rms, 4),
         "changed_pixel_fraction_threshold_32": round(changed_32, 6),

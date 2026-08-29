@@ -14,6 +14,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageFilter
 from atomic_output import atomic_write_json
+from image_viewport import load_viewport
 
 
 ASPECT_RATIO_TOLERANCE = 0.015
@@ -41,12 +42,26 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("rendered")
     parser.add_argument("reference")
+    parser.add_argument("--expected-ratio", type=float, help="optional slide ratio used to validate viewer-capture crops")
     parser.add_argument("--threshold", type=float)
     parser.add_argument("--report")
     args = parser.parse_args()
     rendered_path, reference_path = Path(args.rendered), Path(args.reference)
-    _, rendered_size = array(rendered_path)
-    _, reference_size = array(reference_path)
+    rendered_image, rendered_viewport = load_viewport(rendered_path)
+    reference_image, reference_viewport = load_viewport(
+        reference_path,
+        expected_ratio=args.expected_ratio,
+    )
+    # If the caller did not declare a ratio, use the normalized reference
+    # viewport as the contract for a viewer-captured candidate as well.
+    reference_ratio = reference_image.width / reference_image.height if reference_image.height else 0
+    if not args.expected_ratio and reference_viewport["detected"]:
+        rendered_image, rendered_viewport = load_viewport(
+            rendered_path,
+            expected_ratio=reference_ratio,
+        )
+    rendered_size = rendered_image.size
+    reference_size = reference_image.size
     issues = []
     resized_for_comparison = False
     aspect_ratio_delta = 0.0
@@ -58,16 +73,15 @@ def main() -> int:
             issues.append({"severity": "blocker", "code": "aspect_ratio_mismatch", "rendered": rendered_size, "reference": reference_size})
         else:
             resized_for_comparison = True
-    rendered, _ = array(rendered_path, reference_size if resized_for_comparison else None)
-    reference, _ = array(reference_path)
+    if resized_for_comparison:
+        rendered_image = rendered_image.resize(reference_size, Image.Resampling.LANCZOS)
+    rendered = np.asarray(rendered_image, dtype=np.float32) / 255.0
+    reference = np.asarray(reference_image, dtype=np.float32) / 255.0
     if not issues:
         diff = np.abs(rendered - reference)
         global_ssim = ssim(rendered, reference)
-        with Image.open(rendered_path) as r_image, Image.open(reference_path) as s_image:
-            if resized_for_comparison:
-                r_image = r_image.convert("RGB").resize(reference_size, Image.Resampling.LANCZOS)
-            r_blur = np.asarray(r_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
-            s_blur = np.asarray(s_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
+        r_blur = np.asarray(rendered_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
+        s_blur = np.asarray(reference_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
         blurred_ssim = ssim(r_blur[..., None], s_blur[..., None])
         result_metrics = {
             "global_ssim": round(global_ssim, 6),
@@ -80,7 +94,7 @@ def main() -> int:
             issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": args.threshold, "observed": result_metrics["blurred_layout_ssim"]})
     else:
         result_metrics = {}
-    result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "reference": str(reference_path.resolve()), "original_sizes": {"rendered": rendered_size, "reference": reference_size}, "aspect_ratio_delta": round(aspect_ratio_delta, 6), "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE, "comparison_size": reference_size if resized_for_comparison else rendered_size, "resized_for_comparison": resized_for_comparison, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
+    result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "reference": str(reference_path.resolve()), "original_sizes": {"rendered": rendered_viewport["original_size"], "reference": reference_viewport["original_size"]}, "normalized_sizes": {"rendered": list(rendered_size), "reference": list(reference_size)}, "viewer_crops": {"rendered": rendered_viewport, "reference": reference_viewport}, "aspect_ratio_delta": round(aspect_ratio_delta, 6), "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE, "comparison_size": list(reference_size if resized_for_comparison else rendered_size), "resized_for_comparison": resized_for_comparison, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
     if args.report:
         report = Path(args.report)
         report.parent.mkdir(parents=True, exist_ok=True)

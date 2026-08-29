@@ -14,7 +14,8 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 from atomic_output import atomic_write_json
-from compare_visual import ASPECT_RATIO_TOLERANCE, array, ssim
+from compare_visual import ASPECT_RATIO_TOLERANCE, ssim
+from image_viewport import load_viewport
 
 
 def page_number(path: Path) -> int:
@@ -44,9 +45,14 @@ def parse_pages(value: str | None) -> set[int] | None:
     return selected
 
 
-def compare_page(rendered_path: Path, reference_path: Path, threshold):
-    _, rendered_size = array(rendered_path)
-    _, reference_size = array(reference_path)
+def compare_page(rendered_path: Path, reference_path: Path, threshold, expected_ratio=None):
+    rendered_image, rendered_viewport = load_viewport(rendered_path, expected_ratio=expected_ratio)
+    reference_image, reference_viewport = load_viewport(reference_path, expected_ratio=expected_ratio)
+    reference_ratio = reference_image.width / reference_image.height if reference_image.height else 0
+    if reference_viewport["detected"]:
+        rendered_image, rendered_viewport = load_viewport(rendered_path, expected_ratio=reference_ratio)
+    rendered_size = rendered_image.size
+    reference_size = reference_image.size
     issues = []
     metrics = {}
     resized_for_comparison = False
@@ -59,14 +65,13 @@ def compare_page(rendered_path: Path, reference_path: Path, threshold):
             resized_for_comparison = True
     if issues:
         return metrics, issues
-    rendered, _ = array(rendered_path, reference_size if resized_for_comparison else None)
-    reference, _ = array(reference_path)
+    if resized_for_comparison:
+        rendered_image = rendered_image.resize(reference_size, Image.Resampling.LANCZOS)
+    rendered = np.asarray(rendered_image, dtype=np.float32) / 255.0
+    reference = np.asarray(reference_image, dtype=np.float32) / 255.0
     diff = np.abs(rendered - reference)
-    with Image.open(rendered_path) as rendered_image, Image.open(reference_path) as reference_image:
-        if resized_for_comparison:
-            rendered_image = rendered_image.convert("RGB").resize(reference_size, Image.Resampling.LANCZOS)
-        rendered_blur = np.asarray(rendered_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
-        reference_blur = np.asarray(reference_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
+    rendered_blur = np.asarray(rendered_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
+    reference_blur = np.asarray(reference_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
     metrics = {
         "global_ssim": round(ssim(rendered, reference), 6),
         "blurred_layout_ssim": round(ssim(rendered_blur[..., None], reference_blur[..., None]), 6),
@@ -75,6 +80,9 @@ def compare_page(rendered_path: Path, reference_path: Path, threshold):
         "pixel_fidelity_score": round(max(0.0, 1.0 - float(diff.mean())), 6),
         "resized_for_comparison": resized_for_comparison,
         "comparison_size": reference_size if resized_for_comparison else rendered_size,
+        "original_sizes": {"rendered": rendered_viewport["original_size"], "reference": reference_viewport["original_size"]},
+        "normalized_sizes": {"rendered": list(rendered_size), "reference": list(reference_size)},
+        "viewer_crops": {"rendered": rendered_viewport, "reference": reference_viewport},
     }
     if threshold is not None and metrics["blurred_layout_ssim"] < threshold:
         issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": threshold, "observed": metrics["blurred_layout_ssim"]})
@@ -87,6 +95,7 @@ def main() -> int:
     parser.add_argument("reference_dir")
     parser.add_argument("--expected-pages", type=int, help="expected full-deck page count; missing pages are blockers")
     parser.add_argument("--threshold", type=float)
+    parser.add_argument("--expected-ratio", type=float, help="optional slide ratio used to validate viewer-capture crops")
     parser.add_argument("--pages", help="only compare selected slide numbers, e.g. 1,3-4")
     parser.add_argument("--report")
     args = parser.parse_args()
@@ -128,7 +137,7 @@ def main() -> int:
         if reference_path is None:
             issues.append({"severity": "blocker", "code": "reference_page_missing", "slide": number, "rendered": str(rendered_path.resolve())})
             continue
-        metrics, page_issues = compare_page(rendered_path, reference_path, args.threshold)
+        metrics, page_issues = compare_page(rendered_path, reference_path, args.threshold, args.expected_ratio)
         for issue in page_issues:
             issue["slide"] = number
         issues.extend(page_issues)

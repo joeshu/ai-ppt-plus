@@ -48,6 +48,24 @@ def main() -> int:
         specialized = run("scripts/validate_imagegen_assets_manifest.py", str(imagegen), "--require-hashes")
         assert specialized.returncode == 0, specialized.stdout + specialized.stderr
 
+        source = root / "source.png"
+        source.write_bytes(b"authoritative source")
+        reused = root / "reused.png"
+        reused.write_bytes(b"cropped source asset")
+        reuse_manifest = root / "source-reuse-manifest.json"
+        write(reuse_manifest, {"provenance_mode": "source_reuse", "assets": [{
+            "source_ref": "source.png",
+            "source_bbox": [10, 20, 30, 40],
+            "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+            "copied_to": "reused.png",
+            "layer": "icons_raw_1",
+            "extraction_method": "deterministic_source_crop",
+            "sha256": hashlib.sha256(reused.read_bytes()).hexdigest(),
+        }]})
+        source_reuse = run("scripts/validate_imagegen_assets_manifest.py", str(reuse_manifest), "--require-hashes")
+        assert source_reuse.returncode == 0, source_reuse.stdout + source_reuse.stderr
+        assert json.loads(source_reuse.stdout)["provenance_modes"] == {"source_reuse": 1}
+
     print("asset hash gates: ok")
     return 0
 

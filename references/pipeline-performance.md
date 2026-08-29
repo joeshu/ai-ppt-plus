@@ -28,6 +28,30 @@ directory. The cache never reuses a run directory, report index or PPTX path.
 Failed or incomplete outputs are not cached. Use `--cache-dir PATH` to choose a
 cache location or `--no-cache` for a clean run.
 
+## Fast reconstruction profile
+
+Reference reconstruction should spend model time only where it changes the
+result. Inventory all visual assets once, then use `source_reuse` for complete
+authoritative pixels and reserve imagegen for missing, ambiguous or genuinely
+reconstructive visuals. The provenance validator accepts both modes, so this
+optimization does not remove the evidence gate.
+
+Use a two-pass loop: first run cheap source, manifest, text, layout and targeted
+region checks; then render only affected pages/regions with `--affected-pages`
+and `--affected-region`. Run the full-deck render and release bundle once at
+the end. Do not use `--no-cache` for ordinary repair iterations: it disables
+both task and page caches and is reserved for clean-environment verification.
+Batch related typography/layout changes before a render so each repair round
+has one render/compare cycle. A stage budget should emit a recorded degradation
+or blocker rather than silently retrying expensive generation.
+
+For a reference-reconstruction route, `run_pipeline.py` requires
+`typography-calibration.json` before it starts the render graph. A missing
+manifest therefore fails fast; a measured font-metric drift fails the
+calibration gate. This saves a full render on an incomplete repair and makes
+the WPS/PowerPoint typography regression explicit instead of hiding it in a
+global similarity score.
+
 ## Page and region scope
 
 `--affected-pages 1,3-4` makes the renderer emit only those pages and passes the

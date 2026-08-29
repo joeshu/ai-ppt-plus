@@ -1,8 +1,10 @@
 {
   "schema": "ai-ppt-plus/imagegen-assets/v1",
+  "provenance_policy": "imagegen_or_source_reuse",
   "run_root": "/workspace/.../unique-run",
   "assets": [
     {
+      "provenance_mode": "imagegen",
       "layer": "background",
       "generated_source": "/imagegen/generated/background.png",
       "copied_to": "editable/01/background.png",
