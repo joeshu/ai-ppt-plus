@@ -40,9 +40,11 @@ ownership or create a fourth release authority.
 
 ## Shared runtime and contracts
 
-The three skills share one versioned `scripts/`, `assets/`, and `references/`
-runtime. Every entrypoint declares the same package revision. This prevents
-copied validators or schemas from drifting between skills.
+Each skill directory contains its own versioned `scripts/`, `assets/`, and
+`references/` runtime. Every package validates independently and declares the
+same bundle revision. The root Super package also checks both child manifests,
+entrypoints, required directories, managed files, and revision parity so copied
+runtime files cannot drift silently.
 
 Shared contracts include:
 

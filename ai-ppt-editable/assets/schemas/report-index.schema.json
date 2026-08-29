@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "project_id", "revision", "stage", "validation_scope", "deck_path", "deck_sha256", "source_references", "reports"],
+  "properties": {
+    "schema": {"type": "string", "enum": ["ai-ppt-plus/report-index/v1"]},
+    "project_id": {"type": "string"},
+    "revision": {"type": "string"},
+    "stage": {"type": "string"},
+    "validation_scope": {"type": "string", "enum": ["full", "incremental"]},
+    "deck_path": {"type": "string"},
+    "deck_sha256": {"type": "string"},
+    "source_references": {"type": "array"},
+    "reports": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["report_type", "path", "required", "stage"], "properties": {"report_type": {"type": "string"}, "path": {"type": "string"}, "required": {"type": "boolean"}, "stage": {"type": "string"}, "step_ok": {"type": "boolean"}}}}
+  }
+}

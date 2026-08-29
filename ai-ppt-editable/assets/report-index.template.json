@@ -1,0 +1,24 @@
+{
+  "schema": "ai-ppt-plus/report-index/v1",
+  "project_id": "",
+  "revision": "R1",
+  "stage": "validated",
+  "validation_scope": "full",
+  "deck_path": "deck.pptx",
+  "deck_sha256": "",
+  "source_references": [],
+  "reports": [
+    {
+      "report_type": "inspection",
+      "path": "inspection.json",
+      "required": true,
+      "stage": "validated"
+    },
+    {
+      "report_type": "render",
+      "path": "render-report.json",
+      "required": true,
+      "stage": "rendered"
+    }
+  ]
+}

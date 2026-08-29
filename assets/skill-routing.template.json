@@ -31,13 +31,14 @@
       "skill": "ai-ppt-editable",
       "invocation": "sibling-skill",
       "skill_entrypoint": "ai-ppt-editable/SKILL.md",
-      "runtime_entrypoint": "scripts/compose_pptx.py",
+      "runtime_entrypoint": "ai-ppt-editable/scripts/compose_pptx.py",
       "required_for": ["reference-reconstruction", "editable-pptx"]
     },
     "visual_generation": {
       "skill": "ai-ppt-visual-gen",
       "invocation": "sibling-skill",
       "skill_entrypoint": "ai-ppt-visual-gen/SKILL.md",
+      "runtime_entrypoint": "ai-ppt-visual-gen/scripts/run_visual_pipeline.py",
       "required_for": ["visual-creation:image-slide"],
       "tool_resolution": "runtime-discovery",
       "preferred_tool": "imagegen",
@@ -48,8 +49,8 @@
     "authoring": {
       "kind": "adapter",
       "backend": "python-pptx",
-      "entrypoint": "scripts/authoring_backend.py",
-      "font_postprocessor": "scripts/embed_fonts.py"
+      "entrypoint": "ai-ppt-editable/scripts/authoring_backend.py",
+      "font_postprocessor": "ai-ppt-editable/scripts/embed_fonts.py"
     }
   }
 }

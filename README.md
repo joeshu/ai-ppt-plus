@@ -28,9 +28,19 @@
 | `ai-ppt-visual-gen` | 图片版 PPT、视觉中间稿 | A1–A5 文生图、单页重试、生成源留存、deck strip |
 | `ai-ppt-editable` | 参考图/内容到可编辑 PPTX | 对象拆解、PPTX 创作、渲染与技术 QA |
 
-三个入口共享同一套 `scripts/`、`assets/`、`references/`，不复制后段
-图转 PPTX 实现。详细边界见
+三个技能目录都是自包含包，各自拥有 `scripts/`、`assets/`、
+`references/`、包校验器和测试。`ai-ppt-editable` 内的后段图转 PPTX
+算法是从已验证版本原样封装，不在本次拆分中改写。详细边界见
 [`references/three-skill-architecture.md`](references/three-skill-architecture.md)。
+
+```text
+ai-ppt-plus/                 # 仓库根目录即 Super 技能（A→B）
+├── scripts/ references/ assets/
+├── ai-ppt-visual-gen/       # 可单独复制/安装的图片版 PPT 技能
+│   ├── scripts/ references/ assets/ tests/
+└── ai-ppt-editable/         # 可单独复制/安装的图片转可编辑技能
+    ├── scripts/ references/ assets/ tests/
+```
 
 默认运行 DAG 流水线；局部修复可只验证受影响页面和区域：
 

@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
- package_revision: 2026.08.29.18
+ package_revision: 2026.08.29.19
 ---
 
 # AI PPT Plus Orchestrator
@@ -15,8 +15,10 @@ outline, route decisions, design-system revision, deck-wide state, report
 aggregation, human closeout, and delivery eligibility. It does not duplicate
 the workers' generation or reconstruction procedures.
 
-The repository is one bundle with three skill entrypoints and one shared
-runtime. Read `references/three-skill-architecture.md` and
+The repository is one bundle with three self-contained skill directories.
+The repository root is the `ai-ppt-plus` Super skill; each worker owns its own
+`scripts/`, `references/`, `assets/`, package validator, and tests. Read
+`references/three-skill-architecture.md` and
 `references/skill-routing.md`. Validate the bundle before intake:
 
 ```bash
@@ -24,7 +26,8 @@ python3 scripts/validate_skill_package.py --skill-dir .
 python3 scripts/validate_routing_contract.py
 ```
 
-If a configured runtime copy differs by revision or managed-file SHA-256,
+The root package validator also validates both child packages. If any
+configured runtime copy differs by revision or managed-file SHA-256,
 stop. Never continue on chat memory or an unversioned worker copy.
 
 ## Ownership and delegation
@@ -32,8 +35,8 @@ stop. Never continue on chat memory or an unversioned worker copy.
 | Entrypoint | Owns | Must not claim |
 |---|---|---|
 | `ai-ppt-plus` | intake, source authority, narrative, approved outline, route, design authority, shared state, QA aggregation, human closeout, release | the workers' internal generation/decomposition algorithms |
-| `$ai-ppt-visual-gen` | A1–A5 image-slide planning, prompting, raster generation evidence, page-local retry, source retention, deck strip | narrative/formal-text authority in orchestrated mode, editable reconstruction, release |
-| `$ai-ppt-editable` | reference decomposition, editable-object planning, PPTX authoring, rendering and technical QA | narrative redesign, whole-deck release, human sign-off |
+| `$ai-ppt-visual-gen` | self-contained A1–A5 image-slide planning, prompting, raster generation evidence, page-local retry, source retention, deck strip and image-only PPTX | narrative/formal-text authority in orchestrated mode, editable reconstruction, release |
+| `$ai-ppt-editable` | self-contained reference decomposition, editable-object planning, PPTX authoring, rendering and technical QA | narrative redesign, whole-deck release, human sign-off |
 
 `Presentations`, `python-pptx`, image models, OCR, and renderers are adapters or
 tools, not extra business skills. A worker may use them only through the
@@ -82,7 +85,7 @@ workers return evidence and issues, not replacement authority.
 ### O3 — Delegate visual generation
 
 For image slides or high-end visual intermediates, invoke
-`$ai-ppt-visual-gen`. Supply approved outline rows, source references, design
+`$ai-ppt-visual-gen` from `ai-ppt-visual-gen/`. Supply approved outline rows, source references, design
 system, page count, ratio, language, density, reference policy, and target
 mode. Require its A1–A5 outputs:
 
@@ -98,11 +101,26 @@ provisional until reconciled against the approved formal-text authority.
 
 Invoke `$ai-ppt-editable` when the deliverable is editable PPTX, when a fixed
 reference must be reconstructed, or when approved content must be authored as
-native objects. Supply route decision, formal-text authority, references or
+native objects. Invoke it from `ai-ppt-editable/` and supply route decision, formal-text authority, references or
 visual intermediates, design revision, editability target, fonts, and worker
 manifests. Require editable-object evidence, rendered previews, technical QA,
 and a worker handoff. The worker may repair its own technical defects but may
 not change the story or redesign an approved reference.
+
+After A's generated images/evidence and B's reviewed editable layout plan exist,
+the deterministic handoff can be executed in one command:
+
+```bash
+python3 scripts/run_super_pipeline.py PROJECT \
+  --visual-plan PROJECT/visual-generation-plan.json \
+  --visual-manifest PROJECT/visual-generation-manifest.json \
+  --editable-layout PROJECT/editable-layout.json \
+  --output-deck PROJECT/deliverable.pptx --expected-pages N
+```
+
+This command validates A, builds the deck strip, invokes B's local composer,
+and inspects the resulting PPTX. It does not replace the native image-generation
+event or the editable worker's visual/object planning.
 
 ### O5 — Reconcile, review, and release
 
@@ -148,4 +166,5 @@ successful pages and unrelated downstream artifacts remain intact.
 - No release claim without aggregated technical evidence and explicit human
   closeout where required.
 - No three-skill package change is valid unless all three entrypoints share the
-  same `package_revision` and package validation passes.
+  same `package_revision`, each directory passes its own package validation,
+  and the root bundle validation passes.

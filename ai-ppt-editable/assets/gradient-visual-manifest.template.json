@@ -1,0 +1,24 @@
+{
+  "schema": "ai-ppt-plus/gradient-visual/v1",
+  "project_id": "PROJECT_ID",
+  "revision": "R13",
+  "slides": [
+    {
+      "slide": 1,
+      "regions": [
+        {
+          "id": "gradient-01",
+          "role": "background_blend",
+          "route": "B2",
+          "source": "assets/background-blend.png",
+          "covers_background": true,
+          "requires_alpha": false,
+          "alpha_verified": false,
+          "embedded": false,
+          "render_visible": false,
+          "notes": "Broad page-level gradient atmosphere"
+        }
+      ]
+    }
+  ]
+}

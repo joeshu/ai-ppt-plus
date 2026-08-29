@@ -2,7 +2,7 @@
 name: ai-ppt-visual-gen
 description: Generate polished image-format PowerPoint slides or visual intermediates from a topic, approved outline, or content brief. Trigger for “图片版PPT/文生图PPT/AI出图幻灯片/视觉中间稿”, high-information commercial slide images, A1–A5 visual production, page-local image retry, source retention, or deck-strip review. Outputs one raster image per slide plus prompts and generation evidence. It can run standalone or as the visual worker for $ai-ppt-plus. Do not use for editable PPTX reconstruction or deck-wide release; use $ai-ppt-editable or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.29.18
+ package_revision: 2026.08.29.19
 ---
 
 # AI PPT Visual Gen
@@ -14,13 +14,12 @@ first turn the user's topic/content into a local visual brief and identify any
 unverified facts. In orchestrated mode, the supplied outline, formal text,
 source references, and design-system revisions are immutable authority.
 
-This skill is independently invokable but belongs to the `ai-ppt-plus`
-three-skill bundle. Resolve shared paths from the repository root and validate
-the bundle before work:
+This skill is independently installable and invokable. Run commands from this
+skill directory; every referenced script, reference, schema, template, and test
+is contained here. Validate this package before work:
 
 ```bash
 python3 scripts/validate_skill_package.py --skill-dir .
-python3 scripts/validate_routing_contract.py
 ```
 
 Read `references/visual-generation-tool.md` and
@@ -47,6 +46,8 @@ Required outputs:
 
 The image files may be assembled into an image-only PPTX when requested, but
 that artifact is not editable reconstruction and must be labeled accurately.
+Use `scripts/compose_image_pptx.py` or the `--image-pptx` option of
+`scripts/run_visual_pipeline.py`.
 
 ## A1 — Lock production context
 

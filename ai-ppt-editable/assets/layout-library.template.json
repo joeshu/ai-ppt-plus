@@ -1,0 +1,10 @@
+{
+  "schema": "ai-ppt-plus/layout-library/v1",
+  "library_id": "default-layouts",
+  "version": "1.0.0",
+  "layouts": [
+    {"layout_id": "blank-canvas", "pptx_layout_name": "Blank", "page_family": "freeform", "safe_margins": [0.05, 0.05, 0.05, 0.05], "grid": {"columns": 12, "gutter": 0.01}},
+    {"layout_id": "title-content", "pptx_layout_name": "Title and Content", "page_family": "content", "safe_margins": [0.06, 0.06, 0.06, 0.06], "grid": {"columns": 12, "gutter": 0.012}},
+    {"layout_id": "title-only", "pptx_layout_name": "Title Only", "page_family": "section", "safe_margins": [0.06, 0.06, 0.06, 0.06], "grid": {"columns": 12, "gutter": 0.012}}
+  ]
+}

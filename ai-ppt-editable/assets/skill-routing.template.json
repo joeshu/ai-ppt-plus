@@ -1,0 +1,21 @@
+{
+  "schema": "ai-ppt-editable/skill-routing/v1",
+  "skill": "ai-ppt-editable",
+  "owns": [
+    "reference-decomposition",
+    "editable-layer-plan",
+    "image-to-pptx-object-mapping",
+    "pptx-authoring",
+    "pptx-rendering",
+    "technical-qa"
+  ],
+  "forbids": ["narrative-redesign", "release-eligibility", "human-signoff"],
+  "bindings": {
+    "authoring": {
+      "kind": "adapter",
+      "backend": "python-pptx",
+      "entrypoint": "scripts/authoring_backend.py",
+      "font_postprocessor": "scripts/embed_fonts.py"
+    }
+  }
+}

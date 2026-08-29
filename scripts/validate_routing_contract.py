@@ -75,13 +75,14 @@ def main() -> int:
             "skill": "ai-ppt-editable",
             "invocation": "sibling-skill",
             "skill_entrypoint": "ai-ppt-editable/SKILL.md",
-            "runtime_entrypoint": "scripts/compose_pptx.py",
+            "runtime_entrypoint": "ai-ppt-editable/scripts/compose_pptx.py",
             "required_for": ["reference-reconstruction", "editable-pptx"],
         },
         "visual_generation": {
             "skill": "ai-ppt-visual-gen",
             "invocation": "sibling-skill",
             "skill_entrypoint": "ai-ppt-visual-gen/SKILL.md",
+            "runtime_entrypoint": "ai-ppt-visual-gen/scripts/run_visual_pipeline.py",
             "required_for": ["visual-creation:image-slide"],
             "tool_resolution": "runtime-discovery",
             "preferred_tool": "imagegen",
@@ -89,7 +90,7 @@ def main() -> int:
             "source_retention": "generated-source-and-project-copy",
             "prompt_contract": "ai-ppt-plus/visual-generation-plan/v1",
         },
-        "authoring": {"kind": "adapter", "backend": "python-pptx", "entrypoint": "scripts/authoring_backend.py", "font_postprocessor": "scripts/embed_fonts.py"},
+        "authoring": {"kind": "adapter", "backend": "python-pptx", "entrypoint": "ai-ppt-editable/scripts/authoring_backend.py", "font_postprocessor": "ai-ppt-editable/scripts/embed_fonts.py"},
     }
     for section, expected in expected_bindings.items():
         observed = bindings.get(section)
@@ -100,12 +101,12 @@ def main() -> int:
             if observed.get(key) != value:
                 issues.append({"severity": "blocker", "code": "routing_binding_mismatch", "section": section, "field": key, "expected": value, "observed": observed.get(key)})
 
-    # A declaration is not an executable binding unless every sibling skill
-    # and shared runtime entrypoint is present in the same repository bundle.
+    # A declaration is not executable unless every sibling skill and its own
+    # self-contained runtime entrypoint is present in the repository bundle.
     skill_root = path.parent.parent
     for section, fields in {
         "orchestrator": ("entrypoint",),
-        "visual_generation": ("skill_entrypoint",),
+        "visual_generation": ("skill_entrypoint", "runtime_entrypoint"),
         "reconstruction": ("skill_entrypoint", "runtime_entrypoint"),
         "authoring": ("entrypoint", "font_postprocessor"),
     }.items():

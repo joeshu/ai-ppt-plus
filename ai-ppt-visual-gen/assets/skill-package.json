@@ -1,0 +1,43 @@
+{
+  "schema": "ai-ppt-plus/skill-package/v2",
+  "skill": "ai-ppt-visual-gen",
+  "package_revision": "2026.08.29.19",
+  "source_of_truth": "git",
+  "entrypoint": "SKILL.md",
+  "self_contained": {
+    "policy": "self-contained",
+    "required_dirs": ["agents", "scripts", "references", "assets"]
+  },
+  "managed_globs": [
+    "SKILL.md",
+    "agents/*.yaml",
+    "assets/*",
+    "assets/schemas/*.json",
+    "references/*.md",
+    "scripts/*.py",
+    "evals/*.yaml",
+    "tests/*.py"
+  ],
+  "required_files": [
+    "SKILL.md",
+    "agents/openai.yaml",
+    "assets/skill-package.json",
+    "assets/visual-generation-plan.template.json",
+    "assets/visual-generation-manifest.template.json",
+    "assets/schemas/visual-generation-plan.schema.json",
+    "assets/schemas/visual-generation-manifest.schema.json",
+    "scripts/validate_skill_package.py",
+    "scripts/validate_visual_generation_plan.py",
+    "scripts/materialize_visual_generation_prompts.py",
+    "scripts/build_visual_generation_strip.py",
+    "scripts/compose_image_pptx.py",
+    "scripts/run_visual_pipeline.py",
+    "references/visual-generation-tool.md",
+    "references/visual-intermediate.md"
+  ],
+  "runtime_sync": {
+    "required": true,
+    "comparison": "sha256",
+    "operator": "refresh this complete skill directory from the same git revision before use"
+  }
+}

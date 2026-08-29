@@ -1,0 +1,113 @@
+{
+  "schema": "ai-ppt-plus/visual-generation-plan/v1",
+  "project_id": "project-slug",
+  "route": "visual-creation",
+  "mode": "image-slide",
+  "outline_revision": "R1",
+  "design_system_revision": "R1",
+  "page_count": 1,
+  "canvas": {
+    "ratio": "16:9",
+    "width_px": 2048,
+    "height_px": 1152
+  },
+  "density_profile": "dense",
+  "density_override_reason": "",
+  "generation_context": {
+    "audience": "executive stakeholders",
+    "language": "zh-CN",
+    "presentation_context": "high-end executive review in a conference room"
+  },
+  "retry_policy": {
+    "max_attempts_per_slide": 2,
+    "scope": "single-slide",
+    "triggers": [
+      "image-generation failure",
+      "missing or garbled approved copy",
+      "collapsed reading path or unusable layout"
+    ]
+  },
+  "style_lock": {
+    "name": "deck-style-v1",
+    "palette": [
+      {"name": "primary", "hex": "#14313B"},
+      {"name": "secondary", "hex": "#287B80"},
+      {"name": "accent", "hex": "#E85B47"},
+      {"name": "surface", "hex": "#F7F0E4"}
+    ],
+    "font_style": "Noto Sans CJK SC / clean sans-serif",
+    "surface": "light paper with restrained card depth",
+    "icon_style": "flat business icons with consistent stroke weight",
+    "avoid_items": ["placeholder text", "invented numbers", "large pure-green areas", "random icon collage"]
+  },
+  "generation_contract": {
+    "skill": "ai-ppt-visual-gen",
+    "tool_resolution": "runtime-discovery",
+    "preferred_tool": "imagegen",
+    "backend_policy": "raster-only",
+    "source_retention": "generated-source-and-project-copy",
+    "no_code_overlay": true
+  },
+  "evidence_manifest": "visual-generation-manifest.json",
+  "slides": [
+    {
+      "slide_no": 1,
+      "page_type": "infographic",
+      "title": "verbatim slide title",
+      "core_logic": "one sentence explaining the relationship on the page",
+      "visual_framework": "Bento Box dashboard",
+      "visual_generation_prompt": "Visual-only description of the composition, hierarchy, surfaces, light and visual flow; do not use this field alone for generation.",
+      "detailed_content_paragraphs": [
+        "First reserve paragraph: summarize the situation and the decision this page must support using only traceable source material.",
+        "Second reserve paragraph: decompose the proposed actions, roles or stages into a coherent relationship for the visual framework.",
+        "Third reserve paragraph: state the expected outcome, constraints and risk controls without inventing data."
+      ],
+      "layout_blueprint": {
+        "focal_point": "the one visual anchor that must dominate the page",
+        "reading_path": "header → central framework → supporting modules → conclusion",
+        "zones": [
+          {"name": "header", "purpose": "title, intro and section cue", "position": "top", "content_capacity": "one title plus one intro"},
+          {"name": "main framework", "purpose": "visualize the page relationship", "position": "center", "content_capacity": "all primary modules and connectors"},
+          {"name": "supporting rail", "purpose": "callouts or structural labels", "position": "right or lower edge", "content_capacity": "three short callouts"},
+          {"name": "conclusion", "purpose": "repeat the page takeaway", "position": "bottom", "content_capacity": "one banner sentence"}
+        ],
+        "anti_template_rules": ["do not use unrelated equal cards", "do not leave the central framework unconnected"]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "Use inline color emphasis for approved keywords without changing or adding copy.",
+          "Keep the bottom conclusion sentence on one line where possible; do not flatten mapped keywords to the body color."
+        ],
+        "items": [
+          {"text": "approved keyword", "color": "#E85B47", "scope": "bottom conclusion", "treatment": "inline emphasis"}
+        ]
+      },
+      "diagram_annotations": [
+        {"text": "approved phase", "purpose": "name a relationship inside the visual framework", "scope": "inner loop", "approved_by": "approved visual brief"}
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "no external reference",
+        "preserve": ["the approved design-system language"],
+        "exclude": ["unapproved text", "brand elements", "invented data"]
+      },
+      "production_prompt": "A self-contained 16:9 presentation-slide prompt. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render every item in the 页面文字 section verbatim, do not invent data, do not use SVG/HTML/Canvas or code to add text, and use a Bento Box dashboard with clear hierarchy.",
+      "content_model": {
+        "intro": "one short introduction",
+        "modules": [
+          {"label": "label", "title": "module title", "bullets": ["point 1", "point 2"], "kpi": "12", "tag": "tag", "source_refs": ["outline.csv#1"]},
+          {"label": "label", "title": "module title", "bullets": ["point 1", "point 2"], "kpi": "24", "tag": "tag", "source_refs": ["outline.csv#1"]},
+          {"label": "label", "title": "module title", "bullets": ["point 1", "point 2"], "kpi": "36", "tag": "tag", "source_refs": ["outline.csv#1"]},
+          {"label": "label", "title": "module title", "bullets": ["point 1", "point 2"], "kpi": "48", "tag": "tag", "source_refs": ["outline.csv#1"]}
+        ],
+        "footer_banner": "one concise conclusion"
+      },
+      "formal_text": [
+        {"id": "title", "role": "title", "text": "verbatim slide title", "source_ref": "outline.csv#1"}
+      ],
+      "visual_assets": {"icons": ["semantic icon"], "background_texture": "subtle topical line texture"},
+      "reference_images": [],
+      "prompt_file": "prompts/01-slide.md"
+    }
+  ]
+}

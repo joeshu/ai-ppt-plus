@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""Regression checks for the three-entrypoint, single-runtime architecture."""
+"""Regression checks for three self-contained skill packages."""
 from __future__ import annotations
 
+import hashlib
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED = {
-    "ai-ppt-plus": ("orchestrator", ROOT / "SKILL.md"),
-    "ai-ppt-visual-gen": ("visual-worker", ROOT / "ai-ppt-visual-gen" / "SKILL.md"),
-    "ai-ppt-editable": ("editable-worker", ROOT / "ai-ppt-editable" / "SKILL.md"),
+PACKAGES = {
+    "ai-ppt-plus": ROOT,
+    "ai-ppt-visual-gen": ROOT / "ai-ppt-visual-gen",
+    "ai-ppt-editable": ROOT / "ai-ppt-editable",
 }
 
 
@@ -20,38 +23,67 @@ def frontmatter_value(text: str, key: str) -> str | None:
     return match.group(1) if match else None
 
 
-def main() -> int:
-    package = json.loads((ROOT / "assets" / "skill-package.json").read_text(encoding="utf-8"))
-    routing = json.loads((ROOT / "assets" / "skill-routing.template.json").read_text(encoding="utf-8"))
-    revision = package["package_revision"]
+def digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
-    entries = {item["name"]: item for item in package["skill_entries"]}
-    assert set(entries) == set(EXPECTED), entries
-    assert package["shared_runtime"] == {
-        "policy": "single-source",
-        "roots": ["scripts", "assets", "references"],
+
+def main() -> int:
+    root_package = json.loads((ROOT / "assets" / "skill-package.json").read_text(encoding="utf-8"))
+    routing = json.loads((ROOT / "assets" / "skill-routing.template.json").read_text(encoding="utf-8"))
+    revision = root_package["package_revision"]
+    bundled = {item["name"]: item["root"] for item in root_package["bundled_skills"]}
+    assert bundled == {
+        "ai-ppt-visual-gen": "ai-ppt-visual-gen",
+        "ai-ppt-editable": "ai-ppt-editable",
     }
 
-    for name, (role, path) in EXPECTED.items():
-        assert entries[name]["role"] == role
-        text = path.read_text(encoding="utf-8")
+    for name, root in PACKAGES.items():
+        package = json.loads((root / "assets" / "skill-package.json").read_text(encoding="utf-8"))
+        assert package["schema"] == "ai-ppt-plus/skill-package/v2"
+        assert package["skill"] == name
+        assert package["package_revision"] == revision
+        assert package["self_contained"]["policy"] == "self-contained"
+        for directory in ("agents", "scripts", "references", "assets"):
+            path = root / directory
+            assert path.is_dir() and any(item.is_file() for item in path.rglob("*")), (name, directory)
+        text = (root / "SKILL.md").read_text(encoding="utf-8")
         assert frontmatter_value(text, "name") == name
         assert frontmatter_value(text, "package_revision") == revision
+        validated = subprocess.run(
+            [sys.executable, str(root / "scripts" / "validate_skill_package.py"), "--skill-dir", str(root)],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert validated.returncode == 0, validated.stdout + validated.stderr
 
-    assert {item["name"] for item in routing["skills"]} == set(EXPECTED)
-    assert routing["bindings"]["orchestrator"]["skill"] == "ai-ppt-plus"
-    assert routing["bindings"]["visual_generation"]["skill"] == "ai-ppt-visual-gen"
-    assert routing["bindings"]["reconstruction"]["skill"] == "ai-ppt-editable"
-    assert routing["bindings"]["authoring"]["kind"] == "adapter"
-    assert "Presentations" not in {item["name"] for item in routing["skills"]}
+    assert {item["name"] for item in routing["skills"]} == set(PACKAGES)
+    assert routing["bindings"]["visual_generation"]["runtime_entrypoint"].startswith("ai-ppt-visual-gen/")
+    assert routing["bindings"]["reconstruction"]["runtime_entrypoint"].startswith("ai-ppt-editable/")
+    assert routing["bindings"]["authoring"]["entrypoint"].startswith("ai-ppt-editable/")
     assert "GordenImage" not in json.dumps(routing, ensure_ascii=False)
 
-    for worker in (ROOT / "ai-ppt-visual-gen", ROOT / "ai-ppt-editable"):
-        assert not (worker / "scripts").exists(), "shared scripts must not be copied into worker entrypoints"
-        assert not (worker / "assets").exists(), "shared assets must not be copied into worker entrypoints"
-        assert not (worker / "references").exists(), "shared references must not be copied into worker entrypoints"
+    # The split is packaging-only for existing algorithms: every copied script
+    # remains byte-identical except the two package-local contract validators.
+    editable_scripts = ROOT / "ai-ppt-editable" / "scripts"
+    for worker_file in editable_scripts.glob("*.py"):
+        if worker_file.name in {"validate_skill_package.py", "validate_routing_contract.py"}:
+            continue
+        source = ROOT / "scripts" / worker_file.name
+        assert source.is_file(), worker_file.name
+        assert digest(source) == digest(worker_file), worker_file.name
+    visual_scripts = ROOT / "ai-ppt-visual-gen" / "scripts"
+    for name in (
+        "atomic_output.py",
+        "build_visual_generation_strip.py",
+        "materialize_visual_generation_prompts.py",
+        "run_tests.py",
+        "validate_visual_generation_plan.py",
+    ):
+        assert digest(ROOT / "scripts" / name) == digest(visual_scripts / name), name
 
-    print("three-skill split: ok")
+    print("three self-contained skills: ok")
     return 0
 
 

@@ -1,0 +1,45 @@
+{
+  "schema": "ai-ppt-plus/icon-assets/v1",
+  "source_reference": "reference/slide-1.png",
+  "source_vs_frame_review": {
+    "status": "pass",
+    "notes": "All visible icons/decorations are rostered and excluded from the frame layer."
+  },
+  "frame_asset_ids": [
+    "frame-layer"
+  ],
+  "icon_asset_ids": [
+    "icon-1"
+  ],
+  "frame_preview": "qa/frame-preview-gray.png",
+  "contact_sheet": "qa/icon-contact-sheet.png",
+  "assets": [
+    {
+      "asset_id": "icon-1",
+      "role": "icon",
+      "source_ref": "reference/slide-1.png",
+      "source_bbox": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 1
+      },
+      "extraction_method": "chroma-cutout",
+      "frame_exclusion": "verified-not-in-frame",
+      "asset_path": "assets/icons/icon-1.png",
+      "editability_level": "L2",
+      "sha256": "",
+      "replaceable": true,
+      "cutout_method": "chroma_key.py --preset icon-safe --scale 2",
+      "alpha_quality": "pass",
+      "edge_touch": false,
+      "split_status": "single",
+      "duplicate_guard": "pass",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "review_status": "pending_human"
+    }
+  ]
+}

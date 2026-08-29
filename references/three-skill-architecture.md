@@ -10,11 +10,12 @@ The package exposes exactly three independently discoverable skill entrypoints:
 | `ai-ppt-visual-gen` | visual worker | topic, content brief, or approved outline | raster slide pages, prompts, retained sources, manifest and deck strip |
 | `ai-ppt-editable` | editable worker | references, image pages, existing deck, or approved structured content | editable PPTX, rendered previews, object evidence and technical QA |
 
-The repository keeps one shared `scripts/`, `assets/`, and `references/`
-runtime. Worker entrypoints do not copy implementation files. This is deliberate:
-independent invocation is a product boundary, while shared code is a versioning
-boundary. Copying the same validators and schemas into three directories would
-allow revisions to drift and make cross-skill evidence non-reproducible.
+Every skill is a physical self-contained package with its own `scripts/`,
+`assets/`, `references/`, package manifest, validator, tests, and agent metadata.
+The root repository directory is the `ai-ppt-plus` Super package; the two worker
+directories can be copied or installed independently. Deliberate copies are
+controlled by matching package revisions, per-package hashes, child package
+validation, and regression tests.
 
 ## Inspiration and non-dependency
 
@@ -37,13 +38,14 @@ authority rules. Independence does not grant release authority:
   deck-wide narrative approval or human sign-off;
 - the orchestrator can release only after it reconciles worker evidence.
 
-All three entrypoints must declare the same package revision. The package
-validator blocks missing entrypoints, duplicate names/roles/paths, revision
-drift, or a shared-runtime policy other than `single-source`.
+All three entrypoints must declare the same package revision. Each package
+validator blocks missing local runtime directories and stale managed files. The
+root validator additionally blocks missing child packages, duplicate roots,
+entrypoint mismatch, or revision drift.
 
 ## Change boundary
 
 The split is organizational. Existing image-to-PPTX decomposition, asset
-extraction, composition, rendering, and QA algorithms remain in the shared
-runtime unchanged. Future algorithm changes require their own scoped review;
+extraction, composition, rendering, and QA algorithms are copied into the
+editable worker unchanged. Future algorithm changes require their own scoped review;
 they must not be smuggled into an entrypoint/routing refactor.

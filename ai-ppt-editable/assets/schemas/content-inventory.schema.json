@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "project_id", "authority", "slides"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/content-inventory/v1"},
+    "project_id": {"type": "string"},
+    "authority": {"enum": ["approved_outline", "user_transcription", "approved_outline_or_user_transcription"]},
+    "source_reference": {"type": ["string", "null"]},
+    "source_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["slide_no"],
+        "properties": {
+          "slide_no": {"type": "integer", "minimum": 1},
+          "visible_text": {"type": "array"},
+          "charts": {"type": "array"},
+          "required_object_ids": {"type": "array"}
+        }
+      }
+    }
+  }
+}

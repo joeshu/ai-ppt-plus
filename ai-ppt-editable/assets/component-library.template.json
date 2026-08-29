@@ -1,0 +1,45 @@
+{
+  "schema": "ai-ppt-plus/component-library/v1",
+  "library_id": "default-components",
+  "version": "1.0.0",
+  "tokens": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#222222",
+    "accent_color": "#E60012",
+    "spacing_unit": 0.08
+  },
+  "components": [
+    {
+      "component_id": "section-title",
+      "type": "text",
+      "editability_level": "L1",
+      "allowed_layouts": ["Title Only", "Blank"],
+      "defaults": {"size": 28, "bold": true},
+      "template": {"x": 0.08, "y": 0.06, "w": 0.7, "h": 0.1}
+    },
+    {
+      "component_id": "metric-card",
+      "type": "group",
+      "editability_level": "L1",
+      "allowed_layouts": ["Blank"],
+      "defaults": {"radius": 0.02, "padding": 0.02},
+      "template": {"x": 0.08, "y": 0.2, "w": 0.25, "h": 0.2, "children_coordinate_space": "local", "children": []}
+    },
+    {
+      "component_id": "data-table",
+      "type": "table",
+      "editability_level": "L1",
+      "allowed_layouts": ["Blank", "Title and Content"],
+      "defaults": {"header_bold": true},
+      "template": {"x": 0.08, "y": 0.3, "w": 0.84, "h": 0.3, "columns": 2}
+    },
+    {
+      "component_id": "trend-chart",
+      "type": "chart",
+      "editability_level": "L1",
+      "allowed_layouts": ["Blank", "Title and Content"],
+      "defaults": {"type": "line", "data_labels": false},
+      "template": {"x": 0.08, "y": 0.3, "w": 0.84, "h": 0.4}
+    }
+  ]
+}

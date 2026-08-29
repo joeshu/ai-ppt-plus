@@ -1,0 +1,21 @@
+{
+  "schema": "ai-ppt-plus/typography-calibration/v1",
+  "coordinate_space": "normalized_pixel",
+  "canvas": {"width": 1920, "height": 1080},
+  "reference_image": "reference/slide-1.png",
+  "rendered_image": "rendered/slide-1.png",
+  "font_profile": {
+    "source_family": "unknown",
+    "render_family": "Noto Sans CJK SC",
+    "metric_assumption": "measured_from_normalized_ink_bbox"
+  },
+  "samples": [
+    {
+      "sample_id": "title",
+      "role": "title",
+      "source_ink_bbox": [150, 60, 720, 72],
+      "rendered_ink_bbox": [150, 60, 720, 72],
+      "declared_size_px": 48
+    }
+  ]
+}

@@ -1,13 +1,13 @@
 interface:
-  display_name: AI PPT Plus Orchestrator
-  short_description: 编排视觉生成与可编辑重建并完成整套 PPT 质量闭环
-  default_prompt: Use $ai-ppt-plus to orchestrate my source materials into a reviewed, editable PowerPoint deck.
-  icon_small: assets/icon.svg
-  icon_large: assets/icon.svg
+  display_name: "AI PPT Plus Orchestrator"
+  short_description: "编排视觉生成与可编辑重建并完成整套 PPT 质量闭环"
+  default_prompt: "Use $ai-ppt-plus to orchestrate my source materials into a reviewed, editable PowerPoint deck."
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
 policy:
   products:
-  - chatgpt
-  - codex
-  - api
-  - atlas
+  - "chatgpt"
+  - "codex"
+  - "api"
+  - "atlas"
   allow_implicit_invocation: true

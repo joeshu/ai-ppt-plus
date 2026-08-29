@@ -1,86 +1,43 @@
 {
-  "schema": "ai-ppt-plus/skill-package/v1",
+  "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.08.29.18",
+  "package_revision": "2026.08.29.19",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
-  "skill_entries": [
-    {
-      "name": "ai-ppt-plus",
-      "role": "orchestrator",
-      "entrypoint": "SKILL.md",
-      "agent": "agents/openai.yaml"
-    },
-    {
-      "name": "ai-ppt-visual-gen",
-      "role": "visual-worker",
-      "entrypoint": "ai-ppt-visual-gen/SKILL.md",
-      "agent": "ai-ppt-visual-gen/agents/openai.yaml"
-    },
-    {
-      "name": "ai-ppt-editable",
-      "role": "editable-worker",
-      "entrypoint": "ai-ppt-editable/SKILL.md",
-      "agent": "ai-ppt-editable/agents/openai.yaml"
-    }
-  ],
-  "shared_runtime": {
-    "policy": "single-source",
-    "roots": ["scripts", "assets", "references"]
+  "self_contained": {
+    "policy": "self-contained",
+    "required_dirs": ["agents", "scripts", "references", "assets"]
   },
+  "bundled_skills": [
+    {"name": "ai-ppt-visual-gen", "root": "ai-ppt-visual-gen"},
+    {"name": "ai-ppt-editable", "root": "ai-ppt-editable"}
+  ],
   "managed_globs": [
     "SKILL.md",
     "agents/*.yaml",
-    "ai-ppt-visual-gen/*.md",
-    "ai-ppt-visual-gen/agents/*.yaml",
-    "ai-ppt-editable/*.md",
-    "ai-ppt-editable/agents/*.yaml",
-    "evals/*.yaml",
-    "assets/*.json",
-    "assets/*.yaml",
+    "assets/*",
     "assets/schemas/*.json",
+    "assets/fonts/*",
     "references/*.md",
-    "scripts/*.py"
+    "scripts/*.py",
+    "evals/*.yaml"
   ],
   "required_files": [
     "SKILL.md",
     "agents/openai.yaml",
-    "ai-ppt-visual-gen/SKILL.md",
-    "ai-ppt-visual-gen/agents/openai.yaml",
-    "ai-ppt-editable/SKILL.md",
-    "ai-ppt-editable/agents/openai.yaml",
     "assets/skill-package.json",
     "assets/skill-routing.template.json",
     "assets/schemas/skill-routing.schema.json",
-    "scripts/run_pipeline.py",
-    "scripts/validate_route.py",
+    "scripts/validate_skill_package.py",
     "scripts/validate_routing_contract.py",
-    "scripts/semantic_object_audit.py",
-    "scripts/validate_content_inventory.py",
-    "scripts/validate_asset_hashes.py",
-    "scripts/validate_backend_binding.py",
-    "scripts/validate_multipage_layout.py",
-    "scripts/validate_preview_consistency.py",
-    "scripts/authoring_backend.py",
-    "scripts/atomic_output.py",
-    "references/skill-routing.md",
+    "scripts/run_super_pipeline.py",
+    "scripts/run_pipeline.py",
     "references/three-skill-architecture.md",
-    "references/chart-reconstruction.md",
-    "assets/chart-reconstruction.template.json",
-    "scripts/validate_chart_manifest.py",
-    "assets/visual-generation-plan.template.json",
-    "assets/visual-generation-manifest.template.json",
-    "assets/schemas/visual-generation-plan.schema.json",
-    "assets/schemas/visual-generation-manifest.schema.json",
-    "scripts/validate_visual_generation_plan.py",
-    "scripts/materialize_visual_generation_prompts.py",
-    "scripts/build_visual_generation_strip.py",
-    "references/visual-intermediate.md",
-    "references/visual-generation-tool.md"
+    "references/skill-routing.md"
   ],
   "runtime_sync": {
     "required": true,
     "comparison": "sha256",
-    "operator": "refresh the installed skill from the same git revision before use"
+    "operator": "refresh the complete skill directory from the same git revision before use"
   }
 }

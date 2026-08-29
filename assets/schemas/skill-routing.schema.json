@@ -13,7 +13,7 @@
       "properties": {
         "orchestrator": {"type": "object", "required": ["skill", "entrypoint"]},
         "reconstruction": {"type": "object", "required": ["skill", "invocation", "skill_entrypoint", "runtime_entrypoint", "required_for"]},
-        "visual_generation": {"type": "object", "required": ["skill", "invocation", "skill_entrypoint", "required_for", "tool_resolution", "preferred_tool", "backend_policy", "source_retention", "prompt_contract"]},
+        "visual_generation": {"type": "object", "required": ["skill", "invocation", "skill_entrypoint", "runtime_entrypoint", "required_for", "tool_resolution", "preferred_tool", "backend_policy", "source_retention", "prompt_contract"]},
         "authoring": {"type": "object", "required": ["kind", "backend", "entrypoint", "font_postprocessor"]}
       }
     }
