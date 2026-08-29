@@ -5,7 +5,7 @@
     {
       "name": "ai-ppt-plus",
       "role": "orchestrator",
-      "owns": ["intake", "narrative", "route", "design-system", "manifests", "qa", "reports", "release-gates"],
+      "owns": ["intake", "narrative", "route", "design-system", "manifests", "chart-data-authority", "chart-representation", "qa", "reports", "release-gates"],
       "forbids": ["silent-backend-substitution", "human-signoff-claim"]
     },
     {
@@ -21,7 +21,7 @@
       "forbids": ["narrative-authority", "editability-policy", "release-claim"]
     }
   ],
-  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1"],
+  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1", "ai-ppt-plus/chart-reconstruction/v1"],
   "bindings": {
     "orchestrator": {
       "skill": "ai-ppt-plus",

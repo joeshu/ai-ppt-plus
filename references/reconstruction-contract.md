@@ -13,7 +13,11 @@ Preserve, in order: information hierarchy → page structure → spatial relatio
 - Default to 16:9 unless the confirmed design system says otherwise.
 - Use real editable text boxes for every title, body paragraph, label, note and number. Never bake required text into a whole-slide image.
 - Rebuild simple cards, lines, color blocks, tags, process nodes and geometry with PowerPoint native shapes or editable vector objects whenever reliable.
-- Use editable charts or traceable data where supported; otherwise retain an exact verified graphic and disclose reduced editability.
+- Use `references/chart-reconstruction.md` for every chart. Use an editable
+  native chart only with verified source data; for image-only visual
+  transcriptions use native line/marker primitives plus independent text
+  labels, or retain an exact verified graphic and disclose the reduced
+  editability. Never turn unreadable or unconfirmed values into a native chart.
 - All icons, decorations and artistic typography in a reference reconstruction must pass the B4 asset-provenance inventory and B5 cutout/split QA where applicable. Use the imagegen B4 asset-sheet route for missing, ambiguous or reconstructive visuals; use the deterministic `source_reuse` route for complete authoritative source pixels, with source bbox/hash evidence. A supplied exact asset no longer incurs a redundant generation call, but it must remain independently movable and provenance-validated.
 - Insert every independently separable image as an independent picture object so it can be moved, cropped or replaced later. Do not merge separable elements into a full-page screenshot.
 - Do not force a low-quality redraw of complex illustration, photography, texture, logo or specialized visual material. If the original asset is supplied, place it at the reference position. If it is missing, create a precisely sized and positioned placeholder and emit a material request describing the required asset.

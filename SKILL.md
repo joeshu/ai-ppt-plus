@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Turn PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, images, existing PPT/PPTX, or approved outlines into narrative-coherent, visually consistent, editable, renderable, quality-checked PowerPoint deliverables. Trigger for “做PPT/幻灯片/演示稿/路演稿/汇报材料”, outline-first deck planning, image-model-generated high-end visual-intermediate design, slide reconstruction, PPTX redesign/inspection/repair, or resuming a multi-session deck. Outputs structured briefs, source inventories, outline tables, design systems, generated visual drafts, manifests, editable PPTX, validation and delivery reports. Do not trigger for a prose-only summary, a standalone image, spreadsheet-only analysis, or image-to-PPT reconstruction when the dedicated reconstruction skill is the narrower fit.
 metadata:
-  package_revision: 2026.08.29.4
+  package_revision: 2026.08.29.6
 ---
 
 # AI PPT Plus
@@ -37,6 +37,7 @@ Use for new decks, reference-led decks, outline-only or visual-only work, PPT/PP
 Read `references/narrative-strategy.md` for story decisions, `references/artifact-ownership.md` for authority/conflict rules, and `references/icon-asset-protocol.md` whenever a page contains icons, decorations, logos, illustrations or decorative typography.
 For reference reconstruction with visible text styling, also read `references/text-style-protocol.md` and run `scripts/validate_text_style_map.py`; this is the reusable gate for preserving mixed-color text, emphasized numbers, line breaks and text-box boundaries.
 For repeated cards or bordered content modules, also read `references/panel-asset-protocol.md` and run `scripts/validate_panel_assets.py --require-independent`; each semantic panel must remain independently movable. During composition, place independent panel images before native overlays and keep the Pillow preview order identical to the PPTX backend.
+For every page containing a chart, also read `references/chart-reconstruction.md`, create `chart-reconstruction.json`, and run `scripts/validate_chart_manifest.py --content-inventory content-inventory.json`; release runs add `--require-source` and require one-to-one chart coverage. A native chart requires verified source data; an image-only transcription must use the explicit hybrid/static-line route. Keep chart labels, legends, units and months as native text objects, and represent missing months as null/blank rather than zero.
 Record every case-specific workaround in the issue log with its trigger, why the normal path failed, scope, validation evidence and rollback/expiry condition. Promote it into the shared toolchain only when the failure is reproducible across references; otherwise keep it as a documented special attempt.
 Before visual comparison, run `scripts/reference_audit.py REFERENCE CANDIDATE`; it records raw and normalized viewports and automatically removes only strong, contiguous viewer letterbox bars. Keep the raw capture as evidence, but compare normalized content at the same aspect ratio and render scale. For prominent text, create `typography-calibration.json` from the normalized source/render evidence and run `scripts/validate_typography_calibration.py`; a technical pass does not waive a material font-size, font-metric or line-wrap drift.
 
@@ -267,6 +268,13 @@ imagegen for missing or reconstructive visuals. During repair, run cheap gates
 first and pass `--affected-pages`/`--affected-region` to reuse page artifacts;
 batch related changes and perform one full-deck release run at the end. Keep
 `--no-cache` for clean verification only.
+
+For dense charts, make one source-hashed chart manifest, process chart crops in
+parallel, and route unverified visual transcriptions directly to
+`static_line_primitives` or an explicit raster fallback. Do not spend an
+iteration generating native-chart variants without an authoritative table.
+Validate chart/data coverage before rendering; render the affected chart region
+first, then do one full-deck render and bundle at release.
 
 Every run writes `review.html` beside `pipeline-result.json`. Reports use the
 common technical/human/release vocabulary through the project aggregate:

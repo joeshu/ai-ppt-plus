@@ -69,10 +69,13 @@ that snapshot after applying declared merges.
 `charts[]` creates an editable chart from `categories` and `series` data.
 Supported types are `column`, `bar`, `line`, `pie`, and `doughnut`. Each
 series has a `name` and numeric `values` whose length must equal the category
-count; non-finite values are rejected. Record `data_source` and do not invent
-values during reconstruction. The object manifest records a canonical
-`data_snapshot`; the final semantic audit reads both chart cache data and the
-embedded workbook and compares both to that snapshot.
+count; non-finite values are rejected. A native chart is permitted only when
+the chart record declares `source_data_status: verified`; an OCR/visual
+transcription must use the explicit `static_line_primitives` route until its
+data is confirmed. Record `data_source` and do not invent values during
+reconstruction. The object manifest records a canonical `data_snapshot`; the
+final semantic audit reads both chart cache data and the embedded workbook and
+compares both to that snapshot.
 
 Deck-level `theme` may provide default `font`, `text_color`, and `size` for
 native text and tables. Explicit object styles override those defaults.

@@ -166,13 +166,17 @@ def render_previews(deck: dict, preview_dir: Path) -> None:
             for shape_spec in slide_spec.get("shapes", []):
                 fx = _frac(deck, shape_spec, "x", "x", ref_width)
                 fy = _frac(deck, shape_spec, "y", "y", ref_height)
-                fw = _frac(deck, shape_spec, "w", "x", ref_width)
-                fh = _frac(deck, shape_spec, "h", "y", ref_height)
                 x0, y0 = int(fx * canvas_width), int(fy * canvas_height)
-                x1, y1 = int((fx + fw) * canvas_width), int((fy + fh) * canvas_height)
                 overlay = Image.new("RGBA", (canvas_width, canvas_height), (0, 0, 0, 0))
                 draw = ImageDraw.Draw(overlay)
                 shape_type = shape_spec.get("type", "rounded_rect")
+                if shape_type == "line" and "x2" in shape_spec and "y2" in shape_spec:
+                    x1 = int(_frac(deck, shape_spec, "x2", "x", ref_width) * canvas_width)
+                    y1 = int(_frac(deck, shape_spec, "y2", "y", ref_height) * canvas_height)
+                else:
+                    fw = _frac(deck, shape_spec, "w", "x", ref_width)
+                    fh = _frac(deck, shape_spec, "h", "y", ref_height)
+                    x1, y1 = int((fx + fw) * canvas_width), int((fy + fh) * canvas_height)
                 alpha = int(float(shape_spec.get("opacity", 1.0)) * 255) if shape_spec.get("fill") else 0
                 fill = _hex_to_tuple(shape_spec["fill"]) + (alpha,) if shape_spec.get("fill") else None
                 line = _hex_to_tuple(shape_spec["line"]) + (255,) if shape_spec.get("line") else None

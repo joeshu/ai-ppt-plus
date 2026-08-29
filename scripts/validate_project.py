@@ -55,6 +55,8 @@ def main() -> int:
     parser.add_argument("--ocr-report")
     parser.add_argument("--content-inventory-validation")
     parser.add_argument("--require-content-inventory", action="store_true")
+    parser.add_argument("--chart-manifest-validation")
+    parser.add_argument("--require-chart-manifest", action="store_true")
     parser.add_argument("--asset-hash-validation")
     parser.add_argument("--require-asset-hashes", action="store_true")
     parser.add_argument("--multipage-layout-validation")
@@ -115,6 +117,7 @@ def main() -> int:
     visual_comparison = read_quality_report(args.visual_comparison, "visual-comparison")
     ocr_report = read_quality_report(args.ocr_report, "ocr-text-check")
     content_inventory_report = read_quality_report(args.content_inventory_validation, "content-inventory-validation")
+    chart_manifest_report = read_quality_report(args.chart_manifest_validation, "chart-manifest-validation")
     asset_hash_report = read_quality_report(args.asset_hash_validation, "asset-hash-validation")
     multipage_layout_report = read_quality_report(args.multipage_layout_validation, "multipage-layout-validation")
     preview_consistency_report = read_quality_report(args.preview_consistency_validation, "preview-consistency-validation")
@@ -126,6 +129,8 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "route_validation_missing", "artifact": "route-validation"})
     if args.require_content_inventory and content_inventory_report is None:
         issues.append({"severity": "blocker", "code": "content_inventory_missing", "artifact": "content-inventory-validation"})
+    if args.require_chart_manifest and chart_manifest_report is None:
+        issues.append({"severity": "blocker", "code": "chart_manifest_missing", "artifact": "chart-manifest-validation"})
     if args.require_asset_hashes and asset_hash_report is None:
         issues.append({"severity": "blocker", "code": "asset_hash_validation_missing", "artifact": "asset-hash-validation"})
     if args.require_multipage_layout and multipage_layout_report is None:
@@ -171,6 +176,15 @@ def main() -> int:
             "chart_count": content_inventory_report.get("chart_count"),
             "chart_annotation_count": content_inventory_report.get("chart_annotation_count"),
             "issues": content_inventory_report.get("errors", content_inventory_report.get("issues", [])),
+        }
+    if chart_manifest_report is not None:
+        quality_evidence["chart_manifest_validation"] = {
+            "valid": chart_manifest_report.get("valid"),
+            "status": chart_manifest_report.get("status"),
+            "chart_count": chart_manifest_report.get("chart_count"),
+            "charts": chart_manifest_report.get("charts", []),
+            "issues": chart_manifest_report.get("errors", chart_manifest_report.get("issues", [])),
+            "warnings": chart_manifest_report.get("warnings", []),
         }
     if asset_hash_report is not None:
         quality_evidence["asset_hash_validation"] = {
