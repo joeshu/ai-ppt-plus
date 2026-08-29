@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Turn PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, images, existing PPT/PPTX, or approved outlines into narrative-coherent, visually consistent, editable, renderable, quality-checked PowerPoint deliverables. Trigger for “做PPT/幻灯片/演示稿/路演稿/汇报材料”, outline-first deck planning, image-model-generated high-end visual-intermediate design, slide reconstruction, PPTX redesign/inspection/repair, or resuming a multi-session deck. Outputs structured briefs, source inventories, outline tables, design systems, generated visual drafts, manifests, editable PPTX, validation and delivery reports. Do not trigger for a prose-only summary, a standalone image, spreadsheet-only analysis, or image-to-PPT reconstruction when the dedicated reconstruction skill is the narrower fit.
 metadata:
-  package_revision: 2026.08.29.9
+ package_revision: 2026.08.29.11
 ---
 
 # AI PPT Plus
@@ -138,6 +138,9 @@ Record the mode in `route-decision.json`; the older `layout-reference` mode
 remains valid for existing projects and does not change reconstruction
 behavior.
 
+Read `references/visual-generation-tool.md` before selecting the A4 backend;
+it is the versioned runtime/tool contract for this visual-only path.
+
 The image-slide path follows a bounded A1–A5 contract inspired by
 `GordenImagePPTGen`:
 
@@ -152,10 +155,14 @@ The image-slide path follows a bounded A1–A5 contract inspired by
    contain the canvas ratio, locked palette, layout, visual hierarchy,
    explicit anti-fabrication rules and every formal text item verbatim. The
    visual-only description is never sent to the image model by itself.
-4. A4 calls the actual raster image-generation backend once per page, keeps
-   the original generated source, copies the selected image into the project,
-   and records both paths, prompt file, backend and SHA-256 values in
-   `visual-generation-manifest.json`.
+4. A4 delegates raster generation to the `GordenImagePPTGen` binding. Resolve
+   the actual tool at runtime in this order: a backend explicitly named by the
+   user, Codex's preferred `imagegen` tool, another available native raster
+   image tool, then `unavailable`/blocked. Never substitute SVG, HTML, Canvas,
+   Pillow/ImageMagick drawing or code-patched text for raster generation.
+   Keep the original generated source, copy the selected image into the
+   project, and record both paths, prompt file, actual backend/model and
+   SHA-256 values in `visual-generation-manifest.json`.
 5. A5 is the visual review handoff. The image is reviewed as a visual
    intermediate; formal PPTX text still comes from the approved outline, not
    OCR or generated pixels.
@@ -167,6 +174,13 @@ with an explicit reason. A single deck must keep one style lock and must not
 reuse a visual framework without a recorded exception. Reference images may
 influence layout only and must not leak their text, colors or branding into
 the prompt.
+
+The machine-readable `visual_generation` binding in
+`assets/skill-routing.template.json` is the executable handoff for this step.
+`ai-ppt-plus` retains narrative/formal-text authority and release policy;
+`GordenImagePPTGen` supplies only the raster-generation event and original
+source retention. The provider never enters the downstream
+`reference-reconstruction` or image-to-editable-PPTX route.
 
 This section owns only visual-generation planning, prompting, raster evidence
 and visual review. It does not replace or modify the downstream

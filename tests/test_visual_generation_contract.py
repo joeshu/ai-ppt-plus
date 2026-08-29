@@ -60,6 +60,14 @@ def build_plan() -> dict:
             "icon_style": "flat line icons with consistent stroke",
             "avoid_items": ["placeholder text", "invented numbers", "random icon collage"],
         },
+        "generation_contract": {
+            "skill": "GordenImagePPTGen",
+            "tool_resolution": "runtime-discovery",
+            "preferred_tool": "imagegen",
+            "backend_policy": "raster-only",
+            "source_retention": "generated-source-and-project-copy",
+            "no_code_overlay": True,
+        },
         "evidence_manifest": "visual-generation-manifest.json",
         "slides": [{
             "slide_no": 1,
@@ -68,7 +76,7 @@ def build_plan() -> dict:
             "core_logic": "用一条由抵达、海岸、环岛到返程的路线组织一次轻松的海南旅行。",
             "visual_framework": "layered coastal journey map",
             "visual_generation_prompt": "Visual-only composition: a layered coastal journey map with a clear reading path and four anchored modules.",
-            "production_prompt": "Create a polished 16:9 presentation slide in a layered coastal journey map. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render the following 页面文字逐字: 海南旅行攻略; 把海岛节奏拆成四个易执行的旅行模块。; 模块 1; 海口抵达; D1; 建议; 安排当天核心体验; 保留弹性与安全余量; 模块 2; 三亚海岸; D2; 模块 3; 环岛体验; D3; 模块 4; 返程收束; D4; 先定节奏，再把风景留给临场发现。 Core logic: 用一条由抵达、海岸、环岛到返程的路线组织一次轻松的海南旅行。 不得编造任何数据; use clear hierarchy, restrained line icons and a readable route spine.",
+            "production_prompt": "Create a polished 16:9 presentation slide in a layered coastal journey map. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render the following 页面文字逐字: 海南旅行攻略; 把海岛节奏拆成四个易执行的旅行模块。; 模块 1; 海口抵达; D1; 建议; 安排当天核心体验; 保留弹性与安全余量; 模块 2; 三亚海岸; D2; 模块 3; 环岛体验; D3; 模块 4; 返程收束; D4; 先定节奏，再把风景留给临场发现。 Core logic: 用一条由抵达、海岸、环岛到返程的路线组织一次轻松的海南旅行。 不得编造任何数据；不得用代码补字或盖字; use clear hierarchy, restrained line icons and a readable route spine.",
             "content_model": {
                 "intro": "把海岛节奏拆成四个易执行的旅行模块。",
                 "modules": modules,
@@ -107,6 +115,11 @@ def main() -> int:
             "schema": "ai-ppt-plus/visual-generation-manifest/v1",
             "project_id": "visual-generation-fixture",
             "plan_sha256": digest(plan),
+            "generator_skill": "GordenImagePPTGen",
+            "tool_resolution": "runtime-discovery",
+            "backend_policy": "raster-only",
+            "source_retention": "generated-source-and-project-copy",
+            "no_code_overlay": True,
             "slides": [{
                 "slide_no": 1,
                 "prompt_file": "prompts/slide-1.md",

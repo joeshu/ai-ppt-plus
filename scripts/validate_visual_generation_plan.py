@@ -24,6 +24,17 @@ DENSITY_PROFILES = {"dense", "balanced", "minimal"}
 EXEMPT_PAGE_TYPES = {"title", "section", "quote", "summary"}
 HEX_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")
+GENERATION_CONTRACT = {
+    "skill": "GordenImagePPTGen",
+    "tool_resolution": "runtime-discovery",
+    "preferred_tool": "imagegen",
+    "backend_policy": "raster-only",
+    "source_retention": "generated-source-and-project-copy",
+}
+PROHIBITED_GENERATION_TOKEN_RE = re.compile(
+    r"(?:^|[^a-z])(svg|html|canvas|pillow|imagemagick|image\s*magick|code\s*draw)(?:$|[^a-z])",
+    re.IGNORECASE,
+)
 PLACEHOLDER_RE = re.compile(
     r"(?:lorem\s+ipsum|placeholder|占位|待填写|待补充|TBD)|<[^>\n]{1,60}>", re.IGNORECASE
 )
@@ -60,6 +71,10 @@ def resolve_path(base: Path, value) -> Path | None:
         return None
     path = Path(value)
     return path.resolve() if path.is_absolute() else (base / path).resolve()
+
+
+def ratio_value(ratio: str) -> float | None:
+    return {"16:9": 16 / 9, "3:2": 3 / 2}.get(ratio)
 
 
 def formal_text_entries(slide: dict) -> list[dict]:
@@ -168,6 +183,20 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
         return evidence
     if manifest.get("project_id") != plan.get("project_id"):
         add_issue(issues, "blocker", "generation_manifest_project_mismatch", expected=plan.get("project_id"), observed=manifest.get("project_id"))
+    if plan.get("mode") == "image-slide":
+        expected_contract = plan.get("generation_contract") if isinstance(plan.get("generation_contract"), dict) else {}
+        expected_contract = {**GENERATION_CONTRACT, **expected_contract}
+        manifest_contract_fields = {
+            "generator_skill": expected_contract.get("skill"),
+            "tool_resolution": expected_contract.get("tool_resolution"),
+            "backend_policy": expected_contract.get("backend_policy"),
+            "source_retention": expected_contract.get("source_retention"),
+            "no_code_overlay": True,
+        }
+        for field, expected in manifest_contract_fields.items():
+            observed = manifest.get(field)
+            if observed != expected:
+                add_issue(issues, "blocker", "generation_manifest_contract_mismatch", field=field, expected=expected, observed=observed)
     declared_plan_hash = manifest.get("plan_sha256")
     actual_plan_hash = sha256(plan_path)
     if not isinstance(declared_plan_hash, str) or not SHA256_RE.fullmatch(declared_plan_hash):
@@ -193,6 +222,9 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
         observed[slide_no] = record
         plan_slide = expected_slides.get(slide_no, {})
         record_summary = {"slide_no": slide_no, "files": {}}
+        backend_label = " ".join(text_value(record.get(field)) for field in ("backend", "model_or_tool"))
+        if PROHIBITED_GENERATION_TOKEN_RE.search(backend_label):
+            add_issue(issues, "blocker", "generation_backend_not_raster", slide_no=slide_no, observed=backend_label)
         for field in ("prompt_file", "generated_source", "copied_to", "backend", "model_or_tool", "canvas"):
             value = record.get(field)
             missing = not isinstance(value, dict) if field == "canvas" else not text_value(value)
@@ -231,12 +263,19 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
                 add_issue(issues, "blocker", "generation_image_decode_failed", slide_no=slide_no, field=field, message=error)
                 continue
             record_summary["files"][field + "_size"] = list(size or ())
+            expected_ratio_value = ratio_value(expected_ratio)
+            if size and expected_ratio_value and size[1] and abs((size[0] / size[1]) - expected_ratio_value) > 0.02:
+                add_issue(issues, "blocker", "generation_image_ratio_mismatch", slide_no=slide_no, field=field, expected=expected_ratio, observed=f"{size[0]}:{size[1]}")
             declared_hash = record.get(hash_field)
             actual_hash = sha256(path)
             if not isinstance(declared_hash, str) or not SHA256_RE.fullmatch(declared_hash):
                 add_issue(issues, "blocker", "generation_image_hash_missing", slide_no=slide_no, field=hash_field)
             elif actual_hash != declared_hash:
                 add_issue(issues, "blocker", "generation_image_hash_mismatch", slide_no=slide_no, field=hash_field, expected=actual_hash, observed=declared_hash)
+        source_path = resolve_path(manifest_path.parent, record.get("generated_source"))
+        copied_path = resolve_path(manifest_path.parent, record.get("copied_to"))
+        if source_path and copied_path and source_path == copied_path:
+            add_issue(issues, "blocker", "generation_source_copy_same_path", slide_no=slide_no)
         evidence["slides"].append(record_summary)
     for slide_no in sorted(set(expected_slides) - set(observed)):
         add_issue(issues, "blocker", "generation_manifest_slide_missing", slide_no=slide_no)
@@ -276,6 +315,17 @@ def main() -> int:
     mode = plan.get("mode")
     if mode not in MODES:
         add_issue(issues, "blocker", "plan_mode_invalid", observed=mode)
+    if mode == "image-slide":
+        generation_contract = plan.get("generation_contract")
+        if not isinstance(generation_contract, dict):
+            add_issue(issues, "blocker", "generation_contract_missing")
+            generation_contract = {}
+        for field, expected in GENERATION_CONTRACT.items():
+            observed = generation_contract.get(field)
+            if observed != expected:
+                add_issue(issues, "blocker", "generation_contract_mismatch", field=field, expected=expected, observed=observed)
+        if generation_contract.get("no_code_overlay") is not True:
+            add_issue(issues, "blocker", "generation_contract_no_code_overlay_missing")
     if not text_value(plan.get("project_id")):
         add_issue(issues, "blocker", "plan_project_id_missing")
     for field in ("outline_revision", "design_system_revision"):
@@ -403,6 +453,8 @@ def main() -> int:
                 add_issue(issues, "blocker", "production_prompt_verbatim_policy_missing", slide_no=slide_no)
             if not re.search(r"不得编造|不可编造|do not invent|no invented", production_prompt, re.IGNORECASE):
                 add_issue(issues, "blocker", "production_prompt_no_fabrication_policy_missing", slide_no=slide_no)
+            if not re.search(r"不要用代码|不得.*(补字|盖字)|禁止.*补字|禁止.*盖字|no code.*(text|overlay)|do not.*(patch|overlay).*text", production_prompt, re.IGNORECASE):
+                add_issue(issues, "blocker", "production_prompt_no_code_overlay_policy_missing", slide_no=slide_no)
             for entry in formal_entries:
                 if not entry["text"]:
                     add_issue(issues, "blocker", "formal_text_empty", slide_no=slide_no, text_id=entry["id"])
@@ -433,6 +485,10 @@ def main() -> int:
                 add_issue(issues, "blocker", "reference_usage_policy_missing", slide_no=slide_no)
             if not ("不使用其文字" in production_prompt or "do not use its text" in reference_text):
                 add_issue(issues, "blocker", "reference_text_isolation_policy_missing", slide_no=slide_no)
+            if not ("不使用其配色" in production_prompt or "do not use its colors" in reference_text or "do not use its palette" in reference_text):
+                add_issue(issues, "blocker", "reference_color_isolation_policy_missing", slide_no=slide_no)
+            if not ("不使用其品牌" in production_prompt or "do not use its branding" in reference_text or "do not use its brand" in reference_text):
+                add_issue(issues, "blocker", "reference_brand_isolation_policy_missing", slide_no=slide_no)
         slide_summaries.append({
             "slide_no": slide_no,
             "page_type": page_type,

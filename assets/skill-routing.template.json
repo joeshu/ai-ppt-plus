@@ -9,6 +9,12 @@
       "forbids": ["silent-backend-substitution", "human-signoff-claim"]
     },
     {
+      "name": "GordenImagePPTGen",
+      "role": "visual-generation-provider",
+      "owns": ["raster-visual-generation", "generated-source-retention"],
+      "forbids": ["narrative-authority", "formal-text-authority", "image-to-editable-pptx", "release-eligibility", "human-signoff"]
+    },
+    {
       "name": "GordenImage2PPTX",
       "role": "reconstruction-engine",
       "owns": ["reference-decomposition", "editable-layer-plan", "image-to-pptx-object-mapping"],
@@ -21,7 +27,7 @@
       "forbids": ["narrative-authority", "editability-policy", "release-claim"]
     }
   ],
-  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1", "ai-ppt-plus/chart-reconstruction/v1", "ai-ppt-plus/visual-generation-plan/v1"],
+  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1", "ai-ppt-plus/chart-reconstruction/v1", "ai-ppt-plus/visual-generation-plan/v1", "ai-ppt-plus/visual-generation-tool/v1"],
   "bindings": {
     "orchestrator": {
       "skill": "ai-ppt-plus",
@@ -31,6 +37,16 @@
       "skill": "GordenImage2PPTX",
       "invocation": "external-skill",
       "required_for": ["reference-reconstruction"]
+    },
+    "visual_generation": {
+      "skill": "GordenImagePPTGen",
+      "invocation": "external-skill",
+      "required_for": ["visual-creation:image-slide"],
+      "tool_resolution": "runtime-discovery",
+      "preferred_tool": "imagegen",
+      "backend_policy": "raster-only",
+      "source_retention": "generated-source-and-project-copy",
+      "prompt_contract": "ai-ppt-plus/visual-generation-plan/v1"
     },
     "authoring": {
       "backend": "python-pptx",

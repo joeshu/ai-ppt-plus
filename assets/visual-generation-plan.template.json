@@ -26,6 +26,14 @@
     "icon_style": "flat business icons with consistent stroke weight",
     "avoid_items": ["placeholder text", "invented numbers", "large pure-green areas", "random icon collage"]
   },
+  "generation_contract": {
+    "skill": "GordenImagePPTGen",
+    "tool_resolution": "runtime-discovery",
+    "preferred_tool": "imagegen",
+    "backend_policy": "raster-only",
+    "source_retention": "generated-source-and-project-copy",
+    "no_code_overlay": true
+  },
   "evidence_manifest": "visual-generation-manifest.json",
   "slides": [
     {
@@ -35,7 +43,7 @@
       "core_logic": "one sentence explaining the relationship on the page",
       "visual_framework": "Bento Box dashboard",
       "visual_generation_prompt": "Visual-only description of the composition, hierarchy, surfaces, light and visual flow; do not use this field alone for generation.",
-      "production_prompt": "A self-contained 16:9 presentation-slide prompt. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render every item in the 页面文字 section verbatim, do not invent data, and use a Bento Box dashboard with clear hierarchy.",
+      "production_prompt": "A self-contained 16:9 presentation-slide prompt. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render every item in the 页面文字 section verbatim, do not invent data, do not use SVG/HTML/Canvas or code to add text, and use a Bento Box dashboard with clear hierarchy.",
       "content_model": {
         "intro": "one short introduction",
         "modules": [

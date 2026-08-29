@@ -2,6 +2,11 @@
   "schema": "ai-ppt-plus/visual-generation-manifest/v1",
   "project_id": "project-slug",
   "plan_sha256": "<sha256 of visual-generation-plan.json>",
+  "generator_skill": "GordenImagePPTGen",
+  "tool_resolution": "runtime-discovery",
+  "backend_policy": "raster-only",
+  "source_retention": "generated-source-and-project-copy",
+  "no_code_overlay": true,
   "slides": [
     {
       "slide_no": 1,
