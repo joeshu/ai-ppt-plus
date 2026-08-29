@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Turn PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, images, existing PPT/PPTX, or approved outlines into narrative-coherent, visually consistent, editable, renderable, quality-checked PowerPoint deliverables. Trigger for “做PPT/幻灯片/演示稿/路演稿/汇报材料”, outline-first deck planning, image-model-generated high-end visual-intermediate design, slide reconstruction, PPTX redesign/inspection/repair, or resuming a multi-session deck. Outputs structured briefs, source inventories, outline tables, design systems, generated visual drafts, manifests, editable PPTX, validation and delivery reports. Do not trigger for a prose-only summary, a standalone image, spreadsheet-only analysis, or image-to-PPT reconstruction when the dedicated reconstruction skill is the narrower fit.
 metadata:
- package_revision: 2026.08.29.13
+ package_revision: 2026.08.29.17
 ---
 
 # AI PPT Plus
@@ -151,11 +151,35 @@ The image-slide path follows a bounded A1–A5 contract inspired by
    one-sentence core logic, a non-repeating visual framework, a visual-only
    generation description, structured content modules, visual assets,
    reference-image usage and formal copy links back to the approved outline.
+   The plan also records an A1 `generation_context` (audience, language and
+   presentation setting) and a bounded `retry_policy` so the runtime does not
+   guess the viewing context or repeatedly regenerate the whole deck. Dense
+   pages keep at least three `detailed_content_paragraphs` as A2 content
+   reserve; these paragraphs support capacity planning but are never copied
+   into the rendered page as extra text. For dense pages it also records a
+   `layout_blueprint` with the single focal point, reading path, named zones
+   with content capacity and anti-template guards; this prevents a complex
+   framework from collapsing into unrelated equal cards. It also records a
+   `keyword_emphasis` map whenever the page uses colored key phrases: each
+   approved token names its exact formal text, hex color, scope and treatment
+   so a dark conclusion banner cannot flatten the intended emphasis into one
+   white line. If the visual framework needs short relationship labels (for
+   example, phase names around a flywheel), A2 records them as
+   `diagram_annotations` with purpose, scope and approval instead of letting
+   the image model invent them.
 3. A3 materializes a self-contained `production_prompt` for each page. It must
    contain the canvas ratio, locked palette, layout, visual hierarchy,
-   explicit anti-fabrication rules and every formal text item verbatim. The
-   visual-only description is never sent to the image model by itself. For a
-   new plan, use the deterministic visual-only helper after reviewing A2:
+   explicit spatial blueprint, anti-template/anti-fabrication rules and every
+   formal text item verbatim. It also carries a strict text whitelist: only
+   approved copy may be rendered; visual annotations must use icons or lines
+   when they are not in the formal-copy list. It materializes the approved
+   `keyword_emphasis` color map as presentation semantics, preserving
+   inline emphasis without adding words or converting keywords into fake
+   metrics. It also carries only explicitly approved `diagram_annotations`
+   into the relationship layer; all other extra labels remain forbidden. The
+   visual-only description is
+   never sent to the image model by itself. For a new plan, use the
+   deterministic visual-only helper after reviewing A2:
 
    ```bash
    python3 scripts/materialize_visual_generation_prompts.py \
@@ -191,9 +215,13 @@ Run `scripts/validate_visual_generation_plan.py` for the plan/evidence gate.
 The default `dense` profile requires enough structured modules and information
 points to support a high-density image slide; use `balanced` or `minimal` only
 with an explicit reason. A single deck must keep one style lock and must not
-reuse a visual framework without a recorded exception. Reference images may
-influence layout only and must not leak their text, colors or branding into
-the prompt.
+reuse a visual framework without a recorded exception. Each declared reference
+must have a `reference_treatment`: use `layout-only` for the built-in gallery
+or a layout inspiration, and use `layout-and-style` only for a user-approved
+target whose palette and surface language are intentionally part of the brief.
+Both modes forbid reference text, data, logos and brand leakage. Dense modules
+must carry a title, at least two bullets, a KPI and a tag; sparse exceptions
+require an explicit reason.
 
 The machine-readable `visual_generation` binding in
 `assets/skill-routing.template.json` is the executable handoff for this step.

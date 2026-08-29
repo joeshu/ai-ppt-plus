@@ -86,6 +86,24 @@ def content_entries(slide: dict) -> list[dict]:
     return entries
 
 
+def diagram_annotation_entries(slide: dict) -> list[dict]:
+    """Return explicitly approved relationship labels in declaration order."""
+    annotations = slide.get("diagram_annotations") if isinstance(slide.get("diagram_annotations"), list) else []
+    entries: list[dict] = []
+    for index, item in enumerate(annotations, start=1):
+        if not isinstance(item, dict):
+            continue
+        text = visible_scalar(item.get("text"))
+        if text:
+            entries.append({
+                "role": f"diagram-annotation-{index}",
+                "text": text,
+                "purpose": visible_scalar(item.get("purpose")),
+                "scope": visible_scalar(item.get("scope")),
+            })
+    return entries
+
+
 def all_visible_text(slide: dict) -> list[str]:
     """Collect every page string without duplicating exact copies."""
     values: list[str] = []
@@ -97,6 +115,7 @@ def all_visible_text(slide: dict) -> list[str]:
         if entry["text"]:
             values.append(entry["text"])
     values.extend(entry["text"] for entry in content_entries(slide))
+    values.extend(entry["text"] for entry in diagram_annotation_entries(slide))
     result: list[str] = []
     for value in values:
         if value not in result:
@@ -129,6 +148,38 @@ def format_visual_assets(slide: dict) -> str:
     return f"图标语义：{icon_text}\n背景纹理：{background}"
 
 
+def generation_context(plan: dict) -> str:
+    """Render the A1 audience/language/setting contract into every prompt."""
+    context = plan.get("generation_context") if isinstance(plan.get("generation_context"), dict) else {}
+    audience = visible_scalar(context.get("audience")) or "未声明受众"
+    language = visible_scalar(context.get("language")) or "跟随页面正式文字"
+    presentation_context = visible_scalar(context.get("presentation_context")) or "会议室可读的正式演示场景"
+    return "\n".join([
+        f"受众：{quote_copy(audience)}",
+        f"语言：{quote_copy(language)}",
+        f"演示场景：{quote_copy(presentation_context)}",
+    ])
+
+
+def retry_policy(plan: dict) -> str:
+    """Make the bounded page-local recovery rule visible to the handoff."""
+    policy = plan.get("retry_policy") if isinstance(plan.get("retry_policy"), dict) else {}
+    max_attempts = visible_scalar(policy.get("max_attempts_per_slide")) or "2"
+    scope = visible_scalar(policy.get("scope")) or "single-slide"
+    triggers = policy.get("triggers") if isinstance(policy.get("triggers"), list) else []
+    trigger_text = "、".join(visible_scalar(item) for item in triggers if visible_scalar(item)) or "生成失败或页面质量不达标"
+    return f"最多每页 {max_attempts} 次；范围：{scope}；触发条件：{trigger_text}。只重试问题页，不重跑已通过页面。"
+
+
+def detailed_content_summary(slide: dict) -> str:
+    """Keep A2's thick-content reserve explicit without asking the model to render it."""
+    paragraphs = slide.get("detailed_content_paragraphs") if isinstance(slide.get("detailed_content_paragraphs"), list) else []
+    usable = [visible_scalar(item) for item in paragraphs if visible_scalar(item)]
+    if not usable:
+        return "未声明独立的详细内容储备；仅使用下方结构化页面文字，并保持不编造。"
+    return f"A2 已准备 {len(usable)} 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。"
+
+
 def reference_policy(slide: dict) -> str:
     references = slide.get("reference_images") or []
     if not isinstance(references, list) or not references:
@@ -142,10 +193,110 @@ def reference_policy(slide: dict) -> str:
         if value:
             paths.append(value)
     listed = "、".join(paths) if paths else "已声明的参考图"
+    treatment = slide.get("reference_treatment") if isinstance(slide.get("reference_treatment"), dict) else {}
+    mode = visible_scalar(treatment.get("mode")) or "layout-only"
+    source_role = visible_scalar(treatment.get("source_role")) or "approved visual reference"
+    preserve = treatment.get("preserve") if isinstance(treatment.get("preserve"), list) else []
+    exclude = treatment.get("exclude") if isinstance(treatment.get("exclude"), list) else []
+    preserve_text = "、".join(visible_scalar(item) for item in preserve if visible_scalar(item)) or "宏观构图与阅读路径"
+    exclude_text = "、".join(visible_scalar(item) for item in exclude if visible_scalar(item)) or "全部参考图文字、品牌和事实性数据"
+    if mode == "layout-and-style":
+        return (
+            f"参考图：{listed}；来源角色：{source_role}；参考模式：布局+风格。"
+            f"允许保留：{preserve_text}。禁止复制或改写：{exclude_text}；不使用其文字、不使用其数据、不使用其品牌元素；"
+            "参考图只提供视觉目标，不提供正式文字、数据或品牌授权。"
+        )
     return (
-        f"参考图：{listed}。只参考排版/构图，不使用其文字，不使用其配色，"
-        "不使用其品牌元素；不得复制其 logo、专名、数据或装饰性文案。"
+        f"参考图：{listed}；来源角色：{source_role}；参考模式：只学布局。"
+        f"只允许吸收：{preserve_text}；必须忽略配色、{exclude_text}；"
+        "不得复制其 logo、专名、数据或装饰性文案。"
     )
+
+
+def layout_blueprint(slide: dict) -> str:
+    """Render the spatial capacity contract before the copy block."""
+    blueprint = slide.get("layout_blueprint") if isinstance(slide.get("layout_blueprint"), dict) else {}
+    focal = visible_scalar(blueprint.get("focal_point")) or "由页面核心逻辑决定的唯一主焦点"
+    reading_path = visible_scalar(blueprint.get("reading_path")) or "页眉 → 主体框架 → 支撑模块 → 底部结论"
+    zones = blueprint.get("zones") if isinstance(blueprint.get("zones"), list) else []
+    zone_lines = []
+    for index, zone in enumerate(zones, start=1):
+        if isinstance(zone, dict):
+            name = visible_scalar(zone.get("name")) or f"区域 {index}"
+            purpose = visible_scalar(zone.get("purpose")) or "承载页面内容"
+            position = visible_scalar(zone.get("position"))
+            capacity = visible_scalar(zone.get("content_capacity"))
+            details = "；".join(value for value in (position, capacity) if value)
+            zone_lines.append(f"- {name}：{purpose}" + (f"（{details}）" if details else ""))
+        else:
+            value = visible_scalar(zone)
+            if value:
+                zone_lines.append(f"- {value}")
+    if not zone_lines:
+        zone_lines = ["- 页眉标题区：标题、导语和短强调线", "- 主体框架区：核心关系、模块和连接线", "- 结论区：底部通栏总结"]
+    guards = blueprint.get("anti_template_rules") if isinstance(blueprint.get("anti_template_rules"), list) else []
+    guard_lines = [f"- {visible_scalar(item)}" for item in guards if visible_scalar(item)]
+    if not guard_lines:
+        guard_lines = ["- 不要退化成互不相连的等权卡片", "- 不要让装饰替代信息关系"]
+    return "\n".join([
+        f"主焦点：{quote_copy(focal)}",
+        f"阅读路径：{quote_copy(reading_path)}",
+        "区域与容量：",
+        *zone_lines,
+        "反模板护栏：",
+        *guard_lines,
+    ])
+
+
+def keyword_emphasis(slide: dict) -> str:
+    """Render the approved token-level color semantics without adding copy."""
+    emphasis = slide.get("keyword_emphasis") if isinstance(slide.get("keyword_emphasis"), dict) else {}
+    rules = emphasis.get("rules") if isinstance(emphasis.get("rules"), list) else []
+    items = emphasis.get("items") if isinstance(emphasis.get("items"), list) else []
+    rule_lines = [f"- {visible_scalar(item)}" for item in rules if visible_scalar(item)]
+    item_lines = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        text = visible_scalar(item.get("text"))
+        color = visible_scalar(item.get("color"))
+        scope = visible_scalar(item.get("scope"))
+        treatment = visible_scalar(item.get("treatment")) or "行内重点着色"
+        if text:
+            item_lines.append(f"- {quote_copy(text)} → {color}；范围：{scope}；处理：{treatment}")
+    if not rule_lines:
+        rule_lines = ["- 只给下方映射中的正式文字着色，不改变文字、不新增文字。"]
+    if not item_lines:
+        item_lines = ["- 未声明逐词颜色映射；保持正文高对比，不自行创造关键词。"]
+    return "\n".join([
+        "执行规则：",
+        *rule_lines,
+        "逐词颜色映射：",
+        *item_lines,
+        "底部结论横幅若列出重点词，必须在同一行内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。",
+    ])
+
+
+def diagram_annotations(slide: dict) -> str:
+    """Render explicitly approved non-formal labels for diagram relationships."""
+    annotations = slide.get("diagram_annotations") if isinstance(slide.get("diagram_annotations"), list) else []
+    lines = []
+    for item in annotations:
+        if not isinstance(item, dict):
+            continue
+        text = visible_scalar(item.get("text"))
+        purpose = visible_scalar(item.get("purpose"))
+        scope = visible_scalar(item.get("scope"))
+        approved_by = visible_scalar(item.get("approved_by")) or "approved visual brief"
+        if text:
+            lines.append(f"- {quote_copy(text)}；用途：{purpose}；范围：{scope}；批准依据：{approved_by}")
+    if not lines:
+        lines = ["- 无；不要自行添加关系标签，使用图标、箭头、节点和线条表达关系。"]
+    return "\n".join([
+        "仅允许以下明确批准的图示标注作为关系层文字：",
+        *lines,
+        "这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。",
+    ])
 
 
 def quote_copy(value: str) -> str:
@@ -217,8 +368,22 @@ def build_prompt(plan: dict, slide: dict) -> str:
 核心逻辑：{quote_copy(core_logic)}
 视觉框架：{framework}。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。
 
+【A1 生成上下文】
+{generation_context(plan)}
+本 deck 共 {visible_scalar(plan.get("page_count")) or "1"} 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。
+
+【A4 有界恢复策略】
+{retry_policy(plan)}
+
 【版式结构】
 沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 底部结论横幅”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 {framework} 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。
+
+【区域蓝图（必须按区域分配容量）】
+{layout_blueprint(slide)}
+区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。
+
+【重点词着色语义（必须保留）】
+{keyword_emphasis(slide)}
 
 【视觉生成描述】
 {visual_prompt}
@@ -227,6 +392,10 @@ def build_prompt(plan: dict, slide: dict) -> str:
 【页面内容结构】
 {content_block}
 
+【A2 内容厚度储备（仅用于容量规划）】
+{detailed_content_summary(slide)}
+不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。
+
 【页面文字（逐字照排，必须全部出现）】
 以下所有文字必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得生成额外的事实性标签：
 {visible_lines}
@@ -234,6 +403,12 @@ def build_prompt(plan: dict, slide: dict) -> str:
 【正式文字来源锚点】
 以下是 approved outline / formal copy 的逐字文本，优先级高于任何视觉参考；全部必须出现：
 {formal_block}
+
+【批准的图示标注】
+{diagram_annotations(slide)}
+
+【文字白名单（强约束）】
+画面中只能出现上方【页面文字】、【正式文字来源锚点】和【批准的图示标注】已经列出的文字；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。
 
 【图标与装饰】
 {format_visual_assets(slide)}
@@ -297,6 +472,24 @@ def validate_input(plan: object) -> list[dict]:
             issue("generation_contract_mismatch", field=field, expected=expected, observed=contract.get(field))
     if contract.get("no_code_overlay") is not True:
         issue("generation_contract_no_code_overlay_missing")
+    context = plan.get("generation_context")
+    if not isinstance(context, dict):
+        issue("generation_context_missing")
+        context = {}
+    for field in ("audience", "language", "presentation_context"):
+        if not visible_scalar(context.get(field)):
+            issue("generation_context_field_missing", field=field)
+    retry = plan.get("retry_policy")
+    if not isinstance(retry, dict):
+        issue("retry_policy_missing")
+        retry = {}
+    attempts = retry.get("max_attempts_per_slide")
+    if not isinstance(attempts, int) or isinstance(attempts, bool) or attempts < 1 or attempts > 3:
+        issue("retry_policy_attempts_invalid", observed=attempts)
+    if visible_scalar(retry.get("scope")) != "single-slide":
+        issue("retry_policy_scope_invalid", observed=retry.get("scope"))
+    if not isinstance(retry.get("triggers"), list) or not any(visible_scalar(item) for item in retry.get("triggers", [])):
+        issue("retry_policy_triggers_missing")
     canvas = plan.get("canvas") if isinstance(plan.get("canvas"), dict) else {}
     ratio = visible_scalar(canvas.get("ratio"))
     if ratio not in {"16:9", "3:2"}:
@@ -350,6 +543,37 @@ def validate_input(plan: object) -> list[dict]:
             refs = module.get("source_refs")
             if not isinstance(refs, list) or not any(visible_scalar(item) for item in refs):
                 issue("content_module_source_reference_missing", slide_no=slide_no, module=module_index)
+            if not visible_scalar(module.get("title")):
+                issue("content_module_title_missing", slide_no=slide_no, module=module_index)
+            if len(module_bullets(module)) < 2:
+                issue("content_module_bullets_low", slide_no=slide_no, module=module_index, minimum=2)
+            if not visible_scalar(module.get("kpi")):
+                issue("content_module_kpi_missing", slide_no=slide_no, module=module_index)
+            if not visible_scalar(module.get("tag")):
+                issue("content_module_tag_missing", slide_no=slide_no, module=module_index)
+        detailed = slide.get("detailed_content_paragraphs") if isinstance(slide.get("detailed_content_paragraphs"), list) else []
+        detailed = [visible_scalar(item) for item in detailed if visible_scalar(item)]
+        if len(detailed) < 3:
+            issue("detailed_content_reserve_low", slide_no=slide_no, minimum=3, observed=len(detailed))
+        for paragraph_index, paragraph in enumerate(detailed, start=1):
+            if PLACEHOLDER_RE.search(paragraph):
+                issue("detailed_content_placeholder", slide_no=slide_no, paragraph=paragraph_index)
+        references = slide.get("reference_images") or []
+        if references and not isinstance(slide.get("reference_treatment"), dict):
+            issue("reference_treatment_missing", slide_no=slide_no)
+        if isinstance(slide.get("reference_treatment"), dict):
+            treatment = slide["reference_treatment"]
+            mode = visible_scalar(treatment.get("mode"))
+            if references and mode not in {"layout-only", "layout-and-style"}:
+                issue("reference_treatment_mode_invalid", slide_no=slide_no, observed=mode)
+            if not visible_scalar(treatment.get("source_role")):
+                issue("reference_treatment_source_role_missing", slide_no=slide_no)
+            if not isinstance(treatment.get("preserve"), list) or not any(visible_scalar(item) for item in treatment.get("preserve", [])):
+                issue("reference_treatment_preserve_missing", slide_no=slide_no)
+            if not isinstance(treatment.get("exclude"), list) or not any(visible_scalar(item) for item in treatment.get("exclude", [])):
+                issue("reference_treatment_exclude_missing", slide_no=slide_no)
+            if mode == "layout-and-style" and not any("palette" in visible_scalar(item).lower() or "配色" in visible_scalar(item) for item in treatment.get("preserve", [])):
+                issue("reference_style_treatment_palette_missing", slide_no=slide_no)
         entries = formal_text_entries(slide)
         if not entries:
             issue("formal_text_missing", slide_no=slide_no)

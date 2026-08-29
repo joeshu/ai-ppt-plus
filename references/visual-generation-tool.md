@@ -61,9 +61,19 @@ python3 scripts/materialize_visual_generation_prompts.py \
   visual-generation-plan.json --in-place
 ```
 
-The helper deterministically combines the visual-only description with the
-canvas, style lock, layout framework, structured modules, formal text and
-reference-isolation rules. It writes `prompts/NN-*.md` and the corresponding
+The helper deterministically combines the A1 generation context, visual-only
+description, canvas, style lock, layout framework, structured modules, formal
+text and reference-treatment rules. When a page has `layout_blueprint`, it also writes
+the focal point, reading path, zone capacity and anti-template guards into a
+dedicated prompt section; this is the missing spatial contract that keeps a
+complex framework from becoming a generic card grid. When a dense page has
+`keyword_emphasis`, it writes the approved token-level color map, scope and
+treatment into a second prompt section so inline emphasis survives inside a
+conclusion banner without introducing copy. When a page needs short
+relationship labels inside a framework, A2 may declare `diagram_annotations`
+with exact text, purpose, scope and approval; A3 carries only those approved
+labels into the prompt. It writes
+`prompts/NN-*.md` and the corresponding
 `production_prompt` values in the plan. It refuses to overwrite existing
 derived prompts unless `--force` is explicit, and supports `--dry-run` for a
 preflight. It is intentionally text-only: it does not invoke imagegen,
@@ -72,8 +82,27 @@ image-to-editable-PPTX artifact.
 
 Run the visual-generation validator after materialization. The prompt file
 is the exact A3 handoff for A4; if a designer manually revises visual wording,
-the complete formal-copy block and anti-fabrication/no-code policies must
-remain intact.
+the complete formal-copy block, text whitelist and anti-fabrication/no-code
+policies must remain intact. Extra annotations not present in the whitelist
+are not an acceptable way to make a page look denser; use icons, lines and
+spatial grouping instead. A keyword color instruction never authorizes new
+words: only exact approved tokens may receive the declared color. A diagram
+annotation likewise never authorizes an explanatory sentence or invented
+metric. Dense pages must also carry an A2 `detailed_content_paragraphs`
+reserve; the reserve is used to check content capacity and is explicitly not
+rendered as extra page text.
+
+The plan's `retry_policy` is deliberately page-local: allow at most three
+attempts per slide (normally two), record the trigger, and regenerate only the
+failed page. A successful page and its retained source are not invalidated by
+another page's retry.
+
+Reference treatment is explicit. `layout-only` is for the built-in reference
+gallery or loose layout inspiration and must reject its palette;
+`layout-and-style` is reserved for a user-approved target where palette,
+surface and icon language are intentional. Both modes reject reference text,
+data, logos and brand leakage. If the page has no reference, use `mode: none`
+rather than silently discovering one.
 
 After A4, create and record the A5 deck strip:
 

@@ -47,6 +47,16 @@ def build_plan() -> dict:
         "canvas": {"ratio": "16:9", "width_px": 2048, "height_px": 1152},
         "density_profile": "dense",
         "density_override_reason": "",
+        "generation_context": {
+            "audience": "executive stakeholders",
+            "language": "zh-CN",
+            "presentation_context": "high-end executive review in a conference room",
+        },
+        "retry_policy": {
+            "max_attempts_per_slide": 2,
+            "scope": "single-slide",
+            "triggers": ["image-generation failure", "missing approved copy", "collapsed layout"],
+        },
         "style_lock": {
             "name": "coastal-clear-tech",
             "palette": [
@@ -76,7 +86,41 @@ def build_plan() -> dict:
             "core_logic": "用一条由抵达、海岸、环岛到返程的路线组织一次轻松的海南旅行。",
             "visual_framework": "layered coastal journey map",
             "visual_generation_prompt": "Visual-only composition: a layered coastal journey map with a clear reading path and four anchored modules.",
-            "production_prompt": "Create a polished 16:9 presentation slide in a layered coastal journey map. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render the following 页面文字逐字: 海南旅行攻略; 把海岛节奏拆成四个易执行的旅行模块。; 模块 1; 海口抵达; D1; 建议; 安排当天核心体验; 保留弹性与安全余量; 模块 2; 三亚海岸; D2; 模块 3; 环岛体验; D3; 模块 4; 返程收束; D4; 先定节奏，再把风景留给临场发现。 Core logic: 用一条由抵达、海岸、环岛到返程的路线组织一次轻松的海南旅行。 不得编造任何数据；不得用代码补字或盖字; use clear hierarchy, restrained line icons and a readable route spine.",
+            "detailed_content_paragraphs": [
+                "第一段：把抵达、海岸、环岛与返程拆成可执行的旅行节奏，所有安排只引用已确认的攻略内容。",
+                "第二段：每个模块提供体验重点、弹性边界与安全余量，帮助读者按天执行并保留临场发现。",
+                "第三段：页面通过路线主轴和支撑提示，降低决策成本，不新增未经确认的景点、日期或价格。",
+            ],
+            "layout_blueprint": {
+                "focal_point": "the coastal route spine",
+                "reading_path": "arrival → coast → island loop → return",
+                "zones": [
+                    {"name": "header", "purpose": "title and trip thesis", "position": "top", "content_capacity": "title plus intro"},
+                    {"name": "route spine", "purpose": "connect four travel modules", "position": "center", "content_capacity": "four modules and arrows"},
+                    {"name": "tips rail", "purpose": "compact travel reminders", "position": "right", "content_capacity": "three callouts"},
+                    {"name": "conclusion", "purpose": "close the travel rhythm", "position": "bottom", "content_capacity": "one banner"}
+                ],
+                "anti_template_rules": ["do not use unrelated equal cards", "do not hide the route spine"]
+            },
+            "keyword_emphasis": {
+                "rules": [
+                    "Use inline color emphasis for approved keywords without changing or adding copy.",
+                    "Keep emphasis readable against the surface."
+                ],
+                "items": [
+                    {"text": "海南旅行攻略", "color": "#E85B47", "scope": "title", "treatment": "inline emphasis"}
+                ]
+            },
+            "diagram_annotations": [
+                {"text": "执行", "purpose": "name the execution phase inside the route spine", "scope": "inner loop", "approved_by": "approved visual brief"}
+            ],
+            "reference_treatment": {
+                "mode": "none",
+                "source_role": "no external reference",
+                "preserve": ["the approved design-system language"],
+                "exclude": ["unapproved text", "brand elements", "invented data"],
+            },
+            "production_prompt": "Create a polished 16:9 presentation slide in a layered coastal journey map. Use #14313B, #287B80, #E85B47 and #F7F0E4. Audience: executive stakeholders; language: zh-CN; presentation_context: high-end executive review in a conference room. A4 有界恢复策略：最多每页 2 次；范围：single-slide；只重试问题页。 Render the following 页面文字逐字: 海南旅行攻略; 把海岛节奏拆成四个易执行的旅行模块。; 模块 1; 海口抵达; D1; 建议; 安排当天核心体验; 保留弹性与安全余量; 模块 2; 三亚海岸; D2; 模块 3; 环岛体验; D3; 模块 4; 返程收束; D4; 先定节奏，再把风景留给临场发现。 Core logic: 用一条由抵达、海岸、环岛到返程的路线组织一次轻松的海南旅行。 不得编造任何数据；不得用代码补字或盖字; use clear hierarchy, restrained line icons and a readable route spine.",
             "content_model": {
                 "intro": "把海岛节奏拆成四个易执行的旅行模块。",
                 "modules": modules,
@@ -229,6 +273,24 @@ def main() -> int:
         assert invalid.returncode == 2, invalid.stdout + invalid.stderr
         assert "formal_text_missing_for_image_slide" in invalid.stdout
         assert "production_prompt_not_materialized" in invalid.stdout
+
+        blueprint_plan = root / "missing-blueprint-plan.json"
+        blueprint_broken = build_plan()
+        blueprint_broken["evidence_manifest"] = None
+        blueprint_broken["slides"][0].pop("layout_blueprint", None)
+        write_json(blueprint_plan, blueprint_broken)
+        blueprint_invalid = run("scripts/validate_visual_generation_plan.py", str(blueprint_plan), "--expected-pages", "1")
+        assert blueprint_invalid.returncode == 2, blueprint_invalid.stdout + blueprint_invalid.stderr
+        assert "layout_blueprint_missing" in blueprint_invalid.stdout
+
+        emphasis_plan = root / "missing-emphasis-plan.json"
+        emphasis_broken = build_plan()
+        emphasis_broken["evidence_manifest"] = None
+        emphasis_broken["slides"][0].pop("keyword_emphasis", None)
+        write_json(emphasis_plan, emphasis_broken)
+        emphasis_invalid = run("scripts/validate_visual_generation_plan.py", str(emphasis_plan), "--expected-pages", "1")
+        assert emphasis_invalid.returncode == 2, emphasis_invalid.stdout + emphasis_invalid.stderr
+        assert "keyword_emphasis_missing" in emphasis_invalid.stdout
 
     print("visual generation contract: ok")
     return 0

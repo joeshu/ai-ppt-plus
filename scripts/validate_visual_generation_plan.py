@@ -22,6 +22,8 @@ MANIFEST_SCHEMA = "ai-ppt-plus/visual-generation-manifest/v1"
 MODES = {"image-slide", "layout-reference"}
 DENSITY_PROFILES = {"dense", "balanced", "minimal"}
 EXEMPT_PAGE_TYPES = {"title", "section", "quote", "summary"}
+REFERENCE_MODES = {"none", "layout-only", "layout-and-style"}
+RETRY_SCOPES = {"single-slide"}
 HEX_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 GENERATION_CONTRACT = {
@@ -109,6 +111,49 @@ def content_text_entries(slide: dict) -> list[str]:
                 values.extend(text_value(item) for item in bullets)
     values.append(text_value(content.get("footer_banner")))
     return [value for value in values if value]
+
+
+def copy_values(slide: dict) -> list[str]:
+    """Return copy-bearing strings against which emphasis tokens are checked."""
+    values = [text_value(slide.get("title")), text_value(slide.get("sub_title"))]
+    values.extend(content_text_entries(slide))
+    values.extend(entry["text"] for entry in formal_text_entries(slide) if entry["text"])
+    return [value for value in values if value]
+
+
+def diagram_annotation_entries(slide: dict) -> list[dict]:
+    """Return explicitly approved non-formal relationship labels."""
+    annotations = slide.get("diagram_annotations") if isinstance(slide.get("diagram_annotations"), list) else []
+    entries = []
+    for index, item in enumerate(annotations, start=1):
+        if isinstance(item, dict):
+            entries.append({
+                "index": index,
+                "text": text_value(item.get("text")),
+                "purpose": text_value(item.get("purpose")),
+                "scope": text_value(item.get("scope")),
+            })
+        else:
+            entries.append({"index": index, "text": "", "purpose": "", "scope": ""})
+    return entries
+
+
+def detailed_content_entries(slide: dict) -> list[str]:
+    """Return A2's thick-content reserve without treating it as visible copy."""
+    paragraphs = slide.get("detailed_content_paragraphs") if isinstance(slide.get("detailed_content_paragraphs"), list) else []
+    return [text_value(item) for item in paragraphs if text_value(item)]
+
+
+def reference_path(value) -> str:
+    """Read a reference path from either the legacy string or structured form."""
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, dict):
+        for field in ("path", "file", "id"):
+            path = text_value(value.get(field))
+            if path:
+                return path
+    return ""
 
 
 def module_metrics(content: dict) -> tuple[int, int, int, list[dict]]:
@@ -389,6 +434,28 @@ def main() -> int:
                 add_issue(issues, "blocker", "generation_contract_mismatch", field=field, expected=expected, observed=observed)
         if generation_contract.get("no_code_overlay") is not True:
             add_issue(issues, "blocker", "generation_contract_no_code_overlay_missing")
+        generation_context = plan.get("generation_context")
+        if not isinstance(generation_context, dict):
+            add_issue(issues, "blocker", "generation_context_missing")
+            generation_context = {}
+        for field in ("audience", "language", "presentation_context"):
+            if not text_value(generation_context.get(field)):
+                add_issue(issues, "blocker", "generation_context_field_missing", field=field)
+        retry = plan.get("retry_policy")
+        if not isinstance(retry, dict):
+            add_issue(issues, "blocker", "retry_policy_missing")
+            retry = {}
+        attempts = retry.get("max_attempts_per_slide")
+        if not isinstance(attempts, int) or isinstance(attempts, bool) or attempts < 1 or attempts > 3:
+            add_issue(issues, "blocker", "retry_policy_attempts_invalid", observed=attempts)
+        if retry.get("scope") not in RETRY_SCOPES:
+            add_issue(issues, "blocker", "retry_policy_scope_invalid", observed=retry.get("scope"))
+        triggers = retry.get("triggers")
+        if not isinstance(triggers, list) or not any(text_value(item) for item in triggers):
+            add_issue(issues, "blocker", "retry_policy_triggers_missing")
+    else:
+        generation_context = plan.get("generation_context") if isinstance(plan.get("generation_context"), dict) else {}
+        retry = plan.get("retry_policy") if isinstance(plan.get("retry_policy"), dict) else {}
     if not text_value(plan.get("project_id")):
         add_issue(issues, "blocker", "plan_project_id_missing")
     for field in ("outline_revision", "design_system_revision"):
@@ -479,6 +546,64 @@ def main() -> int:
         has_exception = page_type in EXEMPT_PAGE_TYPES or text_value(slide.get("density_exception_reason"))
         if profile != "dense" and not has_exception and not text_value(slide.get("density_exception_reason")):
             add_issue(issues, "blocker", "slide_density_exception_reason_missing", slide_no=slide_no)
+        detailed_content = detailed_content_entries(slide)
+        for paragraph_index, paragraph in enumerate(detailed_content, start=1):
+            if PLACEHOLDER_RE.search(paragraph):
+                add_issue(issues, "blocker", "detailed_content_placeholder", slide_no=slide_no, paragraph=paragraph_index)
+        if mode == "image-slide" and profile == "dense" and not has_exception and len(detailed_content) < 3:
+            add_issue(issues, "blocker", "detailed_content_reserve_low", slide_no=slide_no, minimum=3, observed=len(detailed_content))
+        blueprint = slide.get("layout_blueprint")
+        if mode == "image-slide" and profile == "dense" and not has_exception:
+            if not isinstance(blueprint, dict):
+                add_issue(issues, "blocker", "layout_blueprint_missing", slide_no=slide_no)
+            else:
+                for field in ("focal_point", "reading_path"):
+                    if not text_value(blueprint.get(field)):
+                        add_issue(issues, "blocker", "layout_blueprint_field_missing", slide_no=slide_no, field=field)
+                zones = blueprint.get("zones")
+                if not isinstance(zones, list) or len(zones) < 3:
+                    add_issue(issues, "blocker", "layout_blueprint_zones_low", slide_no=slide_no, minimum=3, observed=len(zones) if isinstance(zones, list) else 0)
+                else:
+                    for zone_index, zone in enumerate(zones, start=1):
+                        if isinstance(zone, dict):
+                            if not text_value(zone.get("name")) or not text_value(zone.get("purpose")):
+                                add_issue(issues, "blocker", "layout_blueprint_zone_invalid", slide_no=slide_no, zone=zone_index)
+                        elif not text_value(zone):
+                            add_issue(issues, "blocker", "layout_blueprint_zone_invalid", slide_no=slide_no, zone=zone_index)
+                guards = blueprint.get("anti_template_rules")
+                if not isinstance(guards, list) or not any(text_value(item) for item in guards):
+                    add_issue(issues, "blocker", "layout_blueprint_guards_missing", slide_no=slide_no)
+            emphasis = slide.get("keyword_emphasis")
+            if not isinstance(emphasis, dict):
+                add_issue(issues, "blocker", "keyword_emphasis_missing", slide_no=slide_no)
+            else:
+                rules = emphasis.get("rules")
+                if not isinstance(rules, list) or not any(text_value(item) for item in rules):
+                    add_issue(issues, "blocker", "keyword_emphasis_rules_missing", slide_no=slide_no)
+                items = emphasis.get("items")
+                if not isinstance(items, list) or not items:
+                    add_issue(issues, "blocker", "keyword_emphasis_items_missing", slide_no=slide_no)
+                else:
+                    visible_copy = copy_values(slide)
+                    for item_index, item in enumerate(items, start=1):
+                        if not isinstance(item, dict):
+                            add_issue(issues, "blocker", "keyword_emphasis_item_invalid", slide_no=slide_no, item=item_index)
+                            continue
+                        token = text_value(item.get("text"))
+                        color = text_value(item.get("color"))
+                        scope = text_value(item.get("scope"))
+                        if not token or not color or not scope:
+                            add_issue(issues, "blocker", "keyword_emphasis_item_invalid", slide_no=slide_no, item=item_index)
+                        elif not HEX_RE.fullmatch(color):
+                            add_issue(issues, "blocker", "keyword_emphasis_color_invalid", slide_no=slide_no, item=item_index, observed=color)
+                        elif not any(token in value for value in visible_copy):
+                            add_issue(issues, "blocker", "keyword_emphasis_text_not_in_copy", slide_no=slide_no, item=item_index, text=token)
+            annotations = diagram_annotation_entries(slide)
+            for annotation in annotations:
+                if not annotation["text"] or not annotation["purpose"] or not annotation["scope"]:
+                    add_issue(issues, "blocker", "diagram_annotation_invalid", slide_no=slide_no, item=annotation["index"])
+                elif PLACEHOLDER_RE.search(annotation["text"]):
+                    add_issue(issues, "blocker", "diagram_annotation_placeholder", slide_no=slide_no, item=annotation["index"])
         min_modules, min_bullets_required, min_info = density_threshold(profile)
         if not has_exception:
             if profile == "dense" and not text_value(content.get("intro")):
@@ -496,6 +621,19 @@ def main() -> int:
                     source_refs = module.get("source_refs")
                     if not isinstance(source_refs, list) or not any(text_value(item) for item in source_refs):
                         add_issue(issues, "blocker", "content_module_source_reference_missing", slide_no=slide_no, module=module_index)
+                    if profile == "dense":
+                        if not text_value(module.get("title")):
+                            add_issue(issues, "blocker", "content_module_title_missing", slide_no=slide_no, module=module_index)
+                        raw_bullets = module.get("bullets", module.get("points", []))
+                        if isinstance(raw_bullets, str):
+                            raw_bullets = [raw_bullets]
+                        bullet_count = len([text_value(item) for item in raw_bullets if text_value(item)]) if isinstance(raw_bullets, list) else 0
+                        if bullet_count < 2:
+                            add_issue(issues, "blocker", "content_module_bullets_low", slide_no=slide_no, module=module_index, minimum=2, observed=bullet_count)
+                        if not text_value(module.get("kpi")):
+                            add_issue(issues, "blocker", "content_module_kpi_missing", slide_no=slide_no, module=module_index)
+                        if not text_value(module.get("tag")):
+                            add_issue(issues, "blocker", "content_module_tag_missing", slide_no=slide_no, module=module_index)
         formal_entries = formal_text_entries(slide)
         production_prompt = text_value(slide.get("production_prompt"))
         visual_prompt = text_value(slide.get("visual_generation_prompt"))
@@ -507,6 +645,12 @@ def main() -> int:
             if production_prompt and visual_prompt and production_prompt == visual_prompt:
                 add_issue(issues, "blocker", "production_prompt_not_materialized", slide_no=slide_no)
             prompt_lower = production_prompt.lower()
+            for context_field in ("audience", "language", "presentation_context"):
+                context_value = text_value(generation_context.get(context_field))
+                if context_value and context_value not in production_prompt:
+                    add_issue(issues, "blocker", "production_prompt_generation_context_missing", slide_no=slide_no, field=context_field)
+            if retry and "有界恢复策略" not in production_prompt and "retry" not in prompt_lower:
+                add_issue(issues, "blocker", "production_prompt_retry_policy_missing", slide_no=slide_no)
             if ratio and ratio not in production_prompt:
                 add_issue(issues, "blocker", "production_prompt_ratio_missing", slide_no=slide_no, ratio=ratio)
             for color in palette_hexes:
@@ -530,6 +674,9 @@ def main() -> int:
             for content_text in content_text_entries(slide):
                 if content_text not in production_prompt:
                     add_issue(issues, "blocker", "production_prompt_content_copy_mismatch", slide_no=slide_no, text=content_text)
+            for annotation in diagram_annotation_entries(slide):
+                if annotation["text"] and annotation["text"] not in production_prompt:
+                    add_issue(issues, "blocker", "production_prompt_diagram_annotation_mismatch", slide_no=slide_no, text=annotation["text"])
             if framework and framework not in production_prompt:
                 add_issue(issues, "blocker", "production_prompt_framework_missing", slide_no=slide_no, framework=framework)
             core_logic = text_value(slide.get("core_logic"))
@@ -542,14 +689,40 @@ def main() -> int:
         if not isinstance(references, list):
             add_issue(issues, "blocker", "reference_images_invalid", slide_no=slide_no)
             references = []
+        for reference_index, reference in enumerate(references, start=1):
+            if not reference_path(reference):
+                add_issue(issues, "blocker", "reference_image_path_missing", slide_no=slide_no, reference=reference_index)
         if references and mode == "image-slide" and production_prompt:
             reference_text = production_prompt.lower()
-            if not ("只参考排版" in production_prompt or "layout only" in reference_text):
-                add_issue(issues, "blocker", "reference_usage_policy_missing", slide_no=slide_no)
+            treatment = slide.get("reference_treatment")
+            if not isinstance(treatment, dict):
+                add_issue(issues, "blocker", "reference_treatment_missing", slide_no=slide_no)
+                treatment = {}
+            treatment_mode = text_value(treatment.get("mode"))
+            if treatment_mode not in {"layout-only", "layout-and-style"}:
+                add_issue(issues, "blocker", "reference_treatment_mode_invalid", slide_no=slide_no, observed=treatment_mode)
+            if not text_value(treatment.get("source_role")):
+                add_issue(issues, "blocker", "reference_treatment_source_role_missing", slide_no=slide_no)
+            preserve = treatment.get("preserve")
+            exclude = treatment.get("exclude")
+            if not isinstance(preserve, list) or not any(text_value(item) for item in preserve):
+                add_issue(issues, "blocker", "reference_treatment_preserve_missing", slide_no=slide_no)
+            if not isinstance(exclude, list) or not any(text_value(item) for item in exclude):
+                add_issue(issues, "blocker", "reference_treatment_exclude_missing", slide_no=slide_no)
+            if treatment_mode == "layout-and-style" and not any("palette" in text_value(item).lower() or "配色" in text_value(item) for item in (preserve or [])):
+                add_issue(issues, "blocker", "reference_style_treatment_palette_missing", slide_no=slide_no)
+            if treatment_mode == "layout-only":
+                if not ("只学布局" in production_prompt or "只参考排版" in production_prompt or "layout only" in reference_text):
+                    add_issue(issues, "blocker", "reference_layout_only_policy_missing", slide_no=slide_no)
+                if not ("不使用其配色" in production_prompt or "do not use its colors" in reference_text or "do not use its palette" in reference_text):
+                    add_issue(issues, "blocker", "reference_color_isolation_policy_missing", slide_no=slide_no)
+            else:
+                if not ("布局+风格" in production_prompt or "layout-and-style" in reference_text or "layout and style" in reference_text):
+                    add_issue(issues, "blocker", "reference_layout_style_policy_missing", slide_no=slide_no)
+                if not ("保留" in production_prompt and ("配色" in production_prompt or "palette" in reference_text)):
+                    add_issue(issues, "blocker", "reference_palette_preservation_policy_missing", slide_no=slide_no)
             if not ("不使用其文字" in production_prompt or "do not use its text" in reference_text):
                 add_issue(issues, "blocker", "reference_text_isolation_policy_missing", slide_no=slide_no)
-            if not ("不使用其配色" in production_prompt or "do not use its colors" in reference_text or "do not use its palette" in reference_text):
-                add_issue(issues, "blocker", "reference_color_isolation_policy_missing", slide_no=slide_no)
             if not ("不使用其品牌" in production_prompt or "do not use its branding" in reference_text or "do not use its brand" in reference_text):
                 add_issue(issues, "blocker", "reference_brand_isolation_policy_missing", slide_no=slide_no)
         slide_summaries.append({
@@ -562,6 +735,12 @@ def main() -> int:
             "info_points": info_points,
             "formal_text_count": len(formal_entries),
             "prompt_file": str(prompt_file) if prompt_file else None,
+            "layout_blueprint_zones": len(blueprint.get("zones") or []) if isinstance(blueprint, dict) and isinstance(blueprint.get("zones"), list) else 0,
+            "keyword_emphasis_items": len((slide.get("keyword_emphasis") or {}).get("items") or []) if isinstance(slide.get("keyword_emphasis"), dict) else 0,
+            "diagram_annotation_count": len(diagram_annotation_entries(slide)),
+            "detailed_content_paragraph_count": len(detailed_content),
+            "reference_image_count": len(references),
+            "reference_treatment_mode": text_value((slide.get("reference_treatment") or {}).get("mode")) if isinstance(slide.get("reference_treatment"), dict) else None,
             "module_details": module_summaries,
         })
     if slide_numbers and sorted(slide_numbers) != list(range(1, max(slide_numbers) + 1)):
@@ -587,6 +766,8 @@ def main() -> int:
         "mode": mode,
         "canvas": canvas,
         "density_profile": density_profile,
+        "generation_context": generation_context,
+        "retry_policy": retry,
         "page_count": page_count,
         "framework_count": len(frameworks),
         "slides": slide_summaries,

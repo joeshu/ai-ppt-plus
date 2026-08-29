@@ -57,13 +57,29 @@ For new image-slide work, borrow the useful A1–A5 discipline from
 `GordenImagePPTGen` without changing the downstream reconstruction contract:
 
 - A1 records style, audience, language, page count, ratio and an explicit
-  density profile. `dense` is the default; `balanced` and `minimal` require a
-  reason so a sparse page is intentional rather than an accidental generic
-  template.
+  density profile in `generation_context`. `dense` is the default; `balanced`
+  and `minimal` require a reason so a sparse page is intentional rather than
+  an accidental generic template. `retry_policy` caps attempts per slide and
+  keeps recovery page-local.
 - A2 uses `visual-generation-plan.json` to separate `core_logic` and a
   visual-only `visual_generation_prompt` from structured `content_model`.
   Each page selects one visual framework; duplicate frameworks across a deck
   are a blocking planning error unless a future contract adds an exception.
+- Dense pages also declare a `layout_blueprint`: one focal point, one reading
+  path, named zones with content capacity and anti-template guards. The
+  blueprint is spatial direction, not formal copy; it is materialized into A3
+  so the image model has enough structure to preserve a complex commercial
+  framework instead of defaulting to equal cards.
+- Dense pages also retain at least three `detailed_content_paragraphs` as an
+  A2 content reserve. They are planning material only, not a second visible
+  copy authority, and must never be rendered verbatim.
+- When the approved design calls for colored key phrases, A2 records a
+  `keyword_emphasis` map with exact copy tokens, hex colors, scopes and
+  treatments. A3 must preserve that inline emphasis in the prompt; do not
+  flatten a conclusion banner to one color or invent separate keyword labels.
+- If a reference uses short relationship labels inside a diagram, record them
+  as approved `diagram_annotations` with purpose and scope; the whitelist may
+  then admit only those exact labels, not any model-invented explanatory text.
 - A3 materializes a self-contained `production_prompt` containing the ratio,
   locked palette, visual hierarchy, explicit no-invention rules and every
   `formal_text[].text` value verbatim. The visual-only prompt is a design
@@ -71,7 +87,9 @@ For new image-slide work, borrow the useful A1–A5 discipline from
   `scripts/materialize_visual_generation_prompts.py --in-place` to derive the
   prompt from the reviewed plan; it is a text-only helper and does not call an
   image model or write PPTX files. Manual visual refinements may adjust layout
-  wording, but must preserve the generated formal-copy block verbatim.
+  wording, but must preserve the generated formal-copy block and text
+  whitelist verbatim; unapproved labels must be replaced by iconography or
+  connector geometry.
 - A4 records one real raster-generation event per page. The evidence manifest
   retains `generated_source` and `copied_to`, prompt file, backend, model/tool,
   prompt-file SHA-256, canvas and current image SHA-256 values. Both image
@@ -85,11 +103,13 @@ For new image-slide work, borrow the useful A1–A5 discipline from
   is never patched onto the bitmap with code.
 
 The dense content baseline is four or more modules, normally two or more
-bullets per module, an introduction, a footer conclusion and at least one
-visual KPI/tag layer per module. These are planning capacity checks, not
-permission to fabricate data. Every module and formal text item should retain
-an outline/source reference. A reference image is layout-only: the prompt
-must explicitly reject its text, color and brand leakage.
+bullets per module, an introduction, a footer conclusion and a visual KPI/tag
+layer per module. These are planning capacity checks, not permission to
+fabricate data. Every module and formal text item should retain an
+outline/source reference. Reference treatment is explicit: `layout-only` for
+the built-in gallery or loose inspiration, and `layout-and-style` only for a
+user-approved target whose palette is intentionally preserved. Both modes
+must reject reference text, data and brand leakage.
 
 Validate the contract with:
 

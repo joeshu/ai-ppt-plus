@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v1",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.08.29.13",
+  "package_revision": "2026.08.29.17",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "managed_globs": [

@@ -80,6 +80,15 @@ def main() -> int:
             assert value in prompt, value
         assert "页面文字（逐字照排" in prompt
         assert "【参考图隔离规则】" in prompt
+        assert "【区域蓝图（必须按区域分配容量）】" in prompt
+        assert "主焦点：" in prompt
+        assert "反模板护栏：" in prompt
+        assert "【重点词着色语义（必须保留）】" in prompt
+        assert "海南旅行攻略" in prompt and "范围：title" in prompt
+        assert "【批准的图示标注】" in prompt
+        assert "执行" in prompt and "inner loop" in prompt
+        assert "【文字白名单（强约束）】" in prompt
+        assert "只能出现上方【页面文字】" in prompt
         validated = run_validator(plan)
         assert validated.returncode == 0, validated.stdout + validated.stderr
 
