@@ -6,7 +6,7 @@
   "assets_dir": ".",
   "component_library": "assets/component-library.template.json",
   "layout_library": "assets/layout-library.template.json",
-  "theme": {"layout_id": "blank-canvas", "font": "Noto Sans CJK SC", "text_color": "#222222"},
+  "theme": {"layout_id": "blank-canvas", "font": "Noto Sans SC", "text_color": "#222222"},
   "slides": [
     {
       "layout_id": "blank-canvas",

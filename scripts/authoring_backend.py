@@ -19,7 +19,10 @@ from component_expander import _choose_slide_layout
 from pptx_primitives import add_charts, add_groups, add_shapes, add_tables, add_texts
 
 
-DEFAULT_FONT_FAMILY = "Noto Sans CJK SC"
+# Use the family name exposed by the bundled redistributable font. The older
+# "Noto Sans CJK SC" label is still accepted when explicitly requested, but
+# it does not resolve reliably against the packaged NotoSansSC-Regular.ttf.
+DEFAULT_FONT_FAMILY = "Noto Sans SC"
 BACKEND_ID = "python-pptx"
 
 
@@ -62,6 +65,12 @@ def build_pptx(deck: dict, out_path: Path) -> None:
             slide = presentation.slides.add_slide(_choose_slide_layout(presentation, slide_spec, theme, deck))
             add_background(slide, slide_spec, assets_dir, slide_width_emu, slide_height_emu)
             add_frame(slide, slide_spec, assets_dir, slide_width_emu, slide_height_emu)
+            # Semantic panel images are structural substrates.  Place them
+            # before native overlays so badges, legend keys and bullet marks
+            # remain visible and independently editable.  The previous order
+            # silently covered those overlays whenever a panel occupied the
+            # same region.
+            add_panels(slide, slide_spec.get("panels", []), assets_dir, deck, reference_width, reference_height, slide_width_emu, slide_height_emu, slide_no)
             add_shapes(slide, slide_spec.get("shapes", []), deck, reference_width, reference_height, slide_width_emu, slide_height_emu)
             add_groups(slide, slide_spec.get("groups", []), deck, reference_width, reference_height, slide_width_emu, slide_height_emu)
             add_tables(slide, slide_spec.get("tables", []), deck, theme, reference_width, reference_height, slide_width_emu, slide_height_emu)
@@ -69,7 +78,6 @@ def build_pptx(deck: dict, out_path: Path) -> None:
             notes = slide_spec.get("speaker_notes") or slide_spec.get("notes")
             if notes:
                 slide.notes_slide.notes_text_frame.text = str(notes)
-            add_panels(slide, slide_spec.get("panels", []), assets_dir, deck, reference_width, reference_height, slide_width_emu, slide_height_emu, slide_no)
             add_icons(slide, slide_spec.get("icons", []), assets_dir, deck, reference_width, reference_height, slide_width_emu, slide_height_emu, slide_no, svg_assets, temporary_files)
             add_texts(slide, slide_spec.get("texts", []), deck, theme, reference_width, reference_height, slide_width_emu, slide_height_emu)
 

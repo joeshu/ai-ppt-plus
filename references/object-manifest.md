@@ -25,6 +25,11 @@ embedded media hashes against the declared source. A semantic mismatch is a
 technical blocker; human visual review is still required for appearance and
 fidelity.
 
+Line and connector primitives remain native editable geometry. The semantic
+auditor treats both ordinary auto-shapes and `python-pptx` `LINE` shapes as
+`native_shape`; do not classify a visible legend line as a raster asset merely
+because its runtime shape enum is `LINE`.
+
 The object builder records `data_snapshot` for inline tables/charts and
 `source_sha256` for locally available image assets. A production manifest must
 retain those fields (or a resolvable `data_source`/source hash); otherwise the

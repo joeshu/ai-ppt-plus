@@ -3,8 +3,9 @@
 
 The metrics are diagnostics for layout/fidelity regression, not a replacement
 for human review. Use `--threshold` only when a project has an approved metric
-baseline. Same-aspect-ratio images are normalized to the reference pixel size;
-a true aspect-ratio mismatch remains a blocker.
+baseline. Same-aspect-ratio images are normalized to the reference pixel size.
+A small aspect-ratio delta is tolerated for screenshot capture padding; a true
+aspect-ratio mismatch remains a blocker.
 """
 import argparse
 import json
@@ -13,6 +14,9 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageFilter
 from atomic_output import atomic_write_json
+
+
+ASPECT_RATIO_TOLERANCE = 0.015
 
 
 def array(path: Path, target_size=None):
@@ -45,10 +49,12 @@ def main() -> int:
     _, reference_size = array(reference_path)
     issues = []
     resized_for_comparison = False
+    aspect_ratio_delta = 0.0
     if rendered_size != reference_size:
         rendered_ratio = rendered_size[0] / rendered_size[1] if rendered_size[1] else 0
         reference_ratio = reference_size[0] / reference_size[1] if reference_size[1] else 0
-        if abs(rendered_ratio - reference_ratio) > 0.01:
+        aspect_ratio_delta = abs(rendered_ratio - reference_ratio)
+        if aspect_ratio_delta > ASPECT_RATIO_TOLERANCE:
             issues.append({"severity": "blocker", "code": "aspect_ratio_mismatch", "rendered": rendered_size, "reference": reference_size})
         else:
             resized_for_comparison = True
@@ -74,7 +80,7 @@ def main() -> int:
             issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": args.threshold, "observed": result_metrics["blurred_layout_ssim"]})
     else:
         result_metrics = {}
-    result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "reference": str(reference_path.resolve()), "original_sizes": {"rendered": rendered_size, "reference": reference_size}, "comparison_size": reference_size if resized_for_comparison else rendered_size, "resized_for_comparison": resized_for_comparison, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
+    result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "reference": str(reference_path.resolve()), "original_sizes": {"rendered": rendered_size, "reference": reference_size}, "aspect_ratio_delta": round(aspect_ratio_delta, 6), "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE, "comparison_size": reference_size if resized_for_comparison else rendered_size, "resized_for_comparison": resized_for_comparison, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
     if args.report:
         report = Path(args.report)
         report.parent.mkdir(parents=True, exist_ok=True)

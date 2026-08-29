@@ -25,6 +25,14 @@ intermediate, never the delivered PPT object.
 
 Original icon files may be supplied as the imagegen edit target/reference, but may not be copied directly into the delivered icon layer. Every icon, decoration and artistic word must pass the same imagegen asset-sheet route, followed by B5 cutout, split and QA. A screenshot crop is never an original asset and may not bypass imagegen. If imagegen is unavailable or fails, block the page; do not silently fall back to direct crops, weak redraws or unproven substitutes.
 
+Complete brand lockups are an exception to grid splitting: keep the logo mark
+and wordmark together as one `brand_lockup`/`role: logo` asset. Do not pass a
+complete lockup to `slice_grid.py --auto`, because automatic segmentation can
+split the mark from its wordmark. Alpha-trim or crop the generated lockup
+output without splitting it, and record `whole_asset_contract` in the object
+manifest. Only independently replaceable non-brand icons may be split into
+separate delivered assets.
+
 ## Imagegen extraction evidence gate
 
 For every icon, decoration and artistic word, use the ChatGPT imagegen skill (or an explicitly declared image-generation backend) to create an isolated, frame-excluded icon/decorative asset sheet. The prompt must use the current reference as the edit target and request no ordinary text, frame, card, or background. Do not use code to draw or reconstruct the icon sheet, and do not crop a local screenshot region as a substitute.
@@ -38,7 +46,7 @@ This evidence gate is separate from the visual route: reference reconstruction d
 For generated or supplied assets on a flat background, use the portable tools:
 
 ```bash
-python3 scripts/probe_palette.py reference/slide-1.png
+python3 scripts/probe_palette.py reference/slide-1.png --output qa/palette-report.json
 python3 scripts/chroma_key.py --input icons_raw.png --out icons_transparent.png --preset icon-safe --scale 2 --force
 python3 scripts/slice_grid.py icons_transparent.png assets/icons --auto --pad 24 --contact-sheet --prefix ic
 python3 scripts/placement_qa.py reference/slide-1.png slide-manifest.json --out-dir qa/icon-placement

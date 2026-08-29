@@ -207,7 +207,10 @@ def _actual_kind(shape) -> str:
         return "picture"
     if shape_type == types.GROUP:
         return "native_group"
-    if shape_type == types.AUTO_SHAPE:
+    # python-pptx exposes connector/line primitives as LINE rather than
+    # AUTO_SHAPE.  They are still native, movable PowerPoint geometry and
+    # must satisfy manifests that declare a native_shape object.
+    if shape_type in {types.AUTO_SHAPE, types.LINE}:
         return "native_shape"
     if shape_type == types.TEXT_BOX and getattr(shape, "has_text_frame", False):
         return "native_text"

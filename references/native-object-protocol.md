@@ -10,7 +10,10 @@ the existing image and text layers.
 Supported shape names include `rect`, `rounded_rect`, `oval`, `ellipse`,
 `triangle`, `chevron`, `arrow`, `pentagon`, `hexagon`, `parallelogram`,
 `trapezoid`, and `diamond`. `fill`, `opacity`, `line`, `line_width`,
-`rotation`, and `alt_text` are optional.
+`rotation`, and `alt_text` are optional. A `line` is a native PowerPoint
+connector/line primitive and is audited as `native_shape` even though
+`python-pptx` exposes it as `MSO_SHAPE_TYPE.LINE` rather than
+`MSO_SHAPE_TYPE.AUTO_SHAPE`.
 
 ## Gradients
 

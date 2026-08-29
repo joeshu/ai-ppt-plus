@@ -19,13 +19,20 @@ The implementation is split into focused modules:
 The backend order is fixed for reconstruction fidelity:
 
 1. background and whole frame;
-2. native shapes, groups, tables and charts;
-3. speaker notes;
-4. independent panels;
+2. independent panels;
+3. native shapes, groups, tables and charts;
+4. speaker notes;
 5. icons and SVG assets;
 6. editable text.
 
-The default family is `Noto Sans CJK SC`, not Microsoft YaHei. A task may
+Independent panel images are structural substrates. They must be inserted
+before native overlays so badges, legend keys, bullet marks and other simple
+geometry remain visible and independently editable. The Pillow preview
+renderer follows the same order; a preview that disagrees with the PPTX
+layering is a QA defect, not a harmless approximation.
+
+The default family is `Noto Sans SC`, matching the bundled
+`assets/fonts/NotoSansSC-Regular.ttf`, not Microsoft YaHei. A task may
 override it through the deck theme or an explicitly licensed font. Font
 availability, CJK coverage and delivery embedding remain separate gates; this
 module does not claim delivery merely because a font name was written into a

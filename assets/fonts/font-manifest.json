@@ -1,6 +1,6 @@
 {
   "schema": "ai-ppt-plus/font-manifest/v1",
-  "family": "Noto Sans SC Thin",
+  "family": "Noto Sans SC",
   "role": "portable_cjk_fallback",
   "file": "NotoSansSC-Regular.ttf",
   "source": "Noto CJK / validated reconstruction asset",

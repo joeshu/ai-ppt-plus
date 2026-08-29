@@ -4,7 +4,7 @@
 
 Formal text must remain real PPTX text, but the deck must carry a declared,
 legally redistributable CJK fallback for rendering and delivery checks. Copy
-`assets/fonts/NotoSansCJKsc-Regular.otf` and its manifest into the task's
+`assets/fonts/NotoSansSC-Regular.ttf` and its manifest into the task's
 `project-fonts/` directory, then pass `--font-dir project-fonts/` to both
 `probe_fonts.py` and `render_pptx.py`.
 
@@ -14,7 +14,7 @@ before the first font probe; do not rely on the host's installed-font list.
 Use this font priority:
 
 1. A user-supplied licensed font explicitly requested for the project.
-2. The bundled Noto Sans CJK SC fallback.
+2. The bundled Noto Sans SC fallback (the manifest's canonical family name).
 3. Microsoft YaHei only when explicitly requested, already licensed and
    available on the authoring/rendering device; never select or package it
    implicitly.

@@ -113,7 +113,12 @@ def render_previews(deck: dict, preview_dir: Path) -> None:
     slide_height = float(deck["slide_height_in"])
     ratio = slide_width / slide_height
     if deck["units"] == "px" and deck.get("ref_width") and deck.get("ref_height"):
-        canvas_width, canvas_height = int(deck["ref_width"]), int(deck["ref_height"])
+        # Reference screenshots can carry a few pixels of capture padding and
+        # therefore not have the slide's declared aspect ratio.  The preview
+        # must still use the slide ratio or preview-consistency will reject a
+        # valid reconstruction even though the final PPTX renders correctly.
+        canvas_height = int(deck["ref_height"])
+        canvas_width = max(1, int(round(canvas_height * ratio)))
     else:
         canvas_width = 1600
         canvas_height = int(round(canvas_width / ratio))
@@ -141,6 +146,22 @@ def render_previews(deck: dict, preview_dir: Path) -> None:
                 if path.exists():
                     with Image.open(path) as image:
                         canvas.alpha_composite(image.convert("RGBA").resize((canvas_width, canvas_height)), (0, 0))
+
+            # Semantic panel images are structural substrates.  Render them
+            # before native overlays so this diagnostic preview follows the
+            # PPTX backend: badges, legend keys and bullet marks remain
+            # visible instead of being covered by their panel image.
+            for panel in slide_spec.get("panels", []):
+                path = _resolve(assets_dir, panel["file"])
+                if not path.exists():
+                    continue
+                fx = _frac(deck, panel, "x", "x", ref_width)
+                fy = _frac(deck, panel, "y", "y", ref_height)
+                fw = _frac(deck, panel, "w", "x", ref_width)
+                fh = _frac(deck, panel, "h", "y", ref_height)
+                with Image.open(path) as image:
+                    panel_image = image.convert("RGBA").resize((max(1, int(fw * canvas_width)), max(1, int(fh * canvas_height))))
+                canvas.alpha_composite(panel_image, (int(fx * canvas_width), int(fy * canvas_height)))
 
             for shape_spec in slide_spec.get("shapes", []):
                 fx = _frac(deck, shape_spec, "x", "x", ref_width)
@@ -170,18 +191,6 @@ def render_previews(deck: dict, preview_dir: Path) -> None:
                 else:
                     draw.rectangle([x0, y0, x1, y1], fill=fill, outline=line, width=line_width)
                 canvas.alpha_composite(overlay)
-
-            for panel in slide_spec.get("panels", []):
-                path = _resolve(assets_dir, panel["file"])
-                if not path.exists():
-                    continue
-                fx = _frac(deck, panel, "x", "x", ref_width)
-                fy = _frac(deck, panel, "y", "y", ref_height)
-                fw = _frac(deck, panel, "w", "x", ref_width)
-                fh = _frac(deck, panel, "h", "y", ref_height)
-                with Image.open(path) as image:
-                    panel_image = image.convert("RGBA").resize((max(1, int(fw * canvas_width)), max(1, int(fh * canvas_height))))
-                canvas.alpha_composite(panel_image, (int(fx * canvas_width), int(fy * canvas_height)))
 
             for icon in slide_spec.get("icons", []):
                 path = _resolve(assets_dir, icon["file"])

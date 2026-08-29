@@ -14,7 +14,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 from atomic_output import atomic_write_json
-from compare_visual import array, ssim
+from compare_visual import ASPECT_RATIO_TOLERANCE, array, ssim
 
 
 def page_number(path: Path) -> int:
@@ -53,7 +53,7 @@ def compare_page(rendered_path: Path, reference_path: Path, threshold):
     if rendered_size != reference_size:
         rendered_ratio = rendered_size[0] / rendered_size[1] if rendered_size[1] else 0
         reference_ratio = reference_size[0] / reference_size[1] if reference_size[1] else 0
-        if abs(rendered_ratio - reference_ratio) > 0.01:
+        if abs(rendered_ratio - reference_ratio) > ASPECT_RATIO_TOLERANCE:
             issues.append({"severity": "blocker", "code": "aspect_ratio_mismatch", "rendered": rendered_size, "reference": reference_size})
         else:
             resized_for_comparison = True

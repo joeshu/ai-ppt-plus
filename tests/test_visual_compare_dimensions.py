@@ -24,10 +24,14 @@ def main() -> int:
         rendered = root / "rendered.png"
         reference = root / "reference.png"
         mismatch = root / "mismatch.png"
+        near_rendered = root / "near-rendered.png"
+        near_reference = root / "near-reference.png"
         report = root / "report.json"
         Image.new("RGB", (40, 30), (240, 240, 240)).save(rendered)
         Image.new("RGB", (80, 60), (240, 240, 240)).save(reference)
         Image.new("RGB", (80, 80), (240, 240, 240)).save(mismatch)
+        Image.new("RGB", (160, 90), (240, 240, 240)).save(near_rendered)
+        Image.new("RGB", (142, 80), (240, 240, 240)).save(near_reference)
 
         result = run("scripts/compare_visual.py", str(rendered), str(reference), "--report", str(report))
         assert result.returncode == 0, result.stderr or result.stdout
@@ -35,6 +39,13 @@ def main() -> int:
         assert data["valid"] is True
         assert data["resized_for_comparison"] is True
         assert data["comparison_size"] == [80, 60]
+
+        near_report = root / "near-report.json"
+        result = run("scripts/compare_visual.py", str(near_rendered), str(near_reference), "--report", str(near_report))
+        assert result.returncode == 0, result.stderr or result.stdout
+        near_data = json.loads(near_report.read_text(encoding="utf-8"))
+        assert near_data["valid"] is True
+        assert near_data["aspect_ratio_delta"] < near_data["aspect_ratio_tolerance"]
 
         result = run("scripts/compare_visual.py", str(rendered), str(mismatch))
         assert result.returncode == 2, result.stdout

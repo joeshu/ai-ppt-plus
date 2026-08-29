@@ -22,7 +22,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 from atomic_output import atomic_write_json
-from compare_visual import ssim
+from compare_visual import ASPECT_RATIO_TOLERANCE, ssim
 
 
 def _page_number(path: Path) -> int | None:
@@ -60,7 +60,7 @@ def _compare(rendered: Path, preview: Path) -> dict[str, Any]:
     preview_array, preview_size = _read(preview)
     rendered_ratio = rendered_size[0] / rendered_size[1] if rendered_size[1] else 0
     preview_ratio = preview_size[0] / preview_size[1] if preview_size[1] else 0
-    if abs(rendered_ratio - preview_ratio) > 0.01:
+    if abs(rendered_ratio - preview_ratio) > ASPECT_RATIO_TOLERANCE:
         return {
             "valid": False,
             "rendered_size": rendered_size,

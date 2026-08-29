@@ -134,6 +134,22 @@ def main() -> int:
             assert "embeddedFontLst" in presentation
             assert "embedTrueTypeFonts=\"1\"" in presentation
 
+        # Variable-font exports may expose a style suffix in name ID 1 while
+        # fontconfig exposes the root family too.  The manifest should be able
+        # to declare that stable root family and embed it under the same name.
+        alias_dir = root / "alias-fonts"
+        alias_dir.mkdir()
+        alias_family = "Synthetic Variable"
+        (alias_dir / "fixture.otf").write_bytes(synthetic_sfnt(alias_family + " Thin"))
+        write_manifest(alias_dir, "fixture.otf", alias_family)
+        alias_output = root / "alias-embedded.pptx"
+        alias_report = root / "alias-embedding.json"
+        aliased = run("scripts/embed_fonts.py", str(input_pptx), str(alias_output), "--font-dir", str(alias_dir), "--report", str(alias_report))
+        assert aliased.returncode == 0, aliased.stdout + aliased.stderr
+        alias_data = json.loads(alias_report.read_text(encoding="utf-8"))
+        assert alias_data["valid"] is True
+        assert alias_data["fonts"][0]["metadata"]["family"] == alias_family
+
         malformed = root / "malformed.pptx"
         rewrite_package(output, malformed, {"ppt/fonts/font1.fntdata": b"not-an-eot"})
         malformed_report = root / "malformed-inspection.json"

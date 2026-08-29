@@ -19,6 +19,7 @@ import argparse
 import json
 from pathlib import Path
 from atomic_output import atomic_write_json
+from compare_visual import ASPECT_RATIO_TOLERANCE
 
 
 def _die(msg: str, code: int = 2):
@@ -58,7 +59,7 @@ def main() -> None:
         preview_size = prv_im.size
         source_ratio = source_size[0] / source_size[1] if source_size[1] else 0
         preview_ratio = preview_size[0] / preview_size[1] if preview_size[1] else 0
-        if abs(source_ratio - preview_ratio) > 0.01:
+        if abs(source_ratio - preview_ratio) > ASPECT_RATIO_TOLERANCE:
             _die(
                 f"aspect_ratio_mismatch: source {source_size} vs preview {preview_size}; "
                 "refusing to stretch a visual comparison"

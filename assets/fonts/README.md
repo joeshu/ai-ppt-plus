@@ -3,7 +3,7 @@
 `NotoSansSC-Regular.ttf` is the portable Chinese fallback used for local
 rendering and font parity checks when a user-provided font is unavailable.
 
-- Family: Noto Sans SC Thin
+- Family: Noto Sans SC
 - License: SIL Open Font License 1.1
 - Source: Noto CJK / validated reconstruction asset
 - License text: https://scripts.sil.org/OFL

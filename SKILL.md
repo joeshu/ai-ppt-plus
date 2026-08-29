@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Turn PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, images, existing PPT/PPTX, or approved outlines into narrative-coherent, visually consistent, editable, renderable, quality-checked PowerPoint deliverables. Trigger for “做PPT/幻灯片/演示稿/路演稿/汇报材料”, outline-first deck planning, image-model-generated high-end visual-intermediate design, slide reconstruction, PPTX redesign/inspection/repair, or resuming a multi-session deck. Outputs structured briefs, source inventories, outline tables, design systems, generated visual drafts, manifests, editable PPTX, validation and delivery reports. Do not trigger for a prose-only summary, a standalone image, spreadsheet-only analysis, or image-to-PPT reconstruction when the dedicated reconstruction skill is the narrower fit.
 metadata:
-  package_revision: 2026.08.28.5
+  package_revision: 2026.08.29.2
 ---
 
 # AI PPT Plus
@@ -36,7 +36,7 @@ Use for new decks, reference-led decks, outline-only or visual-only work, PPT/PP
 
 Read `references/narrative-strategy.md` for story decisions, `references/artifact-ownership.md` for authority/conflict rules, and `references/icon-asset-protocol.md` whenever a page contains icons, decorations, logos, illustrations or decorative typography.
 For reference reconstruction with visible text styling, also read `references/text-style-protocol.md` and run `scripts/validate_text_style_map.py`; this is the reusable gate for preserving mixed-color text, emphasized numbers, line breaks and text-box boundaries.
-For repeated cards or bordered content modules, also read `references/panel-asset-protocol.md` and run `scripts/validate_panel_assets.py --require-independent`; each semantic panel must remain independently movable.
+For repeated cards or bordered content modules, also read `references/panel-asset-protocol.md` and run `scripts/validate_panel_assets.py --require-independent`; each semantic panel must remain independently movable. During composition, place independent panel images before native overlays and keep the Pillow preview order identical to the PPTX backend.
 Record every case-specific workaround in the issue log with its trigger, why the normal path failed, scope, validation evidence and rollback/expiry condition. Promote it into the shared toolchain only when the failure is reproducible across references; otherwise keep it as a documented special attempt.
 Before visual comparison, run `scripts/reference_audit.py REFERENCE CANDIDATE`; distinguish viewer screenshot letterboxing/black bars from actual slide content, and compare at the same aspect ratio and render scale.
 
@@ -214,8 +214,9 @@ The `compose_pptx.py` CLI is only the authoring entrypoint. Its implementation
 is split across `component_expander.py`, `pptx_primitives.py`,
 `asset_placement.py`, `preview_renderer.py`, `atomic_output.py` and
 `authoring_backend.py`; `embed_fonts.py` remains the licensed OOXML font
-post-processor. The backend defaults to `Noto Sans CJK SC` and never silently
-selects Microsoft YaHei. PPTX, native-SVG rewrites and previews are published
+post-processor. The backend defaults to `Noto Sans SC`, matching the bundled
+font manifest and `NotoSansSC-Regular.ttf`, and never silently selects
+Microsoft YaHei. PPTX, native-SVG rewrites and previews are published
 through sibling temporary files, and converted SVG PNGs are cleaned up in a
 `finally` block. Use `compose_pptx.py --strict-input` for reference
 reconstruction and other delivery-bound authoring; it rejects implicit shape

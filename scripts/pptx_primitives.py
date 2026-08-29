@@ -382,7 +382,7 @@ def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
         ).table
         graphic_frame = table._graphic_frame
         graphic_frame.name = str(spec.get("object_id") or spec.get("name") or f"table-{table_index:02d}")
-        font = str(spec.get("font") or theme.get("font") or "Noto Sans CJK SC")
+        font = str(spec.get("font") or theme.get("font") or "Noto Sans SC")
         header_fill = spec.get("header_fill") or theme.get("table_header_fill")
         body_fill = spec.get("fill") or theme.get("table_fill")
         for column_index, width in enumerate((spec.get("column_widths") or [])[:columns]):
@@ -518,7 +518,7 @@ def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, r
 
         size_pt = text_size_pt(spec, slide_height_pt, ref_h)
         color = _hex_to_rgb(spec.get("color", theme.get("text_color", "#111111")))
-        font = str(spec.get("font", theme.get("font", "Noto Sans CJK SC")))
+        font = str(spec.get("font", theme.get("font", "Noto Sans SC")))
         bold = bool(spec.get("bold", False))
         italic = bool(spec.get("italic", False))
         align = spec.get("align", "left")

@@ -62,6 +62,10 @@ STYLE_TAGS = {
     "bold_italic": "boldItalic",
     "bold-italic": "boldItalic",
 }
+FAMILY_STYLE_SUFFIXES = {
+    "thin", "extralight", "extra light", "light", "regular", "medium",
+    "semibold", "semi bold", "bold", "extrabold", "extra bold", "black",
+}
 
 
 class EmbeddingError(ValueError):
@@ -444,6 +448,24 @@ def _write_xml(root: ET.Element) -> bytes:
     return ET.tostring(root, encoding="utf-8", xml_declaration=True, short_empty_elements=True)
 
 
+def _families_compatible(declared: str, actual: str) -> bool:
+    """Allow a style-suffixed variable-font family to use its root family.
+
+    Some redistributable variable fonts expose ``Family Style`` as name ID 1
+    even though fontconfig also exposes the root family.  The manifest and
+    PPTX runs should be able to use that stable root family without weakening
+    the exact-family check to arbitrary aliases.
+    """
+    declared_norm = re.sub(r"\s+", " ", declared).strip().casefold()
+    actual_norm = re.sub(r"\s+", " ", actual).strip().casefold()
+    if declared_norm == actual_norm:
+        return True
+    if not actual_norm.startswith(declared_norm + " "):
+        return False
+    suffix = actual_norm[len(declared_norm):].strip()
+    return suffix in FAMILY_STYLE_SUFFIXES
+
+
 def _validate_spec(spec: FontSpec, root: Path | None) -> tuple[bytes, FontMeta, dict]:
     if not spec.path.is_file():
         raise EmbeddingError(f"font file missing: {spec.path}")
@@ -457,7 +479,7 @@ def _validate_spec(spec: FontSpec, root: Path | None) -> tuple[bytes, FontMeta, 
     family = spec.family or meta.family
     if not family:
         raise EmbeddingError(f"font family is unavailable: {spec.path}")
-    if spec.family and meta.family and spec.family.casefold() != meta.family.casefold():
+    if spec.family and meta.family and not _families_compatible(spec.family, meta.family):
         raise EmbeddingError(f"declared family {spec.family!r} does not match font name {meta.family!r}")
     if meta.fs_type & 0x0002:
         raise EmbeddingError(f"font forbids embedding under OS/2 fsType restricted-license bit: {spec.path}")

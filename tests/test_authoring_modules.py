@@ -54,7 +54,7 @@ def main() -> int:
         assert composed.returncode == 0, composed.stdout + composed.stderr
         with zipfile.ZipFile(deck) as package:
             xml = b"".join(package.read(name) for name in package.namelist() if name.endswith(".xml"))
-        assert b"Noto Sans CJK SC" in xml
+        assert b"Noto Sans SC" in xml
         assert b"Microsoft YaHei" not in xml
 
         svg = work / "icon.svg"
