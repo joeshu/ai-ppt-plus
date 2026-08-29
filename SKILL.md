@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Turn PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, images, existing PPT/PPTX, or approved outlines into narrative-coherent, visually consistent, editable, renderable, quality-checked PowerPoint deliverables. Trigger for “做PPT/幻灯片/演示稿/路演稿/汇报材料”, outline-first deck planning, image-model-generated high-end visual-intermediate design, slide reconstruction, PPTX redesign/inspection/repair, or resuming a multi-session deck. Outputs structured briefs, source inventories, outline tables, design systems, generated visual drafts, manifests, editable PPTX, validation and delivery reports. Do not trigger for a prose-only summary, a standalone image, spreadsheet-only analysis, or image-to-PPT reconstruction when the dedicated reconstruction skill is the narrower fit.
 metadata:
- package_revision: 2026.08.29.11
+ package_revision: 2026.08.29.12
 ---
 
 # AI PPT Plus
@@ -151,10 +151,20 @@ The image-slide path follows a bounded A1–A5 contract inspired by
    one-sentence core logic, a non-repeating visual framework, a visual-only
    generation description, structured content modules, visual assets,
    reference-image usage and formal copy links back to the approved outline.
-3. A3 writes a self-contained `production_prompt` for each page. It must
+3. A3 materializes a self-contained `production_prompt` for each page. It must
    contain the canvas ratio, locked palette, layout, visual hierarchy,
    explicit anti-fabrication rules and every formal text item verbatim. The
-   visual-only description is never sent to the image model by itself.
+   visual-only description is never sent to the image model by itself. For a
+   new plan, use the deterministic visual-only helper after reviewing A2:
+
+   ```bash
+   python3 scripts/materialize_visual_generation_prompts.py \
+     visual-generation-plan.json --in-place
+   ```
+
+   The helper writes only `prompts/NN-*.md` and derived
+   `production_prompt` fields. Use `--force` only after intentionally
+   changing the plan; then run the visual-generation validator again.
 4. A4 delegates raster generation to the `GordenImagePPTGen` binding. Resolve
    the actual tool at runtime in this order: a backend explicitly named by the
    user, Codex's preferred `imagegen` tool, another available native raster

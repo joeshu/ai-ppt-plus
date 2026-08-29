@@ -48,3 +48,27 @@ design-system tokens, prompt materialization, evidence, QA and release state.
 retention only. Generated pixels never become formal text authority. This
 contract does not enter or modify the downstream `GordenImage2PPTX` /
 image-to-editable-PPTX route.
+
+## A3 prompt materialization
+
+Use `scripts/materialize_visual_generation_prompts.py` once the A2 plan and
+design system have been reviewed:
+
+```bash
+python3 scripts/materialize_visual_generation_prompts.py \
+  visual-generation-plan.json --in-place
+```
+
+The helper deterministically combines the visual-only description with the
+canvas, style lock, layout framework, structured modules, formal text and
+reference-isolation rules. It writes `prompts/NN-*.md` and the corresponding
+`production_prompt` values in the plan. It refuses to overwrite existing
+derived prompts unless `--force` is explicit, and supports `--dry-run` for a
+preflight. It is intentionally text-only: it does not invoke imagegen,
+create PNGs, patch generated pixels, compose PPTX or modify any
+image-to-editable-PPTX artifact.
+
+Run the visual-generation validator after materialization. The prompt file
+is the exact A3 handoff for A4; if a designer manually revises visual wording,
+the complete formal-copy block and anti-fabrication/no-code policies must
+remain intact.

@@ -67,7 +67,11 @@ For new image-slide work, borrow the useful A1–A5 discipline from
 - A3 materializes a self-contained `production_prompt` containing the ratio,
   locked palette, visual hierarchy, explicit no-invention rules and every
   `formal_text[].text` value verbatim. The visual-only prompt is a design
-  ingredient, not a runnable image prompt.
+  ingredient, not a runnable image prompt. Use
+  `scripts/materialize_visual_generation_prompts.py --in-place` to derive the
+  prompt from the reviewed plan; it is a text-only helper and does not call an
+  image model or write PPTX files. Manual visual refinements may adjust layout
+  wording, but must preserve the generated formal-copy block verbatim.
 - A4 records one real raster-generation event per page. The evidence manifest
   retains `generated_source` and `copied_to`, prompt file, backend, model/tool,
   canvas and current SHA-256 values. Both image paths are fully decoded during
