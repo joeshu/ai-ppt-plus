@@ -17,6 +17,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--parallel-workers N] [--affected-pages 1,3-4]
        [--page-cache-dir DIR] [--preview-dir DIR]
        [--affected-region name=x,y,w,h]
+       [--chart-manifest CHARTS.json] [--require-chart-manifest]
        [--output-dir RUN_DIR]
 """
 import argparse
@@ -229,6 +230,30 @@ def inferred_gate_requirements(project: Path, object_manifest: Path, route_data:
     }
 
 
+def project_has_charts(project: Path) -> bool:
+    """Detect declared chart content without requiring a particular layout."""
+    def contains_charts(value: object) -> bool:
+        if isinstance(value, dict):
+            charts = value.get("charts")
+            if isinstance(charts, list) and charts:
+                return True
+            return any(contains_charts(child) for child in value.values())
+        if isinstance(value, list):
+            return any(contains_charts(child) for child in value)
+        return False
+
+    for name in ("content-inventory.json", "layout.json", "slide-manifest.json"):
+        path = project / name
+        if not path.is_file():
+            continue
+        try:
+            if contains_charts(json.loads(path.read_text(encoding="utf-8"))):
+                return True
+        except (OSError, json.JSONDecodeError):
+            continue
+    return False
+
+
 def summarize_report(name: str, path: Path, report: dict):
     summary = normalize_child(name, path, report, required=True, stage=None, deck_sha256=report.get("deck_sha256"))
     summary["report"] = str(path.resolve())
@@ -252,6 +277,8 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"expected_pages": report.get("expected_pages"), "aggregate": report.get("aggregate", {}), "threshold": report.get("threshold"), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "typography_calibration":
         summary.update({"sample_count": report.get("sample_count"), "max_drift": report.get("max_drift"), "samples": report.get("samples", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "chart_manifest_validation":
+        summary.update({"chart_count": report.get("chart_count"), "charts": report.get("charts", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
     return summary
 
 
@@ -277,6 +304,8 @@ def main() -> int:
     parser.add_argument("--require-formal-content", action="store_true", help="require approved formal text authority in the route decision")
     parser.add_argument("--content-inventory", help="independent visible-content inventory for text and chart annotations")
     parser.add_argument("--require-content-inventory", action="store_true", help="require and validate the independent visible-content inventory")
+    parser.add_argument("--chart-manifest", help="traceable chart data and representation manifest; defaults to project/chart-reconstruction.json")
+    parser.add_argument("--require-chart-manifest", action="store_true", help="require and validate the chart data/representation manifest")
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
     parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
     parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
@@ -424,6 +453,11 @@ def main() -> int:
         # inferred from object counts alone.  Release therefore requires an
         # independent inventory of all visible text and chart annotations.
         args.require_content_inventory = True
+    # A release containing declared charts must carry independent chart
+    # data/representation evidence. Infer this from project content so an
+    # omitted CLI flag cannot bypass the data-authority gate.
+    if args.release and project_has_charts(project):
+        args.require_chart_manifest = True
     gate_info = project_gate_requirements(project)
     gate_requirements = gate_info.get("requirements", {})
     if args.release:
@@ -630,6 +664,38 @@ def main() -> int:
         if text_manifest_for_content.is_file() or args.require_text_model:
             content_inputs.append(text_manifest_for_content)
         add_step("content-inventory", content_args, deps=route_deps, outputs=[run_dir / "content-inventory-validation.json"], inputs=content_inputs)
+    chart_manifest = Path(args.chart_manifest).resolve() if args.chart_manifest else project / "chart-reconstruction.json"
+    chart_manifest_required = bool(args.require_chart_manifest)
+    chart_manifest_enabled = chart_manifest_required or chart_manifest.is_file()
+    if chart_manifest_required and not chart_manifest.is_file():
+        add_step(
+            "chart-manifest",
+            static_result={"name": "chart-manifest", "command": [], "exit_code": 2, "ok": False, "failure": "chart_manifest_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            deps=route_deps,
+            outputs=[run_dir / "chart-manifest-validation.json"],
+        )
+    elif chart_manifest_enabled:
+        chart_args = [str(SCRIPT_DIR / "validate_chart_manifest.py"), str(chart_manifest), "--report", str(run_dir / "chart-manifest-validation.json")]
+        if args.release:
+            chart_args.append("--require-source")
+        chart_inputs = [chart_manifest]
+        chart_deps = list(route_deps)
+        if content_inventory_enabled:
+            chart_deps.append("content-inventory")
+            if content_inventory.is_file():
+                chart_args.extend(["--content-inventory", str(content_inventory)])
+                chart_inputs.append(content_inventory)
+        try:
+            chart_data = json.loads(chart_manifest.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            chart_data = {}
+        source_reference = chart_data.get("source_reference") if isinstance(chart_data, dict) else None
+        if isinstance(source_reference, str) and source_reference:
+            source_path = (chart_manifest.parent / source_reference).resolve()
+            if source_path.is_file():
+                chart_inputs.append(source_path)
+        add_step("chart-manifest", chart_args, deps=chart_deps, outputs=[run_dir / "chart-manifest-validation.json"], inputs=list(dict.fromkeys(chart_inputs)))
     if args.require_object_manifest or object_manifest.is_file():
         object_args = [str(SCRIPT_DIR / "validate_object_manifest.py"), str(object_manifest), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "object-manifest-validation.json")]
         if args.require_independent_panels:
@@ -906,6 +972,10 @@ def main() -> int:
         project_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json")])
         if content_inventory_required:
             project_args.append("--require-content-inventory")
+    if chart_manifest_enabled:
+        project_args.extend(["--chart-manifest-validation", str(run_dir / "chart-manifest-validation.json")])
+        if chart_manifest_required:
+            project_args.append("--require-chart-manifest")
     if asset_hashes_enabled:
         project_args.extend(["--asset-hash-validation", str(run_dir / "asset-hash-validation.json")])
         if args.require_asset_hashes:
@@ -921,11 +991,13 @@ def main() -> int:
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "visual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration"):
+    for candidate in ("route", "visual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     if content_inventory_enabled:
         project_deps.append("content-inventory")
+    if chart_manifest_enabled:
+        project_deps.append("chart-manifest")
     if asset_hashes_enabled:
         project_deps.append("asset-hashes")
     project_inputs = [
@@ -949,6 +1021,7 @@ def main() -> int:
         "validation-report.json",
         "issue-log.json",
         "typography-calibration.json",
+        "chart-reconstruction.json",
     ):
         path = project / candidate
         if path.is_file():
@@ -969,6 +1042,9 @@ def main() -> int:
     )
     project_inputs.extend(
         [run_dir / "content-inventory-validation.json"] if content_inventory_enabled else []
+    )
+    project_inputs.extend(
+        [run_dir / "chart-manifest-validation.json"] if chart_manifest_enabled else []
     )
     project_inputs.extend(
         [run_dir / "asset-hash-validation.json"] if asset_hashes_enabled else []
@@ -1017,6 +1093,7 @@ def main() -> int:
             ("gradient_visual_validation", run_dir / "gradient-visual-validation.json"),
             ("reference_audit", run_dir / "reference-audit.json"),
             ("content_inventory_validation", run_dir / "content-inventory-validation.json"),
+            ("chart_manifest_validation", run_dir / "chart-manifest-validation.json"),
             ("visual_compare_qa", run_dir / "visual-qa/report.json"),
             ("project_report_aggregate", run_dir / "project-report.json"),
             (bundle_key, bundle_path),
@@ -1167,6 +1244,8 @@ def main() -> int:
         report_entries.append({"report_type": "reference-audit", "path": "reference-audit.json", "required": True, "stage": "validated"})
     if content_inventory_enabled:
         report_entries.append({"report_type": "content-inventory-validation", "path": "content-inventory-validation.json", "required": content_inventory_required, "stage": "validated"})
+    if chart_manifest_enabled:
+        report_entries.append({"report_type": "chart-manifest-validation", "path": "chart-manifest-validation.json", "required": chart_manifest_required, "stage": "validated"})
     if asset_hashes_enabled:
         report_entries.append({"report_type": "asset-hash-validation", "path": "asset-hash-validation.json", "required": args.require_asset_hashes, "stage": "validated"})
     if args.font_dir or args.require_cjk:
@@ -1185,7 +1264,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
@@ -1248,6 +1327,10 @@ def main() -> int:
         ]
         if content_inventory_required:
             release_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json"), "--require-content-inventory"])
+        if chart_manifest_enabled:
+            release_args.extend(["--chart-manifest-validation", str(run_dir / "chart-manifest-validation.json")])
+            if chart_manifest_required:
+                release_args.append("--require-chart-manifest")
         if asset_hashes_enabled:
             release_args.extend(["--asset-hash-validation", str(run_dir / "asset-hash-validation.json")])
             if args.require_asset_hashes:

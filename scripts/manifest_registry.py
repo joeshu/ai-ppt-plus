@@ -179,6 +179,14 @@ def build(args: argparse.Namespace) -> int:
             if not isinstance(item, dict):
                 continue
             asset = canonical_asset(item, source, path_base, item_index)
+            # Panel manifests produced before source_ref was added still have
+            # a manifest-level source image.  Carry it down to AssetSpec so
+            # the registry remains traceable without forcing a re-approval.
+            if not asset.get("source_ref") and isinstance(data.get("source"), str) and data.get("source"):
+                source_ref = Path(data["source"])
+                if not source_ref.is_absolute():
+                    source_ref = asset_path.parent / source_ref
+                asset["source_ref"] = path_ref(source_ref, base)
             resolved = _resolve_path(asset.get("path"), asset.get("path_base"), base)
             if resolved and resolved.is_file():
                 asset["path_sha256"] = digest(resolved)
@@ -341,11 +349,21 @@ def _text_model_spec(spec: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
-def _validate_text_specs(text_specs: list[Any], slide_no: Any, issues: list[dict[str, Any]], warnings: list[dict[str, Any]]) -> None:
+def _validate_text_specs(
+    text_specs: list[Any],
+    slide_no: Any,
+    issues: list[dict[str, Any]],
+    warnings: list[dict[str, Any]],
+    *,
+    units: str = "fraction",
+) -> None:
     adapted = [_text_model_spec(spec) for spec in text_specs if isinstance(spec, dict)]
     result = validate_text_manifest({
         "schema": "ai-ppt-plus/text-layout-manifest/v1",
-        "units": "fraction",
+        # Keep the registry validator in the same coordinate space as the
+        # source layout.  Treating pixel bboxes as fractions creates a large
+        # set of false warnings for otherwise valid slide geometry.
+        "units": units,
         "reference_size": {},
         "slides": [{"slide_no": slide_no, "text_specs": adapted}],
     })
@@ -657,7 +675,9 @@ def validate(args: argparse.Namespace) -> int:
                 _append_issue(issues, "text_spec_without_editable_object", slide_no=slide_no, text_id=text_id)
             elif not any(obj.get("object_type") == "editable_text" for obj in matching):
                 _append_issue(issues, "text_spec_object_not_editable_text", slide_no=slide_no, text_id=text_id)
-        _validate_text_specs(text_specs, slide_no, issues, warnings)
+        geometry = slide.get("geometry") if isinstance(slide.get("geometry"), dict) else {}
+        units = str(geometry.get("coordinate_space") or "fraction")
+        _validate_text_specs(text_specs, slide_no, issues, warnings, units=units)
 
         for asset_id in _refs(slide.get("asset_ids")):
             if asset_id not in assets_by_id:

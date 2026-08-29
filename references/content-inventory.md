@@ -34,9 +34,12 @@ The gate checks page coverage, duplicate IDs, complete editable-text coverage,
 object/text-manifest agreement,
 native text-box identity, exact PPTX text, and chart annotation completeness.
 For a native chart, `source_data_status` must be `verified` and the source
-data/hash evidence must be carried by the object manifest. For a static chart
-or SVG fallback, the visible labels still remain native text objects; the
-fallback does not excuse missing months, legends, units, or data labels.
+data/hash evidence must be carried by the object manifest. An OCR or visual
+transcription without authoritative confirmation must use
+`static_line_primitives` or another explicit fallback; it must never be
+promoted to a native chart silently. For a static chart or SVG fallback, the
+visible labels still remain native text objects; the fallback does not excuse
+missing months, legends, units, or data labels.
 
 Do not use a screenshot crop as the only evidence for formal text. If OCR is
 unavailable, keep the transcription authority explicit (`approved_outline` or

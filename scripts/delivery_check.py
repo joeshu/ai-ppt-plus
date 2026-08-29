@@ -75,6 +75,8 @@ def main() -> int:
     parser.add_argument("--ocr-report")
     parser.add_argument("--content-inventory-validation")
     parser.add_argument("--require-content-inventory", action="store_true")
+    parser.add_argument("--chart-manifest-validation")
+    parser.add_argument("--require-chart-manifest", action="store_true")
     parser.add_argument("--asset-hash-validation")
     parser.add_argument("--require-asset-hashes", action="store_true")
     parser.add_argument("--multipage-layout-validation")
@@ -110,6 +112,7 @@ def main() -> int:
     text_model_report = load(args.text_layout_validation) if args.text_layout_validation else None
     text_style_report = load(args.text_style_map_validation) if args.text_style_map_validation else None
     content_inventory_report = load(args.content_inventory_validation) if args.content_inventory_validation else None
+    chart_manifest_report = load(args.chart_manifest_validation) if args.chart_manifest_validation else None
     asset_hash_report = load(args.asset_hash_validation) if args.asset_hash_validation else None
     multipage_layout_report = load(args.multipage_layout_validation) if args.multipage_layout_validation else None
     preview_consistency_report = load(args.preview_consistency_validation) if args.preview_consistency_validation else None
@@ -174,6 +177,7 @@ def main() -> int:
     required_quality(text_model_report, args.require_text_model, "text_model_validation_failed", "text model validation")
     required_quality(text_style_report, args.require_text_style_map, "text_style_map_validation_failed", "text style map validation")
     required_quality(content_inventory_report, args.require_content_inventory, "content_inventory_validation_failed", "visible-content inventory")
+    required_quality(chart_manifest_report, args.require_chart_manifest, "chart_manifest_validation_failed", "chart manifest")
     required_quality(asset_hash_report, args.require_asset_hashes, "asset_hash_validation_failed", "asset hash validation")
     required_quality(multipage_layout_report, args.require_multipage_layout, "multipage_layout_validation_failed", "multi-page layout validation")
     required_quality(preview_consistency_report, args.require_preview_consistency, "preview_consistency_validation_failed", "preview/final-render consistency")
@@ -186,6 +190,15 @@ def main() -> int:
             "checked_count": asset_hash_report.get("checked_count"),
             "issues": asset_hash_report.get("issues", []),
             "warnings": asset_hash_report.get("warnings", []),
+        }
+    if chart_manifest_report:
+        quality_evidence["chart_manifest_validation"] = {
+            "valid": chart_manifest_report.get("valid"),
+            "status": chart_manifest_report.get("status"),
+            "chart_count": chart_manifest_report.get("chart_count"),
+            "charts": chart_manifest_report.get("charts", []),
+            "issues": chart_manifest_report.get("errors", chart_manifest_report.get("issues", [])),
+            "warnings": chart_manifest_report.get("warnings", []),
         }
     if multipage_layout_report:
         quality_evidence["multipage_layout_validation"] = {

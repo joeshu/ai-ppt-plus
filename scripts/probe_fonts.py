@@ -13,7 +13,7 @@ from atomic_output import atomic_write_json, atomic_write_text
 # Keep the probe's implicit route on redistributable/open families.  A
 # proprietary family can still be requested explicitly with --font after the
 # caller has established its license and device availability.
-DEFAULT=['Noto Sans SC','Noto Sans CJK SC','WenQuanYi Zen Hei']
+DEFAULT=['Noto Sans CJK SC','Noto Sans SC','WenQuanYi Zen Hei']
 def license_status(font_dir):
     if not font_dir or not font_dir.is_dir():
         return {'status':'not_applicable','files':[]}

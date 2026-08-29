@@ -2,7 +2,10 @@
 """Build a semantic object manifest from layout and asset manifests.
 
 Geometry remains in layout.json; this command only creates the canonical
-identity/provenance/editability inventory consumed by the release gates.
+identity/provenance/editability inventory consumed by the release gates. File
+references are normalized relative to the output manifest when the referenced
+asset lives below the project bundle. That keeps semantic audits working when
+``layout.json`` uses a separate ``assets_dir``.
 """
 from __future__ import annotations
 
@@ -52,6 +55,28 @@ def _source_fields(layout: dict, value: object) -> dict:
     if path is None or not path.is_file():
         return {}
     return {"source_sha256": _file_sha256(path)}
+
+
+def _source_reference(layout: dict, value: object, output_base: Path | None) -> str:
+    """Return an audit-resolvable path without losing the raw provenance.
+
+    ``assets_dir`` is the authoring lookup root, while semantic audits resolve
+    object-manifest paths from the manifest directory.  A path that is valid
+    for composition can therefore be invisible to the audit.  Normalize only
+    when the file exists and an output base is known; otherwise preserve the
+    legacy value so incomplete exploratory layouts remain inspectable.
+    """
+    raw = str(value) if value is not None else ""
+    resolved = _asset_path(layout, value)
+    if output_base is None or resolved is None or not resolved.is_file():
+        return raw
+    try:
+        return resolved.relative_to(output_base.resolve()).as_posix()
+    except ValueError:
+        # A source outside the project bundle cannot be made portable without
+        # copying it. Keep an absolute evidence path so the failure is
+        # explicit rather than silently pointing at the wrong directory.
+        return str(resolved)
 
 
 def _data_source_fields(layout: dict, value: object) -> dict:
@@ -119,7 +144,13 @@ def obj(object_id, role, object_type, level, *, required=True, review=False, **e
     return base
 
 
-def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> dict:
+def build(
+    layout: dict,
+    panel_manifest: dict | None,
+    imagegen: dict | None,
+    *,
+    output_base: Path | None = None,
+) -> dict:
     has_components = bool(layout.get("components")) or any(isinstance(slide, dict) and slide.get("components") for slide in layout.get("slides", []))
     if has_components:
         from compose_pptx import _expand_components
@@ -138,16 +169,16 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
         objects = []
         bg = slide.get("background")
         if bg:
-            objects.append(obj(slide.get("background_object_id", "background"), "background", "independent_image", "L2", review=True, replaceable=True, contains_formal_content=False, source_path=str(bg), **_source_fields(layout, bg)))
+            objects.append(obj(slide.get("background_object_id", "background"), "background", "independent_image", "L2", review=True, replaceable=True, contains_formal_content=False, provenance=str(bg), source_path=_source_reference(layout, bg, output_base), **_source_fields(layout, bg)))
         frame = slide.get("frame")
         if frame:
-            objects.append(obj(slide.get("frame_object_id", "frame"), "frame", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, contains_formal_content=False, provenance=str(frame), source_path=str(frame), **_source_fields(layout, frame)))
+            objects.append(obj(slide.get("frame_object_id", "frame"), "frame", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, contains_formal_content=False, provenance=str(frame), source_path=_source_reference(layout, frame, output_base), **_source_fields(layout, frame)))
         for i, panel in enumerate(slide.get("panels", []), 1):
             pid = str(panel.get("object_id") or panel.get("panel_id") or f"panel-{i:02d}")
             layout_file = str(panel.get("file", ""))
             evidence = panels_by_file.get(layout_file) or panels_by_file.get(Path(layout_file).name) or {}
             baked = bool(panel.get("formal_text_baked_in", evidence.get("formal_text_baked_in", False)))
-            objects.append(obj(pid, "semantic-panel", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, independent=True, contains_formal_content=baked, provenance=str(evidence.get("source") or panel.get("file")), source_path=layout_file, source_bbox=evidence.get("source_bbox"), **_source_fields(layout, layout_file)))
+            objects.append(obj(pid, "semantic-panel", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, independent=True, contains_formal_content=baked, provenance=str(evidence.get("source") or panel.get("file")), source_path=_source_reference(layout, layout_file, output_base), source_bbox=evidence.get("source_bbox"), **_source_fields(layout, layout_file)))
         for i, shape in enumerate(slide.get("shapes", []), 1):
             sid = str(shape.get("object_id") or shape.get("name") or f"shape-{i:02d}")
             objects.append(obj(sid, "native-shape", "native_shape", "L1", review=False, contains_formal_content=False, component_ref=shape.get("component_id")))
@@ -176,7 +207,7 @@ def build(layout: dict, panel_manifest: dict | None, imagegen: dict | None) -> d
             is_svg = Path(icon_file).suffix.casefold() == ".svg"
             vector_editable = bool(icon.get("vector_editable", False))
             brand = role in {"brand_lockup", "logo", "brand-logo"} or icon.get("asset_policy") == "brand_lockup"
-            objects.append(obj(iid, role, "editable_vector" if vector_editable else "extracted_icon", "L1" if vector_editable else "L2", review=True, replaceable=True, vector_asset=is_svg, contains_formal_content=False, source_path=icon_file, provenance=icon_file, asset_policy="brand_lockup" if brand else icon.get("asset_policy", "normal_asset"), brand_asset_contract={"whole_asset": True, "allow_crop": False} if brand else None, **_source_fields(layout, icon_file), component_ref=icon.get("component_id")))
+            objects.append(obj(iid, role, "editable_vector" if vector_editable else "extracted_icon", "L1" if vector_editable else "L2", review=True, replaceable=True, vector_asset=is_svg, contains_formal_content=False, source_path=_source_reference(layout, icon_file, output_base), provenance=icon_file, asset_policy="brand_lockup" if brand else icon.get("asset_policy", "normal_asset"), brand_asset_contract={"whole_asset": True, "allow_crop": False} if brand else None, **_source_fields(layout, icon_file), component_ref=icon.get("component_id")))
         for i, text in enumerate(slide.get("texts", []), 1):
             tid = str(text.get("object_id") or text.get("name") or f"text-{i:02d}")
             objects.append(obj(
@@ -203,8 +234,13 @@ def main() -> int:
     ap.add_argument("--imagegen-manifest")
     ap.add_argument("--output", required=True)
     args = ap.parse_args()
-    data = build(read(args.layout), read(args.panel_manifest) if args.panel_manifest else None, read(args.imagegen_manifest) if args.imagegen_manifest else None)
     out = Path(args.output)
+    data = build(
+        read(args.layout),
+        read(args.panel_manifest) if args.panel_manifest else None,
+        read(args.imagegen_manifest) if args.imagegen_manifest else None,
+        output_base=out.resolve().parent,
+    )
     atomic_write_json(out, data)
     print(json.dumps({"valid": True, "slides": len(data["slides"]), "objects": sum(len(s["objects"]) for s in data["slides"]), "output": str(out)}, ensure_ascii=False))
     return 0

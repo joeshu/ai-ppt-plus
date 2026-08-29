@@ -76,6 +76,11 @@ def main() -> int:
     unknown = (set(replacements) | excluded) - ids
     if unknown:
         ap.error(f"unknown candidate id(s): {', '.join(sorted(unknown))}")
+    # Preserve the image that the reviewer actually approved on every panel
+    # record.  Older versions only kept source_sha256 at the manifest level,
+    # which made the later manifest registry emit asset_source_ref_missing
+    # warnings even though source_bbox was fully traceable.
+    source_path = data.get("source")
     panels = []
     for item in candidates:
         if not isinstance(item, dict):
@@ -89,6 +94,7 @@ def main() -> int:
         panels.append({
             "panel_id": cid,
             "file": f"{cid}.png",
+            "source_ref": source_path,
             "source_bbox": [int(round(float(v))) for v in bbox],
             "treatment": "transparent-image",
             "formal_text_baked_in": False,
@@ -99,7 +105,6 @@ def main() -> int:
     if not panels:
         ap.error("approval would produce no panels")
     approved_at = args.approved_at or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-    source_path = data.get("source")
     source_file = Path(source_path) if source_path else None
     if source_file is not None and not source_file.is_absolute():
         source_file = source.parent / source_file

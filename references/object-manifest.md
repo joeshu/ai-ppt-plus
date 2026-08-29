@@ -31,9 +31,14 @@ auditor treats both ordinary auto-shapes and `python-pptx` `LINE` shapes as
 because its runtime shape enum is `LINE`.
 
 The object builder records `data_snapshot` for inline tables/charts and
-`source_sha256` for locally available image assets. A production manifest must
-retain those fields (or a resolvable `data_source`/source hash); otherwise the
-semantic gate cannot prove source identity and blocks the affected object.
+`source_sha256` for locally available image assets. For file-backed objects it
+also normalizes an existing asset path relative to the output manifest when
+the file is below the project bundle. This is important when `layout.json`
+uses a separate `assets_dir`: composition may resolve that directory while the
+semantic auditor resolves from `slide-object-manifest.json`. A production
+manifest must retain these fields (or a resolvable `data_source`/source hash);
+otherwise the semantic gate cannot prove source identity and blocks the
+affected object.
 
 Run it directly after the object inventory is reviewed:
 

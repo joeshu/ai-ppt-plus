@@ -1,0 +1,279 @@
+{
+  "schema": "ai-ppt-plus/test-run/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-08-29T06:58:22.039799+00:00",
+  "python": "3.12.13",
+  "tests": [
+    {
+      "test": "tests/test_asset_hashes.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "asset hash gates: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_authoring_modules.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "authoring module split and atomic output: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_chart_line_primitives.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "diagonal line primitives: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_chart_reconstruction.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "chart reconstruction evidence gates: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_component_instances.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "component instances and rendering: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_component_library.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "component library contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_content_inventory.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "content inventory and backend binding: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_delivery.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "portable font delivery triple gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_embedding.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "PresentationML font embedding and restricted-rights gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_metadata_gate.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "font metadata gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_missing.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "font missing gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_golden_render.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "golden render regression: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_incremental_render.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "incremental selected-page render: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_irregular_regions.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "irregular region contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_manifest_registry.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "manifest registry tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_native_objects.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native objects contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_object_manifest_paths.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "separate assets_dir object-manifest paths: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_p2_guards.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "P2 multi-page, preview and strict-input gates: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_panel_approval.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "panel approval counts arbitrary N=1..9: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_panel_layer_order.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "panel substrate/native overlay layer order: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_pipeline_engine.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "pipeline DAG/cache contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_pipeline_integration.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "pipeline DAG integration and incremental page mode: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_pptx_package.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "PPTX package unzip contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_preview_font_fallback.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "preview bold fallback: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_report_bundle.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "report bundle freshness and consistency: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_report_review.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "report envelope and HTML review: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_revision_guard.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "revision guard baseline: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_route_contracts.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "package and route contracts: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_schema_contracts.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "schema contracts: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_semantic_object_audit.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "semantic object audit: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_semantic_object_types.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native line semantic classification: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_slide_manifest_builder.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "slide manifest builder: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_text_model.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "text model contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_typography_calibration.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "typography calibration gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_validate_source_images.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "source image full-decode gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_viewer_capture.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "viewer capture normalization: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_visual_compare_dimensions.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual comparison size normalization: ok\n",
+      "stderr": ""
+    }
+  ],
+  "fixture_validation": {
+    "status": "passed",
+    "valid": true,
+    "files": [
+      "/workspace/scratch/0146f07be8cc/ai-ppt-plus/evals/failure-cases.yaml",
+      "/workspace/scratch/0146f07be8cc/ai-ppt-plus/evals/trigger-cases.yaml",
+      "/workspace/scratch/0146f07be8cc/ai-ppt-plus/evals/workflow-cases.yaml"
+    ],
+    "issues": []
+  },
+  "failed": []
+}

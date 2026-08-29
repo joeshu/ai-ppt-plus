@@ -1,0 +1,66 @@
+{
+  "schema": "ai-ppt-plus/chart-reconstruction/v1",
+  "project_id": "",
+  "source_reference": "reference/slide-1.png",
+  "source_sha256": "",
+  "coordinate_space": "reference_pixels",
+  "canvas": [1409, 798],
+  "charts": [
+    {
+      "chart_id": "chart-02",
+      "slide_no": 1,
+      "title": "月度降套用户降收金额（万元）",
+      "representation": "static_line_primitives",
+      "editability_level": "L2",
+      "source_data_status": "unverified",
+      "source_data_note": "视觉转录，未提供原始工作簿；发布前需人工确认。",
+      "data_source": {
+        "kind": "image_transcription",
+        "authority": "visual_reference",
+        "method": "ocr_plus_human_readback",
+        "source_reference": "reference/slide-1.png",
+        "source_bbox": [0, 0, 0, 0]
+      },
+      "categories": ["1月", "2月", "3月"],
+      "series": [
+        {
+          "series_id": "series-2025",
+          "name": "2025年",
+          "color": "#667A45",
+          "values": [0, 0, 0],
+          "value_labels": []
+        },
+        {
+          "series_id": "series-2026",
+          "name": "2026年",
+          "color": "#EAA035",
+          "values": [0, 0, 0],
+          "value_labels": []
+        }
+      ],
+      "missing_value_policy": "blank_not_zero",
+      "data_snapshot_sha256": "",
+      "geometry": {
+        "source_bbox": [0, 0, 0, 0],
+        "plot_bbox": [0, 0, 0, 0],
+        "point_anchor_tolerance": 0.015
+      },
+      "style": {
+        "line_width_px": 2.2,
+        "marker": "circle",
+        "gridline": "minimal_dashed"
+      },
+      "required_elements": ["title", "legend", "category_labels", "data_labels"],
+      "visible_elements": {
+        "title": [],
+        "legend": [],
+        "category_labels": [],
+        "data_labels": []
+      },
+      "qa": {
+        "reference_region": [0, 0, 0, 0],
+        "status": "pending_human_review"
+      }
+    }
+  ]
+}

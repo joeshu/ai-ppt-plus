@@ -77,6 +77,22 @@ def main() -> int:
         (archive / "preview/slide-1.png").write_bytes(b"changed")
         if run("verify", str(archive)).returncode == 0:
             raise AssertionError("changed artifact must fail verification")
+
+        project = root / "project"
+        project.mkdir()
+        (project / "layout.json").write_text("{}", encoding="utf-8")
+        snapshot_deck = project / "deck.pptx"
+        snapshot_deck.write_bytes(b"snapshot-deck")
+        first = run("prepare", str(project), "--deck", str(snapshot_deck), "--label", "R1")
+        if first.returncode != 0:
+            raise AssertionError(first.stdout + first.stderr)
+        retry = run("prepare", str(project), "--deck", str(snapshot_deck), "--label", "R1")
+        if retry.returncode != 0 or '"reused": true' not in retry.stdout:
+            raise AssertionError("same-source retry should reuse the immutable snapshot: " + retry.stdout + retry.stderr)
+        snapshot_deck.write_bytes(b"changed-deck")
+        stale_retry = run("prepare", str(project), "--deck", str(snapshot_deck), "--label", "R1")
+        if stale_retry.returncode == 0 or "snapshot_exists" not in stale_retry.stdout:
+            raise AssertionError("stale snapshot must still block reuse")
     print("revision guard baseline: ok")
     return 0
 

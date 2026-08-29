@@ -157,6 +157,12 @@ def _iter_inventory_text(slide_no: int, slide: dict[str, Any], errors: list[dict
         source_status = chart.get("source_data_status")
         if source_status not in {"verified", "unverified", "unavailable"}:
             errors.append({"severity": "blocker", "code": "chart_source_status_invalid", "slide_no": slide_no, "chart_id": chart_id, "observed": source_status})
+        # A native chart exposes an editable data model. It must be backed by
+        # authoritative data, not merely values visually transcribed from a
+        # screenshot. Unverified transcriptions remain valid for an explicit
+        # static/vector chart route.
+        if representation == "native_chart" and source_status != "verified":
+            errors.append({"severity": "blocker", "code": "native_chart_requires_verified_data", "slide_no": slide_no, "chart_id": chart_id, "source_data_status": source_status})
         required_elements = chart.get("required_elements")
         if not isinstance(required_elements, list) or not required_elements:
             errors.append({"severity": "blocker", "code": "chart_required_elements_missing", "slide_no": slide_no, "chart_id": chart_id})

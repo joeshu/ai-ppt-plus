@@ -52,6 +52,23 @@ calibration gate. This saves a full render on an incomplete repair and makes
 the WPS/PowerPoint typography regression explicit instead of hiding it in a
 global similarity score.
 
+## Chart fast path
+
+Charts are a frequent source of long, low-value repair loops. First create one
+chart manifest from the source hash and chart crops; run OCR/readback for the
+three crops concurrently; and cache the canonical data/style records. If no
+authoritative workbook or approved table exists, stop trying native chart
+variants and route directly to `static_line_primitives` (or an explicit
+`raster_fallback` for a chart whose geometry is not recoverable). This keeps
+the visual result editable without inventing data.
+
+During chart repair, pass the affected page and chart region to the pipeline,
+validate the chart manifest and visible-content inventory before rendering,
+and render only the affected page. Batch line/marker, label and spacing fixes
+into one iteration. Reserve one full-deck render, font embedding and report
+bundle for release. The chart manifest is content-addressed by source/data
+hash, so a typography-only retry does not repeat chart extraction.
+
 ## Page and region scope
 
 `--affected-pages 1,3-4` makes the renderer emit only those pages and passes the

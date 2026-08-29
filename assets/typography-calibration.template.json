@@ -6,7 +6,7 @@
   "rendered_image": "rendered/slide-1.png",
   "font_profile": {
     "source_family": "unknown",
-    "render_family": "Noto Sans SC",
+    "render_family": "Noto Sans CJK SC",
     "metric_assumption": "measured_from_normalized_ink_bbox"
   },
   "samples": [

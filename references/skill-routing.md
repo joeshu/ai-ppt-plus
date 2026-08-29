@@ -34,6 +34,8 @@ These contracts are project-level and must be consumed by all routes:
   charts and vector asset evidence.
 - `references/report-protocol.md` defines the normalized report envelope and
   the technical/human/release state split.
+- `references/chart-reconstruction.md` defines chart data authority,
+  representation selection, missing-value handling and chart-specific QA.
 - `references/font-embedding.md` and `references/font-portability.md` define
   the font evidence and delivery restrictions.
 

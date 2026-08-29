@@ -3,7 +3,7 @@
   "library_id": "default-components",
   "version": "1.0.0",
   "tokens": {
-    "font": "Noto Sans SC",
+    "font": "Noto Sans CJK SC",
     "text_color": "#222222",
     "accent_color": "#E60012",
     "spacing_unit": 0.08

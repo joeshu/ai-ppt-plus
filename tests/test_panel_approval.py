@@ -35,6 +35,7 @@ def main() -> int:
             assert result.returncode == 0, result.stderr
             data = json.loads(approved.read_text(encoding="utf-8"))
             assert data["status"] == "approved" and len(data["panels"]) == count
+            assert all(panel["source_ref"] == str(image) for panel in data["panels"])
             check = run("scripts/validate_panel_assets.py", str(approved), "--require-approved", "--expected-count", str(count), "--strict")
             assert check.returncode == 0, check.stderr
             assets_dir = root / f"assets-{count}"
@@ -43,6 +44,7 @@ def main() -> int:
             assert extract.returncode == 0, extract.stderr
             extracted_data = json.loads(extracted.read_text(encoding="utf-8"))
             assert all(str(panel["file"]).startswith(f"assets-{count}/") for panel in extracted_data["panels"])
+            assert all(panel["source_ref"] == str(image) for panel in extracted_data["panels"])
             check = run("scripts/validate_panel_assets.py", str(extracted), "--assets-dir", str(root), "--require-approved", "--expected-count", str(count), "--strict")
             assert check.returncode == 0, check.stderr
     print("panel approval counts arbitrary N=1..9: ok")

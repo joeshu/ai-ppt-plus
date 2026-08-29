@@ -1,0 +1,25 @@
+{
+  "schema": "ai-ppt-plus/routing-contract-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "contract": "/workspace/scratch/0146f07be8cc/ai-ppt-plus/assets/skill-routing.template.json",
+  "issues": [],
+  "bindings": {
+    "orchestrator": {
+      "skill": "ai-ppt-plus",
+      "entrypoint": "scripts/run_pipeline.py"
+    },
+    "reconstruction": {
+      "skill": "GordenImage2PPTX",
+      "invocation": "external-skill",
+      "required_for": [
+        "reference-reconstruction"
+      ]
+    },
+    "authoring": {
+      "backend": "python-pptx",
+      "entrypoint": "scripts/authoring_backend.py",
+      "font_postprocessor": "scripts/embed_fonts.py"
+    }
+  }
+}

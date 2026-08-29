@@ -112,11 +112,14 @@ def canonical_region(item: dict[str, Any], slide_no: int, ordinal: int) -> dict[
     if not isinstance(asset_ids, list):
         asset_id = first(item, "asset_id", "panel_id")
         asset_ids = [str(asset_id)] if asset_id not in (None, "") else []
+    raw_bbox = first(item, "bbox", "source_bbox", "box")
+    if raw_bbox is None and all(is_number(item.get(key)) for key in ("x", "y", "w", "h")):
+        raw_bbox = [item[key] for key in ("x", "y", "w", "h")]
     result = {
         "region_id": region_id,
         "slide_no": slide_no,
         "role": first(item, "role", "region_role") or "region",
-        "bbox": canonical_bbox(first(item, "bbox", "source_bbox", "box")),
+        "bbox": canonical_bbox(raw_bbox),
         "polygon": canonical_polygon(item.get("polygon")),
         "object_ids": [str(value) for value in object_ids if value not in (None, "")],
         "asset_ids": [str(value) for value in asset_ids if value not in (None, "")],

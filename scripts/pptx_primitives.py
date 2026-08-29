@@ -236,27 +236,45 @@ def add_shapes(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
     for index, spec in enumerate(specs, 1):
         fx = _frac(deck, spec, "x", ref_w)
         fy = _frac(deck, spec, "y", ref_h)
-        fw = _frac(deck, spec, "w", ref_w)
-        fh = _frac(deck, spec, "h", ref_h)
-        _validate_box(deck, spec, fx, fy, fw, fh, f"shape {index}")
-        left, top = Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu))
-        width, height = Emu(int(fw * sw_emu)), Emu(int(fh * sh_emu))
         if deck.get("strict_input") and "type" not in spec:
             _die(f"shape {index} requires an explicit type in strict input mode")
         shape_type = spec.get("type", "rounded_rect")
         if shape_type == "line":
+            # Lines are not boxes: a descending segment needs a negative
+            # delta, which cannot be represented by the historical positive
+            # w/h contract.  Accept explicit x2/y2 endpoints while retaining
+            # the old x/y/w/h form for backwards compatibility.
+            if ("x2" in spec) != ("y2" in spec):
+                _die(f"line shape {index} requires both x2 and y2 when either endpoint is provided")
+            if "x2" in spec:
+                ex = _frac(deck, spec, "x2", ref_w)
+                ey = _frac(deck, spec, "y2", ref_h)
+                if not spec.get("allow_bleed") is True and deck.get("strict_input"):
+                    if any(value < 0 or value > 1 for value in (fx, fy, ex, ey)):
+                        _die(f"line shape {index} endpoints must stay within the slide in strict input mode")
+                x1, y1, x2, y2 = fx, fy, ex, ey
+            else:
+                fw = _frac(deck, spec, "w", ref_w)
+                fh = _frac(deck, spec, "h", ref_h)
+                _validate_box(deck, spec, fx, fy, fw, fh, f"shape {index}")
+                x1, y1, x2, y2 = fx, fy, fx + fw, fy + fh
             connector = slide.shapes.add_connector(
                 MSO_CONNECTOR.STRAIGHT,
-                left,
-                top,
-                Emu(int((fx + fw) * sw_emu)),
-                Emu(int((fy + fh) * sh_emu)),
+                Emu(int(x1 * sw_emu)),
+                Emu(int(y1 * sh_emu)),
+                Emu(int(x2 * sw_emu)),
+                Emu(int(y2 * sh_emu)),
             )
             connector.line.color.rgb = _hex_to_rgb(spec.get("line", spec.get("fill", "#FFFFFF")))
             connector.line.width = Pt(float(spec.get("line_width", 1.5)))
             connector.name = str(spec.get("object_id") or spec.get("name") or f"shape-{index:02d}")
             continue
 
+        fw = _frac(deck, spec, "w", ref_w)
+        fh = _frac(deck, spec, "h", ref_h)
+        _validate_box(deck, spec, fx, fy, fw, fh, f"shape {index}")
+        left, top = Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu))
+        width, height = Emu(int(fw * sw_emu)), Emu(int(fh * sh_emu))
         if shape_type not in shape_types:
             _die(f"unsupported shape type: {shape_type}")
         shape = slide.shapes.add_shape(shape_types[shape_type], left, top, width, height)
@@ -313,22 +331,36 @@ def add_groups(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
                 child_deck = deck
             cfx = _frac(child_deck, child, "x", ref_w)
             cfy = _frac(child_deck, child, "y", ref_h)
-            cfw = _frac(child_deck, child, "w", ref_w)
-            cfh = _frac(child_deck, child, "h", ref_h)
-            _validate_box(deck, child, cfx, cfy, cfw, cfh, f"group {group_index} child {child_index}")
             child_name = str(child.get("object_id") or child.get("name") or f"{group.name}-child-{child_index:02d}")
             if child.get("type", "rounded_rect") == "line":
+                if ("x2" in child) != ("y2" in child):
+                    _die(f"group {group_index} line child {child_index} requires both x2 and y2 when either endpoint is provided")
+                if "x2" in child:
+                    cex = _frac(child_deck, child, "x2", ref_w)
+                    cey = _frac(child_deck, child, "y2", ref_h)
+                    if not child.get("allow_bleed") is True and deck.get("strict_input"):
+                        if any(value < 0 or value > 1 for value in (cfx, cfy, cex, cey)):
+                            _die(f"group {group_index} line child {child_index} endpoints must stay within the slide in strict input mode")
+                    cx1, cy1, cx2, cy2 = cfx, cfy, cex, cey
+                else:
+                    cfw = _frac(child_deck, child, "w", ref_w)
+                    cfh = _frac(child_deck, child, "h", ref_h)
+                    _validate_box(deck, child, cfx, cfy, cfw, cfh, f"group {group_index} child {child_index}")
+                    cx1, cy1, cx2, cy2 = cfx, cfy, cfx + cfw, cfy + cfh
                 connector = group.shapes.add_connector(
                     MSO_CONNECTOR.STRAIGHT,
-                    Emu(int(cfx * sw_emu)),
-                    Emu(int(cfy * sh_emu)),
-                    Emu(int((cfx + cfw) * sw_emu)),
-                    Emu(int((cfy + cfh) * sh_emu)),
+                    Emu(int(cx1 * sw_emu)),
+                    Emu(int(cy1 * sh_emu)),
+                    Emu(int(cx2 * sw_emu)),
+                    Emu(int(cy2 * sh_emu)),
                 )
                 connector.line.color.rgb = _hex_to_rgb(child.get("line", child.get("fill", "#FFFFFF")))
                 connector.line.width = Pt(float(child.get("line_width", 1.5)))
                 connector.name = child_name
                 continue
+            cfw = _frac(child_deck, child, "w", ref_w)
+            cfh = _frac(child_deck, child, "h", ref_h)
+            _validate_box(deck, child, cfx, cfy, cfw, cfh, f"group {group_index} child {child_index}")
             if deck.get("strict_input") and "type" not in child:
                 _die(f"group {group_index} child {child_index} requires an explicit type in strict input mode")
             child_type = child.get("type", "rounded_rect")
@@ -382,7 +414,7 @@ def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
         ).table
         graphic_frame = table._graphic_frame
         graphic_frame.name = str(spec.get("object_id") or spec.get("name") or f"table-{table_index:02d}")
-        font = str(spec.get("font") or theme.get("font") or "Noto Sans SC")
+        font = str(spec.get("font") or theme.get("font") or "Noto Sans CJK SC")
         header_fill = spec.get("header_fill") or theme.get("table_header_fill")
         body_fill = spec.get("fill") or theme.get("table_fill")
         for column_index, width in enumerate((spec.get("column_widths") or [])[:columns]):
@@ -518,7 +550,7 @@ def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, r
 
         size_pt = text_size_pt(spec, slide_height_pt, ref_h)
         color = _hex_to_rgb(spec.get("color", theme.get("text_color", "#111111")))
-        font = str(spec.get("font", theme.get("font", "Noto Sans SC")))
+        font = str(spec.get("font", theme.get("font", "Noto Sans CJK SC")))
         bold = bool(spec.get("bold", False))
         italic = bool(spec.get("italic", False))
         align = spec.get("align", "left")
