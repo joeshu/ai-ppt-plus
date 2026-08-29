@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression tests for the GordenImagePPTGen-compatible visual route."""
+"""Regression tests for the ai-ppt-visual-gen A1-A5 visual route."""
 from __future__ import annotations
 
 import hashlib
@@ -71,7 +71,7 @@ def build_plan() -> dict:
             "avoid_items": ["placeholder text", "invented numbers", "random icon collage"],
         },
         "generation_contract": {
-            "skill": "GordenImagePPTGen",
+            "skill": "ai-ppt-visual-gen",
             "tool_resolution": "runtime-discovery",
             "preferred_tool": "imagegen",
             "backend_policy": "raster-only",
@@ -159,7 +159,7 @@ def main() -> int:
             "schema": "ai-ppt-plus/visual-generation-manifest/v1",
             "project_id": "visual-generation-fixture",
             "plan_sha256": digest(plan),
-            "generator_skill": "GordenImagePPTGen",
+            "generator_skill": "ai-ppt-visual-gen",
             "tool_resolution": "runtime-discovery",
             "backend_policy": "raster-only",
             "source_retention": "generated-source-and-project-copy",
@@ -206,7 +206,7 @@ def main() -> int:
         visual_manifest = root / "visual-intermediate-manifest.json"
         write_json(visual_manifest, {
             "image_path": "project-copy.png",
-            "generator_skill": "GordenImagePPTGen",
+            "generator_skill": "ai-ppt-visual-gen",
             "model_or_tool": "image-generation",
             "prompt_or_recipe": "self-contained slide prompt",
             "review_status": "pending-human-review",

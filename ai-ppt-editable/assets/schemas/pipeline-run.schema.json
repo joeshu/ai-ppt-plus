@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "valid", "status", "technical_valid", "technical_status", "validation_scope", "full_deck_validation_required", "release_eligible", "release_status", "human_review_required", "human_review_status", "run_id", "project", "deck", "deck_sha256", "source_references", "run_dir", "steps", "failed_steps", "technical_failed_steps", "next_state", "human_visual_review_required", "human_signoff_required", "execution"],
+  "properties": {
+    "schema": {"type": "string", "enum": ["ai-ppt-plus/pipeline-run/v2"]},
+    "valid": {"type": "boolean"},
+    "status": {"type": "string"},
+    "technical_valid": {"type": "boolean"},
+    "technical_status": {"type": "string"},
+    "validation_scope": {"type": "string", "enum": ["full", "incremental"]},
+    "full_deck_validation_required": {"type": "boolean"},
+    "release_eligible": {"type": "boolean"},
+    "release_status": {"type": "string"},
+    "human_review_required": {"type": "boolean"},
+    "human_review_status": {"type": "string"},
+    "run_id": {"type": "string"},
+    "project": {"type": "string"},
+    "deck": {"type": "string"},
+    "deck_sha256": {"type": "string"},
+    "run_dir": {"type": "string"},
+    "steps": {"type": "array", "items": {"type": "object"}},
+    "failed_steps": {"type": "array", "items": {"type": "string"}},
+    "technical_failed_steps": {"type": "array", "items": {"type": "string"}},
+    "next_state": {"type": "string"},
+    "human_visual_review_required": {"type": "boolean"},
+    "human_signoff_required": {"type": "boolean"},
+    "execution": {"type": "object"},
+    "source_references": {"type": "array"}
+  }
+}

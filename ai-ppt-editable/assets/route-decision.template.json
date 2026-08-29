@@ -1,0 +1,24 @@
+{
+  "schema": "ai-ppt-plus/route-decision/v1",
+  "project_id": "",
+  "route": "reference-reconstruction",
+  "status": "decided",
+  "visual_authority": "approved_reference_image",
+  "formal_content_authority": "approved_outline",
+  "requires_image_generation": false,
+  "reference_roster": [
+    {
+      "slide_no": 1,
+      "path": "references/slide-1.png",
+      "sha256": "",
+      "comparison_path": null,
+      "comparison_sha256": null,
+      "derived_from_sha256": null,
+      "comparison_transform": null
+    }
+  ],
+  "visual_intermediate_manifest": null,
+  "reason": "",
+  "confirmed_by": "",
+  "confirmed_at": ""
+}

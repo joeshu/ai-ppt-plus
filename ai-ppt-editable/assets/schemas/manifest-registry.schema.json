@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "model", "project_id", "revision", "state", "deck", "authority", "sources", "slides", "assets", "gates", "evidence"],
+  "properties": {
+    "schema": {"type": "string", "enum": ["ai-ppt-plus/manifest-registry/v2"]},
+    "model": {
+      "type": "object",
+      "required": ["name", "version", "legacy_inputs"],
+      "properties": {
+        "name": {"type": "string", "enum": ["SlideSpec/RegionSpec/ObjectSpec/AssetSpec"]},
+        "version": {"type": "string", "enum": ["2.0"]},
+        "legacy_inputs": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "project_id": {"type": "string"},
+    "revision": {"type": "string"},
+    "state": {"type": "string"},
+    "deck": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string"}, "sha256": {"type": "string"}}
+    },
+    "authority": {
+      "type": "object",
+      "required": ["formal_content", "visual", "geometry", "semantic_objects", "assets"],
+      "properties": {
+        "formal_content": {"type": "string"},
+        "visual": {"type": "string"},
+        "geometry": {"type": "string"},
+        "semantic_objects": {"type": "string"},
+        "assets": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "kind", "path", "sha256", "required"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "kind": {"type": "string"},
+          "path": {"type": "string"},
+          "sha256": {"type": "string"},
+          "required": {"type": "boolean"}
+        }
+      }
+    },
+    "slides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slide_id", "slide_no", "regions", "objects", "text_specs", "text_runs", "asset_ids", "gate_refs"],
+        "properties": {
+          "slide_id": {"type": "string"},
+          "slide_no": {"type": "integer"},
+          "page_type": {"type": ["string", "null"]},
+          "state": {"type": ["string", "null"]},
+          "geometry": {"type": "object"},
+          "geometry_ref": {"type": ["string", "null"]},
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["region_id", "slide_no", "role", "object_ids", "asset_ids", "id_origin"],
+              "properties": {
+                "region_id": {"type": "string"},
+                "slide_no": {"type": "integer"},
+                "role": {"type": "string"},
+                "bbox": {
+                  "type": "object",
+                  "required": ["x", "y", "w", "h"],
+                  "properties": {"x": {"type": "number"}, "y": {"type": "number"}, "w": {"type": "number"}, "h": {"type": "number"}}
+                },
+                "polygon": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}},
+                "object_ids": {"type": "array", "items": {"type": "string"}},
+                "asset_ids": {"type": "array", "items": {"type": "string"}},
+                "source_ref": {"type": ["string", "null"]},
+                "source_hash": {"type": ["string", "null"]},
+                "independent": {"type": ["boolean", "null"]},
+                "id_origin": {"type": "string"}
+              }
+            }
+          },
+          "objects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["object_id", "slide_no", "role", "object_type", "editability_level", "asset_ids", "source_manifest", "id_origin"],
+              "properties": {
+                "object_id": {"type": "string"},
+                "slide_no": {"type": "integer"},
+                "role": {"type": "string"},
+                "object_type": {"type": "string"},
+                "editability_level": {"type": "string"},
+                "required_for_delivery": {"type": ["boolean", "null"]},
+                "human_review_required": {"type": ["boolean", "null"]},
+                "bbox": {"type": "object"},
+                "source_bbox": {"type": "object"},
+                "polygon": {"type": "array"},
+                "z_index": {"type": ["number", "null"]},
+                "source_hash": {"type": ["string", "null"]},
+                "source_ref": {"type": ["string", "null"]},
+                "expected_kind": {"type": ["string", "null"]},
+                "editability": {"type": ["string", "object", "null"]},
+                "embedded_asset": {"type": ["string", "null"]},
+                "asset_ids": {"type": "array", "items": {"type": "string"}},
+                "text_id": {"type": ["string", "null"]},
+                "contains_formal_content": {"type": ["boolean", "null"]},
+                "validation_status": {"type": ["string", "null"]},
+                "source_manifest": {"type": "string"},
+                "id_origin": {"type": "string"},
+                "details": {"type": "object"}
+              }
+            }
+          },
+          "text_specs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["text_id", "slide_no", "content", "runs", "id_origin"],
+              "properties": {
+                "text_id": {"type": "string"},
+                "slide_no": {"type": "integer"},
+                "content": {"type": "string"},
+                "source_ref": {"type": ["string", "null"]},
+                "source_bbox": {"type": "object"},
+                "bbox": {"type": "object"},
+                "coordinate_space": {"type": ["string", "null"]},
+                "style": {"type": ["object", "null"]},
+                "runs": {"type": "array", "items": {"type": "object"}},
+                "wrap": {"type": ["object", "null"]},
+                "literal_redaction": {"type": "boolean"},
+                "emphasis_expected": {"type": "boolean"},
+                "id_origin": {"type": "string"}
+              }
+            }
+          },
+          "text_runs": {"type": "array", "items": {"type": "object"}},
+          "asset_ids": {"type": "array", "items": {"type": "string"}},
+          "gate_refs": {"type": "array"}
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "role", "path_base", "source_manifest", "id_origin", "details"],
+        "properties": {
+          "asset_id": {"type": "string"},
+          "role": {"type": "string"},
+          "path": {"type": ["string", "null"]},
+          "path_base": {"type": "string"},
+          "source_ref": {"type": ["string", "null"]},
+          "source_bbox": {"type": "object"},
+          "strategy": {"type": ["string", "null"]},
+          "editability_level": {"type": ["string", "null"]},
+          "required_for_delivery": {"type": ["boolean", "null"]},
+          "embedded": {"type": ["boolean", "null"]},
+          "render_visible": {"type": ["boolean", "null"]},
+          "source_hash": {"type": ["string", "null"]},
+          "path_sha256": {"type": ["string", "null"]},
+          "validation_status": {"type": ["string", "null"]},
+          "source_manifest": {"type": "string"},
+          "id_origin": {"type": "string"},
+          "details": {"type": "object"},
+          "asset_manifest_index": {"type": "integer"}
+        }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["gate_id", "path", "source"],
+        "properties": {
+          "gate_id": {"type": "string"},
+          "report_type": {"type": ["string", "null"]},
+          "path": {"type": ["string", "null"]},
+          "source": {"type": ["string", "null"]},
+          "required": {"type": ["boolean", "null"]},
+          "stage": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["slide_manifest", "object_manifest", "layout", "text_manifest", "asset_manifests", "report_index"],
+      "properties": {
+        "slide_manifest": {"type": ["string", "null"]},
+        "object_manifest": {"type": ["string", "null"]},
+        "layout": {"type": ["string", "null"]},
+        "text_manifest": {"type": ["string", "null"]},
+        "asset_manifests": {"type": "array", "items": {"type": "string"}},
+        "report_index": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

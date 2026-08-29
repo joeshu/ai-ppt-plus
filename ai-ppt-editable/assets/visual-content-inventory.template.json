@@ -1,0 +1,36 @@
+{
+  "schema": "ai-ppt-plus/content-inventory/v1",
+  "project_id": "",
+  "authority": "approved_outline_or_user_transcription",
+  "source_reference": "reference/slide-1.png",
+  "source_sha256": "",
+  "slides": [
+    {
+      "slide_no": 1,
+      "visible_text": [
+        {
+          "object_id": "title",
+          "content": "<approved visible text>",
+          "role": "formal-text",
+          "source_bbox": [0, 0, 0, 0],
+          "required": true
+        }
+      ],
+      "charts": [
+        {
+          "chart_id": "chart-01",
+          "representation": "native_chart",
+          "source_data_status": "verified",
+          "required_elements": ["category_labels", "series_labels", "data_labels", "legend"],
+          "visible_elements": {
+            "category_labels": [],
+            "series_labels": [],
+            "data_labels": [],
+            "legend": []
+          }
+        }
+      ],
+      "required_object_ids": ["title"]
+    }
+  ]
+}

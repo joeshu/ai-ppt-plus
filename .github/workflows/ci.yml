@@ -21,11 +21,21 @@ jobs:
       - name: Verify SVG rendering dependency
         run: inkscape --version
       - name: Compile Python sources
-        run: python -m py_compile scripts/*.py tests/test_*.py
-      - name: Validate package and routing contracts
+        run: |
+          python -m py_compile scripts/*.py tests/test_*.py
+          python -m py_compile ai-ppt-visual-gen/scripts/*.py ai-ppt-visual-gen/tests/*.py
+          python -m py_compile ai-ppt-editable/scripts/*.py ai-ppt-editable/tests/*.py
+      - name: Validate all self-contained packages and routing contracts
         run: |
           python scripts/validate_skill_package.py --skill-dir .
           python scripts/validate_routing_contract.py
+          python ai-ppt-visual-gen/scripts/validate_skill_package.py --skill-dir ai-ppt-visual-gen
+          python ai-ppt-editable/scripts/validate_skill_package.py --skill-dir ai-ppt-editable
+          python ai-ppt-editable/scripts/validate_routing_contract.py
+      - name: Run standalone worker smoke tests
+        run: |
+          python ai-ppt-visual-gen/scripts/run_tests.py --report visual-skill-test-report.json
+          python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
       - name: Run schema, DAG, package and golden regressions
         run: python scripts/run_tests.py --report test-report.json
       - name: Run strict P2 guard smoke tests
@@ -37,4 +47,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ai-ppt-plus-test-report
-          path: test-report.json
+          path: |
+            test-report.json
+            visual-skill-test-report.json
+            editable-skill-test-report.json

@@ -1,0 +1,25 @@
+schema_version: "1.0"
+revision: 1
+canvas: {ratio: "16:9", width_in: 13.333, height_in: 7.5}
+grid: {columns: 12, gutter_in: 0.18, margin_left_in: 0.55, margin_right_in: 0.55, margin_top_in: 0.42, margin_bottom_in: 0.42}
+typography:
+  primary_font: "待确认"
+  fallback_fonts: []
+  sizes_pt: {cover: 30, title: 24, subtitle: 15, body: 12, caption: 9}
+colors:
+  background: "#FFFFFF"
+  text_primary: "#111827"
+  text_secondary: "#4B5563"
+  accent: "#D71920"
+  chart_palette: ["#D71920", "#2563EB", "#0F766E", "#F59E0B", "#7C3AED"]
+shapes: {corner_radius: "small", stroke_pt: 0.75, shadow: "none"}
+spacing: {xs_in: 0.08, sm_in: 0.16, md_in: 0.28, lg_in: 0.48, xl_in: 0.72}
+lines: {default_color: "#D1D5DB", default_width_pt: 0.75}
+icons: {style: "outline", stroke_consistency: true}
+images: {treatment: "document", crop_policy: "preserve_subject"}
+charts: {label_rule: "show_only_decision_relevant", gridline_rule: "minimal", source_note_required: true}
+backgrounds: {default: "#FFFFFF", section: "#111827", exception_policy: "document_and_approve"}
+slide_types: []
+components: []
+focal_pages: []
+approval_status: draft

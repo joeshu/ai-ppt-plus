@@ -10,18 +10,16 @@ from atomic_output import atomic_write_json
 
 
 SCHEMA = "ai-ppt-plus/skill-routing/v1"
-EXPECTED_NAMES = {"ai-ppt-plus", "GordenImagePPTGen", "GordenImage2PPTX", "Presentations"}
+EXPECTED_NAMES = {"ai-ppt-plus", "ai-ppt-visual-gen", "ai-ppt-editable"}
 REQUIRED_OWNS = {
-    "ai-ppt-plus": {"intake", "narrative", "route", "design-system", "manifests", "qa", "reports", "release-gates"},
-    "GordenImagePPTGen": {"raster-visual-generation", "generated-source-retention"},
-    "GordenImage2PPTX": {"reference-decomposition", "editable-layer-plan", "image-to-pptx-object-mapping"},
-    "Presentations": {"pptx-create", "pptx-edit", "pptx-render", "ooxml-package-operations"},
+    "ai-ppt-plus": {"intake", "source-authority", "narrative", "approved-outline", "route", "design-system", "manifest-reconciliation", "qa-aggregation", "reports", "human-closeout", "release-gates"},
+    "ai-ppt-visual-gen": {"visual-generation-plan", "visual-prompt-contract", "raster-visual-generation", "single-slide-retry", "generated-source-retention", "deck-strip-review"},
+    "ai-ppt-editable": {"reference-decomposition", "editable-layer-plan", "image-to-pptx-object-mapping", "pptx-authoring", "pptx-rendering", "technical-qa"},
 }
 REQUIRED_FORBIDS = {
     "ai-ppt-plus": {"silent-backend-substitution", "human-signoff-claim"},
-    "GordenImagePPTGen": {"narrative-authority", "formal-text-authority", "image-to-editable-pptx", "release-eligibility", "human-signoff"},
-    "GordenImage2PPTX": {"narrative-redesign", "release-eligibility", "human-signoff"},
-    "Presentations": {"narrative-authority", "editability-policy", "release-claim"},
+    "ai-ppt-visual-gen": {"narrative-authority", "formal-text-authority", "image-to-editable-pptx", "release-eligibility", "human-signoff"},
+    "ai-ppt-editable": {"narrative-redesign", "release-eligibility", "human-signoff"},
 }
 
 
@@ -73,10 +71,18 @@ def main() -> int:
         bindings = {}
     expected_bindings = {
         "orchestrator": {"skill": "ai-ppt-plus", "entrypoint": "scripts/run_pipeline.py"},
-        "reconstruction": {"skill": "GordenImage2PPTX", "invocation": "external-skill", "required_for": ["reference-reconstruction"]},
+        "reconstruction": {
+            "skill": "ai-ppt-editable",
+            "invocation": "sibling-skill",
+            "skill_entrypoint": "ai-ppt-editable/SKILL.md",
+            "runtime_entrypoint": "ai-ppt-editable/scripts/compose_pptx.py",
+            "required_for": ["reference-reconstruction", "editable-pptx"],
+        },
         "visual_generation": {
-            "skill": "GordenImagePPTGen",
-            "invocation": "external-skill",
+            "skill": "ai-ppt-visual-gen",
+            "invocation": "sibling-skill",
+            "skill_entrypoint": "ai-ppt-visual-gen/SKILL.md",
+            "runtime_entrypoint": "ai-ppt-visual-gen/scripts/run_visual_pipeline.py",
             "required_for": ["visual-creation:image-slide"],
             "tool_resolution": "runtime-discovery",
             "preferred_tool": "imagegen",
@@ -84,7 +90,7 @@ def main() -> int:
             "source_retention": "generated-source-and-project-copy",
             "prompt_contract": "ai-ppt-plus/visual-generation-plan/v1",
         },
-        "authoring": {"backend": "python-pptx", "entrypoint": "scripts/authoring_backend.py", "font_postprocessor": "scripts/embed_fonts.py"},
+        "authoring": {"kind": "adapter", "backend": "python-pptx", "entrypoint": "ai-ppt-editable/scripts/authoring_backend.py", "font_postprocessor": "ai-ppt-editable/scripts/embed_fonts.py"},
     }
     for section, expected in expected_bindings.items():
         observed = bindings.get(section)
@@ -95,13 +101,13 @@ def main() -> int:
             if observed.get(key) != value:
                 issues.append({"severity": "blocker", "code": "routing_binding_mismatch", "section": section, "field": key, "expected": value, "observed": observed.get(key)})
 
-    # A declaration is not an executable binding unless the checked-in
-    # entrypoints are present at the same skill revision.  The reconstruction
-    # engine remains an external skill by contract, but the orchestrator and
-    # authoring adapter must be locally resolvable.
+    # A declaration is not executable unless every sibling skill and its own
+    # self-contained runtime entrypoint is present in the repository bundle.
     skill_root = path.parent.parent
     for section, fields in {
         "orchestrator": ("entrypoint",),
+        "visual_generation": ("skill_entrypoint", "runtime_entrypoint"),
+        "reconstruction": ("skill_entrypoint", "runtime_entrypoint"),
         "authoring": ("entrypoint", "font_postprocessor"),
     }.items():
         binding = bindings.get(section) if isinstance(bindings, dict) else None

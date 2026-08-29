@@ -1,0 +1,46 @@
+{
+  "schema": "ai-ppt-plus/skill-package/v2",
+  "skill": "ai-ppt-editable",
+  "package_revision": "2026.08.29.19",
+  "source_of_truth": "git",
+  "entrypoint": "SKILL.md",
+  "self_contained": {
+    "policy": "self-contained",
+    "required_dirs": ["agents", "scripts", "references", "assets"]
+  },
+  "managed_globs": [
+    "SKILL.md",
+    "agents/*.yaml",
+    "assets/*",
+    "assets/schemas/*.json",
+    "assets/fonts/*",
+    "references/*.md",
+    "scripts/*.py",
+    "evals/*.yaml",
+    "tests/*.py"
+  ],
+  "required_files": [
+    "SKILL.md",
+    "agents/openai.yaml",
+    "assets/skill-package.json",
+    "assets/skill-routing.template.json",
+    "assets/schemas/skill-routing.schema.json",
+    "assets/fonts/NotoSansSC-Regular.ttf",
+    "assets/fonts/font-manifest.json",
+    "scripts/validate_skill_package.py",
+    "scripts/validate_routing_contract.py",
+    "scripts/run_pipeline.py",
+    "scripts/compose_pptx.py",
+    "scripts/render_pptx.py",
+    "scripts/inspect_pptx.py",
+    "scripts/validate_backend_binding.py",
+    "references/reconstruction-contract.md",
+    "references/editability-levels.md",
+    "references/icon-asset-protocol.md"
+  ],
+  "runtime_sync": {
+    "required": true,
+    "comparison": "sha256",
+    "operator": "refresh this complete skill directory from the same git revision before use"
+  }
+}
