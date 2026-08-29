@@ -44,4 +44,83 @@ Input: approved outline rows, design system and reference assets. Output: visual
 
 Common failures: no image model was actually used, ordinary PPT layout mislabeled as intermediate, generic template appearance, style drift, unreadable hierarchy, distorted reference ratios and invented labels. Validate generation evidence, page purpose, focus, reading order, content-zone capacity, token compliance and deck-strip consistency.
 
+## GordenImagePPTGen-compatible production mode
+
+`visual-creation` has two explicit modes:
+
+| Mode | Use | Text behavior | Required planning |
+|---|---|---|---|
+| `image-slide` | A generated raster slide should already read like a finished, high-density PPT page | The production prompt includes all approved copy verbatim; generated pixels remain provisional and never override formal PPTX text | `visual-generation-plan.json` plus `visual-generation-manifest.json` |
+| `layout-reference` | Explore composition before formal copy is placed | No formal text is required in the generated image; this is the backward-compatible mode | Existing visual-intermediate manifest |
+
+For new image-slide work, borrow the useful A1–A5 discipline from
+`GordenImagePPTGen` without changing the downstream reconstruction contract:
+
+- A1 records style, audience, language, page count, ratio and an explicit
+  density profile in `generation_context`. `dense` is the default; `balanced`
+  and `minimal` require a reason so a sparse page is intentional rather than
+  an accidental generic template. `retry_policy` caps attempts per slide and
+  keeps recovery page-local.
+- A2 uses `visual-generation-plan.json` to separate `core_logic` and a
+  visual-only `visual_generation_prompt` from structured `content_model`.
+  Each page selects one visual framework; duplicate frameworks across a deck
+  are a blocking planning error unless a future contract adds an exception.
+- Dense pages also declare a `layout_blueprint`: one focal point, one reading
+  path, named zones with content capacity and anti-template guards. The
+  blueprint is spatial direction, not formal copy; it is materialized into A3
+  so the image model has enough structure to preserve a complex commercial
+  framework instead of defaulting to equal cards.
+- Dense pages also retain at least three `detailed_content_paragraphs` as an
+  A2 content reserve. They are planning material only, not a second visible
+  copy authority, and must never be rendered verbatim.
+- When the approved design calls for colored key phrases, A2 records a
+  `keyword_emphasis` map with exact copy tokens, hex colors, scopes and
+  treatments. A3 must preserve that inline emphasis in the prompt; do not
+  flatten a conclusion banner to one color or invent separate keyword labels.
+- If a reference uses short relationship labels inside a diagram, record them
+  as approved `diagram_annotations` with purpose and scope; the whitelist may
+  then admit only those exact labels, not any model-invented explanatory text.
+- A3 materializes a self-contained `production_prompt` containing the ratio,
+  locked palette, visual hierarchy, explicit no-invention rules and every
+  `formal_text[].text` value verbatim. The visual-only prompt is a design
+  ingredient, not a runnable image prompt. Use
+  `scripts/materialize_visual_generation_prompts.py --in-place` to derive the
+  prompt from the reviewed plan; it is a text-only helper and does not call an
+  image model or write PPTX files. Manual visual refinements may adjust layout
+  wording, but must preserve the generated formal-copy block and text
+  whitelist verbatim; unapproved labels must be replaced by iconography or
+  connector geometry.
+- A4 records one real raster-generation event per page. The evidence manifest
+  retains `generated_source` and `copied_to`, prompt file, backend, model/tool,
+  prompt-file SHA-256, canvas and current image SHA-256 values. Both image
+  paths and the prompt file are checked during technical validation;
+  metadata-only file checks are insufficient.
+- A5 compares the generated pages as a deck strip before approving individual
+  pages. Build it with
+  `scripts/build_visual_generation_strip.py --record-in-manifest`; the helper
+  creates only a neutral QA contact sheet from the manifest-listed copied
+  images. A visual typo is repaired by regenerating the page prompt/image; it
+  is never patched onto the bitmap with code.
+
+The dense content baseline is four or more modules, normally two or more
+bullets per module, an introduction, a footer conclusion and a visual KPI/tag
+layer per module. These are planning capacity checks, not permission to
+fabricate data. Every module and formal text item should retain an
+outline/source reference. Reference treatment is explicit: `layout-only` for
+the built-in gallery or loose inspiration, and `layout-and-style` only for a
+user-approved target whose palette is intentionally preserved. Both modes
+must reject reference text, data and brand leakage.
+
+Validate the contract with:
+
+```bash
+python3 scripts/validate_visual_generation_plan.py visual-generation-plan.json \
+  --expected-pages N --manifest visual-generation-manifest.json \
+  --require-evidence --report visual-generation-validation.json
+```
+
+The plan/evidence gate applies only to `visual-creation`. It is not imported
+by, and does not alter, the `reference-reconstruction` image-to-editable-PPTX
+engine or its asset-extraction rules.
+
 If image generation is unavailable, record the discovery evidence and `visual_intermediate_status: unavailable`; retry once with a simplified prompt or compatible available model. If it still fails, offer a documented placeholder/wireframe only as a degraded artifact, keep it distinct from a visual intermediate, and wait for user approval or report the blocker.

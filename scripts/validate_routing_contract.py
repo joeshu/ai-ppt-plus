@@ -10,14 +10,16 @@ from atomic_output import atomic_write_json
 
 
 SCHEMA = "ai-ppt-plus/skill-routing/v1"
-EXPECTED_NAMES = {"ai-ppt-plus", "GordenImage2PPTX", "Presentations"}
+EXPECTED_NAMES = {"ai-ppt-plus", "GordenImagePPTGen", "GordenImage2PPTX", "Presentations"}
 REQUIRED_OWNS = {
     "ai-ppt-plus": {"intake", "narrative", "route", "design-system", "manifests", "qa", "reports", "release-gates"},
+    "GordenImagePPTGen": {"raster-visual-generation", "generated-source-retention"},
     "GordenImage2PPTX": {"reference-decomposition", "editable-layer-plan", "image-to-pptx-object-mapping"},
     "Presentations": {"pptx-create", "pptx-edit", "pptx-render", "ooxml-package-operations"},
 }
 REQUIRED_FORBIDS = {
     "ai-ppt-plus": {"silent-backend-substitution", "human-signoff-claim"},
+    "GordenImagePPTGen": {"narrative-authority", "formal-text-authority", "image-to-editable-pptx", "release-eligibility", "human-signoff"},
     "GordenImage2PPTX": {"narrative-redesign", "release-eligibility", "human-signoff"},
     "Presentations": {"narrative-authority", "editability-policy", "release-claim"},
 }
@@ -72,6 +74,16 @@ def main() -> int:
     expected_bindings = {
         "orchestrator": {"skill": "ai-ppt-plus", "entrypoint": "scripts/run_pipeline.py"},
         "reconstruction": {"skill": "GordenImage2PPTX", "invocation": "external-skill", "required_for": ["reference-reconstruction"]},
+        "visual_generation": {
+            "skill": "GordenImagePPTGen",
+            "invocation": "external-skill",
+            "required_for": ["visual-creation:image-slide"],
+            "tool_resolution": "runtime-discovery",
+            "preferred_tool": "imagegen",
+            "backend_policy": "raster-only",
+            "source_retention": "generated-source-and-project-copy",
+            "prompt_contract": "ai-ppt-plus/visual-generation-plan/v1",
+        },
         "authoring": {"backend": "python-pptx", "entrypoint": "scripts/authoring_backend.py", "font_postprocessor": "scripts/embed_fonts.py"},
     }
     for section, expected in expected_bindings.items():

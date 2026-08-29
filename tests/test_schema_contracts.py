@@ -22,6 +22,10 @@ def main() -> int:
     assert not validate(report_index, read(schemas / "report-index.schema.json"))
     routing = read(ROOT / "assets/skill-routing.template.json")
     assert not validate(routing, read(schemas / "skill-routing.schema.json"))
+    visual_plan = read(ROOT / "assets/visual-generation-plan.template.json")
+    assert not validate(visual_plan, read(schemas / "visual-generation-plan.schema.json"))
+    visual_manifest = read(ROOT / "assets/visual-generation-manifest.template.json")
+    assert not validate(visual_manifest, read(schemas / "visual-generation-manifest.schema.json"))
     manifest_registry = read(ROOT / "assets/manifest-registry.template.json")
     assert not validate(manifest_registry, read(schemas / "manifest-registry.schema.json"))
 
