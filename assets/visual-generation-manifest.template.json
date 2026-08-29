@@ -1,0 +1,18 @@
+{
+  "schema": "ai-ppt-plus/visual-generation-manifest/v1",
+  "project_id": "project-slug",
+  "plan_sha256": "<sha256 of visual-generation-plan.json>",
+  "slides": [
+    {
+      "slide_no": 1,
+      "prompt_file": "prompts/01-slide.md",
+      "generated_source": "/path/to/generated_images/source.png",
+      "copied_to": "slides/01-slide.png",
+      "generated_source_sha256": "<sha256>",
+      "copied_to_sha256": "<sha256>",
+      "backend": "codex-imagegen",
+      "model_or_tool": "Codex built-in image_gen",
+      "canvas": {"width_px": 2048, "height_px": 1152, "ratio": "16:9"}
+    }
+  ]
+}

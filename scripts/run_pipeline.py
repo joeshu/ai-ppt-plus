@@ -12,6 +12,8 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--visual-threshold N]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
        [--route-decision ROUTE.json] [--require-route] [--require-editability]
+       [--visual-generation-plan PLAN.json] [--visual-generation-manifest MANIFEST.json]
+       [--require-visual-generation]
        [--dpi N] [--strict-layout]
        [--execution-mode dag|linear] [--cache-dir DIR] [--no-cache]
        [--parallel-workers N] [--affected-pages 1,3-4]
@@ -264,7 +266,9 @@ def summarize_report(name: str, path: Path, report: dict):
     elif name == "ocr_text_check":
         summary.update({"language": report.get("language"), "slide_count": len(report.get("slides", [])), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "route_validation":
-        summary.update({"route": report.get("route"), "visual_authority": report.get("visual_authority"), "formal_content_authority": report.get("formal_content_authority")})
+        summary.update({"route": report.get("route"), "visual_authority": report.get("visual_authority"), "formal_content_authority": report.get("formal_content_authority"), "visual_generation_mode": report.get("visual_generation_mode")})
+    elif name == "visual_generation_validation":
+        summary.update({"mode": report.get("mode"), "page_count": report.get("page_count"), "framework_count": report.get("framework_count"), "density_profile": report.get("density_profile"), "evidence": report.get("evidence"), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "manifest_validation":
         summary.update({"warnings": report.get("warnings", []), "editability_protocol": report.get("editability_protocol"), "editability": report.get("editability", [])})
     elif name == "visual_compare_qa":
@@ -300,6 +304,9 @@ def main() -> int:
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
+    parser.add_argument("--visual-generation-plan", help="GordenImagePPTGen-compatible visual-generation-plan.json")
+    parser.add_argument("--visual-generation-manifest", help="per-page raster generation evidence manifest")
+    parser.add_argument("--require-visual-generation", action="store_true", help="require the visual-generation plan, self-contained prompts and retained image evidence")
     parser.add_argument("--routing-contract", help="skill-routing contract; defaults to the checked-in contract")
     parser.add_argument("--require-formal-content", action="store_true", help="require approved formal text authority in the route decision")
     parser.add_argument("--content-inventory", help="independent visible-content inventory for text and chart annotations")
@@ -428,6 +435,10 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False))
         return 2
     reference_route = isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction"
+    visual_creation_route = isinstance(route_data, dict) and route_data.get("route") == "visual-creation"
+    visual_generation_mode = route_data.get("visual_generation_mode", "layout-reference") if visual_creation_route else None
+    if visual_creation_route and visual_generation_mode == "image-slide":
+        args.require_visual_generation = True
     # Reference reconstruction is the route where a technically valid deck
     # can still fail visibly because the chosen font has different metrics.
     # Make the lightweight calibration evidence non-optional here, and also
@@ -567,6 +578,13 @@ def main() -> int:
                 for item in (route_data.get("reference_roster") or [])
                 if isinstance(item, dict) and isinstance(item.get("path"), str) and item.get("path")
             )
+        if isinstance(route_data, dict) and route_data.get("route") == "visual-creation" and route_data.get("visual_generation_mode", "layout-reference") == "image-slide":
+            route_base = Path(args.route_decision).resolve().parent
+            for field in ("visual_generation_plan", "visual_generation_manifest"):
+                value = route_data.get(field)
+                if isinstance(value, str) and value.strip():
+                    candidate = Path(value)
+                    route_inputs.append((candidate if candidate.is_absolute() else route_base / candidate).resolve())
         if args.reference:
             route_inputs.append(Path(args.reference).resolve())
         elif args.reference_dir:
@@ -577,6 +595,132 @@ def main() -> int:
     icon_required = args.require_icon_assets or manifest_icon_required or (project / "icon-asset-manifest.json").is_file()
     imagegen_required = args.require_imagegen_assets or manifest_imagegen_required or (project / "imagegen-assets-manifest.json").is_file()
     route_deps = ["route"] if args.route_decision else []
+    visual_generation_plan = None
+    visual_generation_manifest = None
+    visual_generation_enabled = False
+    if visual_creation_route:
+        visual_generation_base = Path(args.route_decision).resolve().parent if args.route_decision else project
+
+        def declared_visual_path(cli_value, route_key, default_name):
+            if cli_value:
+                return Path(cli_value).resolve()
+            value = None
+            if not value and isinstance(route_data, dict):
+                value = route_data.get(route_key)
+            if not value:
+                value = default_name
+            path = Path(value)
+            return path.resolve() if path.is_absolute() else (visual_generation_base / path).resolve()
+
+        visual_generation_plan = declared_visual_path(
+            args.visual_generation_plan,
+            "visual_generation_plan",
+            "visual-generation-plan.json",
+        )
+        visual_generation_manifest = declared_visual_path(
+            args.visual_generation_manifest,
+            "visual_generation_manifest",
+            "visual-generation-manifest.json",
+        )
+        visual_generation_enabled = bool(
+            args.require_visual_generation
+            or args.visual_generation_plan
+            or args.visual_generation_manifest
+            or visual_generation_mode == "image-slide"
+            or visual_generation_plan.is_file()
+            or visual_generation_manifest.is_file()
+        )
+        if visual_generation_enabled:
+            visual_generation_inputs = []
+            visual_generation_args = [
+                str(SCRIPT_DIR / "validate_visual_generation_plan.py"),
+                str(visual_generation_plan),
+                "--expected-pages", str(args.expected_pages),
+                "--report", str(run_dir / "visual-generation-validation.json"),
+            ]
+            manifest_declared = bool(
+                args.visual_generation_manifest
+                or (isinstance(route_data, dict) and route_data.get("visual_generation_manifest"))
+                or visual_generation_manifest.is_file()
+                or visual_generation_mode == "image-slide"
+            )
+            if manifest_declared:
+                visual_generation_args.extend(["--manifest", str(visual_generation_manifest)])
+            if args.require_visual_generation:
+                visual_generation_args.append("--require-evidence")
+
+            if not visual_generation_plan.is_file():
+                add_step(
+                    "visual-generation",
+                    static_result={
+                        "name": "visual-generation",
+                        "command": [],
+                        "exit_code": 2,
+                        "ok": False,
+                        "failure": "visual_generation_plan_missing",
+                        "stdout": "",
+                        "stderr": "",
+                    },
+                    cacheable=False,
+                    deps=route_deps,
+                    outputs=[run_dir / "visual-generation-validation.json"],
+                )
+            elif args.require_visual_generation and not visual_generation_manifest.is_file():
+                add_step(
+                    "visual-generation",
+                    static_result={
+                        "name": "visual-generation",
+                        "command": [],
+                        "exit_code": 2,
+                        "ok": False,
+                        "failure": "visual_generation_manifest_missing",
+                        "stdout": "",
+                        "stderr": "",
+                    },
+                    cacheable=False,
+                    deps=route_deps,
+                    outputs=[run_dir / "visual-generation-validation.json"],
+                )
+            else:
+                visual_generation_inputs.append(visual_generation_plan)
+                if visual_generation_manifest.is_file():
+                    visual_generation_inputs.append(visual_generation_manifest)
+                # Include referenced prompt/source/copy files in the task
+                # fingerprint so changing a prompt or selected raster cannot
+                # silently reuse a stale validation result.
+                for manifest_path in (visual_generation_plan, visual_generation_manifest):
+                    if not manifest_path.is_file():
+                        continue
+                    try:
+                        manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+                    except (OSError, json.JSONDecodeError):
+                        manifest_data = {}
+                    records = manifest_data.get("slides", []) if isinstance(manifest_data, dict) else []
+                    if isinstance(records, list):
+                        for record in records:
+                            if not isinstance(record, dict):
+                                continue
+                            for field in ("prompt_file", "generated_source", "copied_to"):
+                                value = record.get(field)
+                                if not isinstance(value, str) or not value.strip():
+                                    continue
+                                candidate = Path(value)
+                                candidate = candidate.resolve() if candidate.is_absolute() else (manifest_path.parent / candidate).resolve()
+                                if candidate.is_file():
+                                    visual_generation_inputs.append(candidate)
+                add_step(
+                    "visual-generation",
+                    visual_generation_args,
+                    deps=route_deps,
+                    outputs=[run_dir / "visual-generation-validation.json"],
+                    inputs=list(dict.fromkeys(visual_generation_inputs)),
+                    metadata={
+                        "mode": visual_generation_mode,
+                        "required": args.require_visual_generation,
+                        "plan": str(visual_generation_plan),
+                        "manifest": str(visual_generation_manifest) if manifest_declared else None,
+                    },
+                )
     reference_sources: list[Path] = []
     if isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction":
         route_base = Path(args.route_decision).resolve().parent if args.route_decision else project
@@ -1001,7 +1145,7 @@ def main() -> int:
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "visual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest"):
+    for candidate in ("route", "visual-generation", "visual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     if content_inventory_enabled:
@@ -1032,6 +1176,8 @@ def main() -> int:
         "issue-log.json",
         "typography-calibration.json",
         "chart-reconstruction.json",
+        "visual-generation-plan.json",
+        "visual-generation-manifest.json",
     ):
         path = project / candidate
         if path.is_file():
@@ -1043,6 +1189,9 @@ def main() -> int:
                 project_inputs.append(path)
     project_inputs.extend(
         [run_dir / "route-validation.json"] if args.route_decision else []
+    )
+    project_inputs.extend(
+        [run_dir / "visual-generation-validation.json"] if visual_generation_enabled else []
     )
     project_inputs.extend(
         [run_dir / "visual-comparison.json"] if args.reference or args.reference_dir else []
@@ -1088,6 +1237,7 @@ def main() -> int:
             ("visual_comparison", run_dir / "visual-comparison.json"),
             ("ocr_text_check", run_dir / "ocr-text-check.json"),
             ("route_validation", run_dir / "route-validation.json"),
+            ("visual_generation_validation", run_dir / "visual-generation-validation.json"),
             ("manifest_validation", run_dir / "manifest-validation.json"),
             ("manifest_registry_validation", run_dir / "manifest-registry-validation.json"),
             ("text_layout_validation", run_dir / "text-layout-validation.json"),
@@ -1266,6 +1416,8 @@ def main() -> int:
         report_entries.append({"report_type": "font-delivery-validation", "path": "font-delivery-validation.json", "required": True, "stage": "validated"})
     if args.route_decision:
         report_entries.append({"report_type": "route-validation", "path": "route-validation.json", "required": args.require_route, "stage": "design-system-ready"})
+    if visual_generation_enabled:
+        report_entries.append({"report_type": "visual-generation-validation", "path": "visual-generation-validation.json", "required": args.require_visual_generation, "stage": "visual-draft"})
     if args.handoff:
         report_entries.append({"report_type": "handoff-validation", "path": "handoff-validation.json", "required": True, "stage": "validated"})
     if args.reference or args.reference_dir:
@@ -1274,7 +1426,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"

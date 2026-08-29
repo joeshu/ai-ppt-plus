@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v1",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.08.29.8",
+  "package_revision": "2026.08.29.9",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "managed_globs": [
@@ -33,7 +33,13 @@
     "references/skill-routing.md",
     "references/chart-reconstruction.md",
     "assets/chart-reconstruction.template.json",
-    "scripts/validate_chart_manifest.py"
+    "scripts/validate_chart_manifest.py",
+    "assets/visual-generation-plan.template.json",
+    "assets/visual-generation-manifest.template.json",
+    "assets/schemas/visual-generation-plan.schema.json",
+    "assets/schemas/visual-generation-manifest.schema.json",
+    "scripts/validate_visual_generation_plan.py",
+    "references/visual-intermediate.md"
   ],
   "runtime_sync": {
     "required": true,

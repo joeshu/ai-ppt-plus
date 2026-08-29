@@ -13,6 +13,7 @@ from atomic_output import atomic_write_json
 ROUTES = {"visual-creation", "reference-reconstruction"}
 STATUSES = {"decided", "needs_user", "blocked"}
 AUTHORITIES = {"approved_outline", "user_transcription", "transcription_pending_confirmation"}
+VISUAL_GENERATION_MODES = {"image-slide", "layout-reference"}
 SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 
 
@@ -53,6 +54,7 @@ def main() -> int:
     status = data.get("status")
     authority = data.get("visual_authority")
     formal_authority = data.get("formal_content_authority")
+    visual_generation_mode = data.get("visual_generation_mode", "layout-reference")
     if route not in ROUTES:
         issues.append({"severity": "blocker", "code": "route_invalid", "value": route})
     if status not in STATUSES:
@@ -62,11 +64,15 @@ def main() -> int:
     expected_authority = {"visual-creation": "generated_visual_intermediate", "reference-reconstruction": "approved_reference_image"}.get(route)
     if expected_authority and authority != expected_authority:
         issues.append({"severity": "blocker", "code": "visual_authority_route_conflict", "expected": expected_authority, "observed": authority})
+    if visual_generation_mode not in VISUAL_GENERATION_MODES:
+        issues.append({"severity": "blocker", "code": "visual_generation_mode_invalid", "observed": visual_generation_mode})
+    if route == "reference-reconstruction" and "visual_generation_mode" in data:
+        issues.append({"severity": "blocker", "code": "reference_route_visual_generation_mode_conflict", "observed": visual_generation_mode})
     expected_generation = route == "visual-creation"
     if not isinstance(data.get("requires_image_generation"), bool) or data.get("requires_image_generation") is not expected_generation:
         issues.append({"severity": "blocker", "code": "image_generation_requirement_conflict", "expected": expected_generation, "observed": data.get("requires_image_generation")})
     base = route_path.parent
-    evidence = {"route_file": str(route_path), "reference_files": [], "external_reference_files": [], "visual_intermediate_manifest": None}
+    evidence = {"route_file": str(route_path), "reference_files": [], "external_reference_files": [], "visual_intermediate_manifest": None, "visual_generation_plan": None, "visual_generation_manifest": None}
     formal_content_ready = formal_authority in {"approved_outline", "user_transcription"}
     if status in {"needs_user", "blocked"}:
         issues.append({"severity": "blocker", "code": "route_not_ready", "status": status, "reason": data.get("reason")})
@@ -111,6 +117,23 @@ def main() -> int:
                 image_path = visual_manifest.get("image_path")
                 if isinstance(image_path, str) and image_path.strip() and not (manifest_path.parent / image_path).resolve().is_file():
                     issues.append({"severity": "blocker", "code": "visual_intermediate_image_missing", "path": str((manifest_path.parent / image_path).resolve())})
+        if visual_generation_mode == "image-slide":
+            plan_ref = data.get("visual_generation_plan")
+            manifest_ref = data.get("visual_generation_manifest")
+            if not isinstance(plan_ref, str) or not plan_ref.strip():
+                issues.append({"severity": "blocker", "code": "visual_generation_plan_missing"})
+            else:
+                plan_path = (base / plan_ref).resolve()
+                evidence["visual_generation_plan"] = str(plan_path)
+                if args.require_files and not plan_path.is_file():
+                    issues.append({"severity": "blocker", "code": "visual_generation_plan_missing_file", "path": str(plan_path)})
+            if not isinstance(manifest_ref, str) or not manifest_ref.strip():
+                issues.append({"severity": "blocker", "code": "visual_generation_manifest_missing"})
+            else:
+                generation_manifest_path = (base / manifest_ref).resolve()
+                evidence["visual_generation_manifest"] = str(generation_manifest_path)
+                if args.require_files and not generation_manifest_path.is_file():
+                    issues.append({"severity": "blocker", "code": "visual_generation_manifest_missing_file", "path": str(generation_manifest_path)})
     if route == "reference-reconstruction" and status == "decided":
         roster = data.get("reference_roster")
         if not isinstance(roster, list) or not roster:
@@ -206,7 +229,7 @@ def main() -> int:
                 if external_hash not in accepted_hashes:
                     issues.append({"severity": "blocker", "code": "external_reference_hash_mismatch", "slide_no": external_slide, "roster_path": str(roster_path), "external_path": str(external_path), "accepted_hashes": sorted(accepted_hashes)})
     valid = not any(issue.get("severity") == "blocker" for issue in issues)
-    result = {"schema": "ai-ppt-plus/route-validation/v1", "valid": valid, "ready_for_delivery": valid and formal_content_ready and status == "decided", "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "formal_content_ready": formal_content_ready, "requires_image_generation": data.get("requires_image_generation"), "issues": issues, "evidence": evidence}
+    result = {"schema": "ai-ppt-plus/route-validation/v1", "valid": valid, "ready_for_delivery": valid and formal_content_ready and status == "decided", "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "visual_generation_mode": visual_generation_mode, "formal_content_ready": formal_content_ready, "requires_image_generation": data.get("requires_image_generation"), "issues": issues, "evidence": evidence}
     if args.report:
         atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))

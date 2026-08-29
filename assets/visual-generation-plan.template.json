@@ -1,0 +1,57 @@
+{
+  "schema": "ai-ppt-plus/visual-generation-plan/v1",
+  "project_id": "project-slug",
+  "route": "visual-creation",
+  "mode": "image-slide",
+  "outline_revision": "R1",
+  "design_system_revision": "R1",
+  "page_count": 1,
+  "canvas": {
+    "ratio": "16:9",
+    "width_px": 2048,
+    "height_px": 1152
+  },
+  "density_profile": "dense",
+  "density_override_reason": "",
+  "style_lock": {
+    "name": "deck-style-v1",
+    "palette": [
+      {"name": "primary", "hex": "#14313B"},
+      {"name": "secondary", "hex": "#287B80"},
+      {"name": "accent", "hex": "#E85B47"},
+      {"name": "surface", "hex": "#F7F0E4"}
+    ],
+    "font_style": "Noto Sans CJK SC / clean sans-serif",
+    "surface": "light paper with restrained card depth",
+    "icon_style": "flat business icons with consistent stroke weight",
+    "avoid_items": ["placeholder text", "invented numbers", "large pure-green areas", "random icon collage"]
+  },
+  "evidence_manifest": "visual-generation-manifest.json",
+  "slides": [
+    {
+      "slide_no": 1,
+      "page_type": "infographic",
+      "title": "verbatim slide title",
+      "core_logic": "one sentence explaining the relationship on the page",
+      "visual_framework": "Bento Box dashboard",
+      "visual_generation_prompt": "Visual-only description of the composition, hierarchy, surfaces, light and visual flow; do not use this field alone for generation.",
+      "production_prompt": "A self-contained 16:9 presentation-slide prompt. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render every item in the 页面文字 section verbatim, do not invent data, and use a Bento Box dashboard with clear hierarchy.",
+      "content_model": {
+        "intro": "one short introduction",
+        "modules": [
+          {"label": "label", "title": "module title", "bullets": ["point 1", "point 2"], "kpi": "12", "tag": "tag", "source_refs": ["outline.csv#1"]},
+          {"label": "label", "title": "module title", "bullets": ["point 1", "point 2"], "kpi": "24", "tag": "tag", "source_refs": ["outline.csv#1"]},
+          {"label": "label", "title": "module title", "bullets": ["point 1", "point 2"], "kpi": "36", "tag": "tag", "source_refs": ["outline.csv#1"]},
+          {"label": "label", "title": "module title", "bullets": ["point 1", "point 2"], "kpi": "48", "tag": "tag", "source_refs": ["outline.csv#1"]}
+        ],
+        "footer_banner": "one concise conclusion"
+      },
+      "formal_text": [
+        {"id": "title", "role": "title", "text": "verbatim slide title", "source_ref": "outline.csv#1"}
+      ],
+      "visual_assets": {"icons": ["semantic icon"], "background_texture": "subtle topical line texture"},
+      "reference_images": [],
+      "prompt_file": "prompts/01-slide.md"
+    }
+  ]
+}

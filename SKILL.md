@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Turn PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, images, existing PPT/PPTX, or approved outlines into narrative-coherent, visually consistent, editable, renderable, quality-checked PowerPoint deliverables. Trigger for “做PPT/幻灯片/演示稿/路演稿/汇报材料”, outline-first deck planning, image-model-generated high-end visual-intermediate design, slide reconstruction, PPTX redesign/inspection/repair, or resuming a multi-session deck. Outputs structured briefs, source inventories, outline tables, design systems, generated visual drafts, manifests, editable PPTX, validation and delivery reports. Do not trigger for a prose-only summary, a standalone image, spreadsheet-only analysis, or image-to-PPT reconstruction when the dedicated reconstruction skill is the narrower fit.
 metadata:
-  package_revision: 2026.08.29.8
+  package_revision: 2026.08.29.9
 ---
 
 # AI PPT Plus
@@ -129,6 +129,48 @@ Visual intermediates confirm layout, proportions, hierarchy, space, color, readi
 **Hard gate:** when the workflow includes `visual-draft`, invoke an available image-generation skill, tool, or multimodal image model—prefer the installed `imagegen` skill when available—to generate a genuinely high-quality raster visual draft. A manually arranged PPTX page, native-shape wireframe, template substitution, HTML/SVG mockup, or render of an already-built PPTX is not a completed visual intermediate and must not be labeled as one. Record generator, model/tool, prompt, image path and review status in `visual-intermediate-manifest.json`.
 
 Target the requested presentation context, such as high-end state-owned-enterprise reporting, executive review, product launch, academic defense or roadshow; “high quality” is observable through coherent hierarchy, intentional composition, professional typography scale, disciplined color, adequate whitespace, clear focal point and deck-wide stylistic consistency. Generated text is provisional and may be inaccurate; never copy it into formal PPTX content. If image generation is unavailable, fails after the bounded retry, or is explicitly skipped by the user, record `visual_intermediate_status: unavailable|skipped`, state the reason and stop at the relevant gate unless the selected route is `reference-reconstruction` and the approved reference image itself is the visual authority.
+
+### GordenImagePPTGen-compatible visual generation
+
+For a new `visual-creation` request, default to the `image-slide` visual
+generation mode unless the user explicitly asks for a layout-only exploration.
+Record the mode in `route-decision.json`; the older `layout-reference` mode
+remains valid for existing projects and does not change reconstruction
+behavior.
+
+The image-slide path follows a bounded A1–A5 contract inspired by
+`GordenImagePPTGen`:
+
+1. A1 confirms style, audience, page count, language, ratio and density. If
+   the user says to generate directly, record the adopted assumptions rather
+   than inventing missing critical facts.
+2. A2 creates `visual-generation-plan.json`. Each page records its purpose,
+   one-sentence core logic, a non-repeating visual framework, a visual-only
+   generation description, structured content modules, visual assets,
+   reference-image usage and formal copy links back to the approved outline.
+3. A3 writes a self-contained `production_prompt` for each page. It must
+   contain the canvas ratio, locked palette, layout, visual hierarchy,
+   explicit anti-fabrication rules and every formal text item verbatim. The
+   visual-only description is never sent to the image model by itself.
+4. A4 calls the actual raster image-generation backend once per page, keeps
+   the original generated source, copies the selected image into the project,
+   and records both paths, prompt file, backend and SHA-256 values in
+   `visual-generation-manifest.json`.
+5. A5 is the visual review handoff. The image is reviewed as a visual
+   intermediate; formal PPTX text still comes from the approved outline, not
+   OCR or generated pixels.
+
+Run `scripts/validate_visual_generation_plan.py` for the plan/evidence gate.
+The default `dense` profile requires enough structured modules and information
+points to support a high-density image slide; use `balanced` or `minimal` only
+with an explicit reason. A single deck must keep one style lock and must not
+reuse a visual framework without a recorded exception. Reference images may
+influence layout only and must not leak their text, colors or branding into
+the prompt.
+
+This section owns only visual-generation planning, prompting, raster evidence
+and visual review. It does not replace or modify the downstream
+`reference-reconstruction` / image-to-editable-PPTX contract.
 
 ## PPTX reconstruction
 

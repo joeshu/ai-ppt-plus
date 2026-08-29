@@ -5,7 +5,7 @@ may pass through several layers, but each contract has one source of truth.
 
 | Skill | Owns | Does not own |
 |---|---|---|
-| `ai-ppt-plus` | intake, source authority, narrative/outline, route decision, design system, manifests, QA orchestration, report aggregation, human closeout and release gates | low-level shape-writing implementation details or image-only reconstruction internals |
+| `ai-ppt-plus` | intake, source authority, narrative/outline, route decision, design system, visual-generation plan/prompt/evidence, manifests, QA orchestration, report aggregation, human closeout and release gates | low-level shape-writing implementation details or image-only reconstruction internals |
 | `GordenImage2PPTX` | image/screenshot/reference decomposition into background, frame, icon/asset and formal-text layers; reconstruction-specific object plan and editable PPTX output | narrative redesign, release eligibility, human sign-off, or a second definition of the backend contract |
 | `Presentations` | low-level PPTX/Google Slides creation, mutation, rendering and package manipulation through the selected authoring adapter | choosing the story, deciding the visual route, defining editability policy, or claiming QA/release completion |
 

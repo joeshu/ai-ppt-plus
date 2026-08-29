@@ -44,4 +44,55 @@ Input: approved outline rows, design system and reference assets. Output: visual
 
 Common failures: no image model was actually used, ordinary PPT layout mislabeled as intermediate, generic template appearance, style drift, unreadable hierarchy, distorted reference ratios and invented labels. Validate generation evidence, page purpose, focus, reading order, content-zone capacity, token compliance and deck-strip consistency.
 
+## GordenImagePPTGen-compatible production mode
+
+`visual-creation` has two explicit modes:
+
+| Mode | Use | Text behavior | Required planning |
+|---|---|---|---|
+| `image-slide` | A generated raster slide should already read like a finished, high-density PPT page | The production prompt includes all approved copy verbatim; generated pixels remain provisional and never override formal PPTX text | `visual-generation-plan.json` plus `visual-generation-manifest.json` |
+| `layout-reference` | Explore composition before formal copy is placed | No formal text is required in the generated image; this is the backward-compatible mode | Existing visual-intermediate manifest |
+
+For new image-slide work, borrow the useful A1–A5 discipline from
+`GordenImagePPTGen` without changing the downstream reconstruction contract:
+
+- A1 records style, audience, language, page count, ratio and an explicit
+  density profile. `dense` is the default; `balanced` and `minimal` require a
+  reason so a sparse page is intentional rather than an accidental generic
+  template.
+- A2 uses `visual-generation-plan.json` to separate `core_logic` and a
+  visual-only `visual_generation_prompt` from structured `content_model`.
+  Each page selects one visual framework; duplicate frameworks across a deck
+  are a blocking planning error unless a future contract adds an exception.
+- A3 materializes a self-contained `production_prompt` containing the ratio,
+  locked palette, visual hierarchy, explicit no-invention rules and every
+  `formal_text[].text` value verbatim. The visual-only prompt is a design
+  ingredient, not a runnable image prompt.
+- A4 records one real raster-generation event per page. The evidence manifest
+  retains `generated_source` and `copied_to`, prompt file, backend, model/tool,
+  canvas and current SHA-256 values. Both image paths are fully decoded during
+  technical validation; metadata-only file checks are insufficient.
+- A5 compares the generated pages as a deck strip before approving individual
+  pages. A visual typo is repaired by regenerating the page prompt/image; it
+  is never patched onto the bitmap with code.
+
+The dense content baseline is four or more modules, normally two or more
+bullets per module, an introduction, a footer conclusion and at least one
+visual KPI/tag layer per module. These are planning capacity checks, not
+permission to fabricate data. Every module and formal text item should retain
+an outline/source reference. A reference image is layout-only: the prompt
+must explicitly reject its text, color and brand leakage.
+
+Validate the contract with:
+
+```bash
+python3 scripts/validate_visual_generation_plan.py visual-generation-plan.json \
+  --expected-pages N --manifest visual-generation-manifest.json \
+  --require-evidence --report visual-generation-validation.json
+```
+
+The plan/evidence gate applies only to `visual-creation`. It is not imported
+by, and does not alter, the `reference-reconstruction` image-to-editable-PPTX
+engine or its asset-extraction rules.
+
 If image generation is unavailable, record the discovery evidence and `visual_intermediate_status: unavailable`; retry once with a simplified prompt or compatible available model. If it still fails, offer a documented placeholder/wireframe only as a degraded artifact, keep it distinct from a visual intermediate, and wait for user approval or report the blocker.

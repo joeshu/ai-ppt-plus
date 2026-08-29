@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "project_id", "route", "mode", "outline_revision", "design_system_revision", "page_count", "canvas", "density_profile", "style_lock", "slides"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/visual-generation-plan/v1"},
+    "project_id": {"type": "string", "minLength": 1},
+    "route": {"const": "visual-creation"},
+    "mode": {"enum": ["image-slide", "layout-reference"]},
+    "outline_revision": {"type": "string", "minLength": 1},
+    "design_system_revision": {"type": "string", "minLength": 1},
+    "page_count": {"type": "integer", "minimum": 1},
+    "canvas": {"type": "object", "required": ["ratio"], "properties": {"ratio": {"enum": ["16:9", "3:2"]}, "width_px": {"type": "integer", "minimum": 1}, "height_px": {"type": "integer", "minimum": 1}}},
+    "density_profile": {"enum": ["dense", "balanced", "minimal"]},
+    "style_lock": {"type": "object", "required": ["palette", "font_style", "surface", "icon_style", "avoid_items"], "properties": {"palette": {"type": "array", "minItems": 3}, "font_style": {"type": "string"}, "surface": {"type": "string"}, "icon_style": {"type": "string"}, "avoid_items": {"type": "array"}}},
+    "slides": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["slide_no", "page_type", "title", "core_logic", "visual_framework", "visual_generation_prompt", "content_model"], "properties": {"slide_no": {"type": "integer", "minimum": 1}, "page_type": {"type": "string"}, "title": {"type": "string"}, "core_logic": {"type": "string"}, "visual_framework": {"type": "string"}, "visual_generation_prompt": {"type": "string"}, "production_prompt": {"type": "string"}, "formal_text": {"type": "array"}, "content_model": {"type": "object"}}}}
+  }
+}
