@@ -920,7 +920,12 @@ def main() -> int:
     panel_gate_required = panel_manifest.is_file() or args.require_independent_panels or args.require_panel_approval
     if panel_gate_required:
         panel_args = [str(SCRIPT_DIR / "validate_panel_assets.py"), str(panel_manifest), "--assets-dir", str(project), "--report", str(run_dir / "panel-assets-validation.json"), "--strict"]
-        panel_args.append("--require-approved")
+        # Draft/technical runs need independent-panel evidence but do not
+        # possess a human approval record yet. Approval is a release/closeout
+        # gate and is added only when explicitly requested (or promoted by
+        # the strict release profile).
+        if args.require_panel_approval:
+            panel_args.append("--require-approved")
         if args.require_asset_hashes:
             panel_args.append("--require-hashes")
         if args.require_independent_panels:
@@ -942,7 +947,12 @@ def main() -> int:
     elif text_model_enabled:
         text_model_args = [str(SCRIPT_DIR / "text_model.py"), "validate", str(text_manifest), "--report", str(run_dir / "text-layout-validation.json")]
         if args.require_text_model:
-            text_model_args.extend(["--strict", "--require-source-bbox"])
+            text_model_args.append("--strict")
+            # source_bbox is reference-image evidence. Visual-creation
+            # layouts have no source viewport, so requiring it creates false
+            # blockers; reference reconstruction still enforces it.
+            if reference_route:
+                text_model_args.append("--require-source-bbox")
         add_step("text-model", text_model_args, outputs=[run_dir / "text-layout-validation.json"], inputs=[text_manifest])
     manifest_args = [str(SCRIPT_DIR / "validate_manifest.py"), str(project / "slide-manifest.json"), "--kind", "slide", "--report", str(run_dir / "manifest-validation.json")]
     if args.require_editability:

@@ -85,7 +85,8 @@ def main() -> int:
             continue
         if asset.get("asset_id") in icon_set:
             exclusion = asset.get("frame_exclusion")
-            if exclusion not in {"verified-not-in-frame", "verified", "pass"} and not (
+            standalone_without_frame = not frame_set and exclusion == "not-applicable-standalone"
+            if exclusion not in {"verified-not-in-frame", "verified", "pass"} and not standalone_without_frame and not (
                 isinstance(exclusion, dict) and exclusion.get("status") == "pass"
             ):
                 issue(issues, "blocker", "icon_frame_exclusion_unverified", asset_index=index,
