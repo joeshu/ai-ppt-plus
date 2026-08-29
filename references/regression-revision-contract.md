@@ -20,6 +20,12 @@ known open issues in `baseline-manifest.json`. A baseline can be technical-
 validated while still requiring human closeout; do not convert that state into
 `delivered` without the required closeout evidence.
 
+`revision_guard.py prepare` is retry-safe. If the requested snapshot already
+exists and every current source hash matches its recorded snapshot, it returns
+the existing immutable snapshot as `reused: true`. If any source changed, it
+continues to block with `snapshot_exists`; use a new revision label rather than
+overwriting the old evidence.
+
 ## Required behavior for a new revision
 
 1. Compute the input/reference hash and record it in the current route and

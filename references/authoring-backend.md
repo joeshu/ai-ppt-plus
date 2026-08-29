@@ -31,7 +31,7 @@ geometry remain visible and independently editable. The Pillow preview
 renderer follows the same order; a preview that disagrees with the PPTX
 layering is a QA defect, not a harmless approximation.
 
-The default family is `Noto Sans SC`, matching the bundled
+The default family is `Noto Sans CJK SC`, matching the bundled
 `assets/fonts/NotoSansSC-Regular.ttf`, not Microsoft YaHei. A task may
 override it through the deck theme or an explicitly licensed font. Font
 availability, CJK coverage and delivery embedding remain separate gates; this

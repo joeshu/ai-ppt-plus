@@ -19,10 +19,10 @@ from component_expander import _choose_slide_layout
 from pptx_primitives import add_charts, add_groups, add_shapes, add_tables, add_texts
 
 
-# Use the family name exposed by the bundled redistributable font. The older
-# "Noto Sans CJK SC" label is still accepted when explicitly requested, but
-# it does not resolve reliably against the packaged NotoSansSC-Regular.ttf.
-DEFAULT_FONT_FAMILY = "Noto Sans SC"
+# Use the family name exposed by the bundled redistributable font. Keep the
+# declared family and the asset name table aligned so renderers do not
+# silently substitute a thinner host face.
+DEFAULT_FONT_FAMILY = "Noto Sans CJK SC"
 BACKEND_ID = "python-pptx"
 
 

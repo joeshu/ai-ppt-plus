@@ -266,7 +266,34 @@ def prepare(project: Path, deck: Path, label: str) -> int:
     root = project / "revisions"
     target = root / f"{label}-baseline"
     if target.exists():
-        print(json.dumps({"valid": False, "code": "snapshot_exists", "path": str(target)}, ensure_ascii=False))
+        # A DAG retry can legitimately reach the revision-preparation step
+        # after a previous attempt already created the immutable snapshot.
+        # Reuse it only when every current source byte still matches the
+        # recorded snapshot; never overwrite or silently reuse a stale one.
+        metadata_path = target / "snapshot.json"
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            records = metadata.get("files") if isinstance(metadata, dict) else None
+            current = snapshot_files(project, deck)
+            by_name = {str(record.get("name")): record for record in records or [] if isinstance(record, dict)}
+            reusable = (
+                metadata.get("schema") == "ai-ppt-plus/revision-snapshot/v1"
+                and metadata.get("label") == label
+                and len(by_name) == len(current)
+                and all(
+                    name in by_name
+                    and Path(record["snapshot"]).is_file()
+                    and digest(source) == record.get("sha256") == digest(Path(record["snapshot"]))
+                    for source, name in current
+                    for record in [by_name.get(name, {})]
+                )
+            )
+        except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+            reusable = False
+        if reusable:
+            print(json.dumps({"valid": True, "operation": "prepare", "reused": True, "snapshot": str(target.resolve()), "files": len(current)}, ensure_ascii=False))
+            return 0
+        print(json.dumps({"valid": False, "code": "snapshot_exists", "path": str(target), "message": "existing snapshot is immutable and no longer matches current sources; use a new revision label"}, ensure_ascii=False))
         return 2
     target.mkdir(parents=True)
     records = []

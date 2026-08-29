@@ -60,6 +60,9 @@ def main() -> None:
                 # directory; validators treat an absolute path as explicit.
                 file_ref = os.fspath(asset_path)
             emitted.append({**panel, "panel_id": pid, "file": file_ref,
+                            # Upgrade older approved manifests that did not
+                            # repeat the source reference per panel.
+                            "source_ref": panel.get("source_ref") or data.get("source") or str(src),
                             "source_bbox": [x, y, w, h], "asset_size": [w, h],
                             "sha256": sha256(asset_path),
                             "formal_text_baked_in": bool(panel.get("formal_text_baked_in", False))})

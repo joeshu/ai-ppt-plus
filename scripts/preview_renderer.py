@@ -20,6 +20,11 @@ def find_cjk_font(font_dir=None, bold=False):
                 bold_local = [path for path in local if any(token in path.stem.casefold() for token in ("bold", "medium", "semibold"))]
                 if bold_local:
                     return str(bold_local[0])
+                # Do not silently treat a regular file as a bold face.  The
+                # caller can then apply a small synthetic stroke, keeping the
+                # preview's weight closer to the native PPTX when a licensed
+                # bold companion is not available.
+                return None
             return str(local[0])
     candidates_bold = [
         "/System/Library/Fonts/PingFang.ttc",

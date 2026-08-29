@@ -14,7 +14,7 @@ before the first font probe; do not rely on the host's installed-font list.
 Use this font priority:
 
 1. A user-supplied licensed font explicitly requested for the project.
-2. The bundled Noto Sans SC fallback (the manifest's canonical family name).
+2. The bundled Noto Sans CJK SC fallback (the manifest's canonical family name).
 3. Microsoft YaHei only when explicitly requested, already licensed and
    available on the authoring/rendering device; never select or package it
    implicitly.
@@ -22,8 +22,11 @@ Use this font priority:
 After copying a task-local font, run
 `scripts/validate_font_asset.py --font-dir project-fonts/ --require-cjk
 --report font-asset-validation.json`. This validates the manifest Hash, the
-declared family, a representative CJK glyph set and the license declaration;
-font discovery alone is not asset-integrity evidence.
+declared family, a representative CJK glyph set, the license declaration and
+the raw SFNT family/style/weight metadata; font discovery alone is not
+asset-integrity evidence. A manifest that calls a file Regular while its
+default SFNT face is Thin or ExtraLight is invalid, even if fontconfig lists a
+regular named instance for the same variable file.
 
 ## Hard gates
 

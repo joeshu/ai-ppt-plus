@@ -71,6 +71,65 @@ def run_query(command: str | None, font: Path, fmt: str) -> tuple[str | None, st
     return completed.stdout.strip(), None
 
 
+def inspect_font_metadata(font: Path) -> tuple[dict | None, str | None]:
+    """Read the raw face metadata used to distinguish Regular from Thin.
+
+    Fontconfig can expose every named instance of a variable font.  That is
+    useful for discovery but can hide the fact that the file's default face
+    is Thin.  Inspecting the first SFNT face keeps the portable-asset gate
+    aligned with what a renderer receives when no named instance is selected.
+    """
+    try:
+        from fontTools.ttLib import TTCollection, TTFont
+    except ImportError as exc:
+        return None, f"fontTools unavailable: {exc}"
+
+    face = None
+    collection = None
+    try:
+        if font.suffix.casefold() == ".ttc":
+            collection = TTCollection(str(font))
+            face = collection.fonts[0]
+        else:
+            face = TTFont(str(font), fontNumber=0)
+
+        def name_value(name_id: int) -> str | None:
+            table = face.get("name")
+            if table is None:
+                return None
+            for record in table.names:
+                if record.nameID != name_id:
+                    continue
+                try:
+                    return record.toUnicode()
+                except Exception:
+                    continue
+            return None
+
+        os2 = face.get("OS/2")
+        metadata = {
+            "family": name_value(1),
+            "subfamily": name_value(2),
+            "full_name": name_value(4),
+            "weight_class": int(os2.usWeightClass) if os2 is not None else None,
+            "fsType": int(os2.fsType) if os2 is not None else None,
+        }
+        return metadata, None
+    except Exception as exc:
+        return None, f"{type(exc).__name__}: {exc}"
+    finally:
+        if face is not None and collection is None:
+            try:
+                face.close()
+            except Exception:
+                pass
+        if collection is not None:
+            try:
+                collection.close()
+            except Exception:
+                pass
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--font-dir", required=True)
@@ -110,6 +169,7 @@ def main() -> int:
     fc_query = shutil.which("fc-query")
     family = None
     charset_raw = None
+    font_metadata = None
     if font_path.is_file():
         family, error = run_query(fc_scan, font_path, "%{family}\\n")
         if error:
@@ -118,10 +178,27 @@ def main() -> int:
         if error:
             severity = "blocker" if args.require_cjk else "warning"
             (issues if severity == "blocker" else warnings).append({"severity": severity, "code": "font_charset_unavailable", "message": error})
+        font_metadata, error = inspect_font_metadata(font_path)
+        if error:
+            severity = "blocker" if args.require_cjk else "warning"
+            (issues if severity == "blocker" else warnings).append({"severity": severity, "code": "font_metadata_unavailable", "message": error})
 
     declared_family = str(manifest.get("family", "")).strip() if isinstance(manifest, dict) else ""
     if declared_family and family and declared_family.lower() not in family.lower():
         issues.append({"severity": "blocker", "code": "font_family_mismatch", "expected": declared_family, "observed": family})
+
+    declared_style = str(manifest.get("style", "regular")).strip().casefold() if isinstance(manifest, dict) else "regular"
+    declared_role = str(manifest.get("role", "")).strip().casefold() if isinstance(manifest, dict) else ""
+    thin_allowed = any(token in f"{declared_style} {declared_role}" for token in ("thin", "extra light", "extralight"))
+    weight_class = font_metadata.get("weight_class") if isinstance(font_metadata, dict) else None
+    if not thin_allowed and weight_class is not None and not 300 <= int(weight_class) <= 700:
+        issues.append({
+            "severity": "blocker",
+            "code": "font_weight_mismatch",
+            "expected": "regular-like weight class 300-700",
+            "observed": weight_class,
+            "style": font_metadata.get("subfamily") if isinstance(font_metadata, dict) else None,
+        })
 
     charset = parse_charset(charset_raw or "")
     missing_chars = sorted({char for char in SMOKE_TEXT if ord(char) not in charset})
@@ -144,6 +221,7 @@ def main() -> int:
         "manifest": str(manifest_path),
         "file": str(font_path),
         "family": family,
+        "font_metadata": font_metadata,
         "declared_family": declared_family,
         "sha256": actual_hash,
         "expected_sha256": expected_hash,

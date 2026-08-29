@@ -16,7 +16,7 @@
           "source_bbox": [160, 32, 900, 76],
           "coordinate_space": "fraction",
           "bbox": {"x": 0.08, "y": 0.03, "w": 0.45, "h": 0.08},
-          "style": {"font_family": "Noto Sans SC", "size_pt": 27, "color": "#FFFFFF", "bold": true, "align": "left", "valign": "middle"},
+          "style": {"font_family": "Noto Sans CJK SC", "size_pt": 27, "color": "#FFFFFF", "bold": true, "align": "left", "valign": "middle"},
           "runs": []
         }
       ]

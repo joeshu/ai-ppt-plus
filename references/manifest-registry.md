@@ -24,8 +24,10 @@ The registry normalizes these inputs into four shared record families:
   Formal text must use `editable_text`; a raster object may not claim formal
   content.
 - `assets[]` contains `AssetSpec` records. Asset paths carry a base, source
-  manifest and optional file hash; `brand_lockup` remains one movable brand
-  asset rather than being converted into ordinary text.
+  manifest and optional file hash; `source_ref` should identify the reviewed
+  source image or generated input for every file-backed asset;
+  `brand_lockup` remains one movable brand asset rather than being converted
+  into ordinary text.
 
 Every generated v2 record carries `id_origin` (`explicit` or `derived`) so a
 missing legacy ID is visible rather than silently dropped. Source manifests
@@ -39,6 +41,17 @@ The builder accepts historical v1 input shapes, including list bounding boxes
 and singular `object_id` / `asset_id` references, and emits v2. A checked-in v1
 registry is read for compatibility with a migration warning; rebuild it with
 the builder before delivery.
+
+For panel manifests from older package revisions, `build` falls back to the
+manifest-level `source` image when a panel has no per-asset `source_ref`. New
+approval and extraction outputs write the per-panel reference directly, so
+this compatibility path is only a migration aid.
+
+Coordinate units are part of the contract. When `layout.json` declares
+`units: px`, the builder accepts either `[x, y, w, h]`, `{x, y, w, h}`, or the
+common top-level `x/y/w/h` region form and keeps those values in pixel space.
+The registry text validator uses that same space; it must not apply the
+fractional 0–1 check to pixel bboxes.
 
 Build after the slide/object/asset manifests exist:
 
