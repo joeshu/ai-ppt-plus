@@ -2,7 +2,7 @@
   "schema": "ai-ppt-plus/visual-generation-manifest/v1",
   "project_id": "project-slug",
   "plan_sha256": "<sha256 of visual-generation-plan.json>",
-  "generator_skill": "GordenImagePPTGen",
+  "generator_skill": "ai-ppt-visual-gen",
   "tool_resolution": "runtime-discovery",
   "backend_policy": "raster-only",
   "source_retention": "generated-source-and-project-copy",

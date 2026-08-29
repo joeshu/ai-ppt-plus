@@ -18,7 +18,19 @@
 - DAG 流水线、内容哈希缓存、页面级增量渲染、受影响区域 QA 与并行检查
 - Schema、任意 N/不规则区域、字体缺失、PPTX 解包和 Golden Render 回归，以及 GitHub Actions CI
 - 统一技术/人工/交付报告协议与项目级 `review.html` 审阅页
-- `ai-ppt-plus`、`GordenImage2PPTX`、`Presentations` 的机器可读职责路由
+- `ai-ppt-plus`、`ai-ppt-visual-gen`、`ai-ppt-editable` 三个独立技能入口及机器可读职责路由
+
+## 三技能入口
+
+| 技能 | 独立用途 | 在全流程中的职责 |
+|---|---|---|
+| `ai-ppt-plus` | 多源材料到完整演示项目 | 叙事、路线、设计权威、跨技能 QA 与交付门禁 |
+| `ai-ppt-visual-gen` | 图片版 PPT、视觉中间稿 | A1–A5 文生图、单页重试、生成源留存、deck strip |
+| `ai-ppt-editable` | 参考图/内容到可编辑 PPTX | 对象拆解、PPTX 创作、渲染与技术 QA |
+
+三个入口共享同一套 `scripts/`、`assets/`、`references/`，不复制后段
+图转 PPTX 实现。详细边界见
+[`references/three-skill-architecture.md`](references/three-skill-architecture.md)。
 
 默认运行 DAG 流水线；局部修复可只验证受影响页面和区域：
 

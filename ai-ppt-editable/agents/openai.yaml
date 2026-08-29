@@ -1,0 +1,11 @@
+interface:
+  display_name: AI PPT Editable
+  short_description: 将参考图或内容还原为可编辑并完成技术验证的 PPTX
+  default_prompt: Use $ai-ppt-editable to reconstruct or author an editable, rendered, technically validated PowerPoint.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

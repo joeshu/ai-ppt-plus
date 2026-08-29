@@ -304,7 +304,7 @@ def main() -> int:
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
-    parser.add_argument("--visual-generation-plan", help="GordenImagePPTGen-compatible visual-generation-plan.json")
+    parser.add_argument("--visual-generation-plan", help="ai-ppt-visual-gen A1-A5 visual-generation-plan.json")
     parser.add_argument("--visual-generation-manifest", help="per-page raster generation evidence manifest")
     parser.add_argument("--require-visual-generation", action="store_true", help="require the visual-generation plan, self-contained prompts and retained image evidence")
     parser.add_argument("--routing-contract", help="skill-routing contract; defaults to the checked-in contract")

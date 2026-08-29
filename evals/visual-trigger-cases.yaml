@@ -1,0 +1,11 @@
+skill: ai-ppt-visual-gen
+should_trigger:
+  - "用AI生成两页高信息密度的图片版商业PPT"
+  - "按这个大纲执行A1到A5文生图，并保留每页生成源"
+  - "只做整套幻灯片视觉中间稿和deck strip复核"
+  - "这张参考图只学布局，重新生成一页图片型PPT"
+should_not_trigger:
+  - "把这些PDF做成完整可编辑PPT并交付"
+  - "把这张截图还原成真正可编辑的PPTX"
+  - "修复已有PPTX里的文字溢出"
+  - "生成一张普通社交媒体海报"

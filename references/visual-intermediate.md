@@ -44,7 +44,7 @@ Input: approved outline rows, design system and reference assets. Output: visual
 
 Common failures: no image model was actually used, ordinary PPT layout mislabeled as intermediate, generic template appearance, style drift, unreadable hierarchy, distorted reference ratios and invented labels. Validate generation evidence, page purpose, focus, reading order, content-zone capacity, token compliance and deck-strip consistency.
 
-## GordenImagePPTGen-compatible production mode
+## AI PPT Visual Gen A1-A5 production mode
 
 `visual-creation` has two explicit modes:
 
@@ -53,8 +53,8 @@ Common failures: no image model was actually used, ordinary PPT layout mislabele
 | `image-slide` | A generated raster slide should already read like a finished, high-density PPT page | The production prompt includes all approved copy verbatim; generated pixels remain provisional and never override formal PPTX text | `visual-generation-plan.json` plus `visual-generation-manifest.json` |
 | `layout-reference` | Explore composition before formal copy is placed | No formal text is required in the generated image; this is the backward-compatible mode | Existing visual-intermediate manifest |
 
-For new image-slide work, borrow the useful A1–A5 discipline from
-`GordenImagePPTGen` without changing the downstream reconstruction contract:
+For new image-slide work, use the A1–A5 discipline owned by
+`ai-ppt-visual-gen` without changing the downstream reconstruction contract:
 
 - A1 records style, audience, language, page count, ratio and an explicit
   density profile in `generation_context`. `dense` is the default; `balanced`

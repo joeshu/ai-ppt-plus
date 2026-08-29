@@ -2,7 +2,7 @@
 
 This contract is `ai-ppt-plus/visual-generation-tool/v1`. It applies only to
 the `visual-creation:image-slide` route and describes how `ai-ppt-plus`
-delegates the actual raster-generation event to `GordenImagePPTGen`.
+delegates the actual raster-generation event to `ai-ppt-visual-gen`.
 
 ## Runtime resolution
 
@@ -28,7 +28,7 @@ bitmap with code; repair the production prompt and regenerate the page.
 The plan's `generation_contract` and the manifest's matching top-level fields
 must declare:
 
-- `skill: GordenImagePPTGen`;
+- `skill: ai-ppt-visual-gen`;
 - `tool_resolution: runtime-discovery`;
 - `backend_policy: raster-only`;
 - `source_retention: generated-source-and-project-copy`;
@@ -46,9 +46,9 @@ manifest. A missing or mismatched record blocks the visual-generation gate.
 
 `ai-ppt-plus` remains the authority for narrative, approved formal copy,
 design-system tokens, prompt materialization, evidence, QA and release state.
-`GordenImagePPTGen` supplies the delegated raster-generation event and source
+`ai-ppt-visual-gen` owns the raster-generation event and source
 retention only. Generated pixels never become formal text authority. This
-contract does not enter or modify the downstream `GordenImage2PPTX` /
+contract does not enter or modify the downstream `ai-ppt-editable` /
 image-to-editable-PPTX route.
 
 ## A3 prompt materialization

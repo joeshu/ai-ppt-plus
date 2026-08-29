@@ -1,91 +1,79 @@
 # Skill routing and ownership
 
-The project has one orchestration owner and three capability layers. A request
-may pass through several layers, but each contract has one source of truth.
+The package has exactly three business skill entrypoints. Adapters and tools
+sit below this layer and are not counted as skills.
 
 | Skill | Owns | Does not own |
 |---|---|---|
-| `ai-ppt-plus` | intake, source authority, narrative/outline, route decision, design system, visual-generation plan/prompt/evidence, manifests, QA orchestration, report aggregation, human closeout and release gates | low-level shape-writing implementation details or image-only reconstruction internals |
-| `GordenImagePPTGen` | the delegated raster visual-generation event and retention of the generated source image | narrative/formal-text authority, image-to-editable-PPTX reconstruction, release eligibility or human sign-off |
-| `GordenImage2PPTX` | image/screenshot/reference decomposition into background, frame, icon/asset and formal-text layers; reconstruction-specific object plan and editable PPTX output | narrative redesign, release eligibility, human sign-off, or a second definition of the backend contract |
-| `Presentations` | low-level PPTX/Google Slides creation, mutation, rendering and package manipulation through the selected authoring adapter | choosing the story, deciding the visual route, defining editability policy, or claiming QA/release completion |
+| `ai-ppt-plus` | intake, source authority, narrative, approved outline, route, design authority, manifest reconciliation, QA aggregation, reports, human closeout and release gates | worker-internal generation/decomposition algorithms |
+| `ai-ppt-visual-gen` | A1–A5 planning and prompts, raster generation, page-local retry, generated-source retention and deck-strip review | orchestrated narrative/formal-text authority, editable reconstruction, release or human sign-off |
+| `ai-ppt-editable` | reference decomposition, editable-layer/object plan, PPTX authoring/rendering and technical QA | narrative redesign, release eligibility or human sign-off |
+
+`Presentations`, `python-pptx`, image generation, OCR, and rendering are
+adapters/tools. They may implement an operation but cannot acquire business
+ownership or create a fourth release authority.
 
 ## Routing rules
 
-1. A topic, outline, source bundle, or existing deck starts in
-   `ai-ppt-plus`.
-2. A fixed slide image or screenshot that must be reconstructed is delegated to
-   `GordenImage2PPTX` for decomposition. The formal text authority remains the
-   approved outline or user transcription, not generated pixels.
-3. A new `visual-creation:image-slide` request delegates the actual raster
-   generation to `GordenImagePPTGen` through the `visual_generation` binding.
-   Resolve the tool at runtime using the user-named backend first, Codex's
-   preferred `imagegen` tool second, another native raster tool third, and
-   otherwise record an unavailable/blocked generation state. SVG/HTML/Canvas
-   drawings and code-patched bitmap text do not satisfy this binding.
-4. PPTX object creation/editing is performed through the presentation
-   capability exposed by `Presentations` or the explicitly selected adapter.
-5. The result returns to `ai-ppt-plus` for manifest reconciliation, rendering,
-   structural/visual checks, report aggregation, human review and release.
-6. The runner must validate the discovered backend against the declared
-   `authoring` binding before any downstream gate. No child skill may silently replace the selected authoring backend, lower the
-   L0-L5 editability standard, or turn an automated pass into a delivery claim.
+1. A complete deck request, source bundle, mixed route, or resumed project
+   starts in `ai-ppt-plus`.
+2. A request only for image-format slides or a visual intermediate may invoke
+   `ai-ppt-visual-gen` directly. Under orchestration, the worker consumes the
+   approved outline/design revisions and returns evidence without replacing
+   them.
+3. A fixed reference image, screenshot, rasterized PDF page, existing deck, or
+   structured-content-to-editable-PPTX request may invoke `ai-ppt-editable`
+   directly. Its standalone text authority rules must be explicit.
+4. `visual-creation:image-slide` binds to `ai-ppt-visual-gen` as a checked-in
+   sibling skill. Resolve the image tool at runtime: user-named compatible
+   backend first, preferred native imagegen second, another native raster tool
+   third, otherwise blocked/unavailable. SVG/HTML/Canvas/code-added bitmap text
+   does not satisfy the generation event.
+5. `reference-reconstruction` and `editable-pptx` bind to `ai-ppt-editable` as
+   a checked-in sibling skill. A fixed reference is not routed through
+   whole-page visual generation merely to satisfy another path.
+6. PPTX operations use the declared authoring adapter. No skill may silently
+   replace the adapter, lower L0–L5 editability, or turn automated technical
+   success into delivery/human approval.
+7. Orchestrated results return to `ai-ppt-plus` for canonical manifest
+   reconciliation, deck-wide QA, human closeout, and release eligibility.
 
-## Shared contracts
+## Shared runtime and contracts
 
-These contracts are project-level and must be consumed by all routes:
+The three skills share one versioned `scripts/`, `assets/`, and `references/`
+runtime. Every entrypoint declares the same package revision. This prevents
+copied validators or schemas from drifting between skills.
 
-- `references/editability-levels.md` defines L0-L5 and the distinction between
-  editable content, movable assets and component editability.
-- `references/native-object-protocol.md` defines native shapes, groups, tables,
-  charts and vector asset evidence.
-- `references/report-protocol.md` defines the normalized report envelope and
-  the technical/human/release state split.
-- `references/chart-reconstruction.md` defines chart data authority,
-  representation selection, missing-value handling and chart-specific QA.
-- `ai-ppt-plus/visual-generation-tool/v1` defines the runtime raster-tool
-  resolution order, source-retention requirement and no-code-overlay boundary
-  for the `GordenImagePPTGen` visual path.
-- `references/font-embedding.md` and `references/font-portability.md` define
-  the font evidence and delivery restrictions.
+Shared contracts include:
 
-The machine-readable ownership map is kept in
-`assets/skill-routing.template.json` so a future adapter can validate its
-declared scope before it is selected.
+- `references/editability-levels.md` for L0–L5 semantics;
+- `references/native-object-protocol.md` for native/vector/object evidence;
+- `references/report-protocol.md` for automated/human/release state separation;
+- `references/chart-reconstruction.md` for chart authority and representation;
+- `ai-ppt-plus/visual-generation-tool/v1` for raster tool resolution,
+  source retention, and no-code-overlay policy;
+- font embedding/portability contracts;
+- machine-readable ownership in `assets/skill-routing.template.json`.
 
-## Executable contract
-
-The checked-in package is the source of truth for the orchestrator and its
-managed routing rules. Validate both contracts before intake or authoring:
+Validate before any downstream work:
 
 ```bash
-python scripts/validate_skill_package.py --skill-dir .
-python scripts/validate_routing_contract.py
+python3 scripts/validate_skill_package.py --skill-dir .
+python3 scripts/validate_routing_contract.py
 ```
 
-`validate_skill_package.py` checks the package revision and SHA-256 of every
-managed file. When a runtime-installed copy is known, pass
-`--runtime-skill-dir RUNTIME_DIR`; a missing or stale runtime file is a
-blocking drift, not a warning. `run_pipeline.py` runs this contract as its
-first prerequisite and includes the managed files in cache inputs.
-
-The route graph is intentionally small and explicit:
+When a runtime-installed bundle exists, pass it to
+`validate_skill_package.py --runtime-skill-dir`. Missing files, entrypoint
+revision drift, or a managed-file hash mismatch is blocking.
 
 ```mermaid
 flowchart TD
-    A[ai-ppt-plus intake] --> B{route decision}
-    B -->|visual-creation:image-slide| C[GordenImagePPTGen raster generation]
-    B -->|reference-reconstruction| D[GordenImage2PPTX decomposition]
-    C --> E[Presentations authoring adapter]
-    D --> E
-    E --> F[ai-ppt-plus QA and release gates]
+    A[ai-ppt-plus intake and authority] --> B{route}
+    B -->|image slides| C[ai-ppt-visual-gen A1-A5]
+    B -->|editable or reference| D[ai-ppt-editable]
+    C -->|visual evidence| D
+    D -->|PPTX and technical QA| E[ai-ppt-plus closeout]
 ```
 
-The route validator rejects undeclared ownership, missing backend bindings,
-and a non-`decided` route. The pipeline also binds a reference roster to its
-source hashes and makes the supplied route a prerequisite for every
-downstream task; an invalid route therefore cannot be treated as advisory
-metadata. The roster's `path` is the original authoritative source. A
-normalized comparison image, when needed, must be recorded separately as
-`comparison_path` with its own hash and `derived_from_sha256`; it must not
-replace the source authority.
+Direct worker invocation omits the outer orchestrator nodes but does not relax
+the worker's authority, evidence, or blocking rules.

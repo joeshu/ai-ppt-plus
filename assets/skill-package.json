@@ -1,12 +1,41 @@
 {
   "schema": "ai-ppt-plus/skill-package/v1",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.08.29.17",
+  "package_revision": "2026.08.29.18",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
+  "skill_entries": [
+    {
+      "name": "ai-ppt-plus",
+      "role": "orchestrator",
+      "entrypoint": "SKILL.md",
+      "agent": "agents/openai.yaml"
+    },
+    {
+      "name": "ai-ppt-visual-gen",
+      "role": "visual-worker",
+      "entrypoint": "ai-ppt-visual-gen/SKILL.md",
+      "agent": "ai-ppt-visual-gen/agents/openai.yaml"
+    },
+    {
+      "name": "ai-ppt-editable",
+      "role": "editable-worker",
+      "entrypoint": "ai-ppt-editable/SKILL.md",
+      "agent": "ai-ppt-editable/agents/openai.yaml"
+    }
+  ],
+  "shared_runtime": {
+    "policy": "single-source",
+    "roots": ["scripts", "assets", "references"]
+  },
   "managed_globs": [
     "SKILL.md",
     "agents/*.yaml",
+    "ai-ppt-visual-gen/*.md",
+    "ai-ppt-visual-gen/agents/*.yaml",
+    "ai-ppt-editable/*.md",
+    "ai-ppt-editable/agents/*.yaml",
+    "evals/*.yaml",
     "assets/*.json",
     "assets/*.yaml",
     "assets/schemas/*.json",
@@ -16,6 +45,10 @@
   "required_files": [
     "SKILL.md",
     "agents/openai.yaml",
+    "ai-ppt-visual-gen/SKILL.md",
+    "ai-ppt-visual-gen/agents/openai.yaml",
+    "ai-ppt-editable/SKILL.md",
+    "ai-ppt-editable/agents/openai.yaml",
     "assets/skill-package.json",
     "assets/skill-routing.template.json",
     "assets/schemas/skill-routing.schema.json",
@@ -31,6 +64,7 @@
     "scripts/authoring_backend.py",
     "scripts/atomic_output.py",
     "references/skill-routing.md",
+    "references/three-skill-architecture.md",
     "references/chart-reconstruction.md",
     "assets/chart-reconstruction.template.json",
     "scripts/validate_chart_manifest.py",

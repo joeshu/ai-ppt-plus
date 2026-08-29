@@ -1,0 +1,11 @@
+interface:
+  display_name: AI PPT Visual Gen
+  short_description: 独立生成高信息密度图片型幻灯片并保留完整证据
+  default_prompt: Use $ai-ppt-visual-gen to generate reviewed image-format slides with A1-A5 evidence.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

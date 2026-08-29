@@ -41,7 +41,7 @@
     "avoid_items": ["placeholder text", "invented numbers", "large pure-green areas", "random icon collage"]
   },
   "generation_contract": {
-    "skill": "GordenImagePPTGen",
+    "skill": "ai-ppt-visual-gen",
     "tool_resolution": "runtime-discovery",
     "preferred_tool": "imagegen",
     "backend_policy": "raster-only",

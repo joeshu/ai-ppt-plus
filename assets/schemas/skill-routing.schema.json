@@ -5,16 +5,16 @@
   "properties": {
     "schema": {"type": "string", "enum": ["ai-ppt-plus/skill-routing/v1"]},
     "orchestrator": {"type": "string", "enum": ["ai-ppt-plus"]},
-    "skills": {"type": "array", "minItems": 4, "items": {"type": "object", "required": ["name", "role", "owns", "forbids"], "properties": {"name": {"type": "string"}, "role": {"type": "string"}, "owns": {"type": "array"}, "forbids": {"type": "array"}}}},
+    "skills": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "required": ["name", "role", "owns", "forbids"], "properties": {"name": {"type": "string", "enum": ["ai-ppt-plus", "ai-ppt-visual-gen", "ai-ppt-editable"]}, "role": {"type": "string", "enum": ["orchestrator", "visual-worker", "editable-worker"]}, "owns": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "forbids": {"type": "array", "minItems": 1, "items": {"type": "string"}}}, "additionalProperties": false}},
     "shared_contracts": {"type": "array", "minItems": 1, "items": {"type": "string"}},
     "bindings": {
       "type": "object",
       "required": ["orchestrator", "reconstruction", "visual_generation", "authoring"],
       "properties": {
         "orchestrator": {"type": "object", "required": ["skill", "entrypoint"]},
-        "reconstruction": {"type": "object", "required": ["skill", "invocation", "required_for"]},
-        "visual_generation": {"type": "object", "required": ["skill", "invocation", "required_for", "tool_resolution", "preferred_tool", "backend_policy", "source_retention", "prompt_contract"]},
-        "authoring": {"type": "object", "required": ["backend", "entrypoint", "font_postprocessor"]}
+        "reconstruction": {"type": "object", "required": ["skill", "invocation", "skill_entrypoint", "runtime_entrypoint", "required_for"]},
+        "visual_generation": {"type": "object", "required": ["skill", "invocation", "skill_entrypoint", "required_for", "tool_resolution", "preferred_tool", "backend_policy", "source_retention", "prompt_contract"]},
+        "authoring": {"type": "object", "required": ["kind", "backend", "entrypoint", "font_postprocessor"]}
       }
     }
   }

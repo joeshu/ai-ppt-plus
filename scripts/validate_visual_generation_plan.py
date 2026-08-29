@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the GordenImagePPTGen-inspired visual-generation contract.
+"""Validate the ai-ppt-visual-gen A1-A5 visual-generation contract.
 
 This gate is intentionally scoped to the ``visual-creation`` route.  It
 checks the planning and image-generation evidence used to make a visual
@@ -27,7 +27,7 @@ RETRY_SCOPES = {"single-slide"}
 HEX_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 GENERATION_CONTRACT = {
-    "skill": "GordenImagePPTGen",
+    "skill": "ai-ppt-visual-gen",
     "tool_resolution": "runtime-discovery",
     "preferred_tool": "imagegen",
     "backend_policy": "raster-only",

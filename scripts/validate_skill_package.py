@@ -19,6 +19,11 @@ from atomic_output import atomic_write_json
 PACKAGE_SCHEMA = "ai-ppt-plus/skill-package/v1"
 NAME_RE = re.compile(r"^name:\s*([a-z0-9][a-z0-9-]*)\s*$", re.MULTILINE)
 REVISION_RE = re.compile(r"^\s*package_revision:\s*([^\s#]+)\s*$", re.MULTILINE)
+EXPECTED_ENTRIES = {
+    "ai-ppt-plus": ("orchestrator", "SKILL.md", "agents/openai.yaml"),
+    "ai-ppt-visual-gen": ("visual-worker", "ai-ppt-visual-gen/SKILL.md", "ai-ppt-visual-gen/agents/openai.yaml"),
+    "ai-ppt-editable": ("editable-worker", "ai-ppt-editable/SKILL.md", "ai-ppt-editable/agents/openai.yaml"),
+}
 
 
 def sha256(path: Path) -> str:
@@ -57,18 +62,65 @@ def main() -> int:
     if not isinstance(revision, str) or not revision.strip():
         issues.append({"severity": "blocker", "code": "package_revision_missing"})
 
-    entrypoint = root / str(package.get("entrypoint") or "SKILL.md")
-    entrypoint_text = ""
-    if not entrypoint.is_file():
-        issues.append({"severity": "blocker", "code": "entrypoint_missing", "path": str(entrypoint)})
+    entries = package.get("skill_entries")
+    if not isinstance(entries, list):
+        entries = []
+        issues.append({"severity": "blocker", "code": "skill_entries_missing"})
+    by_name: dict[str, dict] = {}
+    seen_paths: set[str] = set()
+    seen_roles: set[str] = set()
+    for index, item in enumerate(entries):
+        if not isinstance(item, dict) or not isinstance(item.get("name"), str):
+            issues.append({"severity": "blocker", "code": "skill_entry_invalid", "index": index})
+            continue
+        name = item["name"]
+        if name in by_name:
+            issues.append({"severity": "blocker", "code": "skill_entry_duplicate_name", "name": name})
+        by_name[name] = item
+        for field in ("entrypoint", "agent"):
+            value = item.get(field)
+            if not isinstance(value, str) or not value or Path(value).is_absolute() or ".." in Path(value).parts:
+                issues.append({"severity": "blocker", "code": "skill_entry_path_invalid", "name": name, "field": field, "path": value})
+            elif field == "entrypoint":
+                if value in seen_paths:
+                    issues.append({"severity": "blocker", "code": "skill_entry_duplicate_path", "path": value})
+                seen_paths.add(value)
+        role = item.get("role")
+        if not isinstance(role, str) or role in seen_roles:
+            issues.append({"severity": "blocker", "code": "skill_entry_role_invalid", "name": name, "role": role})
+        elif role:
+            seen_roles.add(role)
+    if set(by_name) != set(EXPECTED_ENTRIES):
+        issues.append({"severity": "blocker", "code": "skill_entry_set_invalid", "expected": sorted(EXPECTED_ENTRIES), "observed": sorted(by_name)})
+    for name, (role, relative, agent_relative) in EXPECTED_ENTRIES.items():
+        item = by_name.get(name)
+        if not isinstance(item, dict):
+            continue
+        expected = {"role": role, "entrypoint": relative, "agent": agent_relative}
+        for field, value in expected.items():
+            if item.get(field) != value:
+                issues.append({"severity": "blocker", "code": "skill_entry_contract_mismatch", "name": name, "field": field, "expected": value, "observed": item.get(field)})
+        entrypoint = root / relative
+        if not entrypoint.is_file():
+            issues.append({"severity": "blocker", "code": "entrypoint_missing", "name": name, "path": str(entrypoint)})
+            continue
+        text = entrypoint.read_text(encoding="utf-8")
+        declared_name = NAME_RE.search(text)
+        if not declared_name or declared_name.group(1) != name:
+            issues.append({"severity": "blocker", "code": "entrypoint_name_mismatch", "expected": name, "path": relative})
+        declared_revision = REVISION_RE.search(text)
+        if not declared_revision or declared_revision.group(1) != revision:
+            issues.append({"severity": "blocker", "code": "entrypoint_revision_mismatch", "name": name, "expected": revision, "observed": declared_revision.group(1) if declared_revision else None})
+        if not (root / agent_relative).is_file():
+            issues.append({"severity": "blocker", "code": "skill_agent_missing", "name": name, "path": agent_relative})
+
+    shared_runtime = package.get("shared_runtime")
+    if not isinstance(shared_runtime, dict) or shared_runtime.get("policy") != "single-source":
+        issues.append({"severity": "blocker", "code": "shared_runtime_policy_invalid", "observed": shared_runtime})
     else:
-        entrypoint_text = entrypoint.read_text(encoding="utf-8")
-        name = NAME_RE.search(entrypoint_text)
-        if not name or name.group(1) != "ai-ppt-plus":
-            issues.append({"severity": "blocker", "code": "entrypoint_name_mismatch"})
-        entrypoint_revision = REVISION_RE.search(entrypoint_text)
-        if not entrypoint_revision or entrypoint_revision.group(1) != revision:
-            issues.append({"severity": "blocker", "code": "entrypoint_revision_mismatch", "expected": revision, "observed": entrypoint_revision.group(1) if entrypoint_revision else None})
+        roots = shared_runtime.get("roots")
+        if roots != ["scripts", "assets", "references"]:
+            issues.append({"severity": "blocker", "code": "shared_runtime_roots_invalid", "expected": ["scripts", "assets", "references"], "observed": roots})
 
     required_files = package.get("required_files")
     if not isinstance(required_files, list) or not required_files:
