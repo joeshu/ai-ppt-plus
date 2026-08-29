@@ -20,7 +20,8 @@ may pass through several layers, but each contract has one source of truth.
    capability exposed by `Presentations` or the explicitly selected adapter.
 4. The result returns to `ai-ppt-plus` for manifest reconciliation, rendering,
    structural/visual checks, report aggregation, human review and release.
-5. No child skill may silently replace the selected authoring backend, lower the
+5. The runner must validate the discovered backend against the declared
+   `authoring` binding before any downstream gate. No child skill may silently replace the selected authoring backend, lower the
    L0-L5 editability standard, or turn an automated pass into a delivery claim.
 
 ## Shared contracts
@@ -72,4 +73,7 @@ The route validator rejects undeclared ownership, missing backend bindings,
 and a non-`decided` route. The pipeline also binds a reference roster to its
 source hashes and makes the supplied route a prerequisite for every
 downstream task; an invalid route therefore cannot be treated as advisory
-metadata.
+metadata. The roster's `path` is the original authoritative source. A
+normalized comparison image, when needed, must be recorded separately as
+`comparison_path` with its own hash and `derived_from_sha256`; it must not
+replace the source authority.

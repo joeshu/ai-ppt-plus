@@ -56,12 +56,14 @@ python scripts/manifest_registry.py build \
 ```
 
 Validate the result before project or delivery checks. Add `--require-gates`
-when the report evidence is mandatory:
+when the report evidence is mandatory; add `--require-asset-hashes` for strict
+delivery so every file-backed `AssetSpec` has a current `path_sha256`:
 
 ```bash
 python scripts/manifest_registry.py validate manifest-registry.json \
   --deck final.pptx \
   --require-gates \
+  --require-asset-hashes \
   --report manifest-registry-validation.json
 ```
 

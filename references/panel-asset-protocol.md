@@ -32,7 +32,7 @@ manifest can be checked with `validate_panel_assets.py --assets-dir PROJECT`.
 ## Manifest
 
 Record each panel in `panel-asset-manifest.json` with `panel_id`, `file`,
-`source_bbox`, `editability_level`, `treatment` and `text_layer_ids`. The six
+`sha256`, `source_bbox`, `editability_level`, `treatment` and `text_layer_ids`. The six
 containers in a six-card reference therefore produce six entries, not one
 `frame` entry. If a whole-frame asset remains, record the exact non-semantic
 regions it covers and why it does not prevent panel movement.
@@ -47,4 +47,6 @@ Logo wordmark) is not valid evidence for the full asset placement.
 Before composition, run `validate_panel_assets.py --require-independent`.
 Missing panel entries, duplicate panel files, overlapping panel ownership or
 formal text baked into a panel image are repair items; in strict mode they block
-delivery.
+delivery. For strict release, also pass `--require-hashes`; `sha256` must be the
+hash of the independent panel file named by `file`, while `source_sha256`
+remains the hash of the original full-resolution reference.

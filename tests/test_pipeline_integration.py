@@ -27,7 +27,8 @@ def main() -> int:
             "slides": [{"texts": [{"object_id": "title", "text": "DAG fixture", "x": 0.1, "y": 0.1, "w": 0.8, "h": 0.2, "size": 18}]}],
         }), encoding="utf-8")
         deck = project / "deck.pptx"
-        composed = subprocess.run([sys.executable, "scripts/compose_pptx.py", str(layout), str(deck)], cwd=ROOT, capture_output=True, text=True, check=False)
+        preview_dir = project / "preview"
+        composed = subprocess.run([sys.executable, "scripts/compose_pptx.py", str(layout), str(deck), "--preview-dir", str(preview_dir)], cwd=ROOT, capture_output=True, text=True, check=False)
         assert composed.returncode == 0, composed.stdout + composed.stderr
         objects = project / "slide-object-manifest.json"
         built_objects = subprocess.run([sys.executable, "scripts/build_object_manifest.py", str(layout), "--output", str(objects)], cwd=ROOT, capture_output=True, text=True, check=False)
@@ -41,7 +42,7 @@ def main() -> int:
         runs = []
         for number in (1, 2):
             run_dir = root / f"run-{number}"
-            command = [sys.executable, "scripts/run_pipeline.py", str(project), "--deck", str(deck), "--expected-pages", "1", "--affected-pages", "1", "--affected-region", "title=0,0,100,40", "--execution-mode", "dag", "--cache-dir", str(cache), "--output-dir", str(run_dir)]
+            command = [sys.executable, "scripts/run_pipeline.py", str(project), "--deck", str(deck), "--expected-pages", "1", "--affected-pages", "1", "--affected-region", "title=0,0,100,40", "--preview-dir", str(preview_dir), "--require-preview-consistency", "--execution-mode", "dag", "--cache-dir", str(cache), "--output-dir", str(run_dir)]
             completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
             assert completed.returncode == 0, completed.stdout + completed.stderr
             data = json.loads(completed.stdout.strip().splitlines()[-1])
@@ -57,6 +58,7 @@ def main() -> int:
             semantic = json.loads((run_dir / "semantic-object-audit.json").read_text(encoding="utf-8"))
             assert semantic["valid"] is True
             assert data["quality_evidence"]["semantic_object_audit"]["valid"] is True
+            assert data["quality_evidence"]["preview_consistency"]["valid"] is True
             assert data["finalization"]["report_bundle"]["status"] == "passed"
             runs.append(data)
         assert runs[1]["execution"]["cache_hits"] > 0, runs[1]["execution"]

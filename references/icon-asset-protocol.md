@@ -72,11 +72,15 @@ The page must have an `icon-asset-manifest.json` with schema
 `ai-ppt-plus/icon-assets/v1`, complete B4/B5 evidence, and one record per
 independent icon/decorative asset. Each record includes `asset_id`, `role`,
 `source_ref`, `source_bbox`, `extraction_method`, `frame_exclusion`,
-`asset_path`, `editability_level`, `replaceable`, `alpha_quality`,
+`asset_path`, `sha256`, `editability_level`, `replaceable`, `alpha_quality`,
 `edge_touch`, `split_status`, `duplicate_guard`, `anchor`, and
 `review_status`. The top level also records `source_vs_frame_review`,
 `frame_asset_ids`, `icon_asset_ids`, `frame_preview`, and
 `contact_sheet`.
+
+`sha256` is the hash of the delivered file at `asset_path`, not the hash of
+the source screenshot. Run `scripts/validate_icon_assets.py --require-hashes`
+and the project-wide `scripts/validate_asset_hashes.py` before strict release.
 
 Use independent PPT picture objects for extracted icons and decoration unless a
 genuinely editable vector/native equivalent is selected. Extracted icons and

@@ -79,6 +79,8 @@ def _gate_requirements(layout: dict, slides: list[dict], args) -> dict[str, bool
         "gradient_visual": has_gradient(layout) or bool(args.requires_gradient_visual),
         "source_image_validation": reference_driven,
         "reference_audit": reference_driven,
+        "content_inventory": reference_driven and has_text,
+        "asset_hashes": bool(visual_objects) or reference_driven,
     }
 
 

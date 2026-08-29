@@ -83,6 +83,26 @@ def main() -> int:
             if observed.get(key) != value:
                 issues.append({"severity": "blocker", "code": "routing_binding_mismatch", "section": section, "field": key, "expected": value, "observed": observed.get(key)})
 
+    # A declaration is not an executable binding unless the checked-in
+    # entrypoints are present at the same skill revision.  The reconstruction
+    # engine remains an external skill by contract, but the orchestrator and
+    # authoring adapter must be locally resolvable.
+    skill_root = path.parent.parent
+    for section, fields in {
+        "orchestrator": ("entrypoint",),
+        "authoring": ("entrypoint", "font_postprocessor"),
+    }.items():
+        binding = bindings.get(section) if isinstance(bindings, dict) else None
+        if not isinstance(binding, dict):
+            continue
+        for field in fields:
+            value = binding.get(field)
+            if not isinstance(value, str) or not value.strip():
+                continue
+            target = (skill_root / value).resolve()
+            if not target.is_file():
+                issues.append({"severity": "blocker", "code": "routing_entrypoint_missing", "section": section, "field": field, "path": str(target)})
+
     result = {
         "schema": "ai-ppt-plus/routing-contract-validation/v1",
         "valid": not issues,

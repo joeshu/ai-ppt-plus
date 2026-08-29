@@ -15,7 +15,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--dpi N] [--strict-layout]
        [--execution-mode dag|linear] [--cache-dir DIR] [--no-cache]
        [--parallel-workers N] [--affected-pages 1,3-4]
-       [--page-cache-dir DIR]
+       [--page-cache-dir DIR] [--preview-dir DIR]
        [--affected-region name=x,y,w,h]
        [--output-dir RUN_DIR]
 """
@@ -134,11 +134,19 @@ def project_gate_requirements(project: Path) -> dict:
         "object_manifest", "semantic_object_audit", "manifest_registry", "text_model",
         "text_style_map", "icon_assets", "imagegen_assets", "panel_assets",
         "panel_approval", "gradient_visual", "source_image_validation", "reference_audit",
+        "content_inventory",
     )
+    optional_names = ("asset_hashes",)
     requirements = {}
     issues = []
     for name in names:
         value = raw.get(name)
+        if not isinstance(value, bool):
+            issues.append(f"gate_requirements.{name}_must_be_boolean")
+        else:
+            requirements[name] = value
+    for name in optional_names:
+        value = raw.get(name, False)
         if not isinstance(value, bool):
             issues.append(f"gate_requirements.{name}_must_be_boolean")
         else:
@@ -213,6 +221,11 @@ def inferred_gate_requirements(project: Path, object_manifest: Path, route_data:
         "gradient_visual": has_gradient,
         "source_image_validation": reference_route,
         "reference_audit": reference_route,
+        "content_inventory": reference_route and has_text,
+        "asset_hashes": bool(visual_objects) or any(
+            (project / name).is_file()
+            for name in ("asset-manifest.json", "panel-asset-manifest.json", "icon-asset-manifest.json", "imagegen-assets-manifest.json")
+        ),
     }
 
 
@@ -233,6 +246,10 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"native_status": report.get("status", "diagnostic"), "ok": report.get("ok"), "resized_for_comparison": report.get("resized_for_comparison"), "preview_size": report.get("preview_size")})
     elif name == "render":
         summary.update({"renderer": report.get("renderer"), "dpi": report.get("dpi"), "conversion": report.get("conversion", {}), "page_cache": report.get("page_cache", {}), "page_fingerprints": report.get("page_fingerprints", [])})
+    elif name == "multipage_layout_guard":
+        summary.update({"expected_pages": report.get("expected_pages"), "selected_pages": report.get("selected_pages"), "pages": len(report.get("pages", [])), "strict": report.get("strict"), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "preview_consistency":
+        summary.update({"expected_pages": report.get("expected_pages"), "aggregate": report.get("aggregate", {}), "threshold": report.get("threshold"), "human_visual_review_required": report.get("human_visual_review_required", True)})
     return summary
 
 
@@ -256,6 +273,8 @@ def main() -> int:
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
     parser.add_argument("--routing-contract", help="skill-routing contract; defaults to the checked-in contract")
     parser.add_argument("--require-formal-content", action="store_true", help="require approved formal text authority in the route decision")
+    parser.add_argument("--content-inventory", help="independent visible-content inventory for text and chart annotations")
+    parser.add_argument("--require-content-inventory", action="store_true", help="require and validate the independent visible-content inventory")
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
     parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
     parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
@@ -271,6 +290,7 @@ def main() -> int:
     parser.add_argument("--manifest-registry", help="canonical cross-manifest registry.json")
     parser.add_argument("--require-manifest-registry", action="store_true", help="require and validate the cross-manifest registry")
     parser.add_argument("--require-source-hashes", action="store_true", help="require declared source hashes for raster/data assets")
+    parser.add_argument("--require-asset-hashes", action="store_true", help="require current SHA-256 declarations for all file-backed asset manifests")
     parser.add_argument("--require-gradient-visual", action="store_true", help="require and validate the gradient visual manifest")
     parser.add_argument("--release", action="store_true", help="run the strict release gate after technical validation")
     parser.add_argument("--handoff", help="handoff.json; required by --release")
@@ -281,6 +301,10 @@ def main() -> int:
     parser.add_argument("--require-embedded-fonts", action="store_true", help="require verified OOXML embedded fonts in strict release delivery")
     parser.add_argument("--dpi", type=int, default=96, help="render DPI; same-ratio reference comparisons are normalized when pixel sizes differ")
     parser.add_argument("--strict-layout", action="store_true", help="treat layout-audit warnings (such as missing source_bbox) as blockers")
+    parser.add_argument("--require-multipage-layout", action="store_true", help="require per-page layout/bbox validation when --reference-dir is used")
+    parser.add_argument("--preview-dir", help="Pillow authoring previews to compare with final rendered PNGs")
+    parser.add_argument("--preview-threshold", type=float, help="minimum blurred SSIM for preview/final-render consistency")
+    parser.add_argument("--require-preview-consistency", action="store_true", help="require an exact preview page set and valid preview/final-render comparison")
     parser.add_argument("--execution-mode", choices=["dag", "linear"], default="dag", help="DAG execution with caching, or the compatibility linear runner")
     parser.add_argument("--cache-dir", help="content-addressed pipeline cache directory; defaults to PROJECT_DIR/.pipeline-cache in DAG mode")
     parser.add_argument("--no-cache", action="store_true", help="disable successful-task cache restores/writes")
@@ -292,6 +316,9 @@ def main() -> int:
     args = parser.parse_args()
     project = Path(args.project_dir).resolve()
     deck = Path(args.deck).resolve()
+    if args.expected_pages < 1:
+        print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "expected_pages_invalid", "message": "--expected-pages must be positive"}, ensure_ascii=False))
+        return 2
     if args.release:
         # A release is a stronger profile than technical validation.  Make
         # the required evidence explicit instead of allowing a green run to
@@ -304,7 +331,10 @@ def main() -> int:
         args.require_manifest_registry = True
         args.require_text_model = True
         args.require_source_hashes = True
+        args.require_asset_hashes = True
         args.require_formal_content = True
+        if args.reference_dir:
+            args.require_multipage_layout = True
         missing = []
         if not args.font_dir:
             missing.append("--font-dir")
@@ -364,6 +394,12 @@ def main() -> int:
         }
         print(json.dumps(result, ensure_ascii=False))
         return 2
+    reference_route = isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction"
+    if args.release and reference_route:
+        # A fixed reference contains visible information that cannot be
+        # inferred from object counts alone.  Release therefore requires an
+        # independent inventory of all visible text and chart annotations.
+        args.require_content_inventory = True
     gate_info = project_gate_requirements(project)
     gate_requirements = gate_info.get("requirements", {})
     if args.release:
@@ -391,7 +427,8 @@ def main() -> int:
         args.require_imagegen_assets = args.require_imagegen_assets or gate_requirements.get("imagegen_assets", False)
         args.require_text_style_map = args.require_text_style_map or gate_requirements.get("text_style_map", False)
         args.require_gradient_visual = args.require_gradient_visual or gate_requirements.get("gradient_visual", False)
-    if args.require_route and isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction":
+        args.require_asset_hashes = args.require_asset_hashes or gate_requirements.get("asset_hashes", False)
+    if args.require_route and reference_route:
         if not (args.reference or args.reference_dir):
             result = {"schema": "ai-ppt-plus/pipeline-run/v1", "valid": False, "code": "reference_route_without_reference", "message": "reference-reconstruction requires --reference or --reference-dir for visual comparison"}
             print(json.dumps(result, ensure_ascii=False))
@@ -510,6 +547,19 @@ def main() -> int:
     if args.revision_label:
         add_step("revision-prepare", [str(SCRIPT_DIR / "revision_guard.py"), "prepare", str(project), "--deck", str(deck), "--label", args.revision_label], inputs=[project, deck], metadata={"revision_label": args.revision_label}, cacheable=False)
     add_step("environment", [str(SCRIPT_DIR / "probe_environment.py"), "--output", str(run_dir / "environment-report.json")], outputs=[run_dir / "environment-report.json"])
+    add_step(
+        "backend-binding",
+        [
+            str(SCRIPT_DIR / "validate_backend_binding.py"),
+            str(run_dir / "environment-report.json"),
+            str(routing_contract),
+            "--skill-dir", str(SCRIPT_DIR.parent),
+            "--report", str(run_dir / "backend-binding-validation.json"),
+        ],
+        deps=["environment", "routing-contract"],
+        outputs=[run_dir / "backend-binding-validation.json"],
+        inputs=[run_dir / "environment-report.json", routing_contract, SCRIPT_DIR / "authoring_backend.py", SCRIPT_DIR / "embed_fonts.py"],
+    )
     if args.font_dir or args.require_cjk:
         font_args = [str(SCRIPT_DIR / "probe_fonts.py"), "--output", str(run_dir / "font-report.json")]
         if args.font_dir:
@@ -525,11 +575,60 @@ def main() -> int:
             add_step("font-asset", font_asset_args, deps=["fonts"], outputs=[run_dir / "font-asset-validation.json"], inputs=[Path(args.font_dir).resolve()])
     layout_path = project / "layout.json"
     object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
+    content_inventory = Path(args.content_inventory).resolve() if args.content_inventory else project / "content-inventory.json"
+    content_inventory_required = bool(args.require_content_inventory)
+    content_inventory_enabled = content_inventory_required or content_inventory.is_file()
+    if content_inventory_required and not content_inventory.is_file():
+        add_step(
+            "content-inventory",
+            static_result={"name": "content-inventory", "command": [], "exit_code": 2, "ok": False, "failure": "content_inventory_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            deps=route_deps,
+            outputs=[run_dir / "content-inventory-validation.json"],
+        )
+    elif content_inventory_enabled:
+        content_args = [
+            str(SCRIPT_DIR / "validate_content_inventory.py"),
+            str(content_inventory),
+            "--expected-pages", str(args.expected_pages),
+            "--deck", str(deck),
+            "--report", str(run_dir / "content-inventory-validation.json"),
+        ]
+        if object_manifest.is_file() or args.require_object_manifest:
+            content_args.extend(["--object-manifest", str(object_manifest)])
+        text_manifest_for_content = Path(args.text_manifest).resolve() if args.text_manifest else project / "text-layout-manifest.json"
+        if text_manifest_for_content.is_file() or args.require_text_model:
+            content_args.extend(["--text-manifest", str(text_manifest_for_content)])
+        content_inputs = [content_inventory, deck]
+        if object_manifest.is_file() or args.require_object_manifest:
+            content_inputs.append(object_manifest)
+        if text_manifest_for_content.is_file() or args.require_text_model:
+            content_inputs.append(text_manifest_for_content)
+        add_step("content-inventory", content_args, deps=route_deps, outputs=[run_dir / "content-inventory-validation.json"], inputs=content_inputs)
     if args.require_object_manifest or object_manifest.is_file():
         object_args = [str(SCRIPT_DIR / "validate_object_manifest.py"), str(object_manifest), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "object-manifest-validation.json")]
         if args.require_independent_panels:
             object_args.append("--require-panels")
         add_step("object-manifest", object_args, outputs=[run_dir / "object-manifest-validation.json"], inputs=[object_manifest, deck])
+    hash_manifests: list[Path] = []
+    for candidate in [*(Path(path).resolve() for path in args.asset_manifest), *(project / name for name in ("asset-manifest.json", "panel-asset-manifest.json", "icon-asset-manifest.json", "imagegen-assets-manifest.json"))]:
+        candidate = candidate.resolve()
+        if candidate.is_file() and candidate not in hash_manifests:
+            hash_manifests.append(candidate)
+    asset_hashes_enabled = bool(hash_manifests) or args.require_asset_hashes
+    if args.require_asset_hashes and not hash_manifests:
+        add_step(
+            "asset-hashes",
+            static_result={"name": "asset-hashes", "command": [], "exit_code": 2, "ok": False, "failure": "asset_manifests_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            deps=route_deps,
+            outputs=[run_dir / "asset-hash-validation.json"],
+        )
+    elif hash_manifests:
+        hash_args = [str(SCRIPT_DIR / "validate_asset_hashes.py"), *[str(path) for path in hash_manifests], "--base", str(project), "--report", str(run_dir / "asset-hash-validation.json")]
+        if args.require_asset_hashes:
+            hash_args.append("--require")
+        add_step("asset-hashes", hash_args, deps=route_deps, outputs=[run_dir / "asset-hash-validation.json"], inputs=hash_manifests)
     registry_path = Path(args.manifest_registry).resolve() if args.manifest_registry else project / "manifest-registry.json"
     registry_enabled = bool(args.manifest_registry or registry_path.is_file())
     if args.require_manifest_registry and not registry_path.is_file():
@@ -538,6 +637,8 @@ def main() -> int:
         registry_args = [str(SCRIPT_DIR / "manifest_registry.py"), "validate", str(registry_path), "--deck", str(deck), "--report", str(run_dir / "manifest-registry-validation.json")]
         if args.require_manifest_registry:
             registry_args.append("--require-gates")
+        if args.require_asset_hashes:
+            registry_args.append("--require-asset-hashes")
         add_step("manifest-registry", registry_args, outputs=[run_dir / "manifest-registry-validation.json"], inputs=[registry_path, deck, project / "slide-manifest.json"] + ([object_manifest] if object_manifest.is_file() else []))
     if args.reference:
         if layout_path.is_file():
@@ -548,10 +649,47 @@ def main() -> int:
             add_step("layout-guard", layout_args, outputs=[run_dir / "layout-guard.json"], inputs=[Path(args.reference).resolve(), layout_path])
         else:
             add_step("layout-guard", static_result={"name": "layout-guard", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""}, outputs=[run_dir / "layout-guard.json"], cacheable=False)
+    if args.reference_dir:
+        reference_dir = Path(args.reference_dir).resolve()
+        if layout_path.is_file():
+            multi_layout_args = [
+                str(SCRIPT_DIR / "validate_multipage_layout.py"),
+                str(reference_dir),
+                str(layout_path),
+                "--expected-pages", str(args.expected_pages),
+                "--expected-ratio", str(args.expected_ratio or (16 / 9)),
+                "--report", str(run_dir / "multipage-layout-guard.json"),
+            ]
+            if args.strict_layout or args.require_multipage_layout or args.release:
+                multi_layout_args.append("--strict")
+            if affected_pages:
+                multi_layout_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+            add_step(
+                "multipage-layout-guard",
+                multi_layout_args,
+                deps=route_deps,
+                outputs=[run_dir / "multipage-layout-guard.json"],
+                inputs=[reference_dir, layout_path],
+                metadata={"affected_pages": affected_pages or "all", "strict": bool(args.strict_layout or args.require_multipage_layout or args.release)},
+            )
+        elif args.require_multipage_layout:
+            add_step(
+                "multipage-layout-guard",
+                static_result={"name": "multipage-layout-guard", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""},
+                cacheable=False,
+                deps=route_deps,
+                outputs=[run_dir / "multipage-layout-guard.json"],
+            )
     if imagegen_required:
-        add_step("imagegen-assets", [str(SCRIPT_DIR / "validate_imagegen_assets_manifest.py"), str(project / "imagegen-assets-manifest.json"), "--report", str(run_dir / "imagegen-assets-validation.json")], outputs=[run_dir / "imagegen-assets-validation.json"], inputs=[project / "imagegen-assets-manifest.json"])
+        imagegen_args = [str(SCRIPT_DIR / "validate_imagegen_assets_manifest.py"), str(project / "imagegen-assets-manifest.json"), "--report", str(run_dir / "imagegen-assets-validation.json")]
+        if args.require_asset_hashes:
+            imagegen_args.append("--require-hashes")
+        add_step("imagegen-assets", imagegen_args, outputs=[run_dir / "imagegen-assets-validation.json"], inputs=[project / "imagegen-assets-manifest.json"])
     if icon_required:
-        add_step("icon-assets", [str(SCRIPT_DIR / "validate_icon_assets.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-assets-validation.json")], outputs=[run_dir / "icon-assets-validation.json"], inputs=[project / "icon-asset-manifest.json"])
+        icon_args = [str(SCRIPT_DIR / "validate_icon_assets.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-assets-validation.json")]
+        if args.require_asset_hashes:
+            icon_args.append("--require-hashes")
+        add_step("icon-assets", icon_args, outputs=[run_dir / "icon-assets-validation.json"], inputs=[project / "icon-asset-manifest.json"])
         add_step("icon-layers", [str(SCRIPT_DIR / "audit_icon_layers.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-layer-audit.json")], outputs=[run_dir / "icon-layer-audit.json"], inputs=[project / "icon-asset-manifest.json"])
     inspection_path = run_dir / "inspection.json"
     render_report_path = run_dir / "render-report.json"
@@ -619,12 +757,33 @@ def main() -> int:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
     elif args.reference_dir:
-        comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--report", str(run_dir / "visual-comparison.json")]
+        comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "visual-comparison.json")]
         if args.visual_threshold is not None:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
         if affected_pages:
             comparison_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir, Path(args.reference_dir).resolve()], metadata={"affected_pages": affected_pages or "all"})
+    if args.preview_dir:
+        preview_dir = Path(args.preview_dir).resolve()
+        preview_args = [
+            str(SCRIPT_DIR / "validate_preview_consistency.py"),
+            str(render_dir),
+            str(preview_dir),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(run_dir / "preview-consistency-validation.json"),
+        ]
+        if args.preview_threshold is not None:
+            preview_args.extend(["--threshold", str(args.preview_threshold)])
+        if args.require_preview_consistency or args.release:
+            preview_args.append("--require")
+        add_step(
+            "preview-consistency",
+            preview_args,
+            deps=["render"],
+            outputs=[run_dir / "preview-consistency-validation.json"],
+            inputs=[render_dir, preview_dir],
+            metadata={"expected_pages": args.expected_pages, "threshold": args.preview_threshold, "required": bool(args.require_preview_consistency or args.release)},
+        )
     if args.reference:
         reference_audit_args = [str(SCRIPT_DIR / "reference_audit.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--report", str(run_dir / "reference-audit.json")]
         add_step("reference-audit", reference_audit_args, deps=["render"] + (["source-images"] if "source-images" in {task.name for task in executor.tasks} else []), outputs=[run_dir / "reference-audit.json"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
@@ -645,6 +804,8 @@ def main() -> int:
     if panel_gate_required:
         panel_args = [str(SCRIPT_DIR / "validate_panel_assets.py"), str(panel_manifest), "--assets-dir", str(project), "--report", str(run_dir / "panel-assets-validation.json"), "--strict"]
         panel_args.append("--require-approved")
+        if args.require_asset_hashes:
+            panel_args.append("--require-hashes")
         if args.require_independent_panels:
             panel_args.append("--require-independent")
         if args.expected_panel_count is not None:
@@ -690,12 +851,32 @@ def main() -> int:
         project_args.extend(["--visual-comparison", str(run_dir / "visual-comparison.json")])
     if args.ocr_lang or args.require_ocr:
         project_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
-    project_deps = ["inspection", "render", "render-visual-gate", "manifest"]
+    if content_inventory_enabled:
+        project_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json")])
+        if content_inventory_required:
+            project_args.append("--require-content-inventory")
+    if asset_hashes_enabled:
+        project_args.extend(["--asset-hash-validation", str(run_dir / "asset-hash-validation.json")])
+        if args.require_asset_hashes:
+            project_args.append("--require-asset-hashes")
+    if any(task.name == "multipage-layout-guard" for task in executor.tasks):
+        project_args.extend(["--multipage-layout-validation", str(run_dir / "multipage-layout-guard.json")])
+        if args.require_multipage_layout:
+            project_args.append("--require-multipage-layout")
+    if args.preview_dir:
+        project_args.extend(["--preview-consistency-validation", str(run_dir / "preview-consistency-validation.json")])
+        if args.require_preview_consistency or args.release:
+            project_args.append("--require-preview-consistency")
+    project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "visual-comparison", "ocr-text-check"):
+    for candidate in ("route", "visual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
+    if content_inventory_enabled:
+        project_deps.append("content-inventory")
+    if asset_hashes_enabled:
+        project_deps.append("asset-hashes")
     project_inputs = [
         deck,
         project / "slide-manifest.json",
@@ -735,6 +916,18 @@ def main() -> int:
         [run_dir / "ocr-text-check.json"] if args.ocr_lang or args.require_ocr else []
     )
     project_inputs.extend(
+        [run_dir / "content-inventory-validation.json"] if content_inventory_enabled else []
+    )
+    project_inputs.extend(
+        [run_dir / "asset-hash-validation.json"] if asset_hashes_enabled else []
+    )
+    project_inputs.extend(
+        [run_dir / "multipage-layout-guard.json"] if any(task.name == "multipage-layout-guard" for task in executor.tasks) else []
+    )
+    project_inputs.extend(
+        [run_dir / "preview-consistency-validation.json"] if args.preview_dir else []
+    )
+    project_inputs.extend(
         [run_dir / "semantic-object-audit.json"] if args.require_object_manifest or object_manifest.is_file() else []
     )
     add_step("project", project_args, deps=project_deps, outputs=[run_dir / "project-validation.json"], inputs=project_inputs, metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
@@ -744,6 +937,10 @@ def main() -> int:
         for name, path in (
             ("skill_package_validation", run_dir / "skill-package-validation.json"),
             ("routing_contract_validation", run_dir / "routing-contract-validation.json"),
+            ("backend_binding_validation", run_dir / "backend-binding-validation.json"),
+            ("asset_hash_validation", run_dir / "asset-hash-validation.json"),
+            ("multipage_layout_guard", run_dir / "multipage-layout-guard.json"),
+            ("preview_consistency", run_dir / "preview-consistency-validation.json"),
             ("render", run_dir / "render-report.json"),
             ("render_visual_gate", run_dir / "render-visual-gate.json"),
             ("visual_comparison", run_dir / "visual-comparison.json"),
@@ -763,6 +960,7 @@ def main() -> int:
             ("source_image_validation", run_dir / "source-image-validation.json"),
             ("gradient_visual_validation", run_dir / "gradient-visual-validation.json"),
             ("reference_audit", run_dir / "reference-audit.json"),
+            ("content_inventory_validation", run_dir / "content-inventory-validation.json"),
             ("visual_compare_qa", run_dir / "visual-qa/report.json"),
             ("project_report_aggregate", run_dir / "project-report.json"),
             (bundle_key, bundle_path),
@@ -866,6 +1064,7 @@ def main() -> int:
     report_entries = [
         {"report_type": "skill-package-validation", "path": "skill-package-validation.json", "required": True, "stage": "intake"},
         {"report_type": "routing-contract-validation", "path": "routing-contract-validation.json", "required": True, "stage": "intake"},
+        {"report_type": "backend-binding-validation", "path": "backend-binding-validation.json", "required": True, "stage": "intake"},
         {"report_type": "environment", "path": "environment-report.json", "required": True, "stage": "intake"},
         {"report_type": "inspection", "path": "inspection.json", "required": True, "stage": "validated"},
         {"report_type": "render", "path": "render-report.json", "required": True, "stage": "rendered"},
@@ -898,12 +1097,20 @@ def main() -> int:
         report_entries.append({"report_type": "layout-guard", "path": "layout-guard.json", "required": True, "stage": "validated"})
         if (render_dir / "slide-1.png").is_file():
             report_entries.append({"report_type": "visual-compare-qa", "path": "visual-qa/report.json", "required": True, "stage": "validated"})
+    if any(task.name == "multipage-layout-guard" for task in executor.tasks):
+        report_entries.append({"report_type": "multipage-layout-guard", "path": "multipage-layout-guard.json", "required": True, "stage": "validated"})
+    if args.preview_dir:
+        report_entries.append({"report_type": "preview-consistency", "path": "preview-consistency-validation.json", "required": bool(args.require_preview_consistency or args.release), "stage": "validated"})
     if unique_reference_sources:
         report_entries.append({"report_type": "source-image-validation", "path": "source-image-validation.json", "required": True, "stage": "source-analyzed"})
     if gradient_required:
         report_entries.append({"report_type": "gradient-visual-validation", "path": "gradient-visual-validation.json", "required": True, "stage": "validated"})
     if args.reference or args.reference_dir:
         report_entries.append({"report_type": "reference-audit", "path": "reference-audit.json", "required": True, "stage": "validated"})
+    if content_inventory_enabled:
+        report_entries.append({"report_type": "content-inventory-validation", "path": "content-inventory-validation.json", "required": content_inventory_required, "stage": "validated"})
+    if asset_hashes_enabled:
+        report_entries.append({"report_type": "asset-hash-validation", "path": "asset-hash-validation.json", "required": args.require_asset_hashes, "stage": "validated"})
     if args.font_dir or args.require_cjk:
         report_entries.append({"report_type": "font", "path": "font-report.json", "required": True, "stage": "intake"})
     if (run_dir / "font-asset-validation.json").is_file():
@@ -920,7 +1127,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
@@ -981,6 +1188,20 @@ def main() -> int:
             "--quality-threshold", str(args.quality_threshold),
             "--output", str(run_dir / "release-check.json"),
         ]
+        if content_inventory_required:
+            release_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json"), "--require-content-inventory"])
+        if asset_hashes_enabled:
+            release_args.extend(["--asset-hash-validation", str(run_dir / "asset-hash-validation.json")])
+            if args.require_asset_hashes:
+                release_args.append("--require-asset-hashes")
+        if any(task.name == "multipage-layout-guard" for task in executor.tasks):
+            release_args.extend(["--multipage-layout-validation", str(run_dir / "multipage-layout-guard.json")])
+            if args.require_multipage_layout:
+                release_args.append("--require-multipage-layout")
+        if args.preview_dir:
+            release_args.extend(["--preview-consistency-validation", str(run_dir / "preview-consistency-validation.json")])
+            if args.require_preview_consistency or args.release:
+                release_args.append("--require-preview-consistency")
         if args.issue_log:
             release_args.extend(["--issue-log", str(Path(args.issue_log).resolve())])
         if args.expected_ratio is not None:

@@ -517,8 +517,11 @@ def validate(args: argparse.Namespace) -> int:
             if not resolved.is_file():
                 target = issues if asset.get("required_for_delivery") is True else warnings
                 _append_issue(target, "required_asset_missing" if asset.get("required_for_delivery") is True else "asset_file_missing", asset_id=asset_id, path=str(resolved))
-            elif path_hash and digest(resolved) != path_hash:
-                _append_issue(issues, "asset_path_hash_mismatch", asset_id=asset_id, path=str(resolved))
+            else:
+                if args.require_asset_hashes and not path_hash:
+                    _append_issue(issues, "asset_path_hash_missing", asset_id=asset_id, path=str(resolved))
+                elif path_hash and digest(resolved) != path_hash:
+                    _append_issue(issues, "asset_path_hash_mismatch", asset_id=asset_id, path=str(resolved))
         if asset.get("required_for_delivery") is not None and not isinstance(asset.get("required_for_delivery"), bool):
             _append_issue(issues, "asset_required_flag_invalid", asset_id=asset_id, value=asset.get("required_for_delivery"))
 
@@ -710,6 +713,7 @@ def main() -> int:
     validate_parser.add_argument("--deck")
     validate_parser.add_argument("--report")
     validate_parser.add_argument("--require-gates", action="store_true")
+    validate_parser.add_argument("--require-asset-hashes", action="store_true")
     validate_parser.set_defaults(func=validate)
     parsed = parser.parse_args()
     try:

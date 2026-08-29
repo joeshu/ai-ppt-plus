@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Turn PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, images, existing PPT/PPTX, or approved outlines into narrative-coherent, visually consistent, editable, renderable, quality-checked PowerPoint deliverables. Trigger for “做PPT/幻灯片/演示稿/路演稿/汇报材料”, outline-first deck planning, image-model-generated high-end visual-intermediate design, slide reconstruction, PPTX redesign/inspection/repair, or resuming a multi-session deck. Outputs structured briefs, source inventories, outline tables, design systems, generated visual drafts, manifests, editable PPTX, validation and delivery reports. Do not trigger for a prose-only summary, a standalone image, spreadsheet-only analysis, or image-to-PPT reconstruction when the dedicated reconstruction skill is the narrower fit.
 metadata:
-  package_revision: 2026.08.28.3
+  package_revision: 2026.08.28.5
 ---
 
 # AI PPT Plus
@@ -16,7 +16,7 @@ Use for new decks, reference-led decks, outline-only or visual-only work, PPT/PP
 ## Start-up checks
 
 0. Validate the checked-in package and routing contract before selecting a route: `python scripts/validate_skill_package.py --skill-dir .` and `python scripts/validate_routing_contract.py`. If a runtime-installed copy is configured, also pass its path with `--runtime-skill-dir`; any package revision or managed-file hash drift is a blocker. `scripts/run_pipeline.py` repeats these checks as the first DAG prerequisites.
-1. Run `scripts/probe_environment.py --output environment-report.json` and `scripts/probe_fonts.py --output font-report.json --font-dir project-fonts/` before choosing a backend. For Chinese decks, copy the bundled `assets/fonts/NotoSansCJKsc-Regular.otf` and `font-manifest.json` into the task's `project-fonts/` unless the user supplies a licensed font. Read `references/font-portability.md`: use Microsoft YaHei only when already licensed and locally available; never redistribute it. Pass the same task-local font directory to `render_pptx.py --font-dir`. Run `scripts/validate_font_asset.py --font-dir project-fonts/ --require-cjk` to verify the declared asset before authoring. Chinese delivery remains blocked unless `declared_font`, `resolved_font` and `render_visible` all pass, and (when requested) `inspect_pptx.py` verifies embedded-font relationships; a sidecar font is not the same as an embedded font. Use `delivery_check.py --require-embedded-fonts` for a strict embedded-font delivery. If the authoring backend cannot embed fonts, record `embedding: unsupported` and stop final delivery unless the user explicitly accepts it. Never write commands/tools as though they exist without this evidence.
+1. Run `scripts/probe_environment.py --output environment-report.json`, `scripts/validate_backend_binding.py environment-report.json assets/skill-routing.template.json --report backend-binding-validation.json`, and `scripts/probe_fonts.py --output font-report.json --font-dir project-fonts/` before choosing a backend. For Chinese decks, copy a valid bundled font from `assets/fonts/` and its `font-manifest.json` into the task's `project-fonts/` unless the user supplies a licensed font. Read `references/font-portability.md`: use Microsoft YaHei only when already licensed and locally available; never redistribute it. Pass the same task-local font directory to `render_pptx.py --font-dir`. Run `scripts/validate_font_asset.py --font-dir project-fonts/ --require-cjk` to verify the declared asset before authoring. Chinese delivery remains blocked unless `declared_font`, `resolved_font` and `render_visible` all pass, and (when requested) `inspect_pptx.py` verifies embedded-font relationships; a sidecar font is not the same as an embedded font. Use `delivery_check.py --require-embedded-fonts` for a strict embedded-font delivery. If the authoring backend cannot embed fonts, record `embedding: unsupported` and stop final delivery unless the user explicitly accepts it. Never write commands/tools as though they exist without this evidence.
 2. Read `references/source-intake.md`; inventory every source and record readability, authority, conflicts, missing facts, OCR needs, and sensitive-data signals.
 3. Establish goal, audience, setting, language, page/time limit, deadline, output format, editability, formal data, brand/font rules, original assets, outline and references. Do not invent missing critical inputs.
 4. Classify the task: text-only; text+references; reference-only reconstruction; existing deck redesign; PPTX inspection/repair; data chart; complex visual; incomplete input; outline-only; visual-only. Choose one mutually exclusive visual route: `visual-creation` when no approved fixed reference governs the page, or `reference-reconstruction` when a user/approved reference image governs the page. Before downstream work, persist `route-decision.json` from `assets/route-decision.template.json` (or the visual-creation template) and run `scripts/validate_route.py`; do not infer the route from a filename or from whether an image happens to exist. A route with `needs_user` or `blocked` status cannot enter downstream authoring.
@@ -61,12 +61,30 @@ before delivery. Validate it before project or delivery checks with
 is required. See `references/manifest-registry.md` and
 `assets/schemas/manifest-registry.schema.json`.
 
-For pages containing formal text, also build `text-layout-manifest.json` with
+For pages containing formal text, also build an independent
+`content-inventory.json` from source review and `text-layout-manifest.json` with
 `scripts/text_model.py build`. `TextSpec.content` is the formal string and
 `TextSpec.runs[]` preserves mixed styling and line breaks; validate it before
 composition with `scripts/text_model.py validate`. Keep logos as
 `brand_lockup` assets, not TextSpecs, and do not change historical R13 files
 just to add the new sidecar manifest.
+The content inventory is mandatory for reference reconstruction and records
+every visible text item plus chart categories, series labels, legends, units
+and data labels. Run `scripts/validate_content_inventory.py` against the
+object/text manifests and final PPTX; a static chart with missing visible
+annotations is a blocker even when its line/grid scaffold is present. See
+`references/content-inventory.md`.
+
+The content inventory is an authority-bearing artifact, not a second copy of
+`layout.json`: use `approved_outline`, `user_transcription`, or the explicit
+combined authority value, and record `source_reference` plus its SHA-256 when
+the source is a local file. A strict reference run must prove that every
+editable text object in the object/text manifests is represented in the
+inventory. For every file-backed asset manifest, record the hash of the
+delivered file itself. Run `scripts/validate_asset_hashes.py --require` across
+all asset manifests; `--release` enables this gate automatically, passes
+`--require-hashes` to the panel/icon/image-generation validators, and requires
+`manifest_registry.py validate --require-asset-hashes`.
 
 ## State machine
 
@@ -109,6 +127,14 @@ Target the requested presentation context, such as high-end state-owned-enterpri
 
 ## PPTX reconstruction
 
+Reference reconstruction has a separate P0 completeness gate: create
+`content-inventory.json` from the source review before composition. It must
+list every visible text item and, for each chart, the visible category/month
+labels, series labels, legend, units and data labels. Those annotations are
+native text objects even when the chart body is a static editable scaffold.
+Run `scripts/validate_content_inventory.py` against the object manifest, text
+manifest and final PPTX; missing visible information blocks release.
+
 Follow `references/reconstruction-contract.md`, `references/editability-levels.md`, `references/native-object-protocol.md`, `references/component-library.md`, `references/layout-library.md`, and—when applicable—`references/icon-asset-protocol.md`. Default to 16:9 unless explicitly overridden. Reuse an existing PowerPoint master/layout through `layout_id`, `layout_name` or `layout_index` when a template is supplied; prefer stable layout IDs, validate the layout registry, record the selected page family and treat unknown layout references as blocking errors. Validate `assets/component-library.template.json` and `assets/layout-library.template.json` or the project registries before composition; reusable instances must retain their `component_id` in object manifests. Use real text boxes for titles/body/labels/notes/numbers; native shapes for simple geometry and deterministic gradients; SVG as a moveable vector asset unless internal path editability is explicitly proven; groups for semantic components whose child shapes must remain independently editable; native tables and charts when source data is traceable; deck theme tokens for consistent defaults; and speaker notes in the notes part rather than on-slide text. For icons/decorations/artistic typography, inventory every object before implementation, keep them out of the frame layer unless intentionally part of it, use alpha-preserving extraction/splitting, and validate `icon-asset-manifest.json`. For every icon-bearing reference reconstruction, require per-page `imagegen-assets-manifest.json` with `generated_source`, `copied_to`, `layer`, `prompt_file`, `backend`, and `key_color`; run `scripts/validate_imagegen_assets_manifest.py` before composition. Missing or non-imagegen evidence blocks the page. Assign every visible object an `editability_level` from `L0` to `L5`, derive the page summary, and never use a whole-slide image as the only slide content. Document placeholders for unreconstructable visuals.
 
 Treat reconstruction as **reference image → editable PowerPoint engineering**, not as a redesign brief. Before the first page, acknowledge the contract and confirm the reference image, formal-text authority and available source assets; if the user explicitly asks to discuss the protocol first, do not generate. For each page, analyze the reference, decompose it into editable text/native shapes/vectors/independent images/placeholders, implement that plan, render the page, compare hierarchy/structure/spatial relationships, and verify that required objects remain editable. Do not improve, simplify or rearrange an approved reference merely because another design seems preferable.
@@ -146,9 +172,25 @@ to a licensed face before embedding.
 
 ## Render, validation and repair
 
+The default pipeline also validates the selected authoring backend and the
+independent visible-content inventory. In reference reconstruction, pass
+`--content-inventory content-inventory.json --require-content-inventory` (and
+the release profile enables it automatically). A passing object-count audit
+does not waive a missing chart annotation or omitted visible text.
+
 After each page/batch: save, render, inspect openability, overflow risk, overlap, bounds, fonts, numbers/units, missing/blank content and reference-layout relationship. The renderer must validate every published PNG with a full decode; do not treat a zero exit code from Poppler as sufficient. `scripts/render_pptx.py` uses per-page rendering for missing pages so a truncated full-stream PNG cannot pass; if a custom renderer is substituted, it must provide the same decoded-artifact evidence. For reference reconstruction, run `validate_text_style_map.py layout.json --require-source-bbox` before composition and treat missing runs for visibly emphasized text as a repair item. For repeated panels, inventory all components before deleting a whole frame, use `extract_panels.py` with full-resolution bboxes, create `panel-asset-manifest.json`, and run `validate_panel_assets.py --require-independent --assets-dir ...`; a whole-slide frame containing semantic cards is a blocker. For icon-bearing pages, run `probe_palette.py`, `chroma_key.py`, `slice_grid.py`, `validate_imagegen_assets_manifest.py`, `validate_icon_assets.py`, `audit_icon_layers.py`, and `placement_qa.py` as applicable; for every imagegen chroma-key layer, pass the B1-selected color explicitly with `--auto-key none --key-color` and verify the output reports nonzero transparency—automatic border sampling is not authoritative for generated neon/gradient backgrounds. Require B4 source-vs-frame evidence, B5 cutout/split evidence, contact-sheet inspection, **a per-card inventory of internal illustrations/decorations**, and source/preview bbox replay before accepting icon placement. After the deck: check ratio, typography, palette, rhythm, chart data, assets, slide-level independent panels, OOXML structure, editability/flattening, notes/sources/links and openability.
 
 Use `scripts/run_pipeline.py` as the default verification entrypoint for an existing or reconstructed deck. It runs environment/font probes, structural inspection, rendering, non-blank visual gates, optional reference-image comparison, optional OCR readback, route validation, manifest/editability validation, project-level consistency and a unified project-report aggregate in an isolated run directory. After aggregation it runs a report-bundle preflight, then writes the final pipeline result and review page and runs `scripts/validate_report_bundle.py` again to seal the final bundle with current content hashes; the meta-reports remain outside the child index to avoid a self-reference cycle. When `slide-object-manifest.json` exists, the runner automatically validates it and reverse-audits the final PPTX; use `--require-object-manifest --require-independent-panels --expected-panel-count N` to make those gates mandatory, `--require-panel-approval` to require an approved panel manifest even when no panel file is present, and `--require-text-style-map` to enforce the rich-text gate. Any discovered panel manifest is validated as human-approved. For a new or reconstructed project, pass `--route-decision route-decision.json --require-route --require-editability`; the runner records route authority and per-object L0-L5 evidence. Its `pipeline-result.json`, `project-validation.json`, `project-report.json`, final `report-bundle-validation.json` and `review.html` must expose the render gate, visual comparison, route, editability, report registry and OCR status as quality evidence; an optional OCR language that is unavailable is a recorded degradation, not a false pass. For a one-page reference use `--reference IMAGE`; for a multi-page deck use `--reference-dir DIR` containing matching `slide-1.png`, `slide-2.png` and so on. Never compare only the first page of a multi-page deck. Use `--revision-label Rn` before a repair batch to create an immutable snapshot; use `scripts/revision_guard.py materialize` to create a separate recovery work copy. Never let the runner update handoff state or claim human approval. The lower-level commands remain available for targeted diagnosis. Run `validate_render.py` after rendering with the expected page count and critical regions when known. Use `compare_visual.py` for a single approved reference or `compare_visual_deck.py` for every page in an approved reference directory; their metrics are diagnostic and font-sensitive. Use `ocr_text_check.py --require-ocr` only when the requested Tesseract language model is installed; otherwise record `unavailable` and retain human review. For a font-embedded output, include the post-processor report in the run evidence and let the final `inspect_pptx.py`/font-delivery gate, not the staging file, be authoritative. Validate closeout JSON with `validate_signoff.py` before delivery, then pass its report to `delivery_check.py --signoff-report --project-report project-report.json --require-project-report --report-bundle-validation report-bundle-validation.json --require-report-bundle --route-validation route-validation.json --manifest-validation manifest-validation.json --require-route --require-editability` together with `--render-visual-gate`, `--visual-comparison` and `--ocr-report` when those gates were run. Pass `--handoff` and `--expected-ratio 1.7777778` to `delivery_check.py` for the default 16:9 route. Script failure is a blocker. Automated repair is limited to three rounds; each round must update the issue log and repeat rendering and validation. Then escalate honestly. See `references/object-manifest.md`, `references/panel-detection.md`, `references/report-protocol.md`, `references/failure-recovery.md`, `references/workflow-flowchart.md`, `references/editability-levels.md`, and `references/quality-rubric.md`.
+
+For multi-page reference reconstruction, run
+`scripts/validate_multipage_layout.py REFERENCE_DIR layout.json
+--expected-pages N --strict --report multipage-layout-guard.json`; it must
+cover every expected `slide-N.png` and replay each page's source bboxes. When
+Pillow previews are produced, pass `--preview-dir PREVIEW_DIR` to
+`run_pipeline.py`; `validate_preview_consistency.py` compares them with the
+final renderer output, while the final renderer remains the visual source of
+truth. Use `--require-preview-consistency` when the preview set is part of the
+delivery evidence.
 
 When a canonical object manifest is present, `run_pipeline.py` also runs
 `semantic_object_audit.py` against the final PPTX. This semantic gate checks
@@ -162,6 +204,12 @@ Before `run_pipeline.py --release`, produce the final file with the embedding
 adapter when font embedding is required; the pipeline must inspect and render
 that final output, never the staging PPTX.
 
+Release also turns the asset-hash gate on automatically. The pipeline checks
+the current bytes of generic, panel, icon and image-generation assets, and
+fails on missing, malformed or stale declarations. All JSON reports, manifests
+and published PPTX files must be written through `atomic_output.py`; a partial
+report is not evidence.
+
 The `compose_pptx.py` CLI is only the authoring entrypoint. Its implementation
 is split across `component_expander.py`, `pptx_primitives.py`,
 `asset_placement.py`, `preview_renderer.py`, `atomic_output.py` and
@@ -169,7 +217,10 @@ is split across `component_expander.py`, `pptx_primitives.py`,
 post-processor. The backend defaults to `Noto Sans CJK SC` and never silently
 selects Microsoft YaHei. PPTX, native-SVG rewrites and previews are published
 through sibling temporary files, and converted SVG PNGs are cleaned up in a
-`finally` block. Read `references/authoring-backend.md` when changing the
+`finally` block. Use `compose_pptx.py --strict-input` for reference
+reconstruction and other delivery-bound authoring; it rejects implicit shape
+types, unsupported alignments, clipped geometry and malformed primitive input
+instead of silently falling back. Read `references/authoring-backend.md` when changing the
 authoring layer. Keep the CLI compatibility surface and do not alter the
 frozen R13 regression merely to complete this refactor.
 

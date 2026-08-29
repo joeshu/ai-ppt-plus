@@ -73,6 +73,14 @@ def main() -> int:
     parser.add_argument("--render-visual-gate")
     parser.add_argument("--visual-comparison")
     parser.add_argument("--ocr-report")
+    parser.add_argument("--content-inventory-validation")
+    parser.add_argument("--require-content-inventory", action="store_true")
+    parser.add_argument("--asset-hash-validation")
+    parser.add_argument("--require-asset-hashes", action="store_true")
+    parser.add_argument("--multipage-layout-validation")
+    parser.add_argument("--require-multipage-layout", action="store_true")
+    parser.add_argument("--preview-consistency-validation")
+    parser.add_argument("--require-preview-consistency", action="store_true")
     parser.add_argument("--font-delivery-report")
     parser.add_argument("--require-font-delivery", action="store_true")
     parser.add_argument("--expected-slides", type=int)
@@ -101,6 +109,10 @@ def main() -> int:
     panel_report = load(args.panel_assets_validation) if args.panel_assets_validation else None
     text_model_report = load(args.text_layout_validation) if args.text_layout_validation else None
     text_style_report = load(args.text_style_map_validation) if args.text_style_map_validation else None
+    content_inventory_report = load(args.content_inventory_validation) if args.content_inventory_validation else None
+    asset_hash_report = load(args.asset_hash_validation) if args.asset_hash_validation else None
+    multipage_layout_report = load(args.multipage_layout_validation) if args.multipage_layout_validation else None
+    preview_consistency_report = load(args.preview_consistency_validation) if args.preview_consistency_validation else None
     project_report = load(args.project_report) if args.project_report else None
     report_bundle = load(args.report_bundle_validation) if args.report_bundle_validation else None
     font_delivery = load(args.font_delivery_report) if args.font_delivery_report else None
@@ -161,6 +173,38 @@ def main() -> int:
     required_quality(panel_report, args.require_panel_assets, "panel_assets_validation_failed", "panel asset validation")
     required_quality(text_model_report, args.require_text_model, "text_model_validation_failed", "text model validation")
     required_quality(text_style_report, args.require_text_style_map, "text_style_map_validation_failed", "text style map validation")
+    required_quality(content_inventory_report, args.require_content_inventory, "content_inventory_validation_failed", "visible-content inventory")
+    required_quality(asset_hash_report, args.require_asset_hashes, "asset_hash_validation_failed", "asset hash validation")
+    required_quality(multipage_layout_report, args.require_multipage_layout, "multipage_layout_validation_failed", "multi-page layout validation")
+    required_quality(preview_consistency_report, args.require_preview_consistency, "preview_consistency_validation_failed", "preview/final-render consistency")
+    if asset_hash_report:
+        quality_evidence["asset_hash_validation"] = {
+            "valid": asset_hash_report.get("valid"),
+            "status": asset_hash_report.get("status"),
+            "strict": asset_hash_report.get("strict"),
+            "record_count": asset_hash_report.get("record_count"),
+            "checked_count": asset_hash_report.get("checked_count"),
+            "issues": asset_hash_report.get("issues", []),
+            "warnings": asset_hash_report.get("warnings", []),
+        }
+    if multipage_layout_report:
+        quality_evidence["multipage_layout_validation"] = {
+            "valid": multipage_layout_report.get("valid"),
+            "status": multipage_layout_report.get("status"),
+            "expected_pages": multipage_layout_report.get("expected_pages"),
+            "selected_pages": multipage_layout_report.get("selected_pages"),
+            "issues": multipage_layout_report.get("issues", []),
+            "warnings": multipage_layout_report.get("warnings", []),
+        }
+    if preview_consistency_report:
+        quality_evidence["preview_consistency_validation"] = {
+            "valid": preview_consistency_report.get("valid"),
+            "status": preview_consistency_report.get("status"),
+            "aggregate": preview_consistency_report.get("aggregate", {}),
+            "threshold": preview_consistency_report.get("threshold"),
+            "issues": preview_consistency_report.get("issues", []),
+            "warnings": preview_consistency_report.get("warnings", []),
+        }
     if args.require_semantic_object_audit and args.object_manifest:
         object_path = Path(args.object_manifest)
         object_data = load(args.object_manifest)

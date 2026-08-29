@@ -28,6 +28,7 @@
       "frame_exclusion": "verified-not-in-frame",
       "asset_path": "assets/icons/icon-1.png",
       "editability_level": "L2",
+      "sha256": "",
       "replaceable": true,
       "cutout_method": "chroma_key.py --preset icon-safe --scale 2",
       "alpha_quality": "pass",

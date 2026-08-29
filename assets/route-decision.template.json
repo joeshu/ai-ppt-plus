@@ -10,7 +10,11 @@
     {
       "slide_no": 1,
       "path": "references/slide-1.png",
-      "sha256": ""
+      "sha256": "",
+      "comparison_path": null,
+      "comparison_sha256": null,
+      "derived_from_sha256": null,
+      "comparison_transform": null
     }
   ],
   "visual_intermediate_manifest": null,

@@ -33,7 +33,10 @@ def _frac(deck: dict, item: dict, key: str, reference: float) -> float:
         value = float(item[key])
     except (TypeError, ValueError):
         _die(f"asset coordinate {key} must be numeric")
-    if deck["units"] == "px":
+    units = deck.get("units", "fraction")
+    if units not in {"fraction", "px"}:
+        _die(f"unsupported coordinate units: {units}")
+    if units == "px":
         if not reference or not math.isfinite(reference):
             _die(f"pixel asset coordinate {key} requires a positive reference canvas")
         value /= reference
@@ -42,6 +45,14 @@ def _frac(deck: dict, item: dict, key: str, reference: float) -> float:
     if key in {"w", "h"} and value <= 0:
         _die(f"asset coordinate {key} must be positive")
     return value
+
+
+def _validate_box(deck: dict, item: dict, x: float, y: float, w: float, h: float, label: str) -> None:
+    """Reject asset clipping in strict authoring mode unless explicitly allowed."""
+    if not deck.get("strict_input") or item.get("allow_bleed") is True:
+        return
+    if x < 0 or y < 0 or x + w > 1 or y + h > 1:
+        _die(f"{label} box must stay within the slide in strict input mode: {(x, y, w, h)}")
 
 
 def replace_svg_media(pptx_path: Path, svg_assets: list[tuple[int, str, Path]]) -> None:
@@ -173,6 +184,7 @@ def add_panels(slide, specs: list[dict], assets_dir: Path, deck: dict, ref_w: fl
         fy = _frac(deck, panel, "y", ref_h)
         fw = _frac(deck, panel, "w", ref_w)
         fh = _frac(deck, panel, "h", ref_h)
+        _validate_box(deck, panel, fx, fy, fw, fh, f"slide {slide_no} panel")
         picture = slide.shapes.add_picture(
             str(path),
             Emu(int(fx * sw_emu)),
@@ -195,6 +207,7 @@ def add_icons(slide, specs: list[dict], assets_dir: Path, deck: dict, ref_w: flo
         fy = _frac(deck, icon, "y", ref_h)
         fw = _frac(deck, icon, "w", ref_w)
         fh = _frac(deck, icon, "h", ref_h)
+        _validate_box(deck, icon, fx, fy, fw, fh, f"slide {slide_no} icon")
         source_path = path
         if path.suffix.casefold() == ".svg":
             source_path = svg_to_png(path, temporary_files)

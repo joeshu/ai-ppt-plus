@@ -40,6 +40,13 @@ placement layer (`svg_to_png(..., temporary_files=...)`) and removed in a
 temporary package before the final output is published, so a failed rewrite
 does not replace an existing PPTX with a partial result.
 
+`preview_renderer.py` is an authoring diagnostic only. The rendered PPTX is
+the visual source of truth; when previews are retained, compare them with
+`scripts/validate_preview_consistency.py` and record the metric report. For
+delivery-bound reconstruction, use `compose_pptx.py --strict-input`: missing
+primitive types, unsupported text alignment, clipped boxes and malformed
+coordinates fail authoring instead of being silently normalized.
+
 The backend preserves the existing `compose_pptx.py` CLI and the compatibility
 imports used by manifest builders. R13 remains a frozen regression fixture;
 this split changes ownership and testability, not the reconstruction contract.

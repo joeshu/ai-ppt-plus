@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import re
 from pathlib import Path
 from atomic_output import atomic_write_json
 
@@ -16,6 +18,15 @@ except ImportError:  # pragma: no cover
 ROLES = {"icon", "decoration", "badge", "logo", "illustration", "decorative_word_art", "frame_exclusion"}
 METHODS = {"approved-source-asset", "image-generation", "native-vector", "chroma-cutout", "contact-sheet-split", "placeholder"}
 LEVELS = {"L1", "L2", "L4", "L5"}
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def add(issues, severity, code, index=None, **extra):
@@ -29,6 +40,7 @@ def add(issues, severity, code, index=None, **extra):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest")
+    parser.add_argument("--require-hashes", action="store_true", help="require a current SHA-256 for every file-backed asset")
     parser.add_argument("--report")
     args = parser.parse_args()
     manifest_path = Path(args.manifest).resolve()
@@ -66,6 +78,7 @@ def main() -> int:
             if not evidence_path.is_file():
                 add(issues, "blocker", "evidence_file_missing", field=field, path=str(evidence_path))
     seen = set()
+    hashed_asset_count = 0
     required = ("role", "source_ref", "source_bbox", "extraction_method", "frame_exclusion", "editability_level", "asset_path", "alpha_quality", "edge_touch", "split_status", "duplicate_guard", "anchor", "review_status")
     for index, asset in enumerate(assets):
         if not isinstance(asset, dict):
@@ -94,14 +107,26 @@ def main() -> int:
         if isinstance(asset_path, str) and asset_path and not native_ref and asset.get("extraction_method") != "placeholder":
             path = (manifest_path.parent / asset_path).resolve()
             if not path.is_file(): add(issues, "blocker", "asset_file_missing", index, path=str(path))
-            elif Image is not None:
-                try:
-                    with Image.open(path) as image:
-                        if image.width <= 0 or image.height <= 0: add(issues, "blocker", "asset_empty", index, path=str(path))
-                        if "A" in image.getbands() and image.getchannel("A").getbbox() is None: add(issues, "blocker", "asset_alpha_empty", index, path=str(path))
-                except Exception as exc: add(issues, "blocker", "asset_unreadable", index, message=f"{type(exc).__name__}: {exc}")
-            else: warnings.append({"severity": "major", "code": "pillow_unavailable_for_alpha_check", "asset_index": index})
-    result = {"schema": "ai-ppt-plus/icon-assets-validation/v1", "valid": not any(x.get("severity") == "blocker" for x in issues), "status": "passed" if not issues else "blocked", "manifest": str(manifest_path), "asset_count": len(assets), "issues": issues, "warnings": warnings, "human_visual_review_required": True}
+            else:
+                observed_hash = sha256(path)
+                declared_hash = asset.get("sha256") or asset.get("asset_sha256") or asset.get("path_sha256")
+                if declared_hash:
+                    hashed_asset_count += 1
+                hash_row = {"asset_index": index, "path": str(path), "declared_sha256": declared_hash, "observed_sha256": observed_hash}
+                if args.require_hashes and not isinstance(declared_hash, str):
+                    add(issues, "blocker", "asset_hash_missing", index, path=str(path))
+                elif declared_hash is not None and (not isinstance(declared_hash, str) or not SHA256_RE.fullmatch(declared_hash)):
+                    add(issues, "blocker", "asset_hash_invalid", index, **hash_row)
+                elif declared_hash and declared_hash != observed_hash:
+                    add(issues, "blocker", "asset_hash_mismatch", index, **hash_row)
+                if Image is not None:
+                    try:
+                        with Image.open(path) as image:
+                            if image.width <= 0 or image.height <= 0: add(issues, "blocker", "asset_empty", index, path=str(path))
+                            if "A" in image.getbands() and image.getchannel("A").getbbox() is None: add(issues, "blocker", "asset_alpha_empty", index, path=str(path))
+                    except Exception as exc: add(issues, "blocker", "asset_unreadable", index, message=f"{type(exc).__name__}: {exc}")
+                else: warnings.append({"severity": "major", "code": "pillow_unavailable_for_alpha_check", "asset_index": index})
+    result = {"schema": "ai-ppt-plus/icon-assets-validation/v1", "valid": not any(x.get("severity") == "blocker" for x in issues), "status": "passed" if not issues else "blocked", "manifest": str(manifest_path), "asset_count": len(assets), "hashed_asset_count": hashed_asset_count, "hashes_required": args.require_hashes, "issues": issues, "warnings": warnings, "human_visual_review_required": True}
     if args.report:
         report = Path(args.report).resolve(); atomic_write_json(report, result)
     print(json.dumps(result, ensure_ascii=False)); return 0 if result["valid"] else 2

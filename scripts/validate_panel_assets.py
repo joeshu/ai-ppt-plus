@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -29,6 +30,9 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+
 def write_report(path: str | None, result: dict) -> None:
     if path:
         out = Path(path)
@@ -42,6 +46,7 @@ def main() -> None:
     ap.add_argument("--expected-count", type=int, default=None)
     ap.add_argument("--assets-dir", default=None, help="Resolve panel files relative to this directory.")
     ap.add_argument("--require-approved", action="store_true", help="Require an explicit human approval record.")
+    ap.add_argument("--require-hashes", action="store_true", help="Require a current SHA-256 for every extracted panel file.")
     ap.add_argument("--strict", action="store_true")
     ap.add_argument("--report")
     args = ap.parse_args()
@@ -79,6 +84,7 @@ def main() -> None:
     if args.expected_count is not None and len(panels) != args.expected_count:
         errors.append(f"expected {args.expected_count} panels, found {len(panels)}")
     ids, files = set(), set()
+    hashed_panel_count = 0
     assets_root = Path(args.assets_dir).resolve() if args.assets_dir else None
     source = Path(str(data.get("source"))).resolve() if data.get("source") else None
     if source and source.is_file() and data.get("source_sha256") and sha256(source) != data.get("source_sha256"):
@@ -106,6 +112,17 @@ def main() -> None:
                 errors.append(f"panel {i} {pid}: asset path escapes assets-dir")
             if not asset_path.is_file():
                 errors.append(f"panel {i} {pid}: asset not found: {asset_path}")
+            else:
+                observed_hash = sha256(asset_path)
+                declared_hash = panel.get("sha256") or panel.get("asset_sha256") or panel.get("path_sha256")
+                if declared_hash:
+                    hashed_panel_count += 1
+                if args.require_hashes and not isinstance(declared_hash, str):
+                    errors.append(f"panel {i} {pid}: sha256 is required")
+                elif declared_hash is not None and (not isinstance(declared_hash, str) or not SHA256_RE.fullmatch(declared_hash)):
+                    errors.append(f"panel {i} {pid}: sha256 is invalid")
+                elif declared_hash and declared_hash != observed_hash:
+                    errors.append(f"panel {i} {pid}: sha256 does not match the current panel file")
         if source_size and isinstance(panel.get("source_bbox"), list) and len(panel["source_bbox"]) == 4:
             x, y, w, h = panel["source_bbox"]
             if not all(isinstance(value, (int, float)) for value in (x, y, w, h)) or w <= 0 or h <= 0 or x < 0 or y < 0 or x + w > source_size[0] or y + h > source_size[1]:
@@ -131,6 +148,8 @@ def main() -> None:
         "valid": not errors,
         "status": "passed" if not errors else "blocked",
         "panel_count": len(panels),
+        "hashed_panel_count": hashed_panel_count,
+        "hashes_required": args.require_hashes,
         "errors": errors,
         "warnings": warnings,
         "human_visual_review_required": True,

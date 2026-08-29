@@ -61,6 +61,7 @@ def main() -> None:
                 file_ref = os.fspath(asset_path)
             emitted.append({**panel, "panel_id": pid, "file": file_ref,
                             "source_bbox": [x, y, w, h], "asset_size": [w, h],
+                            "sha256": sha256(asset_path),
                             "formal_text_baked_in": bool(panel.get("formal_text_baked_in", False))})
     result = {"schema":"ai-ppt-plus/panel-assets/v1", "status":"approved", "source":str(src), "source_size":[sw, sh], "source_sha256":sha256(src), "whole_frame":False, "approval":approval, "panels":emitted}
     out.parent.mkdir(parents=True, exist_ok=True)

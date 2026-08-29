@@ -18,7 +18,9 @@
     "panel_approval": false,
     "gradient_visual": false,
     "source_image_validation": false,
-    "reference_audit": false
+    "reference_audit": false,
+    "content_inventory": false,
+    "asset_hashes": false
   },
   "assets": [],
   "slides": [{

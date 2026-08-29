@@ -28,6 +28,8 @@ jobs:
           python scripts/validate_routing_contract.py
       - name: Run schema, DAG, package and golden regressions
         run: python scripts/run_tests.py --report test-report.json
+      - name: Run strict P2 guard smoke tests
+        run: python tests/test_p2_guards.py
       - name: Check whitespace
         run: git diff --check
       - name: Upload test report

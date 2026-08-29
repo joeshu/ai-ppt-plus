@@ -53,6 +53,14 @@ def main() -> int:
     parser.add_argument("--render-visual-gate")
     parser.add_argument("--visual-comparison")
     parser.add_argument("--ocr-report")
+    parser.add_argument("--content-inventory-validation")
+    parser.add_argument("--require-content-inventory", action="store_true")
+    parser.add_argument("--asset-hash-validation")
+    parser.add_argument("--require-asset-hashes", action="store_true")
+    parser.add_argument("--multipage-layout-validation")
+    parser.add_argument("--require-multipage-layout", action="store_true")
+    parser.add_argument("--preview-consistency-validation")
+    parser.add_argument("--require-preview-consistency", action="store_true")
     parser.add_argument("--route-validation")
     parser.add_argument("--require-route", action="store_true")
     parser.add_argument("--manifest-validation")
@@ -106,12 +114,24 @@ def main() -> int:
     render_gate = read_quality_report(args.render_visual_gate, "render-visual-gate")
     visual_comparison = read_quality_report(args.visual_comparison, "visual-comparison")
     ocr_report = read_quality_report(args.ocr_report, "ocr-text-check")
+    content_inventory_report = read_quality_report(args.content_inventory_validation, "content-inventory-validation")
+    asset_hash_report = read_quality_report(args.asset_hash_validation, "asset-hash-validation")
+    multipage_layout_report = read_quality_report(args.multipage_layout_validation, "multipage-layout-validation")
+    preview_consistency_report = read_quality_report(args.preview_consistency_validation, "preview-consistency-validation")
     route_report = read_quality_report(args.route_validation, "route-validation")
     manifest_report = read_quality_report(args.manifest_validation, "manifest-validation")
     semantic_report = read_quality_report(args.semantic_object_audit, "semantic-object-audit")
     project_report = read_quality_report(args.project_report, "project-report")
     if args.require_route and route_report is None:
         issues.append({"severity": "blocker", "code": "route_validation_missing", "artifact": "route-validation"})
+    if args.require_content_inventory and content_inventory_report is None:
+        issues.append({"severity": "blocker", "code": "content_inventory_missing", "artifact": "content-inventory-validation"})
+    if args.require_asset_hashes and asset_hash_report is None:
+        issues.append({"severity": "blocker", "code": "asset_hash_validation_missing", "artifact": "asset-hash-validation"})
+    if args.require_multipage_layout and multipage_layout_report is None:
+        issues.append({"severity": "blocker", "code": "multipage_layout_validation_missing", "artifact": "multipage-layout-validation"})
+    if args.require_preview_consistency and preview_consistency_report is None:
+        issues.append({"severity": "blocker", "code": "preview_consistency_validation_missing", "artifact": "preview-consistency-validation"})
     if args.require_editability and manifest_report is None:
         issues.append({"severity": "blocker", "code": "manifest_validation_missing", "artifact": "manifest-validation"})
     object_manifest_path = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
@@ -142,6 +162,43 @@ def main() -> int:
             "language": ocr_report.get("language"),
             "slide_count": len(ocr_report.get("slides", [])),
             "issues": ocr_report.get("issues", []),
+        }
+    if content_inventory_report is not None:
+        quality_evidence["content_inventory_validation"] = {
+            "valid": content_inventory_report.get("valid"),
+            "status": content_inventory_report.get("status"),
+            "visible_text_count": content_inventory_report.get("visible_text_count"),
+            "chart_count": content_inventory_report.get("chart_count"),
+            "chart_annotation_count": content_inventory_report.get("chart_annotation_count"),
+            "issues": content_inventory_report.get("errors", content_inventory_report.get("issues", [])),
+        }
+    if asset_hash_report is not None:
+        quality_evidence["asset_hash_validation"] = {
+            "valid": asset_hash_report.get("valid"),
+            "status": asset_hash_report.get("status"),
+            "strict": asset_hash_report.get("strict"),
+            "record_count": asset_hash_report.get("record_count"),
+            "checked_count": asset_hash_report.get("checked_count"),
+            "issues": asset_hash_report.get("issues", []),
+            "warnings": asset_hash_report.get("warnings", []),
+        }
+    if multipage_layout_report is not None:
+        quality_evidence["multipage_layout_validation"] = {
+            "valid": multipage_layout_report.get("valid"),
+            "status": multipage_layout_report.get("status"),
+            "expected_pages": multipage_layout_report.get("expected_pages"),
+            "selected_pages": multipage_layout_report.get("selected_pages"),
+            "issues": multipage_layout_report.get("issues", []),
+            "warnings": multipage_layout_report.get("warnings", []),
+        }
+    if preview_consistency_report is not None:
+        quality_evidence["preview_consistency_validation"] = {
+            "valid": preview_consistency_report.get("valid"),
+            "status": preview_consistency_report.get("status"),
+            "aggregate": preview_consistency_report.get("aggregate", {}),
+            "threshold": preview_consistency_report.get("threshold"),
+            "issues": preview_consistency_report.get("issues", []),
+            "warnings": preview_consistency_report.get("warnings", []),
         }
     if route_report is not None:
         quality_evidence["route_validation"] = {

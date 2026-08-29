@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -14,6 +15,15 @@ REQUIRED = ("generated_source", "copied_to", "layer", "prompt_file", "backend", 
 LAYERS = {"background", "frame_raw", "icons"}
 IMAGEGEN_WORD = re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])", re.I)
 HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def add(items, code, **extra):
@@ -25,6 +35,7 @@ def add(items, code, **extra):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest")
+    parser.add_argument("--require-hashes", action="store_true", help="require a current SHA-256 for every copied asset")
     parser.add_argument("--report")
     args = parser.parse_args()
     path = Path(args.manifest).resolve()
@@ -55,6 +66,7 @@ def main() -> int:
     if not isinstance(assets, list) or not assets:
         add(issues, "assets_missing_or_empty")
         assets = []
+    hashed_asset_count = 0
     for index, asset in enumerate(assets):
         if not isinstance(asset, dict):
             add(issues, "asset_not_object", asset_index=index)
@@ -81,6 +93,17 @@ def main() -> int:
                 add(issues, "copied_asset_missing", asset_index=index, path=str(copied_path))
             elif path.parent not in copied_path.parents:
                 add(issues, "copied_asset_outside_run_root", asset_index=index, path=str(copied_path))
+            else:
+                observed_hash = sha256(copied_path)
+                declared_hash = asset.get("sha256") or asset.get("asset_sha256") or asset.get("copied_to_sha256")
+                if declared_hash:
+                    hashed_asset_count += 1
+                if args.require_hashes and not isinstance(declared_hash, str):
+                    add(issues, "asset_hash_missing", asset_index=index, path=str(copied_path))
+                elif declared_hash is not None and (not isinstance(declared_hash, str) or not SHA256_RE.fullmatch(declared_hash)):
+                    add(issues, "asset_hash_invalid", asset_index=index, path=str(copied_path), declared_sha256=declared_hash, observed_sha256=observed_hash)
+                elif declared_hash and declared_hash != observed_hash:
+                    add(issues, "asset_hash_mismatch", asset_index=index, path=str(copied_path), declared_sha256=declared_hash, observed_sha256=observed_hash)
         prompt = asset.get("prompt_file")
         if isinstance(prompt, str) and prompt:
             prompt_path = Path(prompt)
@@ -97,6 +120,8 @@ def main() -> int:
         "status": "passed" if not issues else "blocked",
         "manifest": str(path),
         "asset_count": len(assets),
+        "hashed_asset_count": hashed_asset_count,
+        "hashes_required": args.require_hashes,
         "issues": issues,
         "human_visual_review_required": True,
     }

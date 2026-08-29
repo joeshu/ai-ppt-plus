@@ -238,8 +238,11 @@ def add_shapes(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
         fy = _frac(deck, spec, "y", ref_h)
         fw = _frac(deck, spec, "w", ref_w)
         fh = _frac(deck, spec, "h", ref_h)
+        _validate_box(deck, spec, fx, fy, fw, fh, f"shape {index}")
         left, top = Emu(int(fx * sw_emu)), Emu(int(fy * sh_emu))
         width, height = Emu(int(fw * sw_emu)), Emu(int(fh * sh_emu))
+        if deck.get("strict_input") and "type" not in spec:
+            _die(f"shape {index} requires an explicit type in strict input mode")
         shape_type = spec.get("type", "rounded_rect")
         if shape_type == "line":
             connector = slide.shapes.add_connector(
@@ -292,8 +295,12 @@ def add_groups(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
         gy = _frac(deck, group_spec, "y", ref_h) if has_box else 0
         gw = _frac(deck, group_spec, "w", ref_w) if has_box else 1
         gh = _frac(deck, group_spec, "h", ref_h) if has_box else 1
+        if has_box:
+            _validate_box(deck, group_spec, gx, gy, gw, gh, f"group {group_index}")
         for child_index, raw_child in enumerate(group_spec.get("children", []), 1):
             if not isinstance(raw_child, dict):
+                if deck.get("strict_input"):
+                    _die(f"group {group_index} child {child_index} must be an object")
                 continue
             child = dict(raw_child)
             if local:
@@ -308,6 +315,7 @@ def add_groups(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
             cfy = _frac(child_deck, child, "y", ref_h)
             cfw = _frac(child_deck, child, "w", ref_w)
             cfh = _frac(child_deck, child, "h", ref_h)
+            _validate_box(deck, child, cfx, cfy, cfw, cfh, f"group {group_index} child {child_index}")
             child_name = str(child.get("object_id") or child.get("name") or f"{group.name}-child-{child_index:02d}")
             if child.get("type", "rounded_rect") == "line":
                 connector = group.shapes.add_connector(
@@ -321,6 +329,8 @@ def add_groups(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
                 connector.line.width = Pt(float(child.get("line_width", 1.5)))
                 connector.name = child_name
                 continue
+            if deck.get("strict_input") and "type" not in child:
+                _die(f"group {group_index} child {child_index} requires an explicit type in strict input mode")
             child_type = child.get("type", "rounded_rect")
             if child_type not in shape_types:
                 _die(f"unsupported group shape type: {child_type}")
@@ -357,13 +367,18 @@ def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
             _die(f"table {table_index} rows must be lists no wider than columns")
         if not any(cell is not None and str(cell).strip() for row in rows for cell in row):
             _die(f"table {table_index} requires at least one non-empty cell")
+        table_fx = _frac(deck, spec, "x", ref_w)
+        table_fy = _frac(deck, spec, "y", ref_h)
+        table_fw = _frac(deck, spec, "w", ref_w)
+        table_fh = _frac(deck, spec, "h", ref_h)
+        _validate_box(deck, spec, table_fx, table_fy, table_fw, table_fh, f"table {table_index}")
         table = slide.shapes.add_table(
             len(rows),
             columns,
-            Emu(int(_frac(deck, spec, "x", ref_w) * sw_emu)),
-            Emu(int(_frac(deck, spec, "y", ref_h) * sh_emu)),
-            Emu(int(_frac(deck, spec, "w", ref_w) * sw_emu)),
-            Emu(int(_frac(deck, spec, "h", ref_h) * sh_emu)),
+            Emu(int(table_fx * sw_emu)),
+            Emu(int(table_fy * sh_emu)),
+            Emu(int(table_fw * sw_emu)),
+            Emu(int(table_fh * sh_emu)),
         ).table
         graphic_frame = table._graphic_frame
         graphic_frame.name = str(spec.get("object_id") or spec.get("name") or f"table-{table_index:02d}")
@@ -428,12 +443,17 @@ def add_charts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
                     _die("chart values must be finite")
                 values.append(number)
             data.add_series(str(item.get("name", "Series")), values)
+        chart_fx = _frac(deck, spec, "x", ref_w)
+        chart_fy = _frac(deck, spec, "y", ref_h)
+        chart_fw = _frac(deck, spec, "w", ref_w)
+        chart_fh = _frac(deck, spec, "h", ref_h)
+        _validate_box(deck, spec, chart_fx, chart_fy, chart_fw, chart_fh, f"chart {chart_index}")
         graphic_frame = slide.shapes.add_chart(
             charts[chart_type],
-            Emu(int(_frac(deck, spec, "x", ref_w) * sw_emu)),
-            Emu(int(_frac(deck, spec, "y", ref_h) * sh_emu)),
-            Emu(int(_frac(deck, spec, "w", ref_w) * sw_emu)),
-            Emu(int(_frac(deck, spec, "h", ref_h) * sh_emu)),
+            Emu(int(chart_fx * sw_emu)),
+            Emu(int(chart_fy * sh_emu)),
+            Emu(int(chart_fw * sw_emu)),
+            Emu(int(chart_fh * sh_emu)),
             data,
         )
         graphic_frame.name = str(spec.get("object_id") or spec.get("name") or f"chart-{chart_index:02d}")
@@ -471,12 +491,14 @@ def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, r
         "center": MSO_ANCHOR.MIDDLE,
         "bottom": MSO_ANCHOR.BOTTOM,
     }
+    strict_input = bool(deck.get("strict_input"))
     slide_height_pt = float(deck["slide_height_in"]) * 72.0
     for spec in specs:
         fx = _frac(deck, spec, "x", ref_w)
         fy = _frac(deck, spec, "y", ref_h)
         fw = _frac(deck, spec, "w", ref_w)
         fh = _frac(deck, spec, "h", ref_h)
+        _validate_box(deck, spec, fx, fy, fw, fh, f"text {spec.get('object_id') or spec.get('name') or 'unnamed'}")
         box = slide.shapes.add_textbox(
             Emu(int(fx * sw_emu)),
             Emu(int(fy * sh_emu)),
@@ -485,7 +507,10 @@ def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, r
         )
         frame = box.text_frame
         frame.word_wrap = True
-        frame.vertical_anchor = anchors.get(spec.get("valign", "top"), MSO_ANCHOR.TOP)
+        valign = spec.get("valign", "top")
+        if strict_input and valign not in anchors:
+            _die(f"unsupported vertical alignment: {valign}")
+        frame.vertical_anchor = anchors.get(valign, MSO_ANCHOR.TOP)
         frame.margin_left = Pt(float(spec.get("margin_left", 0)))
         frame.margin_right = Pt(float(spec.get("margin_right", 0)))
         frame.margin_top = Pt(float(spec.get("margin_top", 0)))
@@ -496,7 +521,10 @@ def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, r
         font = str(spec.get("font", theme.get("font", "Noto Sans CJK SC")))
         bold = bool(spec.get("bold", False))
         italic = bool(spec.get("italic", False))
-        alignment = alignments.get(spec.get("align", "left"), PP_ALIGN.LEFT)
+        align = spec.get("align", "left")
+        if strict_input and align not in alignments:
+            _die(f"unsupported text alignment: {align}")
+        alignment = alignments.get(align, PP_ALIGN.LEFT)
         line_spacing = spec.get("line_spacing")
         opacity = float(spec.get("opacity", 1.0))
         if spec.get("name") or spec.get("object_id"):
@@ -540,7 +568,10 @@ def _frac(deck: dict, item: dict, key: str, reference: float) -> float:
         value = float(item[key])
     except (TypeError, ValueError):
         _die(f"coordinate {key} must be numeric")
-    if deck["units"] == "px":
+    units = deck.get("units", "fraction")
+    if units not in {"fraction", "px"}:
+        _die(f"unsupported coordinate units: {units}")
+    if units == "px":
         if not reference or not math.isfinite(reference):
             _die(f"pixel coordinate {key} requires a positive reference canvas")
         value = value / reference
@@ -549,6 +580,14 @@ def _frac(deck: dict, item: dict, key: str, reference: float) -> float:
     if key in {"w", "h"} and value <= 0:
         _die(f"coordinate {key} must be positive")
     return value
+
+
+def _validate_box(deck: dict, item: dict, x: float, y: float, w: float, h: float, label: str) -> None:
+    """Reject silent geometry clipping when strict input mode is enabled."""
+    if not deck.get("strict_input") or item.get("allow_bleed") is True:
+        return
+    if x < 0 or y < 0 or x + w > 1 or y + h > 1:
+        _die(f"{label} box must stay within the slide in strict input mode: {(x, y, w, h)}")
 
 
 # Private aliases preserve imports used by older helper scripts while the

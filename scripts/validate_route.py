@@ -133,7 +133,15 @@ def main() -> int:
                 issues.append({"severity": "blocker", "code": "reference_path_missing", "index": index})
                 continue
             ref_path = (base / ref).resolve()
-            record = {"slide_no": slide_no, "path": str(ref_path), "sha256": item.get("sha256")}
+            record = {
+                "slide_no": slide_no,
+                "path": str(ref_path),
+                "sha256": item.get("sha256"),
+                "comparison_path": None,
+                "comparison_sha256": None,
+                "derived_from_sha256": item.get("derived_from_sha256"),
+                "comparison_transform": item.get("comparison_transform"),
+            }
             evidence["reference_files"].append(record)
             if not isinstance(item.get("sha256"), str) or not SHA256_RE.fullmatch(item.get("sha256", "")):
                 issues.append({"severity": "blocker", "code": "reference_hash_missing", "slide_no": slide_no})
@@ -142,6 +150,25 @@ def main() -> int:
                     issues.append({"severity": "blocker", "code": "reference_file_missing", "slide_no": slide_no, "path": str(ref_path)})
                 elif item.get("sha256") and sha256(ref_path) != item.get("sha256"):
                     issues.append({"severity": "blocker", "code": "reference_hash_mismatch", "slide_no": slide_no})
+            comparison_ref = item.get("comparison_path")
+            if comparison_ref not in (None, ""):
+                if not isinstance(comparison_ref, str):
+                    issues.append({"severity": "blocker", "code": "comparison_reference_path_invalid", "slide_no": slide_no})
+                    continue
+                comparison_path = (base / comparison_ref).resolve()
+                record["comparison_path"] = str(comparison_path)
+                record["comparison_sha256"] = item.get("comparison_sha256")
+                if not isinstance(item.get("comparison_sha256"), str) or not SHA256_RE.fullmatch(item.get("comparison_sha256", "")):
+                    issues.append({"severity": "blocker", "code": "comparison_reference_hash_missing", "slide_no": slide_no})
+                if item.get("derived_from_sha256") != item.get("sha256"):
+                    issues.append({"severity": "blocker", "code": "comparison_reference_origin_mismatch", "slide_no": slide_no, "expected": item.get("sha256"), "observed": item.get("derived_from_sha256")})
+                if not isinstance(item.get("comparison_transform"), str) or not item.get("comparison_transform", "").strip():
+                    issues.append({"severity": "blocker", "code": "comparison_reference_transform_missing", "slide_no": slide_no})
+                if args.require_files:
+                    if not comparison_path.is_file():
+                        issues.append({"severity": "blocker", "code": "comparison_reference_missing", "slide_no": slide_no, "path": str(comparison_path)})
+                    elif item.get("comparison_sha256") and sha256(comparison_path) != item.get("comparison_sha256"):
+                        issues.append({"severity": "blocker", "code": "comparison_reference_hash_mismatch", "slide_no": slide_no})
         if slide_numbers and sorted(slide_numbers) != list(range(1, max(slide_numbers) + 1)):
             issues.append({"severity": "blocker", "code": "reference_slide_numbers_not_contiguous", "observed": sorted(slide_numbers)})
         if args.expected_pages is not None and len(roster) != args.expected_pages:
@@ -166,8 +193,18 @@ def main() -> int:
                 issues.append({"severity": "blocker", "code": "external_reference_missing", "slide_no": external_slide, "path": str(external_path)})
             elif not roster_path.is_file():
                 issues.append({"severity": "blocker", "code": "rostered_reference_missing", "slide_no": external_slide, "path": str(roster_path)})
-            elif sha256(external_path) != sha256(roster_path):
-                issues.append({"severity": "blocker", "code": "external_reference_hash_mismatch", "slide_no": external_slide, "roster_path": str(roster_path), "external_path": str(external_path)})
+            else:
+                external_hash = sha256(external_path)
+                accepted_hashes = {sha256(roster_path)}
+                comparison_path = item.get("comparison_path")
+                if isinstance(comparison_path, str) and comparison_path:
+                    comparison_file = (base / comparison_path).resolve()
+                    if comparison_file.is_file():
+                        accepted_hashes.add(sha256(comparison_file))
+                external_record["matches_rostered_source"] = external_hash == sha256(roster_path)
+                external_record["matches_declared_comparison"] = external_hash in accepted_hashes - {sha256(roster_path)}
+                if external_hash not in accepted_hashes:
+                    issues.append({"severity": "blocker", "code": "external_reference_hash_mismatch", "slide_no": external_slide, "roster_path": str(roster_path), "external_path": str(external_path), "accepted_hashes": sorted(accepted_hashes)})
     valid = not any(issue.get("severity") == "blocker" for issue in issues)
     result = {"schema": "ai-ppt-plus/route-validation/v1", "valid": valid, "ready_for_delivery": valid and formal_content_ready and status == "decided", "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "formal_content_ready": formal_content_ready, "requires_image_generation": data.get("requires_image_generation"), "issues": issues, "evidence": evidence}
     if args.report:

@@ -85,6 +85,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("rendered_dir")
     parser.add_argument("reference_dir")
+    parser.add_argument("--expected-pages", type=int, help="expected full-deck page count; missing pages are blockers")
     parser.add_argument("--threshold", type=float)
     parser.add_argument("--pages", help="only compare selected slide numbers, e.g. 1,3-4")
     parser.add_argument("--report")
@@ -109,6 +110,14 @@ def main() -> int:
         reference_by_number = {number: path for number, path in reference_by_number.items() if number in selected_pages}
     issues = []
     page_results = []
+    expected_numbers = None
+    if args.expected_pages is not None:
+        expected_numbers = set(selected_pages) if selected_pages is not None else set(range(1, args.expected_pages + 1))
+        observed_numbers = set(rendered_by_number) | set(reference_by_number)
+        for missing in sorted(expected_numbers - observed_numbers):
+            issues.append({"severity": "blocker", "code": "page_missing_from_both_directories", "slide": missing})
+        for extra in sorted(observed_numbers - expected_numbers):
+            issues.append({"severity": "blocker", "code": "page_outside_expected_range", "slide": extra})
     all_numbers = sorted(set(rendered_by_number) | set(reference_by_number))
     for number in all_numbers:
         rendered_path = rendered_by_number.get(number)
@@ -130,7 +139,7 @@ def main() -> int:
         "valid": not issues,
         "rendered_dir": str(rendered_dir.resolve()),
         "reference_dir": str(reference_dir.resolve()),
-        "expected_pages": len(rendered_pages),
+        "expected_pages": args.expected_pages if args.expected_pages is not None else len(rendered_pages),
         "reference_pages": len(reference_pages),
         "selected_pages": sorted(selected_pages) if selected_pages is not None else "all",
         "pages": page_results,
