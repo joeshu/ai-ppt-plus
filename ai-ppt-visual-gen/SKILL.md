@@ -2,7 +2,7 @@
 name: ai-ppt-visual-gen
 description: Generate polished image-format PowerPoint slides or visual intermediates from a topic, approved outline, or content brief. Trigger for “图片版PPT/文生图PPT/AI出图幻灯片/视觉中间稿”, high-information commercial slide images, A1–A5 visual production, page-local image retry, source retention, or deck-strip review. Outputs one raster image per slide plus prompts and generation evidence. It can run standalone or as the visual worker for $ai-ppt-plus. Do not use for editable PPTX reconstruction or deck-wide release; use $ai-ppt-editable or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.30.05
+ package_revision: 2026.08.30.06
 ---
 
 # AI PPT Visual Gen
@@ -145,8 +145,13 @@ The plan must also carry:
   diagram, placed in a side rail, shown as a compact callout, or omitted as a
   separate visual element. A semantic conclusion field is not permission to
   impose a full-width bottom banner on every page;
-- `canvas_policy`, which blocks a generated image below the declared target
-  dimensions instead of silently accepting a lower-resolution page.
+- `canvas_policy`, which separates a preferred canvas from a hard minimum.
+  Set `require_exact_dimensions: true` only when the selected backend is known
+  to support the requested pixel size. For native image backends, keep the
+  planned ratio, record the actual returned dimensions, enforce the declared
+  minimum, and emit a native-resolution warning when the backend returns a
+  smaller but still presentation-safe canvas. Never silently upscale or claim
+  exact-size evidence that the backend did not produce.
 
 For new image-slide plans, validate the two anti-regression contracts with:
 
@@ -216,9 +221,11 @@ For each page:
 1. invoke the resolved native raster-generation tool with the materialized
    prompt and only approved references;
 2. retain the tool's original generated source and copy it into the project;
-3. record prompt path/hash, tool/model, source path/hash, copy path/hash,
-   dimensions, ratio, generation session ID, context-continuity status, attempt
-   number, and retry trigger in the manifest;
+3. use `scripts/register_generated_slide.py` to perform the untouched project
+   copy and record prompt path/hash, tool/model, source path/hash, copy
+   path/hash, actual dimensions, ratio, generation session ID,
+   context-continuity status, attempt number, and retry trigger in one atomic
+   handoff; use `--force` only for the failed page's explicit retry;
 4. inspect full-page legibility, exact visible strings, mapped key-word colors,
    information hierarchy, framework integrity, brand leakage, fabricated
    content, and whether the lower third is being forced into a repeated bar

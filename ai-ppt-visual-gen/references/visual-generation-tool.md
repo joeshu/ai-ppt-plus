@@ -35,9 +35,12 @@ must declare:
 - `no_code_overlay: true`.
 
 Each slide record then retains the actual `backend`, `model_or_tool`,
-`prompt_file`, its SHA-256, original `generated_source`, project `copied_to`, canvas ratio
+`prompt_file`, its SHA-256, original `generated_source`, project `copied_to`, actual returned canvas dimensions and ratio
 and image SHA-256 values. The source and project copy must be distinct, fully
-decodable raster files with the planned ratio. In strict evidence mode, the
+decodable raster files with the planned ratio. A plan may request an exact
+canvas when the backend supports it, or negotiate a native canvas by declaring
+a hard minimum; native-size output must be recorded as-is and is never
+silently upscaled. In strict evidence mode, the
 manifest also retains a `deck_strip` built from every manifest-listed copied
 image; its output hash and source-image hashes are checked against the
 manifest. A missing or mismatched record blocks the visual-generation gate.

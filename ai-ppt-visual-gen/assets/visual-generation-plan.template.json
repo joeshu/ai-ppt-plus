@@ -27,10 +27,10 @@
     "height_px": 1152
   },
   "canvas_policy": {
-    "require_exact_dimensions": true,
-    "minimum_width_px": 2048,
-    "minimum_height_px": 1152,
-    "on_mismatch": "block"
+    "require_exact_dimensions": false,
+    "minimum_width_px": 1600,
+    "minimum_height_px": 900,
+    "on_mismatch": "warn"
   },
   "density_profile": "dense",
   "density_override_reason": "",

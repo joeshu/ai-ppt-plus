@@ -82,6 +82,27 @@ def resolve_path(base: Path, value) -> Path | None:
     return path.resolve() if path.is_absolute() else (base / path).resolve()
 
 
+def resolve_cli_path(plan_path: Path, value) -> Path | None:
+    """Resolve an explicitly supplied path from cwd, with a plan-local fallback.
+
+    The plan's own relative references are rooted at the plan directory.  A
+    command-line override, however, is normally written relative to the
+    caller's cwd.  Prefer that existing path so ``--manifest visual/foo.json``
+    does not become ``visual/visual/foo.json`` when the plan lives in
+    ``visual/``.
+    """
+    if not isinstance(value, str) or not value.strip():
+        return None
+    path = Path(value)
+    if path.is_absolute():
+        return path.resolve()
+    cwd_path = (Path.cwd() / path).resolve()
+    plan_path_candidate = (plan_path.parent / path).resolve()
+    if cwd_path.is_file() or not plan_path_candidate.is_file():
+        return cwd_path
+    return plan_path_candidate
+
+
 def ratio_value(ratio: str) -> float | None:
     return {"16:9": 16 / 9, "3:2": 3 / 2}.get(ratio)
 
@@ -602,10 +623,21 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
             expected_ratio_value = ratio_value(expected_ratio)
             if size and expected_ratio_value and size[1] and abs((size[0] / size[1]) - expected_ratio_value) > 0.02:
                 add_issue(issues, "blocker", "generation_image_ratio_mismatch", slide_no=slide_no, field=field, expected=expected_ratio, observed=f"{size[0]}:{size[1]}")
-            if exact_dimensions and expected_width and expected_height and tuple(size) != (expected_width, expected_height):
-                add_issue(issues, "blocker", "generation_image_dimensions_mismatch", slide_no=slide_no, field=field, expected=[expected_width, expected_height], observed=list(size))
+            if expected_width and expected_height and tuple(size) != (expected_width, expected_height):
+                if exact_dimensions:
+                    add_issue(issues, "blocker", "generation_image_dimensions_mismatch", slide_no=slide_no, field=field, expected=[expected_width, expected_height], observed=list(size))
+                else:
+                    add_issue(
+                        issues,
+                        "warning",
+                        "generation_image_native_resolution",
+                        slide_no=slide_no,
+                        field=field,
+                        preferred=[expected_width, expected_height],
+                        observed=list(size),
+                    )
             if minimum_width and minimum_height and (size[0] < minimum_width or size[1] < minimum_height):
-                add_issue(issues, "blocker" if exact_dimensions else "major", "generation_image_below_minimum_dimensions", slide_no=slide_no, field=field, expected=[minimum_width, minimum_height], observed=list(size))
+                add_issue(issues, "blocker", "generation_image_below_minimum_dimensions", slide_no=slide_no, field=field, expected=[minimum_width, minimum_height], observed=list(size))
             declared_hash = record.get(hash_field)
             actual_hash = sha256(path)
             if not isinstance(declared_hash, str) or not SHA256_RE.fullmatch(declared_hash):
@@ -826,10 +858,14 @@ def main() -> int:
         if not isinstance(canvas_policy, dict):
             add_issue(issues, "blocker", "canvas_policy_missing")
             canvas_policy = {}
-        if canvas_policy.get("require_exact_dimensions") is not True:
-            add_issue(issues, "blocker", "canvas_exact_dimension_policy_missing", observed=canvas_policy.get("require_exact_dimensions"))
-        if text_value(canvas_policy.get("on_mismatch")) != "block":
-            add_issue(issues, "blocker", "canvas_mismatch_policy_not_blocking", observed=canvas_policy.get("on_mismatch"))
+        exact_policy = canvas_policy.get("require_exact_dimensions")
+        if not isinstance(exact_policy, bool):
+            add_issue(issues, "blocker", "canvas_exact_dimension_policy_invalid", observed=exact_policy)
+        mismatch_policy = text_value(canvas_policy.get("on_mismatch"))
+        if mismatch_policy not in {"block", "warn"}:
+            add_issue(issues, "blocker", "canvas_mismatch_policy_invalid", observed=mismatch_policy)
+        elif exact_policy is True and mismatch_policy != "block":
+            add_issue(issues, "blocker", "canvas_mismatch_policy_not_blocking", observed=mismatch_policy)
         for field in ("minimum_width_px", "minimum_height_px"):
             value = canvas_policy.get(field)
             if not isinstance(value, int) or isinstance(value, bool) or value < 1:
@@ -1110,7 +1146,7 @@ def main() -> int:
     if slide_numbers and sorted(slide_numbers) != list(range(1, max(slide_numbers) + 1)):
         add_issue(issues, "blocker", "plan_slide_numbers_not_contiguous", observed=sorted(slide_numbers))
     manifest_value = args.manifest or (plan.get("evidence_manifest") if args.require_evidence else None)
-    manifest_path = resolve_path(plan_path.parent, manifest_value)
+    manifest_path = resolve_cli_path(plan_path, manifest_value) if args.manifest else resolve_path(plan_path.parent, manifest_value)
     evidence = None
     if args.require_evidence or manifest_value:
         if manifest_path is None or not manifest_path.is_file():

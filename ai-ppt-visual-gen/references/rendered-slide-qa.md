@@ -39,6 +39,10 @@ approved copy or communicates one relationship only once.
 6. Inspect each full-resolution page and the deck strip. Check title, all
    must-render copy, punctuation, duplicate sentences, reading path, empty or
    overcrowded zones, accidental footer bands and unapproved labels.
+7. Treat the requested canvas as a preference unless the backend explicitly
+   guarantees exact pixels. Confirm the native output still clears the plan's
+   hard minimum and record any smaller native resolution as a warning; do not
+   hide it with resampling or an inaccurate manifest.
 
 ## Retry decision
 

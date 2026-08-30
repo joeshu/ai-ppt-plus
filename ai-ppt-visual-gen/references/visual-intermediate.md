@@ -100,8 +100,9 @@ For new image-slide work, use the A1–A5 discipline owned by
   connector geometry.
 - A4 records one real raster-generation event per page. The evidence manifest
   retains `generated_source` and `copied_to`, prompt file, backend, model/tool,
-  prompt-file SHA-256, canvas and current image SHA-256 values. Both image
-  paths and the prompt file are checked during technical validation;
+  prompt-file SHA-256, actual returned canvas dimensions and ratio, and current
+  image SHA-256 values. Both image paths and the prompt file are checked during
+  technical validation;
   metadata-only file checks are insufficient.
 - A5 compares the generated pages as a deck strip before approving individual
   pages. Build it with

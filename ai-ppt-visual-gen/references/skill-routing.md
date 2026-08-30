@@ -63,7 +63,7 @@ Shared contracts include:
 - `ai-ppt-plus/visual-quality/v1` for observable premium-commercial visual
   requirements and commercial-safety constraints;
 - the visual plan's generation-session contract for same-model/context
-  continuity and its canvas policy for exact-size evidence;
+  continuity and its canvas policy for exact-size or native-size evidence;
 - font embedding/portability contracts;
 - machine-readable ownership in `assets/skill-routing.template.json`.
 - `ai-ppt-plus/route-decision/v2` for native-authoring route authority;
