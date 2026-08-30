@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.29.21
+ package_revision: 2026.08.30.01
 ---
 
 # AI PPT Editable
@@ -16,13 +16,18 @@ redesign, deck-wide release, or human sign-off.
 
 This skill is independently installable and invokable. Run commands from this
 skill directory; its reconstruction scripts, references, templates, schemas,
-font assets, route contract, and tests are all local. Validate this package and
-its standalone routing contract before work:
+font assets, pinned `requirements-ci.txt`, route contract, and tests are all
+local. Validate this package and its standalone routing contract before work:
 
 ```bash
 python3 scripts/validate_skill_package.py --skill-dir .
 python3 scripts/validate_routing_contract.py
 ```
+
+For the complete B0-B9 sequence, cache/invalidation policy and tool ownership,
+read the root bundle's `references/operations-matrix.md` when working through
+`ai-ppt-plus`. The worker may report technical completion, but the root
+orchestrator owns deck-wide narrative and release decisions.
 
 The split changes ownership and invocation only. Do not alter the checked-in
 image-to-PPTX decomposition, asset extraction, composition, rendering, or QA

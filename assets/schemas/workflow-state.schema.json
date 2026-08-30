@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "project_id", "run_id", "revision", "package_revision", "phase", "route", "page_count", "canvas_ratio", "formal_text_authority", "visual_authority", "artifacts", "open_blockers", "next_action", "updated_at"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/workflow-state/v1"},
+    "project_id": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "revision": {"type": "string", "minLength": 1},
+    "package_revision": {"type": "string", "minLength": 1},
+    "phase": {"enum": ["intake", "source-analyzed", "outline-draft", "outline-review", "narrative-approved", "design-system-ready", "visual-draft", "visual-approved", "reconstruction", "rendered", "validated", "revision-required", "human-closeout", "delivered"]},
+    "route": {"enum": ["visual-creation", "reference-reconstruction", "native-authoring"]},
+    "page_count": {"type": "integer", "minimum": 1},
+    "canvas_ratio": {"type": "string", "enum": ["16:9", "3:2"]},
+    "formal_text_authority": {
+      "type": "object",
+      "required": ["kind", "approved"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["approved_outline", "user_transcription", "structured_content"]},
+        "path": {"type": "string", "minLength": 1},
+        "approved": {"type": "boolean"}
+      }
+    },
+    "visual_authority": {
+      "type": "object",
+      "required": ["kind", "approved"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["generated_visual_intermediate", "approved_reference_image", "approved_design_system"]},
+        "path": {"type": "string", "minLength": 1},
+        "approved": {"type": "boolean"}
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+          "role": {"type": "string"}
+        }
+      }
+    },
+    "approvals": {
+      "type": "object",
+      "properties": {
+        "outline": {"type": "boolean"},
+        "design_system": {"type": "boolean"},
+        "visual": {"type": "boolean"},
+        "human_closeout": {"type": "boolean"}
+      }
+    },
+    "completed_stages": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "open_blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "severity", "owner_artifact", "status"],
+        "properties": {
+          "code": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["critical", "blocker", "major", "minor", "warning"]},
+          "owner_artifact": {"type": "string", "minLength": 1},
+          "status": {"type": "string", "enum": ["open", "in-progress", "pending-review"]},
+          "message": {"type": "string"}
+        }
+      }
+    },
+    "next_action": {"type": "string", "minLength": 1},
+    "updated_at": {"type": "string", "minLength": 1},
+    "execution": {"type": "object"}
+  }
+}

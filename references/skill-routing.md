@@ -62,6 +62,7 @@ Shared contracts include:
 - machine-readable ownership in `assets/skill-routing.template.json`.
 - `ai-ppt-plus/route-decision/v2` for native-authoring route authority;
 - `ai-ppt-plus/handoff/v2` for hash-backed A-to-B recovery and page coverage.
+- `ai-ppt-plus/workflow-state/v1` for phase readiness, approvals and blockers.
 - `ai-ppt-plus/runtime-mirror/v1` for shared-runtime SHA-256 drift checks;
 - `ai-ppt-plus/environment-contract/v1` for explicit capability and renderer
   requirements.

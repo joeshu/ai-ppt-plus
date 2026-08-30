@@ -68,6 +68,14 @@ def run_one(test: Path, root: Path, timeout_seconds: int) -> dict:
             "stdout": as_text(exc.stdout),
             "stderr": as_text(exc.stderr) + f"\ntimed out after {timeout_seconds}s",
         }
+    except OSError as exc:
+        result = {
+            "test": str(test.relative_to(root)),
+            "status": "failed",
+            "returncode": 127,
+            "stdout": "",
+            "stderr": f"{type(exc).__name__}: {exc}",
+        }
     result["duration_ms"] = round((time.perf_counter() - started) * 1000, 3)
     return result
 
@@ -84,10 +92,12 @@ def main() -> int:
         return 2
     tests = sorted((root / "tests").glob("test_*.py"))
     worker_count = min(args.parallel_workers, max(1, len(tests)))
+    tests_started = time.perf_counter()
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
         # executor.map preserves the sorted test order in the report while
         # allowing independent subprocesses to overlap.
         results = list(executor.map(lambda test: run_one(test, root, args.timeout_seconds), tests))
+    tests_wall_duration_ms = round((time.perf_counter() - tests_started) * 1000, 3)
 
     fixture = yaml_check(root)
     failed = [item["test"] for item in results if item["status"] != "passed"]
@@ -99,7 +109,13 @@ def main() -> int:
         "status": "passed" if not failed else "failed",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "python": sys.version.split()[0],
-        "execution": {"parallel_workers": worker_count, "tests_total": len(results), "duration_ms": round(sum(float(item.get("duration_ms", 0) or 0) for item in results), 3)},
+        "execution": {
+            "parallel_workers": worker_count,
+            "tests_total": len(results),
+            "duration_ms": round(sum(float(item.get("duration_ms", 0) or 0) for item in results), 3),
+            "wall_duration_ms": tests_wall_duration_ms,
+            "max_test_duration_ms": round(max((float(item.get("duration_ms", 0) or 0) for item in results), default=0.0), 3),
+        },
         "tests": results,
         "fixture_validation": fixture,
         "failed": failed,

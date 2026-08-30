@@ -33,6 +33,13 @@ RUNTIME_PACKAGES = ("numpy", "Pillow", "python-pptx", "PyYAML", "cairosvg")
 RUNTIME_BINARIES = ("soffice", "libreoffice", "pdftoppm", "pdftocairo", "inkscape", "fc-match")
 
 
+def as_text(value: Any) -> str:
+    """Normalize subprocess output from both text and timeout paths."""
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    return value or ""
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -161,6 +168,9 @@ class PipelineExecutor:
         self.code_fingerprint = _local_code_fingerprint()
         self.runtime_fingerprint = _runtime_fingerprint()
         self.last_wall_duration_ms = 0.0
+        self.last_cache_hits = 0
+        self.last_cache_misses = 0
+        self.last_critical_path_ms = 0.0
 
     def add(self, task: PipelineTask) -> PipelineTask:
         if task.name in self._task_names:
@@ -392,15 +402,20 @@ class PipelineExecutor:
             command = [sys.executable, *task.args]
             try:
                 completed = subprocess.run(command, capture_output=True, text=True, timeout=task.timeout, check=False)
-                stdout = completed.stdout
-                stderr = completed.stderr
+                stdout = as_text(completed.stdout)
+                stderr = as_text(completed.stderr)
                 exit_code = completed.returncode
                 failure = None
             except subprocess.TimeoutExpired as exc:
-                stdout = exc.stdout or ""
-                stderr = (exc.stderr or "") + f"\nstep timed out after {task.timeout}s"
+                stdout = as_text(exc.stdout)
+                stderr = as_text(exc.stderr) + f"\nstep timed out after {task.timeout}s"
                 exit_code = 124
                 failure = "timeout"
+            except OSError as exc:
+                stdout = ""
+                stderr = f"{type(exc).__name__}: {exc}\n"
+                exit_code = 127
+                failure = "spawn-failed"
             atomic_write_text(stdout_path, stdout)
             atomic_write_text(stderr_path, stderr)
             result = {
@@ -448,32 +463,40 @@ class PipelineExecutor:
     def run(self) -> list[dict[str, Any]]:
         run_started = time.perf_counter()
         by_name = {task.name: task for task in self.tasks}
+        order = {task.name: index for index, task in enumerate(self.tasks)}
         missing_deps = {
             task.name: [dep for dep in task.deps if dep not in by_name]
             for task in self.tasks
         }
         results: dict[str, dict[str, Any]] = {}
         pending = set(by_name)
-        while pending:
-            progressed = False
-            for name in list(pending):
-                if missing_deps[name]:
-                    results[name] = self._blocked_result(by_name[name], missing_deps[name])
-                    pending.remove(name)
-                    progressed = True
-            ready = [
-                by_name[name]
-                for name in pending
-                if all(dep in results for dep in by_name[name].deps)
-            ]
-            if ready:
-                if self.max_workers == 1 or len(ready) == 1:
-                    for task in sorted(ready, key=lambda item: self.tasks.index(item)):
-                        failed = [dep for dep in task.deps if not results[dep].get("ok")]
-                        results[task.name] = self._blocked_result(task, failed) if failed else self._run_task(task)
-                        pending.remove(task.name)
-                else:
-                    with ThreadPoolExecutor(max_workers=min(self.max_workers, len(ready)), thread_name_prefix="ppt-pipeline") as pool:
+        pool = None
+        try:
+            while pending:
+                progressed = False
+                for name in list(pending):
+                    if missing_deps[name]:
+                        results[name] = self._blocked_result(by_name[name], missing_deps[name])
+                        pending.remove(name)
+                        progressed = True
+                ready = [
+                    by_name[name]
+                    for name in pending
+                    if all(dep in results for dep in by_name[name].deps)
+                ]
+                if ready:
+                    ready = sorted(ready, key=lambda item: order[item.name])
+                    if self.max_workers == 1 or len(ready) == 1:
+                        for task in ready:
+                            failed = [dep for dep in task.deps if not results[dep].get("ok")]
+                            results[task.name] = self._blocked_result(task, failed) if failed else self._run_task(task)
+                            pending.remove(task.name)
+                    else:
+                        # Keep one pool for the complete run. Rebuilding a pool
+                        # for every DAG wave paid a process/thread scheduling cost
+                        # on the large validation graph without improving safety.
+                        if pool is None:
+                            pool = ThreadPoolExecutor(max_workers=self.max_workers, thread_name_prefix="ppt-pipeline")
                         futures = {}
                         for task in ready:
                             failed = [dep for dep in task.deps if not results[dep].get("ok")]
@@ -489,13 +512,24 @@ class PipelineExecutor:
                             except Exception as exc:  # executor failure is a hard pipeline failure
                                 results[task.name] = self._blocked_result(task, [f"executor:{type(exc).__name__}"])
                             pending.remove(task.name)
-                progressed = True
-            if not progressed:
-                cycle = sorted(pending)
-                for name in cycle:
-                    results[name] = self._blocked_result(by_name[name], ["dependency_cycle"])
-                break
+                    progressed = True
+                if not progressed:
+                    cycle = sorted(pending)
+                    for name in cycle:
+                        results[name] = self._blocked_result(by_name[name], ["dependency_cycle"])
+                    break
+        finally:
+            if pool is not None:
+                pool.shutdown(wait=True)
         self.last_wall_duration_ms = round((time.perf_counter() - run_started) * 1000, 3)
+        self.last_cache_hits = sum(1 for result in results.values() if result.get("cache_hit") is True)
+        self.last_cache_misses = sum(1 for result in results.values() if result.get("cache_hit") is False and result.get("failure") != "dependency_failed")
+        critical_path: dict[str, float] = {}
+        for task in self.tasks:
+            own = float(results.get(task.name, {}).get("duration_ms", 0) or 0)
+            dependency_path = max((critical_path.get(dep, 0.0) for dep in task.deps), default=0.0)
+            critical_path[task.name] = dependency_path + own
+        self.last_critical_path_ms = round(max(critical_path.values(), default=0.0), 3)
         return [results[task.name] for task in self.tasks]
 
 

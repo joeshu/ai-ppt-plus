@@ -12,6 +12,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--visual-threshold N]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
        [--route-decision ROUTE.json] [--require-route] [--require-editability]
+       [--workflow-state STATE.json] [--require-workflow-state]
        [--visual-generation-plan PLAN.json] [--visual-generation-manifest MANIFEST.json]
        [--require-visual-generation]
        [--dpi N] [--strict-layout]
@@ -28,6 +29,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -50,6 +52,13 @@ def sha256(path: Path) -> str:
 
 
 STEP_TIMEOUT_SECONDS = 600
+
+
+def as_text(value) -> str:
+    """Normalize subprocess output from normal and timeout execution paths."""
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    return value or ""
 
 
 def parse_page_selection(expression: str | None, expected_pages: int) -> list[int] | None:
@@ -77,23 +86,29 @@ def parse_page_selection(expression: str | None, expected_pages: int) -> list[in
 
 
 def run_step(run_dir: Path, name: str, args, timeout: int = STEP_TIMEOUT_SECONDS):
+    started = time.perf_counter()
     stdout_path = run_dir / f"{name}.stdout.txt"
     stderr_path = run_dir / f"{name}.stderr.txt"
     command = [sys.executable, *args]
     try:
         completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout, check=False)
-        stdout = completed.stdout
-        stderr = completed.stderr
+        stdout = as_text(completed.stdout)
+        stderr = as_text(completed.stderr)
         exit_code = completed.returncode
         failure = None
     except subprocess.TimeoutExpired as exc:
-        stdout = exc.stdout or ""
-        stderr = (exc.stderr or "") + f"\nstep timed out after {timeout}s"
+        stdout = as_text(exc.stdout)
+        stderr = as_text(exc.stderr) + f"\nstep timed out after {timeout}s"
         exit_code = 124
         failure = "timeout"
+    except OSError as exc:
+        stdout = ""
+        stderr = f"{type(exc).__name__}: {exc}\n"
+        exit_code = 127
+        failure = "spawn-failed"
     atomic_write_text(stdout_path, stdout)
     atomic_write_text(stderr_path, stderr)
-    result = {"name": name, "command": command, "exit_code": exit_code, "ok": exit_code == 0, "stdout": str(stdout_path.resolve()), "stderr": str(stderr_path.resolve()), "timeout_seconds": timeout, "cache_key": None, "cache_hit": False, "deps": [], "duration_ms": None}
+    result = {"name": name, "command": command, "exit_code": exit_code, "ok": exit_code == 0, "stdout": str(stdout_path.resolve()), "stderr": str(stderr_path.resolve()), "timeout_seconds": timeout, "cache_key": None, "cache_hit": False, "deps": [], "duration_ms": round((time.perf_counter() - started) * 1000, 3)}
     if failure:
         result["failure"] = failure
     return result
@@ -304,6 +319,8 @@ def main() -> int:
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
+    parser.add_argument("--workflow-state", help="workflow-state/v1 contract produced by the orchestrator")
+    parser.add_argument("--require-workflow-state", action="store_true", help="require PROJECT_DIR/workflow-state.json or the path passed to --workflow-state")
     parser.add_argument("--visual-generation-plan", help="ai-ppt-visual-gen A1-A5 visual-generation-plan.json")
     parser.add_argument("--visual-generation-manifest", help="per-page raster generation evidence manifest")
     parser.add_argument("--require-visual-generation", action="store_true", help="require the visual-generation plan, self-contained prompts and retained image evidence")
@@ -595,6 +612,42 @@ def main() -> int:
     icon_required = args.require_icon_assets or manifest_icon_required or (project / "icon-asset-manifest.json").is_file()
     imagegen_required = args.require_imagegen_assets or manifest_imagegen_required or (project / "imagegen-assets-manifest.json").is_file()
     route_deps = ["route"] if args.route_decision else []
+    workflow_state_enabled = bool(args.workflow_state or args.require_workflow_state)
+    workflow_state_path = None
+    if workflow_state_enabled:
+        workflow_state_path = Path(args.workflow_state).resolve() if args.workflow_state else project / "workflow-state.json"
+        workflow_args = [
+            str(SCRIPT_DIR / "validate_workflow_state.py"),
+            str(workflow_state_path),
+            "--project-root", str(project),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(run_dir / "workflow-state-validation.json"),
+        ]
+        if isinstance(package_data, dict) and isinstance(package_data.get("package_revision"), str):
+            workflow_args.extend(["--expected-package-revision", package_data["package_revision"]])
+        if args.require_workflow_state:
+            workflow_args.append("--strict")
+        workflow_inputs = [workflow_state_path]
+        try:
+            workflow_data = json.loads(workflow_state_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            workflow_data = {}
+        if isinstance(workflow_data, dict) and isinstance(workflow_data.get("artifacts"), dict):
+            for record in workflow_data["artifacts"].values():
+                raw_path = record.get("path") if isinstance(record, dict) else record
+                if not isinstance(raw_path, str) or not raw_path.strip():
+                    continue
+                candidate = Path(raw_path)
+                workflow_inputs.append((candidate if candidate.is_absolute() else project / candidate).resolve())
+        add_step(
+            "workflow-state",
+            workflow_args,
+            deps=route_deps,
+            outputs=[run_dir / "workflow-state-validation.json"],
+            inputs=list(dict.fromkeys(workflow_inputs)),
+            metadata={"strict": args.require_workflow_state},
+            cacheable=False,
+        )
     visual_generation_plan = None
     visual_generation_manifest = None
     visual_generation_enabled = False
@@ -1237,6 +1290,7 @@ def main() -> int:
             ("visual_comparison", run_dir / "visual-comparison.json"),
             ("ocr_text_check", run_dir / "ocr-text-check.json"),
             ("route_validation", run_dir / "route-validation.json"),
+            ("workflow_state_validation", run_dir / "workflow-state-validation.json"),
             ("visual_generation_validation", run_dir / "visual-generation-validation.json"),
             ("manifest_validation", run_dir / "manifest-validation.json"),
             ("manifest_registry_validation", run_dir / "manifest-registry-validation.json"),
@@ -1316,9 +1370,11 @@ def main() -> int:
                 "cache_dir": str(cache_dir) if cache_dir else None,
                 "parallel_workers": executor.max_workers,
                 "tasks_total": len(current_steps),
-                "cache_hits": sum(1 for step in current_steps if step.get("cache_hit") is True),
+                "cache_hits": executor.last_cache_hits,
+                "cache_misses": executor.last_cache_misses,
                 "duration_ms": executor.last_wall_duration_ms,
                 "task_duration_ms_sum": round(sum(float(step.get("duration_ms", 0) or 0) for step in current_steps), 3),
+                "critical_path_ms": executor.last_critical_path_ms,
                 "affected_pages": affected_pages or "all",
                 "affected_regions": list(args.affected_region),
                 "page_cache": {
@@ -1329,6 +1385,7 @@ def main() -> int:
                 },
                 "render_conversion_skipped": conversion_evidence.get("skipped", False),
             },
+            "workflow_state": str(workflow_state_path) if workflow_state_enabled and workflow_state_path else None,
             "steps": current_steps,
             "failed_steps": failed,
             "technical_failed_steps": technical_failed,
@@ -1349,10 +1406,13 @@ def main() -> int:
     # informational reports.  A failed decision must block every downstream
     # gate so a parallel DAG cannot continue with an unapproved authority.
     prerequisite = "route" if args.route_decision else "routing-contract"
+    prerequisites = [prerequisite]
+    if workflow_state_enabled:
+        prerequisites.append("workflow-state")
     for task in executor.tasks:
-        if task.name in {"skill-package", "routing-contract", "route"}:
+        if task.name in {"skill-package", "routing-contract", "route", "workflow-state"}:
             continue
-        task.deps = tuple(dict.fromkeys((*task.deps, prerequisite)))
+        task.deps = tuple(dict.fromkeys((*task.deps, *prerequisites)))
     steps = executor.run()
     report_entries = [
         {"report_type": "skill-package-validation", "path": "skill-package-validation.json", "required": True, "stage": "intake"},
@@ -1416,6 +1476,8 @@ def main() -> int:
         report_entries.append({"report_type": "font-delivery-validation", "path": "font-delivery-validation.json", "required": True, "stage": "validated"})
     if args.route_decision:
         report_entries.append({"report_type": "route-validation", "path": "route-validation.json", "required": args.require_route, "stage": "design-system-ready"})
+    if workflow_state_enabled:
+        report_entries.append({"report_type": "workflow-state-validation", "path": "workflow-state-validation.json", "required": True, "stage": "intake"})
     if visual_generation_enabled:
         report_entries.append({"report_type": "visual-generation-validation", "path": "visual-generation-validation.json", "required": args.require_visual_generation, "stage": "visual-draft"})
     if args.handoff:
@@ -1426,7 +1488,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"

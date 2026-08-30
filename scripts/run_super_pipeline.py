@@ -124,6 +124,8 @@ def main() -> int:
     parser.add_argument("--expected-pages", type=int, required=True)
     parser.add_argument("--strip")
     parser.add_argument("--route-decision", help="required by --mode full; route-decision/v1 or v2")
+    parser.add_argument("--workflow-state", help="orchestrator workflow-state/v1 contract")
+    parser.add_argument("--require-workflow-state", action="store_true", help="require PROJECT_DIR/workflow-state.json or the path passed to --workflow-state")
     parser.add_argument("--handoff", help="formal handoff path; defaults to PROJECT/handoff.json")
     parser.add_argument("--font-dir")
     parser.add_argument("--human-signoff")
@@ -146,6 +148,8 @@ def main() -> int:
     route_path = Path(args.route_decision).resolve() if args.route_decision else None
     strip = Path(args.strip).resolve() if args.strip else project / "qa" / "visual-deck-strip.png"
     handoff = Path(args.handoff).resolve() if args.handoff else project / "handoff.json"
+    workflow_state_enabled = bool(args.workflow_state or args.require_workflow_state)
+    workflow_state_path = Path(args.workflow_state).resolve() if args.workflow_state else project / "workflow-state.json"
     run_id = datetime.now(timezone.utc).strftime("super-%Y%m%dT%H%M%S.%fZ") + "-" + uuid.uuid4().hex[:8]
     log_dir = project / "super-pipeline-runs" / run_id
     visual_assertions = log_dir / "visual-assertions.json"
@@ -188,7 +192,23 @@ def main() -> int:
             "--require-formal-content", "--report", str(log_dir / "route-validation.json"),
         ], ROOT, log_dir, deps=["bundle", "environment-contract"])
 
+    if workflow_state_enabled:
+        workflow_command = [
+            sys.executable, str(ROOT / "scripts" / "validate_workflow_state.py"),
+            str(workflow_state_path), "--project-root", str(project),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(log_dir / "workflow-state-validation.json"),
+        ]
+        if args.require_workflow_state:
+            workflow_command.append("--strict")
+        workflow_deps = ["bundle"]
+        if args.mode == "full":
+            workflow_deps.extend(["environment-contract", "route"])
+        add_step(steps, "workflow-state", workflow_command, ROOT, log_dir, deps=workflow_deps)
+
     visual_deps = ["bundle"] + (["route"] if args.mode == "full" else [])
+    if workflow_state_enabled:
+        visual_deps.append("workflow-state")
     if visual_route and visual_plan and visual_manifest:
         add_step(steps, "A-visual", [
             sys.executable, str(VISUAL / "scripts" / "run_visual_pipeline.py"), str(visual_plan),
@@ -200,7 +220,7 @@ def main() -> int:
     else:
         add_not_used(steps, "A-visual", VISUAL)
 
-    compose_deps = ["bundle"] + (["route"] if args.mode == "full" else []) + ["A-visual"]
+    compose_deps = ["bundle"] + (["route"] if args.mode == "full" else []) + (["workflow-state"] if workflow_state_enabled else []) + ["A-visual"]
     add_step(steps, "B-editable-compose", [sys.executable, str(EDITABLE / "scripts" / "compose_pptx.py"), str(editable_layout), str(output_deck)], EDITABLE, log_dir, deps=compose_deps)
     add_step(steps, "B-editable-inspect", [sys.executable, str(EDITABLE / "scripts" / "inspect_pptx.py"), str(output_deck), "--report", str(project / "qa" / "editable-inspection.json")], EDITABLE, log_dir, deps=["B-editable-compose"])
 
@@ -216,6 +236,8 @@ def main() -> int:
             handoff_command.extend(["--visual-plan", str(visual_plan)])
         if visual_manifest:
             handoff_command.extend(["--visual-manifest", str(visual_manifest)])
+        if workflow_state_enabled:
+            handoff_command.extend(["--workflow-state", str(workflow_state_path)])
         if visual_assertions.is_file():
             handoff_command.extend(["--visual-assertions", str(visual_assertions)])
         add_step(steps, "handoff-build", handoff_command, ROOT, log_dir, deps=["B-editable-inspect"])
@@ -267,6 +289,8 @@ def main() -> int:
             final_command.extend(["--visual-plan", str(visual_plan)])
         if visual_manifest:
             final_command.extend(["--visual-manifest", str(visual_manifest)])
+        if workflow_state_enabled:
+            final_command.extend(["--workflow-state", str(workflow_state_path)])
         if visual_assertions.is_file():
             final_command.extend(["--visual-assertions", str(visual_assertions)])
         add_step(steps, "handoff-finalize", final_command, ROOT, log_dir, deps=["B-editable-qa"])
@@ -281,6 +305,7 @@ def main() -> int:
         "run_id": run_id,
         "project_dir": str(project),
         "handoff": str(handoff) if args.mode == "full" else None,
+        "workflow_state": str(workflow_state_path) if workflow_state_enabled else None,
         "visual_skill": str(VISUAL),
         "editable_skill": str(EDITABLE),
         "output_deck": str(output_deck),

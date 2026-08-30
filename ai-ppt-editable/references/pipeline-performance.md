@@ -8,6 +8,11 @@ render node; project validation waits for the technical evidence it consumes.
 The graph is declared in `scripts/run_pipeline.py` and executed by
 `scripts/pipeline_engine.py`.
 
+The executor keeps one bounded thread pool alive across all ready-task waves.
+This avoids repeatedly constructing and tearing down pools on the large
+validation graph while preserving the same dependency barriers and stable
+result ordering.
+
 `--execution-mode dag` is the default. `--execution-mode linear` keeps the same
 commands and output contract with one worker and no cache, which is useful for
 diagnosing an ordering-sensitive environment. A dependency failure blocks
@@ -102,9 +107,11 @@ linear diagnostic run should reuse page artifacts.
 ## Measurement
 
 Each step records `deps`, `duration_ms`, `cache_key` and `cache_hit`. The
-pipeline result records total task count, cache hits, worker count and selected
-scope. Sum of step durations is diagnostic; wall-clock improvement also depends
-on the number of independent nodes and external renderer contention.
+pipeline result records total task count, cache hits, cache misses, worker
+count, wall duration, critical-path duration and selected scope. Sum of step
+durations is diagnostic; wall-clock improvement also depends on the number of
+independent nodes and external renderer contention. Test reports likewise
+retain both summed subprocess time and wall-clock time.
 
 ## Regression and runtime gates
 
@@ -115,9 +122,10 @@ while preserving sorted report order:
 python3 scripts/run_tests.py --parallel-workers 4 --report test-report.json
 ```
 
-The worker packages use the same runner. A bounded subprocess timeout and each
-test's duration are retained in the report, so a slow renderer is visible
-instead of looking like a hung pipeline. Before a full run, validate the
+The worker packages use the same runner. A bounded subprocess timeout,
+durable stdout/stderr and each test's duration are retained in the report, so a
+slow renderer is visible instead of looking like a hung pipeline. Before a
+full run, validate the
 checked-in capability contract and shared-runtime hashes:
 
 ```bash

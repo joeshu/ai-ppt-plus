@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-visual-gen",
-  "package_revision": "2026.08.29.21",
+  "package_revision": "2026.08.30.01",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -13,6 +13,7 @@
     "agents/*.yaml",
     "assets/*",
     "assets/schemas/*.json",
+    "requirements-ci.txt",
     "references/*.md",
     "scripts/*.py",
     "evals/*.yaml",
@@ -22,6 +23,7 @@
     "SKILL.md",
     "agents/openai.yaml",
     "assets/skill-package.json",
+    "requirements-ci.txt",
     "assets/visual-generation-plan.template.json",
     "assets/visual-generation-manifest.template.json",
     "assets/schemas/visual-generation-plan.schema.json",
@@ -32,6 +34,7 @@
     "scripts/build_visual_generation_strip.py",
     "scripts/compose_image_pptx.py",
     "scripts/run_visual_pipeline.py",
+    "scripts/validate_workflow_state.py",
     "scripts/validate_visual_assertions.py",
     "references/visual-generation-tool.md",
     "references/visual-intermediate.md"

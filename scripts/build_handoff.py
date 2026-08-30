@@ -17,7 +17,18 @@ from atomic_output import atomic_write_json
 
 
 SCHEMA = "ai-ppt-plus/handoff/v2"
-PACKAGE_REVISION = "2026.08.29.21"
+
+
+def package_revision() -> str:
+    manifest = Path(__file__).resolve().parents[1] / "assets" / "skill-package.json"
+    try:
+        value = json.loads(manifest.read_text(encoding="utf-8")).get("package_revision")
+    except (OSError, json.JSONDecodeError):
+        value = None
+    return value if isinstance(value, str) and value else "unknown"
+
+
+PACKAGE_REVISION = package_revision()
 
 
 def sha256(path: Path) -> str:
@@ -79,6 +90,7 @@ def main() -> int:
     parser.add_argument("--visual-plan")
     parser.add_argument("--visual-manifest")
     parser.add_argument("--visual-assertions")
+    parser.add_argument("--workflow-state")
     parser.add_argument("--editable-layout")
     parser.add_argument("--pptx", required=True)
     parser.add_argument("--strip")
@@ -96,6 +108,7 @@ def main() -> int:
     visual_plan = Path(args.visual_plan).resolve() if args.visual_plan else None
     visual_manifest = Path(args.visual_manifest).resolve() if args.visual_manifest else None
     visual_assertions = Path(args.visual_assertions).resolve() if args.visual_assertions else None
+    workflow_state = Path(args.workflow_state).resolve() if args.workflow_state else None
     layout = Path(args.editable_layout).resolve() if args.editable_layout else None
     pptx = Path(args.pptx).resolve()
     strip = Path(args.strip).resolve() if args.strip else None
@@ -113,6 +126,7 @@ def main() -> int:
         ("visual_generation_plan", visual_plan, route == "visual-creation" and visual_plan is not None),
         ("visual_generation_manifest", visual_manifest, route == "visual-creation" and visual_manifest is not None),
         ("visual_assertions", visual_assertions, route == "visual-creation" and visual_assertions is not None),
+        ("workflow_state", workflow_state, workflow_state is not None),
         ("editable_layout", layout, layout is not None),
         ("visual_deck_strip", strip, route == "visual-creation" and strip is not None),
         ("pptx", pptx, True),
@@ -158,6 +172,7 @@ def main() -> int:
             "expected_pages": args.expected_pages,
             "route_authority_consistent": bool(route and authority["visual"]),
             "pptx_present": bool(pptx_record and pptx_record.get("exists")),
+            "workflow_state_present": bool(workflow_state and workflow_state.is_file()),
         },
         "worker_handoffs": {
             "visual": {"skill": "ai-ppt-visual-gen", "status": visual_status, "plan": str(visual_plan) if visual_plan else None, "manifest": str(visual_manifest) if visual_manifest else None, "assertions": str(visual_assertions) if visual_assertions else None},

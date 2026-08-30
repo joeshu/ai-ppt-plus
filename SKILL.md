@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
- package_revision: 2026.08.29.21
+ package_revision: 2026.08.30.01
 ---
 
 # AI PPT Plus Orchestrator
@@ -18,8 +18,10 @@ the workers' generation or reconstruction procedures.
 The repository is one bundle with three self-contained skill directories.
 The repository root is the `ai-ppt-plus` Super skill; each worker owns its own
 `scripts/`, `references/`, `assets/`, package validator, and tests. Read
-`references/three-skill-architecture.md` and
-`references/skill-routing.md`. Validate the bundle before intake:
+`references/three-skill-architecture.md`, `references/operations-matrix.md`,
+and `references/skill-routing.md`. The operations matrix is the executable
+module/step/tool map, cache policy and recovery policy. Validate the bundle
+before intake:
 
 ```bash
 python3 scripts/validate_skill_package.py --skill-dir .
@@ -55,6 +57,10 @@ checked-in routing and backend contracts.
    `references/font-portability.md` and validate the task-local CJK font.
 3. Inventory every input under `references/source-intake.md`. Record authority,
    readability, conflicts, missing facts, OCR requirements, and sensitive data.
+4. Create or restore `workflow-state.json`. Validate it with
+   `scripts/validate_workflow_state.py`; use `--strict` when it is a required
+   handoff or release prerequisite. This file is the durable control plane,
+   not a replacement for page/object manifests.
 
 ### O1 — Brief, story, and approval
 
@@ -113,6 +119,7 @@ the deterministic handoff can be executed in one command:
 ```bash
 python3 scripts/run_super_pipeline.py PROJECT \
   --mode full --route-decision PROJECT/route-decision.json \
+  --workflow-state PROJECT/workflow-state.json \
   --visual-plan PROJECT/visual-generation-plan.json \
   --visual-manifest PROJECT/visual-generation-manifest.json \
   --editable-layout PROJECT/editable-layout.json \
@@ -123,7 +130,9 @@ In `full` mode this validates the route, runs A (when the route is
 `visual-creation`), builds the deck strip, invokes B's composer and full
 technical QA, and writes/validates `handoff/v2`. The native image-generation
 event remains external and must happen before A; the coordinator never fakes
-it. The default `handoff` mode remains a quick compatibility diagnostic.
+it. The default `handoff` mode remains a quick compatibility diagnostic. Add
+`--require-workflow-state` to block the chain when phase-required artifacts,
+authority approvals, blocker records or SHA-256 evidence are incomplete.
 
 Before release or a CI run, validate the local capability report against
 `assets/environment-contract.json` and run the runtime mirror gate. Missing
@@ -157,7 +166,7 @@ evidence; they are not silently substituted.
 
 ## Shared state and recovery
 
-The canonical state is files, not conversation: brief, source inventory,
+The canonical state is files, not conversation: workflow state, brief, source inventory,
 outline, design system, route decision, worker manifests, object manifests,
 report index, issue log, handoff, and delivery report. Freeze accepted
 regression baselines with `scripts/revision_guard.py freeze`; never overwrite a
@@ -173,6 +182,7 @@ successful pages and unrelated downstream artifacts remain intact.
 - No child skill lowers the requested L0–L5 editability target.
 - No release claim without aggregated technical evidence and explicit human
   closeout where required.
+- No downstream stage may run from a missing or stale required workflow state.
 - No three-skill package change is valid unless all three entrypoints share the
   same `package_revision`, each directory passes its own package validation,
   and the root bundle validation passes.

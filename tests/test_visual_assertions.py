@@ -64,6 +64,22 @@ def main() -> int:
         data = json.loads(report.read_text(encoding="utf-8"))
         assert data["valid"] is True
         assert data["evidence"]["slides"][0]["keyword_emphasis"][0]["passed"] is True, data
+        assert data["evidence"]["slides"][0]["keyword_emphasis"][0]["text_readback"]["passed"] is True, data
+
+        color_only = root / "color-only.png"
+        color_canvas = Image.new("RGB", (800, 450), "white")
+        ImageDraw.Draw(color_canvas).rectangle((40, 40, 300, 100), fill="#F28C28")
+        color_canvas.save(color_only)
+        color_manifest = root / "color-only-manifest.json"
+        color_manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
+        color_manifest_data["slides"][0]["copied_to"] = color_only.name
+        write_json(color_manifest, color_manifest_data)
+        color_check = subprocess.run([
+            sys.executable, "scripts/validate_visual_assertions.py", str(plan),
+            "--manifest", str(color_manifest), "--expected-pages", "1",
+        ], cwd=ROOT, capture_output=True, text=True, check=False)
+        assert color_check.returncode == 2 and "visual_keyword_text_missing" in color_check.stdout, color_check.stdout
+
         broken = json.loads(plan.read_text(encoding="utf-8"))
         broken["slides"][0]["visual_assertions"]["must_contain_text"] = ["MISSING TEXT"]
         write_json(plan, broken)
