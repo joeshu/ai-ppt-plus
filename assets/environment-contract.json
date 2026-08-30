@@ -1,0 +1,25 @@
+{
+  "schema": "ai-ppt-plus/environment-contract/v1",
+  "requirements_file": "requirements-ci.txt",
+  "requirements_must_be_pinned": true,
+  "python": {"minimum": "3.11", "maximum_exclusive": "3.13"},
+  "required_capabilities": [
+    "python_pptx",
+    "pptx_font_embedding_adapter",
+    "image_reader",
+    "numpy",
+    "pyyaml",
+    "fonttools",
+    "libreoffice_renderer",
+    "poppler_renderer",
+    "pdf_text_extractor",
+    "svg_rasterizer",
+    "ocr_engine"
+  ],
+  "optional_capabilities": ["pymupdf", "docx_reader", "xlsx_reader", "pandoc_converter", "ppt_master"],
+  "rules": [
+    "The selected authoring backend must match the backend used by the composer.",
+    "Visual OCR assertions require an available OCR engine and language data.",
+    "If a required capability is unavailable, the run is blocked or must declare a compatible adapter; it is never silently substituted."
+  ]
+}

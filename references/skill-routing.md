@@ -29,9 +29,13 @@ ownership or create a fourth release authority.
    backend first, preferred native imagegen second, another native raster tool
    third, otherwise blocked/unavailable. SVG/HTML/Canvas/code-added bitmap text
    does not satisfy the generation event.
-5. `reference-reconstruction` and `editable-pptx` bind to `ai-ppt-editable` as
-   a checked-in sibling skill. A fixed reference is not routed through
-   whole-page visual generation merely to satisfy another path.
+5. `reference-reconstruction`, `editable-pptx`, and `native-authoring` bind to
+   `ai-ppt-editable` as a checked-in sibling skill. A fixed reference is not
+   routed through whole-page visual generation merely to satisfy another path.
+   `native-authoring` requires a v2 route decision with
+   `visual_authority=approved_design_system`, `requires_image_generation=false`,
+   and a `native_content_manifest`; it must not silently fall back to image
+   generation or reference reconstruction.
 6. PPTX operations use the declared authoring adapter. No skill may silently
    replace the adapter, lower L0–L5 editability, or turn automated technical
    success into delivery/human approval.
@@ -56,6 +60,11 @@ Shared contracts include:
   source retention, and no-code-overlay policy;
 - font embedding/portability contracts;
 - machine-readable ownership in `assets/skill-routing.template.json`.
+- `ai-ppt-plus/route-decision/v2` for native-authoring route authority;
+- `ai-ppt-plus/handoff/v2` for hash-backed A-to-B recovery and page coverage.
+- `ai-ppt-plus/runtime-mirror/v1` for shared-runtime SHA-256 drift checks;
+- `ai-ppt-plus/environment-contract/v1` for explicit capability and renderer
+  requirements.
 
 Validate before any downstream work:
 

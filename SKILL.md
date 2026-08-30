@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
- package_revision: 2026.08.29.19
+ package_revision: 2026.08.29.21
 ---
 
 # AI PPT Plus Orchestrator
@@ -112,15 +112,23 @@ the deterministic handoff can be executed in one command:
 
 ```bash
 python3 scripts/run_super_pipeline.py PROJECT \
+  --mode full --route-decision PROJECT/route-decision.json \
   --visual-plan PROJECT/visual-generation-plan.json \
   --visual-manifest PROJECT/visual-generation-manifest.json \
   --editable-layout PROJECT/editable-layout.json \
   --output-deck PROJECT/deliverable.pptx --expected-pages N
 ```
 
-This command validates A, builds the deck strip, invokes B's local composer,
-and inspects the resulting PPTX. It does not replace the native image-generation
-event or the editable worker's visual/object planning.
+In `full` mode this validates the route, runs A (when the route is
+`visual-creation`), builds the deck strip, invokes B's composer and full
+technical QA, and writes/validates `handoff/v2`. The native image-generation
+event remains external and must happen before A; the coordinator never fakes
+it. The default `handoff` mode remains a quick compatibility diagnostic.
+
+Before release or a CI run, validate the local capability report against
+`assets/environment-contract.json` and run the runtime mirror gate. Missing
+capabilities, OCR engines, or drifted shared worker files are blocking
+evidence; they are not silently substituted.
 
 ### O5 — Reconcile, review, and release
 

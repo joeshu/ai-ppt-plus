@@ -8,6 +8,7 @@ Exit 0 when recovery inputs are consistent, 2 when a blocker is found,
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 from atomic_output import atomic_write_json
 
@@ -16,6 +17,9 @@ REQUIRED = (
     "completed_slides", "active_batch", "remaining_slides", "open_blockers",
     "repair_round", "latest_checks", "backend", "next_action", "updated_at",
 )
+V2_REQUIRED = ("run_id", "package_revision", "route", "artifacts", "cross_artifact", "worker_handoffs")
+ROUTES = {"visual-creation", "reference-reconstruction", "native-authoring"}
+SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 
 STATES = {
     "intake", "source-analyzed", "outline-draft", "outline-review",
@@ -43,6 +47,9 @@ def main() -> int:
         print(json.dumps({"valid": False, "error": f"{type(exc).__name__}: {exc}"}, ensure_ascii=False))
         return 3
     issues = []
+    schema = data.get("schema") if isinstance(data, dict) else None
+    if schema not in {None, "ai-ppt-plus/handoff/v1", "ai-ppt-plus/handoff/v2"}:
+        issues.append({"severity": "blocker", "code": "invalid_schema", "schema": schema})
     for field in REQUIRED:
         if field not in data or data[field] in (None, ""):
             issues.append({"severity": "blocker", "code": "missing_field", "field": field})
@@ -54,6 +61,40 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "delivered_gate_status_invalid", "gate_status": data.get("gate_status")})
     if current_stage == "human-closeout" and not data.get("capability_status", {}).get("human_signoff") in {"pending", "passed", "approved"}:
         issues.append({"severity": "blocker", "code": "human_closeout_status_invalid"})
+    if schema == "ai-ppt-plus/handoff/v2":
+        for field in V2_REQUIRED:
+            if field not in data or data[field] in (None, "", []):
+                issues.append({"severity": "blocker", "code": "missing_v2_field", "field": field})
+        if data.get("route") not in ROUTES:
+            issues.append({"severity": "blocker", "code": "invalid_route", "route": data.get("route")})
+        artifacts = data.get("artifacts")
+        records = artifacts.values() if isinstance(artifacts, dict) else artifacts if isinstance(artifacts, list) else []
+        for name, record in (artifacts.items() if isinstance(artifacts, dict) else enumerate(records)):
+            if not isinstance(record, dict):
+                issues.append({"severity": "blocker", "code": "artifact_record_invalid", "artifact": name})
+                continue
+            artifact_path = record.get("path")
+            declared = record.get("sha256")
+            if record.get("required") and (not isinstance(artifact_path, str) or not Path(artifact_path).is_file()):
+                issues.append({"severity": "blocker", "code": "artifact_missing", "artifact": name, "path": artifact_path})
+            if isinstance(artifact_path, str) and Path(artifact_path).is_file():
+                if not isinstance(declared, str) or not SHA256_RE.fullmatch(declared):
+                    issues.append({"severity": "blocker", "code": "artifact_hash_missing", "artifact": name})
+                elif sha256(Path(artifact_path)) != declared:
+                    issues.append({"severity": "blocker", "code": "artifact_hash_mismatch", "artifact": name})
+        cross = data.get("cross_artifact") if isinstance(data.get("cross_artifact"), dict) else {}
+        coverage = cross.get("page_coverage") if isinstance(cross.get("page_coverage"), dict) else {}
+        expected_pages = cross.get("expected_pages")
+        if not isinstance(expected_pages, int) or expected_pages < 1:
+            issues.append({"severity": "blocker", "code": "expected_pages_invalid"})
+        else:
+            completed = set(coverage.get("completed") or [])
+            remaining = set(coverage.get("remaining") or [])
+            if completed & remaining:
+                issues.append({"severity": "blocker", "code": "page_coverage_overlap"})
+            covered = sorted(completed | remaining)
+            if covered != list(range(1, expected_pages + 1)):
+                issues.append({"severity": "blocker", "code": "page_coverage_incomplete", "expected": list(range(1, expected_pages + 1)), "observed": covered})
     for key, value in approved.items():
         if key.endswith("_sha256"):
             continue
@@ -72,7 +113,7 @@ def main() -> int:
     if data.get("remaining_slides") and data.get("current_stage") == "delivered":
         issues.append({"severity": "blocker", "code": "delivered_with_remaining_slides"})
     result = {
-        "schema": "ai-ppt-plus/handoff-validation/v1",
+        "schema": "ai-ppt-plus/handoff-validation/v2" if schema == "ai-ppt-plus/handoff/v2" else "ai-ppt-plus/handoff-validation/v1",
         "valid": not any(item["severity"] == "blocker" for item in issues),
         "handoff": str(path.resolve()),
         "project_id": data.get("project_id"),

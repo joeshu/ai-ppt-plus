@@ -2,7 +2,7 @@
 name: ai-ppt-visual-gen
 description: Generate polished image-format PowerPoint slides or visual intermediates from a topic, approved outline, or content brief. Trigger for “图片版PPT/文生图PPT/AI出图幻灯片/视觉中间稿”, high-information commercial slide images, A1–A5 visual production, page-local image retry, source retention, or deck-strip review. Outputs one raster image per slide plus prompts and generation evidence. It can run standalone or as the visual worker for $ai-ppt-plus. Do not use for editable PPTX reconstruction or deck-wide release; use $ai-ppt-editable or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.29.19
+ package_revision: 2026.08.29.21
 ---
 
 # AI PPT Visual Gen
@@ -138,6 +138,13 @@ For each page:
    invalidate accepted pages or regenerate the whole deck as a convenience;
 6. never repair text or decoration by drawing/overlaying code onto the bitmap.
 
+When a slide declares `visual_assertions`, run the readback gate after the
+image exists. `must_contain_text` / `forbidden_text` use OCR against the
+retained project copy; `keyword_emphasis` counts pixels near the declared
+color (optionally inside a normalized `region`); `min_ink_ratio` catches an
+empty or nearly empty page. OCR/tool unavailability or a failed assertion is
+blocking evidence, not a reason to silently accept the image.
+
 If no compatible image tool is available, record discovery evidence, retry
 once with a compatible available model or simplified prompt, then return a
 blocked/unavailable state. A wireframe is a separately labeled degraded output
@@ -155,6 +162,15 @@ python3 scripts/build_visual_generation_strip.py \
 python3 scripts/validate_visual_generation_plan.py \
   visual-generation-plan.json --expected-pages N \
   --manifest visual-generation-manifest.json --require-evidence
+```
+
+If any page declares post-generation assertions, the visual pipeline also
+runs:
+
+```bash
+python3 scripts/validate_visual_assertions.py \
+  visual-generation-plan.json --manifest visual-generation-manifest.json \
+  --expected-pages N --report qa/visual-assertions.json
 ```
 
 Review the strip for palette/style continuity, density rhythm, framework

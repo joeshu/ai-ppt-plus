@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "project_id", "route", "status", "visual_authority", "formal_content_authority", "requires_image_generation"],
+  "properties": {
+    "schema": {"type": "string", "enum": ["ai-ppt-plus/route-decision/v1", "ai-ppt-plus/route-decision/v2"]},
+    "project_id": {"type": "string", "minLength": 1},
+    "route": {"type": "string", "enum": ["visual-creation", "reference-reconstruction", "native-authoring"]},
+    "status": {"type": "string", "enum": ["decided", "needs_user", "blocked"]},
+    "visual_authority": {"type": "string", "enum": ["generated_visual_intermediate", "approved_reference_image", "approved_design_system"]},
+    "formal_content_authority": {"type": "string", "enum": ["approved_outline", "user_transcription", "transcription_pending_confirmation"]},
+    "requires_image_generation": {"type": "boolean"},
+    "visual_generation_mode": {"type": "string", "enum": ["image-slide", "layout-reference"]},
+    "visual_generation_plan": {"type": ["string", "null"]},
+    "visual_generation_manifest": {"type": ["string", "null"]},
+    "visual_intermediate_manifest": {"type": ["string", "null"]},
+    "native_content_manifest": {"type": ["string", "null"]},
+    "reference_roster": {"type": "array"},
+    "reason": {"type": "string"},
+    "confirmed_by": {"type": "string"},
+    "confirmed_at": {"type": "string"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"route": {"const": "native-authoring"}}},
+      "then": {
+        "required": ["native_content_manifest"],
+        "properties": {
+          "schema": {"const": "ai-ppt-plus/route-decision/v2"},
+          "visual_authority": {"const": "approved_design_system"},
+          "requires_image_generation": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"route": {"const": "visual-creation"}}},
+      "then": {
+        "properties": {
+          "visual_authority": {"const": "generated_visual_intermediate"},
+          "requires_image_generation": {"const": true}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"route": {"const": "reference-reconstruction"}}},
+      "then": {
+        "properties": {
+          "visual_authority": {"const": "approved_reference_image"},
+          "requires_image_generation": {"const": false}
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

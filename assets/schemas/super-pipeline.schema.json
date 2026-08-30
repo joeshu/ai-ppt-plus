@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "valid", "status", "mode", "run_id", "project_dir", "steps", "failed_steps", "external_events"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/super-pipeline/v2"},
+    "valid": {"type": "boolean"},
+    "status": {"type": "string", "enum": ["passed", "blocked"]},
+    "mode": {"type": "string", "enum": ["handoff", "full"]},
+    "run_id": {"type": "string"},
+    "project_dir": {"type": "string"},
+    "handoff": {"type": ["string", "null"]},
+    "visual_skill": {"type": "string"},
+    "editable_skill": {"type": "string"},
+    "output_deck": {"type": "string"},
+    "steps": {"type": "array", "items": {"type": "object"}},
+    "failed_steps": {"type": "array", "items": {"type": "string"}},
+    "external_events": {"type": "object"}
+  }
+}

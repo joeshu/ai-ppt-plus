@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "project_id", "run_id", "revision", "package_revision", "current_stage", "gate_status", "route", "approved_artifacts", "artifacts", "cross_artifact", "worker_handoffs", "completed_slides", "remaining_slides", "open_blockers", "latest_checks", "backend", "next_action", "updated_at"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/handoff/v2"},
+    "project_id": {"type": "string", "minLength": 1},
+    "project_dir": {"type": "string"},
+    "run_id": {"type": "string", "minLength": 1},
+    "revision": {"type": "string", "minLength": 1},
+    "package_revision": {"type": "string", "minLength": 1},
+    "current_stage": {"type": "string"},
+    "gate_status": {"type": "string"},
+    "route": {"type": "string", "enum": ["visual-creation", "reference-reconstruction", "native-authoring"]},
+    "authorities": {"type": "object"},
+    "approved_artifacts": {"type": "object"},
+    "artifacts": {"type": "object", "additionalProperties": {"$ref": "#/$defs/artifact"}},
+    "cross_artifact": {"type": "object"},
+    "worker_handoffs": {"type": "object"},
+    "completed_slides": {"type": "array", "items": {"type": "integer", "minimum": 1}},
+    "active_batch": {"type": "string"},
+    "remaining_slides": {"type": "array", "items": {"type": "integer", "minimum": 1}},
+    "open_blockers": {"type": "array"},
+    "repair_round": {"type": "integer", "minimum": 0},
+    "latest_checks": {"type": "array"},
+    "backend": {"type": "string"},
+    "next_action": {"type": "string"},
+    "capability_status": {"type": "object"},
+    "updated_at": {"type": "string"}
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "required": ["path", "sha256", "exists"],
+      "properties": {
+        "path": {"type": "string"},
+        "sha256": {"type": ["string", "null"]},
+        "size_bytes": {"type": ["integer", "null"]},
+        "required": {"type": "boolean"},
+        "exists": {"type": "boolean"}
+      }
+    }
+  }
+}

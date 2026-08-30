@@ -1,0 +1,54 @@
+{
+  "schema": "ai-ppt-plus/runtime-mirror/v1",
+  "source": ".",
+  "pairs": [
+    {
+      "worker": "ai-ppt-visual-gen",
+      "compare_globs": [
+        "scripts/*.py",
+        "references/*.md",
+        "assets/*.template.json",
+        "assets/schemas/*.json"
+      ],
+      "exclude": [
+        "assets/skill-package.json",
+        "scripts/compose_image_pptx.py",
+        "scripts/run_visual_pipeline.py"
+      ],
+      "required_paths": [
+        "scripts/atomic_output.py",
+        "scripts/build_visual_generation_strip.py",
+        "scripts/materialize_visual_generation_prompts.py",
+        "scripts/run_tests.py",
+        "scripts/validate_skill_package.py",
+        "scripts/validate_visual_generation_plan.py",
+        "scripts/validate_visual_assertions.py"
+      ]
+    },
+    {
+      "worker": "ai-ppt-editable",
+      "compare_globs": [
+        "scripts/*.py",
+        "references/*.md",
+        "assets/*.template.json",
+        "assets/schemas/*.json",
+        "assets/fonts/*"
+      ],
+      "exclude": [
+        "scripts/validate_routing_contract.py",
+        "assets/skill-package.json",
+        "assets/skill-routing.template.json",
+        "assets/schemas/skill-routing.schema.json"
+      ],
+      "required_paths": [
+        "scripts/atomic_output.py",
+        "scripts/run_pipeline.py",
+        "scripts/run_tests.py",
+        "scripts/validate_handoff.py",
+        "scripts/validate_route.py",
+        "scripts/validate_skill_package.py",
+        "scripts/validate_visual_generation_plan.py"
+      ]
+    }
+  ]
+}

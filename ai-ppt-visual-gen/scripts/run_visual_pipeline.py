@@ -15,6 +15,14 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_DIR = ROOT / "scripts"
 
 
+def has_visual_assertions(plan: Path) -> bool:
+    try:
+        data = json.loads(plan.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    return any(isinstance(slide, dict) and slide.get("visual_assertions") is not None for slide in (data.get("slides") or [])) if isinstance(data, dict) else False
+
+
 def run(name: str, command: list[str]) -> dict:
     completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
     return {
@@ -80,6 +88,16 @@ def main() -> int:
         if manifest:
             command.extend(["--manifest", str(manifest), "--require-evidence"])
         steps.append(run("visual-generation", command))
+    if all(item["ok"] for item in steps) and manifest and has_visual_assertions(plan):
+        assertions_report = Path(args.report).resolve().with_name("visual-assertions.json") if args.report else plan.parent / "visual-assertions.json"
+        steps.append(run("visual-assertions", [
+            sys.executable,
+            str(SCRIPT_DIR / "validate_visual_assertions.py"),
+            str(plan),
+            "--manifest", str(manifest),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(assertions_report),
+        ]))
     if all(item["ok"] for item in steps) and manifest and args.image_pptx:
         steps.append(run("image-pptx", [
             sys.executable,
