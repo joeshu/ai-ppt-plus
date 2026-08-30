@@ -2,7 +2,7 @@
 name: ai-ppt-visual-gen
 description: Generate polished image-format PowerPoint slides or visual intermediates from a topic, approved outline, or content brief. Trigger for “图片版PPT/文生图PPT/AI出图幻灯片/视觉中间稿”, high-information commercial slide images, A1–A5 visual production, page-local image retry, source retention, or deck-strip review. Outputs one raster image per slide plus prompts and generation evidence. It can run standalone or as the visual worker for $ai-ppt-plus. Do not use for editable PPTX reconstruction or deck-wide release; use $ai-ppt-editable or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.30.07
+ package_revision: 2026.08.30.08
 ---
 
 # AI PPT Visual Gen
@@ -187,6 +187,23 @@ Every reference declares exactly one treatment:
 Write `preserve` and `exclude` lists. A reference is visual guidance, never
 formal-copy authority. Do not claim “style-only” while copying distinctive
 logos, proprietary illustrations, or exact content.
+
+### Bundled visual cases
+
+Reviewed user-approved examples live under
+`assets/reference-images/cases/`. Read the case `README.md` and `case.json`
+when a user asks for a reusable visual precedent or when the active brief
+benefits from a known page framework. Use the case's declared treatment:
+`layout-only` by default, or `layout-and-style` only when the user explicitly
+approves that case for style learning. In both modes, the active outline and
+copy contract remain authoritative; never reuse the case's text, numbers,
+claims, logos, citations or distinctive brand assets. Keep the case raster
+files unchanged and record the case ID in the active plan's reference list.
+
+The current bundled case is
+`assets/reference-images/cases/huawei-tau-law-4page/`: a premium dark
+technology-strategy exemplar showing four different frameworks—hero thesis,
+dual-scale comparison, cross-layer system map, and evidence/horizon close.
 
 ## A3 — Materialize self-contained prompts
 

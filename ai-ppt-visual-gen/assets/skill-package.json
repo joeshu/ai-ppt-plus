@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-visual-gen",
-  "package_revision": "2026.08.30.07",
+  "package_revision": "2026.08.30.08",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -12,6 +12,7 @@
     "SKILL.md",
     "agents/*.yaml",
     "assets/*",
+    "assets/reference-images/**/*",
     "assets/schemas/*.json",
     "requirements-ci.txt",
     "references/*.md",

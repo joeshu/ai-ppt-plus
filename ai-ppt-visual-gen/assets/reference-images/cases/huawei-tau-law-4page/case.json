@@ -1,0 +1,40 @@
+{
+  "schema": "ai-ppt-plus/visual-reference-case/v1",
+  "case_id": "huawei-tau-law-4page",
+  "title": "Huawei Tau Law — 4-page visual case",
+  "created_at": "2026-08-30",
+  "approved_by": "user-requested-case-example",
+  "reference_mode_default": "layout-only",
+  "approved_reference_mode": "layout-and-style",
+  "content_reuse": "prohibited",
+  "canvas": {"ratio": "16:9", "native_width_px": 1672, "native_height_px": 941},
+  "design_tokens": {
+    "palette": ["#10141C", "#202631", "#C8102E", "#B8874D", "#C6CBD3", "#F2F0EA", "#38B7C8"],
+    "surface": "obsidian glass, brushed titanium, fine copper traces, subtle paper grain",
+    "grid": "12-column editorial grid with stable title baseline and page-local closure",
+    "density": "dense",
+    "typography": "premium Chinese sans-serif with restrained tau-symbol serif accent",
+    "icon_language": "engineering linework, timing waveforms, layered cross-sections and precision nodes"
+  },
+  "case_lessons": [
+    "one dominant relationship per page",
+    "four distinct frameworks across a coherent deck",
+    "page-local closure instead of a universal footer",
+    "luxury through material depth, hierarchy, spacing and alignment",
+    "separate public disclosure, engineering interpretation and validation boundary"
+  ],
+  "exclude": [
+    "all rendered text and Chinese copy",
+    "all numbers and claims",
+    "Huawei name as content or brand identity",
+    "citations, logos, watermarks and distinctive proprietary assets",
+    "model-specific accidental text or decorative labels"
+  ],
+  "slides": [
+    {"slide_no": 1, "path": "01-thesis.png", "sha256": "186c5debe21997754defddf1d4816e9c5c75277377148bb8e674626837c3222c", "framework": "asymmetric-hero-thesis"},
+    {"slide_no": 2, "path": "02-scale-shift.png", "sha256": "5bb33a03d85824163271514719632d0a01b5268da00c3c1a7cf0ae3c8df6fcdd", "framework": "dual-scale-comparison"},
+    {"slide_no": 3, "path": "03-cross-layer-chain.png", "sha256": "b7e2c35856b94234644cf18de4d9146c093fe83b8ae30b8a74305f896aef1140", "framework": "cross-layer-exploded-map"},
+    {"slide_no": 4, "path": "04-evidence-route.png", "sha256": "32add5e8441a9a8c8ed12dd6523ab69fe8067e6ffb05a2767e6970b18ed34c3c", "framework": "evidence-matrix-horizon"}
+  ],
+  "contact_sheet": {"path": "contact-sheet.png", "sha256": "ab623e0a22c802fb2341bb561ed347ee193b78ee35e7660e4920e8f1e92ad788"}
+}
