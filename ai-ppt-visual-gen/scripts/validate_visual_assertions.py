@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import functools
 import json
 import re
 import subprocess
@@ -36,8 +37,8 @@ def compact(value: str) -> str:
     return "".join(char for char in unicodedata.normalize("NFKC", value) if not char.isspace())
 
 
-def add_issue(issues: list[dict], code: str, slide_no: int | None = None, **details) -> None:
-    item = {"severity": "blocker", "code": code}
+def add_issue(issues: list[dict], code: str, slide_no: int | None = None, severity: str = "blocker", **details) -> None:
+    item = {"severity": severity, "code": code}
     if slide_no is not None:
         item["slide_no"] = slide_no
     item.update({key: value for key, value in details.items() if value is not None})
@@ -94,7 +95,24 @@ def ink_ratio(path: Path) -> tuple[float, tuple[int, int]]:
         return non_background / max(1, len(pixels)), (width, height)
 
 
+@functools.lru_cache(maxsize=1)
+def available_ocr_languages() -> tuple[str, ...]:
+    try:
+        completed = subprocess.run(["tesseract", "--list-langs"], capture_output=True, text=True, timeout=10, check=False)
+    except (OSError, subprocess.TimeoutExpired):
+        return ()
+    if completed.returncode != 0:
+        return ()
+    lines = [line.strip() for line in (completed.stdout or "").splitlines() if line.strip()]
+    return tuple(line for line in lines if not line.lower().startswith("list of available languages"))
+
+
 def ocr(path: Path, language: str) -> tuple[str | None, str | None, list[dict]]:
+    requested = tuple(item for item in language.split("+") if item)
+    available = available_ocr_languages()
+    missing = [item for item in requested if item not in available]
+    if missing:
+        return None, f"missing OCR languages: {', '.join(missing)}; available: {', '.join(available) or 'none'}", []
     command = ["tesseract", str(path), "stdout", "--psm", "6", "-l", language, "tsv"]
     try:
         completed = subprocess.run(command, capture_output=True, text=True, timeout=60, check=False)
@@ -179,6 +197,9 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
             if not isinstance(values, list) or any(not text(value) for value in values):
                 add_issue(issues, "visual_assertions_text_list_invalid", slide_no=slide_no, field=field)
         emphasis = raw.get("keyword_emphasis", [])
+        failure_policy = text(raw.get("ocr_failure_policy")) or "block"
+        if failure_policy not in {"block", "manual-review"}:
+            add_issue(issues, "visual_assertions_ocr_failure_policy_invalid", slide_no=slide_no, observed=failure_policy)
         if not isinstance(emphasis, list):
             add_issue(issues, "visual_assertions_emphasis_list_invalid", slide_no=slide_no)
             emphasis = []
@@ -239,10 +260,14 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
         ocr_available = False
         if ocr_needed:
             language = text(assertions.get("ocr_lang")) or "eng"
+            failure_policy = text(assertions.get("ocr_failure_policy")) or "block"
             recognized, error, recognized_words = ocr(image_path, language)
             slide_result["ocr"] = {"language": language, "available": error is None, "error": error, "text": recognized or ""}
             if error is not None:
-                add_issue(issues, "visual_ocr_unavailable", slide_no=slide_no, language=language, message=error)
+                if failure_policy == "manual-review":
+                    add_issue(issues, "visual_ocr_manual_review_required", slide_no=slide_no, language=language, message=error, severity="warning")
+                else:
+                    add_issue(issues, "visual_ocr_unavailable", slide_no=slide_no, language=language, message=error)
             else:
                 ocr_available = True
                 recognized_compact = compact(recognized or "")
@@ -285,6 +310,7 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
                 "passed": keyword_box is not None and compact(keyword) in recognized_compact if ocr_available else False,
                 "recognized": recognized_compact[:500] if ocr_available else None,
                 "bbox": keyword_box,
+                "status": "passed" if ocr_available and keyword_box is not None and compact(keyword) in recognized_compact else ("manual-review" if not ocr_available and (text(assertions.get("ocr_failure_policy")) or "block") == "manual-review" else "failed"),
             }
             if ocr_available and not text_readback["passed"]:
                 add_issue(issues, "visual_keyword_text_missing", slide_no=slide_no, item=index, text=keyword, recognized=recognized_compact[:500])
@@ -308,7 +334,8 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
                     add_issue(issues, "visual_color_measurement_failed", slide_no=slide_no, item=index, message=f"{type(exc).__name__}: {exc}")
                     count = 0
                     passed = False
-            item_result = {"text": keyword, "color": text(item.get("color")), "pixel_count": count, "minimum": minimum, "tolerance": tolerance, "region": region, "text_region": effective_region, "passed": passed and (text_readback["passed"] if bool(keyword) else True), "color_passed": passed, "text_readback": text_readback, "dimensions": list(dimensions[:2])}
+            manual_text_review = not ocr_available and (text(assertions.get("ocr_failure_policy")) or "block") == "manual-review"
+            item_result = {"text": keyword, "color": text(item.get("color")), "pixel_count": count, "minimum": minimum, "tolerance": tolerance, "region": region, "text_region": effective_region, "passed": passed and ((text_readback["passed"] if bool(keyword) else True) or manual_text_review), "color_passed": passed, "text_readback": text_readback, "dimensions": list(dimensions[:2])}
             slide_result["keyword_emphasis"].append(item_result)
             if not passed:
                 add_issue(issues, "visual_keyword_emphasis_missing", slide_no=slide_no, item=index, text=text(item.get("text")), color=text(item.get("color")), minimum=minimum, observed=count)
@@ -330,10 +357,11 @@ def main() -> int:
     except Exception as exc:
         evidence = {}
         issues = [{"severity": "blocker", "code": "visual_assertions_failed", "message": f"{type(exc).__name__}: {exc}"}]
+    blockers = [item for item in issues if item.get("severity") == "blocker"]
     result = {
         "schema": SCHEMA,
-        "valid": not issues,
-        "status": "passed" if not issues else "blocked",
+        "valid": not blockers,
+        "status": "passed" if not issues else ("needs-human-review" if not blockers else "blocked"),
         "plan": str(plan_path),
         "manifest": str(manifest_path),
         "evidence": evidence,

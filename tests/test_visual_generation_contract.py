@@ -154,6 +154,9 @@ def main() -> int:
         plan_data = build_plan()
         prompt.write_text(plan_data["slides"][0]["production_prompt"] + "\n", encoding="utf-8")
         write_json(plan, plan_data)
+        plan_only = run("scripts/validate_visual_generation_plan.py", str(plan), "--expected-pages", "1")
+        assert plan_only.returncode == 0, plan_only.stdout + plan_only.stderr
+        assert json.loads(plan_only.stdout)["evidence"] is None, plan_only.stdout
         manifest = root / "visual-generation-manifest.json"
         write_json(manifest, {
             "schema": "ai-ppt-plus/visual-generation-manifest/v1",
@@ -183,6 +186,13 @@ def main() -> int:
             "--expected-pages", "1", "--record-in-manifest",
         )
         assert strip.returncode == 0, strip.stdout + strip.stderr
+        cached_strip = run(
+            "scripts/build_visual_generation_strip.py", str(manifest),
+            "--output", str(root / "qa" / "visual-deck-strip.png"),
+            "--expected-pages", "1", "--record-in-manifest",
+        )
+        assert cached_strip.returncode == 0, cached_strip.stdout + cached_strip.stderr
+        assert json.loads(cached_strip.stdout)["status"] == "cached", cached_strip.stdout
         valid = run(
             "scripts/validate_visual_generation_plan.py", str(plan),
             "--manifest", str(manifest), "--expected-pages", "1", "--require-evidence",

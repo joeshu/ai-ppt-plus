@@ -167,6 +167,40 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False))
         return 2
 
+    current_sources = [
+        {"slide_no": slide_no, "image": record.get("copied_to"), "sha256": sha256(path)}
+        for slide_no, path, _size, record in valid_records
+    ]
+    existing = manifest.get("deck_strip") if isinstance(manifest.get("deck_strip"), dict) else None
+    if output_path.is_file() and existing and not args.force:
+        existing_path = resolve_path(manifest_path.parent, existing.get("path"))
+        cache_hit = (
+            existing_path == output_path
+            and existing.get("sha256") == sha256(output_path)
+            and existing.get("source_slides") == current_sources
+            and existing.get("columns") == args.columns
+            and existing.get("thumbnail_width") == args.thumbnail_width
+        )
+        if cache_hit:
+            result = {
+                "schema": STRIP_SCHEMA,
+                "valid": True,
+                "technical_valid": True,
+                "status": "cached",
+                "manifest_path": str(manifest_path),
+                "output": str(output_path),
+                "output_sha256": existing.get("sha256"),
+                "slides": [{"slide_no": slide_no, "image": str(path), "size": list(size)} for slide_no, path, size, _record in valid_records],
+                "recorded_in_manifest": True,
+                "cache_hit": True,
+                "human_visual_review_required": True,
+                "issues": [],
+            }
+            if args.report:
+                atomic_write_json(Path(args.report).resolve(), result)
+            print(json.dumps(result, ensure_ascii=False))
+            return 0
+
     if output_path.exists() and not args.force:
         add_issue(issues, "strip_exists", path=str(output_path))
     if args.record_in_manifest and isinstance(manifest.get("deck_strip"), dict) and not args.force:
@@ -188,10 +222,7 @@ def main() -> int:
         atomic_replace(output_path, lambda path: sheet.save(str(path), format="PNG"), suffix=".tmp.visual-strip.png")
         output_hash = sha256(output_path)
         relative_output = output_path.relative_to(manifest_path.parent).as_posix()
-        source_slides = [
-            {"slide_no": slide_no, "image": record.get("copied_to"), "sha256": sha256(path)}
-            for slide_no, path, _size, record in valid_records
-        ]
+        source_slides = current_sources
         if args.record_in_manifest:
             updated_manifest = dict(manifest)
             updated_manifest["deck_strip"] = {

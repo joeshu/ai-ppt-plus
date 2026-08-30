@@ -58,12 +58,15 @@ def main() -> int:
         assert strip["sha256"] == digest(output)
         assert [item["slide_no"] for item in strip["source_slides"]] == [1, 2, 3, 4]
 
-        blocked = subprocess.run([
+        cached = subprocess.run([
             sys.executable, "scripts/build_visual_generation_strip.py", str(manifest),
             "--output", str(output), "--expected-pages", "4", "--columns", "2",
             "--thumbnail-width", "512", "--record-in-manifest",
         ], cwd=ROOT, capture_output=True, text=True, check=False)
-        assert blocked.returncode == 2 and "strip_exists" in blocked.stdout, blocked.stdout
+        assert cached.returncode == 0, cached.stdout + cached.stderr
+        cached_result = json.loads(cached.stdout)
+        assert cached_result["status"] == "cached" and cached_result["cache_hit"] is True, cached_result
+        assert cached_result["output_sha256"] == digest(output), cached_result
 
     print("visual generation strip: ok")
     return 0
