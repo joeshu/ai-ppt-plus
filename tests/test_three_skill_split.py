@@ -64,15 +64,27 @@ def main() -> int:
     assert routing["bindings"]["authoring"]["entrypoint"].startswith("ai-ppt-editable/")
     assert "GordenImage" not in json.dumps(routing, ensure_ascii=False)
 
-    # The split is packaging-only for existing algorithms: every copied script
-    # remains byte-identical except the two package-local contract validators.
+    # The editable worker is pinned to the reconstruction core from the
+    # perfect source branch. Its manifest is the source-of-truth parity gate;
+    # only the explicitly documented package and orchestrator adapters are
+    # outside that byte-identical set.
     editable_scripts = ROOT / "ai-ppt-editable" / "scripts"
-    for worker_file in editable_scripts.glob("*.py"):
-        if worker_file.name in {"validate_skill_package.py", "validate_routing_contract.py"}:
-            continue
-        source = ROOT / "scripts" / worker_file.name
-        assert source.is_file(), worker_file.name
-        assert digest(source) == digest(worker_file), worker_file.name
+    parity = subprocess.run(
+        [sys.executable, str(editable_scripts / "validate_perfect_sync.py")],
+        cwd=editable_scripts.parent,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert parity.returncode == 0, parity.stdout + parity.stderr
+    parity_manifest = json.loads((editable_scripts.parent / "assets" / "upstream-perfect-sync.json").read_text(encoding="utf-8"))
+    assert parity_manifest["source"]["ref"] == "完美第一版"
+    assert len(parity_manifest["synced_files"]) >= 175
+
+    # These three files are intentionally kept current with the root
+    # orchestrator so the split worker remains callable by the v2 pipeline.
+    for name in ("run_pipeline.py", "validate_handoff.py", "validate_route.py"):
+        assert digest(ROOT / "scripts" / name) == digest(editable_scripts / name), name
     visual_scripts = ROOT / "ai-ppt-visual-gen" / "scripts"
     for name in (
         "atomic_output.py",

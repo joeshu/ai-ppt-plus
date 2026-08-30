@@ -148,17 +148,6 @@ def cleanup_temporary_files(paths: list[Path]) -> None:
 def add_background(slide, slide_spec: dict, assets_dir: Path, sw_emu: int, sh_emu: int):
     from pptx.util import Emu
 
-    # ``background_color`` is the native, editable slide background for
-    # visual-creation layouts.  Previously this field was silently ignored
-    # unless a full-slide raster ``background`` was also supplied, which made
-    # the persisted design system diverge from the rendered deck.
-    background_color = slide_spec.get("background_color")
-    if background_color:
-        from pptx_primitives import _hex_to_rgb
-
-        slide.background.fill.solid()
-        slide.background.fill.fore_color.rgb = _hex_to_rgb(background_color)
-
     background = slide_spec.get("background")
     if not background:
         return

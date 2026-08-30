@@ -2,7 +2,7 @@
 
 Apply this protocol to every reference-led page containing icons, badges,
 decorations, logos, illustrations, or artistic typography. It adapts the
-the shared B4/B5 chain while preserving AI PPT Plus routing.
+GordenImage2PPTX B4/B5 chain while preserving AI PPT Plus routing.
 
 ## B4: extract and exclude
 

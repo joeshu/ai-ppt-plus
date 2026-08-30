@@ -32,6 +32,7 @@ jobs:
           python ai-ppt-visual-gen/scripts/validate_skill_package.py --skill-dir ai-ppt-visual-gen
           python ai-ppt-editable/scripts/validate_skill_package.py --skill-dir ai-ppt-editable
           python ai-ppt-editable/scripts/validate_routing_contract.py
+          python ai-ppt-editable/scripts/validate_perfect_sync.py
       - name: Verify environment contract and runtime mirrors
         run: |
           python scripts/probe_environment.py --output environment-report.json
