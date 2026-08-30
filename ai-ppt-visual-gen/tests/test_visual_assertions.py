@@ -70,6 +70,22 @@ def main() -> int:
         failed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
         assert failed.returncode == 2 and "visual_text_missing" in failed.stdout, failed.stdout
 
+        fallback = json.loads(plan.read_text(encoding="utf-8"))
+        fallback["slides"][0]["visual_assertions"]["ocr_lang"] = "chi_sim+eng"
+        fallback["slides"][0]["visual_assertions"]["ocr_failure_policy"] = "manual-review"
+        fallback["slides"][0]["visual_assertions"]["must_contain_text"] = ["中文回读"]
+        write_json(plan, fallback)
+        review = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+        assert review.returncode == 0, review.stdout + review.stderr
+        review_data = json.loads(review.stdout)
+        assert review_data["status"] == "needs-human-review", review_data
+        assert any(item["code"] == "visual_ocr_manual_review_required" for item in review_data["issues"]), review_data
+
+        fallback["slides"][0]["visual_assertions"]["ocr_failure_policy"] = "block"
+        write_json(plan, fallback)
+        strict = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+        assert strict.returncode == 2 and "visual_ocr_unavailable" in strict.stdout, strict.stdout
+
     print("visual assertion readback: ok")
     return 0
 

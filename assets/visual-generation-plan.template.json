@@ -84,11 +84,12 @@
       },
       "visual_assertions": {
         "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
         "must_contain_text": ["verbatim slide title"],
         "forbidden_text": ["placeholder"],
         "min_ink_ratio": 0.01,
         "keyword_emphasis": [
-          {"text": "approved keyword", "color": "#E85B47", "min_pixels": 16, "tolerance": 24, "region": [0, 0, 1, 1]}
+          {"text": "approved keyword", "color": "#E85B47", "min_pixels": 16, "tolerance": 24, "region": [0, 0.72, 1, 0.28]}
         ]
       },
       "diagram_annotations": [

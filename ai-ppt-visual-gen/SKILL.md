@@ -2,7 +2,7 @@
 name: ai-ppt-visual-gen
 description: Generate polished image-format PowerPoint slides or visual intermediates from a topic, approved outline, or content brief. Trigger for “图片版PPT/文生图PPT/AI出图幻灯片/视觉中间稿”, high-information commercial slide images, A1–A5 visual production, page-local image retry, source retention, or deck-strip review. Outputs one raster image per slide plus prompts and generation evidence. It can run standalone or as the visual worker for $ai-ppt-plus. Do not use for editable PPTX reconstruction or deck-wide release; use $ai-ppt-editable or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.30.01
+ package_revision: 2026.08.30.02
 ---
 
 # AI PPT Visual Gen
@@ -144,8 +144,16 @@ image exists. `must_contain_text` / `forbidden_text` use OCR against the
 retained project copy; `keyword_emphasis` must pass both OCR readback of the
 declared token and pixels near the declared color (optionally inside a
 normalized `region`); `min_ink_ratio` catches an empty or nearly empty page.
-OCR/tool unavailability or a failed assertion is blocking evidence, not a
-reason to silently accept the image.
+`region` is `[x, y, width, height]` in normalized page coordinates, not corner
+coordinates. Set `ocr_failure_policy` to `block` when OCR evidence is a hard
+delivery requirement, or `manual-review` when the requested language pack is
+not guaranteed in the runtime. Manual-review mode may continue image/PPTX
+assembly only when pixel-color and ink gates pass; it must emit a warning,
+retain the OCR capability error, and keep human closeout/release pending.
+An available, trusted OCR engine that actually misses required text remains a
+blocker. For populated panels or action slots, add explicit placeholder tokens
+such as `placeholder`, `Lorem`, `待补充`, `示意文字`, and context-specific
+standalone ellipses to `forbidden_text`; never accept empty bullets as content.
 
 If no compatible image tool is available, record discovery evidence, retry
 once with a compatible available model or simplified prompt, then return a

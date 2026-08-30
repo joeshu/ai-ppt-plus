@@ -451,7 +451,7 @@ def build_prompt(plan: dict, slide: dict) -> str:
 {reference_policy(slide)}
 
 【生成硬约束】
-不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。避免：{avoid_text}。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"""
+不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：{avoid_text}。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"""
 
 
 def inside(root: Path, path: Path) -> bool:

@@ -42,6 +42,14 @@ Never copy misspellings, pseudo-text, provisional values or invented claims from
 
 Input: approved outline rows, design system and reference assets. Output: visual files plus manifest and review status. Positive: a comparison page mockup fixes hierarchy while final text remains linked to outline v3. Negative: OCR text from the mockup overwrites approved copy.
 
+For generated-page assertions, normalized regions use `[x, y, width, height]`.
+Choose `ocr_failure_policy: block` when OCR proof is mandatory. Choose
+`manual-review` only when the runtime may lack the required language pack; the
+gate must record that capability failure, continue only the non-OCR pixel/ink
+checks, and leave human closeout pending. A successful OCR run that misses
+required copy is still a page failure. Populated zones must name all visible
+copy and declare likely placeholder tokens as forbidden text.
+
 Common failures: no image model was actually used, ordinary PPT layout mislabeled as intermediate, generic template appearance, style drift, unreadable hierarchy, distorted reference ratios and invented labels. Validate generation evidence, page purpose, focus, reading order, content-zone capacity, token compliance and deck-strip consistency.
 
 ## AI PPT Visual Gen A1-A5 production mode

@@ -397,7 +397,7 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("plan")
-    parser.add_argument("--manifest", help="visual-generation-manifest.json; defaults to the plan's evidence_manifest")
+    parser.add_argument("--manifest", help="visual-generation-manifest.json; omit during A1-A3 plan-only validation")
     parser.add_argument("--expected-pages", type=int)
     parser.add_argument("--require-evidence", action="store_true", help="require retained source/copy images, hashes and prompt files")
     parser.add_argument("--report")
@@ -745,7 +745,7 @@ def main() -> int:
         })
     if slide_numbers and sorted(slide_numbers) != list(range(1, max(slide_numbers) + 1)):
         add_issue(issues, "blocker", "plan_slide_numbers_not_contiguous", observed=sorted(slide_numbers))
-    manifest_value = args.manifest or plan.get("evidence_manifest")
+    manifest_value = args.manifest or (plan.get("evidence_manifest") if args.require_evidence else None)
     manifest_path = resolve_path(plan_path.parent, manifest_value)
     evidence = None
     if args.require_evidence or manifest_value:
