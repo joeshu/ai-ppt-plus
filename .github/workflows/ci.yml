@@ -41,7 +41,7 @@ jobs:
       - name: Run standalone worker smoke tests
         run: |
           python ai-ppt-visual-gen/scripts/run_tests.py --parallel-workers 4 --report visual-skill-test-report.json
-          python ai-ppt-editable/scripts/run_tests.py --parallel-workers 4 --report editable-skill-test-report.json
+          python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
       - name: Run schema, DAG, package and golden regressions
         run: python scripts/run_tests.py --parallel-workers 4 --report test-report.json
       - name: Run strict P2 guard smoke tests
