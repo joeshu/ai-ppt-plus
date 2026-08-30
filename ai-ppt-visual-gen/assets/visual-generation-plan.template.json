@@ -60,7 +60,7 @@
     "surface": "light paper with restrained card depth",
     "icon_style": "flat business icons with consistent stroke weight",
     "grid": "12-column editorial grid with stable title baseline and generous outer margins",
-    "shared_chrome": "same title zone, footer conclusion treatment, page number position and component rhythm across the deck",
+    "shared_chrome": "same title zone, page number position, material language and component rhythm; closure treatment remains page-local",
     "material_language": "premium editorial paper, controlled depth, fine linework and restrained light; no glossy app-dashboard treatment",
     "avoid_items": ["placeholder text", "invented numbers", "large pure-green areas", "random icon collage"]
   },
@@ -69,7 +69,7 @@
     "visual_language": "high-end executive editorial information design; luxurious through hierarchy, material depth and restraint",
     "must_have": [
       "one unambiguous focal point per page",
-      "stable deck-wide grid, title baseline, footer and component rhythm",
+      "stable deck-wide grid, title baseline, material language and component rhythm; page-local closure semantics",
       "presentation-scale typography with generous whitespace",
       "controlled material texture, depth and light rather than decoration for decoration",
       "semantic visuals that explain the relationship instead of a wall of equal cards"
@@ -86,7 +86,7 @@
       "min_title_px": 56,
       "min_body_px": 28,
       "min_annotation_px": 22,
-      "max_visible_copy_items": 34
+      "max_visible_copy_items": 30
     },
     "commercial_policy": {
       "exclude_unlicensed_logos": true,
@@ -140,7 +140,7 @@
       "keyword_emphasis": {
         "rules": [
           "Use inline color emphasis for approved keywords without changing or adding copy.",
-          "Keep the bottom conclusion sentence on one line where possible; do not flatten mapped keywords to the body color."
+          "Keep the page conclusion or action close concise where possible; do not flatten mapped keywords to the body color."
         ],
         "items": [
           {"text": "approved keyword", "color": "#E85B47", "scope": "page conclusion or action close", "treatment": "inline emphasis"}
@@ -149,6 +149,7 @@
       "visual_assertions": {
         "ocr_lang": "chi_sim+eng",
         "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
         "must_contain_text": ["verbatim slide title"],
         "forbidden_text": ["placeholder"],
         "min_ink_ratio": 0.01,
@@ -166,6 +167,18 @@
         "exclude": ["unapproved text", "brand elements", "invented data"]
       },
       "production_prompt": "A self-contained 16:9 presentation-slide prompt. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render every item in the 页面文字 section verbatim, do not invent data, do not use SVG/HTML/Canvas or code to add text, and use an asymmetric editorial information landscape with one dominant visual anchor, clear hierarchy and generous whitespace; never fall back to a generic card wall.",
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": ["verbatim slide title", "one short introduction", "module title", "point 1", "point 2", "12", "tag", "one concise conclusion"],
+        "exact_once": true,
+        "max_total_chars": 420
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "only add a new decision cue or evidence, never repeat the primary relationship",
+        "prohibited_patterns": ["second numbering system for the same steps", "duplicate summary rail", "same conclusion in both a node and a banner"]
+      },
       "content_model": {
         "intro": "one short introduction",
         "modules": [

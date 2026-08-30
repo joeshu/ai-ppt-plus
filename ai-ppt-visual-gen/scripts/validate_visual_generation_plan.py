@@ -255,6 +255,30 @@ def formal_text_entries(slide: dict) -> list[dict]:
     return entries
 
 
+def copy_contract(slide: dict) -> dict:
+    """Return the optional single-source visible-copy contract."""
+    value = slide.get("copy_contract")
+    return value if isinstance(value, dict) else {}
+
+
+def render_copy_values(slide: dict) -> list[str]:
+    """Return the exact, deduplicated copy intended for raster rendering."""
+    contract = copy_contract(slide)
+    declared = contract.get("render_copy")
+    if isinstance(declared, list) and declared:
+        values = [text_value(item) for item in declared if text_value(item)]
+    else:
+        values = [text_value(slide.get("title")), text_value(slide.get("sub_title"))]
+        values.extend(content_text_entries(slide))
+        values.extend(entry["text"] for entry in formal_text_entries(slide) if entry["text"])
+        values.extend(annotation["text"] for annotation in diagram_annotation_entries(slide) if annotation["text"])
+    result: list[str] = []
+    for value in values:
+        if value and value not in result:
+            result.append(value)
+    return result
+
+
 def content_text_entries(slide: dict) -> list[str]:
     """Return every visible copy declared in the structured content model."""
     content = slide.get("content_model") if isinstance(slide.get("content_model"), dict) else {}
@@ -276,10 +300,74 @@ def content_text_entries(slide: dict) -> list[str]:
 
 def copy_values(slide: dict) -> list[str]:
     """Return copy-bearing strings against which emphasis tokens are checked."""
+    if copy_contract(slide).get("render_copy"):
+        return render_copy_values(slide)
     values = [text_value(slide.get("title")), text_value(slide.get("sub_title"))]
     values.extend(content_text_entries(slide))
     values.extend(entry["text"] for entry in formal_text_entries(slide) if entry["text"])
     return [value for value in values if value]
+
+
+def validate_copy_contract(slide: dict, issues: list[dict], *, required: bool) -> dict:
+    """Validate a single visible-copy source and its density budget."""
+    contract = slide.get("copy_contract")
+    summary = {"present": isinstance(contract, dict), "render_copy_count": 0, "render_copy_chars": 0}
+    if contract is None:
+        if required:
+            add_issue(issues, "blocker", "copy_contract_missing")
+        return summary
+    if not isinstance(contract, dict):
+        add_issue(issues, "blocker" if required else "warning", "copy_contract_invalid")
+        return summary
+    if text_value(contract.get("render_authority")) != "render_copy":
+        add_issue(issues, "blocker" if required else "warning", "copy_contract_authority_invalid", observed=contract.get("render_authority"))
+    declared = contract.get("render_copy")
+    if not isinstance(declared, list) or not declared or any(not text_value(item) for item in declared):
+        add_issue(issues, "blocker" if required else "warning", "copy_contract_render_copy_invalid")
+        return summary
+    values = [text_value(item) for item in declared]
+    duplicates = sorted({value for value in values if values.count(value) > 1})
+    if duplicates:
+        add_issue(issues, "blocker" if required else "warning", "copy_contract_duplicate_text", duplicates=duplicates)
+    if contract.get("exact_once") is not True:
+        add_issue(issues, "blocker" if required else "warning", "copy_contract_exact_once_missing", observed=contract.get("exact_once"))
+    render_values = render_copy_values(slide)
+    summary["render_copy_count"] = len(render_values)
+    summary["render_copy_chars"] = sum(len(value) for value in render_values)
+    dependencies = [text_value(slide.get("title")), text_value(slide.get("sub_title"))]
+    dependencies.extend(content_text_entries(slide))
+    dependencies.extend(entry["text"] for entry in formal_text_entries(slide) if entry["text"])
+    dependencies.extend(annotation["text"] for annotation in diagram_annotation_entries(slide) if annotation["text"])
+    missing = sorted({value for value in dependencies if value and value not in values})
+    if missing:
+        add_issue(issues, "blocker" if required else "warning", "copy_contract_missing_declared_text", missing=missing)
+    max_chars = contract.get("max_total_chars")
+    if max_chars is not None and (not isinstance(max_chars, int) or isinstance(max_chars, bool) or max_chars < 1):
+        add_issue(issues, "blocker" if required else "warning", "copy_contract_max_chars_invalid", observed=max_chars)
+    elif isinstance(max_chars, int) and summary["render_copy_chars"] > max_chars:
+        add_issue(issues, "blocker" if required else "warning", "copy_contract_char_budget_exceeded", maximum=max_chars, observed=summary["render_copy_chars"])
+    return summary
+
+
+def validate_representation_policy(slide: dict, issues: list[dict], *, required: bool) -> dict:
+    """Require an explicit one-relationship/one-encoding rule for new decks."""
+    policy = slide.get("representation_policy")
+    if policy is None:
+        if required:
+            add_issue(issues, "blocker", "representation_policy_missing")
+        return {"present": False}
+    if not isinstance(policy, dict):
+        add_issue(issues, "blocker" if required else "warning", "representation_policy_invalid")
+        return {"present": False}
+    for field in ("one_primary_encoding", "avoid_duplicate_summary"):
+        if policy.get(field) is not True:
+            add_issue(issues, "blocker" if required else "warning", "representation_policy_field_invalid", field=field, observed=policy.get(field))
+    if not text_value(policy.get("secondary_elements")):
+        add_issue(issues, "blocker" if required else "warning", "representation_policy_secondary_elements_missing")
+    prohibited = policy.get("prohibited_patterns")
+    if not isinstance(prohibited, list) or not any(text_value(item) for item in prohibited):
+        add_issue(issues, "blocker" if required else "warning", "representation_policy_prohibited_patterns_missing")
+    return {"present": True}
 
 
 def diagram_annotation_entries(slide: dict) -> list[dict]:
@@ -604,6 +692,7 @@ def main() -> int:
     parser.add_argument("--expected-pages", type=int)
     parser.add_argument("--require-evidence", action="store_true", help="require retained source/copy images, hashes and prompt files")
     parser.add_argument("--require-narrative-approval", action="store_true", help="require an approved PPT thought table before image-slide generation")
+    parser.add_argument("--require-copy-contract", action="store_true", help="require the single-source visible-copy and anti-duplication contract")
     parser.add_argument("--narrative-only", action="store_true", help="run only the pre-generation thought-table gate")
     parser.add_argument("--report")
     args = parser.parse_args()
@@ -676,6 +765,7 @@ def main() -> int:
     if args.expected_pages is not None and page_count != args.expected_pages:
         add_issue(issues, "blocker", "plan_page_count_mismatch", expected=args.expected_pages, observed=page_count)
     strict_narrative = bool(args.require_narrative_approval or (args.require_evidence and mode == "image-slide"))
+    copy_contract_required = bool(args.require_copy_contract and mode == "image-slide")
     narrative_gate = validate_narrative_gate(plan_path, plan, page_count, issues, required=(strict_narrative and mode == "image-slide"))
     if args.narrative_only:
         blockers = [item for item in issues if item.get("severity") in {"blocker", "critical"}]
@@ -789,6 +879,8 @@ def main() -> int:
         if not isinstance(content, dict):
             add_issue(issues, "blocker", "content_model_missing", slide_no=slide_no)
             content = {}
+        copy_contract_summary = validate_copy_contract(slide, issues, required=copy_contract_required)
+        representation_summary = validate_representation_policy(slide, issues, required=copy_contract_required)
         modules, min_bullets, info_points, module_summaries = module_metrics(content)
         profile = slide.get("density_profile", density_profile)
         if profile not in DENSITY_PROFILES:
@@ -1003,6 +1095,8 @@ def main() -> int:
             "minimum_bullets": min_bullets,
             "info_points": info_points,
             "formal_text_count": len(formal_entries),
+            "copy_contract": copy_contract_summary,
+            "representation_policy": representation_summary,
             "prompt_file": str(prompt_file) if prompt_file else None,
             "layout_blueprint_zones": len(blueprint.get("zones") or []) if isinstance(blueprint, dict) and isinstance(blueprint.get("zones"), list) else 0,
             "keyword_emphasis_items": len((slide.get("keyword_emphasis") or {}).get("items") or []) if isinstance(slide.get("keyword_emphasis"), dict) else 0,

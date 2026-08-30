@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-visual-gen",
-  "package_revision": "2026.08.30.04",
+  "package_revision": "2026.08.30.05",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -40,7 +40,8 @@
     "scripts/validate_visual_assertions.py",
     "references/visual-generation-tool.md",
     "references/visual-intermediate.md",
-    "references/outline-thought-table.md"
+    "references/outline-thought-table.md",
+    "references/rendered-slide-qa.md"
   ],
   "runtime_sync": {
     "required": true,

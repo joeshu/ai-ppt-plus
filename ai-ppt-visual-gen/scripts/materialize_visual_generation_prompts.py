@@ -67,6 +67,36 @@ def content_model(slide: dict) -> dict:
     return value if isinstance(value, dict) else {}
 
 
+def copy_contract(slide: dict) -> dict:
+    """Return the optional single-source visible-copy contract."""
+    value = slide.get("copy_contract")
+    return value if isinstance(value, dict) else {}
+
+
+def render_copy_values(slide: dict) -> list[str]:
+    """Return the one, deduplicated list the image model is allowed to render."""
+    contract = copy_contract(slide)
+    declared = contract.get("render_copy")
+    if isinstance(declared, list) and declared:
+        values = [visible_scalar(item) for item in declared if visible_scalar(item)]
+    else:
+        values = []
+        for value in (slide.get("title"), slide.get("sub_title")):
+            text = visible_scalar(value)
+            if text:
+                values.append(text)
+        for entry in formal_text_entries(slide):
+            if entry["text"]:
+                values.append(entry["text"])
+        values.extend(entry["text"] for entry in content_entries(slide))
+        values.extend(entry["text"] for entry in diagram_annotation_entries(slide))
+    result: list[str] = []
+    for value in values:
+        if value not in result:
+            result.append(value)
+    return result
+
+
 def content_entries(slide: dict) -> list[dict]:
     """Return visible content in the same order used by the page model."""
     content = content_model(slide)
@@ -113,6 +143,8 @@ def diagram_annotation_entries(slide: dict) -> list[dict]:
 
 def all_visible_text(slide: dict) -> list[str]:
     """Collect every page string without duplicating exact copies."""
+    if copy_contract(slide).get("render_copy"):
+        return render_copy_values(slide)
     values: list[str] = []
     for value in (slide.get("title"), slide.get("sub_title")):
         text = visible_scalar(value)
@@ -204,7 +236,7 @@ def generation_session(plan: dict) -> str:
         f"连续性策略：{policy}",
         f"建议批量：{batch_size} 页；风格锚点：{anchor}",
         f"共享前置语：{preamble}",
-        "同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页脚规则。",
+        "同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。",
     ])
 
 
@@ -222,7 +254,7 @@ def quality_target(plan: dict) -> str:
     title_px = visible_scalar(readability.get("min_title_px")) or "56"
     body_px = visible_scalar(readability.get("min_body_px")) or "28"
     annotation_px = visible_scalar(readability.get("min_annotation_px")) or "22"
-    max_copy = visible_scalar(readability.get("max_visible_copy_items")) or "34"
+    max_copy = visible_scalar(readability.get("max_visible_copy_items")) or "30"
     commercial_text = "；".join([
         "不使用未授权 Logo" if commercial.get("exclude_unlicensed_logos", True) else "",
         "不使用水印" if commercial.get("exclude_watermarks", True) else "",
@@ -254,6 +286,46 @@ def detailed_content_summary(slide: dict) -> str:
     if not usable:
         return "未声明独立的详细内容储备；仅使用下方结构化页面文字，并保持不编造。"
     return f"A2 已准备 {len(usable)} 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。"
+
+
+def content_layout_summary(slide: dict) -> str:
+    """Describe slots without repeating the exact strings in the copy contract."""
+    content = content_model(slide)
+    lines = []
+    if visible_scalar(content.get("intro")):
+        lines.append("导语槽：1 条")
+    modules = content.get("modules") if isinstance(content.get("modules"), list) else []
+    for index, module in enumerate(modules, start=1):
+        if not isinstance(module, dict):
+            continue
+        slots = []
+        for label, field in (("子标签", "label"), ("标题", "title"), ("重点数字", "kpi"), ("标签", "tag")):
+            if visible_scalar(module.get(field)):
+                slots.append(label)
+        bullets = module_bullets(module)
+        if bullets:
+            slots.append(f"要点 {len(bullets)} 条")
+        if slots:
+            lines.append(f"模块 {index}：" + "、".join(slots))
+    if visible_scalar(content.get("footer_banner")):
+        lines.append("页面收束槽：1 条，位置遵循本页 closure_treatment")
+    return "\n".join(lines) if lines else "按唯一渲染清单分配标题、模块和页面收束，不额外创造文案。"
+
+
+def representation_policy(slide: dict) -> str:
+    """Render the anti-duplication rule for diagrams and summaries."""
+    policy = slide.get("representation_policy") if isinstance(slide.get("representation_policy"), dict) else {}
+    primary = "是" if policy.get("one_primary_encoding", True) else "否"
+    summary = "是" if policy.get("avoid_duplicate_summary", True) else "否"
+    secondary = visible_scalar(policy.get("secondary_elements")) or "仅允许补充新信息，不重复主关系"
+    prohibited = policy.get("prohibited_patterns") if isinstance(policy.get("prohibited_patterns"), list) else []
+    prohibited_text = "、".join(visible_scalar(item) for item in prohibited if visible_scalar(item)) or "同一关系的第二套编号、重复摘要、同义标签堆叠"
+    return "\n".join([
+        f"同一主关系只保留一套主视觉编码：{primary}。",
+        f"避免把同一结论再做成第二套摘要/节点/编号：{summary}。",
+        f"允许的次级元素：{secondary}。",
+        f"禁止模式：{prohibited_text}。",
+    ])
 
 
 def reference_policy(slide: dict) -> str:
@@ -293,7 +365,7 @@ def layout_blueprint(slide: dict) -> str:
     """Render the spatial capacity contract before the copy block."""
     blueprint = slide.get("layout_blueprint") if isinstance(slide.get("layout_blueprint"), dict) else {}
     focal = visible_scalar(blueprint.get("focal_point")) or "由页面核心逻辑决定的唯一主焦点"
-    reading_path = visible_scalar(blueprint.get("reading_path")) or "页眉 → 主体框架 → 支撑模块 → 底部结论"
+    reading_path = visible_scalar(blueprint.get("reading_path")) or "页眉 → 主体框架 → 支撑模块 → 页面收束"
     zones = blueprint.get("zones") if isinstance(blueprint.get("zones"), list) else []
     zone_lines = []
     for index, zone in enumerate(zones, start=1):
@@ -309,7 +381,7 @@ def layout_blueprint(slide: dict) -> str:
             if value:
                 zone_lines.append(f"- {value}")
     if not zone_lines:
-        zone_lines = ["- 页眉标题区：标题、导语和短强调线", "- 主体框架区：核心关系、模块和连接线", "- 结论区：底部通栏总结"]
+        zone_lines = ["- 页眉标题区：标题、导语和短强调线", "- 主体框架区：核心关系、模块和连接线", "- 页面收束区：按语义自然落位，不默认通栏"]
     guards = blueprint.get("anti_template_rules") if isinstance(blueprint.get("anti_template_rules"), list) else []
     guard_lines = [f"- {visible_scalar(item)}" for item in guards if visible_scalar(item)]
     if not guard_lines:
@@ -349,16 +421,19 @@ def keyword_emphasis(slide: dict) -> str:
         *rule_lines,
         "逐词颜色映射：",
         *item_lines,
-        "底部结论横幅若列出重点词，必须在同一行内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。",
+        "页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。",
     ])
 
 
 def visual_assertions(slide: dict) -> str:
     """Render post-generation readback checks without adding page copy."""
     assertions = slide.get("visual_assertions") if isinstance(slide.get("visual_assertions"), dict) else {}
+    readback_scope = visible_scalar(assertions.get("readback_scope")) or "declared"
     must = [visible_scalar(item) for item in assertions.get("must_contain_text", []) if visible_scalar(item)] if isinstance(assertions.get("must_contain_text", []), list) else []
     forbidden = [visible_scalar(item) for item in assertions.get("forbidden_text", []) if visible_scalar(item)] if isinstance(assertions.get("forbidden_text", []), list) else []
     lines = ["这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。"]
+    if readback_scope == "all-render-copy":
+        lines.append("回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。")
     if must:
         lines.append("OCR 必须识别到：" + "、".join(quote_copy(item) for item in must))
     if forbidden:
@@ -437,29 +512,18 @@ def build_prompt(plan: dict, slide: dict) -> str:
     closure_treatment = visible_scalar(slide.get("closure_treatment")) or "结论文案保留，但位置和形态按本页视觉框架自然落位，不默认使用全宽底部横幅"
     content = content_model(slide)
     modules = content.get("modules") if isinstance(content.get("modules"), list) else []
+    contract = copy_contract(slide)
+    has_copy_contract = isinstance(contract.get("render_copy"), list) and bool(contract.get("render_copy"))
 
-    module_lines: list[str] = []
-    intro = visible_scalar(content.get("intro"))
-    if intro:
-        module_lines.append(f"导语：{quote_copy(intro)}")
-    for index, module in enumerate(modules, start=1):
-        if not isinstance(module, dict):
-            continue
-        module_lines.append(f"模块 {index}：")
-        for label, field in (("子标签", "label"), ("标题", "title"), ("重点数字", "kpi"), ("标签药丸", "tag")):
-            value = visible_scalar(module.get(field))
-            if value:
-                module_lines.append(f"  {label}：{quote_copy(value)}")
-        for bullet in module_bullets(module):
-            module_lines.append(f"  要点：{quote_copy(bullet)}")
-    footer = visible_scalar(content.get("footer_banner"))
-    if footer:
-        module_lines.append(f"页面结论文案（位置按本页收束策略决定，不默认横幅）：{quote_copy(footer)}")
-    content_block = "\n".join(module_lines) if module_lines else "按正式文字组织清晰的页面层级。"
+    content_block = content_layout_summary(slide) if has_copy_contract else "按正式文字组织清晰的页面层级。"
 
     formal_lines = []
     for entry in formal_text_entries(slide):
-        formal_lines.append(f"- [{entry['role']}] {quote_copy(entry['text'])}")
+        if has_copy_contract:
+            source = visible_scalar(entry.get("source_ref")) or "approved source"
+            formal_lines.append(f"- [{entry['role']}] id={entry['id']}；来源：{source}；文本已纳入唯一渲染清单，只用于校对，不得再次排版")
+        else:
+            formal_lines.append(f"- [{entry['role']}] {quote_copy(entry['text'])}")
     formal_block = "\n".join(formal_lines) if formal_lines else "- 无"
 
     visible_lines = "\n".join(f"- {quote_copy(value)}" for value in all_visible_text(slide))
@@ -508,6 +572,9 @@ def build_prompt(plan: dict, slide: dict) -> str:
 {closure_treatment}
 结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。
 
+【关系表达防重复】
+{representation_policy(slide)}
+
 【重点词着色语义（必须保留）】
 {keyword_emphasis(slide)}
 
@@ -525,19 +592,19 @@ def build_prompt(plan: dict, slide: dict) -> str:
 {detailed_content_summary(slide)}
 不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。
 
-【页面文字（逐字照排，必须全部出现）】
-以下所有文字必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得生成额外的事实性标签：
+【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】
+以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：
 {visible_lines}
 
-【正式文字来源锚点】
-以下是 approved outline / formal copy 的逐字文本，优先级高于任何视觉参考；全部必须出现：
+【正式文字来源锚点（只用于审计，不是第二份排版清单）】
+以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：
 {formal_block}
 
 【批准的图示标注】
 {diagram_annotations(slide)}
 
 【文字白名单（强约束）】
-画面中只能出现上方【页面文字】、【正式文字来源锚点】和【批准的图示标注】已经列出的文字；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。
+画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。
 
 【图标与装饰】
 {format_visual_assets(slide)}
@@ -826,6 +893,9 @@ def validate_input(plan: object, plan_path: Path | None = None) -> list[dict]:
                 issue("visual_assertions_not_object", slide_no=slide_no)
             else:
                 approved_text = all_visible_text(slide)
+                readback_scope = visible_scalar(assertions.get("readback_scope")) or "declared"
+                if readback_scope not in {"declared", "all-render-copy", "title-and-key-anchors"}:
+                    issue("visual_assertions_readback_scope_invalid", slide_no=slide_no, observed=readback_scope)
                 for field in ("must_contain_text", "forbidden_text"):
                     values = assertions.get(field, [])
                     if not isinstance(values, list) or any(not visible_scalar(item) for item in values):

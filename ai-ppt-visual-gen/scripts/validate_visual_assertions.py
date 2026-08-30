@@ -37,6 +37,35 @@ def compact(value: str) -> str:
     return "".join(char for char in unicodedata.normalize("NFKC", value) if not char.isspace())
 
 
+def render_copy_values(slide: dict) -> list[str]:
+    """Return the unique visible copy for all-render-copy readback."""
+    contract = slide.get("copy_contract") if isinstance(slide.get("copy_contract"), dict) else {}
+    declared = contract.get("render_copy")
+    if isinstance(declared, list) and declared:
+        values = [text(item) for item in declared if text(item)]
+    else:
+        values = [text(slide.get("title")), text(slide.get("sub_title"))]
+        content = slide.get("content_model") if isinstance(slide.get("content_model"), dict) else {}
+        values.append(text(content.get("intro")))
+        for module in content.get("modules", []) if isinstance(content.get("modules"), list) else []:
+            if not isinstance(module, dict):
+                continue
+            values.extend(text(module.get(field)) for field in ("label", "title", "kpi", "tag"))
+            bullets = module.get("bullets", module.get("points", []))
+            if isinstance(bullets, str):
+                bullets = [bullets]
+            if isinstance(bullets, list):
+                values.extend(text(item) for item in bullets)
+        values.append(text(content.get("footer_banner")))
+        for item in slide.get("formal_text", []) if isinstance(slide.get("formal_text"), list) else []:
+            values.append(text(item if isinstance(item, str) else item.get("text") if isinstance(item, dict) else ""))
+    result: list[str] = []
+    for value in values:
+        if value and value not in result:
+            result.append(value)
+    return result
+
+
 def add_issue(issues: list[dict], code: str, slide_no: int | None = None, severity: str = "blocker", **details) -> None:
     item = {"severity": severity, "code": code}
     if slide_no is not None:
@@ -159,6 +188,14 @@ def text_bbox(words: list[dict], target: str) -> list[int] | None:
     return None
 
 
+def occurrence_count(haystack: str, needle: str) -> int:
+    """Count non-overlapping normalized occurrences in OCR output."""
+    wanted = compact(needle)
+    if not wanted:
+        return 0
+    return haystack.count(wanted)
+
+
 def intersect_region(first: list[float], second: list[float] | None) -> list[float]:
     if second is None:
         return first
@@ -193,6 +230,9 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
         assertion_slides.append(slide_no)
         must = raw.get("must_contain_text", [])
         forbidden = raw.get("forbidden_text", [])
+        readback_scope = text(raw.get("readback_scope")) or "declared"
+        if readback_scope not in {"declared", "all-render-copy", "title-and-key-anchors"}:
+            add_issue(issues, "visual_assertions_readback_scope_invalid", slide_no=slide_no, observed=readback_scope)
         for field, values in (("must_contain_text", must), ("forbidden_text", forbidden)):
             if not isinstance(values, list) or any(not text(value) for value in values):
                 add_issue(issues, "visual_assertions_text_list_invalid", slide_no=slide_no, field=field)
@@ -251,6 +291,8 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
             continue
         slide_result = {"slide_no": slide_no, "image": str(image_path), "text": {}, "keyword_emphasis": []}
         must = [text(value) for value in assertions.get("must_contain_text", []) if text(value)]
+        if text(assertions.get("readback_scope")) == "all-render-copy":
+            must = list(dict.fromkeys(must + render_copy_values(slide)))
         forbidden = [text(value) for value in assertions.get("forbidden_text", []) if text(value)]
         emphasis_items = [item for item in assertions.get("keyword_emphasis", []) if isinstance(item, dict) and text(item.get("text"))]
         emphasis_texts = [text(item.get("text")) for item in emphasis_items]
@@ -276,6 +318,12 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
                     slide_result["text"][value] = {"kind": "must_contain", "passed": passed}
                     if not passed:
                         add_issue(issues, "visual_text_missing", slide_no=slide_no, text=value, recognized=recognized_compact[:500])
+                if text(assertions.get("readback_scope")) == "all-render-copy":
+                    for value in render_copy_values(slide):
+                        occurrences = occurrence_count(recognized_compact, value)
+                        slide_result["text"].setdefault(value, {})["occurrences"] = occurrences
+                        if occurrences > 1:
+                            add_issue(issues, "visual_text_repeated", slide_no=slide_no, text=value, occurrences=occurrences)
                 for value in forbidden:
                     passed = compact(value) not in recognized_compact
                     slide_result["text"][value] = {"kind": "forbidden", "passed": passed}

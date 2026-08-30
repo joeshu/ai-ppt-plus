@@ -2,7 +2,7 @@
 name: ai-ppt-visual-gen
 description: Generate polished image-format PowerPoint slides or visual intermediates from a topic, approved outline, or content brief. Trigger for “图片版PPT/文生图PPT/AI出图幻灯片/视觉中间稿”, high-information commercial slide images, A1–A5 visual production, page-local image retry, source retention, or deck-strip review. Outputs one raster image per slide plus prompts and generation evidence. It can run standalone or as the visual worker for $ai-ppt-plus. Do not use for editable PPTX reconstruction or deck-wide release; use $ai-ppt-editable or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.30.04
+ package_revision: 2026.08.30.05
 ---
 
 # AI PPT Visual Gen
@@ -25,8 +25,9 @@ python3 scripts/validate_skill_package.py --skill-dir .
 ```
 
 Read `references/visual-generation-tool.md`,
-`references/visual-intermediate.md` and
-`references/outline-thought-table.md`. Use the runtime-discovered image-generation
+`references/visual-intermediate.md`,
+`references/outline-thought-table.md` and
+`references/rendered-slide-qa.md`. Use the runtime-discovered image-generation
 tool; do not satisfy image generation with SVG, HTML, Canvas, Pillow drawing,
 PowerPoint shapes, or code-added bitmap text.
 
@@ -123,6 +124,13 @@ Create `visual-generation-plan.json` from
    accent colors, including inside the page's conclusion or action close;
 7. only approved short `diagram_annotations` with an approval source; use geometry or icons instead of
    model-invented explanatory labels.
+8. a `copy_contract` with `render_authority: render_copy`, a deduplicated
+   `render_copy` list, `exact_once: true`, and a page-appropriate character
+   budget. `content_model` is layout-slot metadata; `formal_text` is source
+   authority. Neither may become a second visible-copy list.
+9. a `representation_policy` stating that each primary relationship has one
+   visual encoding, and that secondary elements may add meaning but may not
+   repeat the same steps, conclusion, or summary in another numbering system.
 
 The plan must also carry:
 
@@ -139,6 +147,18 @@ The plan must also carry:
   impose a full-width bottom banner on every page;
 - `canvas_policy`, which blocks a generated image below the declared target
   dimensions instead of silently accepting a lower-resolution page.
+
+For new image-slide plans, validate the two anti-regression contracts with:
+
+```bash
+python3 scripts/validate_visual_generation_plan.py visual-generation-plan.json \
+  --expected-pages N --require-copy-contract
+```
+
+The copy budget is measured on unique visible strings and total characters, not
+on duplicated declarations in the planning model. If it is exceeded, merge,
+shorten or split content before generation; do not solve the problem by making
+Chinese text smaller.
 
 For `dense`, the default capacity baseline is at least four modules, normally
 two bullets per module, an introduction, a conclusion, and a KPI/tag layer per
@@ -182,8 +202,12 @@ field, not a layout command; materialization must not turn it into a fixed
 bottom banner by default.
 Include the exact keyword/color mapping; do not flatten a mapped conclusion to
 one color. Include the narrative gate, continuous-generation lock, premium
-commercial quality target and language policy. Keep a formal-text whitelist.
-Unlisted model text is a defect, not permission to patch pixels with code.
+commercial quality target and language policy. Use the `render_copy` list as
+the only visible-copy authority: render each item at most once. Keep
+`formal_text` in the prompt as an audit/source anchor only, explicitly marked
+“do not typeset again”; keep content-slot metadata free of repeated exact
+sentences. Unlisted model text is a defect, not permission to patch pixels
+with code.
 
 ## A4 — Generate, inspect, and retry one page at a time
 
@@ -221,6 +245,11 @@ An available, trusted OCR engine that actually misses required text remains a
 blocker. For populated panels or action slots, add explicit placeholder tokens
 such as `placeholder`, `Lorem`, `待补充`, `示意文字`, and context-specific
 standalone ellipses to `forbidden_text`; never accept empty bullets as content.
+Use `readback_scope: all-render-copy` when every approved visible string
+matters. The assertion runner expands that scope to the complete deduplicated
+render list, so omitted or rewritten sentences are caught instead of being
+hidden by a title-only smoke check. If OCR is unavailable, keep the page at
+manual review; do not report exact-copy compliance from a technical pass alone.
 
 If no compatible image tool is available, record discovery evidence, retry
 once with a compatible available model or simplified prompt, then return a
@@ -239,7 +268,7 @@ python3 scripts/build_visual_generation_strip.py \
 python3 scripts/validate_visual_generation_plan.py \
   visual-generation-plan.json --expected-pages N \
   --manifest visual-generation-manifest.json --require-evidence \
-  --require-narrative-approval
+  --require-narrative-approval --require-copy-contract
 ```
 
 If any page declares post-generation assertions, the visual pipeline also
@@ -254,9 +283,10 @@ python3 scripts/validate_visual_assertions.py \
 The executable worker wrapper bounds every evidence subprocess and retains
 per-step logs. Review the strip for palette/style continuity, density rhythm,
 framework variety, title placement, margins, focal-point strength, accidental
-duplicates, and closure diversity. A repeated bottom bar is a defect unless
-the approved design system explicitly calls for it. Strip approval never
-replaces page review, and automated validation never claims human sign-off.
+duplicates, competing encodings of one relationship, missing/rewritten copy,
+and closure diversity. A repeated bottom bar is a defect unless the approved
+design system explicitly calls for it. Strip approval never replaces page
+review, and automated validation never claims human sign-off.
 Override the default 600-second limit with
 `run_visual_pipeline.py ... --timeout-seconds N`; a timeout or spawn failure
 is recorded as a blocked step with its captured output.
@@ -277,4 +307,6 @@ PPTX reconstruction artifacts or declare the deck released.
 - retry scope broader than one failed slide;
 - missing deck strip or strip that omits a page;
 - reference text/data/logo leakage;
+- a visible-copy contract that duplicates, omits, or exceeds its character budget;
+- two competing visual encodings for the same relationship or conclusion;
 - a whole-page image mislabeled as editable PPTX.
