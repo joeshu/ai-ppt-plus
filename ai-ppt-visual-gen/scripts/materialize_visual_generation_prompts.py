@@ -777,8 +777,14 @@ def validate_input(plan: object, plan_path: Path | None = None) -> list[dict]:
     if not isinstance(canvas_policy, dict):
         issue("canvas_policy_missing")
         canvas_policy = {}
-    if canvas_policy.get("require_exact_dimensions") is not True:
-        issue("canvas_exact_dimension_policy_missing", observed=canvas_policy.get("require_exact_dimensions"))
+    exact_dimensions = canvas_policy.get("require_exact_dimensions")
+    if not isinstance(exact_dimensions, bool):
+        issue("canvas_exact_dimension_policy_invalid", observed=exact_dimensions)
+    mismatch_policy = visible_scalar(canvas_policy.get("on_mismatch"))
+    if mismatch_policy not in {"block", "warn"}:
+        issue("canvas_mismatch_policy_invalid", observed=mismatch_policy)
+    elif exact_dimensions is True and mismatch_policy != "block":
+        issue("canvas_mismatch_policy_not_blocking", observed=mismatch_policy)
     for field in ("minimum_width_px", "minimum_height_px"):
         value = canvas_policy.get(field)
         if not isinstance(value, int) or isinstance(value, bool) or value < 1:
