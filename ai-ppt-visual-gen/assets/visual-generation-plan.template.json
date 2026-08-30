@@ -5,11 +5,32 @@
   "mode": "image-slide",
   "outline_revision": "R1",
   "design_system_revision": "R1",
+  "narrative_gate": {
+    "schema": "ai-ppt-plus/narrative-gate/v1",
+    "workflow": "ppt-thought-table-first",
+    "outline_table": "outline/PPT思路表.xlsx",
+    "outline_table_sha256": "<sha256 of approved thought table>",
+    "revision": "R1",
+    "status": "approved",
+    "approval_required": true,
+    "approved_by": "user",
+    "approved_at": "2026-08-30T00:00:00Z",
+    "feedback_round": 1,
+    "owner_notes_preserved": true,
+    "formal_text_authority": "approved-outline-table",
+    "change_log": "outline/PPT思路表-change-log.json"
+  },
   "page_count": 1,
   "canvas": {
     "ratio": "16:9",
     "width_px": 2048,
     "height_px": 1152
+  },
+  "canvas_policy": {
+    "require_exact_dimensions": true,
+    "minimum_width_px": 2048,
+    "minimum_height_px": 1152,
+    "on_mismatch": "block"
   },
   "density_profile": "dense",
   "density_override_reason": "",
@@ -38,7 +59,48 @@
     "font_style": "Noto Sans CJK SC / clean sans-serif",
     "surface": "light paper with restrained card depth",
     "icon_style": "flat business icons with consistent stroke weight",
+    "grid": "12-column editorial grid with stable title baseline and generous outer margins",
+    "shared_chrome": "same title zone, footer conclusion treatment, page number position and component rhythm across the deck",
+    "material_language": "premium editorial paper, controlled depth, fine linework and restrained light; no glossy app-dashboard treatment",
     "avoid_items": ["placeholder text", "invented numbers", "large pure-green areas", "random icon collage"]
+  },
+  "quality_target": {
+    "tier": "premium-commercial",
+    "visual_language": "high-end executive editorial information design; luxurious through hierarchy, material depth and restraint",
+    "must_have": [
+      "one unambiguous focal point per page",
+      "stable deck-wide grid, title baseline, footer and component rhythm",
+      "presentation-scale typography with generous whitespace",
+      "controlled material texture, depth and light rather than decoration for decoration",
+      "semantic visuals that explain the relationship instead of a wall of equal cards"
+    ],
+    "avoid_items": [
+      "generic four-card template",
+      "app dashboard or neon HUD",
+      "random icon collage",
+      "micro-copy wall or unapproved English labels",
+      "fake charts, fake metrics, watermarks or stock-style clutter"
+    ],
+    "readability": {
+      "target_viewing": "16:9 meeting-room presentation",
+      "min_title_px": 56,
+      "min_body_px": 28,
+      "min_annotation_px": 22,
+      "max_visible_copy_items": 34
+    },
+    "commercial_policy": {
+      "exclude_unlicensed_logos": true,
+      "exclude_watermarks": true,
+      "exclude_celebrity_and_trademark_imitation": true,
+      "external_asset_provenance_required": true
+    }
+  },
+  "generation_session": {
+    "session_id": "deck-generation-session-R1",
+    "continuity_policy": "single-model-single-context",
+    "batch_size": 5,
+    "style_anchor": "design-system:deck-style-v1",
+    "shared_preamble": "Use the same model, same conversation context, same deck style lock and same visual anchor for every page; vary only the page-specific narrative framework."
   },
   "generation_contract": {
     "skill": "ai-ppt-visual-gen",
@@ -52,11 +114,13 @@
   "slides": [
     {
       "slide_no": 1,
+      "outline_row_ref": "outline/PPT思路表.xlsx#row:2",
       "page_type": "infographic",
       "title": "verbatim slide title",
       "core_logic": "one sentence explaining the relationship on the page",
-      "visual_framework": "Bento Box dashboard",
+      "visual_framework": "asymmetric editorial information landscape",
       "visual_generation_prompt": "Visual-only description of the composition, hierarchy, surfaces, light and visual flow; do not use this field alone for generation.",
+      "closure_treatment": "Decide whether the conclusion is inline, integrated into the framework, in a side rail, a compact callout, or not a separate visual element; do not assume a full-width bottom banner.",
       "detailed_content_paragraphs": [
         "First reserve paragraph: summarize the situation and the decision this page must support using only traceable source material.",
         "Second reserve paragraph: decompose the proposed actions, roles or stages into a coherent relationship for the visual framework.",
@@ -69,7 +133,7 @@
           {"name": "header", "purpose": "title, intro and section cue", "position": "top", "content_capacity": "one title plus one intro"},
           {"name": "main framework", "purpose": "visualize the page relationship", "position": "center", "content_capacity": "all primary modules and connectors"},
           {"name": "supporting rail", "purpose": "callouts or structural labels", "position": "right or lower edge", "content_capacity": "three short callouts"},
-          {"name": "conclusion", "purpose": "repeat the page takeaway", "position": "bottom", "content_capacity": "one banner sentence"}
+          {"name": "conclusion", "purpose": "close the page according to its semantic role", "position": "page-specific", "content_capacity": "one concise conclusion or action close; not necessarily a banner"}
         ],
         "anti_template_rules": ["do not use unrelated equal cards", "do not leave the central framework unconnected"]
       },
@@ -79,7 +143,7 @@
           "Keep the bottom conclusion sentence on one line where possible; do not flatten mapped keywords to the body color."
         ],
         "items": [
-          {"text": "approved keyword", "color": "#E85B47", "scope": "bottom conclusion", "treatment": "inline emphasis"}
+          {"text": "approved keyword", "color": "#E85B47", "scope": "page conclusion or action close", "treatment": "inline emphasis"}
         ]
       },
       "visual_assertions": {
@@ -93,7 +157,7 @@
         ]
       },
       "diagram_annotations": [
-        {"text": "approved phase", "purpose": "name a relationship inside the visual framework", "scope": "inner loop", "approved_by": "approved visual brief"}
+        {"text": "approved phase", "purpose": "name a relationship inside the visual framework", "scope": "inner loop", "approved_by": "approved visual brief", "source_ref": "outline/PPT思路表.xlsx#row:2"}
       ],
       "reference_treatment": {
         "mode": "none",
@@ -101,7 +165,7 @@
         "preserve": ["the approved design-system language"],
         "exclude": ["unapproved text", "brand elements", "invented data"]
       },
-      "production_prompt": "A self-contained 16:9 presentation-slide prompt. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render every item in the 页面文字 section verbatim, do not invent data, do not use SVG/HTML/Canvas or code to add text, and use a Bento Box dashboard with clear hierarchy.",
+      "production_prompt": "A self-contained 16:9 presentation-slide prompt. Use #14313B, #287B80, #E85B47 and #F7F0E4. Render every item in the 页面文字 section verbatim, do not invent data, do not use SVG/HTML/Canvas or code to add text, and use an asymmetric editorial information landscape with one dominant visual anchor, clear hierarchy and generous whitespace; never fall back to a generic card wall.",
       "content_model": {
         "intro": "one short introduction",
         "modules": [

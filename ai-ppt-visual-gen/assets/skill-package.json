@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-visual-gen",
-  "package_revision": "2026.08.30.03",
+  "package_revision": "2026.08.30.04",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -24,12 +24,14 @@
     "agents/openai.yaml",
     "assets/skill-package.json",
     "requirements-ci.txt",
+    "assets/outline-thought-table.template.csv",
     "assets/visual-generation-plan.template.json",
     "assets/visual-generation-manifest.template.json",
     "assets/schemas/visual-generation-plan.schema.json",
     "assets/schemas/visual-generation-manifest.schema.json",
     "scripts/validate_skill_package.py",
     "scripts/validate_visual_generation_plan.py",
+    "scripts/validate_outline_table.py",
     "scripts/materialize_visual_generation_prompts.py",
     "scripts/build_visual_generation_strip.py",
     "scripts/compose_image_pptx.py",
@@ -37,7 +39,8 @@
     "scripts/validate_workflow_state.py",
     "scripts/validate_visual_assertions.py",
     "references/visual-generation-tool.md",
-    "references/visual-intermediate.md"
+    "references/visual-intermediate.md",
+    "references/outline-thought-table.md"
   ],
   "runtime_sync": {
     "required": true,

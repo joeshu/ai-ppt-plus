@@ -15,6 +15,7 @@ import re
 from pathlib import Path
 
 from atomic_output import atomic_write_json
+from validate_outline_table import validate_file as validate_outline_file
 
 
 PLAN_SCHEMA = "ai-ppt-plus/visual-generation-plan/v1"
@@ -33,6 +34,12 @@ GENERATION_CONTRACT = {
     "backend_policy": "raster-only",
     "source_retention": "generated-source-and-project-copy",
 }
+NARRATIVE_GATE_SCHEMA = "ai-ppt-plus/narrative-gate/v1"
+NARRATIVE_WORKFLOW = "ppt-thought-table-first"
+NARRATIVE_APPROVED = "approved"
+CONTINUITY_POLICIES = {"single-model-single-context", "single-model-shared-anchor", "best-effort"}
+CONTINUITY_STRICT_POLICIES = {"single-model-single-context", "single-model-shared-anchor"}
+QUALITY_TIERS = {"premium-commercial", "enterprise-commercial"}
 PROHIBITED_GENERATION_TOKEN_RE = re.compile(
     r"(?:^|[^a-z])(svg|html|canvas|pillow|imagemagick|image\s*magick|code\s*draw)(?:$|[^a-z])",
     re.IGNORECASE,
@@ -77,6 +84,160 @@ def resolve_path(base: Path, value) -> Path | None:
 
 def ratio_value(ratio: str) -> float | None:
     return {"16:9": 16 / 9, "3:2": 3 / 2}.get(ratio)
+
+
+def validate_narrative_gate(plan_path: Path, plan: dict, page_count: int, issues: list[dict], *, required: bool) -> dict:
+    """Validate the pre-generation PPT thought-table approval gate."""
+    gate = plan.get("narrative_gate")
+    summary = {"required": required, "present": isinstance(gate, dict), "outline_table": None, "change_log": None, "outline": None}
+    if not isinstance(gate, dict):
+        add_issue(issues, "blocker" if required else "warning", "narrative_gate_missing", required=required)
+        return summary
+
+    if text_value(gate.get("schema")) != NARRATIVE_GATE_SCHEMA:
+        add_issue(issues, "blocker" if required else "warning", "narrative_gate_schema_invalid", observed=gate.get("schema"))
+    if text_value(gate.get("workflow")) != NARRATIVE_WORKFLOW:
+        add_issue(issues, "blocker" if required else "warning", "narrative_gate_workflow_invalid", observed=gate.get("workflow"))
+    outline_path = resolve_path(plan_path.parent, gate.get("outline_table"))
+    summary["outline_table"] = str(outline_path) if outline_path else None
+    change_log_path = resolve_path(plan_path.parent, gate.get("change_log"))
+    summary["change_log"] = str(change_log_path) if change_log_path else None
+    if required and (change_log_path is None or not change_log_path.is_file()):
+        add_issue(issues, "blocker", "narrative_change_log_missing", path=str(change_log_path) if change_log_path else None)
+    if outline_path is None or not outline_path.is_file():
+        add_issue(issues, "blocker" if required else "warning", "narrative_outline_table_missing", path=str(outline_path) if outline_path else None)
+        return summary
+
+    outline_result = validate_outline_file(outline_path, require_approved=required)
+    summary["outline"] = {
+        "valid": outline_result.get("valid"),
+        "row_count": outline_result.get("row_count", 0),
+        "issues": outline_result.get("issues", []),
+    }
+    for outline_issue in outline_result.get("issues", []):
+        if not isinstance(outline_issue, dict):
+            continue
+        severity = outline_issue.get("severity", "blocker")
+        if severity not in {"blocker", "critical", "major", "minor", "warning"}:
+            severity = "blocker"
+        details = {key: value for key, value in outline_issue.items() if key not in {"severity", "code"}}
+        add_issue(issues, severity, f"outline_table_{outline_issue.get('code', 'invalid')}", **details)
+
+    expected_hash = text_value(gate.get("outline_table_sha256"))
+    actual_hash = sha256(outline_path)
+    if not SHA256_RE.fullmatch(expected_hash):
+        add_issue(issues, "blocker" if required else "warning", "narrative_outline_hash_missing", path=str(outline_path))
+    elif expected_hash.lower() != actual_hash.lower():
+        add_issue(issues, "blocker", "narrative_outline_hash_mismatch", expected=actual_hash, observed=expected_hash)
+
+    gate_revision = text_value(gate.get("revision"))
+    if gate_revision != text_value(plan.get("outline_revision")):
+        add_issue(issues, "blocker" if required else "warning", "narrative_revision_mismatch", expected=plan.get("outline_revision"), observed=gate_revision)
+    if required:
+        required_fields = {
+            "status": NARRATIVE_APPROVED,
+            "approval_required": True,
+            "approved_by": None,
+            "approved_at": None,
+            "owner_notes_preserved": True,
+            "formal_text_authority": "approved-outline-table",
+            "change_log": None,
+        }
+        for field, expected in required_fields.items():
+            observed = gate.get(field)
+            if expected is None and field == "change_log":
+                valid = bool(change_log_path and change_log_path.is_file())
+            elif expected is None:
+                valid = bool(text_value(observed))
+            elif isinstance(expected, bool):
+                valid = observed is expected
+            else:
+                valid = text_value(observed) == expected
+            if not valid:
+                add_issue(issues, "blocker", "narrative_gate_field_invalid", field=field, expected=expected, observed=observed)
+        feedback_round = gate.get("feedback_round")
+        if not isinstance(feedback_round, int) or isinstance(feedback_round, bool) or feedback_round < 0:
+            add_issue(issues, "blocker", "narrative_feedback_round_invalid", observed=feedback_round)
+        if outline_result.get("row_count") != page_count:
+            add_issue(issues, "blocker", "narrative_outline_page_count_mismatch", expected=page_count, observed=outline_result.get("row_count"))
+        table_numbers = {
+            int(row.get("slide_no"))
+            for row in (outline_result.get("rows") or [])
+            if isinstance(row, dict) and str(row.get("slide_no", "")).isdigit()
+        }
+        plan_numbers = {
+            slide.get("slide_no")
+            for slide in (plan.get("slides") or [])
+            if isinstance(slide, dict) and isinstance(slide.get("slide_no"), int)
+        }
+        if table_numbers != plan_numbers:
+            add_issue(issues, "blocker", "narrative_outline_slide_roster_mismatch", expected=sorted(plan_numbers), observed=sorted(table_numbers))
+    elif text_value(gate.get("status")) != NARRATIVE_APPROVED:
+        add_issue(issues, "warning", "narrative_approval_pending", observed=gate.get("status"))
+    summary["outline_table_sha256"] = actual_hash
+    summary["status"] = text_value(gate.get("status"))
+    summary["revision"] = gate_revision
+    return summary
+
+
+def validate_quality_target(plan: dict, issues: list[dict], *, required: bool) -> dict:
+    """Validate observable premium-commercial visual quality requirements."""
+    quality = plan.get("quality_target")
+    if not isinstance(quality, dict):
+        add_issue(issues, "blocker" if required else "warning", "quality_target_missing", required=required)
+        return {}
+    summary = {"tier": text_value(quality.get("tier")), "readability": quality.get("readability")}
+    if required and summary["tier"] not in QUALITY_TIERS:
+        add_issue(issues, "blocker", "quality_target_tier_invalid", observed=summary["tier"], allowed=sorted(QUALITY_TIERS))
+    for field in ("visual_language", "must_have", "avoid_items"):
+        value = quality.get(field)
+        valid = bool(text_value(value)) if field == "visual_language" else isinstance(value, list) and bool(value) and all(text_value(item) for item in value)
+        if required and not valid:
+            add_issue(issues, "blocker", "quality_target_field_invalid", field=field)
+    readability = quality.get("readability")
+    if required:
+        if not isinstance(readability, dict):
+            add_issue(issues, "blocker", "quality_readability_missing")
+        else:
+            for field in ("target_viewing", "min_title_px", "min_body_px", "min_annotation_px", "max_visible_copy_items"):
+                value = readability.get(field)
+                if field == "target_viewing":
+                    valid = bool(text_value(value))
+                elif field == "max_visible_copy_items":
+                    valid = isinstance(value, int) and not isinstance(value, bool) and value > 0
+                else:
+                    valid = isinstance(value, (int, float)) and not isinstance(value, bool) and value > 0
+                if not valid:
+                    add_issue(issues, "blocker", "quality_readability_field_invalid", field=field, observed=value)
+        commercial = quality.get("commercial_policy")
+        if not isinstance(commercial, dict):
+            add_issue(issues, "blocker", "quality_commercial_policy_missing")
+        else:
+            for field in ("exclude_unlicensed_logos", "exclude_watermarks", "exclude_celebrity_and_trademark_imitation", "external_asset_provenance_required"):
+                if commercial.get(field) is not True:
+                    add_issue(issues, "blocker", "quality_commercial_policy_invalid", field=field, observed=commercial.get(field))
+    return summary
+
+
+def validate_generation_session(plan: dict, issues: list[dict], *, required: bool) -> dict:
+    """Validate the same-model/context continuity lock for a deck."""
+    session = plan.get("generation_session")
+    if not isinstance(session, dict):
+        add_issue(issues, "blocker" if required else "warning", "generation_session_missing", required=required)
+        return {}
+    summary = {"session_id": text_value(session.get("session_id")), "continuity_policy": text_value(session.get("continuity_policy")), "batch_size": session.get("batch_size")}
+    for field in ("session_id", "continuity_policy", "style_anchor", "shared_preamble"):
+        if not text_value(session.get(field)) and required:
+            add_issue(issues, "blocker", "generation_session_field_missing", field=field)
+    policy = text_value(session.get("continuity_policy"))
+    if policy not in CONTINUITY_POLICIES and required:
+        add_issue(issues, "blocker", "generation_continuity_policy_invalid", observed=policy)
+    if required and policy not in CONTINUITY_STRICT_POLICIES:
+        add_issue(issues, "blocker", "generation_continuity_not_strict", observed=policy)
+    batch_size = session.get("batch_size")
+    if required and (not isinstance(batch_size, int) or isinstance(batch_size, bool) or not 1 <= batch_size <= 6):
+        add_issue(issues, "blocker", "generation_batch_size_invalid", observed=batch_size)
+    return summary
 
 
 def formal_text_entries(slide: dict) -> list[dict]:
@@ -132,9 +293,11 @@ def diagram_annotation_entries(slide: dict) -> list[dict]:
                 "text": text_value(item.get("text")),
                 "purpose": text_value(item.get("purpose")),
                 "scope": text_value(item.get("scope")),
+                "approved_by": text_value(item.get("approved_by")),
+                "source_ref": text_value(item.get("source_ref")),
             })
         else:
-            entries.append({"index": index, "text": "", "purpose": "", "scope": ""})
+            entries.append({"index": index, "text": "", "purpose": "", "scope": "", "approved_by": "", "source_ref": ""})
     return entries
 
 
@@ -242,6 +405,14 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
             observed = manifest.get(field)
             if observed != expected:
                 add_issue(issues, "blocker", "generation_manifest_contract_mismatch", field=field, expected=expected, observed=observed)
+        session = plan.get("generation_session") if isinstance(plan.get("generation_session"), dict) else {}
+        session_id = text_value(session.get("session_id"))
+        continuity_policy = text_value(session.get("continuity_policy"))
+        if require:
+            if text_value(manifest.get("generation_session_id")) != session_id:
+                add_issue(issues, "blocker", "generation_manifest_session_mismatch", expected=session_id, observed=manifest.get("generation_session_id"))
+            if text_value(manifest.get("continuity_policy")) != continuity_policy:
+                add_issue(issues, "blocker", "generation_manifest_continuity_policy_mismatch", expected=continuity_policy, observed=manifest.get("continuity_policy"))
     declared_plan_hash = manifest.get("plan_sha256")
     actual_plan_hash = sha256(plan_path)
     if not isinstance(declared_plan_hash, str) or not SHA256_RE.fullmatch(declared_plan_hash):
@@ -254,6 +425,23 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
         return evidence
     expected_slides = {slide.get("slide_no"): slide for slide in plan.get("slides", []) if isinstance(slide, dict)}
     observed = {}
+    observed_models: set[str] = set()
+    session = plan.get("generation_session") if isinstance(plan.get("generation_session"), dict) else {}
+    session_id = text_value(session.get("session_id"))
+    continuity_policy = text_value(session.get("continuity_policy"))
+    canvas = plan.get("canvas") if isinstance(plan.get("canvas"), dict) else {}
+    canvas_policy = plan.get("canvas_policy") if isinstance(plan.get("canvas_policy"), dict) else {}
+    exact_dimensions = canvas_policy.get("require_exact_dimensions") is True
+    try:
+        expected_width = int(canvas.get("width_px"))
+        expected_height = int(canvas.get("height_px"))
+    except (TypeError, ValueError):
+        expected_width = expected_height = 0
+    try:
+        minimum_width = int(canvas_policy.get("minimum_width_px")) if canvas_policy.get("minimum_width_px") is not None else 0
+        minimum_height = int(canvas_policy.get("minimum_height_px")) if canvas_policy.get("minimum_height_px") is not None else 0
+    except (TypeError, ValueError):
+        minimum_width = minimum_height = 0
     for index, record in enumerate(records):
         if not isinstance(record, dict):
             add_issue(issues, "blocker", "generation_manifest_slide_invalid", index=index)
@@ -268,6 +456,9 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
         plan_slide = expected_slides.get(slide_no, {})
         record_summary = {"slide_no": slide_no, "files": {}}
         backend_label = " ".join(text_value(record.get(field)) for field in ("backend", "model_or_tool"))
+        observed_model = text_value(record.get("model_or_tool"))
+        if observed_model:
+            observed_models.add(observed_model)
         if PROHIBITED_GENERATION_TOKEN_RE.search(backend_label):
             add_issue(issues, "blocker", "generation_backend_not_raster", slide_no=slide_no, observed=backend_label)
         for field in ("prompt_file", "generated_source", "copied_to", "backend", "model_or_tool", "canvas"):
@@ -275,6 +466,12 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
             missing = not isinstance(value, dict) if field == "canvas" else not text_value(value)
             if missing:
                 add_issue(issues, "blocker", "generation_evidence_field_missing", slide_no=slide_no, field=field)
+        if require:
+            if text_value(record.get("generation_session_id")) != session_id:
+                add_issue(issues, "blocker", "generation_slide_session_mismatch", slide_no=slide_no, expected=session_id, observed=record.get("generation_session_id"))
+            expected_continuity_status = "preserved" if continuity_policy == "single-model-single-context" else "shared-anchor"
+            if text_value(record.get("context_continuity_status")) != expected_continuity_status:
+                add_issue(issues, "blocker", "generation_slide_context_not_preserved", slide_no=slide_no, expected=expected_continuity_status, observed=record.get("context_continuity_status"))
         prompt_path = resolve_path(manifest_path.parent, record.get("prompt_file"))
         plan_prompt_path = resolve_path(plan_path.parent, plan_slide.get("prompt_file"))
         if prompt_path and plan_prompt_path and prompt_path != plan_prompt_path:
@@ -317,6 +514,10 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
             expected_ratio_value = ratio_value(expected_ratio)
             if size and expected_ratio_value and size[1] and abs((size[0] / size[1]) - expected_ratio_value) > 0.02:
                 add_issue(issues, "blocker", "generation_image_ratio_mismatch", slide_no=slide_no, field=field, expected=expected_ratio, observed=f"{size[0]}:{size[1]}")
+            if exact_dimensions and expected_width and expected_height and tuple(size) != (expected_width, expected_height):
+                add_issue(issues, "blocker", "generation_image_dimensions_mismatch", slide_no=slide_no, field=field, expected=[expected_width, expected_height], observed=list(size))
+            if minimum_width and minimum_height and (size[0] < minimum_width or size[1] < minimum_height):
+                add_issue(issues, "blocker" if exact_dimensions else "major", "generation_image_below_minimum_dimensions", slide_no=slide_no, field=field, expected=[minimum_width, minimum_height], observed=list(size))
             declared_hash = record.get(hash_field)
             actual_hash = sha256(path)
             if not isinstance(declared_hash, str) or not SHA256_RE.fullmatch(declared_hash):
@@ -382,6 +583,8 @@ def validate_evidence(plan_path: Path, plan: dict, manifest_path: Path, issues: 
                     add_issue(issues, "blocker", "generation_deck_strip_slide_coverage_mismatch", expected=sorted(expected_numbers), observed=sorted(strip_numbers))
             if not text_value(deck_strip.get("review_status")):
                 add_issue(issues, "blocker", "generation_deck_strip_review_status_missing")
+    if require and continuity_policy == "single-model-single-context" and len(observed_models) > 1:
+        add_issue(issues, "blocker", "generation_model_changed_within_deck", expected="one model/tool", observed=sorted(observed_models))
     evidence["plan_sha256"] = actual_plan_hash
     evidence["record_count"] = len(records)
     if isinstance(deck_strip, dict):
@@ -400,6 +603,8 @@ def main() -> int:
     parser.add_argument("--manifest", help="visual-generation-manifest.json; omit during A1-A3 plan-only validation")
     parser.add_argument("--expected-pages", type=int)
     parser.add_argument("--require-evidence", action="store_true", help="require retained source/copy images, hashes and prompt files")
+    parser.add_argument("--require-narrative-approval", action="store_true", help="require an approved PPT thought table before image-slide generation")
+    parser.add_argument("--narrative-only", action="store_true", help="run only the pre-generation thought-table gate")
     parser.add_argument("--report")
     args = parser.parse_args()
 
@@ -470,6 +675,30 @@ def main() -> int:
         add_issue(issues, "blocker", "plan_page_count_invalid", observed=plan.get("page_count"))
     if args.expected_pages is not None and page_count != args.expected_pages:
         add_issue(issues, "blocker", "plan_page_count_mismatch", expected=args.expected_pages, observed=page_count)
+    strict_narrative = bool(args.require_narrative_approval or (args.require_evidence and mode == "image-slide"))
+    narrative_gate = validate_narrative_gate(plan_path, plan, page_count, issues, required=(strict_narrative and mode == "image-slide"))
+    if args.narrative_only:
+        blockers = [item for item in issues if item.get("severity") in {"blocker", "critical"}]
+        result = {
+            "schema": "ai-ppt-plus/visual-generation-validation/v1",
+            "valid": not blockers,
+            "technical_valid": not blockers,
+            "status": "passed" if not blockers else "blocked",
+            "plan_path": str(plan_path),
+            "plan_sha256": sha256(plan_path),
+            "project_id": plan.get("project_id"),
+            "route": plan.get("route"),
+            "mode": mode,
+            "page_count": page_count,
+            "narrative_gate": narrative_gate,
+            "issues": issues,
+            "human_visual_review_required": True,
+            "release_eligible": False,
+        }
+        if args.report:
+            atomic_write_json(Path(args.report).resolve(), result)
+        print(json.dumps(result, ensure_ascii=False))
+        return 0 if result["valid"] else 2
     style_lock = plan.get("style_lock")
     if not isinstance(style_lock, dict):
         add_issue(issues, "blocker", "style_lock_missing")
@@ -488,6 +717,10 @@ def main() -> int:
     for field in ("font_style", "surface", "icon_style"):
         if not text_value(style_lock.get(field)):
             add_issue(issues, "blocker", "style_lock_field_missing", field=field)
+    if strict_narrative and mode == "image-slide":
+        for field in ("grid", "shared_chrome", "material_language"):
+            if not text_value(style_lock.get(field)):
+                add_issue(issues, "blocker", "style_lock_deck_system_field_missing", field=field)
     avoid_items = style_lock.get("avoid_items")
     if not isinstance(avoid_items, list) or not all(text_value(item) for item in avoid_items):
         add_issue(issues, "blocker", "style_lock_avoid_items_invalid")
@@ -498,12 +731,29 @@ def main() -> int:
     ratio = text_value(canvas.get("ratio"))
     if ratio not in {"16:9", "3:2"}:
         add_issue(issues, "blocker", "canvas_ratio_invalid", observed=ratio)
+    canvas_policy = plan.get("canvas_policy")
+    if strict_narrative and mode == "image-slide":
+        if not isinstance(canvas_policy, dict):
+            add_issue(issues, "blocker", "canvas_policy_missing")
+            canvas_policy = {}
+        if canvas_policy.get("require_exact_dimensions") is not True:
+            add_issue(issues, "blocker", "canvas_exact_dimension_policy_missing", observed=canvas_policy.get("require_exact_dimensions"))
+        if text_value(canvas_policy.get("on_mismatch")) != "block":
+            add_issue(issues, "blocker", "canvas_mismatch_policy_not_blocking", observed=canvas_policy.get("on_mismatch"))
+        for field in ("minimum_width_px", "minimum_height_px"):
+            value = canvas_policy.get(field)
+            if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+                add_issue(issues, "blocker", "canvas_policy_dimension_invalid", field=field, observed=value)
+        if not isinstance(canvas.get("width_px"), int) or not isinstance(canvas.get("height_px"), int):
+            add_issue(issues, "blocker", "canvas_target_dimensions_missing")
     density_profile = plan.get("density_profile", "dense")
     if density_profile not in DENSITY_PROFILES:
         add_issue(issues, "blocker", "density_profile_invalid", observed=density_profile)
         density_profile = "dense"
     if density_profile != "dense" and not text_value(plan.get("density_override_reason")):
         add_issue(issues, "blocker", "density_override_reason_missing")
+    quality_target = validate_quality_target(plan, issues, required=(strict_narrative and mode == "image-slide"))
+    generation_session = validate_generation_session(plan, issues, required=(strict_narrative and mode == "image-slide"))
     slides = plan.get("slides")
     if not isinstance(slides, list):
         slides = []
@@ -524,6 +774,8 @@ def main() -> int:
             add_issue(issues, "blocker", "plan_slide_number_duplicate", slide_no=slide_no)
         else:
             slide_numbers.append(slide_no)
+        if strict_narrative and mode == "image-slide" and not text_value(slide.get("outline_row_ref")):
+            add_issue(issues, "blocker", "slide_outline_row_reference_missing", slide_no=slide_no)
         for field in ("page_type", "title", "core_logic", "visual_framework", "visual_generation_prompt"):
             if not text_value(slide.get(field)):
                 add_issue(issues, "blocker", "plan_slide_field_missing", slide_no=slide_no, field=field)
@@ -598,12 +850,19 @@ def main() -> int:
                             add_issue(issues, "blocker", "keyword_emphasis_color_invalid", slide_no=slide_no, item=item_index, observed=color)
                         elif not any(token in value for value in visible_copy):
                             add_issue(issues, "blocker", "keyword_emphasis_text_not_in_copy", slide_no=slide_no, item=item_index, text=token)
-            annotations = diagram_annotation_entries(slide)
-            for annotation in annotations:
-                if not annotation["text"] or not annotation["purpose"] or not annotation["scope"]:
-                    add_issue(issues, "blocker", "diagram_annotation_invalid", slide_no=slide_no, item=annotation["index"])
-                elif PLACEHOLDER_RE.search(annotation["text"]):
-                    add_issue(issues, "blocker", "diagram_annotation_placeholder", slide_no=slide_no, item=annotation["index"])
+        annotations = diagram_annotation_entries(slide)
+        for annotation in annotations:
+            if not annotation["text"] or not annotation["purpose"] or not annotation["scope"]:
+                add_issue(issues, "blocker", "diagram_annotation_invalid", slide_no=slide_no, item=annotation["index"])
+            elif PLACEHOLDER_RE.search(annotation["text"]):
+                add_issue(issues, "blocker", "diagram_annotation_placeholder", slide_no=slide_no, item=annotation["index"])
+            if not text_value(annotation.get("approved_by")):
+                add_issue(issues, "blocker", "diagram_annotation_approval_missing", slide_no=slide_no, item=annotation["index"])
+        readability = quality_target.get("readability") if isinstance(quality_target, dict) else None
+        max_copy_items = readability.get("max_visible_copy_items") if isinstance(readability, dict) else None
+        declared_copy = copy_values(slide) + [annotation["text"] for annotation in annotations if annotation["text"]]
+        if isinstance(max_copy_items, int) and len(set(declared_copy)) > max_copy_items:
+            add_issue(issues, "blocker" if strict_narrative and mode == "image-slide" else "warning", "slide_copy_density_too_high", slide_no=slide_no, maximum=max_copy_items, observed=len(set(declared_copy)))
         min_modules, min_bullets_required, min_info = density_threshold(profile)
         if not has_exception:
             if profile == "dense" and not text_value(content.get("intro")):
@@ -645,6 +904,16 @@ def main() -> int:
             if production_prompt and visual_prompt and production_prompt == visual_prompt:
                 add_issue(issues, "blocker", "production_prompt_not_materialized", slide_no=slide_no)
             prompt_lower = production_prompt.lower()
+            if strict_narrative:
+                required_prompt_sections = (
+                    "【生图前叙事审批闸门】",
+                    "【整套连续生成锁】",
+                    "【商用级视觉质量标准】",
+                    "【语言与标签规则】",
+                )
+                for section in required_prompt_sections:
+                    if section not in production_prompt:
+                        add_issue(issues, "blocker", "production_prompt_contract_section_missing", slide_no=slide_no, section=section)
             for context_field in ("audience", "language", "presentation_context"):
                 context_value = text_value(generation_context.get(context_field))
                 if context_value and context_value not in production_prompt:
@@ -741,6 +1010,7 @@ def main() -> int:
             "detailed_content_paragraph_count": len(detailed_content),
             "reference_image_count": len(references),
             "reference_treatment_mode": text_value((slide.get("reference_treatment") or {}).get("mode")) if isinstance(slide.get("reference_treatment"), dict) else None,
+            "outline_row_ref": text_value(slide.get("outline_row_ref")),
             "module_details": module_summaries,
         })
     if slide_numbers and sorted(slide_numbers) != list(range(1, max(slide_numbers) + 1)):
@@ -753,7 +1023,7 @@ def main() -> int:
             add_issue(issues, "blocker", "generation_manifest_missing", path=str(manifest_path) if manifest_path else None)
         else:
             evidence = validate_evidence(plan_path, plan, manifest_path, issues, args.require_evidence)
-    blockers = [item for item in issues if item.get("severity") == "blocker"]
+    blockers = [item for item in issues if item.get("severity") in {"blocker", "critical"}]
     result = {
         "schema": "ai-ppt-plus/visual-generation-validation/v1",
         "valid": not blockers,
@@ -768,6 +1038,10 @@ def main() -> int:
         "density_profile": density_profile,
         "generation_context": generation_context,
         "retry_policy": retry,
+        "narrative_gate": narrative_gate,
+        "quality_target": quality_target,
+        "generation_session": generation_session,
+        "canvas_policy": canvas_policy,
         "page_count": page_count,
         "framework_count": len(frameworks),
         "slides": slide_summaries,

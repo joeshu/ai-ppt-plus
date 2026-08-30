@@ -7,6 +7,8 @@
   "backend_policy": "raster-only",
   "source_retention": "generated-source-and-project-copy",
   "no_code_overlay": true,
+  "generation_session_id": "deck-generation-session-R1",
+  "continuity_policy": "single-model-single-context",
   "slides": [
     {
       "slide_no": 1,
@@ -18,6 +20,8 @@
       "copied_to_sha256": "<sha256>",
       "backend": "codex-imagegen",
       "model_or_tool": "Codex built-in image_gen",
+      "generation_session_id": "deck-generation-session-R1",
+      "context_continuity_status": "preserved",
       "canvas": {"width_px": 2048, "height_px": 1152, "ratio": "16:9"}
     }
   ],

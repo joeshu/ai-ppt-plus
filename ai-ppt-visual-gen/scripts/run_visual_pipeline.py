@@ -98,6 +98,16 @@ def main() -> int:
             str(ROOT),
         ], args.timeout_seconds, log_dir)
     ]
+    if steps[-1]["ok"]:
+        steps.append(run("narrative-gate", [
+            sys.executable,
+            str(SCRIPT_DIR / "validate_visual_generation_plan.py"),
+            str(plan),
+            "--expected-pages",
+            str(args.expected_pages),
+            "--narrative-only",
+            "--require-narrative-approval",
+        ], args.timeout_seconds, log_dir))
     if steps[-1]["ok"] and args.materialize:
         command = [
             sys.executable,
@@ -129,6 +139,7 @@ def main() -> int:
         ]
         if manifest:
             command.extend(["--manifest", str(manifest), "--require-evidence"])
+        command.append("--require-narrative-approval")
         steps.append(run("visual-generation", command, args.timeout_seconds, log_dir))
     if all(item["ok"] for item in steps) and manifest and has_visual_assertions(plan):
         assertions_report = Path(args.report).resolve().with_name("visual-assertions.json") if args.report else plan.parent / "visual-assertions.json"

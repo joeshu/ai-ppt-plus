@@ -28,6 +28,7 @@ from validate_visual_generation_plan import (  # noqa: E402
     formal_text_entries,
     text_value,
 )
+from validate_outline_table import validate_file as validate_outline_file  # noqa: E402
 
 
 MATERIALIZATION_SCHEMA = "ai-ppt-plus/visual-prompt-materialization/v1"
@@ -39,6 +40,10 @@ def read_json(path: Path):
 
 def text_sha256(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def file_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def visible_scalar(value) -> str:
@@ -100,6 +105,8 @@ def diagram_annotation_entries(slide: dict) -> list[dict]:
                 "text": text,
                 "purpose": visible_scalar(item.get("purpose")),
                 "scope": visible_scalar(item.get("scope")),
+                "approved_by": visible_scalar(item.get("approved_by")),
+                "source_ref": visible_scalar(item.get("source_ref")),
             })
     return entries
 
@@ -169,6 +176,75 @@ def retry_policy(plan: dict) -> str:
     triggers = policy.get("triggers") if isinstance(policy.get("triggers"), list) else []
     trigger_text = "、".join(visible_scalar(item) for item in triggers if visible_scalar(item)) or "生成失败或页面质量不达标"
     return f"最多每页 {max_attempts} 次；范围：{scope}；触发条件：{trigger_text}。只重试问题页，不重跑已通过页面。"
+
+
+def narrative_gate(plan: dict) -> str:
+    """Make the approved thought-table authority explicit in every prompt."""
+    gate = plan.get("narrative_gate") if isinstance(plan.get("narrative_gate"), dict) else {}
+    table = visible_scalar(gate.get("outline_table")) or "未声明思路表"
+    revision = visible_scalar(gate.get("revision")) or visible_scalar(plan.get("outline_revision")) or "未声明修订号"
+    status = visible_scalar(gate.get("status")) or "未审批"
+    authority = visible_scalar(gate.get("formal_text_authority")) or "approved-outline-table"
+    return (
+        f"审批思路表：{table}；叙事修订：{revision}；审批状态：{status}；正式文字权威：{authority}。"
+        "只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。"
+    )
+
+
+def generation_session(plan: dict) -> str:
+    """Render the deck-level same-model/context continuity lock."""
+    session = plan.get("generation_session") if isinstance(plan.get("generation_session"), dict) else {}
+    session_id = visible_scalar(session.get("session_id")) or "未声明会话"
+    policy = visible_scalar(session.get("continuity_policy")) or "single-model-single-context"
+    batch_size = visible_scalar(session.get("batch_size")) or "3–6"
+    anchor = visible_scalar(session.get("style_anchor")) or "无外部锚点；以本 deck style lock 为唯一锚点"
+    preamble = visible_scalar(session.get("shared_preamble")) or "所有页面共用同一模型、同一上下文和同一设计系统。"
+    return "\n".join([
+        f"会话 ID：{session_id}",
+        f"连续性策略：{policy}",
+        f"建议批量：{batch_size} 页；风格锚点：{anchor}",
+        f"共享前置语：{preamble}",
+        "同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页脚规则。",
+    ])
+
+
+def quality_target(plan: dict) -> str:
+    """Translate premium-commercial intent into observable image directions."""
+    quality = plan.get("quality_target") if isinstance(plan.get("quality_target"), dict) else {}
+    tier = visible_scalar(quality.get("tier")) or "premium-commercial"
+    language = visible_scalar(quality.get("visual_language")) or "高端商业信息设计，克制、精确、有层次"
+    must = quality.get("must_have") if isinstance(quality.get("must_have"), list) else []
+    avoid = quality.get("avoid_items") if isinstance(quality.get("avoid_items"), list) else []
+    readability = quality.get("readability") if isinstance(quality.get("readability"), dict) else {}
+    commercial = quality.get("commercial_policy") if isinstance(quality.get("commercial_policy"), dict) else {}
+    must_text = "；".join(visible_scalar(item) for item in must if visible_scalar(item)) or "明确焦点、稳定网格、展示级字号、克制材质和足够留白"
+    avoid_text = "、".join(visible_scalar(item) for item in avoid if visible_scalar(item)) or "廉价卡片墙、霓虹 HUD、随机图标、密集小字、水印"
+    title_px = visible_scalar(readability.get("min_title_px")) or "56"
+    body_px = visible_scalar(readability.get("min_body_px")) or "28"
+    annotation_px = visible_scalar(readability.get("min_annotation_px")) or "22"
+    max_copy = visible_scalar(readability.get("max_visible_copy_items")) or "34"
+    commercial_text = "；".join([
+        "不使用未授权 Logo" if commercial.get("exclude_unlicensed_logos", True) else "",
+        "不使用水印" if commercial.get("exclude_watermarks", True) else "",
+        "不仿冒名人、商标或品牌" if commercial.get("exclude_celebrity_and_trademark_imitation", True) else "",
+        "外部素材必须有来源/授权记录" if commercial.get("external_asset_provenance_required", True) else "",
+    ])
+    return "\n".join([
+        f"质量档位：{tier}；视觉语言：{language}",
+        f"必须具备：{must_text}。",
+        f"可读性下限：标题约 {title_px}px、正文约 {body_px}px、图示标注约 {annotation_px}px；每页可见文字项目原则上不超过 {max_copy} 项。",
+        f"禁止：{avoid_text}。",
+        f"商用安全：{commercial_text or '无水印、无未授权 Logo、无仿冒品牌、外部素材保留来源记录'}。",
+        "豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。",
+    ])
+
+
+def language_policy(plan: dict) -> str:
+    context = plan.get("generation_context") if isinstance(plan.get("generation_context"), dict) else {}
+    language = visible_scalar(context.get("language")).lower()
+    if "zh" in language or "中文" in language or "汉" in language:
+        return "中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。"
+    return "页面可见文字只能来自正式文字白名单；非正式语言标签也不得由模型自行补充。"
 
 
 def detailed_content_summary(slide: dict) -> str:
@@ -315,8 +391,10 @@ def diagram_annotations(slide: dict) -> str:
         purpose = visible_scalar(item.get("purpose"))
         scope = visible_scalar(item.get("scope"))
         approved_by = visible_scalar(item.get("approved_by")) or "approved visual brief"
+        source_ref = visible_scalar(item.get("source_ref"))
         if text:
-            lines.append(f"- {quote_copy(text)}；用途：{purpose}；范围：{scope}；批准依据：{approved_by}")
+            source = f"；来源：{source_ref}" if source_ref else ""
+            lines.append(f"- {quote_copy(text)}；用途：{purpose}；范围：{scope}；批准依据：{approved_by}{source}")
     if not lines:
         lines = ["- 无；不要自行添加关系标签，使用图标、箭头、节点和线条表达关系。"]
     return "\n".join([
@@ -343,6 +421,9 @@ def build_prompt(plan: dict, slide: dict) -> str:
     font_style = visible_scalar(style.get("font_style")) or "干净的无衬线字体"
     surface = visible_scalar(style.get("surface")) or "克制、有层次的演示页表面"
     icon_style = visible_scalar(style.get("icon_style")) or "统一笔画的语义图标"
+    grid = visible_scalar(style.get("grid")) or "12 列网格，稳定标题基线和统一外边距"
+    shared_chrome = visible_scalar(style.get("shared_chrome")) or "统一标题区、材质语言和组件节奏；页面收束方式按页决定，不强制固定底栏"
+    material_language = visible_scalar(style.get("material_language")) or "克制的材质、细线和光影层次，不做炫技式装饰"
     avoid_items = style.get("avoid_items") if isinstance(style.get("avoid_items"), list) else []
     avoid_text = "、".join(visible_scalar(item) for item in avoid_items if visible_scalar(item))
     if not avoid_text:
@@ -353,6 +434,7 @@ def build_prompt(plan: dict, slide: dict) -> str:
     core_logic = visible_scalar(slide.get("core_logic"))
     framework = visible_scalar(slide.get("visual_framework"))
     visual_prompt = visible_scalar(slide.get("visual_generation_prompt"))
+    closure_treatment = visible_scalar(slide.get("closure_treatment")) or "结论文案保留，但位置和形态按本页视觉框架自然落位，不默认使用全宽底部横幅"
     content = content_model(slide)
     modules = content.get("modules") if isinstance(content.get("modules"), list) else []
 
@@ -372,7 +454,7 @@ def build_prompt(plan: dict, slide: dict) -> str:
             module_lines.append(f"  要点：{quote_copy(bullet)}")
     footer = visible_scalar(content.get("footer_banner"))
     if footer:
-        module_lines.append(f"底部总结横幅：{quote_copy(footer)}")
+        module_lines.append(f"页面结论文案（位置按本页收束策略决定，不默认横幅）：{quote_copy(footer)}")
     content_block = "\n".join(module_lines) if module_lines else "按正式文字组织清晰的页面层级。"
 
     formal_lines = []
@@ -387,7 +469,8 @@ def build_prompt(plan: dict, slide: dict) -> str:
     return f"""生成一张 {ratio} 横版图片型演示幻灯片{dimensions}。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。
 
 【整体风格】
-统一遵循本 deck 的设计系统：{surface}；字体为{font_style}；图标为{icon_style}；配色固定为：{palette_text}。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。
+统一遵循本 deck 的设计系统：{surface}；字体为{font_style}；图标为{icon_style}；配色固定为：{palette_text}。
+网格：{grid}。跨页固定元素：{shared_chrome}。材质语言：{material_language}。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。
 
 【本页角色与叙事】
 页面类型：{page_type}
@@ -399,15 +482,31 @@ def build_prompt(plan: dict, slide: dict) -> str:
 {generation_context(plan)}
 本 deck 共 {visible_scalar(plan.get("page_count")) or "1"} 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。
 
+【生图前叙事审批闸门】
+{narrative_gate(plan)}
+
+【整套连续生成锁】
+{generation_session(plan)}
+
+【商用级视觉质量标准】
+{quality_target(plan)}
+
+【语言与标签规则】
+{language_policy(plan)}
+
 【A4 有界恢复策略】
 {retry_policy(plan)}
 
 【版式结构】
-沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 底部结论横幅”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 {framework} 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。
+沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 {framework} 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。
 
 【区域蓝图（必须按区域分配容量）】
 {layout_blueprint(slide)}
 区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。
+
+【页面收束策略】
+{closure_treatment}
+结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。
 
 【重点词着色语义（必须保留）】
 {keyword_emphasis(slide)}
@@ -442,10 +541,11 @@ def build_prompt(plan: dict, slide: dict) -> str:
 
 【图标与装饰】
 {format_visual_assets(slide)}
-使用克制的线性/扁平商务图标、连接线、箭头、标签药丸、进度或节点微件提升信息密度；装饰不得抢夺核心文字焦点。
+使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。
 
 【字体与可读性】
 重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。
+中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。
 
 【参考图隔离规则】
 {reference_policy(slide)}
@@ -471,7 +571,7 @@ def prompt_target(plan_path: Path, slide: dict) -> tuple[str, Path]:
     return relative, path
 
 
-def validate_input(plan: object) -> list[dict]:
+def validate_input(plan: object, plan_path: Path | None = None) -> list[dict]:
     issues: list[dict] = []
 
     def issue(code: str, **details) -> None:
@@ -493,6 +593,88 @@ def validate_input(plan: object) -> list[dict]:
         issue("plan_route_invalid", observed=plan.get("route"))
     if plan.get("mode") != "image-slide":
         issue("plan_mode_not_materializable", observed=plan.get("mode"))
+    gate = plan.get("narrative_gate")
+    if not isinstance(gate, dict):
+        issue("narrative_gate_missing")
+    else:
+        for field, expected in (("schema", "ai-ppt-plus/narrative-gate/v1"), ("workflow", "ppt-thought-table-first"), ("status", "approved"), ("formal_text_authority", "approved-outline-table")):
+            if visible_scalar(gate.get(field)) != expected:
+                issue("narrative_gate_field_invalid", field=field, expected=expected, observed=gate.get(field))
+        if gate.get("approval_required") is not True:
+            issue("narrative_gate_approval_required_missing")
+        if gate.get("owner_notes_preserved") is not True:
+            issue("narrative_gate_owner_notes_not_preserved")
+        if visible_scalar(gate.get("revision")) != visible_scalar(plan.get("outline_revision")):
+            issue("narrative_revision_mismatch", expected=plan.get("outline_revision"), observed=gate.get("revision"))
+        feedback_round = gate.get("feedback_round")
+        if not isinstance(feedback_round, int) or isinstance(feedback_round, bool) or feedback_round < 0:
+            issue("narrative_feedback_round_invalid", observed=feedback_round)
+        for field in ("approved_by", "approved_at", "outline_table", "outline_table_sha256", "change_log"):
+            if not visible_scalar(gate.get(field)):
+                issue("narrative_gate_field_missing", field=field)
+        if plan_path and visible_scalar(gate.get("outline_table")):
+            outline_value = Path(visible_scalar(gate.get("outline_table")))
+            outline_path = outline_value.resolve() if outline_value.is_absolute() else (plan_path.parent / outline_value).resolve()
+            if not outline_path.is_file():
+                issue("narrative_outline_table_missing", path=str(outline_path))
+            else:
+                outline_result = validate_outline_file(outline_path, require_approved=True)
+                for outline_issue in outline_result.get("issues", []):
+                    if isinstance(outline_issue, dict):
+                        issue(f"outline_table_{outline_issue.get('code', 'invalid')}", **{key: value for key, value in outline_issue.items() if key not in {"severity", "code"}})
+                expected_hash = visible_scalar(gate.get("outline_table_sha256"))
+                actual_hash = file_sha256(outline_path)
+                if expected_hash.lower() != actual_hash.lower():
+                    issue("narrative_outline_hash_mismatch", expected=actual_hash, observed=expected_hash)
+        if plan_path and visible_scalar(gate.get("change_log")):
+            change_log_value = Path(visible_scalar(gate.get("change_log")))
+            change_log_path = change_log_value.resolve() if change_log_value.is_absolute() else (plan_path.parent / change_log_value).resolve()
+            if not change_log_path.is_file():
+                issue("narrative_change_log_missing", path=str(change_log_path))
+    quality = plan.get("quality_target")
+    if not isinstance(quality, dict):
+        issue("quality_target_missing")
+    else:
+        if visible_scalar(quality.get("tier")) not in {"premium-commercial", "enterprise-commercial"}:
+            issue("quality_target_tier_invalid", observed=quality.get("tier"))
+        for field in ("visual_language", "must_have", "avoid_items"):
+            value = quality.get(field)
+            valid = bool(visible_scalar(value)) if field == "visual_language" else isinstance(value, list) and bool(value) and all(visible_scalar(item) for item in value)
+            if not valid:
+                issue("quality_target_field_invalid", field=field)
+        readability = quality.get("readability")
+        if not isinstance(readability, dict):
+            issue("quality_readability_missing")
+        else:
+            for field in ("target_viewing", "min_title_px", "min_body_px", "min_annotation_px", "max_visible_copy_items"):
+                value = readability.get(field)
+                if field == "target_viewing":
+                    valid = bool(visible_scalar(value))
+                elif field == "max_visible_copy_items":
+                    valid = isinstance(value, int) and not isinstance(value, bool) and value > 0
+                else:
+                    valid = isinstance(value, (int, float)) and not isinstance(value, bool) and value > 0
+                if not valid:
+                    issue("quality_readability_field_invalid", field=field, observed=value)
+        commercial = quality.get("commercial_policy")
+        if not isinstance(commercial, dict):
+            issue("quality_commercial_policy_missing")
+        else:
+            for field in ("exclude_unlicensed_logos", "exclude_watermarks", "exclude_celebrity_and_trademark_imitation", "external_asset_provenance_required"):
+                if commercial.get(field) is not True:
+                    issue("quality_commercial_policy_invalid", field=field, observed=commercial.get(field))
+    session = plan.get("generation_session")
+    if not isinstance(session, dict):
+        issue("generation_session_missing")
+    else:
+        for field in ("session_id", "continuity_policy", "style_anchor", "shared_preamble"):
+            if not visible_scalar(session.get(field)):
+                issue("generation_session_field_missing", field=field)
+        if visible_scalar(session.get("continuity_policy")) not in {"single-model-single-context", "single-model-shared-anchor"}:
+            issue("generation_continuity_policy_invalid", observed=session.get("continuity_policy"))
+        batch_size = session.get("batch_size")
+        if not isinstance(batch_size, int) or isinstance(batch_size, bool) or not 1 <= batch_size <= 6:
+            issue("generation_batch_size_invalid", observed=batch_size)
     contract = plan.get("generation_contract")
     if not isinstance(contract, dict):
         issue("generation_contract_missing")
@@ -524,6 +706,20 @@ def validate_input(plan: object) -> list[dict]:
     ratio = visible_scalar(canvas.get("ratio"))
     if ratio not in {"16:9", "3:2"}:
         issue("canvas_ratio_invalid", observed=ratio)
+    canvas_policy = plan.get("canvas_policy")
+    if not isinstance(canvas_policy, dict):
+        issue("canvas_policy_missing")
+        canvas_policy = {}
+    if canvas_policy.get("require_exact_dimensions") is not True:
+        issue("canvas_exact_dimension_policy_missing", observed=canvas_policy.get("require_exact_dimensions"))
+    for field in ("minimum_width_px", "minimum_height_px"):
+        value = canvas_policy.get(field)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+            issue("canvas_policy_dimension_invalid", field=field, observed=value)
+    for field in ("width_px", "height_px"):
+        value = canvas.get(field)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+            issue("canvas_target_dimension_invalid", field=field, observed=value)
     style = plan.get("style_lock") if isinstance(plan.get("style_lock"), dict) else {}
     palette = style.get("palette") if isinstance(style.get("palette"), list) else []
     if len(palette) < 3:
@@ -535,6 +731,9 @@ def validate_input(plan: object) -> list[dict]:
     for field in ("font_style", "surface", "icon_style"):
         if not visible_scalar(style.get(field)):
             issue("style_lock_field_missing", field=field)
+    for field in ("grid", "shared_chrome", "material_language"):
+        if not visible_scalar(style.get(field)):
+            issue("style_lock_deck_system_field_missing", field=field)
     slides = plan.get("slides")
     if not isinstance(slides, list) or not slides:
         issue("plan_slides_missing")
@@ -604,6 +803,10 @@ def validate_input(plan: object) -> list[dict]:
                 issue("reference_treatment_exclude_missing", slide_no=slide_no)
             if mode == "layout-and-style" and not any("palette" in visible_scalar(item).lower() or "配色" in visible_scalar(item) for item in treatment.get("preserve", [])):
                 issue("reference_style_treatment_palette_missing", slide_no=slide_no)
+        annotations = slide.get("diagram_annotations") if isinstance(slide.get("diagram_annotations"), list) else []
+        for annotation_index, annotation in enumerate(annotations, start=1):
+            if not isinstance(annotation, dict) or not visible_scalar(annotation.get("approved_by")):
+                issue("diagram_annotation_approval_missing", slide_no=slide_no, item=annotation_index)
         entries = formal_text_entries(slide)
         if not entries:
             issue("formal_text_missing", slide_no=slide_no)
@@ -678,7 +881,7 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False))
         return 2
 
-    issues.extend(validate_input(plan))
+    issues.extend(validate_input(plan, plan_path))
     if not args.in_place and not args.dry_run:
         issues.append({"severity": "blocker", "code": "in_place_or_dry_run_required"})
     if issues:
