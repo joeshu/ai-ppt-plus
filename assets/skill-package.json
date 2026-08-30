@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.08.29.21",
+  "package_revision": "2026.08.30.01",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -39,13 +39,17 @@
     "scripts/probe_environment.py",
     "scripts/validate_handoff.py",
     "scripts/build_handoff.py",
+    "scripts/validate_workflow_state.py",
     "assets/route-decision-native-authoring.template.json",
+    "assets/workflow-state.template.json",
     "assets/schemas/route-decision.schema.json",
+    "assets/schemas/workflow-state.schema.json",
     "assets/schemas/handoff.schema.json",
     "assets/schemas/super-pipeline.schema.json",
     "assets/runtime-mirror-policy.json",
     "assets/environment-contract.json",
     "references/three-skill-architecture.md",
+    "references/operations-matrix.md",
     "references/skill-routing.md"
   ],
   "runtime_sync": {

@@ -13,6 +13,7 @@
     "visual_skill": {"type": "string"},
     "editable_skill": {"type": "string"},
     "output_deck": {"type": "string"},
+    "workflow_state": {"type": ["string", "null"]},
     "steps": {"type": "array", "items": {"type": "object"}},
     "failed_steps": {"type": "array", "items": {"type": "string"}},
     "external_events": {"type": "object"}

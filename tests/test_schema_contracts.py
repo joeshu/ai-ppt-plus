@@ -26,6 +26,8 @@ def main() -> int:
     assert not validate(visual_plan, read(schemas / "visual-generation-plan.schema.json"))
     visual_manifest = read(ROOT / "assets/visual-generation-manifest.template.json")
     assert not validate(visual_manifest, read(schemas / "visual-generation-manifest.schema.json"))
+    workflow_state = read(ROOT / "assets/workflow-state.template.json")
+    assert not validate(workflow_state, read(schemas / "workflow-state.schema.json"))
     manifest_registry = read(ROOT / "assets/manifest-registry.template.json")
     assert not validate(manifest_registry, read(schemas / "manifest-registry.schema.json"))
 

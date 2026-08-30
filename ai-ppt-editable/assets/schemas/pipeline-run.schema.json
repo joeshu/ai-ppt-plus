@@ -25,7 +25,20 @@
     "next_state": {"type": "string"},
     "human_visual_review_required": {"type": "boolean"},
     "human_signoff_required": {"type": "boolean"},
-    "execution": {"type": "object"},
+    "execution": {
+      "type": "object",
+      "properties": {
+        "mode": {"type": "string", "enum": ["dag", "linear"]},
+        "parallel_workers": {"type": "integer", "minimum": 1},
+        "tasks_total": {"type": "integer", "minimum": 0},
+        "cache_hits": {"type": "integer", "minimum": 0},
+        "cache_misses": {"type": "integer", "minimum": 0},
+        "duration_ms": {"type": "number", "minimum": 0},
+        "task_duration_ms_sum": {"type": "number", "minimum": 0},
+        "critical_path_ms": {"type": "number", "minimum": 0}
+      }
+    },
+    "workflow_state": {"type": ["string", "null"]},
     "source_references": {"type": "array"}
   }
 }

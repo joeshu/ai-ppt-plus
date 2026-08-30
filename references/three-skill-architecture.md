@@ -49,3 +49,13 @@ The split is organizational. Existing image-to-PPTX decomposition, asset
 extraction, composition, rendering, and QA algorithms are copied into the
 editable worker unchanged. Future algorithm changes require their own scoped review;
 they must not be smuggled into an entrypoint/routing refactor.
+
+## Operating contract
+
+The complete stage-by-stage module and tool map is maintained in
+[`operations-matrix.md`](operations-matrix.md). The root orchestrator's
+resumable control plane is `workflow-state/v1`, defined by
+`assets/schemas/workflow-state.schema.json` and validated by
+`scripts/validate_workflow_state.py`. Worker manifests remain the detailed
+page/object evidence; workflow state only decides whether the next stage is
+allowed to start.

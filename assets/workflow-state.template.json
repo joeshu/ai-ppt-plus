@@ -1,0 +1,51 @@
+{
+  "schema": "ai-ppt-plus/workflow-state/v1",
+  "project_id": "project-slug",
+  "run_id": "run-20260830T000000Z",
+  "revision": "R1",
+  "package_revision": "2026.08.30.01",
+  "phase": "design-system-ready",
+  "route": "visual-creation",
+  "page_count": 6,
+  "canvas_ratio": "16:9",
+  "formal_text_authority": {
+    "kind": "approved_outline",
+    "path": "outline/approved-outline.json",
+    "approved": true
+  },
+  "visual_authority": {
+    "kind": "generated_visual_intermediate",
+    "path": "visual/visual-generation-manifest.json",
+    "approved": false
+  },
+  "artifacts": {
+    "deck-brief": {"path": "brief/deck-brief.md", "required": true, "role": "O1 approved brief"},
+    "source-inventory": {"path": "brief/source-inventory.json", "required": true, "role": "O0 traceable source inventory"},
+    "outline": {"path": "outline/approved-outline.json", "required": true, "role": "formal narrative authority"},
+    "design-system": {"path": "design/design-system.yaml", "required": true, "role": "visual authority"},
+    "route-decision": {"path": "route-decision.json", "required": true, "role": "route-decision/v2"},
+    "visual-plan": {"path": "visual/visual-generation-plan.json", "required": false, "role": "A1-A3 plan and prompts"},
+    "visual-manifest": {"path": "visual/visual-generation-manifest.json", "required": false, "role": "A4 source/hash evidence"},
+    "deck-strip": {"path": "visual/visual-deck-strip.png", "required": false, "role": "A5 deck review strip"},
+    "editable-layout": {"path": "editable/layout.json", "required": false, "role": "B6-B8 layout input"},
+    "slide-manifest": {"path": "editable/slide-manifest.json", "required": false, "role": "editable object inventory"},
+    "pptx": {"path": "deliverables/final.pptx", "required": false, "role": "editable deliverable"},
+    "render-report": {"path": "qa/render-report.json", "required": false, "role": "render evidence"},
+    "qa-report": {"path": "qa/project-report.json", "required": false, "role": "aggregated QA"},
+    "human-signoff": {"path": "qa/human-closeout.json", "required": false, "role": "human closeout"}
+  },
+  "approvals": {
+    "outline": true,
+    "design_system": true,
+    "visual": false,
+    "human_closeout": false
+  },
+  "completed_stages": ["O0", "O1", "O2"],
+  "open_blockers": [],
+  "next_action": "run A1-A5 visual generation",
+  "updated_at": "2026-08-30T00:00:00Z",
+  "execution": {
+    "profile": "review",
+    "cache_policy": "content-addressed plus page-level render cache"
+  }
+}

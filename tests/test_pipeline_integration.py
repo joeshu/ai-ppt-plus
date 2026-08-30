@@ -48,6 +48,9 @@ def main() -> int:
             data = json.loads(completed.stdout.strip().splitlines()[-1])
             assert data["valid"] is True and data["technical_valid"] is True and data["execution"]["affected_pages"] == [1]
             assert data["execution"]["page_cache"]["enabled"] is True
+            assert data["execution"]["duration_ms"] >= 0
+            assert data["execution"]["critical_path_ms"] >= 0
+            assert data["execution"]["cache_misses"] >= 0
             assert data["source_references"]
             assert not validate(data, json.loads((ROOT / "assets/schemas/pipeline-run.schema.json").read_text(encoding="utf-8")))
             assert not validate(json.loads((run_dir / "report-index.json").read_text(encoding="utf-8")), json.loads((ROOT / "assets/schemas/report-index.schema.json").read_text(encoding="utf-8")))

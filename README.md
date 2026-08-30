@@ -18,6 +18,7 @@
 - DAG 流水线、内容哈希缓存、页面级增量渲染、受影响区域 QA 与并行检查
 - Schema、任意 N/不规则区域、字体缺失、PPTX 解包和 Golden Render 回归，以及 GitHub Actions CI
 - 统一技术/人工/交付报告协议与项目级 `review.html` 审阅页
+- O0-O5、A1-A5、B0-B9 模块/步骤/工具矩阵，以及可恢复的 `workflow-state/v1` 契约
 - `ai-ppt-plus`、`ai-ppt-visual-gen`、`ai-ppt-editable` 三个独立技能入口及机器可读职责路由
 
 ## 三技能入口
@@ -32,6 +33,8 @@
 `references/`、包校验器和测试。`ai-ppt-editable` 内的后段图转 PPTX
 算法是从已验证版本原样封装，不在本次拆分中改写。详细边界见
 [`references/three-skill-architecture.md`](references/three-skill-architecture.md)。
+模块职责、工具链、缓存失效和恢复规则见
+[`references/operations-matrix.md`](references/operations-matrix.md)。
 
 ```text
 ai-ppt-plus/                 # 仓库根目录即 Super 技能（A→B）

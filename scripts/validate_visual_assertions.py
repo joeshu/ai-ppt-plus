@@ -10,6 +10,7 @@ keyword emphasis survived generation.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import re
 import subprocess
@@ -93,16 +94,61 @@ def ink_ratio(path: Path) -> tuple[float, tuple[int, int]]:
         return non_background / max(1, len(pixels)), (width, height)
 
 
-def ocr(path: Path, language: str) -> tuple[str | None, str | None]:
-    command = ["tesseract", str(path), "stdout", "--psm", "6", "-l", language]
+def ocr(path: Path, language: str) -> tuple[str | None, str | None, list[dict]]:
+    command = ["tesseract", str(path), "stdout", "--psm", "6", "-l", language, "tsv"]
     try:
         completed = subprocess.run(command, capture_output=True, text=True, timeout=60, check=False)
-    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
-        return None, f"{type(exc).__name__}: {exc}"
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return None, f"{type(exc).__name__}: {exc}", []
     if completed.returncode != 0:
         message = (completed.stderr or completed.stdout or "tesseract failed").strip()
-        return None, message
-    return completed.stdout or "", None
+        return None, message, []
+    words = []
+    rows = csv.DictReader((completed.stdout or "").splitlines(), delimiter="\t")
+    for row in rows:
+        value = (row.get("text") or "").strip()
+        if not value:
+            continue
+        try:
+            left = int(row.get("left", "0"))
+            top = int(row.get("top", "0"))
+            width = int(row.get("width", "0"))
+            height = int(row.get("height", "0"))
+        except (TypeError, ValueError):
+            continue
+        if width > 0 and height > 0:
+            words.append({"text": value, "left": left, "top": top, "right": left + width, "bottom": top + height})
+    return " ".join(item["text"] for item in words), None, words
+
+
+def text_bbox(words: list[dict], target: str) -> list[int] | None:
+    """Find a contiguous OCR word span for a declared keyword."""
+    wanted = compact(target)
+    if not wanted:
+        return None
+    for start in range(len(words)):
+        assembled = ""
+        for end in range(start, min(len(words), start + 16)):
+            assembled += compact(str(words[end].get("text", "")))
+            if wanted in assembled:
+                span = words[start:end + 1]
+                return [
+                    min(int(item["left"]) for item in span),
+                    min(int(item["top"]) for item in span),
+                    max(int(item["right"]) for item in span),
+                    max(int(item["bottom"]) for item in span),
+                ]
+    return None
+
+
+def intersect_region(first: list[float], second: list[float] | None) -> list[float]:
+    if second is None:
+        return first
+    left = max(first[0], second[0])
+    top = max(first[1], second[1])
+    right = min(first[0] + first[2], second[0] + second[2])
+    bottom = min(first[1] + first[3], second[1] + second[3])
+    return [left, top, max(0.0, right - left), max(0.0, bottom - top)]
 
 
 def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: int | None) -> tuple[dict, list[dict]]:
@@ -147,7 +193,17 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
             if isinstance(tolerance, bool) or not isinstance(tolerance, int) or not 0 <= tolerance <= 255:
                 add_issue(issues, "visual_assertions_tolerance_invalid", slide_no=slide_no, item=index)
             region = item.get("region")
-            if region is not None and (not isinstance(region, list) or len(region) != 4 or any(not isinstance(value, (int, float)) or isinstance(value, bool) for value in region) or region[2] <= 0 or region[3] <= 0):
+            if region is not None and (
+                not isinstance(region, list)
+                or len(region) != 4
+                or any(not isinstance(value, (int, float)) or isinstance(value, bool) for value in region)
+                or region[0] < 0
+                or region[1] < 0
+                or region[2] <= 0
+                or region[3] <= 0
+                or region[0] + region[2] > 1
+                or region[1] + region[3] > 1
+            ):
                 add_issue(issues, "visual_assertions_region_invalid", slide_no=slide_no, item=index)
         minimum_ink = raw.get("min_ink_ratio")
         if minimum_ink is not None and (isinstance(minimum_ink, bool) or not isinstance(minimum_ink, (int, float)) or not 0 <= minimum_ink <= 1):
@@ -175,13 +231,20 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
         slide_result = {"slide_no": slide_no, "image": str(image_path), "text": {}, "keyword_emphasis": []}
         must = [text(value) for value in assertions.get("must_contain_text", []) if text(value)]
         forbidden = [text(value) for value in assertions.get("forbidden_text", []) if text(value)]
-        if must or forbidden:
+        emphasis_items = [item for item in assertions.get("keyword_emphasis", []) if isinstance(item, dict) and text(item.get("text"))]
+        emphasis_texts = [text(item.get("text")) for item in emphasis_items]
+        recognized_compact = ""
+        recognized_words = []
+        ocr_needed = bool(must or forbidden or emphasis_texts)
+        ocr_available = False
+        if ocr_needed:
             language = text(assertions.get("ocr_lang")) or "eng"
-            recognized, error = ocr(image_path, language)
+            recognized, error, recognized_words = ocr(image_path, language)
             slide_result["ocr"] = {"language": language, "available": error is None, "error": error, "text": recognized or ""}
             if error is not None:
                 add_issue(issues, "visual_ocr_unavailable", slide_no=slide_no, language=language, message=error)
             else:
+                ocr_available = True
                 recognized_compact = compact(recognized or "")
                 for value in must:
                     passed = compact(value) in recognized_compact
@@ -215,12 +278,42 @@ def validate_assertions(plan_path: Path, manifest_path: Path, expected_pages: in
                 add_issue(issues, "visual_color_measurement_failed", slide_no=slide_no, item=index, message=f"{type(exc).__name__}: {exc}")
                 continue
             passed = count >= minimum
-            item_result = {"text": text(item.get("text")), "color": text(item.get("color")), "pixel_count": count, "minimum": minimum, "tolerance": tolerance, "region": region, "passed": passed, "dimensions": list(dimensions[:2])}
+            keyword = text(item.get("text"))
+            keyword_box = text_bbox(recognized_words, keyword) if ocr_available else None
+            text_readback = {
+                "requested": bool(keyword),
+                "passed": keyword_box is not None and compact(keyword) in recognized_compact if ocr_available else False,
+                "recognized": recognized_compact[:500] if ocr_available else None,
+                "bbox": keyword_box,
+            }
+            if ocr_available and not text_readback["passed"]:
+                add_issue(issues, "visual_keyword_text_missing", slide_no=slide_no, item=index, text=keyword, recognized=recognized_compact[:500])
+            if ocr_available and keyword and keyword_box is None:
+                add_issue(issues, "visual_keyword_bbox_missing", slide_no=slide_no, item=index, text=keyword)
+            effective_region = region
+            if keyword_box is not None:
+                width, height = dimensions[:2]
+                effective_region = [
+                    keyword_box[0] / max(1, width),
+                    keyword_box[1] / max(1, height),
+                    (keyword_box[2] - keyword_box[0]) / max(1, width),
+                    (keyword_box[3] - keyword_box[1]) / max(1, height),
+                ]
+                if isinstance(region, list) and len(region) == 4 and all(isinstance(value, (int, float)) and not isinstance(value, bool) for value in region):
+                    effective_region = intersect_region(effective_region, [float(value) for value in region])
+                try:
+                    count, dimensions = count_color_pixels(image_path, text(item.get("color")), effective_region, tolerance)
+                    passed = count >= minimum
+                except Exception as exc:
+                    add_issue(issues, "visual_color_measurement_failed", slide_no=slide_no, item=index, message=f"{type(exc).__name__}: {exc}")
+                    count = 0
+                    passed = False
+            item_result = {"text": keyword, "color": text(item.get("color")), "pixel_count": count, "minimum": minimum, "tolerance": tolerance, "region": region, "text_region": effective_region, "passed": passed and (text_readback["passed"] if bool(keyword) else True), "color_passed": passed, "text_readback": text_readback, "dimensions": list(dimensions[:2])}
             slide_result["keyword_emphasis"].append(item_result)
             if not passed:
                 add_issue(issues, "visual_keyword_emphasis_missing", slide_no=slide_no, item=index, text=text(item.get("text")), color=text(item.get("color")), minimum=minimum, observed=count)
         results.append(slide_result)
-    return {"configured": True, "slides": results, "ocr": {"requested": any(bool((slide.get("visual_assertions") or {}).get("must_contain_text") or (slide.get("visual_assertions") or {}).get("forbidden_text")) for slide in slides if isinstance(slide, dict))}}, issues
+    return {"configured": True, "slides": results, "ocr": {"requested": any(bool((slide.get("visual_assertions") or {}).get("must_contain_text") or (slide.get("visual_assertions") or {}).get("forbidden_text") or (slide.get("visual_assertions") or {}).get("keyword_emphasis")) for slide in slides if isinstance(slide, dict))}}, issues
 
 
 def main() -> int:

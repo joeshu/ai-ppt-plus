@@ -102,6 +102,39 @@ def main() -> int:
             "confirmed_at": "2026-08-29T00:00:00Z",
         })
 
+        workflow_files = {
+            "deck-brief": "brief\n",
+            "source-inventory": "sources\n",
+            "outline": "outline\n",
+            "design-system": "design\n",
+        }
+        workflow_artifacts = {}
+        for name, content in workflow_files.items():
+            artifact = project / f"{name}.txt"
+            artifact.write_text(content, encoding="utf-8")
+            workflow_artifacts[name] = {"path": artifact.name, "required": True, "sha256": digest(artifact)}
+        workflow_artifacts["route-decision"] = {"path": route.name, "required": True, "sha256": digest(route)}
+        workflow_state = project / "workflow-state.json"
+        write_json(workflow_state, {
+            "schema": "ai-ppt-plus/workflow-state/v1",
+            "project_id": plan_data["project_id"],
+            "run_id": "workflow-fixture",
+            "revision": "R1",
+            "package_revision": json.loads((ROOT / "assets/skill-package.json").read_text(encoding="utf-8"))["package_revision"],
+            "phase": "design-system-ready",
+            "route": "visual-creation",
+            "page_count": 1,
+            "canvas_ratio": "16:9",
+            "formal_text_authority": {"kind": "approved_outline", "path": "outline.txt", "approved": True},
+            "visual_authority": {"kind": "generated_visual_intermediate", "path": generation_manifest.name, "approved": False},
+            "artifacts": workflow_artifacts,
+            "approvals": {"outline": True, "design_system": True, "visual": False, "human_closeout": False},
+            "completed_stages": ["O0", "O1", "O2"],
+            "open_blockers": [],
+            "next_action": "run A1-A5",
+            "updated_at": "2026-08-30T00:00:00Z",
+        })
+
         layout = project / "layout.json"
         write_json(layout, {
             "project_id": plan_data["project_id"],
@@ -140,13 +173,14 @@ def main() -> int:
             "--visual-plan", str(plan), "--visual-manifest", str(generation_manifest),
             "--editable-layout", str(layout), "--output-deck", str(deck),
             "--expected-pages", "1", "--route-decision", str(route),
+            "--workflow-state", str(workflow_state), "--require-workflow-state",
             "--execution-mode", "linear", "--no-cache",
         )
         assert completed.returncode == 0, completed.stdout + completed.stderr
         result = json.loads(completed.stdout.strip().splitlines()[-1])
         assert result["valid"] is True, result
         assert [item["name"] for item in result["steps"]] == [
-            "bundle", "environment", "environment-contract", "route", "A-visual", "B-editable-compose",
+            "bundle", "environment", "environment-contract", "route", "workflow-state", "A-visual", "B-editable-compose",
             "B-editable-inspect", "handoff-build", "B-editable-qa",
             "handoff-finalize", "handoff-validate",
         ], result["steps"]
