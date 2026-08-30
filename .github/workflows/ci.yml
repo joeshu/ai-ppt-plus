@@ -15,9 +15,9 @@ jobs:
       - name: Install deterministic rendering dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libreoffice poppler-utils inkscape
+          sudo apt-get install -y libreoffice poppler-utils inkscape tesseract-ocr tesseract-ocr-chi-sim
           python -m pip install --upgrade pip
-          python -m pip install numpy pillow python-pptx pyyaml openpyxl cairosvg fonttools
+          python -m pip install -r requirements-ci.txt
       - name: Verify SVG rendering dependency
         run: inkscape --version
       - name: Compile Python sources
@@ -32,12 +32,17 @@ jobs:
           python ai-ppt-visual-gen/scripts/validate_skill_package.py --skill-dir ai-ppt-visual-gen
           python ai-ppt-editable/scripts/validate_skill_package.py --skill-dir ai-ppt-editable
           python ai-ppt-editable/scripts/validate_routing_contract.py
+      - name: Verify environment contract and runtime mirrors
+        run: |
+          python scripts/probe_environment.py --output environment-report.json
+          python scripts/validate_environment_contract.py --report environment-report.json --output environment-validation.json
+          python scripts/validate_runtime_mirror.py --report runtime-mirror-report.json
       - name: Run standalone worker smoke tests
         run: |
-          python ai-ppt-visual-gen/scripts/run_tests.py --report visual-skill-test-report.json
-          python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
+          python ai-ppt-visual-gen/scripts/run_tests.py --parallel-workers 4 --report visual-skill-test-report.json
+          python ai-ppt-editable/scripts/run_tests.py --parallel-workers 4 --report editable-skill-test-report.json
       - name: Run schema, DAG, package and golden regressions
-        run: python scripts/run_tests.py --report test-report.json
+        run: python scripts/run_tests.py --parallel-workers 4 --report test-report.json
       - name: Run strict P2 guard smoke tests
         run: python tests/test_p2_guards.py
       - name: Check whitespace
@@ -51,3 +56,6 @@ jobs:
             test-report.json
             visual-skill-test-report.json
             editable-skill-test-report.json
+            environment-report.json
+            environment-validation.json
+            runtime-mirror-report.json

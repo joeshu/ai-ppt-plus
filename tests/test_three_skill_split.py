@@ -79,6 +79,7 @@ def main() -> int:
         "build_visual_generation_strip.py",
         "materialize_visual_generation_prompts.py",
         "run_tests.py",
+        "validate_visual_assertions.py",
         "validate_visual_generation_plan.py",
     ):
         assert digest(ROOT / "scripts" / name) == digest(visual_scripts / name), name

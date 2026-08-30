@@ -277,6 +277,33 @@ def keyword_emphasis(slide: dict) -> str:
     ])
 
 
+def visual_assertions(slide: dict) -> str:
+    """Render post-generation readback checks without adding page copy."""
+    assertions = slide.get("visual_assertions") if isinstance(slide.get("visual_assertions"), dict) else {}
+    must = [visible_scalar(item) for item in assertions.get("must_contain_text", []) if visible_scalar(item)] if isinstance(assertions.get("must_contain_text", []), list) else []
+    forbidden = [visible_scalar(item) for item in assertions.get("forbidden_text", []) if visible_scalar(item)] if isinstance(assertions.get("forbidden_text", []), list) else []
+    lines = ["这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。"]
+    if must:
+        lines.append("OCR 必须识别到：" + "、".join(quote_copy(item) for item in must))
+    if forbidden:
+        lines.append("OCR 不得识别到：" + "、".join(quote_copy(item) for item in forbidden))
+    minimum_ink = assertions.get("min_ink_ratio")
+    if minimum_ink is not None:
+        lines.append(f"整页非背景墨迹比例至少为：{minimum_ink}。")
+    emphasis = assertions.get("keyword_emphasis", []) if isinstance(assertions.get("keyword_emphasis", []), list) else []
+    for item in emphasis:
+        if not isinstance(item, dict):
+            continue
+        token = visible_scalar(item.get("text"))
+        color = visible_scalar(item.get("color"))
+        minimum = visible_scalar(item.get("min_pixels")) or "8"
+        if token and color:
+            lines.append(f"重点词 {quote_copy(token)} 必须保留接近 {color} 的颜色，目标区域至少有 {minimum} 个对应颜色像素；不可把重点词与整句统一成单色。")
+    if len(lines) == 1:
+        lines.append("本页未配置额外像素/OCR断言；仍须完成整页文字、层级和重点色人工复核。")
+    return "\n".join(lines)
+
+
 def diagram_annotations(slide: dict) -> str:
     """Render explicitly approved non-formal labels for diagram relationships."""
     annotations = slide.get("diagram_annotations") if isinstance(slide.get("diagram_annotations"), list) else []
@@ -384,6 +411,9 @@ def build_prompt(plan: dict, slide: dict) -> str:
 
 【重点词着色语义（必须保留）】
 {keyword_emphasis(slide)}
+
+【生成后视觉断言（必须回读）】
+{visual_assertions(slide)}
 
 【视觉生成描述】
 {visual_prompt}
@@ -587,6 +617,31 @@ def validate_input(plan: object) -> list[dict]:
         for value in all_visible_text(slide):
             if PLACEHOLDER_RE.search(value):
                 issue("content_text_placeholder", slide_no=slide_no, text=value)
+        assertions = slide.get("visual_assertions")
+        if assertions is not None:
+            if not isinstance(assertions, dict):
+                issue("visual_assertions_not_object", slide_no=slide_no)
+            else:
+                approved_text = all_visible_text(slide)
+                for field in ("must_contain_text", "forbidden_text"):
+                    values = assertions.get(field, [])
+                    if not isinstance(values, list) or any(not visible_scalar(item) for item in values):
+                        issue("visual_assertions_text_list_invalid", slide_no=slide_no, field=field)
+                    if field == "must_contain_text":
+                        for value in values if isinstance(values, list) else []:
+                            token = visible_scalar(value)
+                            if token and not any(token in copy for copy in approved_text):
+                                issue("visual_assertion_text_not_approved", slide_no=slide_no, text=token)
+                minimum_ink = assertions.get("min_ink_ratio")
+                if minimum_ink is not None and (isinstance(minimum_ink, bool) or not isinstance(minimum_ink, (int, float)) or not 0 <= minimum_ink <= 1):
+                    issue("visual_assertions_ink_ratio_invalid", slide_no=slide_no)
+                emphasis = assertions.get("keyword_emphasis", [])
+                if not isinstance(emphasis, list):
+                    issue("visual_assertions_emphasis_list_invalid", slide_no=slide_no)
+                else:
+                    for item_index, item in enumerate(emphasis, start=1):
+                        if not isinstance(item, dict) or not visible_scalar(item.get("text")) or not HEX_RE.fullmatch(visible_scalar(item.get("color"))):
+                            issue("visual_assertions_emphasis_invalid", slide_no=slide_no, item=item_index)
     return issues
 
 

@@ -76,7 +76,7 @@ def main() -> int:
             "invocation": "sibling-skill",
             "skill_entrypoint": "ai-ppt-editable/SKILL.md",
             "runtime_entrypoint": "ai-ppt-editable/scripts/compose_pptx.py",
-            "required_for": ["reference-reconstruction", "editable-pptx"],
+            "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"],
         },
         "visual_generation": {
             "skill": "ai-ppt-visual-gen",

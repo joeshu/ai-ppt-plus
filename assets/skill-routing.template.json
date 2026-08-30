@@ -21,7 +21,7 @@
       "forbids": ["narrative-redesign", "release-eligibility", "human-signoff"]
     }
   ],
-  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1", "ai-ppt-plus/chart-reconstruction/v1", "ai-ppt-plus/visual-generation-plan/v1", "ai-ppt-plus/visual-generation-tool/v1"],
+  "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1", "ai-ppt-plus/chart-reconstruction/v1", "ai-ppt-plus/visual-generation-plan/v1", "ai-ppt-plus/visual-generation-tool/v1", "ai-ppt-plus/route-decision/v2", "ai-ppt-plus/handoff/v2"],
   "bindings": {
     "orchestrator": {
       "skill": "ai-ppt-plus",
@@ -32,7 +32,7 @@
       "invocation": "sibling-skill",
       "skill_entrypoint": "ai-ppt-editable/SKILL.md",
       "runtime_entrypoint": "ai-ppt-editable/scripts/compose_pptx.py",
-      "required_for": ["reference-reconstruction", "editable-pptx"]
+      "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"]
     },
     "visual_generation": {
       "skill": "ai-ppt-visual-gen",

@@ -82,6 +82,15 @@
           {"text": "approved keyword", "color": "#E85B47", "scope": "bottom conclusion", "treatment": "inline emphasis"}
         ]
       },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "must_contain_text": ["verbatim slide title"],
+        "forbidden_text": ["placeholder"],
+        "min_ink_ratio": 0.01,
+        "keyword_emphasis": [
+          {"text": "approved keyword", "color": "#E85B47", "min_pixels": 16, "tolerance": 24, "region": [0, 0, 1, 1]}
+        ]
+      },
       "diagram_annotations": [
         {"text": "approved phase", "purpose": "name a relationship inside the visual framework", "scope": "inner loop", "approved_by": "approved visual brief"}
       ],

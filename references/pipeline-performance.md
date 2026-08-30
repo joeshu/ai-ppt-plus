@@ -105,3 +105,26 @@ Each step records `deps`, `duration_ms`, `cache_key` and `cache_hit`. The
 pipeline result records total task count, cache hits, worker count and selected
 scope. Sum of step durations is diagnostic; wall-clock improvement also depends
 on the number of independent nodes and external renderer contention.
+
+## Regression and runtime gates
+
+The repository test runner executes independent executable tests concurrently
+while preserving sorted report order:
+
+```bash
+python3 scripts/run_tests.py --parallel-workers 4 --report test-report.json
+```
+
+The worker packages use the same runner. A bounded subprocess timeout and each
+test's duration are retained in the report, so a slow renderer is visible
+instead of looking like a hung pipeline. Before a full run, validate the
+checked-in capability contract and shared-runtime hashes:
+
+```bash
+python3 scripts/probe_environment.py --output environment-report.json
+python3 scripts/validate_environment_contract.py --report environment-report.json
+python3 scripts/validate_runtime_mirror.py
+```
+
+These checks are cheap and should remain ahead of model generation or PPTX
+rendering in CI.

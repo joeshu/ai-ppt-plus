@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.08.29.19",
+  "package_revision": "2026.08.29.21",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -34,6 +34,8 @@
     "scripts/render_pptx.py",
     "scripts/inspect_pptx.py",
     "scripts/validate_backend_binding.py",
+    "scripts/validate_visual_generation_plan.py",
+    "scripts/validate_handoff.py",
     "references/reconstruction-contract.md",
     "references/editability-levels.md",
     "references/icon-asset-protocol.md"

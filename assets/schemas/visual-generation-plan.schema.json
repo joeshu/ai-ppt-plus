@@ -70,6 +70,29 @@
               }
             }
           },
+          "visual_assertions": {
+            "type": "object",
+            "properties": {
+              "ocr_lang": {"type": "string", "minLength": 1},
+              "must_contain_text": {"type": "array", "items": {"type": "string", "minLength": 1}},
+              "forbidden_text": {"type": "array", "items": {"type": "string", "minLength": 1}},
+              "min_ink_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+              "keyword_emphasis": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["text", "color"],
+                  "properties": {
+                    "text": {"type": "string", "minLength": 1},
+                    "color": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+                    "min_pixels": {"type": "integer", "minimum": 1},
+                    "tolerance": {"type": "integer", "minimum": 0, "maximum": 255},
+                    "region": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}}
+                  }
+                }
+              }
+            }
+          },
           "diagram_annotations": {
             "type": "array",
             "items": {

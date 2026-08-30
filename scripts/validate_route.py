@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Validate the mutually exclusive visual-creation/reference-reconstruction route."""
+"""Validate the mutually exclusive visual-authority route decision.
+
+Route-decision/v1 remains readable for existing projects. Route-decision/v2
+adds the explicit ``native-authoring`` route used when the approved design
+system and structured content are already available.
+"""
 
 import argparse
 import hashlib
@@ -10,7 +15,8 @@ from pathlib import Path
 from atomic_output import atomic_write_json
 
 
-ROUTES = {"visual-creation", "reference-reconstruction"}
+ROUTES = {"visual-creation", "reference-reconstruction", "native-authoring"}
+ROUTE_SCHEMAS = {"ai-ppt-plus/route-decision/v1", "ai-ppt-plus/route-decision/v2"}
 STATUSES = {"decided", "needs_user", "blocked"}
 AUTHORITIES = {"approved_outline", "user_transcription", "transcription_pending_confirmation"}
 VISUAL_GENERATION_MODES = {"image-slide", "layout-reference"}
@@ -48,26 +54,35 @@ def main() -> int:
     if not isinstance(data, dict):
         issues.append({"severity": "blocker", "code": "route_not_object"})
         data = {}
-    if data.get("schema") != "ai-ppt-plus/route-decision/v1":
+    schema = data.get("schema")
+    if schema not in ROUTE_SCHEMAS:
         issues.append({"severity": "blocker", "code": "route_schema_invalid", "value": data.get("schema")})
     route = data.get("route")
     status = data.get("status")
     authority = data.get("visual_authority")
     formal_authority = data.get("formal_content_authority")
-    visual_generation_mode = data.get("visual_generation_mode", "layout-reference")
+    visual_generation_mode = data.get("visual_generation_mode")
     if route not in ROUTES:
         issues.append({"severity": "blocker", "code": "route_invalid", "value": route})
     if status not in STATUSES:
         issues.append({"severity": "blocker", "code": "route_status_invalid", "value": status})
     if formal_authority not in AUTHORITIES:
         issues.append({"severity": "blocker", "code": "formal_content_authority_invalid", "value": formal_authority})
-    expected_authority = {"visual-creation": "generated_visual_intermediate", "reference-reconstruction": "approved_reference_image"}.get(route)
+    expected_authority = {
+        "visual-creation": "generated_visual_intermediate",
+        "reference-reconstruction": "approved_reference_image",
+        "native-authoring": "approved_design_system",
+    }.get(route)
     if expected_authority and authority != expected_authority:
         issues.append({"severity": "blocker", "code": "visual_authority_route_conflict", "expected": expected_authority, "observed": authority})
-    if visual_generation_mode not in VISUAL_GENERATION_MODES:
+    if route == "visual-creation" and visual_generation_mode is None:
+        visual_generation_mode = "layout-reference"
+    if route == "visual-creation" and visual_generation_mode not in VISUAL_GENERATION_MODES:
         issues.append({"severity": "blocker", "code": "visual_generation_mode_invalid", "observed": visual_generation_mode})
-    if route == "reference-reconstruction" and "visual_generation_mode" in data:
+    if route in {"reference-reconstruction", "native-authoring"} and "visual_generation_mode" in data:
         issues.append({"severity": "blocker", "code": "reference_route_visual_generation_mode_conflict", "observed": visual_generation_mode})
+    if route == "native-authoring" and schema != "ai-ppt-plus/route-decision/v2":
+        issues.append({"severity": "blocker", "code": "native_route_requires_v2", "observed": schema})
     expected_generation = route == "visual-creation"
     if not isinstance(data.get("requires_image_generation"), bool) or data.get("requires_image_generation") is not expected_generation:
         issues.append({"severity": "blocker", "code": "image_generation_requirement_conflict", "expected": expected_generation, "observed": data.get("requires_image_generation")})
@@ -134,6 +149,21 @@ def main() -> int:
                 evidence["visual_generation_manifest"] = str(generation_manifest_path)
                 if args.require_files and not generation_manifest_path.is_file():
                     issues.append({"severity": "blocker", "code": "visual_generation_manifest_missing_file", "path": str(generation_manifest_path)})
+    if route == "native-authoring" and status == "decided":
+        if data.get("reference_roster") not in (None, []):
+            issues.append({"severity": "blocker", "code": "native_route_reference_roster_conflict"})
+        forbidden_fields = ("visual_generation_plan", "visual_generation_manifest", "visual_intermediate_manifest")
+        for field in forbidden_fields:
+            if data.get(field) not in (None, "", []):
+                issues.append({"severity": "blocker", "code": "native_route_visual_artifact_conflict", "field": field})
+        native_manifest = data.get("native_content_manifest")
+        if not isinstance(native_manifest, str) or not native_manifest.strip():
+            issues.append({"severity": "blocker", "code": "native_content_manifest_missing"})
+        else:
+            native_manifest_path = (base / native_manifest).resolve()
+            evidence["native_content_manifest"] = str(native_manifest_path)
+            if args.require_files and not native_manifest_path.is_file():
+                issues.append({"severity": "blocker", "code": "native_content_manifest_missing_file", "path": str(native_manifest_path)})
     if route == "reference-reconstruction" and status == "decided":
         roster = data.get("reference_roster")
         if not isinstance(roster, list) or not roster:
@@ -229,7 +259,7 @@ def main() -> int:
                 if external_hash not in accepted_hashes:
                     issues.append({"severity": "blocker", "code": "external_reference_hash_mismatch", "slide_no": external_slide, "roster_path": str(roster_path), "external_path": str(external_path), "accepted_hashes": sorted(accepted_hashes)})
     valid = not any(issue.get("severity") == "blocker" for issue in issues)
-    result = {"schema": "ai-ppt-plus/route-validation/v1", "valid": valid, "ready_for_delivery": valid and formal_content_ready and status == "decided", "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "visual_generation_mode": visual_generation_mode, "formal_content_ready": formal_content_ready, "requires_image_generation": data.get("requires_image_generation"), "issues": issues, "evidence": evidence}
+    result = {"schema": "ai-ppt-plus/route-validation/v2" if schema == "ai-ppt-plus/route-decision/v2" else "ai-ppt-plus/route-validation/v1", "valid": valid, "ready_for_delivery": valid and formal_content_ready and status == "decided", "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "visual_generation_mode": visual_generation_mode, "formal_content_ready": formal_content_ready, "requires_image_generation": data.get("requires_image_generation"), "issues": issues, "evidence": evidence}
     if args.report:
         atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
