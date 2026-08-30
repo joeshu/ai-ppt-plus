@@ -65,11 +65,7 @@ def _gate_requirements(layout: dict, slides: list[dict], args) -> dict[str, bool
         return False
 
     has_text = any(obj.get("object_type") == "editable_text" for obj in objects)
-    # A visual intermediate is an authority for composition, not a fixed
-    # reference image. Treating --visual-source as reference-driven enabled
-    # typography-calibration/source-image/reference-audit gates for ordinary
-    # visual-creation decks and made the manifest overstate their evidence.
-    reference_driven = bool(args.reference)
+    reference_driven = bool(args.reference or args.visual_source)
     return {
         "object_manifest": True,
         "semantic_object_audit": True,

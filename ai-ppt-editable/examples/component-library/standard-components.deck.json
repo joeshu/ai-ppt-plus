@@ -1,0 +1,20 @@
+{
+  "project_id": "standard-components-example",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "units": "fraction",
+  "assets_dir": ".",
+  "component_library": "assets/component-library.template.json",
+  "layout_library": "assets/layout-library.template.json",
+  "theme": {"layout_id": "blank-canvas", "font": "Noto Sans SC", "text_color": "#222222"},
+  "slides": [
+    {
+      "layout_id": "blank-canvas",
+      "components": [
+        {"component_id": "section-title", "object_id": "example-title", "object": {"text": "标准组件示例"}},
+        {"component_id": "data-table", "object_id": "example-table", "object": {"rows": [["指标", "本月"], ["发展量", "128"]], "data_source": "example-data"}},
+        {"component_id": "trend-chart", "object_id": "example-chart", "object": {"categories": ["一季度", "二季度", "三季度"], "series": [{"name": "完成量", "values": [80, 105, 128]}], "data_source": "example-data", "title": "季度趋势"}}
+      ]
+    }
+  ]
+}

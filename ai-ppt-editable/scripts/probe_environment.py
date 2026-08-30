@@ -44,10 +44,7 @@ def main():
       'libreoffice_renderer': command('soffice'),
       'poppler_renderer': command('pdftoppm'),
       'pdf_text_extractor': command('pdftotext'),
-      'svg_rasterizer': command('inkscape'),
-      'ocr_engine': command('tesseract'),
       'pandoc_converter': command('pandoc'),
-      'numpy': module('numpy'), 'pyyaml': module('yaml'), 'fonttools': module('fontTools'),
       'pymupdf': module('fitz'), 'docx_reader': module('docx'), 'xlsx_reader': module('openpyxl'), 'image_reader': module('PIL'), 'ppt_master':ppt_master()}
     # Keep the selected backend truthful: the repository's deterministic
     # authoring backend imports python-pptx. The artifact-tool runtime is a

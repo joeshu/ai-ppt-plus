@@ -1,0 +1,1181 @@
+{
+  "schema": "ai-ppt-editable/upstream-perfect-sync/v1",
+  "source": {
+    "repository": "joeshu/ai-ppt-plus",
+    "ref": "完美第一版",
+    "commit": "d5dec0588fe87581112cbe1498ad4dac44f402e4",
+    "path_scope": "repository package areas copied under ai-ppt-editable/"
+  },
+  "mapping": {
+    "mode": "byte-identical",
+    "source_root": ".",
+    "target_root": "ai-ppt-editable"
+  },
+  "synced_files": [
+    {
+      "source_path": "assets/chart-reconstruction.template.json",
+      "target_path": "assets/chart-reconstruction.template.json",
+      "sha256": "b27cf931d5eaa39245de35752e55a835063b6fec76b20200e5f432a420a0e3dd",
+      "executable": false
+    },
+    {
+      "source_path": "assets/component-library.template.json",
+      "target_path": "assets/component-library.template.json",
+      "sha256": "d52a94e9fddc08e44098d42bede8519b525ff066be3999ed9f6008db831c7071",
+      "executable": false
+    },
+    {
+      "source_path": "assets/deck-brief.template.md",
+      "target_path": "assets/deck-brief.template.md",
+      "sha256": "d22cde045057152ce1a63aac0edf84b329d4c3be69d0084e842e773cd801475b",
+      "executable": false
+    },
+    {
+      "source_path": "assets/delivery-report.template.md",
+      "target_path": "assets/delivery-report.template.md",
+      "sha256": "cad5035405c374b4a98a79bf61790e1171d3802bdf0cbd4fc993100feeaf4674",
+      "executable": false
+    },
+    {
+      "source_path": "assets/design-system.template.yaml",
+      "target_path": "assets/design-system.template.yaml",
+      "sha256": "ef07fc9562b6ddb0ce0c1100b8ec47d40b9b4c5518e9d50131df86439f25d9db",
+      "executable": false
+    },
+    {
+      "source_path": "assets/fonts/NotoSansSC-Regular.ttf",
+      "target_path": "assets/fonts/NotoSansSC-Regular.ttf",
+      "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+      "executable": false
+    },
+    {
+      "source_path": "assets/fonts/README.md",
+      "target_path": "assets/fonts/README.md",
+      "sha256": "896bdcee08da56c00a529c3232a83d998905f05395d3249bb809107d3b0ca154",
+      "executable": false
+    },
+    {
+      "source_path": "assets/fonts/font-manifest.json",
+      "target_path": "assets/fonts/font-manifest.json",
+      "sha256": "30eb639f881340228a093895ab321fa7fec0e18c0ed3cd94237d7758ec4b0294",
+      "executable": false
+    },
+    {
+      "source_path": "assets/gradient-visual-manifest.template.json",
+      "target_path": "assets/gradient-visual-manifest.template.json",
+      "sha256": "25af44db7da3c7af8461469c0b2609e6adcc7443a5c76d601e3b084bead0eaef",
+      "executable": false
+    },
+    {
+      "source_path": "assets/icon-asset-manifest.template.json",
+      "target_path": "assets/icon-asset-manifest.template.json",
+      "sha256": "2b09adf9aa6818098a9e9b9218e81076bc27a278078fdccf4a781be6a6a5af29",
+      "executable": false
+    },
+    {
+      "source_path": "assets/icon.svg",
+      "target_path": "assets/icon.svg",
+      "sha256": "49315dda7125ec5fc77ef5f2b96126d8b2121c6e72944b4702972e90f321d3ee",
+      "executable": false
+    },
+    {
+      "source_path": "assets/imagegen-assets-manifest.template.json",
+      "target_path": "assets/imagegen-assets-manifest.template.json",
+      "sha256": "6585af0ae3e29ba842edea8f0872222ea4e52c798694746abc70014f9b46768e",
+      "executable": false
+    },
+    {
+      "source_path": "assets/layout-library.template.json",
+      "target_path": "assets/layout-library.template.json",
+      "sha256": "b571c4c881169925143b045b344dc6c525d8137d1f863f68d9c626d70548205d",
+      "executable": false
+    },
+    {
+      "source_path": "assets/manifest-registry.template.json",
+      "target_path": "assets/manifest-registry.template.json",
+      "sha256": "8858cfabaeeeb88a0e21bac4263e454f5826a6fd18894bfcbfa1d4ddb9904614",
+      "executable": false
+    },
+    {
+      "source_path": "assets/outline-template.xlsx",
+      "target_path": "assets/outline-template.xlsx",
+      "sha256": "6a5ead31d1ff807579a8158f216975ccde03e50b09096ed6bd2ccf65e7b78f41",
+      "executable": false
+    },
+    {
+      "source_path": "assets/report-index.template.json",
+      "target_path": "assets/report-index.template.json",
+      "sha256": "ca74def28acf2b0b8adb5e5dfadec45fcd8aaade135c9326d95633c51e69766e",
+      "executable": false
+    },
+    {
+      "source_path": "assets/route-decision-visual-creation.template.json",
+      "target_path": "assets/route-decision-visual-creation.template.json",
+      "sha256": "58e3623613dbea0d5cb0a41572492b8bdc5bf78f9d5ef1b46f3ee1e618df5b52",
+      "executable": false
+    },
+    {
+      "source_path": "assets/route-decision.template.json",
+      "target_path": "assets/route-decision.template.json",
+      "sha256": "1af0004a4a9b0b5b9c9433153fc822a51851ccf9c9c4f504d7fcba3fc6f62d69",
+      "executable": false
+    },
+    {
+      "source_path": "assets/schemas/content-inventory.schema.json",
+      "target_path": "assets/schemas/content-inventory.schema.json",
+      "sha256": "362d2c9ea1e912d2feb9f6923a24ebc3e083726df61173610945ea433c0cb6f5",
+      "executable": false
+    },
+    {
+      "source_path": "assets/schemas/manifest-registry.schema.json",
+      "target_path": "assets/schemas/manifest-registry.schema.json",
+      "sha256": "196d8c79773c53da7d091bdb0d5157c5ef3908d9da4dfda9e1446323a812b0a3",
+      "executable": false
+    },
+    {
+      "source_path": "assets/schemas/pipeline-run.schema.json",
+      "target_path": "assets/schemas/pipeline-run.schema.json",
+      "sha256": "74a46a02188b0f7581e11ffcc93f64325b3d5d62eb8a48877a9d215ddb5915f8",
+      "executable": false
+    },
+    {
+      "source_path": "assets/schemas/report-bundle-validation.schema.json",
+      "target_path": "assets/schemas/report-bundle-validation.schema.json",
+      "sha256": "c74499a88a029c221264fc37a03362e6ce518dfda1dd6db9ce95c9634ea2fbe9",
+      "executable": false
+    },
+    {
+      "source_path": "assets/schemas/report-envelope.schema.json",
+      "target_path": "assets/schemas/report-envelope.schema.json",
+      "sha256": "fdfd866fd1f477c2ac2bb04bf63ac2bd88bd5c2710e49f82c9c2f321853fdee1",
+      "executable": false
+    },
+    {
+      "source_path": "assets/schemas/report-index.schema.json",
+      "target_path": "assets/schemas/report-index.schema.json",
+      "sha256": "25cdbae8bcd2b4b060c975bea6dfd9fe43fe6a0802d7d8e98127a8ed6422ac31",
+      "executable": false
+    },
+    {
+      "source_path": "assets/slide-manifest.template.json",
+      "target_path": "assets/slide-manifest.template.json",
+      "sha256": "614532b5f9b6a748ca2e53fd0834addd0844cc556daa4f6aaff9da7b979c3a9a",
+      "executable": false
+    },
+    {
+      "source_path": "assets/slide-object-manifest.template.json",
+      "target_path": "assets/slide-object-manifest.template.json",
+      "sha256": "49b2719d0b5851341814c1825ad7f1dd128093fd09582fe89502bf0598a61a87",
+      "executable": false
+    },
+    {
+      "source_path": "assets/text-layout-manifest.template.json",
+      "target_path": "assets/text-layout-manifest.template.json",
+      "sha256": "3aa9d0937cfcdd160c5189fc67b8cf67d09d24dfe1a502ebb192add8e2ad280a",
+      "executable": false
+    },
+    {
+      "source_path": "assets/typography-calibration.template.json",
+      "target_path": "assets/typography-calibration.template.json",
+      "sha256": "95b60ffac875e310c8bf957622f6ba40d128c3dabe1c7adc08c50256d3cc7d1d",
+      "executable": false
+    },
+    {
+      "source_path": "assets/visual-content-inventory.template.json",
+      "target_path": "assets/visual-content-inventory.template.json",
+      "sha256": "42f172c6299c8efd654d64e66e6fe3590027e541c6657a241dc7a9a256fe4a7d",
+      "executable": false
+    },
+    {
+      "source_path": "evals/failure-cases.yaml",
+      "target_path": "evals/failure-cases.yaml",
+      "sha256": "fbf53c80adf143e278f7f35fc229c39a1b5481aef15a29424e41e7e6b6b977de",
+      "executable": false
+    },
+    {
+      "source_path": "evals/regression-r13.md",
+      "target_path": "evals/regression-r13.md",
+      "sha256": "87fc4db8376ff09009f2fc2a79c8ab8a733da68d95051993a9cb4d38e14e9fbf",
+      "executable": false
+    },
+    {
+      "source_path": "evals/rubric.md",
+      "target_path": "evals/rubric.md",
+      "sha256": "89a356da731683188fbd6026d6cb36eb4cd9bb24b0b2ff3282129aa949cbe53b",
+      "executable": false
+    },
+    {
+      "source_path": "evals/trigger-cases.yaml",
+      "target_path": "evals/trigger-cases.yaml",
+      "sha256": "954b3f477b8a750382b824e27c24fe05d4c1ee56ef7a532a54f3ed7f544e4a27",
+      "executable": false
+    },
+    {
+      "source_path": "evals/workflow-cases.yaml",
+      "target_path": "evals/workflow-cases.yaml",
+      "sha256": "969ebd8c5b943239b053867da389f4ef5a9e4fe233794f4b6af3d2d65808fb28",
+      "executable": false
+    },
+    {
+      "source_path": "examples/component-library/standard-components.deck.json",
+      "target_path": "examples/component-library/standard-components.deck.json",
+      "sha256": "9ba1ea170a053e85387a5075244f59d2adab11c035ffa5c766a0b91f0c689f8c",
+      "executable": false
+    },
+    {
+      "source_path": "references/artifact-ownership.md",
+      "target_path": "references/artifact-ownership.md",
+      "sha256": "7b629d1f885ed675046ee2a48e77b8ed07696df3f3e8349c1b9a74d2f72592c3",
+      "executable": false
+    },
+    {
+      "source_path": "references/authoring-backend.md",
+      "target_path": "references/authoring-backend.md",
+      "sha256": "da2bf00347a2c2659b431ac90681e1afde2a3397ad45253a844df9914bbf7977",
+      "executable": false
+    },
+    {
+      "source_path": "references/chart-reconstruction.md",
+      "target_path": "references/chart-reconstruction.md",
+      "sha256": "29ccff3cda7e6573c7e706d658cf17ae34e40cb7f7e839eadd4f352752fa824d",
+      "executable": false
+    },
+    {
+      "source_path": "references/component-examples.md",
+      "target_path": "references/component-examples.md",
+      "sha256": "d08eaebdb7cd8ec453cf398f71e282879765ea4e4bd0bb56655fc9ff045627fb",
+      "executable": false
+    },
+    {
+      "source_path": "references/component-library.md",
+      "target_path": "references/component-library.md",
+      "sha256": "e52ac312bb8b58779976a94abd00ce8ec5b95333ea155bf84b37e690f4605911",
+      "executable": false
+    },
+    {
+      "source_path": "references/content-inventory.md",
+      "target_path": "references/content-inventory.md",
+      "sha256": "7bc4f1f23db6c97a0f742dd48b95ba5d05a2a02b7735988a297b71e91ceece93",
+      "executable": false
+    },
+    {
+      "source_path": "references/context-handoff.md",
+      "target_path": "references/context-handoff.md",
+      "sha256": "336692cb24ecbadd94ec5dd5b70fec90ff5d648d4cd5688d86ecec8cf07f12b9",
+      "executable": false
+    },
+    {
+      "source_path": "references/design-system.md",
+      "target_path": "references/design-system.md",
+      "sha256": "e0d5b87e19056a32b81517f7f598a0ba1b12abf5b7149e1aee533494decf9ad7",
+      "executable": false
+    },
+    {
+      "source_path": "references/editability-levels.md",
+      "target_path": "references/editability-levels.md",
+      "sha256": "cae04eab74249cf91ec11858a187ad74eac7cea36fb994c778de3264f32ad27c",
+      "executable": false
+    },
+    {
+      "source_path": "references/failure-recovery.md",
+      "target_path": "references/failure-recovery.md",
+      "sha256": "3f4fe45d2b512b61516f2a3c7d3a4a73a54af9a013c1bc1a22ab2c0a46d88d8c",
+      "executable": false
+    },
+    {
+      "source_path": "references/font-embedding.md",
+      "target_path": "references/font-embedding.md",
+      "sha256": "98ac30fe37831bdf4d4228b7b8caca491d7f561b97565b14a8b03155aef834bc",
+      "executable": false
+    },
+    {
+      "source_path": "references/font-portability.md",
+      "target_path": "references/font-portability.md",
+      "sha256": "8bf8fc91a48518a990b230d3de2da1b8056cb220966e37c76904749969e317b0",
+      "executable": false
+    },
+    {
+      "source_path": "references/gradient-visual.md",
+      "target_path": "references/gradient-visual.md",
+      "sha256": "5b05fd57694583b8ea027964e52697729f36f5679e8205b0d5bea0811dd2c26b",
+      "executable": false
+    },
+    {
+      "source_path": "references/icon-asset-protocol.md",
+      "target_path": "references/icon-asset-protocol.md",
+      "sha256": "9f90a3eaba11c94141b7c0b5c4c4ecab8c3a61b90dffa0d4e061987812809d9d",
+      "executable": false
+    },
+    {
+      "source_path": "references/layout-library.md",
+      "target_path": "references/layout-library.md",
+      "sha256": "2d2857f8802625ed76bafcdc857ec2b2ebb2ca036332bf63f8c4d6964d7bcaaa",
+      "executable": false
+    },
+    {
+      "source_path": "references/manifest-registry.md",
+      "target_path": "references/manifest-registry.md",
+      "sha256": "41cd4974055306548c296458b8e760a9f5119e8ef7e56fe84fda502fd4c027da",
+      "executable": false
+    },
+    {
+      "source_path": "references/narrative-strategy.md",
+      "target_path": "references/narrative-strategy.md",
+      "sha256": "2d259d00f5a4a953dca4826590f9f9e84cbaab755b00245b0ecd7efd689557d7",
+      "executable": false
+    },
+    {
+      "source_path": "references/native-object-protocol.md",
+      "target_path": "references/native-object-protocol.md",
+      "sha256": "b819f6b447057e2ae7ec51272b0fe3e97d69a5c4c50d66e07269b399a282f243",
+      "executable": false
+    },
+    {
+      "source_path": "references/object-manifest.md",
+      "target_path": "references/object-manifest.md",
+      "sha256": "1caeaecaba06651959fb9ddcda13497869405fc35cd8b43fb42c2f9e8b984dd1",
+      "executable": false
+    },
+    {
+      "source_path": "references/outline-table-contract.md",
+      "target_path": "references/outline-table-contract.md",
+      "sha256": "8a9d212fda7e596e88248cbe866192fb2c76abec9b44bad627d73202a3bdf1be",
+      "executable": false
+    },
+    {
+      "source_path": "references/panel-asset-protocol.md",
+      "target_path": "references/panel-asset-protocol.md",
+      "sha256": "d36d5be1d40e9cb27464a5e3502aaae38435ed2c72ebbc34327aa08e2ae318e8",
+      "executable": false
+    },
+    {
+      "source_path": "references/panel-detection.md",
+      "target_path": "references/panel-detection.md",
+      "sha256": "2ba8210456d05a60ac8867c16aefa48141825328517a3906f359449b9c6e49c3",
+      "executable": false
+    },
+    {
+      "source_path": "references/pipeline-performance.md",
+      "target_path": "references/pipeline-performance.md",
+      "sha256": "b7a6b24d0364b731c814abffdf6aae725fad9b4c1e0027a896c373a29b7f7594",
+      "executable": false
+    },
+    {
+      "source_path": "references/quality-rubric.md",
+      "target_path": "references/quality-rubric.md",
+      "sha256": "796d23245b2fd078519357a6173ed4929244e4dd96884bb1c3fac29de394b433",
+      "executable": false
+    },
+    {
+      "source_path": "references/reconstruction-contract.md",
+      "target_path": "references/reconstruction-contract.md",
+      "sha256": "ebddf9ff3aff73775d3b5293ab3aceee14c5a7b908486b0931b692550ab0399a",
+      "executable": false
+    },
+    {
+      "source_path": "references/regression-revision-contract.md",
+      "target_path": "references/regression-revision-contract.md",
+      "sha256": "53476b2dc379f155075e23171d409fafca2927542ca544858b5d900e191a9d5b",
+      "executable": false
+    },
+    {
+      "source_path": "references/report-protocol.md",
+      "target_path": "references/report-protocol.md",
+      "sha256": "bd435a24c88954663de4c6b5988b129d664faf07bce30353b9690306aabe8449",
+      "executable": false
+    },
+    {
+      "source_path": "references/skill-routing.md",
+      "target_path": "references/skill-routing.md",
+      "sha256": "ed6fa40164dd585d2dc33e0a2fd372ed4129ea49799ef6c3c0b549de1b87041d",
+      "executable": false
+    },
+    {
+      "source_path": "references/source-intake.md",
+      "target_path": "references/source-intake.md",
+      "sha256": "e97124b2a52ca70a934c06bbd7deac8161847f16e99e1d0ce60d15817ce620b4",
+      "executable": false
+    },
+    {
+      "source_path": "references/text-layout-model.md",
+      "target_path": "references/text-layout-model.md",
+      "sha256": "23bae55cfbce0faa6a69c37bf23bdd44b3279a9a31a3d742182b8ce2834c8ae0",
+      "executable": false
+    },
+    {
+      "source_path": "references/text-style-protocol.md",
+      "target_path": "references/text-style-protocol.md",
+      "sha256": "2d9fcf911396454ecd8827fe8153d4091fc912c0dc0dd29880fdbc25c2d73a6a",
+      "executable": false
+    },
+    {
+      "source_path": "references/visual-intermediate.md",
+      "target_path": "references/visual-intermediate.md",
+      "sha256": "a7e4ed0225d5a35550b44321f838c07fca347db5c3bb9414210d5a07311a1a2a",
+      "executable": false
+    },
+    {
+      "source_path": "references/visual-review.md",
+      "target_path": "references/visual-review.md",
+      "sha256": "8b694f0471482980ad4de964ff4be66b6a8482b4633d0c0bbd9f34f7b3cbb934",
+      "executable": false
+    },
+    {
+      "source_path": "references/workflow-flowchart.md",
+      "target_path": "references/workflow-flowchart.md",
+      "sha256": "87613b4668c4f88aa198d6055649c81a3e6a8ffaedaec4d4ce347ee648cd1197",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/aggregate_project_reports.py",
+      "target_path": "scripts/aggregate_project_reports.py",
+      "sha256": "8bff0504d723c61e9c638776ea727aea8ca0d9ca104f912f25cde3beec67da46",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/approve_panel_candidates.py",
+      "target_path": "scripts/approve_panel_candidates.py",
+      "sha256": "4ec7e7202b7b7f832c1784d1402c07430c13074e3da415358b22020d52a0310e",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/asset_placement.py",
+      "target_path": "scripts/asset_placement.py",
+      "sha256": "b9ec3c6fcdabdee0cf77d40b529e195d97d1c84039b96b686db0602791d48859",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/atomic_output.py",
+      "target_path": "scripts/atomic_output.py",
+      "sha256": "8db72d834048f05028d76924a29760cddc7be3211c55e105f53493f432ebf04b",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/audit_icon_layers.py",
+      "target_path": "scripts/audit_icon_layers.py",
+      "sha256": "b94bf73ddc6856f08a13877bda41d60cc67596d04f184739e1e07d73cd3f8cd0",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/authoring_backend.py",
+      "target_path": "scripts/authoring_backend.py",
+      "sha256": "1ae438dfa008e374ac5a73f689c6474fa880d6b3285a76683c75d3a7fd38b6f9",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/build_object_manifest.py",
+      "target_path": "scripts/build_object_manifest.py",
+      "sha256": "7537c5b02357b4494a6b4707f52efb4e247dd4c1c7d031a2ad416a5ccd2182e3",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/build_slide_manifest.py",
+      "target_path": "scripts/build_slide_manifest.py",
+      "sha256": "7aa16feb12a4b87eb949efd2f64d12cc4133635ba632bdfbb26f23f0e0944fd2",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/chroma_key.py",
+      "target_path": "scripts/chroma_key.py",
+      "sha256": "7a61d3307795a5cd5103479f10be62c64b13ef4fa91ec6c64c791ca2ef1ab205",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/compare_visual.py",
+      "target_path": "scripts/compare_visual.py",
+      "sha256": "f47e083297890857140d7d417e9bd9ce431e61c7f85f514db8102db1c6090893",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/compare_visual_deck.py",
+      "target_path": "scripts/compare_visual_deck.py",
+      "sha256": "3c0b3cc629bd126f137dee80afb627d7def45fdc67626bac93e41e8a9ba4d0be",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/component_expander.py",
+      "target_path": "scripts/component_expander.py",
+      "sha256": "efcb2632317d6a40bc267bf7f714327481e5d8766af322baf6c65ac1cfc68a73",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/compose_pptx.py",
+      "target_path": "scripts/compose_pptx.py",
+      "sha256": "2afb38099ae3e00069f3540cd8fa1b509af533b63395b6110bf43743415de1ed",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/delivery_check.py",
+      "target_path": "scripts/delivery_check.py",
+      "sha256": "ace84b835c119cb460e4fda153bfbc55cd394436269f6f9d5e09c63611aa854a",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/detect_panel_candidates.py",
+      "target_path": "scripts/detect_panel_candidates.py",
+      "sha256": "ff71c3f7105d8aa9eb4b5a081e589ce7c2663f75236e35a57428611c4c9e817b",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/editability.py",
+      "target_path": "scripts/editability.py",
+      "sha256": "306f51123085124efb99bf090dd42fad2218f2a8e6d8570075dd0051171841b1",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/embed_fonts.py",
+      "target_path": "scripts/embed_fonts.py",
+      "sha256": "3448fea8c73488430c5bcf24d68f0898f3dfadb59e49a96cf11df9385cf16afb",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/extract_panels.py",
+      "target_path": "scripts/extract_panels.py",
+      "sha256": "ceb426567a6f325f8a2a6a2d7b83244935e901a9c646b38b7f9bcbffc875b8c6",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/frame_parts_to_icons.py",
+      "target_path": "scripts/frame_parts_to_icons.py",
+      "sha256": "98d48d6f0758423c231f1e725813364d411022e4d04a4dd74caea3b69a6e1320",
+      "executable": true
+    },
+    {
+      "source_path": "scripts/image_viewport.py",
+      "target_path": "scripts/image_viewport.py",
+      "sha256": "0a3fa00591af691c0309b6c18035f47b26bf364ff66039ee3b7ec93b289c805b",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/inspect_pptx.py",
+      "target_path": "scripts/inspect_pptx.py",
+      "sha256": "da410b8966e72fd48759c55022c1cba29d37a9cd8408f0ef60ff995844bf3a1f",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/inspect_sources.py",
+      "target_path": "scripts/inspect_sources.py",
+      "sha256": "51b0628c41aed2f53047229b435ddbb2e7314dce46cab301d549449b8382fa26",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/layout_guard.py",
+      "target_path": "scripts/layout_guard.py",
+      "sha256": "fcbde493c68bf58acff49d01c648fc03dca7a6b420feb5bc8ce0a2c1a1af94f3",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/manifest_contract.py",
+      "target_path": "scripts/manifest_contract.py",
+      "sha256": "a0b5ebd73c2d5594d46fcfd01f3376e97958675e220210fb5fa6fb6db985b97b",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/manifest_registry.py",
+      "target_path": "scripts/manifest_registry.py",
+      "sha256": "ae08ecb5ae8ba8b00bb8f25efeb7bc9a65786929ccfb99bef9815b6d8ed62fef",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/ocr_text_check.py",
+      "target_path": "scripts/ocr_text_check.py",
+      "sha256": "ccb93ddd937e51f5e4aa2db2c8c83f605e8ea5f6b314a82aba2c230e3f431f7d",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/placement_qa.py",
+      "target_path": "scripts/placement_qa.py",
+      "sha256": "4ce9d625450ce474ca6ea22acfca2c7b4be2a2e9af848b3c44d001122c3191ee",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/pptx_primitives.py",
+      "target_path": "scripts/pptx_primitives.py",
+      "sha256": "901c1731af621ecee37ec5b07eff752341382414422e96c0257cc832196fb75a",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/preview_renderer.py",
+      "target_path": "scripts/preview_renderer.py",
+      "sha256": "e134da4dc4329a1ee191a18b951c932c89867bc12028b39c2d553bb043044600",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/probe_environment.py",
+      "target_path": "scripts/probe_environment.py",
+      "sha256": "4f6805f23bcc7c3a534eb94dc025af6b7c18b40befec230cf6be7a3feabcc8d2",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/probe_fonts.py",
+      "target_path": "scripts/probe_fonts.py",
+      "sha256": "8d91ee45653e8d14defb036830c26408dfc30a0da91305dc409737521e10dc91",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/probe_palette.py",
+      "target_path": "scripts/probe_palette.py",
+      "sha256": "54575466b858f1ac2f54724f63e0350559cbd1fb716bc9fd8a1b0608e59f9cc8",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/reference_audit.py",
+      "target_path": "scripts/reference_audit.py",
+      "sha256": "3c844dc26a109b79d3f87e0ac04176602c5b14ae90f0c4bbdbfe4f824ee40a90",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/reference_audit_deck.py",
+      "target_path": "scripts/reference_audit_deck.py",
+      "sha256": "17c441345e22096e7a6089420537d3c1be2d53260acf4ef0ac28621881cb021b",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/render_pptx.py",
+      "target_path": "scripts/render_pptx.py",
+      "sha256": "d5dbebdbe4b6e068df2a8de5f987748b3fe062889e68842cd49fa73f396f1b85",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/render_review_html.py",
+      "target_path": "scripts/render_review_html.py",
+      "sha256": "c632edad868967f204b1f640233d18418374a669e8a223f70dcab9a888eff94f",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/report_envelope.py",
+      "target_path": "scripts/report_envelope.py",
+      "sha256": "53fb6ff19ef57652146a5cfa05a1390eac1a0c4dfc163a09adaf2d6e3839beb4",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/revision_guard.py",
+      "target_path": "scripts/revision_guard.py",
+      "sha256": "24e11c6173223f2a163c9ab224f410a870cccae3e93a3acf2f7e0d6d71c5b8fc",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/run_tests.py",
+      "target_path": "scripts/run_tests.py",
+      "sha256": "7ee30e732f42dc7faf77b318a685ea5e10ab4791e1e38e0f288294088b25db33",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/schema_contract.py",
+      "target_path": "scripts/schema_contract.py",
+      "sha256": "471015e312fed1760449b86628873052109dbbacf326f2cac359dba7184b9dac",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/semantic_object_audit.py",
+      "target_path": "scripts/semantic_object_audit.py",
+      "sha256": "83d2a7d6c1208375679dcfc72e5783eba27afcc5b0223f2eef50a0571266f919",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/slice_grid.py",
+      "target_path": "scripts/slice_grid.py",
+      "sha256": "ce6d94ef15631d9422aa3fc329dbff1e47265de6514c89569040b9279613b213",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/text_model.py",
+      "target_path": "scripts/text_model.py",
+      "sha256": "725be3c4aa5e0f9848085776a5e74d6328c0c3d18cda6179f9836b41f695cf01",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_asset_hashes.py",
+      "target_path": "scripts/validate_asset_hashes.py",
+      "sha256": "2eeecc9ea7d62268c719c838b973ef46fd4f732da7f6004fa09847e47c2b4dba",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_backend_binding.py",
+      "target_path": "scripts/validate_backend_binding.py",
+      "sha256": "523b7fba0b3261c27ce5c3cf1ef2871951937bd54f51f427bd47e35f025286f9",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_chart_manifest.py",
+      "target_path": "scripts/validate_chart_manifest.py",
+      "sha256": "3dc9bdc415f15a45023e5deea9b19cc84e9b1cb889ec804d333373146e0b22d6",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_component_instances.py",
+      "target_path": "scripts/validate_component_instances.py",
+      "sha256": "fbbe4b175716bf9921ab4775530743dfc730d669c75ec5bdeaaf00f0cb95aaa4",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_component_library.py",
+      "target_path": "scripts/validate_component_library.py",
+      "sha256": "59ecb36de54c0eaeda4fc8cf397c12fa8246a0a0af274d6b7c303be58bb62abe",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_content_inventory.py",
+      "target_path": "scripts/validate_content_inventory.py",
+      "sha256": "95b1b932f873b3bc83f70cab24e906e1e1fea1046b90340e7538c5f1be2f2c9f",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_font_asset.py",
+      "target_path": "scripts/validate_font_asset.py",
+      "sha256": "f687dae3f5ce96bb9e537e20176c09f8627891643d0ec8cd3657cde14086cf59",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_font_delivery.py",
+      "target_path": "scripts/validate_font_delivery.py",
+      "sha256": "aaca824b146e6b26a469628cf06b0883eef2a97be5699a41143344a2c042634c",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_gradient_visual.py",
+      "target_path": "scripts/validate_gradient_visual.py",
+      "sha256": "e4b0a8d85e83f1f39f4ac0730ea31b5d22727bd0770ae796003b86eee4a62a45",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_icon_assets.py",
+      "target_path": "scripts/validate_icon_assets.py",
+      "sha256": "94de4f0412d4857408b073e7d3d1d685317104539fba0277d03322d6bb7e3dc0",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_imagegen_assets_manifest.py",
+      "target_path": "scripts/validate_imagegen_assets_manifest.py",
+      "sha256": "649d0bbbc19c4d56127a84385a6a31e3c6bf59f49ebb27d34e4f85fdc77104ce",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_layout_library.py",
+      "target_path": "scripts/validate_layout_library.py",
+      "sha256": "ff2557b3ea62977ec06fddbf47a069a50e608d026466b83e616a7ccf7a483645",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_manifest.py",
+      "target_path": "scripts/validate_manifest.py",
+      "sha256": "1f8e561079fd88b16f205a711421ee720a0c9e2cb39a884ed877a3ac2b644bb4",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_multipage_layout.py",
+      "target_path": "scripts/validate_multipage_layout.py",
+      "sha256": "2f2a61981621768452c32095f94ee080317e6298d918d5b018082745e40ab7b9",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_object_manifest.py",
+      "target_path": "scripts/validate_object_manifest.py",
+      "sha256": "7bd561dfebaecf3b35c0af0f623f058da8e799b4169100fd6dcaea823392191f",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_outline.py",
+      "target_path": "scripts/validate_outline.py",
+      "sha256": "875b1e69468ad7f5838de734a091ce2a2513579a62bc8751f67debe07910799d",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_panel_assets.py",
+      "target_path": "scripts/validate_panel_assets.py",
+      "sha256": "f52d6c3512faf960ea79046bcae3f21b5d7e793b53aff8f0b9a5fd6ea21ab8d7",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_preview_consistency.py",
+      "target_path": "scripts/validate_preview_consistency.py",
+      "sha256": "2e53e00eedcdb625dc68c3bf2e352a6af4caf8785f39a1ad5232b8ebf92bd3e1",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_project.py",
+      "target_path": "scripts/validate_project.py",
+      "sha256": "c9c2a5eb95e499d4672d65614c09c773d4f28c194f2045425313a3690ada1519",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_regions.py",
+      "target_path": "scripts/validate_regions.py",
+      "sha256": "5a66adbd7c7e607dd9220c7fe878fb876c034240e7c79cd1b5a9b4f1a38f772a",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_render.py",
+      "target_path": "scripts/validate_render.py",
+      "sha256": "931683b313f6a9f26fda2c8dbad95a7abc99f5b3e23339a79cc6a2202127d567",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_report_bundle.py",
+      "target_path": "scripts/validate_report_bundle.py",
+      "sha256": "5970a8cb7e1b8088d0ba06bae73ece590bc0c0e56a2d7b7ff7e1414e987c9014",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_signoff.py",
+      "target_path": "scripts/validate_signoff.py",
+      "sha256": "5ac8f3c2a68f115222613883945f0a66da887b3b683688313d5747f961d4feb6",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_source_images.py",
+      "target_path": "scripts/validate_source_images.py",
+      "sha256": "c0097a2a91cdaa009b0b8c58cd8b54bd8e8e596587d886c3457895886b22f864",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_text_style_map.py",
+      "target_path": "scripts/validate_text_style_map.py",
+      "sha256": "0cf0794dc2f6c785c0fef531a8d071f681c126a00072055abb569e1bff089a5a",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/validate_typography_calibration.py",
+      "target_path": "scripts/validate_typography_calibration.py",
+      "sha256": "e1484c6e0224168634b0940b77d92a0c5f325865904bf56f505b5c8f4e15c4be",
+      "executable": false
+    },
+    {
+      "source_path": "scripts/visual_compare_qa.py",
+      "target_path": "scripts/visual_compare_qa.py",
+      "sha256": "71f3d4e211a3f5b1816bfd8867c0bcde08a2a8e10d1af680ad5f2cafe0b9ef46",
+      "executable": false
+    },
+    {
+      "source_path": "tests/fixtures/object-manifest.sample.json",
+      "target_path": "tests/fixtures/object-manifest.sample.json",
+      "sha256": "90c2b1d8e42cd8b297891d1c487d0429e7676a21dca2d6ab3f73e77e41ba3049",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_asset_hashes.py",
+      "target_path": "tests/test_asset_hashes.py",
+      "sha256": "4f8e4edd1a1e3f4bbfcffda6cc40f20c00e995ba4dc9e9a8081327a3b8b03962",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_authoring_modules.py",
+      "target_path": "tests/test_authoring_modules.py",
+      "sha256": "3020ae9f21e3cc63a1aeae32df74211236a3752b25748fd8ba5b34ef55ff03bc",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_chart_line_primitives.py",
+      "target_path": "tests/test_chart_line_primitives.py",
+      "sha256": "dfac7a8d6cbb275d52f13e283a14c9e7c3669e27cca56bd857862b49c3e594e8",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_chart_reconstruction.py",
+      "target_path": "tests/test_chart_reconstruction.py",
+      "sha256": "9de233989ba2c19419b3da8900bc10ea134e8b0bd0d24a813a8d7be77217a8eb",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_component_instances.py",
+      "target_path": "tests/test_component_instances.py",
+      "sha256": "4d3844d632fd72c0c503bcba8b491fbfa1055ed04b7fb6fa0dd08b7a6f858ece",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_component_library.py",
+      "target_path": "tests/test_component_library.py",
+      "sha256": "cad6fdaabfb33160bc399ba86436f0b43ba132fa81adf69f1e39071ba9a30f11",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_content_inventory.py",
+      "target_path": "tests/test_content_inventory.py",
+      "sha256": "348ca1c848e75e3e9ff5c87c402824cdfde8e45e748317dc46b39b59b78234e2",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_font_delivery.py",
+      "target_path": "tests/test_font_delivery.py",
+      "sha256": "d6a4e79628fb7fa767881eeb5bef6bc00f38a0ed677420dd3e5644c0aa39bb37",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_font_embedding.py",
+      "target_path": "tests/test_font_embedding.py",
+      "sha256": "a61c2f570d000801b36f96caffeccac873e5eba4c33880befea21f2ed8bc35cf",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_font_metadata_gate.py",
+      "target_path": "tests/test_font_metadata_gate.py",
+      "sha256": "68bf01119f1d8c6fbf12d45b72b415c5215cfd80e9aa1cb5a218c2a3f81914c9",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_font_missing.py",
+      "target_path": "tests/test_font_missing.py",
+      "sha256": "244baf30156eabd95547afbab05f0044edaeabde5c35483fe375473028774b59",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_golden_render.py",
+      "target_path": "tests/test_golden_render.py",
+      "sha256": "e625f9b80963c2264f0795ac7d546a7b7c325b8e99c5bf2ccb543d50d382173f",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_incremental_render.py",
+      "target_path": "tests/test_incremental_render.py",
+      "sha256": "662f853d4dcde8e3dad836671677d779b023ccfbf8ed52e0ded7a85a1f07efd0",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_irregular_regions.py",
+      "target_path": "tests/test_irregular_regions.py",
+      "sha256": "783a29d8d02666f969447d03de2b73e7b3b9c230ee09ba2158594fe38bc7476c",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_manifest_registry.py",
+      "target_path": "tests/test_manifest_registry.py",
+      "sha256": "a13cef063098f213612d831bb2b5ec330f8b16ecd93befe3e5cb2a031cafc9ae",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_native_objects.py",
+      "target_path": "tests/test_native_objects.py",
+      "sha256": "52a46a8fc6da7233305687c4c84e46c707cda02e47dec2cc34d385ac13483f46",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_object_manifest_paths.py",
+      "target_path": "tests/test_object_manifest_paths.py",
+      "sha256": "4a40e4a593bd9c64256f3630c5e2036bf5ee1953165b1d97b247879b1a50ccec",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_p2_guards.py",
+      "target_path": "tests/test_p2_guards.py",
+      "sha256": "ab12f18d454bfd12b6e1cd126f5f4aba20ac1a5e32c8bd3d307fec04eb4591de",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_panel_approval.py",
+      "target_path": "tests/test_panel_approval.py",
+      "sha256": "890e44a6266a0ed018a420bda0fb99bea1a1f988b16db9f0f57760f91d103b01",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_panel_layer_order.py",
+      "target_path": "tests/test_panel_layer_order.py",
+      "sha256": "14addef2c6d3e31ec490ee375a029abcaa013ee9c75080da280ea9660095810b",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_pipeline_engine.py",
+      "target_path": "tests/test_pipeline_engine.py",
+      "sha256": "b57b427d64643a4f27e67cd9014231ddd6f181064e3fdff002e601d1804bede7",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_pipeline_integration.py",
+      "target_path": "tests/test_pipeline_integration.py",
+      "sha256": "af00f593322f0fcfb15e87471c20036b3b1a7f8002700c37cdde9544dc863246",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_pptx_package.py",
+      "target_path": "tests/test_pptx_package.py",
+      "sha256": "d6d3b141a142e30b80e61baf32a78d3b64762ef76a17dab6d38a9a403dd72eff",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_preview_font_fallback.py",
+      "target_path": "tests/test_preview_font_fallback.py",
+      "sha256": "e01c669d2b94f3e0471e3944b0719ce799c39abbb6b4a4b69ab653491c3ff93a",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_report_bundle.py",
+      "target_path": "tests/test_report_bundle.py",
+      "sha256": "04585c3bfca64a522e73b968385600a2de5a09a4777e4ac1800a611c28a315f8",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_report_review.py",
+      "target_path": "tests/test_report_review.py",
+      "sha256": "a8080948dc6a39bbd39457b5fab6e22cbc3e41c7dccc9916067ab5817c6cdbf6",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_revision_guard.py",
+      "target_path": "tests/test_revision_guard.py",
+      "sha256": "6cc825460af385733998be0dab2b6d48157e8d4869f9a63b0b7e588f68110c54",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_route_contracts.py",
+      "target_path": "tests/test_route_contracts.py",
+      "sha256": "98294618f976e553d122d46887095808cb7761386ad7012febb7d54183f5bac6",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_schema_contracts.py",
+      "target_path": "tests/test_schema_contracts.py",
+      "sha256": "e78bdcb04575d08ba8a93a2ac89fbd269e93232519f48bbaad47b78e7b385877",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_semantic_object_audit.py",
+      "target_path": "tests/test_semantic_object_audit.py",
+      "sha256": "d7c2032834489ad86fea31118564907b177e1c1d34ca4a3fbc47137f1e3aff16",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_semantic_object_types.py",
+      "target_path": "tests/test_semantic_object_types.py",
+      "sha256": "198cf462c2eb1c63c9ec3a7f2a4e038fd0310022d945187f2f8a86504096a795",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_slide_manifest_builder.py",
+      "target_path": "tests/test_slide_manifest_builder.py",
+      "sha256": "6bc32d6ee3566e75ccdb276c0a465c577b0563d2c0772497407a06aea241c87a",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_text_model.py",
+      "target_path": "tests/test_text_model.py",
+      "sha256": "239f47e4e5e58e3044715f4be12664109f5402bacb4c77a34c220786e16b8709",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_typography_calibration.py",
+      "target_path": "tests/test_typography_calibration.py",
+      "sha256": "93f708c73af3b2f9c6555e606c9c22ab96348229a6534bae40748883bf48f3ab",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_validate_source_images.py",
+      "target_path": "tests/test_validate_source_images.py",
+      "sha256": "4cb0c8f7fcd5e7cbcbbd14e2db18670279afc3e073b5ea15a62231e4dd98623a",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_viewer_capture.py",
+      "target_path": "tests/test_viewer_capture.py",
+      "sha256": "dd40630105116d532656ad40857e0178f80b85fea5277d0285e67feb4b90275f",
+      "executable": false
+    },
+    {
+      "source_path": "tests/test_visual_compare_dimensions.py",
+      "target_path": "tests/test_visual_compare_dimensions.py",
+      "sha256": "5507ae138131b89865f96280ab69e3d9adaf0f4aefffc2183740daaa54501581",
+      "executable": false
+    }
+  ],
+  "excluded_paths": [
+    {
+      "path": "SKILL.md",
+      "reason": "standalone worker entrypoint and identity"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "reason": "standalone worker interface and identity"
+    },
+    {
+      "path": "assets/skill-package.json",
+      "reason": "standalone package manifest"
+    },
+    {
+      "path": "assets/skill-routing.template.json",
+      "reason": "standalone worker routing contract"
+    },
+    {
+      "path": "assets/schemas/skill-routing.schema.json",
+      "reason": "standalone worker routing schema"
+    },
+    {
+      "path": "assets/upstream-perfect-sync.json",
+      "reason": "generated parity manifest"
+    },
+    {
+      "path": "assets/route-decision-native-authoring.template.json",
+      "reason": "post-baseline native-authoring compatibility extension"
+    },
+    {
+      "path": "assets/schemas/route-decision.schema.json",
+      "reason": "post-baseline route schema extension"
+    },
+    {
+      "path": "evals/editable-trigger-cases.yaml",
+      "reason": "standalone worker trigger extension"
+    },
+    {
+      "path": "requirements-ci.txt",
+      "reason": "standalone package dependency pin"
+    },
+    {
+      "path": "references/perfect-source-sync.md",
+      "reason": "standalone synchronization documentation"
+    },
+    {
+      "path": "scripts/build_perfect_sync_manifest.py",
+      "reason": "standalone synchronization utility"
+    },
+    {
+      "path": "scripts/inspect_editable_objects.py",
+      "reason": "post-baseline page-scoped object audit correctness fix"
+    },
+    {
+      "path": "scripts/pipeline_engine.py",
+      "reason": "post-baseline orchestrator runtime compatibility adapter"
+    },
+    {
+      "path": "scripts/run_pipeline.py",
+      "reason": "post-baseline orchestrator integration adapter"
+    },
+    {
+      "path": "scripts/validate_handoff.py",
+      "reason": "post-baseline v2 handoff compatibility adapter"
+    },
+    {
+      "path": "scripts/validate_perfect_sync.py",
+      "reason": "standalone synchronization validator"
+    },
+    {
+      "path": "scripts/validate_skill_package.py",
+      "reason": "standalone package validator"
+    },
+    {
+      "path": "scripts/validate_routing_contract.py",
+      "reason": "standalone worker routing validator"
+    },
+    {
+      "path": "scripts/validate_route.py",
+      "reason": "post-baseline v2/native-authoring route compatibility adapter"
+    },
+    {
+      "path": "scripts/validate_visual_generation_plan.py",
+      "reason": "post-baseline compatibility validator"
+    },
+    {
+      "path": "scripts/validate_workflow_state.py",
+      "reason": "post-baseline compatibility validator"
+    },
+    {
+      "path": "tests/test_editable_object_audit.py",
+      "reason": "standalone page-scoped audit regression"
+    },
+    {
+      "path": "tests/test_perfect_sync.py",
+      "reason": "standalone synchronization regression"
+    },
+    {
+      "path": "tests/test_self_contained.py",
+      "reason": "standalone package smoke test"
+    }
+  ],
+  "generated_by": "scripts/build_perfect_sync_manifest.py"
+}

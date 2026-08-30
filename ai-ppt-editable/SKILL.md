@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.30.02
+ package_revision: 2026.08.30.03
 ---
 
 # AI PPT Editable
@@ -24,10 +24,20 @@ python3 scripts/validate_skill_package.py --skill-dir .
 python3 scripts/validate_routing_contract.py
 ```
 
-For the complete B0-B9 sequence, cache/invalidation policy and tool ownership,
-read the root bundle's `references/operations-matrix.md` when working through
-`ai-ppt-plus`. The worker may report technical completion, but the root
-orchestrator owns deck-wide narrative and release decisions.
+The reconstruction engine and shared QA contracts are byte-synchronized with
+the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Verify that source
+relationship before authoring:
+
+```bash
+python3 scripts/validate_perfect_sync.py
+```
+
+The exact source commit, file mapping, and intentional package-boundary
+exceptions are recorded in `references/perfect-source-sync.md` and
+`assets/upstream-perfect-sync.json`. The worker remains independently runnable;
+when called by `ai-ppt-plus`, it consumes the orchestrator's approved handoff
+and returns worker-level technical evidence. It never owns deck-wide narrative,
+release eligibility, or human sign-off.
 
 The split changes ownership and invocation only. Do not alter the checked-in
 image-to-PPTX decomposition, asset extraction, composition, rendering, or QA
@@ -37,12 +47,12 @@ algorithms merely to satisfy this skill boundary.
 
 In orchestrated mode, consume the immutable route decision, approved outline,
 formal-text authority, design revision, reference roster, editability target,
-and worker manifests supplied by `$ai-ppt-plus`.
-
-For `native-authoring`, consume `route-decision/v2` with
-`visual_authority: approved_design_system` and a declared
-`native_content_manifest`. This route never silently falls back to whole-page
-image generation or reference reconstruction.
+and worker manifests supplied by `$ai-ppt-plus`. The pinned reconstruction
+baseline intentionally uses the same mutually exclusive `route-decision/v1`
+routes as `完美第一版`: `visual-creation` and
+`reference-reconstruction`. A post-baseline native-authoring route is an
+orchestrator extension, not a replacement for this worker's synchronized
+reconstruction contract.
 
 In standalone mode:
 

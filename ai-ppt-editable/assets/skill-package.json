@@ -1,12 +1,12 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.08.30.02",
+  "package_revision": "2026.08.30.03",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
     "policy": "self-contained",
-    "required_dirs": ["agents", "scripts", "references", "assets"]
+    "required_dirs": ["agents", "scripts", "references", "assets", "evals", "examples", "tests"]
   },
   "managed_globs": [
     "SKILL.md",
@@ -18,12 +18,15 @@
     "references/*.md",
     "scripts/*.py",
     "evals/*.yaml",
-    "tests/*.py"
+    "examples/**/*.json",
+    "tests/**/*.py",
+    "tests/**/*.json"
   ],
   "required_files": [
     "SKILL.md",
     "agents/openai.yaml",
     "assets/skill-package.json",
+    "assets/upstream-perfect-sync.json",
     "requirements-ci.txt",
     "assets/skill-routing.template.json",
     "assets/schemas/skill-routing.schema.json",
@@ -36,12 +39,18 @@
     "scripts/render_pptx.py",
     "scripts/inspect_pptx.py",
     "scripts/validate_backend_binding.py",
+    "scripts/build_perfect_sync_manifest.py",
+    "scripts/validate_perfect_sync.py",
     "scripts/validate_visual_generation_plan.py",
     "scripts/validate_workflow_state.py",
     "scripts/validate_handoff.py",
+    "scripts/run_tests.py",
     "references/reconstruction-contract.md",
     "references/editability-levels.md",
-    "references/icon-asset-protocol.md"
+    "references/icon-asset-protocol.md",
+    "references/perfect-source-sync.md",
+    "examples/component-library/standard-components.deck.json",
+    "tests/test_perfect_sync.py"
   ],
   "runtime_sync": {
     "required": true,

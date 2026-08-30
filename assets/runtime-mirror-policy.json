@@ -37,10 +37,28 @@
         "assets/fonts/*"
       ],
       "exclude": [
+        "scripts/asset_placement.py",
+        "scripts/audit_icon_layers.py",
+        "scripts/build_perfect_sync_manifest.py",
+        "scripts/build_slide_manifest.py",
+        "scripts/pipeline_engine.py",
+        "scripts/probe_environment.py",
+        "scripts/run_tests.py",
         "scripts/validate_routing_contract.py",
+        "scripts/validate_perfect_sync.py",
         "assets/skill-package.json",
+        "assets/route-decision-visual-creation.template.json",
         "assets/skill-routing.template.json",
+        "assets/schemas/pipeline-run.schema.json",
         "assets/schemas/skill-routing.schema.json",
+        "references/authoring-backend.md",
+        "references/icon-asset-protocol.md",
+        "references/panel-asset-protocol.md",
+        "references/perfect-source-sync.md",
+        "references/pipeline-performance.md",
+        "references/skill-routing.md",
+        "references/text-layout-model.md",
+        "references/visual-intermediate.md",
         "references/operations-matrix.md"
       ],
       "required_paths": [

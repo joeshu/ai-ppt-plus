@@ -23,11 +23,6 @@ contains (overview badges, intro bars, footer waves and decorative lines). Each
 component must be re-homed as a native shape or independent asset; deleting the
 frame must never silently delete content.
 
-Technical/draft validation may keep `status: draft` and record pending human
-review. `status: approved` plus approval metadata is a release/closeout gate;
-the technical pipeline must not require a human approval record before a draft
-can be rendered and structurally checked.
-
 Use `extract_panels.py` with full-resolution `source_bbox` values to produce
 panel files. Do not crop from a palette thumbnail or guessed scaled coordinates.
 The emitted manifest records actual asset sizes and writes each `file` relative
