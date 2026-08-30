@@ -71,7 +71,9 @@ def main() -> int:
         assert failed.returncode == 2 and "visual_text_missing" in failed.stdout, failed.stdout
 
         fallback = json.loads(plan.read_text(encoding="utf-8"))
-        fallback["slides"][0]["visual_assertions"]["ocr_lang"] = "chi_sim+eng"
+        # Use a deliberately unavailable language pack so this capability
+        # fallback remains deterministic on runners that install chi_sim.
+        fallback["slides"][0]["visual_assertions"]["ocr_lang"] = "missing_test_language"
         fallback["slides"][0]["visual_assertions"]["ocr_failure_policy"] = "manual-review"
         fallback["slides"][0]["visual_assertions"]["must_contain_text"] = ["中文回读"]
         write_json(plan, fallback)
