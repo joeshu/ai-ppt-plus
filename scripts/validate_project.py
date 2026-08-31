@@ -72,6 +72,12 @@ def main() -> int:
     parser.add_argument("--require-semantic-object-audit", action="store_true")
     parser.add_argument("--project-report")
     parser.add_argument("--require-project-report", action="store_true")
+    parser.add_argument("--content-authority")
+    parser.add_argument("--require-content-authority", action="store_true")
+    parser.add_argument("--quality-gates")
+    parser.add_argument("--require-quality-gates", action="store_true")
+    parser.add_argument("--orchestration-gates")
+    parser.add_argument("--require-orchestration-gates", action="store_true")
     parser.add_argument("--expected-ratio", type=float)
     parser.add_argument("--report")
     args = parser.parse_args()
@@ -125,6 +131,9 @@ def main() -> int:
     manifest_report = read_quality_report(args.manifest_validation, "manifest-validation")
     semantic_report = read_quality_report(args.semantic_object_audit, "semantic-object-audit")
     project_report = read_quality_report(args.project_report, "project-report")
+    content_authority_report = read_quality_report(args.content_authority, "content-authority")
+    quality_gates_report = read_quality_report(args.quality_gates, "quality-gates")
+    orchestration_gates_report = read_quality_report(args.orchestration_gates, "orchestration-gates")
     if args.require_route and route_report is None:
         issues.append({"severity": "blocker", "code": "route_validation_missing", "artifact": "route-validation"})
     if args.require_content_inventory and content_inventory_report is None:
@@ -145,6 +154,12 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "semantic_object_audit_missing", "artifact": "semantic-object-audit"})
     if args.require_project_report and project_report is None:
         issues.append({"severity": "blocker", "code": "project_report_missing", "artifact": "project-report"})
+    if args.require_content_authority and content_authority_report is None:
+        issues.append({"severity": "blocker", "code": "content_authority_missing", "artifact": "content-authority"})
+    if args.require_quality_gates and quality_gates_report is None:
+        issues.append({"severity": "blocker", "code": "quality_gates_missing", "artifact": "quality-gates"})
+    if args.require_orchestration_gates and orchestration_gates_report is None:
+        issues.append({"severity": "blocker", "code": "orchestration_gates_missing", "artifact": "orchestration-gates"})
     if render_gate is not None:
         quality_evidence["render_visual_gate"] = {
             "valid": render_gate.get("valid"),
@@ -255,6 +270,9 @@ def main() -> int:
             child_path = Path(child.get("path", ""))
             if child.get("sha256") and (not child_path.is_file() or child.get("sha256") != sha256(child_path)):
                 issues.append({"severity": "blocker", "code": "stale_child_report", "report_type": child.get("report_type")})
+    for report, label in ((content_authority_report, "content_authority"), (quality_gates_report, "quality_gates"), (orchestration_gates_report, "orchestration_gates")):
+        if report is not None:
+            quality_evidence[label] = {"valid": report.get("valid"), "status": report.get("status"), "issues": report.get("issues", [])}
 
     if handoff:
         approved = handoff.get("approved_artifacts") or {}

@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tests"))
-from test_visual_generation_contract import build_plan  # noqa: E402
+from test_visual_generation_contract import attach_narrative_gate, build_plan  # noqa: E402
 
 
 def write_json(path: Path, value) -> None:
@@ -46,6 +46,7 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="visual-prompt-materializer-") as temp:
         root = Path(temp)
         plan_data = build_plan()
+        attach_narrative_gate(root, plan_data)
         plan_data.pop("evidence_manifest", None)
         slide = plan_data["slides"][0]
         slide.pop("production_prompt", None)

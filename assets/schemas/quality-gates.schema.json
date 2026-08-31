@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "project_id", "revision", "technical_valid", "human_review_status", "release_eligible", "dimensions"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/quality-gates/v1"},
+    "project_id": {"type": "string", "minLength": 1},
+    "revision": {"type": "string", "minLength": 1},
+    "deck_path": {"type": ["string", "null"]},
+    "deck_sha256": {"type": ["string", "null"]},
+    "technical_valid": {"type": "boolean"},
+    "human_review_status": {"enum": ["pending", "passed", "failed", "not-required"]},
+    "release_eligible": {"type": "boolean"},
+    "release_status": {"type": "string"},
+    "open_blockers": {"type": "array"},
+    "dimensions": {
+      "type": "object",
+      "required": ["content", "visual", "structure", "delivery"],
+      "properties": {
+        "content": {"$ref": "#/$defs/dimension"},
+        "visual": {"$ref": "#/$defs/dimension"},
+        "structure": {"$ref": "#/$defs/dimension"},
+        "delivery": {"$ref": "#/$defs/dimension"}
+      }
+    }
+  },
+  "$defs": {"dimension": {"type": "object", "required": ["status", "required"], "properties": {"status": {"enum": ["passed", "failed", "pending", "not-run"]}, "required": {"type": "boolean"}, "evidence": {"type": "array"}, "issues": {"type": "array"}}, "additionalProperties": true}}
+}

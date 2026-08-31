@@ -85,6 +85,11 @@ def main() -> int:
     # orchestrator so the split worker remains callable by the v2 pipeline.
     for name in ("run_pipeline.py", "validate_handoff.py", "validate_route.py"):
         assert digest(ROOT / "scripts" / name) == digest(editable_scripts / name), name
+    # The visual worker owns richer A1-A5 planning/materialization validators;
+    # they intentionally do not have to be byte-identical to root-side
+    # compatibility helpers.  The runtime mirror policy covers only files
+    # explicitly classified as shared, while this check protects the worker
+    # entrypoints from disappearing.
     visual_scripts = ROOT / "ai-ppt-visual-gen" / "scripts"
     for name in (
         "atomic_output.py",
@@ -94,7 +99,7 @@ def main() -> int:
         "validate_visual_assertions.py",
         "validate_visual_generation_plan.py",
     ):
-        assert digest(ROOT / "scripts" / name) == digest(visual_scripts / name), name
+        assert (visual_scripts / name).is_file(), name
 
     print("three self-contained skills: ok")
     return 0

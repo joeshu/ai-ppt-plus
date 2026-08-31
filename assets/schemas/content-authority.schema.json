@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "project_id", "revision", "outline_contract", "entries"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/content-authority/v1"},
+    "project_id": {"type": "string", "minLength": 1},
+    "revision": {"type": "string", "minLength": 1},
+    "outline_contract": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"}},
+      "additionalProperties": false
+    },
+    "sources": {"type": "array", "items": {"type": "object"}},
+    "entries": {"type": "array", "items": {
+      "type": "object",
+      "required": ["authority_id", "slide_no", "object_id", "role", "content", "outline_ref", "source_refs"],
+      "properties": {
+        "authority_id": {"type": "string", "minLength": 1},
+        "slide_no": {"type": "integer", "minimum": 1},
+        "object_id": {"type": "string", "minLength": 1},
+        "role": {"type": "string", "minLength": 1},
+        "content": {"type": "string"},
+        "outline_ref": {"type": "object", "required": ["slide_no", "field"], "properties": {"slide_no": {"type": "integer", "minimum": 1}, "field": {"type": "string"}}},
+        "source_refs": {"type": "array", "items": {"type": "object"}},
+        "pptx_object_ref": {"type": ["object", "null"]},
+        "render_ref": {"type": ["object", "null"]},
+        "status": {"enum": ["planned", "placed", "verified", "blocked"]}
+      },
+      "additionalProperties": true
+    }}
+  },
+  "additionalProperties": true
+}

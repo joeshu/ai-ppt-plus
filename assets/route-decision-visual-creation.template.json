@@ -6,6 +6,7 @@
   "visual_authority": "generated_visual_intermediate",
   "formal_content_authority": "approved_outline",
   "requires_image_generation": true,
+  "outline_contract": {"path": "outline-contract.json", "sha256": ""},
   "visual_generation_mode": "image-slide",
   "visual_generation_plan": "visual-generation-plan.json",
   "visual_generation_manifest": "visual-generation-manifest.json",

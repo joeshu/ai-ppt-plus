@@ -76,6 +76,25 @@ def artifact(path: Path | None, *, required: bool = False) -> dict | None:
     return record
 
 
+def worker_record(skill: str, status: str, artifacts: dict[str, dict], checks: list[str], blockers: list[str], next_action: str) -> dict:
+    inputs = {name: record.get("sha256") for name, record in artifacts.items() if name != "pptx" and record.get("sha256")}
+    outputs = [record for name, record in artifacts.items() if name != "route_decision" and record.get("exists")]
+    manifests = [record["path"] for name, record in artifacts.items() if "manifest" in name or name in {"route_decision", "workflow_state"}]
+    qa_results = [{"name": check, "status": "passed"} for check in checks]
+    return {
+        "protocol": "ai-ppt-plus/worker-handoff/v1",
+        "skill": skill,
+        "skill_revision": PACKAGE_REVISION,
+        "status": status,
+        "input_hashes": inputs,
+        "output_artifacts": outputs,
+        "manifest_paths": manifests,
+        "qa_results": qa_results,
+        "known_issues": list(blockers),
+        "next_action": next_action,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("project_dir")
@@ -154,6 +173,7 @@ def main() -> int:
         "complete": sorted(set(completed) | set(remaining)) == list(range(1, args.expected_pages + 1)),
     }
     visual_status = "not-used" if route in {"reference-reconstruction", "native-authoring"} else ("passed" if visual_plan and visual_manifest else "pending")
+    editable_status = "passed" if args.current_stage == "validated" else "in-progress"
     data = {
         "schema": SCHEMA,
         "project_id": project_id,
@@ -175,9 +195,10 @@ def main() -> int:
             "workflow_state_present": bool(workflow_state and workflow_state.is_file()),
         },
         "worker_handoffs": {
-            "visual": {"skill": "ai-ppt-visual-gen", "status": visual_status, "plan": str(visual_plan) if visual_plan else None, "manifest": str(visual_manifest) if visual_manifest else None, "assertions": str(visual_assertions) if visual_assertions else None},
-            "editable": {"skill": "ai-ppt-editable", "status": "in-progress" if args.current_stage != "validated" else "passed", "layout": str(layout) if layout else None, "pptx": str(pptx)},
+            "visual": {**worker_record("ai-ppt-visual-gen", visual_status, artifacts, args.latest_check, args.blocker, args.next_action), "plan": str(visual_plan) if visual_plan else None, "manifest": str(visual_manifest) if visual_manifest else None, "assertions": str(visual_assertions) if visual_assertions else None},
+            "editable": {**worker_record("ai-ppt-editable", editable_status, artifacts, args.latest_check, args.blocker, args.next_action), "layout": str(layout) if layout else None, "pptx": str(pptx)},
         },
+        "handoff_protocol": "ai-ppt-plus/worker-handoff/v1",
         "completed_slides": completed,
         "active_batch": "B01",
         "remaining_slides": remaining,

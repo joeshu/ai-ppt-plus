@@ -6,6 +6,7 @@
   "visual_authority": "approved_design_system",
   "formal_content_authority": "approved_outline",
   "requires_image_generation": false,
+  "outline_contract": {"path": "outline-contract.json", "sha256": ""},
   "native_content_manifest": "native-content-manifest.json",
   "reference_roster": [],
   "reason": "",

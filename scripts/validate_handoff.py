@@ -39,6 +39,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("handoff")
     parser.add_argument("--report")
+    parser.add_argument("--require-worker-protocol", action="store_true", help="require normalized worker handoff records")
     args = parser.parse_args()
     path = Path(args.handoff)
     try:
@@ -67,6 +68,20 @@ def main() -> int:
                 issues.append({"severity": "blocker", "code": "missing_v2_field", "field": field})
         if data.get("route") not in ROUTES:
             issues.append({"severity": "blocker", "code": "invalid_route", "route": data.get("route")})
+        if args.require_worker_protocol:
+            if data.get("handoff_protocol") != "ai-ppt-plus/worker-handoff/v1":
+                issues.append({"severity": "blocker", "code": "worker_protocol_missing"})
+            workers = data.get("worker_handoffs") if isinstance(data.get("worker_handoffs"), dict) else {}
+            for name in ("visual", "editable"):
+                record = workers.get(name)
+                if not isinstance(record, dict):
+                    issues.append({"severity": "blocker", "code": "worker_handoff_missing", "worker": name})
+                    continue
+                for field in ("protocol", "skill", "skill_revision", "status", "input_hashes", "output_artifacts", "manifest_paths", "qa_results", "known_issues", "next_action"):
+                    if field not in record:
+                        issues.append({"severity": "blocker", "code": "worker_handoff_field_missing", "worker": name, "field": field})
+                if record.get("protocol") != "ai-ppt-plus/worker-handoff/v1":
+                    issues.append({"severity": "blocker", "code": "worker_handoff_protocol_invalid", "worker": name})
         artifacts = data.get("artifacts")
         records = artifacts.values() if isinstance(artifacts, dict) else artifacts if isinstance(artifacts, list) else []
         for name, record in (artifacts.items() if isinstance(artifacts, dict) else enumerate(records)):

@@ -115,12 +115,6 @@
       "executable": false
     },
     {
-      "source_path": "assets/route-decision.template.json",
-      "target_path": "assets/route-decision.template.json",
-      "sha256": "1af0004a4a9b0b5b9c9433153fc822a51851ccf9c9c4f504d7fcba3fc6f62d69",
-      "executable": false
-    },
-    {
       "source_path": "assets/schemas/content-inventory.schema.json",
       "target_path": "assets/schemas/content-inventory.schema.json",
       "sha256": "362d2c9ea1e912d2feb9f6923a24ebc3e083726df61173610945ea433c0cb6f5",
@@ -793,12 +787,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/validate_project.py",
-      "target_path": "scripts/validate_project.py",
-      "sha256": "c9c2a5eb95e499d4672d65614c09c773d4f28c194f2045425313a3690ada1519",
-      "executable": false
-    },
-    {
       "source_path": "scripts/validate_regions.py",
       "target_path": "scripts/validate_regions.py",
       "sha256": "5a66adbd7c7e607dd9220c7fe878fb876c034240e7c79cd1b5a9b4f1a38f772a",
@@ -1105,6 +1093,10 @@
       "reason": "post-baseline native-authoring compatibility extension"
     },
     {
+      "path": "assets/route-decision.template.json",
+      "reason": "post-baseline outline-contract binding extension"
+    },
+    {
       "path": "assets/schemas/route-decision.schema.json",
       "reason": "post-baseline route schema extension"
     },
@@ -1135,6 +1127,10 @@
     {
       "path": "scripts/run_pipeline.py",
       "reason": "post-baseline orchestrator integration adapter"
+    },
+    {
+      "path": "scripts/validate_project.py",
+      "reason": "post-baseline root P0 governance integration"
     },
     {
       "path": "scripts/validate_handoff.py",

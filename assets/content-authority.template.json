@@ -1,0 +1,21 @@
+{
+  "schema": "ai-ppt-plus/content-authority/v1",
+  "project_id": "project-slug",
+  "revision": "R1",
+  "outline_contract": {"path": "outline-contract.json", "sha256": ""},
+  "sources": [],
+  "entries": [
+    {
+      "authority_id": "slide-1-title",
+      "slide_no": 1,
+      "object_id": "title",
+      "role": "title",
+      "content": "正式标题",
+      "outline_ref": {"slide_no": 1, "field": "title"},
+      "source_refs": [],
+      "pptx_object_ref": {"manifest_path": "slide-object-manifest.json", "object_id": "title"},
+      "render_ref": {"path": "renders/slide-1.png", "bbox": [0, 0, 100, 50]},
+      "status": "planned"
+    }
+  ]
+}
