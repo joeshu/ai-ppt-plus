@@ -7,7 +7,7 @@
     "valid": {"type": "boolean"},
     "status": {"enum": ["passed", "partial", "blocked"]},
     "comparison_model": {"type": "object"},
-    "pixel_comparison": {"type": "object", "required": ["valid", "status"]},
+    "pixel_comparison": {"type": "object", "required": ["valid", "status", "compared_pages", "aggregate", "metrics", "page_metrics", "hash_bound"], "properties": {"valid": {"type": "boolean"}, "status": {"type": "string"}, "compared_pages": {"type": "integer", "minimum": 0}, "aggregate": {"type": "object"}, "metrics": {"type": "object"}, "page_metrics": {"type": "array"}, "hash_bound": {"type": "boolean"}}},
     "object_comparison": {"type": "object", "required": ["valid", "status"]},
     "issues": {"type": "array"}
   }

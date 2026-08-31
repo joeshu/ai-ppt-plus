@@ -24,6 +24,43 @@ def _ratio(numerator: int, denominator: int) -> float | None:
     return round(numerator / denominator, 6) if denominator else None
 
 
+def _critical_path_ms(execution: dict[str, Any], steps: list[Any]) -> float:
+    """Use recorded DAG timing, or derive it for older pipeline results."""
+    if "critical_path_ms" in execution:
+        try:
+            return max(0.0, float(execution.get("critical_path_ms") or 0))
+        except (TypeError, ValueError):
+            return 0.0
+    if execution.get("mode") != "dag":
+        return 0.0
+    tasks: dict[str, tuple[float, tuple[str, ...]]] = {}
+    for step in steps:
+        if not isinstance(step, dict) or not step.get("name"):
+            continue
+        try:
+            duration = max(0.0, float(step.get("duration_ms", 0) or 0))
+        except (TypeError, ValueError):
+            duration = 0.0
+        dependencies = step.get("deps") if isinstance(step.get("deps"), list) else []
+        tasks[str(step["name"])] = (duration, tuple(str(dep) for dep in dependencies if dep))
+    memo: dict[str, float] = {}
+    visiting: set[str] = set()
+
+    def path_duration(name: str) -> float:
+        if name in memo:
+            return memo[name]
+        if name in visiting:
+            return 0.0
+        visiting.add(name)
+        duration, dependencies = tasks[name]
+        longest_dependency = max((path_duration(dep) for dep in dependencies if dep in tasks), default=0.0)
+        visiting.remove(name)
+        memo[name] = duration + longest_dependency
+        return memo[name]
+
+    return round(max((path_duration(name) for name in tasks), default=0.0), 3)
+
+
 def _repair_rounds(data: dict[str, Any], issue_log: dict[str, Any] | None, explicit: int | None) -> int:
     values = []
     if explicit is not None:
@@ -93,7 +130,7 @@ def build(pipeline_result: Path, output: Path, *, issue_log: Path | None = None,
             },
             "wall_duration_ms": float(execution.get("duration_ms", 0) or 0),
             "task_duration_ms_sum": float(execution.get("task_duration_ms_sum", 0) or 0),
-            "critical_path_ms": float(execution.get("critical_path_ms", 0) or 0),
+            "critical_path_ms": _critical_path_ms(execution, steps),
             "retry_count": retries,
             "repair_rounds": repair_rounds,
             "affected_pages": execution.get("affected_pages", "all"),
