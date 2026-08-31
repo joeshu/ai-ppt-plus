@@ -111,6 +111,53 @@ def pixel_bindings(visual: dict[str, Any] | None, issues: list[dict[str, Any]], 
     return records
 
 
+def pixel_rollup(visual: dict[str, Any] | None) -> dict[str, Any]:
+    """Normalize both deck-level and single-page visual reports.
+
+    ``compare_visual.py`` emits one page with top-level ``metrics`` while
+    ``compare_visual_deck.py`` emits ``pages`` plus an ``aggregate`` object.
+    Keep both forms equally informative in the unified report.
+    """
+    if not visual:
+        return {"compared_pages": 0, "aggregate": {}, "metrics": {}, "page_metrics": []}
+
+    pages = visual.get("pages")
+    if isinstance(pages, list) and pages:
+        aggregate = visual.get("aggregate") if isinstance(visual.get("aggregate"), dict) else {}
+        page_metrics = [
+            {"slide": page.get("slide"), "metrics": page.get("metrics", {})}
+            for page in pages
+            if isinstance(page, dict)
+        ]
+        compared_pages = aggregate.get("compared_pages")
+        if not isinstance(compared_pages, int) or compared_pages < 0:
+            compared_pages = sum(1 for item in page_metrics if item["metrics"]) or len(page_metrics)
+        return {
+            "compared_pages": compared_pages,
+            "aggregate": aggregate,
+            "metrics": {},
+            "page_metrics": page_metrics,
+        }
+
+    metrics = visual.get("metrics") if isinstance(visual.get("metrics"), dict) else {}
+    aggregate = visual.get("aggregate") if isinstance(visual.get("aggregate"), dict) else {}
+    if not aggregate and metrics:
+        blurred = metrics.get("blurred_layout_ssim")
+        fidelity = metrics.get("pixel_fidelity_score")
+        aggregate = {
+            "compared_pages": 1,
+            "worst_blurred_layout_ssim": blurred,
+            "mean_blurred_layout_ssim": blurred,
+            "mean_pixel_fidelity_score": fidelity,
+        }
+    return {
+        "compared_pages": 1 if metrics else 0,
+        "aggregate": aggregate,
+        "metrics": metrics,
+        "page_metrics": [],
+    }
+
+
 def build(visual_report_path: Path, output: Path, *, object_report_path: Path | None = None, object_manifest_path: Path | None = None, deck_path: Path | None = None, require_object: bool = False) -> dict[str, Any]:
     issues: list[dict[str, Any]] = []
     visual = read_json(visual_report_path, "pixel_comparison", issues)
@@ -161,12 +208,15 @@ def build(visual_report_path: Path, output: Path, *, object_report_path: Path | 
             "errors": object_report.get("errors", []),
             "warnings": object_report.get("warnings", []),
         }
+    pixel_rollup_data = pixel_rollup(visual)
     pixel_evidence = {
         "status": "passed" if visual and visual.get("valid") is True else "blocked",
         "valid": bool(visual and visual.get("valid") is True),
         "schema": visual.get("schema") if visual else None,
-        "compared_pages": len(visual.get("pages", [])) if visual else 0,
-        "aggregate": visual.get("aggregate", {}) if visual else {},
+        "compared_pages": pixel_rollup_data["compared_pages"],
+        "aggregate": pixel_rollup_data["aggregate"],
+        "metrics": pixel_rollup_data["metrics"],
+        "page_metrics": pixel_rollup_data["page_metrics"],
         "issues": visual.get("issues", []) if visual else [],
         "hash_bound": bool(bindings) and all(item["rendered"].get("valid") and item["reference"].get("valid") for item in bindings),
         "bindings": bindings,
