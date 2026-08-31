@@ -10,6 +10,15 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+EXPECTED_SYNCED_FILE_COUNT = 171
+POST_BASELINE_EXCLUSIONS = frozenset({
+    "assets/route-decision.template.json",
+    "scripts/compare_visual.py",
+    "scripts/compare_visual_deck.py",
+    "scripts/delivery_check.py",
+    "scripts/validate_project.py",
+    "scripts/validate_signoff.py",
+})
 
 
 def main() -> int:
@@ -28,7 +37,11 @@ def main() -> int:
         assert data["source"]["repository"] == "joeshu/ai-ppt-plus", data
         assert data["source"]["ref"] == "完美第一版", data
         assert data["source"]["commit"] == "d5dec0588fe87581112cbe1498ad4dac44f402e4", data
-        assert data["synced_file_count"] >= 177, data
+        manifest = json.loads((ROOT / "assets/upstream-perfect-sync.json").read_text(encoding="utf-8"))
+        assert len(manifest["synced_files"]) == EXPECTED_SYNCED_FILE_COUNT, manifest
+        excluded = {item["path"] for item in manifest["excluded_paths"]}
+        assert POST_BASELINE_EXCLUSIONS <= excluded, manifest
+        assert data["synced_file_count"] == EXPECTED_SYNCED_FILE_COUNT, data
     print("perfect-source parity gate: ok")
     return 0
 
