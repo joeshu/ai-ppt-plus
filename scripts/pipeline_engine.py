@@ -26,11 +26,13 @@ from typing import Any, Iterable
 from atomic_output import atomic_write_json, atomic_write_text
 
 
-CACHE_SCHEMA = "ai-ppt-plus/pipeline-cache/v2"
+CACHE_SCHEMA = "ai-ppt-plus/pipeline-cache/v3"
 ENGINE_VERSION = "pipeline-engine-v2"
 CACHE_EXCLUDED_DIRS = {".git", ".pipeline-cache", "pipeline-runs", "__pycache__"}
 RUNTIME_PACKAGES = ("numpy", "Pillow", "python-pptx", "PyYAML", "cairosvg")
 RUNTIME_BINARIES = ("soffice", "libreoffice", "pdftoppm", "pdftocairo", "inkscape", "fc-match")
+CACHE_LOCK_TIMEOUT_SECONDS = 30.0
+CACHE_LOCK_STALE_SECONDS = 900.0
 
 
 def as_text(value: Any) -> str:
@@ -238,6 +240,67 @@ class PipelineExecutor:
             raise RuntimeError("cache directory is not configured")
         return self.cache_dir / key
 
+    def _cache_lock(self, key: str) -> Path:
+        if not self.cache_dir:
+            raise RuntimeError("cache directory is not configured")
+        return self.cache_dir / f".{key}.lock"
+
+    def _acquire_cache_lock(self, key: str) -> Path | None:
+        """Acquire a cross-process lock for one cache key.
+
+        Cache entries are immutable once published.  The lock only protects
+        the temporary-copy/publish window so two workers cannot race to
+        publish or remove the same entry.  A stale lock is recoverable and
+        is removed only when its recorded age exceeds the safety threshold.
+        """
+        if not self.cache_dir:
+            return None
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        lock = self._cache_lock(key)
+        deadline = time.monotonic() + CACHE_LOCK_TIMEOUT_SECONDS
+        while time.monotonic() < deadline:
+            try:
+                descriptor = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+                with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+                    stream.write(json.dumps({"pid": os.getpid(), "created_at": time.time()}))
+                return lock
+            except FileExistsError:
+                try:
+                    age = time.time() - lock.stat().st_mtime
+                    if age > CACHE_LOCK_STALE_SECONDS:
+                        lock.unlink()
+                        continue
+                except OSError:
+                    continue
+                time.sleep(0.05)
+            except OSError:
+                return None
+        return None
+
+    @staticmethod
+    def _release_cache_lock(lock: Path | None) -> None:
+        if lock is None:
+            return
+        try:
+            lock.unlink()
+        except FileNotFoundError:
+            pass
+        except OSError:
+            pass
+
+    def _quarantine_cache_entry(self, entry: Path, reason: str) -> None:
+        """Move a corrupt entry aside so it cannot poison future runs."""
+        if not entry.exists() or not self.cache_dir:
+            return
+        quarantine = self.cache_dir / f".corrupt-{entry.name}-{time.time_ns()}"
+        try:
+            os.replace(entry, quarantine)
+            atomic_write_text(quarantine / "quarantine-reason.txt", reason + "\n")
+        except OSError:
+            # A concurrent writer may have replaced the entry; a cache miss is
+            # still safe and the next run will rebuild it.
+            return
+
     def _restore_cache(self, task: PipelineTask, key: str) -> dict[str, Any] | None:
         if self.mode != "dag" or not task.cacheable or not self.cache_dir:
             return None
@@ -248,32 +311,48 @@ class PipelineExecutor:
         try:
             metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
+            self._quarantine_cache_entry(entry, "metadata unreadable")
             return None
-        if metadata.get("schema") != CACHE_SCHEMA or metadata.get("cache_key") != key or metadata.get("ok") is not True:
+        if (
+            metadata.get("schema") != CACHE_SCHEMA
+            or metadata.get("cache_key") != key
+            or metadata.get("ok") is not True
+            or metadata.get("local_code_fingerprint") != self.code_fingerprint
+            or metadata.get("runtime_fingerprint") != self.runtime_fingerprint
+        ):
+            self._quarantine_cache_entry(entry, "cache metadata or environment fingerprint mismatch")
             return None
         artifacts = metadata.get("artifacts", [])
         if not isinstance(artifacts, list):
+            self._quarantine_cache_entry(entry, "cache artifacts is not a list")
             return None
         safe_artifacts = []
         for artifact in artifacts:
             if not isinstance(artifact, dict) or not artifact.get("relative"):
+                self._quarantine_cache_entry(entry, "cache artifact record invalid")
                 return None
             relative = _safe_relative(artifact["relative"])
             if relative is None or artifact.get("kind") not in {"file", "directory"}:
+                self._quarantine_cache_entry(entry, "cache artifact path invalid")
                 return None
             source = entry / "artifacts" / relative
             if artifact["kind"] == "directory" and not source.is_dir():
+                self._quarantine_cache_entry(entry, "cache directory artifact missing")
                 return None
             if artifact["kind"] == "file" and not source.is_file():
+                self._quarantine_cache_entry(entry, "cache file artifact missing")
                 return None
             recorded_digest = artifact.get("sha256")
             if not isinstance(recorded_digest, str) or len(recorded_digest) != 64:
+                self._quarantine_cache_entry(entry, "cache artifact digest invalid")
                 return None
             try:
                 current_digest = _artifact_digest(source)
             except OSError:
+                self._quarantine_cache_entry(entry, "cache artifact unreadable")
                 return None
             if current_digest != recorded_digest:
+                self._quarantine_cache_entry(entry, "cache artifact digest mismatch")
                 return None
             safe_artifacts.append((relative, artifact["kind"], source))
         try:
@@ -330,7 +409,12 @@ class PipelineExecutor:
         entry = self._cache_entry(key)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         temporary = self.cache_dir / f".{key}.tmp-{os.getpid()}-{time.time_ns()}"
+        lock = self._acquire_cache_lock(key)
+        if lock is None:
+            return
         try:
+            if entry.exists():
+                return
             (temporary / "artifacts").mkdir(parents=True)
             for artifact in artifacts:
                 source = self.run_dir / artifact["relative"]
@@ -347,6 +431,8 @@ class PipelineExecutor:
                 "task": task.name,
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "ok": True,
+                "local_code_fingerprint": self.code_fingerprint,
+                "runtime_fingerprint": self.runtime_fingerprint,
                 "artifacts": artifacts,
                 "result": cache_result,
             }
@@ -357,6 +443,8 @@ class PipelineExecutor:
                 os.replace(temporary, entry)
         except OSError:
             shutil.rmtree(temporary, ignore_errors=True)
+        finally:
+            self._release_cache_lock(lock)
 
     def _run_task(self, task: PipelineTask) -> dict[str, Any]:
         key, _payload = self._cache_key(task)
@@ -429,6 +517,26 @@ class PipelineExecutor:
             }
             if failure:
                 result["failure"] = failure
+        if result.get("ok") is True and task.outputs:
+            missing_outputs = [
+                str(Path(output).resolve())
+                for output in task.outputs
+                if not Path(output).resolve().exists()
+            ]
+            if missing_outputs:
+                result.update({
+                    "ok": False,
+                    "exit_code": 2,
+                    "failure": "declared_output_missing",
+                    "missing_outputs": missing_outputs,
+                })
+                stderr_path = Path(result["stderr"])
+                try:
+                    stderr = stderr_path.read_text(encoding="utf-8")
+                except OSError:
+                    stderr = ""
+                message = "declared output missing: " + ", ".join(missing_outputs) + "\n"
+                atomic_write_text(stderr_path, stderr + message)
         result.update({
             "cache_key": key,
             "cache_hit": False,
@@ -460,6 +568,23 @@ class PipelineExecutor:
             "duration_ms": 0.0,
         }
 
+    def _write_checkpoint(self, results: dict[str, dict[str, Any]], pending: set[str], *, status: str = "running") -> None:
+        """Persist enough state to resume inspection after interruption."""
+        checkpoint = {
+            "schema": "ai-ppt-plus/pipeline-checkpoint/v1",
+            "status": status,
+            "run_dir": str(self.run_dir),
+            "engine_version": ENGINE_VERSION,
+            "local_code_fingerprint": self.code_fingerprint,
+            "runtime_fingerprint": self.runtime_fingerprint,
+            "completed": [
+                {"name": name, "ok": result.get("ok"), "cache_hit": result.get("cache_hit"), "duration_ms": result.get("duration_ms", 0)}
+                for name, result in results.items()
+            ],
+            "remaining": sorted(pending),
+        }
+        atomic_write_json(self.run_dir / "pipeline-checkpoint.json", checkpoint)
+
     def run(self) -> list[dict[str, Any]]:
         run_started = time.perf_counter()
         by_name = {task.name: task for task in self.tasks}
@@ -471,6 +596,7 @@ class PipelineExecutor:
         results: dict[str, dict[str, Any]] = {}
         pending = set(by_name)
         pool = None
+        self._write_checkpoint(results, pending)
         try:
             while pending:
                 progressed = False
@@ -517,7 +643,9 @@ class PipelineExecutor:
                     cycle = sorted(pending)
                     for name in cycle:
                         results[name] = self._blocked_result(by_name[name], ["dependency_cycle"])
+                    self._write_checkpoint(results, pending, status="blocked")
                     break
+                self._write_checkpoint(results, pending)
         finally:
             if pool is not None:
                 pool.shutdown(wait=True)
@@ -530,6 +658,7 @@ class PipelineExecutor:
             dependency_path = max((critical_path.get(dep, 0.0) for dep in task.deps), default=0.0)
             critical_path[task.name] = dependency_path + own
         self.last_critical_path_ms = round(max(critical_path.values(), default=0.0), 3)
+        self._write_checkpoint(results, set(), status="completed")
         return [results[task.name] for task in self.tasks]
 
 

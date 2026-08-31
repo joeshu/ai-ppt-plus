@@ -1,0 +1,10 @@
+{
+  "schema": "ai-ppt-plus/design-system-validation/v1",
+  "valid": false,
+  "status": "blocked",
+  "design_system_path": "design-system.yaml",
+  "design_system_revision": "R1",
+  "bindings": [],
+  "issues": [],
+  "warnings": []
+}

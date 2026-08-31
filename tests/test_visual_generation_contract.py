@@ -25,6 +25,33 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def attach_narrative_gate(project: Path, plan_data: dict) -> None:
+    """Add the approved thought-table evidence required by the visual pipeline."""
+    outline = project / "outline.csv"
+    outline.write_text(
+        "slide_no,section,title,core_message,purpose,body_content,data_sources,visual_type,audience_takeaway,owner_notes,status,revision_reason\n"
+        "1,海南旅行,海南旅行攻略,用一条路线组织旅行,帮助执行,四个旅行模块,fixture-source,infographic,按路线执行,保留弹性,approved,fixture\n",
+        encoding="utf-8",
+    )
+    change_log = project / "change-log.json"
+    write_json(change_log, {"revision": plan_data["outline_revision"], "changes": []})
+    plan_data["narrative_gate"] = {
+        "schema": "ai-ppt-plus/narrative-gate/v1",
+        "workflow": "ppt-thought-table-first",
+        "outline_table": outline.name,
+        "outline_table_sha256": digest(outline),
+        "change_log": change_log.name,
+        "revision": plan_data["outline_revision"],
+        "status": "approved",
+        "approval_required": True,
+        "approved_by": "fixture-owner",
+        "approved_at": "2026-08-31T00:00:00Z",
+        "owner_notes_preserved": True,
+        "formal_text_authority": "approved-outline-table",
+        "feedback_round": 0,
+    }
+
+
 def build_plan() -> dict:
     modules = []
     for index, name in enumerate(("海口抵达", "三亚海岸", "环岛体验", "返程收束"), start=1):
@@ -68,7 +95,31 @@ def build_plan() -> dict:
             "font_style": "clean sans-serif",
             "surface": "light paper with restrained depth",
             "icon_style": "flat line icons with consistent stroke",
+            "grid": "12-column grid with a generous outer margin",
+            "shared_chrome": "quiet chapter label and restrained footer rhythm",
+            "material_language": "paper, sea-glass and coral accents with shallow depth",
             "avoid_items": ["placeholder text", "invented numbers", "random icon collage"],
+        },
+        "canvas_policy": {
+            "require_exact_dimensions": False,
+            "on_mismatch": "warn",
+            "minimum_width_px": 1,
+            "minimum_height_px": 1,
+        },
+        "quality_target": {
+            "tier": "premium-commercial",
+            "visual_language": "calm, editorial and information-dense",
+            "must_have": ["clear hierarchy", "readable route spine"],
+            "avoid_items": ["placeholder text", "invented data"],
+            "readability": {"target_viewing": "conference-room review", "min_title_px": 32, "min_body_px": 18, "min_annotation_px": 14, "max_visible_copy_items": 40},
+            "commercial_policy": {"exclude_unlicensed_logos": True, "exclude_watermarks": True, "exclude_celebrity_and_trademark_imitation": True, "external_asset_provenance_required": True},
+        },
+        "generation_session": {
+            "session_id": "visual-generation-fixture-session",
+            "continuity_policy": "single-model-shared-anchor",
+            "style_anchor": "coastal-clear-tech",
+            "shared_preamble": "Use the same coastal-clear-tech visual language on every page.",
+            "batch_size": 1,
         },
         "generation_contract": {
             "skill": "ai-ppt-visual-gen",
@@ -120,7 +171,7 @@ def build_plan() -> dict:
                 "preserve": ["the approved design-system language"],
                 "exclude": ["unapproved text", "brand elements", "invented data"],
             },
-            "production_prompt": "Create a polished 16:9 presentation slide in a layered coastal journey map. Use #14313B, #287B80, #E85B47 and #F7F0E4. Audience: executive stakeholders; language: zh-CN; presentation_context: high-end executive review in a conference room. A4 有界恢复策略：最多每页 2 次；范围：single-slide；只重试问题页。 Render the following 页面文字逐字: 海南旅行攻略; 把海岛节奏拆成四个易执行的旅行模块。; 模块 1; 海口抵达; D1; 建议; 安排当天核心体验; 保留弹性与安全余量; 模块 2; 三亚海岸; D2; 模块 3; 环岛体验; D3; 模块 4; 返程收束; D4; 先定节奏，再把风景留给临场发现。 Core logic: 用一条由抵达、海岸、环岛到返程的路线组织一次轻松的海南旅行。 不得编造任何数据；不得用代码补字或盖字; use clear hierarchy, restrained line icons and a readable route spine.",
+            "production_prompt": "Create a polished 16:9 presentation slide in a layered coastal journey map. Use #14313B, #287B80, #E85B47 and #F7F0E4. Audience: executive stakeholders; language: zh-CN; presentation_context: high-end executive review in a conference room. A4 有界恢复策略：最多每页 2 次；范围：single-slide；只重试问题页。 Render the following 页面文字逐字: 海南旅行攻略; 把海岛节奏拆成四个易执行的旅行模块。; 模块 1; 海口抵达; D1; 建议; 安排当天核心体验; 保留弹性与安全余量; 模块 2; 三亚海岸; D2; 模块 3; 环岛体验; D3; 模块 4; 返程收束; D4; 先定节奏，再把风景留给临场发现。 Core logic: 用一条由抵达、海岸、环岛到返程的路线组织一次轻松的海南旅行。 不得编造任何数据；不得用代码补字或盖字; use clear hierarchy, restrained line icons and a readable route spine. 【生图前叙事审批闸门】 approved outline table is the sole formal-copy authority. 【整套连续生成锁】 single-model-shared-anchor; preserve the shared style anchor. 【商用级视觉质量标准】 premium-commercial, readable at conference-room review. 【语言与标签规则】 zh-CN labels are verbatim and no decorative text is invented.",
             "content_model": {
                 "intro": "把海岛节奏拆成四个易执行的旅行模块。",
                 "modules": modules,
@@ -130,6 +181,7 @@ def build_plan() -> dict:
             "visual_assets": {"icons": ["arrival", "coast", "route", "return"], "background_texture": "subtle wave contour"},
             "reference_images": [],
             "prompt_file": "prompts/slide-1.md",
+            "outline_row_ref": "outline.csv#slide-1",
         }],
     }
 
@@ -152,6 +204,7 @@ def main() -> int:
 
         plan = root / "visual-generation-plan.json"
         plan_data = build_plan()
+        attach_narrative_gate(root, plan_data)
         prompt.write_text(plan_data["slides"][0]["production_prompt"] + "\n", encoding="utf-8")
         write_json(plan, plan_data)
         plan_only = run("scripts/validate_visual_generation_plan.py", str(plan), "--expected-pages", "1")
@@ -167,6 +220,8 @@ def main() -> int:
             "backend_policy": "raster-only",
             "source_retention": "generated-source-and-project-copy",
             "no_code_overlay": True,
+            "generation_session_id": plan_data["generation_session"]["session_id"],
+            "continuity_policy": plan_data["generation_session"]["continuity_policy"],
             "slides": [{
                 "slide_no": 1,
                 "prompt_file": "prompts/slide-1.md",
@@ -177,6 +232,8 @@ def main() -> int:
                 "copied_to_sha256": digest(copied),
                 "backend": "codex.imagegen",
                 "model_or_tool": "image-generation",
+                "generation_session_id": plan_data["generation_session"]["session_id"],
+                "context_continuity_status": "shared-anchor",
                 "canvas": {"ratio": "16:9"},
             }],
         })

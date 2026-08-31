@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tests"))
-from test_visual_generation_contract import build_plan  # noqa: E402
+from test_visual_generation_contract import attach_narrative_gate, build_plan  # noqa: E402
 
 
 def write_json(path: Path, value) -> None:
@@ -42,6 +42,7 @@ def main() -> int:
         plan_data = build_plan()
         plan_data["slides"][0]["prompt_file"] = "prompts/slide-1.md"
         prompt.write_text(plan_data["slides"][0]["production_prompt"] + "\n", encoding="utf-8")
+        attach_narrative_gate(project, plan_data)
         write_json(plan, plan_data)
         manifest = project / "visual-generation-manifest.json"
         write_json(manifest, {
@@ -51,9 +52,11 @@ def main() -> int:
             "generator_skill": "ai-ppt-visual-gen",
             "tool_resolution": "runtime-discovery",
             "backend_policy": "raster-only",
-            "source_retention": "generated-source-and-project-copy",
-            "no_code_overlay": True,
-            "slides": [{
+                "source_retention": "generated-source-and-project-copy",
+                "no_code_overlay": True,
+                "generation_session_id": plan_data["generation_session"]["session_id"],
+                "continuity_policy": plan_data["generation_session"]["continuity_policy"],
+                "slides": [{
                 "slide_no": 1,
                 "prompt_file": "prompts/slide-1.md",
                 "prompt_sha256": digest(prompt),
@@ -61,9 +64,11 @@ def main() -> int:
                 "copied_to": copied.name,
                 "generated_source_sha256": digest(source),
                 "copied_to_sha256": digest(copied),
-                "backend": "test-imagegen",
-                "model_or_tool": "fixture",
-                "canvas": {"width_px": 160, "height_px": 90, "ratio": "16:9"},
+                    "backend": "test-imagegen",
+                    "model_or_tool": "fixture",
+                    "generation_session_id": plan_data["generation_session"]["session_id"],
+                    "context_continuity_status": "shared-anchor",
+                    "canvas": {"width_px": 160, "height_px": 90, "ratio": "16:9"},
             }],
         })
         layout = project / "editable-layout.json"

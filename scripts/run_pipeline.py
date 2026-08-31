@@ -12,6 +12,10 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--visual-threshold N]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
        [--route-decision ROUTE.json] [--require-route] [--require-editability]
+       [--outline-contract CONTRACT.json] [--content-authority AUTHORITY.json]
+       [--quality-gates QUALITY.json] [--require-root-p0]
+       [--design-system DESIGN.yaml] [--require-p1]
+       [--require-dual-comparison] [--repair-round N]
        [--workflow-state STATE.json] [--require-workflow-state]
        [--visual-generation-plan PLAN.json] [--visual-generation-manifest MANIFEST.json]
        [--require-visual-generation]
@@ -35,6 +39,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from atomic_output import atomic_write_json, atomic_write_text
+from build_performance_report import build as build_performance_report
 from pipeline_engine import PipelineExecutor, PipelineTask
 from report_envelope import normalize_child
 from render_review_html import write_review
@@ -298,6 +303,8 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"sample_count": report.get("sample_count"), "max_drift": report.get("max_drift"), "samples": report.get("samples", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "chart_manifest_validation":
         summary.update({"chart_count": report.get("chart_count"), "charts": report.get("charts", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "dual_comparison":
+        summary.update({"pixel": report.get("pixel_comparison", {}), "object": report.get("object_comparison", {}), "human_visual_review_required": report.get("human_visual_review_required", True)})
     return summary
 
 
@@ -319,6 +326,15 @@ def main() -> int:
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
+    parser.add_argument("--outline-contract", help="approved outline-contract/v1; defaults to project/outline-contract.json when --require-root-p0 is used")
+    parser.add_argument("--content-authority", help="content-authority/v1 provenance contract")
+    parser.add_argument("--quality-gates", help="quality-gates/v1 four-dimensional quality contract")
+    parser.add_argument("--require-root-p0", action="store_true", help="require the root P0 outline, authority, route, handoff and quality gates")
+    parser.add_argument("--design-system", help="deck-wide design-system.yaml")
+    parser.add_argument("--require-p1", action="store_true", help="require P0 plus the P1 design-system, issue-log and review-package gates")
+    parser.add_argument("--require-dual-comparison", action="store_true", help="require both pixel and semantic object comparison when a reference is supplied")
+    parser.add_argument("--repair-round", type=int, default=0, help="current fix-render-validate repair round for performance telemetry")
+    parser.add_argument("--review-package-dir", help="portable review-package output directory")
     parser.add_argument("--workflow-state", help="workflow-state/v1 contract produced by the orchestrator")
     parser.add_argument("--require-workflow-state", action="store_true", help="require PROJECT_DIR/workflow-state.json or the path passed to --workflow-state")
     parser.add_argument("--visual-generation-plan", help="ai-ppt-visual-gen A1-A5 visual-generation-plan.json")
@@ -373,6 +389,23 @@ def main() -> int:
     args = parser.parse_args()
     project = Path(args.project_dir).resolve()
     deck = Path(args.deck).resolve()
+    if args.require_root_p0:
+        args.require_route = True
+        args.require_workflow_state = True
+        args.require_formal_content = True
+        args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
+        args.content_authority = args.content_authority or str(project / "content-authority.json")
+        args.quality_gates = args.quality_gates or str(project / "quality-gates.json")
+        args.handoff = args.handoff or str(project / "handoff.json")
+    if args.require_p1:
+        args.require_root_p0 = True
+        args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
+        args.content_authority = args.content_authority or str(project / "content-authority.json")
+        args.quality_gates = args.quality_gates or str(project / "quality-gates.json")
+        args.handoff = args.handoff or str(project / "handoff.json")
+        args.design_system = args.design_system or str(project / "design-system.yaml")
+        args.issue_log = args.issue_log or str(project / "issue-log.json")
+        args.review_package_dir = args.review_package_dir or str(project / "review-package")
     if args.expected_pages < 1:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "expected_pages_invalid", "message": "--expected-pages must be positive"}, ensure_ascii=False))
         return 2
@@ -390,6 +423,8 @@ def main() -> int:
         args.require_source_hashes = True
         args.require_asset_hashes = True
         args.require_formal_content = True
+        if args.reference or args.reference_dir:
+            args.require_dual_comparison = True
         if args.reference_dir:
             args.require_multipage_layout = True
         missing = []
@@ -426,6 +461,9 @@ def main() -> int:
     if args.parallel_workers < 1:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "parallel_workers_invalid"}, ensure_ascii=False))
         return 2
+    if args.repair_round < 0:
+        print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "repair_round_invalid"}, ensure_ascii=False))
+        return 2
     if args.release and affected_pages:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "release_requires_full_deck", "message": "--release requires a full-deck render; omit --affected-pages"}, ensure_ascii=False))
         return 2
@@ -451,6 +489,30 @@ def main() -> int:
         }
         print(json.dumps(result, ensure_ascii=False))
         return 2
+    outline_contract_path = Path(args.outline_contract).resolve() if args.outline_contract else None
+    content_authority_path = Path(args.content_authority).resolve() if args.content_authority else None
+    quality_gates_path = Path(args.quality_gates).resolve() if args.quality_gates else None
+    design_system_path = Path(args.design_system).resolve() if args.design_system else None
+    issue_log_path = Path(args.issue_log).resolve() if args.issue_log else None
+    if args.require_root_p0:
+        missing_root_p0 = [
+            str(path) for path in (outline_contract_path, content_authority_path, quality_gates_path)
+            if path is None or not path.is_file()
+        ]
+        if not args.route_decision:
+            missing_root_p0.append("--route-decision")
+        if not args.workflow_state and not (project / "workflow-state.json").is_file():
+            missing_root_p0.append("--workflow-state or project/workflow-state.json")
+        if not args.handoff or not Path(args.handoff).is_file():
+            missing_root_p0.append("--handoff or project/handoff.json")
+        if missing_root_p0:
+            print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "root_p0_evidence_missing", "missing": missing_root_p0}, ensure_ascii=False))
+            return 2
+    if args.require_p1:
+        missing_p1 = [str(path) for path in (design_system_path, issue_log_path) if path is None or not path.is_file()]
+        if missing_p1:
+            print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "p1_evidence_missing", "missing": missing_p1}, ensure_ascii=False))
+            return 2
     reference_route = isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction"
     visual_creation_route = isinstance(route_data, dict) and route_data.get("route") == "visual-creation"
     visual_generation_mode = route_data.get("visual_generation_mode", "layout-reference") if visual_creation_route else None
@@ -648,6 +710,73 @@ def main() -> int:
             metadata={"strict": args.require_workflow_state},
             cacheable=False,
         )
+    p0_deps = ["routing-contract"]
+    if args.route_decision:
+        p0_deps.append("route")
+    if workflow_state_enabled:
+        p0_deps.append("workflow-state")
+    if outline_contract_path:
+        outline_contract_args = [
+            str(SCRIPT_DIR / "validate_outline_contract.py"),
+            str(outline_contract_path),
+            "--report", str(run_dir / "outline-contract-validation.json"),
+        ]
+        if args.require_root_p0:
+            outline_contract_args.append("--require-approved")
+        add_step("outline-contract", outline_contract_args, deps=["routing-contract"], outputs=[run_dir / "outline-contract-validation.json"], inputs=[outline_contract_path], metadata={"required": args.require_root_p0})
+        p0_deps.append("outline-contract")
+    if content_authority_path:
+        authority_args = [
+            str(SCRIPT_DIR / "validate_content_authority.py"),
+            str(content_authority_path),
+            "--report", str(run_dir / "content-authority-validation.json"),
+        ]
+        if args.require_root_p0:
+            authority_args.extend(["--require-pptx-refs", "--require-render-refs"])
+        add_step("content-authority", authority_args, deps=["outline-contract"] if outline_contract_path else ["routing-contract"], outputs=[run_dir / "content-authority-validation.json"], inputs=[content_authority_path] + ([outline_contract_path] if outline_contract_path else []), metadata={"required": args.require_root_p0})
+        p0_deps.append("content-authority")
+    if args.route_decision and outline_contract_path:
+        orchestration_args = [
+            str(SCRIPT_DIR / "validate_orchestration_gates.py"),
+            str(project),
+            "--outline-contract", str(outline_contract_path),
+            "--route-decision", str(Path(args.route_decision).resolve()),
+            "--report", str(run_dir / "orchestration-gates-validation.json"),
+        ]
+        if workflow_state_enabled:
+            orchestration_args.extend(["--workflow-state", str(workflow_state_path)])
+        if args.require_root_p0:
+            orchestration_args.append("--strict")
+        orchestration_deps = p0_deps[:] + (["design-system"] if design_system_path else []) + (["issue-log"] if issue_log_path else [])
+        add_step("orchestration-gates", orchestration_args, deps=orchestration_deps, outputs=[run_dir / "orchestration-gates-validation.json"], inputs=[outline_contract_path, Path(args.route_decision).resolve()] + ([workflow_state_path] if workflow_state_enabled else []), metadata={"required": args.require_root_p0})
+        p0_deps.append("orchestration-gates")
+    if quality_gates_path:
+        quality_args = [
+            str(SCRIPT_DIR / "validate_quality_gates.py"),
+            str(quality_gates_path),
+            "--report", str(run_dir / "quality-gates-validation.json"),
+        ]
+        add_step("quality-gates", quality_args, deps=["routing-contract"], outputs=[run_dir / "quality-gates-validation.json"], inputs=[quality_gates_path], metadata={"required": args.require_root_p0})
+        p0_deps.append("quality-gates")
+    if design_system_path:
+        design_args = [str(SCRIPT_DIR / "validate_design_system.py"), str(design_system_path), "--report", str(run_dir / "design-system-validation.json")]
+        design_inputs = [design_system_path]
+        if args.visual_generation_plan:
+            visual_plan_path = Path(args.visual_generation_plan).resolve()
+            design_args.extend(["--visual-plan", str(visual_plan_path)])
+            design_inputs.append(visual_plan_path)
+        if (project / "slide-manifest.json").is_file():
+            slide_manifest_path = project / "slide-manifest.json"
+            design_args.extend(["--slide-manifest", str(slide_manifest_path)])
+            design_inputs.append(slide_manifest_path)
+        if args.require_p1:
+            design_args.append("--strict")
+        add_step("design-system", design_args, deps=["routing-contract"], outputs=[run_dir / "design-system-validation.json"], inputs=design_inputs, metadata={"required": args.require_p1})
+        p0_deps.append("design-system")
+    if issue_log_path:
+        issue_args = [str(SCRIPT_DIR / "validate_issue_log.py"), str(issue_log_path), "--report", str(run_dir / "issue-log-validation.json")]
+        add_step("issue-log", issue_args, deps=["routing-contract"], outputs=[run_dir / "issue-log-validation.json"], inputs=[issue_log_path], metadata={"required": args.require_p1})
+        p0_deps.append("issue-log")
     visual_generation_plan = None
     visual_generation_manifest = None
     visual_generation_enabled = False
@@ -798,7 +927,10 @@ def main() -> int:
             gradient_args.append("--require-verified")
         add_step("gradient-visual", gradient_args, deps=route_deps, outputs=[run_dir / "gradient-visual-validation.json"], inputs=[gradient_manifest])
     if args.handoff:
-        add_step("handoff", [str(SCRIPT_DIR / "validate_handoff.py"), str(Path(args.handoff).resolve()), "--report", str(run_dir / "handoff-validation.json")], outputs=[run_dir / "handoff-validation.json"], inputs=[Path(args.handoff).resolve(), deck])
+        handoff_args = [str(SCRIPT_DIR / "validate_handoff.py"), str(Path(args.handoff).resolve()), "--report", str(run_dir / "handoff-validation.json")]
+        if args.require_root_p0:
+            handoff_args.extend(["--require-worker-protocol", "--expected-package-revision", str(package_data["package_revision"])])
+        add_step("handoff", handoff_args, deps=["routing-contract"] if args.require_root_p0 else [], outputs=[run_dir / "handoff-validation.json"], inputs=[Path(args.handoff).resolve(), deck], metadata={"required": args.require_root_p0})
     if args.revision_label:
         add_step("revision-prepare", [str(SCRIPT_DIR / "revision_guard.py"), "prepare", str(project), "--deck", str(deck), "--label", args.revision_label], inputs=[project, deck], metadata={"revision_label": args.revision_label}, cacheable=False)
     add_step("environment", [str(SCRIPT_DIR / "probe_environment.py"), "--output", str(run_dir / "environment-report.json")], outputs=[run_dir / "environment-report.json"])
@@ -1070,6 +1202,26 @@ def main() -> int:
         if affected_pages:
             comparison_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir, Path(args.reference_dir).resolve()], metadata={"affected_pages": affected_pages or "all"})
+    if args.reference or args.reference_dir:
+        dual_args = [
+            str(SCRIPT_DIR / "compare_dual.py"),
+            "--visual-report", str(run_dir / "visual-comparison.json"),
+            "--deck", str(deck),
+            "--report", str(run_dir / "dual-comparison.json"),
+        ]
+        dual_inputs = [run_dir / "visual-comparison.json", deck]
+        dual_deps = ["visual-comparison"]
+        object_required = bool(args.require_dual_comparison or args.require_object_manifest or object_manifest.is_file())
+        if object_manifest.is_file() or args.require_object_manifest:
+            dual_args.extend(["--object-manifest", str(object_manifest)])
+            dual_inputs.append(object_manifest)
+        if any(task.name == "semantic-object-audit" for task in executor.tasks):
+            dual_args.extend(["--object-report", str(run_dir / "semantic-object-audit.json")])
+            dual_inputs.append(run_dir / "semantic-object-audit.json")
+            dual_deps.append("semantic-object-audit")
+        if object_required:
+            dual_args.append("--require-object")
+        add_step("dual-comparison", dual_args, deps=dual_deps, outputs=[run_dir / "dual-comparison.json"], inputs=dual_inputs, metadata={"require_object": object_required, "affected_pages": affected_pages or "all"})
     if args.preview_dir:
         preview_dir = Path(args.preview_dir).resolve()
         preview_args = [
@@ -1173,6 +1325,9 @@ def main() -> int:
         project_args.extend(["--expected-ratio", str(args.expected_ratio)])
     if args.reference or args.reference_dir:
         project_args.extend(["--visual-comparison", str(run_dir / "visual-comparison.json")])
+        project_args.extend(["--dual-comparison", str(run_dir / "dual-comparison.json")])
+        if args.require_dual_comparison:
+            project_args.append("--require-dual-comparison")
     if args.ocr_lang or args.require_ocr:
         project_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
     if content_inventory_enabled:
@@ -1195,10 +1350,31 @@ def main() -> int:
         project_args.extend(["--preview-consistency-validation", str(run_dir / "preview-consistency-validation.json")])
         if args.require_preview_consistency or args.release:
             project_args.append("--require-preview-consistency")
+    if content_authority_path:
+        project_args.extend(["--content-authority", str(run_dir / "content-authority-validation.json")])
+        if args.require_root_p0:
+            project_args.append("--require-content-authority")
+    if quality_gates_path:
+        project_args.extend(["--quality-gates", str(run_dir / "quality-gates-validation.json")])
+        if args.require_root_p0:
+            project_args.append("--require-quality-gates")
+    if args.route_decision and outline_contract_path:
+        project_args.extend(["--orchestration-gates", str(run_dir / "orchestration-gates-validation.json")])
+        if args.require_root_p0:
+            project_args.append("--require-orchestration-gates")
+    if design_system_path:
+        project_args.extend(["--design-system-validation", str(run_dir / "design-system-validation.json")])
+        if args.require_p1:
+            project_args.append("--require-design-system")
+    if issue_log_path:
+        project_args.extend(["--issue-log", str(issue_log_path)])
+        project_args.extend(["--issue-log-validation", str(run_dir / "issue-log-validation.json")])
+        if args.require_p1:
+            project_args.append("--require-issue-log")
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "visual-generation", "visual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest"):
+    for candidate in ("route", "visual-generation", "visual-comparison", "dual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     if content_inventory_enabled:
@@ -1207,6 +1383,9 @@ def main() -> int:
         project_deps.append("chart-manifest")
     if asset_hashes_enabled:
         project_deps.append("asset-hashes")
+    for candidate in ("outline-contract", "content-authority", "orchestration-gates", "quality-gates", "design-system", "issue-log"):
+        if any(task.name == candidate for task in executor.tasks):
+            project_deps.append(candidate)
     project_inputs = [
         deck,
         project / "slide-manifest.json",
@@ -1225,6 +1404,8 @@ def main() -> int:
         "imagegen-assets-manifest.json",
         "text-layout-manifest.json",
         "handoff.json",
+        "design-system.yaml",
+        "issue-log.json",
         "validation-report.json",
         "issue-log.json",
         "typography-calibration.json",
@@ -1250,6 +1431,9 @@ def main() -> int:
         [run_dir / "visual-comparison.json"] if args.reference or args.reference_dir else []
     )
     project_inputs.extend(
+        [run_dir / "dual-comparison.json"] if args.reference or args.reference_dir else []
+    )
+    project_inputs.extend(
         [run_dir / "ocr-text-check.json"] if args.ocr_lang or args.require_ocr else []
     )
     project_inputs.extend(
@@ -1273,6 +1457,24 @@ def main() -> int:
     project_inputs.extend(
         [run_dir / "typography-calibration-validation.json"] if typography_enabled else []
     )
+    project_inputs.extend(
+        [run_dir / "outline-contract-validation.json"] if outline_contract_path else []
+    )
+    project_inputs.extend(
+        [run_dir / "content-authority-validation.json"] if content_authority_path else []
+    )
+    project_inputs.extend(
+        [run_dir / "orchestration-gates-validation.json"] if args.route_decision and outline_contract_path else []
+    )
+    project_inputs.extend(
+        [run_dir / "quality-gates-validation.json"] if quality_gates_path else []
+    )
+    project_inputs.extend(
+        [run_dir / "design-system-validation.json"] if design_system_path else []
+    )
+    project_inputs.extend(
+        [run_dir / "issue-log-validation.json"] if issue_log_path else []
+    )
     add_step("project", project_args, deps=project_deps, outputs=[run_dir / "project-validation.json"], inputs=project_inputs, metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
     def collect_quality_evidence(bundle_path=None, bundle_key="report_bundle_preflight"):
         evidence = {}
@@ -1288,6 +1490,7 @@ def main() -> int:
             ("render", run_dir / "render-report.json"),
             ("render_visual_gate", run_dir / "render-visual-gate.json"),
             ("visual_comparison", run_dir / "visual-comparison.json"),
+            ("dual_comparison", run_dir / "dual-comparison.json"),
             ("ocr_text_check", run_dir / "ocr-text-check.json"),
             ("route_validation", run_dir / "route-validation.json"),
             ("workflow_state_validation", run_dir / "workflow-state-validation.json"),
@@ -1314,6 +1517,12 @@ def main() -> int:
             ("font_asset_validation", run_dir / "font-asset-validation.json"),
             ("font_delivery_validation", run_dir / "font-delivery-validation.json"),
             ("handoff_validation", run_dir / "handoff-validation.json"),
+            ("outline_contract_validation", run_dir / "outline-contract-validation.json"),
+            ("content_authority_validation", run_dir / "content-authority-validation.json"),
+            ("orchestration_gates_validation", run_dir / "orchestration-gates-validation.json"),
+            ("quality_gates_validation", run_dir / "quality-gates-validation.json"),
+            ("design_system_validation", run_dir / "design-system-validation.json"),
+            ("issue_log_validation", run_dir / "issue-log-validation.json"),
             ("signoff_validation", run_dir / "signoff-validation.json"),
             ("release_check", run_dir / "release-check.json"),
         ):
@@ -1372,15 +1581,19 @@ def main() -> int:
                 "tasks_total": len(current_steps),
                 "cache_hits": executor.last_cache_hits,
                 "cache_misses": executor.last_cache_misses,
+                "cache_hit_rate": round(executor.last_cache_hits / (executor.last_cache_hits + executor.last_cache_misses), 6) if (executor.last_cache_hits + executor.last_cache_misses) else None,
                 "duration_ms": executor.last_wall_duration_ms,
                 "task_duration_ms_sum": round(sum(float(step.get("duration_ms", 0) or 0) for step in current_steps), 3),
                 "critical_path_ms": executor.last_critical_path_ms,
+                "retry_count": sum(int(step.get("retry_count", 0) or 0) for step in current_steps),
+                "repair_rounds": args.repair_round,
                 "affected_pages": affected_pages or "all",
                 "affected_regions": list(args.affected_region),
                 "page_cache": {
                     "enabled": page_cache_evidence.get("enabled", False),
                     "hits": page_cache_evidence.get("hits", 0),
                     "misses": page_cache_evidence.get("misses", 0),
+                    "hit_rate": round(page_cache_evidence.get("hits", 0) / (page_cache_evidence.get("hits", 0) + page_cache_evidence.get("misses", 0)), 6) if (page_cache_evidence.get("hits", 0) + page_cache_evidence.get("misses", 0)) else None,
                     "stored": page_cache_evidence.get("stored", 0),
                 },
                 "render_conversion_skipped": conversion_evidence.get("skipped", False),
@@ -1482,13 +1695,26 @@ def main() -> int:
         report_entries.append({"report_type": "visual-generation-validation", "path": "visual-generation-validation.json", "required": args.require_visual_generation, "stage": "visual-draft"})
     if args.handoff:
         report_entries.append({"report_type": "handoff-validation", "path": "handoff-validation.json", "required": True, "stage": "validated"})
+    if outline_contract_path:
+        report_entries.append({"report_type": "outline-contract-validation", "path": "outline-contract-validation.json", "required": args.require_root_p0, "stage": "narrative-approved"})
+    if content_authority_path:
+        report_entries.append({"report_type": "content-authority-validation", "path": "content-authority-validation.json", "required": args.require_root_p0, "stage": "validated"})
+    if args.route_decision and outline_contract_path:
+        report_entries.append({"report_type": "orchestration-gates-validation", "path": "orchestration-gates-validation.json", "required": args.require_root_p0, "stage": "validated"})
+    if quality_gates_path:
+        report_entries.append({"report_type": "quality-gates-validation", "path": "quality-gates-validation.json", "required": args.require_root_p0, "stage": "validated"})
+    if design_system_path:
+        report_entries.append({"report_type": "design-system-validation", "path": "design-system-validation.json", "required": args.require_p1, "stage": "design-system-ready"})
+    if issue_log_path:
+        report_entries.append({"report_type": "issue-log-validation", "path": "issue-log-validation.json", "required": args.require_p1, "stage": "validated"})
     if args.reference or args.reference_dir:
         report_entries.append({"report_type": "visual-comparison", "path": "visual-comparison.json", "required": True, "stage": "validated"})
+        report_entries.append({"report_type": "dual-comparison", "path": "dual-comparison.json", "required": args.require_dual_comparison, "stage": "validated"})
     if args.ocr_lang or args.require_ocr:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
@@ -1515,7 +1741,11 @@ def main() -> int:
     steps.append(bundle_step)
     if args.release:
         signoff_path = Path(args.human_signoff).resolve()
-        steps.append(run_step(run_dir, "signoff-validation", [str(SCRIPT_DIR / "validate_signoff.py"), str(signoff_path), "--report", str(run_dir / "signoff-validation.json")]))
+        steps.append(run_step(run_dir, "signoff-validation", [
+            str(SCRIPT_DIR / "validate_signoff.py"), str(signoff_path),
+            "--deck", str(deck), "--strict-evidence",
+            "--report", str(run_dir / "signoff-validation.json"),
+        ]))
         release_args = [
             str(SCRIPT_DIR / "delivery_check.py"),
             str(deck),
@@ -1573,6 +1803,7 @@ def main() -> int:
             release_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.reference or args.reference_dir:
             release_args.extend(["--visual-comparison", str(run_dir / "visual-comparison.json")])
+            release_args.extend(["--dual-comparison", str(run_dir / "dual-comparison.json"), "--require-dual-comparison"])
             release_args.extend(["--source-image-validation", str(run_dir / "source-image-validation.json"), "--require-source-image-validation", "--reference-audit", str(run_dir / "reference-audit.json"), "--require-reference-audit"])
         if args.ocr_lang or args.require_ocr:
             release_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
@@ -1592,6 +1823,33 @@ def main() -> int:
     signoff_report = load_report(run_dir / "signoff-validation.json") if args.release else None
     quality_evidence, quality_degradations = collect_quality_evidence(preflight_bundle_path, "report_bundle_preflight")
     result = build_pipeline_result(steps, quality_evidence, quality_degradations, release_report, preflight_report, signoff_report)
+    performance_report_path = run_dir / "performance-report.json"
+    result["performance_report"] = str(performance_report_path)
+    atomic_write_json(run_dir / "pipeline-result.json", result)
+    try:
+        performance_report = build_performance_report(
+            run_dir / "pipeline-result.json",
+            performance_report_path,
+            issue_log=issue_log_path,
+            repair_round=args.repair_round,
+        )
+        result["execution"].update({
+            "cache_hit_rate": performance_report["execution"]["cache_hit_rate"],
+            "retry_count": performance_report["execution"]["retry_count"],
+            "repair_rounds": performance_report["execution"]["repair_rounds"],
+            "page_cache": {
+                **result["execution"].get("page_cache", {}),
+                "hit_rate": performance_report["execution"]["page_cache"]["hit_rate"],
+            },
+        })
+        result["quality_evidence"]["performance"] = {
+            "valid": True,
+            "report": str(performance_report_path),
+            "execution": performance_report["execution"],
+        }
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        result["performance_report"] = None
+        result["quality_degradations"].append({"code": "performance_report_failed", "message": f"{type(exc).__name__}: {exc}", "requires_human_review": True})
     review_path = run_dir / "review.html"
     result["review_html"] = str(review_path)
     # validate_report_bundle.py requires a release candidate that claims
@@ -1663,9 +1921,52 @@ def main() -> int:
                 atomic_write_json(run_dir / "pipeline-result.json", result)
         final_bundle_step, final_bundle_report = run_final_bundle()
         final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
+    review_package_step = None
+    if args.review_package_dir:
+        review_package_path = Path(args.review_package_dir).resolve()
+        result["review_package"] = {"path": str(review_package_path), "valid": False, "status": "pending"}
+        atomic_write_json(run_dir / "pipeline-result.json", result)
+        if result.get("review_html"):
+            write_review(result, review_path)
+        # Any pipeline-result/review mutation invalidates the bundle hash. Seal
+        # the pending package state before building, then seal the final state
+        # and rebuild once so the portable package contains only final hashes.
+        final_bundle_step, final_bundle_report = run_final_bundle()
+        final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
+        review_package_step = run_step(
+            run_dir,
+            "review-package",
+            [str(SCRIPT_DIR / "build_review_package.py"), str(run_dir / "pipeline-result.json"), "--output", str(review_package_path)],
+        )
+        result["review_package"] = {"path": str(review_package_path), "valid": review_package_step.get("ok") is True, "status": "passed" if review_package_step.get("ok") else "blocked"}
+        if args.require_p1 and not review_package_step.get("ok"):
+            result["release_eligible"] = False
+            result["release_status"] = "blocked-review-package"
+        atomic_write_json(run_dir / "pipeline-result.json", result)
+        if result.get("review_html"):
+            write_review(result, review_path)
+        final_bundle_step, final_bundle_report = run_final_bundle()
+        final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
+        if final_bundle_passed and review_package_step.get("ok"):
+            review_package_step = run_step(
+                run_dir,
+                "review-package-final",
+                [str(SCRIPT_DIR / "build_review_package.py"), str(run_dir / "pipeline-result.json"), "--output", str(review_package_path)],
+            )
+            if not review_package_step.get("ok"):
+                result["review_package"] = {"path": str(review_package_path), "valid": False, "status": "blocked"}
+                if args.require_p1:
+                    result["release_eligible"] = False
+                    result["release_status"] = "blocked-review-package"
+                atomic_write_json(run_dir / "pipeline-result.json", result)
+                if result.get("review_html"):
+                    write_review(result, review_path)
+                final_bundle_step, final_bundle_report = run_final_bundle()
+                final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
     print(json.dumps(result, ensure_ascii=False))
     release_blocked = args.release and not result["release_eligible"]
-    return 0 if result["technical_valid"] and final_bundle_passed and not release_blocked else 2
+    review_package_blocked = args.require_p1 and review_package_step is not None and not review_package_step.get("ok")
+    return 0 if result["technical_valid"] and final_bundle_passed and not release_blocked and not review_package_blocked else 2
 
 
 if __name__ == "__main__":

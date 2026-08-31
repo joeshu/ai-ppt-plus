@@ -10,6 +10,12 @@
     "visual_authority": {"type": "string", "enum": ["generated_visual_intermediate", "approved_reference_image", "approved_design_system"]},
     "formal_content_authority": {"type": "string", "enum": ["approved_outline", "user_transcription", "transcription_pending_confirmation"]},
     "requires_image_generation": {"type": "boolean"},
+    "outline_contract": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"}},
+      "additionalProperties": false
+    },
     "visual_generation_mode": {"type": "string", "enum": ["image-slide", "layout-reference"]},
     "visual_generation_plan": {"type": ["string", "null"]},
     "visual_generation_manifest": {"type": ["string", "null"]},

@@ -2,7 +2,7 @@
 name: ai-ppt-visual-gen
 description: Generate polished image-format PowerPoint slides or visual intermediates from a topic, approved outline, or content brief. Trigger for “图片版PPT/文生图PPT/AI出图幻灯片/视觉中间稿”, high-information commercial slide images, A1–A5 visual production, page-local image retry, source retention, or deck-strip review. Outputs one raster image per slide plus prompts and generation evidence. It can run standalone or as the visual worker for $ai-ppt-plus. Do not use for editable PPTX reconstruction or deck-wide release; use $ai-ppt-editable or $ai-ppt-plus.
 metadata:
- package_revision: 2026.08.30.08
+package_revision: 2026.08.31.03
 ---
 
 # AI PPT Visual Gen

@@ -72,6 +72,8 @@ def main() -> int:
     parser.add_argument("--require-report-bundle", action="store_true")
     parser.add_argument("--render-visual-gate")
     parser.add_argument("--visual-comparison")
+    parser.add_argument("--dual-comparison")
+    parser.add_argument("--require-dual-comparison", action="store_true")
     parser.add_argument("--ocr-report")
     parser.add_argument("--content-inventory-validation")
     parser.add_argument("--require-content-inventory", action="store_true")
@@ -116,6 +118,7 @@ def main() -> int:
     asset_hash_report = load(args.asset_hash_validation) if args.asset_hash_validation else None
     multipage_layout_report = load(args.multipage_layout_validation) if args.multipage_layout_validation else None
     preview_consistency_report = load(args.preview_consistency_validation) if args.preview_consistency_validation else None
+    dual_report = load(args.dual_comparison) if args.dual_comparison else None
     project_report = load(args.project_report) if args.project_report else None
     report_bundle = load(args.report_bundle_validation) if args.report_bundle_validation else None
     font_delivery = load(args.font_delivery_report) if args.font_delivery_report else None
@@ -136,8 +139,8 @@ def main() -> int:
     check(bool(inspection and inspection.get("ok")), "structural_inspection_failed", "inspection report must be present and pass")
     check(bool(render and render.get("ok")), "render_failed", "render report must be present and pass")
     current_hash = sha256(args.pptx) if pptx_path.is_file() else None
-    check(not inspection or not inspection.get("deck_sha256") or inspection.get("deck_sha256") == current_hash, "stale_inspection_report", "inspection report must describe the current PPTX")
-    check(not render or not render.get("deck_sha256") or render.get("deck_sha256") == current_hash, "stale_render_report", "render report must describe the current PPTX")
+    check(bool(inspection and inspection.get("deck_sha256") == current_hash), "stale_inspection_report", "inspection report must be hash-bound to the current PPTX")
+    check(bool(render and render.get("deck_sha256") == current_hash), "stale_render_report", "render report must be hash-bound to the current PPTX")
     if args.require_embedded_fonts:
         check(bool((inspection or {}).get("embedded_fonts", {}).get("present")), "embedded_fonts_missing", "Chinese delivery requires verified OOXML embedded font parts")
     if args.require_font_delivery:
@@ -155,10 +158,10 @@ def main() -> int:
     if route_report:
         quality_evidence["route_validation"] = {"valid": route_report.get("valid"), "route": route_report.get("route"), "visual_authority": route_report.get("visual_authority"), "formal_content_authority": route_report.get("formal_content_authority"), "issues": route_report.get("issues", [])}
         route_file = Path(route_report.get("route_file", ""))
-        check(not route_report.get("route_sha256") or (route_file.is_file() and sha256(route_file) == route_report.get("route_sha256")), "stale_route_validation", "route-validation report must describe the current route decision")
+        check(bool(route_report.get("route_sha256") and route_file.is_file() and sha256(route_file) == route_report.get("route_sha256")), "stale_route_validation", "route-validation report must be hash-bound to the current route decision")
         for reference in (route_report.get("evidence") or {}).get("reference_files", []):
             reference_path = Path(reference.get("path", ""))
-            check(not reference.get("sha256") or (reference_path.is_file() and sha256(reference_path) == reference.get("sha256")), "stale_reference_validation", "route reference hash must match the current reference file", reference.get("slide_no"))
+            check(bool(reference.get("sha256") and reference_path.is_file() and sha256(reference_path) == reference.get("sha256")), "stale_reference_validation", "route reference must be hash-bound to the current file", reference.get("slide_no"))
 
     def required_quality(report, required: bool, code: str, label: str):
         if required:
@@ -181,6 +184,17 @@ def main() -> int:
     required_quality(asset_hash_report, args.require_asset_hashes, "asset_hash_validation_failed", "asset hash validation")
     required_quality(multipage_layout_report, args.require_multipage_layout, "multipage_layout_validation_failed", "multi-page layout validation")
     required_quality(preview_consistency_report, args.require_preview_consistency, "preview_consistency_validation_failed", "preview/final-render consistency")
+    required_quality(dual_report, args.require_dual_comparison, "dual_comparison_failed", "pixel/object dual baseline")
+    if dual_report:
+        quality_evidence["dual_comparison"] = {
+            "valid": dual_report.get("valid"),
+            "status": dual_report.get("status"),
+            "deck_sha256": dual_report.get("deck_sha256"),
+            "pixel": dual_report.get("pixel_comparison", {}),
+            "object": dual_report.get("object_comparison", {}),
+            "issues": dual_report.get("issues", []),
+        }
+        check(dual_report.get("deck_sha256") == current_hash, "stale_dual_comparison", "dual comparison must be hash-bound to the current PPTX")
     if asset_hash_report:
         quality_evidence["asset_hash_validation"] = {
             "valid": asset_hash_report.get("valid"),
@@ -227,7 +241,8 @@ def main() -> int:
             if isinstance(slide, dict) and isinstance(slide.get("objects"), list)
         )
         if semantic_report:
-            check(semantic_report.get("object_manifest_sha256") == sha256(object_path), "stale_semantic_object_audit", "semantic audit must describe the current object manifest")
+            check(object_path.is_file() and semantic_report.get("object_manifest_sha256") == sha256(object_path), "stale_semantic_object_audit", "semantic audit must describe the current object manifest")
+            check(semantic_report.get("deck_sha256") == current_hash, "stale_semantic_object_deck", "semantic audit must be hash-bound to the current PPTX")
             check(semantic_report.get("audited_object_count") == expected_objects, "semantic_object_count_mismatch", "semantic audit must cover every manifest object")
 
     if args.manifest_validation:
@@ -235,7 +250,7 @@ def main() -> int:
         if manifest_report:
             quality_evidence["manifest_validation"] = {"valid": manifest_report.get("valid"), "issues": manifest_report.get("issues", []), "warnings": manifest_report.get("warnings", []), "editability": manifest_report.get("editability", [])}
             manifest_path = Path(args.manifest)
-            check(not manifest_report.get("manifest_sha256") or (manifest_path.is_file() and sha256(manifest_path) == manifest_report.get("manifest_sha256")), "stale_manifest_validation", "manifest-validation report must describe the current manifest")
+            check(bool(manifest_report.get("manifest_sha256") and manifest_path.is_file() and sha256(manifest_path) == manifest_report.get("manifest_sha256")), "stale_manifest_validation", "manifest-validation report must be hash-bound to the current manifest")
     elif args.require_editability:
         check(False, "manifest_validation_missing", "--require-editability requires a manifest-validation report")
     if args.require_project_report:
@@ -244,12 +259,12 @@ def main() -> int:
         check(project_report.get("valid") is True, "project_report_failed", "project-report.json must be valid")
     if project_report:
         quality_evidence["project_report"] = {"valid": project_report.get("valid"), "status": project_report.get("status"), "reports_total": project_report.get("reports_total"), "issues": project_report.get("issues", [])}
-        check(not project_report.get("deck_sha256") or project_report.get("deck_sha256") == current_hash, "stale_project_report", "project report must describe the current PPTX")
+        check(project_report.get("deck_sha256") == current_hash, "stale_project_report", "project report must be hash-bound to the current PPTX")
         index_path = Path(project_report.get("report_index_path", ""))
-        check(not project_report.get("report_index_sha256") or (index_path.is_file() and sha256(index_path) == project_report.get("report_index_sha256")), "stale_report_index", "project report must describe the current report index")
+        check(bool(project_report.get("report_index_sha256") and index_path.is_file() and sha256(index_path) == project_report.get("report_index_sha256")), "stale_report_index", "project report must be hash-bound to the current report index")
         for child in (project_report.get("evidence") or {}).get("reports", []):
             child_path = Path(child.get("path", ""))
-            check(not child.get("sha256") or (child_path.is_file() and sha256(child_path) == child.get("sha256")), "stale_child_report", "project aggregate child report changed after aggregation", child.get("report_type"))
+            check(bool(child.get("sha256") and child_path.is_file() and sha256(child_path) == child.get("sha256")), "stale_child_report", "project aggregate child report must be hash-bound", child.get("report_type"))
     if args.require_report_bundle:
         check(bool(report_bundle and report_bundle.get("valid") is True), "report_bundle_missing_or_failed", "a fresh and consistent report-bundle-validation.json is required")
     elif report_bundle:
@@ -262,13 +277,13 @@ def main() -> int:
             "checks": report_bundle.get("checks", []),
             "issues": report_bundle.get("issues", []),
         }
-        check(not report_bundle.get("deck_sha256") or report_bundle.get("deck_sha256") == current_hash, "stale_report_bundle_deck", "report-bundle validation must describe the current PPTX")
+        check(report_bundle.get("deck_sha256") == current_hash, "stale_report_bundle_deck", "report-bundle validation must be hash-bound to the current PPTX")
         bundle_index_path = Path(report_bundle.get("report_index_path", ""))
-        check(not report_bundle.get("report_index_sha256") or (bundle_index_path.is_file() and sha256(bundle_index_path) == report_bundle.get("report_index_sha256")), "stale_report_bundle_index", "report-bundle validation must describe the current report index")
+        check(bool(report_bundle.get("report_index_sha256") and bundle_index_path.is_file() and sha256(bundle_index_path) == report_bundle.get("report_index_sha256")), "stale_report_bundle_index", "report-bundle validation must be hash-bound to the current report index")
         bundle_pipeline_path = Path(report_bundle.get("pipeline_result_path", ""))
-        check(not report_bundle.get("pipeline_result_sha256") or (bundle_pipeline_path.is_file() and sha256(bundle_pipeline_path) == report_bundle.get("pipeline_result_sha256")), "stale_report_bundle_pipeline", "report-bundle validation must describe the current pipeline result")
+        check(bool(report_bundle.get("pipeline_result_sha256") and bundle_pipeline_path.is_file() and sha256(bundle_pipeline_path) == report_bundle.get("pipeline_result_sha256")), "stale_report_bundle_pipeline", "report-bundle validation must be hash-bound to the current pipeline result")
         bundle_review_path = Path(report_bundle.get("review_html_path", "")) if report_bundle.get("review_html_path") else None
-        check(not report_bundle.get("review_html_sha256") or (bundle_review_path is not None and bundle_review_path.is_file() and sha256(bundle_review_path) == report_bundle.get("review_html_sha256")), "stale_report_bundle_review", "report-bundle validation must describe the current review HTML")
+        check(bool(report_bundle.get("review_html_sha256") and bundle_review_path is not None and bundle_review_path.is_file() and sha256(bundle_review_path) == report_bundle.get("review_html_sha256")), "stale_report_bundle_review", "report-bundle validation must be hash-bound to the current review HTML")
 
     for option, label in ((args.render_visual_gate, "render-visual-gate"), (args.visual_comparison, "visual-comparison"), (args.ocr_report, "ocr-text-check")):
         report = load(option) if option else None
@@ -289,10 +304,12 @@ def main() -> int:
             blocking.append({"type": "human_signoff_validation_failed", "severity": "blocking", "slide": None, "detail": "sign-off report must be present and valid", "report_issues": (signoff_report or {}).get("issues", [])})
         if not sign and signoff_report and signoff_report.get("valid") is True:
             sign = signoff_report.get("decisions") or {}
+        if signoff_report:
+            check(signoff_report.get("deck_sha256") == current_hash, "stale_human_signoff", "sign-off validation must be hash-bound to the current PPTX")
     if args.handoff:
         approved = (handoff or {}).get("approved_artifacts") or {}
         check(bool(handoff and handoff.get("project_id")), "handoff_missing", "handoff report must be present and valid")
-        check(not approved.get("pptx_sha256") or approved.get("pptx_sha256") == current_hash, "handoff_hash_mismatch", "handoff approved PPTX hash must match the current PPTX")
+        check(bool(approved.get("pptx_sha256") and approved.get("pptx_sha256") == current_hash), "handoff_hash_mismatch", "handoff approved PPTX must be hash-bound to the current PPTX")
         check(not handoff or not manifest or not manifest.get("state") or not handoff.get("current_stage") or manifest.get("state") == handoff.get("current_stage"), "state_mismatch", "handoff state and slide manifest state must agree")
 
     if args.expected_slides is not None:

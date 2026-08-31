@@ -22,4 +22,5 @@ backgrounds: {default: "#FFFFFF", section: "#111827", exception_policy: "documen
 slide_types: []
 components: []
 focal_pages: []
+exceptions: []
 approval_status: draft

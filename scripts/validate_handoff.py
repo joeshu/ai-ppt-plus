@@ -35,31 +35,47 @@ def sha256(path: Path) -> str:
             digest.update(chunk)
     return digest.hexdigest()
 
+
+def resolve_artifact(value, *, base: Path) -> Path | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    candidate = Path(value)
+    return candidate.resolve() if candidate.is_absolute() else (base / candidate).resolve()
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("handoff")
     parser.add_argument("--report")
+    parser.add_argument("--require-worker-protocol", action="store_true", help="require normalized worker handoff records")
+    parser.add_argument("--expected-package-revision", help="block recovery when the handoff was produced by another skill package revision")
     args = parser.parse_args()
-    path = Path(args.handoff)
+    path = Path(args.handoff).resolve()
+    base = path.parent
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
         print(json.dumps({"valid": False, "error": f"{type(exc).__name__}: {exc}"}, ensure_ascii=False))
         return 3
     issues = []
-    schema = data.get("schema") if isinstance(data, dict) else None
+    if not isinstance(data, dict):
+        data = {}
+        issues.append({"severity": "blocker", "code": "handoff_not_object"})
+    schema = data.get("schema")
     if schema not in {None, "ai-ppt-plus/handoff/v1", "ai-ppt-plus/handoff/v2"}:
         issues.append({"severity": "blocker", "code": "invalid_schema", "schema": schema})
     for field in REQUIRED:
         if field not in data or data[field] in (None, ""):
             issues.append({"severity": "blocker", "code": "missing_field", "field": field})
-    approved = data.get("approved_artifacts") or {}
+    approved = data.get("approved_artifacts") if isinstance(data.get("approved_artifacts"), dict) else {}
     current_stage = data.get("current_stage")
+    capabilities = data.get("capability_status") if isinstance(data.get("capability_status"), dict) else {}
     if current_stage not in STATES:
         issues.append({"severity": "blocker", "code": "invalid_state", "state": current_stage, "allowed": sorted(STATES)})
     if current_stage == "delivered" and data.get("gate_status") not in {"delivered", "release-passed"}:
         issues.append({"severity": "blocker", "code": "delivered_gate_status_invalid", "gate_status": data.get("gate_status")})
-    if current_stage == "human-closeout" and not data.get("capability_status", {}).get("human_signoff") in {"pending", "passed", "approved"}:
+    if current_stage == "delivered" and capabilities.get("human_signoff") not in {"passed", "approved", "signed-off", "completed"}:
+        issues.append({"severity": "blocker", "code": "delivered_without_human_signoff"})
+    if current_stage == "human-closeout" and capabilities.get("human_signoff") not in {"pending", "passed", "approved"}:
         issues.append({"severity": "blocker", "code": "human_closeout_status_invalid"})
     if schema == "ai-ppt-plus/handoff/v2":
         for field in V2_REQUIRED:
@@ -67,6 +83,24 @@ def main() -> int:
                 issues.append({"severity": "blocker", "code": "missing_v2_field", "field": field})
         if data.get("route") not in ROUTES:
             issues.append({"severity": "blocker", "code": "invalid_route", "route": data.get("route")})
+        if args.expected_package_revision and data.get("package_revision") != args.expected_package_revision:
+            issues.append({"severity": "blocker", "code": "package_revision_mismatch", "expected": args.expected_package_revision, "observed": data.get("package_revision")})
+        if args.require_worker_protocol:
+            if data.get("handoff_protocol") != "ai-ppt-plus/worker-handoff/v1":
+                issues.append({"severity": "blocker", "code": "worker_protocol_missing"})
+            workers = data.get("worker_handoffs") if isinstance(data.get("worker_handoffs"), dict) else {}
+            for name in ("visual", "editable"):
+                record = workers.get(name)
+                if not isinstance(record, dict):
+                    issues.append({"severity": "blocker", "code": "worker_handoff_missing", "worker": name})
+                    continue
+                for field in ("protocol", "skill", "skill_revision", "status", "input_hashes", "output_artifacts", "manifest_paths", "qa_results", "known_issues", "next_action"):
+                    if field not in record:
+                        issues.append({"severity": "blocker", "code": "worker_handoff_field_missing", "worker": name, "field": field})
+                if record.get("protocol") != "ai-ppt-plus/worker-handoff/v1":
+                    issues.append({"severity": "blocker", "code": "worker_handoff_protocol_invalid", "worker": name})
+                if args.expected_package_revision and record.get("skill_revision") != args.expected_package_revision:
+                    issues.append({"severity": "blocker", "code": "worker_revision_mismatch", "worker": name, "expected": args.expected_package_revision, "observed": record.get("skill_revision")})
         artifacts = data.get("artifacts")
         records = artifacts.values() if isinstance(artifacts, dict) else artifacts if isinstance(artifacts, list) else []
         for name, record in (artifacts.items() if isinstance(artifacts, dict) else enumerate(records)):
@@ -75,12 +109,16 @@ def main() -> int:
                 continue
             artifact_path = record.get("path")
             declared = record.get("sha256")
-            if record.get("required") and (not isinstance(artifact_path, str) or not Path(artifact_path).is_file()):
-                issues.append({"severity": "blocker", "code": "artifact_missing", "artifact": name, "path": artifact_path})
-            if isinstance(artifact_path, str) and Path(artifact_path).is_file():
+            resolved_artifact = resolve_artifact(artifact_path, base=base)
+            observed_exists = bool(resolved_artifact and resolved_artifact.is_file())
+            if isinstance(record.get("exists"), bool) and record.get("exists") is not observed_exists:
+                issues.append({"severity": "blocker", "code": "artifact_existence_mismatch", "artifact": name, "declared": record.get("exists"), "observed": observed_exists})
+            if record.get("required") and not observed_exists:
+                issues.append({"severity": "blocker", "code": "artifact_missing", "artifact": name, "path": str(resolved_artifact) if resolved_artifact else artifact_path})
+            if observed_exists and resolved_artifact is not None:
                 if not isinstance(declared, str) or not SHA256_RE.fullmatch(declared):
                     issues.append({"severity": "blocker", "code": "artifact_hash_missing", "artifact": name})
-                elif sha256(Path(artifact_path)) != declared:
+                elif sha256(resolved_artifact) != declared:
                     issues.append({"severity": "blocker", "code": "artifact_hash_mismatch", "artifact": name})
         cross = data.get("cross_artifact") if isinstance(data.get("cross_artifact"), dict) else {}
         coverage = cross.get("page_coverage") if isinstance(cross.get("page_coverage"), dict) else {}
@@ -98,14 +136,22 @@ def main() -> int:
     for key, value in approved.items():
         if key.endswith("_sha256"):
             continue
+        approved_path = resolve_artifact(value, base=base)
         if not isinstance(value, str) or not value:
             issues.append({"severity": "blocker", "code": "invalid_artifact_path", "artifact": key})
-        elif not Path(value).is_file():
-            issues.append({"severity": "blocker", "code": "artifact_missing", "artifact": key, "path": value})
+        elif approved_path is None or not approved_path.is_file():
+            issues.append({"severity": "blocker", "code": "artifact_missing", "artifact": key, "path": str(approved_path) if approved_path else value})
+        else:
+            declared = approved.get(f"{key}_sha256")
+            if schema == "ai-ppt-plus/handoff/v2" and (not isinstance(declared, str) or not SHA256_RE.fullmatch(declared)):
+                issues.append({"severity": "blocker", "code": "artifact_hash_missing", "artifact": key})
+            elif isinstance(declared, str) and SHA256_RE.fullmatch(declared) and sha256(approved_path) != declared:
+                issues.append({"severity": "blocker", "code": "artifact_hash_mismatch", "artifact": key, "expected": declared, "observed": sha256(approved_path)})
     pptx = approved.get("pptx")
     expected_hash = approved.get("pptx_sha256")
-    if pptx and expected_hash and Path(pptx).is_file():
-        observed_hash = sha256(Path(pptx))
+    pptx_path = resolve_artifact(pptx, base=base)
+    if pptx_path and expected_hash and pptx_path.is_file():
+        observed_hash = sha256(pptx_path)
         if observed_hash != expected_hash:
             issues.append({"severity": "blocker", "code": "artifact_hash_mismatch", "artifact": "pptx", "expected": expected_hash, "observed": observed_hash})
     if data.get("current_stage") == "delivered" and data.get("open_blockers"):
@@ -118,6 +164,7 @@ def main() -> int:
         "handoff": str(path.resolve()),
         "project_id": data.get("project_id"),
         "revision": data.get("revision"),
+        "package_revision": data.get("package_revision"),
         "state": data.get("current_stage"),
         "issues": issues,
     }

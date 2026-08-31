@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 import sys
 import tempfile
@@ -39,6 +40,8 @@ def main() -> int:
         assert data["valid"] is True
         assert data["resized_for_comparison"] is True
         assert data["comparison_size"] == [80, 60]
+        assert data["rendered_sha256"] == hashlib.sha256(rendered.read_bytes()).hexdigest()
+        assert data["reference_sha256"] == hashlib.sha256(reference.read_bytes()).hexdigest()
 
         near_report = root / "near-report.json"
         result = run("scripts/compare_visual.py", str(near_rendered), str(near_reference), "--report", str(near_report))
@@ -74,6 +77,8 @@ def main() -> int:
         data = json.loads(result.stdout)
         assert data["valid"] is True
         assert data["pages"][0]["metrics"]["resized_for_comparison"] is True
+        assert data["pages"][0]["rendered_sha256"] == hashlib.sha256((rendered_dir / "slide-1.png").read_bytes()).hexdigest()
+        assert data["pages"][0]["reference_sha256"] == hashlib.sha256((reference_dir / "slide-1.png").read_bytes()).hexdigest()
     print("visual comparison size normalization: ok")
     return 0
 

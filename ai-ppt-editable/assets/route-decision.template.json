@@ -6,6 +6,7 @@
   "visual_authority": "approved_reference_image",
   "formal_content_authority": "approved_outline",
   "requires_image_generation": false,
+  "outline_contract": {"path": "outline-contract.json", "sha256": ""},
   "reference_roster": [
     {
       "slide_no": 1,

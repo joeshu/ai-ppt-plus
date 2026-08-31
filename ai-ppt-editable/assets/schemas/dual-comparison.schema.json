@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "valid", "status", "comparison_model", "pixel_comparison", "object_comparison", "issues"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/dual-comparison/v1"},
+    "valid": {"type": "boolean"},
+    "status": {"enum": ["passed", "partial", "blocked"]},
+    "comparison_model": {"type": "object"},
+    "pixel_comparison": {"type": "object", "required": ["valid", "status"]},
+    "object_comparison": {"type": "object", "required": ["valid", "status"]},
+    "issues": {"type": "array"}
+  }
+}

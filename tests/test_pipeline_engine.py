@@ -40,11 +40,14 @@ def main() -> int:
         second = run_probe(root / "run-2", cache, source)
         assert second[0]["ok"] is True and second[0]["cache_hit"] is True
         assert json.loads((root / "run-2/probe.json").read_text(encoding="utf-8"))["schema"] == "ai-ppt-plus/environment-report/v1"
+        checkpoint = json.loads((root / "run-2/pipeline-checkpoint.json").read_text(encoding="utf-8"))
+        assert checkpoint["schema"] == "ai-ppt-plus/pipeline-checkpoint/v1" and checkpoint["status"] == "completed"
 
         cache_artifact = cache / first[0]["cache_key"] / "artifacts" / "probe.json"
         cache_artifact.write_text(cache_artifact.read_text(encoding="utf-8") + "\ncorrupted", encoding="utf-8")
         corrupted = run_probe(root / "run-corrupted", cache, source)
         assert corrupted[0]["ok"] is True and corrupted[0]["cache_hit"] is False
+        assert list(cache.glob(".corrupt-*")), "corrupt cache entry must be quarantined"
 
         source.write_text("v2", encoding="utf-8")
         third = run_probe(root / "run-3", cache, source)
@@ -56,6 +59,19 @@ def main() -> int:
         assert incomplete[0]["ok"] is True and not (cache / incomplete[0]["cache_key"]).exists()
         assert (root / "missing-output/result.json").is_file()
         assert json.loads((root / "missing-output/result.json").read_text(encoding="utf-8"))["valid"] is True
+
+        declared_missing = PipelineExecutor(root / "declared-missing", mode="dag", cache_dir=cache, max_workers=1)
+        missing_path = root / "declared-missing/never-created.json"
+        declared_missing.add(PipelineTask(
+            "declared-missing",
+            ["-c", "pass"],
+            outputs=(missing_path,),
+        ))
+        missing_result = declared_missing.run()[0]
+        assert missing_result["ok"] is False
+        assert missing_result["failure"] == "declared_output_missing"
+        assert missing_result["missing_outputs"] == [str(missing_path)]
+        assert not (cache / missing_result["cache_key"]).exists()
 
         parallel = PipelineExecutor(root / "parallel", mode="dag", cache_dir=root / "parallel-cache", max_workers=2)
         parallel.add(PipelineTask("a", [str(ROOT / "scripts/probe_environment.py"), "--output", str(root / "parallel/a.json")], outputs=(root / "parallel/a.json",)))

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "status", "run_id", "execution", "steps_by_duration", "failed_steps"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/performance-report/v1"},
+    "status": {"enum": ["passed", "blocked"]},
+    "run_id": {"type": ["string", "null"]},
+    "execution": {
+      "type": "object",
+      "required": ["cache_hits", "cache_misses", "cache_hit_rate", "wall_duration_ms", "task_duration_ms_sum", "critical_path_ms", "retry_count", "repair_rounds", "page_cache"],
+      "properties": {
+        "cache_hits": {"type": "integer", "minimum": 0},
+        "cache_misses": {"type": "integer", "minimum": 0},
+        "cache_hit_rate": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "wall_duration_ms": {"type": "number", "minimum": 0},
+        "task_duration_ms_sum": {"type": "number", "minimum": 0},
+        "critical_path_ms": {"type": "number", "minimum": 0},
+        "retry_count": {"type": "integer", "minimum": 0},
+        "repair_rounds": {"type": "integer", "minimum": 0},
+        "page_cache": {"type": "object"}
+      }
+    },
+    "steps_by_duration": {"type": "array"},
+    "failed_steps": {"type": "array"}
+  }
+}

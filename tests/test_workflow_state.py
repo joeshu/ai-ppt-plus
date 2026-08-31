@@ -72,6 +72,28 @@ def main() -> int:
         assert evidence["valid"] is True
         assert set(evidence["evidence"]["required_artifacts"]) == set(files)
 
+        closeout = json.loads(state_path.read_text(encoding="utf-8"))
+        closeout["phase"] = "human-closeout"
+        closeout["next_action"] = "await human review"
+        for name in ("editable-layout", "slide-manifest", "pptx", "render-report", "qa-report"):
+            artifact = project / f"{name}.artifact"
+            artifact.write_text(name, encoding="utf-8")
+            closeout["artifacts"][name] = {"path": artifact.name, "required": True, "sha256": digest(artifact)}
+        write_json(state_path, closeout)
+        pending_closeout = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+        assert pending_closeout.returncode == 0, pending_closeout.stdout + pending_closeout.stderr
+        assert "human-signoff" not in json.loads(report.read_text(encoding="utf-8"))["evidence"]["required_artifacts"]
+
+        delivered = json.loads(state_path.read_text(encoding="utf-8"))
+        delivered["phase"] = "delivered"
+        write_json(state_path, delivered)
+        blocked_delivery = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+        assert blocked_delivery.returncode == 2
+        assert "human_closeout_approval_missing" in blocked_delivery.stdout
+        assert "required_artifact_not_declared" in blocked_delivery.stdout
+
+        write_json(state_path, state)
+
         broken = json.loads(state_path.read_text(encoding="utf-8"))
         broken["approvals"]["visual"] = False
         broken["artifacts"]["visual-plan"]["sha256"] = "0" * 64

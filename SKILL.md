@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
- package_revision: 2026.08.30.03
+package_revision: 2026.08.31.03
 ---
 
 # AI PPT Plus Orchestrator
@@ -27,6 +27,26 @@ before intake:
 python3 scripts/validate_skill_package.py --skill-dir .
 python3 scripts/validate_routing_contract.py
 ```
+
+Before any worker starts, create and validate the root contracts. The outline
+contract is the formal content master; route and workflow state bind to its
+hash:
+
+```bash
+python3 scripts/build_outline_contract.py PROJECT/outline.csv \
+  --output PROJECT/outline-contract.json --project-id PROJECT_ID --revision R1
+python3 scripts/validate_outline_contract.py PROJECT/outline-contract.json \
+  --require-approved
+python3 scripts/validate_orchestration_gates.py PROJECT \
+  --outline-contract PROJECT/outline-contract.json \
+  --route-decision PROJECT/route-decision.json \
+  --workflow-state PROJECT/workflow-state.json --strict
+```
+
+Formal copy must be traceable through `content-authority/v1`: source → approved
+outline row → PPTX object → rendered region. Generated pixels and OCR never
+become formal-copy authority. Validate the manifest strictly with
+`scripts/validate_content_authority.py --require-pptx-refs --require-render-refs`.
 
 The root package validator also validates both child packages. If any
 configured runtime copy differs by revision or managed-file SHA-256,
@@ -67,7 +87,8 @@ checked-in routing and backend contracts.
 1. Establish goal, audience, setting, language, page/time limit, output type,
    editability target, data authority, brand/font constraints, and deadline.
 2. Build the narrative using `references/narrative-strategy.md`; create the
-   structured outline from `references/outline-table-contract.md`.
+   structured outline from `references/outline-table-contract.md`, then freeze
+   its hash-backed outline contract before delegation.
 3. Obtain explicit outline approval before visual generation or reconstruction.
    If approval is intentionally waived, record scope and risk. Do not invent
    critical facts or let pixels override approved text.
@@ -83,7 +104,8 @@ Choose one visual authority per page and persist `route-decision.json`:
 - `native-authoring`: a deterministic text/chart/table page can be authored
   directly by `$ai-ppt-editable` from approved content.
 
-Run `scripts/validate_route.py`. A `needs_user` or `blocked` route cannot
+Bind the route decision to the outline contract and run both
+`scripts/validate_route.py` and `scripts/validate_orchestration_gates.py`. A `needs_user` or `blocked` route cannot
 proceed. Persist the deck design system and its revision before delegating.
 The orchestrator's outline/design revisions are immutable inputs to workers;
 workers return evidence and issues, not replacement authority.
@@ -144,7 +166,10 @@ evidence; they are not silently substituted.
 1. Reconcile worker outputs into the canonical manifest registry. Run the
    pipeline and validators appropriate to the route. Follow
    `references/report-protocol.md` and `references/quality-rubric.md`.
-2. Keep automated state, human visual review, and release eligibility separate.
+2. Keep the four quality dimensions—content, visual, structure, and delivery—
+   separate from automated state, human visual review, and release eligibility.
+   Validate `quality-gates.json` with `scripts/validate_quality_gates.py`; a
+   technical pass does not imply human closeout or release eligibility.
    A technical pass never claims human sign-off.
 3. Render the final PPTX, inspect deck strip and full pages, repair only the
    owning stage, rerun affected gates, and record every revision.
@@ -174,6 +199,20 @@ baseline. On interruption, resume only after validating hashes and remaining
 slides. A failed worker page is retried within that worker's bounded policy;
 successful pages and unrelated downstream artifacts remain intact.
 
+P1 reinforcement is available through `--require-p1`: it adds the approved
+deck-wide design-system gate, structured issue-log closure gate, atomic DAG
+checkpoints and a portable review package. Existing DAG/page caches remain
+usable, but cache entries are fingerprinted by local code and runtime,
+published under a per-key lock, and moved to a recoverable quarantine when
+metadata or output hashes fail.
+
+Each run can also emit `performance-report.json` for normalized wall/task/cache
+timings, retries and repair rounds. When a reference and editable object
+manifest are available, `dual-comparison.json` combines pixel comparison of the
+reference against the final render with semantic object comparison of the
+reference-derived manifest against the final PPTX. These reports remain
+diagnostic unless the corresponding strict gate is requested.
+
 ## Non-negotiable gates
 
 - No silent route or backend substitution.
@@ -183,6 +222,10 @@ successful pages and unrelated downstream artifacts remain intact.
 - No release claim without aggregated technical evidence and explicit human
   closeout where required.
 - No downstream stage may run from a missing or stale required workflow state.
+- No downstream stage may run from an unbound or stale outline contract.
+- Every worker handoff must expose the same protocol fields: skill revision,
+  input hashes, output artifacts, manifest paths, QA results, known issues and
+  next action.
 - No three-skill package change is valid unless all three entrypoints share the
   same `package_revision`, each directory passes its own package validation,
   and the root bundle validation passes.
