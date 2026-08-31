@@ -40,11 +40,14 @@ def main() -> int:
         second = run_probe(root / "run-2", cache, source)
         assert second[0]["ok"] is True and second[0]["cache_hit"] is True
         assert json.loads((root / "run-2/probe.json").read_text(encoding="utf-8"))["schema"] == "ai-ppt-plus/environment-report/v1"
+        checkpoint = json.loads((root / "run-2/pipeline-checkpoint.json").read_text(encoding="utf-8"))
+        assert checkpoint["schema"] == "ai-ppt-plus/pipeline-checkpoint/v1" and checkpoint["status"] == "completed"
 
         cache_artifact = cache / first[0]["cache_key"] / "artifacts" / "probe.json"
         cache_artifact.write_text(cache_artifact.read_text(encoding="utf-8") + "\ncorrupted", encoding="utf-8")
         corrupted = run_probe(root / "run-corrupted", cache, source)
         assert corrupted[0]["ok"] is True and corrupted[0]["cache_hit"] is False
+        assert list(cache.glob(".corrupt-*")), "corrupt cache entry must be quarantined"
 
         source.write_text("v2", encoding="utf-8")
         third = run_probe(root / "run-3", cache, source)

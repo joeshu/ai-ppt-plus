@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
- package_revision: 2026.08.31.01
+ package_revision: 2026.08.31.02
 ---
 
 # AI PPT Plus Orchestrator
@@ -198,6 +198,13 @@ regression baselines with `scripts/revision_guard.py freeze`; never overwrite a
 baseline. On interruption, resume only after validating hashes and remaining
 slides. A failed worker page is retried within that worker's bounded policy;
 successful pages and unrelated downstream artifacts remain intact.
+
+P1 reinforcement is available through `--require-p1`: it adds the approved
+deck-wide design-system gate, structured issue-log closure gate, atomic DAG
+checkpoints and a portable review package. Existing DAG/page caches remain
+usable, but cache entries are fingerprinted by local code and runtime,
+published under a per-key lock, and moved to a recoverable quarantine when
+metadata or output hashes fail.
 
 ## Non-negotiable gates
 

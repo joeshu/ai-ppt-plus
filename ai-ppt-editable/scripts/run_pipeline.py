@@ -14,6 +14,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--route-decision ROUTE.json] [--require-route] [--require-editability]
        [--outline-contract CONTRACT.json] [--content-authority AUTHORITY.json]
        [--quality-gates QUALITY.json] [--require-root-p0]
+       [--design-system DESIGN.yaml] [--require-p1]
        [--workflow-state STATE.json] [--require-workflow-state]
        [--visual-generation-plan PLAN.json] [--visual-generation-manifest MANIFEST.json]
        [--require-visual-generation]
@@ -325,6 +326,9 @@ def main() -> int:
     parser.add_argument("--content-authority", help="content-authority/v1 provenance contract")
     parser.add_argument("--quality-gates", help="quality-gates/v1 four-dimensional quality contract")
     parser.add_argument("--require-root-p0", action="store_true", help="require the root P0 outline, authority, route, handoff and quality gates")
+    parser.add_argument("--design-system", help="deck-wide design-system.yaml")
+    parser.add_argument("--require-p1", action="store_true", help="require P0 plus the P1 design-system, issue-log and review-package gates")
+    parser.add_argument("--review-package-dir", help="portable review-package output directory")
     parser.add_argument("--workflow-state", help="workflow-state/v1 contract produced by the orchestrator")
     parser.add_argument("--require-workflow-state", action="store_true", help="require PROJECT_DIR/workflow-state.json or the path passed to --workflow-state")
     parser.add_argument("--visual-generation-plan", help="ai-ppt-visual-gen A1-A5 visual-generation-plan.json")
@@ -387,6 +391,15 @@ def main() -> int:
         args.content_authority = args.content_authority or str(project / "content-authority.json")
         args.quality_gates = args.quality_gates or str(project / "quality-gates.json")
         args.handoff = args.handoff or str(project / "handoff.json")
+    if args.require_p1:
+        args.require_root_p0 = True
+        args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
+        args.content_authority = args.content_authority or str(project / "content-authority.json")
+        args.quality_gates = args.quality_gates or str(project / "quality-gates.json")
+        args.handoff = args.handoff or str(project / "handoff.json")
+        args.design_system = args.design_system or str(project / "design-system.yaml")
+        args.issue_log = args.issue_log or str(project / "issue-log.json")
+        args.review_package_dir = args.review_package_dir or str(project / "review-package")
     if args.expected_pages < 1:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "expected_pages_invalid", "message": "--expected-pages must be positive"}, ensure_ascii=False))
         return 2
@@ -468,6 +481,8 @@ def main() -> int:
     outline_contract_path = Path(args.outline_contract).resolve() if args.outline_contract else None
     content_authority_path = Path(args.content_authority).resolve() if args.content_authority else None
     quality_gates_path = Path(args.quality_gates).resolve() if args.quality_gates else None
+    design_system_path = Path(args.design_system).resolve() if args.design_system else None
+    issue_log_path = Path(args.issue_log).resolve() if args.issue_log else None
     if args.require_root_p0:
         missing_root_p0 = [
             str(path) for path in (outline_contract_path, content_authority_path, quality_gates_path)
@@ -481,6 +496,11 @@ def main() -> int:
             missing_root_p0.append("--handoff or project/handoff.json")
         if missing_root_p0:
             print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "root_p0_evidence_missing", "missing": missing_root_p0}, ensure_ascii=False))
+            return 2
+    if args.require_p1:
+        missing_p1 = [str(path) for path in (design_system_path, issue_log_path) if path is None or not path.is_file()]
+        if missing_p1:
+            print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "p1_evidence_missing", "missing": missing_p1}, ensure_ascii=False))
             return 2
     reference_route = isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction"
     visual_creation_route = isinstance(route_data, dict) and route_data.get("route") == "visual-creation"
@@ -716,7 +736,8 @@ def main() -> int:
             orchestration_args.extend(["--workflow-state", str(workflow_state_path)])
         if args.require_root_p0:
             orchestration_args.append("--strict")
-        add_step("orchestration-gates", orchestration_args, deps=p0_deps[:], outputs=[run_dir / "orchestration-gates-validation.json"], inputs=[outline_contract_path, Path(args.route_decision).resolve()] + ([workflow_state_path] if workflow_state_enabled else []), metadata={"required": args.require_root_p0})
+        orchestration_deps = p0_deps[:] + (["design-system"] if design_system_path else []) + (["issue-log"] if issue_log_path else [])
+        add_step("orchestration-gates", orchestration_args, deps=orchestration_deps, outputs=[run_dir / "orchestration-gates-validation.json"], inputs=[outline_contract_path, Path(args.route_decision).resolve()] + ([workflow_state_path] if workflow_state_enabled else []), metadata={"required": args.require_root_p0})
         p0_deps.append("orchestration-gates")
     if quality_gates_path:
         quality_args = [
@@ -726,6 +747,25 @@ def main() -> int:
         ]
         add_step("quality-gates", quality_args, deps=["routing-contract"], outputs=[run_dir / "quality-gates-validation.json"], inputs=[quality_gates_path], metadata={"required": args.require_root_p0})
         p0_deps.append("quality-gates")
+    if design_system_path:
+        design_args = [str(SCRIPT_DIR / "validate_design_system.py"), str(design_system_path), "--report", str(run_dir / "design-system-validation.json")]
+        design_inputs = [design_system_path]
+        if args.visual_generation_plan:
+            visual_plan_path = Path(args.visual_generation_plan).resolve()
+            design_args.extend(["--visual-plan", str(visual_plan_path)])
+            design_inputs.append(visual_plan_path)
+        if (project / "slide-manifest.json").is_file():
+            slide_manifest_path = project / "slide-manifest.json"
+            design_args.extend(["--slide-manifest", str(slide_manifest_path)])
+            design_inputs.append(slide_manifest_path)
+        if args.require_p1:
+            design_args.append("--strict")
+        add_step("design-system", design_args, deps=["routing-contract"], outputs=[run_dir / "design-system-validation.json"], inputs=design_inputs, metadata={"required": args.require_p1})
+        p0_deps.append("design-system")
+    if issue_log_path:
+        issue_args = [str(SCRIPT_DIR / "validate_issue_log.py"), str(issue_log_path), "--report", str(run_dir / "issue-log-validation.json")]
+        add_step("issue-log", issue_args, deps=["routing-contract"], outputs=[run_dir / "issue-log-validation.json"], inputs=[issue_log_path], metadata={"required": args.require_p1})
+        p0_deps.append("issue-log")
     visual_generation_plan = None
     visual_generation_manifest = None
     visual_generation_enabled = False
@@ -1288,6 +1328,15 @@ def main() -> int:
         project_args.extend(["--orchestration-gates", str(run_dir / "orchestration-gates-validation.json")])
         if args.require_root_p0:
             project_args.append("--require-orchestration-gates")
+    if design_system_path:
+        project_args.extend(["--design-system-validation", str(run_dir / "design-system-validation.json")])
+        if args.require_p1:
+            project_args.append("--require-design-system")
+    if issue_log_path:
+        project_args.extend(["--issue-log", str(issue_log_path)])
+        project_args.extend(["--issue-log-validation", str(run_dir / "issue-log-validation.json")])
+        if args.require_p1:
+            project_args.append("--require-issue-log")
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
@@ -1300,7 +1349,7 @@ def main() -> int:
         project_deps.append("chart-manifest")
     if asset_hashes_enabled:
         project_deps.append("asset-hashes")
-    for candidate in ("outline-contract", "content-authority", "orchestration-gates", "quality-gates"):
+    for candidate in ("outline-contract", "content-authority", "orchestration-gates", "quality-gates", "design-system", "issue-log"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     project_inputs = [
@@ -1321,6 +1370,8 @@ def main() -> int:
         "imagegen-assets-manifest.json",
         "text-layout-manifest.json",
         "handoff.json",
+        "design-system.yaml",
+        "issue-log.json",
         "validation-report.json",
         "issue-log.json",
         "typography-calibration.json",
@@ -1381,6 +1432,12 @@ def main() -> int:
     project_inputs.extend(
         [run_dir / "quality-gates-validation.json"] if quality_gates_path else []
     )
+    project_inputs.extend(
+        [run_dir / "design-system-validation.json"] if design_system_path else []
+    )
+    project_inputs.extend(
+        [run_dir / "issue-log-validation.json"] if issue_log_path else []
+    )
     add_step("project", project_args, deps=project_deps, outputs=[run_dir / "project-validation.json"], inputs=project_inputs, metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
     def collect_quality_evidence(bundle_path=None, bundle_key="report_bundle_preflight"):
         evidence = {}
@@ -1426,6 +1483,8 @@ def main() -> int:
             ("content_authority_validation", run_dir / "content-authority-validation.json"),
             ("orchestration_gates_validation", run_dir / "orchestration-gates-validation.json"),
             ("quality_gates_validation", run_dir / "quality-gates-validation.json"),
+            ("design_system_validation", run_dir / "design-system-validation.json"),
+            ("issue_log_validation", run_dir / "issue-log-validation.json"),
             ("signoff_validation", run_dir / "signoff-validation.json"),
             ("release_check", run_dir / "release-check.json"),
         ):
@@ -1602,13 +1661,17 @@ def main() -> int:
         report_entries.append({"report_type": "orchestration-gates-validation", "path": "orchestration-gates-validation.json", "required": args.require_root_p0, "stage": "validated"})
     if quality_gates_path:
         report_entries.append({"report_type": "quality-gates-validation", "path": "quality-gates-validation.json", "required": args.require_root_p0, "stage": "validated"})
+    if design_system_path:
+        report_entries.append({"report_type": "design-system-validation", "path": "design-system-validation.json", "required": args.require_p1, "stage": "design-system-ready"})
+    if issue_log_path:
+        report_entries.append({"report_type": "issue-log-validation", "path": "issue-log-validation.json", "required": args.require_p1, "stage": "validated"})
     if args.reference or args.reference_dir:
         report_entries.append({"report_type": "visual-comparison", "path": "visual-comparison.json", "required": True, "stage": "validated"})
     if args.ocr_lang or args.require_ocr:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
@@ -1783,9 +1846,21 @@ def main() -> int:
                 atomic_write_json(run_dir / "pipeline-result.json", result)
         final_bundle_step, final_bundle_report = run_final_bundle()
         final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
+    review_package_step = None
+    if args.review_package_dir:
+        review_package_step = run_step(
+            run_dir,
+            "review-package",
+            [str(SCRIPT_DIR / "build_review_package.py"), str(run_dir / "pipeline-result.json"), "--output", str(Path(args.review_package_dir).resolve())],
+        )
+        result["review_package"] = {"path": str(Path(args.review_package_dir).resolve()), "valid": review_package_step.get("ok") is True, "status": "passed" if review_package_step.get("ok") else "blocked"}
+        if args.require_p1 and not review_package_step.get("ok"):
+            result["release_eligible"] = False
+            result["release_status"] = "blocked-review-package"
     print(json.dumps(result, ensure_ascii=False))
     release_blocked = args.release and not result["release_eligible"]
-    return 0 if result["technical_valid"] and final_bundle_passed and not release_blocked else 2
+    review_package_blocked = args.require_p1 and review_package_step is not None and not review_package_step.get("ok")
+    return 0 if result["technical_valid"] and final_bundle_passed and not release_blocked and not review_package_blocked else 2
 
 
 if __name__ == "__main__":
