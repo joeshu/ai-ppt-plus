@@ -60,6 +60,19 @@ def main() -> int:
         assert (root / "missing-output/result.json").is_file()
         assert json.loads((root / "missing-output/result.json").read_text(encoding="utf-8"))["valid"] is True
 
+        declared_missing = PipelineExecutor(root / "declared-missing", mode="dag", cache_dir=cache, max_workers=1)
+        missing_path = root / "declared-missing/never-created.json"
+        declared_missing.add(PipelineTask(
+            "declared-missing",
+            ["-c", "pass"],
+            outputs=(missing_path,),
+        ))
+        missing_result = declared_missing.run()[0]
+        assert missing_result["ok"] is False
+        assert missing_result["failure"] == "declared_output_missing"
+        assert missing_result["missing_outputs"] == [str(missing_path)]
+        assert not (cache / missing_result["cache_key"]).exists()
+
         parallel = PipelineExecutor(root / "parallel", mode="dag", cache_dir=root / "parallel-cache", max_workers=2)
         parallel.add(PipelineTask("a", [str(ROOT / "scripts/probe_environment.py"), "--output", str(root / "parallel/a.json")], outputs=(root / "parallel/a.json",)))
         parallel.add(PipelineTask("b", [str(ROOT / "scripts/probe_environment.py"), "--output", str(root / "parallel/b.json")], outputs=(root / "parallel/b.json",)))

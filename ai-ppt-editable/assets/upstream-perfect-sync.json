@@ -475,18 +475,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/compare_visual.py",
-      "target_path": "scripts/compare_visual.py",
-      "sha256": "f47e083297890857140d7d417e9bd9ce431e61c7f85f514db8102db1c6090893",
-      "executable": false
-    },
-    {
-      "source_path": "scripts/compare_visual_deck.py",
-      "target_path": "scripts/compare_visual_deck.py",
-      "sha256": "3c0b3cc629bd126f137dee80afb627d7def45fdc67626bac93e41e8a9ba4d0be",
-      "executable": false
-    },
-    {
       "source_path": "scripts/component_expander.py",
       "target_path": "scripts/component_expander.py",
       "sha256": "efcb2632317d6a40bc267bf7f714327481e5d8766af322baf6c65ac1cfc68a73",
@@ -496,12 +484,6 @@
       "source_path": "scripts/compose_pptx.py",
       "target_path": "scripts/compose_pptx.py",
       "sha256": "2afb38099ae3e00069f3540cd8fa1b509af533b63395b6110bf43743415de1ed",
-      "executable": false
-    },
-    {
-      "source_path": "scripts/delivery_check.py",
-      "target_path": "scripts/delivery_check.py",
-      "sha256": "ace84b835c119cb460e4fda153bfbc55cd394436269f6f9d5e09c63611aa854a",
       "executable": false
     },
     {
@@ -802,12 +784,6 @@
       "source_path": "scripts/validate_report_bundle.py",
       "target_path": "scripts/validate_report_bundle.py",
       "sha256": "5970a8cb7e1b8088d0ba06bae73ece590bc0c0e56a2d7b7ff7e1414e987c9014",
-      "executable": false
-    },
-    {
-      "source_path": "scripts/validate_signoff.py",
-      "target_path": "scripts/validate_signoff.py",
-      "sha256": "5ac8f3c2a68f115222613883945f0a66da887b3b683688313d5747f961d4feb6",
       "executable": false
     },
     {
@@ -1117,6 +1093,18 @@
       "reason": "standalone synchronization utility"
     },
     {
+      "path": "scripts/compare_visual.py",
+      "reason": "post-baseline pixel evidence hash binding"
+    },
+    {
+      "path": "scripts/compare_visual_deck.py",
+      "reason": "post-baseline deck pixel evidence hash binding"
+    },
+    {
+      "path": "scripts/delivery_check.py",
+      "reason": "post-baseline release evidence freshness gate"
+    },
+    {
       "path": "scripts/inspect_editable_objects.py",
       "reason": "post-baseline page-scoped object audit correctness fix"
     },
@@ -1151,6 +1139,10 @@
     {
       "path": "scripts/validate_route.py",
       "reason": "post-baseline v2/native-authoring route compatibility adapter"
+    },
+    {
+      "path": "scripts/validate_signoff.py",
+      "reason": "post-baseline deck-bound human sign-off evidence"
     },
     {
       "path": "scripts/validate_visual_generation_plan.py",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import shutil
 import subprocess
 import sys
@@ -102,6 +103,16 @@ def main() -> int:
         assert dual_data["quality_evidence"]["dual_comparison"]["valid"] is True
         assert (dual_run / "review-package" / "artifacts" / "performance-report.json").is_file()
         assert (dual_run / "review-package" / "artifacts" / "dual-comparison.json").is_file()
+        persisted = json.loads((dual_run / "pipeline-result.json").read_text(encoding="utf-8"))
+        assert persisted["review_package"]["valid"] is True and persisted["review_package"]["status"] == "passed"
+        assert persisted["review_package"] == dual_data["review_package"]
+        package_manifest = json.loads((dual_run / "review-package/review-package.json").read_text(encoding="utf-8"))
+        pipeline_hash = hashlib.sha256((dual_run / "pipeline-result.json").read_bytes()).hexdigest()
+        assert package_manifest["pipeline_result_sha256"] == pipeline_hash
+        copied_pipeline = dual_run / "review-package/artifacts/pipeline-result.json"
+        assert copied_pipeline.is_file() and hashlib.sha256(copied_pipeline.read_bytes()).hexdigest() == pipeline_hash
+        final_bundle = json.loads((dual_run / "report-bundle-validation.json").read_text(encoding="utf-8"))
+        assert final_bundle["pipeline_result_sha256"] == pipeline_hash
     print("pipeline DAG integration and incremental page mode: ok")
     return 0
 

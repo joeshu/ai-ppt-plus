@@ -517,6 +517,26 @@ class PipelineExecutor:
             }
             if failure:
                 result["failure"] = failure
+        if result.get("ok") is True and task.outputs:
+            missing_outputs = [
+                str(Path(output).resolve())
+                for output in task.outputs
+                if not Path(output).resolve().exists()
+            ]
+            if missing_outputs:
+                result.update({
+                    "ok": False,
+                    "exit_code": 2,
+                    "failure": "declared_output_missing",
+                    "missing_outputs": missing_outputs,
+                })
+                stderr_path = Path(result["stderr"])
+                try:
+                    stderr = stderr_path.read_text(encoding="utf-8")
+                except OSError:
+                    stderr = ""
+                message = "declared output missing: " + ", ".join(missing_outputs) + "\n"
+                atomic_write_text(stderr_path, stderr + message)
         result.update({
             "cache_key": key,
             "cache_hit": False,

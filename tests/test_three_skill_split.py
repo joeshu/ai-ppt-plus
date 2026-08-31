@@ -79,7 +79,10 @@ def main() -> int:
     assert parity.returncode == 0, parity.stdout + parity.stderr
     parity_manifest = json.loads((editable_scripts.parent / "assets" / "upstream-perfect-sync.json").read_text(encoding="utf-8"))
     assert parity_manifest["source"]["ref"] == "完美第一版"
-    assert len(parity_manifest["synced_files"]) >= 175
+    excluded = {item["path"] for item in parity_manifest["excluded_paths"]}
+    assert len(parity_manifest["synced_files"]) >= 170
+    assert len(parity_manifest["synced_files"]) + len(excluded) >= 202
+    assert {"scripts/compare_visual.py", "scripts/compare_visual_deck.py", "scripts/delivery_check.py", "scripts/validate_signoff.py"} <= excluded
 
     # These three files are intentionally kept current with the root
     # orchestrator so the split worker remains callable by the v2 pipeline.

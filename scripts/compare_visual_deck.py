@@ -7,6 +7,7 @@ not replace human visual review. Same-aspect-ratio pages are normalized to the
 reference pixel size; a true aspect-ratio mismatch remains a blocker.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -16,6 +17,14 @@ from PIL import Image, ImageFilter
 from atomic_output import atomic_write_json
 from compare_visual import ASPECT_RATIO_TOLERANCE, ssim
 from image_viewport import load_viewport
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def page_number(path: Path) -> int:
@@ -141,7 +150,7 @@ def main() -> int:
         for issue in page_issues:
             issue["slide"] = number
         issues.extend(page_issues)
-        page_results.append({"slide": number, "rendered": str(rendered_path.resolve()), "reference": str(reference_path.resolve()), "metrics": metrics, "issues": page_issues})
+        page_results.append({"slide": number, "rendered": str(rendered_path.resolve()), "rendered_sha256": sha256(rendered_path), "reference": str(reference_path.resolve()), "reference_sha256": sha256(reference_path), "metrics": metrics, "issues": page_issues})
     valid_pages = [item for item in page_results if item["metrics"]]
     result = {
         "schema": "ai-ppt-plus/visual-deck-comparison/v1",

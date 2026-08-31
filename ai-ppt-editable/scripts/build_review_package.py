@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import tempfile
 from typing import Any
 
 from atomic_output import atomic_write_json, atomic_write_text
@@ -33,12 +34,11 @@ def copy_record(source: Path, root: Path, output: Path, records: list[dict[str, 
     records.append({"path": str(target.relative_to(output)), "source": str(source), "sha256": digest(target), "size": target.stat().st_size})
 
 
-def build(pipeline_result: Path, output: Path) -> dict[str, Any]:
+def build_into(pipeline_result: Path, output: Path) -> dict[str, Any]:
     data = json.loads(pipeline_result.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError("pipeline result must be an object")
     run_dir = Path(str(data.get("run_dir") or pipeline_result.parent)).resolve()
-    output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     records: list[dict[str, Any]] = []
     for candidate in (
@@ -76,6 +76,38 @@ def build(pipeline_result: Path, output: Path) -> dict[str, Any]:
     }
     atomic_write_json(output / "review-package.json", manifest)
     return manifest
+
+
+def build(pipeline_result: Path, output: Path) -> dict[str, Any]:
+    """Build in a clean staging directory, then atomically replace output.
+
+    Reusing an existing review-package directory previously left stale slide
+    images and reports behind. A successful build now represents exactly one
+    pipeline result; a failed build preserves the last complete package.
+    """
+    pipeline_result = pipeline_result.resolve()
+    output = output.resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix=f".{output.name}.staging-", dir=output.parent))
+    backup = output.parent / f".{output.name}.backup"
+    try:
+        manifest = build_into(pipeline_result, staging)
+        if backup.exists():
+            shutil.rmtree(backup)
+        if output.exists():
+            output.replace(backup)
+        try:
+            staging.replace(output)
+        except Exception:
+            if backup.exists() and not output.exists():
+                backup.replace(output)
+            raise
+        if backup.exists():
+            shutil.rmtree(backup)
+        return manifest
+    finally:
+        if staging.exists():
+            shutil.rmtree(staging)
 
 
 def main() -> int:

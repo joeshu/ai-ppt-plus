@@ -929,7 +929,7 @@ def main() -> int:
     if args.handoff:
         handoff_args = [str(SCRIPT_DIR / "validate_handoff.py"), str(Path(args.handoff).resolve()), "--report", str(run_dir / "handoff-validation.json")]
         if args.require_root_p0:
-            handoff_args.append("--require-worker-protocol")
+            handoff_args.extend(["--require-worker-protocol", "--expected-package-revision", str(package_data["package_revision"])])
         add_step("handoff", handoff_args, deps=["routing-contract"] if args.require_root_p0 else [], outputs=[run_dir / "handoff-validation.json"], inputs=[Path(args.handoff).resolve(), deck], metadata={"required": args.require_root_p0})
     if args.revision_label:
         add_step("revision-prepare", [str(SCRIPT_DIR / "revision_guard.py"), "prepare", str(project), "--deck", str(deck), "--label", args.revision_label], inputs=[project, deck], metadata={"revision_label": args.revision_label}, cacheable=False)
@@ -1741,7 +1741,11 @@ def main() -> int:
     steps.append(bundle_step)
     if args.release:
         signoff_path = Path(args.human_signoff).resolve()
-        steps.append(run_step(run_dir, "signoff-validation", [str(SCRIPT_DIR / "validate_signoff.py"), str(signoff_path), "--report", str(run_dir / "signoff-validation.json")]))
+        steps.append(run_step(run_dir, "signoff-validation", [
+            str(SCRIPT_DIR / "validate_signoff.py"), str(signoff_path),
+            "--deck", str(deck), "--strict-evidence",
+            "--report", str(run_dir / "signoff-validation.json"),
+        ]))
         release_args = [
             str(SCRIPT_DIR / "delivery_check.py"),
             str(deck),
@@ -1799,6 +1803,7 @@ def main() -> int:
             release_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.reference or args.reference_dir:
             release_args.extend(["--visual-comparison", str(run_dir / "visual-comparison.json")])
+            release_args.extend(["--dual-comparison", str(run_dir / "dual-comparison.json"), "--require-dual-comparison"])
             release_args.extend(["--source-image-validation", str(run_dir / "source-image-validation.json"), "--require-source-image-validation", "--reference-audit", str(run_dir / "reference-audit.json"), "--require-reference-audit"])
         if args.ocr_lang or args.require_ocr:
             release_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
@@ -1918,15 +1923,46 @@ def main() -> int:
         final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
     review_package_step = None
     if args.review_package_dir:
+        review_package_path = Path(args.review_package_dir).resolve()
+        result["review_package"] = {"path": str(review_package_path), "valid": False, "status": "pending"}
+        atomic_write_json(run_dir / "pipeline-result.json", result)
+        if result.get("review_html"):
+            write_review(result, review_path)
+        # Any pipeline-result/review mutation invalidates the bundle hash. Seal
+        # the pending package state before building, then seal the final state
+        # and rebuild once so the portable package contains only final hashes.
+        final_bundle_step, final_bundle_report = run_final_bundle()
+        final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
         review_package_step = run_step(
             run_dir,
             "review-package",
-            [str(SCRIPT_DIR / "build_review_package.py"), str(run_dir / "pipeline-result.json"), "--output", str(Path(args.review_package_dir).resolve())],
+            [str(SCRIPT_DIR / "build_review_package.py"), str(run_dir / "pipeline-result.json"), "--output", str(review_package_path)],
         )
-        result["review_package"] = {"path": str(Path(args.review_package_dir).resolve()), "valid": review_package_step.get("ok") is True, "status": "passed" if review_package_step.get("ok") else "blocked"}
+        result["review_package"] = {"path": str(review_package_path), "valid": review_package_step.get("ok") is True, "status": "passed" if review_package_step.get("ok") else "blocked"}
         if args.require_p1 and not review_package_step.get("ok"):
             result["release_eligible"] = False
             result["release_status"] = "blocked-review-package"
+        atomic_write_json(run_dir / "pipeline-result.json", result)
+        if result.get("review_html"):
+            write_review(result, review_path)
+        final_bundle_step, final_bundle_report = run_final_bundle()
+        final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
+        if final_bundle_passed and review_package_step.get("ok"):
+            review_package_step = run_step(
+                run_dir,
+                "review-package-final",
+                [str(SCRIPT_DIR / "build_review_package.py"), str(run_dir / "pipeline-result.json"), "--output", str(review_package_path)],
+            )
+            if not review_package_step.get("ok"):
+                result["review_package"] = {"path": str(review_package_path), "valid": False, "status": "blocked"}
+                if args.require_p1:
+                    result["release_eligible"] = False
+                    result["release_status"] = "blocked-review-package"
+                atomic_write_json(run_dir / "pipeline-result.json", result)
+                if result.get("review_html"):
+                    write_review(result, review_path)
+                final_bundle_step, final_bundle_report = run_final_bundle()
+                final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
     print(json.dumps(result, ensure_ascii=False))
     release_blocked = args.release and not result["release_eligible"]
     review_package_blocked = args.require_p1 and review_package_step is not None and not review_package_step.get("ok")

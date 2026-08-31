@@ -59,7 +59,10 @@ BASE_REQUIREMENTS = {
     "reconstruction": {"deck-brief", "source-inventory", "outline", "design-system", "route-decision", "editable-layout"},
     "rendered": {"deck-brief", "source-inventory", "outline", "design-system", "route-decision", "editable-layout", "slide-manifest", "pptx", "render-report"},
     "validated": {"deck-brief", "source-inventory", "outline", "design-system", "route-decision", "editable-layout", "slide-manifest", "pptx", "render-report", "qa-report"},
-    "human-closeout": {"deck-brief", "source-inventory", "outline", "design-system", "route-decision", "editable-layout", "slide-manifest", "pptx", "render-report", "qa-report", "human-signoff"},
+    # human-closeout is the waiting-for-review state. Requiring the sign-off
+    # artifact here would make it impossible to represent a valid pending
+    # review; the artifact becomes mandatory only when the state is delivered.
+    "human-closeout": {"deck-brief", "source-inventory", "outline", "design-system", "route-decision", "editable-layout", "slide-manifest", "pptx", "render-report", "qa-report"},
     "delivered": {"deck-brief", "source-inventory", "outline", "design-system", "route-decision", "editable-layout", "slide-manifest", "pptx", "render-report", "qa-report", "human-signoff"},
 }
 
@@ -197,7 +200,7 @@ def validate_state(state_path: Path, project_root: Path, expected_pages: int | N
         add_issue(issues, "design_system_approval_missing", phase=phase)
     if route == "visual-creation" and phase in {"visual-approved", "reconstruction", "rendered", "validated", "human-closeout", "delivered"} and approvals.get("visual") is not True:
         add_issue(issues, "visual_approval_missing", phase=phase)
-    if phase in {"human-closeout", "delivered"} and approvals.get("human_closeout") is not True:
+    if phase == "delivered" and approvals.get("human_closeout") is not True:
         add_issue(issues, "human_closeout_approval_missing", phase=phase)
     if phase in {"narrative-approved", "design-system-ready", "visual-draft", "visual-approved", "reconstruction", "rendered", "validated", "human-closeout", "delivered"} and isinstance(formal, dict) and formal.get("approved") is not True:
         add_issue(issues, "formal_text_not_approved", phase=phase)

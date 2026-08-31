@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 import sys
 import tempfile
@@ -40,6 +41,11 @@ def main() -> int:
         assert review.returncode == 0, review.stdout + review.stderr
         package = json.loads((root / "review-package/review-package.json").read_text(encoding="utf-8"))
         assert package["schema"] == "ai-ppt-plus/review-package/v1" and package["artifact_count"] >= 2
+        stale = root / "review-package/artifacts/rendered/slide-99.png"
+        stale.parent.mkdir(parents=True, exist_ok=True)
+        stale.write_bytes(b"stale")
+        review = run("scripts/build_review_package.py", str(pipeline_result), "--output", str(root / "review-package"))
+        assert review.returncode == 0 and not stale.exists(), review.stdout + review.stderr
 
         performance = root / "performance-report.json"
         perf = run("scripts/build_performance_report.py", str(pipeline_result), "--output", str(performance), "--issue-log", str(issue_log), "--repair-round", "2")
@@ -48,18 +54,25 @@ def main() -> int:
         assert performance_data["schema"] == "ai-ppt-plus/performance-report/v1"
         assert performance_data["execution"]["repair_rounds"] == 2
 
+        rendered = root / "rendered.png"; rendered.write_bytes(b"rendered")
+        reference = root / "reference.png"; reference.write_bytes(b"reference")
         visual_report = root / "visual-comparison.json"
-        write_json(visual_report, {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": True, "pages": [], "aggregate": {}})
+        write_json(visual_report, {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": True, "pages": [{"slide": 1, "rendered": str(rendered), "rendered_sha256": hashlib.sha256(rendered.read_bytes()).hexdigest(), "reference": str(reference), "reference_sha256": hashlib.sha256(reference.read_bytes()).hexdigest()}], "aggregate": {}})
         object_manifest = root / "slide-object-manifest.json"
         write_json(object_manifest, {"slides": [{"slide_no": 1, "objects": [{"object_id": "title", "object_type": "editable_text"}]}]})
+        deck = root / "deck.pptx"; deck.write_bytes(b"deck")
         object_report = root / "semantic-object-audit.json"
-        write_json(object_report, {"valid": True, "deck_sha256": "", "object_manifest_sha256": "", "expected_object_count": 1, "audited_object_count": 1, "observed_top_level_shape_count": 1, "undeclared_shape_count": 0, "errors": [], "warnings": []})
+        write_json(object_report, {"valid": True, "deck_sha256": hashlib.sha256(deck.read_bytes()).hexdigest(), "object_manifest_sha256": hashlib.sha256(object_manifest.read_bytes()).hexdigest(), "expected_object_count": 1, "audited_object_count": 1, "observed_top_level_shape_count": 1, "undeclared_shape_count": 0, "errors": [], "warnings": []})
         dual_report = root / "dual-comparison.json"
-        dual = run("scripts/compare_dual.py", "--visual-report", str(visual_report), "--object-report", str(object_report), "--object-manifest", str(object_manifest), "--report", str(dual_report), "--require-object")
+        dual = run("scripts/compare_dual.py", "--visual-report", str(visual_report), "--object-report", str(object_report), "--object-manifest", str(object_manifest), "--deck", str(deck), "--report", str(dual_report), "--require-object")
         assert dual.returncode == 0, dual.stdout + dual.stderr
         dual_data = json.loads(dual_report.read_text(encoding="utf-8"))
         assert dual_data["schema"] == "ai-ppt-plus/dual-comparison/v1"
         assert dual_data["pixel_comparison"]["valid"] is True and dual_data["object_comparison"]["valid"] is True
+        assert dual_data["pixel_comparison"]["hash_bound"] is True
+        stale_object = json.loads(object_report.read_text(encoding="utf-8")); stale_object["deck_sha256"] = "0" * 64; write_json(object_report, stale_object)
+        blocked = run("scripts/compare_dual.py", "--visual-report", str(visual_report), "--object-report", str(object_report), "--object-manifest", str(object_manifest), "--deck", str(deck), "--report", str(dual_report), "--require-object")
+        assert blocked.returncode == 2 and "object_comparison_stale_deck" in blocked.stdout, blocked.stdout
         print("root P1 governance: ok")
     return 0
 

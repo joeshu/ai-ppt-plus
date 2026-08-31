@@ -8,6 +8,7 @@ A small aspect-ratio delta is tolerated for screenshot capture padding; a true
 aspect-ratio mismatch remains a blocker.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -18,6 +19,14 @@ from image_viewport import load_viewport
 
 
 ASPECT_RATIO_TOLERANCE = 0.015
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def array(path: Path, target_size=None):
@@ -94,7 +103,7 @@ def main() -> int:
             issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": args.threshold, "observed": result_metrics["blurred_layout_ssim"]})
     else:
         result_metrics = {}
-    result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "reference": str(reference_path.resolve()), "original_sizes": {"rendered": rendered_viewport["original_size"], "reference": reference_viewport["original_size"]}, "normalized_sizes": {"rendered": list(rendered_size), "reference": list(reference_size)}, "viewer_crops": {"rendered": rendered_viewport, "reference": reference_viewport}, "aspect_ratio_delta": round(aspect_ratio_delta, 6), "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE, "comparison_size": list(reference_size if resized_for_comparison else rendered_size), "resized_for_comparison": resized_for_comparison, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
+    result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "rendered_sha256": sha256(rendered_path), "reference": str(reference_path.resolve()), "reference_sha256": sha256(reference_path), "original_sizes": {"rendered": rendered_viewport["original_size"], "reference": reference_viewport["original_size"]}, "normalized_sizes": {"rendered": list(rendered_size), "reference": list(reference_size)}, "viewer_crops": {"rendered": rendered_viewport, "reference": reference_viewport}, "aspect_ratio_delta": round(aspect_ratio_delta, 6), "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE, "comparison_size": list(reference_size if resized_for_comparison else rendered_size), "resized_for_comparison": resized_for_comparison, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
     if args.report:
         report = Path(args.report)
         report.parent.mkdir(parents=True, exist_ok=True)
