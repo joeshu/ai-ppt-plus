@@ -51,6 +51,10 @@ def main() -> int:
             assert data["execution"]["duration_ms"] >= 0
             assert data["execution"]["critical_path_ms"] >= 0
             assert data["execution"]["cache_misses"] >= 0
+            assert data["performance_report"] == str((run_dir / "performance-report.json").resolve())
+            performance = json.loads((run_dir / "performance-report.json").read_text(encoding="utf-8"))
+            assert performance["schema"] == "ai-ppt-plus/performance-report/v1"
+            assert performance["execution"]["cache_hit_rate"] is not None
             assert data["source_references"]
             assert not validate(data, json.loads((ROOT / "assets/schemas/pipeline-run.schema.json").read_text(encoding="utf-8")))
             assert not validate(json.loads((run_dir / "report-index.json").read_text(encoding="utf-8")), json.loads((ROOT / "assets/schemas/report-index.schema.json").read_text(encoding="utf-8")))
@@ -67,6 +71,37 @@ def main() -> int:
         assert runs[1]["execution"]["cache_hits"] > 0, runs[1]["execution"]
         gate = json.loads((Path(runs[1]["run_dir"]) / "render-visual-gate.json").read_text(encoding="utf-8"))
         assert gate["selected_pages"] == [1] and gate["valid"] is True
+        reference_dir = root / "reference-deck"
+        reference_dir.mkdir()
+        shutil.copy2(Path(runs[0]["run_dir"]) / "rendered" / "slide-1.png", reference_dir / "slide-1.png")
+        dual_run = root / "run-dual"
+        dual_command = [
+            sys.executable,
+            "scripts/run_pipeline.py",
+            str(project),
+            "--deck", str(deck),
+            "--expected-pages", "1",
+            "--affected-pages", "1",
+            "--preview-dir", str(preview_dir),
+            "--require-preview-consistency",
+            "--reference-dir", str(reference_dir),
+            "--object-manifest", str(objects),
+            "--require-dual-comparison",
+            "--review-package-dir", str(dual_run / "review-package"),
+            "--execution-mode", "dag",
+            "--cache-dir", str(cache),
+            "--output-dir", str(dual_run),
+        ]
+        dual_completed = subprocess.run(dual_command, cwd=ROOT, capture_output=True, text=True, check=False)
+        assert dual_completed.returncode == 0, dual_completed.stdout + dual_completed.stderr
+        dual_data = json.loads(dual_completed.stdout.strip().splitlines()[-1])
+        dual_report = json.loads((dual_run / "dual-comparison.json").read_text(encoding="utf-8"))
+        assert dual_report["valid"] is True and dual_report["status"] == "passed"
+        assert dual_report["pixel_comparison"]["valid"] is True
+        assert dual_report["object_comparison"]["valid"] is True
+        assert dual_data["quality_evidence"]["dual_comparison"]["valid"] is True
+        assert (dual_run / "review-package" / "artifacts" / "performance-report.json").is_file()
+        assert (dual_run / "review-package" / "artifacts" / "dual-comparison.json").is_file()
     print("pipeline DAG integration and incremental page mode: ok")
     return 0
 

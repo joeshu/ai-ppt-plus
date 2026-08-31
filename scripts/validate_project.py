@@ -52,6 +52,8 @@ def main() -> int:
     parser.add_argument("--render-report")
     parser.add_argument("--render-visual-gate")
     parser.add_argument("--visual-comparison")
+    parser.add_argument("--dual-comparison")
+    parser.add_argument("--require-dual-comparison", action="store_true")
     parser.add_argument("--ocr-report")
     parser.add_argument("--content-inventory-validation")
     parser.add_argument("--require-content-inventory", action="store_true")
@@ -126,6 +128,7 @@ def main() -> int:
 
     render_gate = read_quality_report(args.render_visual_gate, "render-visual-gate")
     visual_comparison = read_quality_report(args.visual_comparison, "visual-comparison")
+    dual_comparison = read_quality_report(args.dual_comparison, "dual-comparison")
     ocr_report = read_quality_report(args.ocr_report, "ocr-text-check")
     content_inventory_report = read_quality_report(args.content_inventory_validation, "content-inventory-validation")
     chart_manifest_report = read_quality_report(args.chart_manifest_validation, "chart-manifest-validation")
@@ -171,6 +174,8 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "design_system_validation_missing", "artifact": "design-system"})
     if args.require_issue_log and issue_log_report is None:
         issues.append({"severity": "blocker", "code": "issue_log_validation_missing", "artifact": "issue-log"})
+    if args.require_dual_comparison and dual_comparison is None:
+        issues.append({"severity": "blocker", "code": "dual_comparison_missing", "artifact": "dual-comparison"})
     if render_gate is not None:
         quality_evidence["render_visual_gate"] = {
             "valid": render_gate.get("valid"),
@@ -185,6 +190,15 @@ def main() -> int:
             "metrics": visual_comparison.get("metrics", {}),
             "issues": visual_comparison.get("issues", []),
             "human_visual_review_required": visual_comparison.get("human_visual_review_required", True),
+        }
+    if dual_comparison is not None:
+        quality_evidence["dual_comparison"] = {
+            "valid": dual_comparison.get("valid"),
+            "status": dual_comparison.get("status"),
+            "pixel_comparison": dual_comparison.get("pixel_comparison", {}),
+            "object_comparison": dual_comparison.get("object_comparison", {}),
+            "issues": dual_comparison.get("issues", []),
+            "human_visual_review_required": dual_comparison.get("human_visual_review_required", True),
         }
     if ocr_report is not None:
         quality_evidence["ocr_text_check"] = {

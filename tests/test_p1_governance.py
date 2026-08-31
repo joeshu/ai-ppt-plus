@@ -40,6 +40,26 @@ def main() -> int:
         assert review.returncode == 0, review.stdout + review.stderr
         package = json.loads((root / "review-package/review-package.json").read_text(encoding="utf-8"))
         assert package["schema"] == "ai-ppt-plus/review-package/v1" and package["artifact_count"] >= 2
+
+        performance = root / "performance-report.json"
+        perf = run("scripts/build_performance_report.py", str(pipeline_result), "--output", str(performance), "--issue-log", str(issue_log), "--repair-round", "2")
+        assert perf.returncode == 0, perf.stdout + perf.stderr
+        performance_data = json.loads(performance.read_text(encoding="utf-8"))
+        assert performance_data["schema"] == "ai-ppt-plus/performance-report/v1"
+        assert performance_data["execution"]["repair_rounds"] == 2
+
+        visual_report = root / "visual-comparison.json"
+        write_json(visual_report, {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": True, "pages": [], "aggregate": {}})
+        object_manifest = root / "slide-object-manifest.json"
+        write_json(object_manifest, {"slides": [{"slide_no": 1, "objects": [{"object_id": "title", "object_type": "editable_text"}]}]})
+        object_report = root / "semantic-object-audit.json"
+        write_json(object_report, {"valid": True, "deck_sha256": "", "object_manifest_sha256": "", "expected_object_count": 1, "audited_object_count": 1, "observed_top_level_shape_count": 1, "undeclared_shape_count": 0, "errors": [], "warnings": []})
+        dual_report = root / "dual-comparison.json"
+        dual = run("scripts/compare_dual.py", "--visual-report", str(visual_report), "--object-report", str(object_report), "--object-manifest", str(object_manifest), "--report", str(dual_report), "--require-object")
+        assert dual.returncode == 0, dual.stdout + dual.stderr
+        dual_data = json.loads(dual_report.read_text(encoding="utf-8"))
+        assert dual_data["schema"] == "ai-ppt-plus/dual-comparison/v1"
+        assert dual_data["pixel_comparison"]["valid"] is True and dual_data["object_comparison"]["valid"] is True
         print("root P1 governance: ok")
     return 0
 

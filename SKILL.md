@@ -206,6 +206,13 @@ usable, but cache entries are fingerprinted by local code and runtime,
 published under a per-key lock, and moved to a recoverable quarantine when
 metadata or output hashes fail.
 
+Each run can also emit `performance-report.json` for normalized wall/task/cache
+timings, retries and repair rounds. When a reference and editable object
+manifest are available, `dual-comparison.json` combines pixel comparison of the
+reference against the final render with semantic object comparison of the
+reference-derived manifest against the final PPTX. These reports remain
+diagnostic unless the corresponding strict gate is requested.
+
 ## Non-negotiable gates
 
 - No silent route or backend substitution.

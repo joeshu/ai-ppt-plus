@@ -22,3 +22,18 @@ package can also be generated independently from any final
 P1 does not restore removed WPS/iPhone or cross-platform rendering gates, does
 not weaken the immutable R13 baseline, and does not allow generated visual
 text to override formal copy.
+
+## Performance and dual comparison
+
+`performance-report.json` is the normalized operational record for a run. It
+keeps wall duration, sum of task durations, DAG critical path, task/page cache
+hit rates, retries and issue-log-derived repair rounds separate. A cache reuse
+is not a repair round; a repair round requires a fix followed by re-render and
+re-validation.
+
+`dual-comparison.json` joins the existing per-page pixel comparison with the
+semantic object audit. Its pixel axis compares the approved reference image to
+the final PPTX render. Its object axis compares the reference-derived
+`slide-object-manifest.json` to the actual PPTX object tree. The flattened
+image object's count is never used as evidence of editability. Pixel and
+object results remain separate, and either axis can block a strict run.
