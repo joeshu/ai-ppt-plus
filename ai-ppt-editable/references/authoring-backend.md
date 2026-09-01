@@ -57,3 +57,12 @@ coordinates fail authoring instead of being silently normalized.
 The backend preserves the existing `compose_pptx.py` CLI and the compatibility
 imports used by manifest builders. R13 remains a frozen regression fixture;
 this split changes ownership and testability, not the reconstruction contract.
+
+When an external native authoring adapter uses `@oai/artifact-tool`, the
+canonical text style field is `typeface`; `fontFamily` is not a substitute and
+can produce a preview with silently missing CJK glyphs. Every image-to-PPTX
+run must therefore (a) set `typeface` explicitly on native text, (b) render
+with the task-local CJK font directory, and (c) inspect the final OOXML font
+part after embedding. An adapter preview without CJK system fonts is a
+runtime diagnostic limitation, not evidence that text may be rasterized or
+that the deliverable passed font QA.
