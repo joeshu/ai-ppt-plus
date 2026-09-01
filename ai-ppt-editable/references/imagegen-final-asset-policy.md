@@ -16,12 +16,17 @@ final PPT object:
 
 `source_reuse` crops are allowed only as reference evidence, crop geometry, or
 source-vs-render comparison material. They must never be inserted as the final
-asset for those classes. A failed generation is a blocker or an explicitly
-labelled placeholder; it must not silently fall back to a source crop, flat
-fill, generic icon, or a full-slide screenshot.
+asset for those classes by default. If generation fails, pause at a user-
+decision gate and present exactly two choices: (1) retry/continue native
+`imagegen`, or (2) use deterministic original-image crop/cutout
+(`source_reuse`). Never choose either route silently. The selected route,
+approver, timestamp and reason must be recorded in the run manifest. If the
+user has not selected a route, the asset remains blocked; an unlabelled
+fallback, flat fill, generic icon, or full-slide screenshot is forbidden.
 
 Each generated final asset is independent and movable, and its manifest record
-must include `asset_id`, `asset_class`, `provenance_mode: imagegen`,
+must include `asset_id`, `asset_class`, `provenance_mode: imagegen` (or
+`source_reuse` only after the explicit fallback decision),
 `generated_source`, `copied_to`, `prompt_file`, `backend`, and a delivered-file
 hash. Generated assets must not contain formal text, numbers, chart data, or
 logos that are authoritative for the page. Formal text remains native rich
@@ -45,4 +50,7 @@ python3 scripts/validate_imagegen_final_assets.py \
 
 Run the validator before composition and after rendering. The post-render
 record must identify the delivered PPT object and preserve the generated asset
-hash. A passing visual score cannot waive a route or provenance failure.
+hash. For an approved fallback, the record must additionally include
+`fallback_decision: user_approved`, `decision_id`, `decision_reason`, and
+source bbox/hash evidence. A passing visual score cannot waive a route or
+provenance failure.
