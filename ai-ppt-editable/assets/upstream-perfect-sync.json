@@ -1079,12 +1079,32 @@
       "reason": "standalone three-round improvement methodology"
     },
     {
+      "path": "references/automatic-distillation.md",
+      "reason": "standalone automatic distillation and training-data policy"
+    },
+    {
+      "path": "assets/schemas/distillation-case-registry.schema.json",
+      "reason": "post-baseline automatic distillation case registry schema"
+    },
+    {
+      "path": "assets/schemas/distillation-score.schema.json",
+      "reason": "post-baseline multi-objective candidate score schema"
+    },
+    {
+      "path": "assets/schemas/distillation-feedback.schema.json",
+      "reason": "post-baseline repair feedback and rollback schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
     },
     {
       "path": "scripts/build_object_manifest.py",
       "reason": "post-baseline layout-relative asset provenance resolution"
+    },
+    {
+      "path": "scripts/distillation_loop.py",
+      "reason": "post-baseline automatic distillation controller"
     },
     {
       "path": "scripts/component_expander.py",
@@ -1165,6 +1185,10 @@
     {
       "path": "tests/test_three_round_distillation.py",
       "reason": "standalone three-round provenance regression"
+    },
+    {
+      "path": "tests/test_distillation_loop.py",
+      "reason": "post-baseline automatic distillation regression"
     },
     {
       "path": "tests/test_self_contained.py",

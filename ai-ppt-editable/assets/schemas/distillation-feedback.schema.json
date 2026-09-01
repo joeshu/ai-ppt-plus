@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "candidate_id", "decision", "rollback_action", "issues", "human_visual_review_required", "release_eligible"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-feedback/v1"},
+    "candidate_id": {"type": "string"},
+    "decision": {"enum": ["accept-for-human-review", "reject-and-rollback"]},
+    "rollback_action": {"enum": ["promote_candidate", "keep_previous_candidate"]},
+    "candidate_score": {"type": ["number", "null"]},
+    "baseline_score": {"type": ["number", "null"]},
+    "issues": {"type": "array"},
+    "regressions": {"type": "array"},
+    "human_visual_review_required": {"const": true},
+    "human_review_status": {"type": "string"},
+    "release_eligible": {"const": false}
+  }
+}

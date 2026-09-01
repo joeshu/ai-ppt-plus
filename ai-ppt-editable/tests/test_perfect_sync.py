@@ -21,6 +21,12 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "scripts/validate_project.py",
     "scripts/validate_signoff.py",
     "scripts/build_object_manifest.py",
+    "scripts/distillation_loop.py",
+    "references/automatic-distillation.md",
+    "assets/schemas/distillation-case-registry.schema.json",
+    "assets/schemas/distillation-score.schema.json",
+    "assets/schemas/distillation-feedback.schema.json",
+    "tests/test_distillation_loop.py",
 })
 
 
