@@ -1,0 +1,7 @@
+Transparent isolated visual asset for a Chinese telecom corporate infographic.
+Reconstruct only the complex central framework from the supplied reference:
+three large colored circles around a red center circle, pale pink halo/rings,
+and two blue directional arrows. Flat polished vector-infographic look, clean
+edges, subtle glow, white/transparent canvas, blue at top, green at lower left,
+orange at lower right, red in the center. No words, no Chinese characters, no
+numbers, no logo, no page frame, no card panels, no background.
