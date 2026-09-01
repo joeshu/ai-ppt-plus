@@ -11,9 +11,9 @@
       "page_id": "slide-01",
       "reference_image": "1096b8c3-9374-4c8f-b012-c4a0e93376b9.png",
       "assets": [
-        {"asset_id":"slide-01-central-framework","asset_class":"complex_art","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-01-central-framework.txt","alpha_required":true,"no_text":true,"no_logo":true},
-        {"asset_id":"slide-01-market-icons","asset_class":"icons","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-01-market-icons.txt","alpha_required":true,"no_text":true,"no_logo":true},
-        {"asset_id":"slide-01-bottom-icons","asset_class":"icons","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-01-bottom-icons.txt","alpha_required":true,"no_text":true,"no_logo":true},
+        {"asset_id":"slide-01-central-framework","asset_class":"complex_art","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-01-central-framework.txt","backend":"native-imagegen","key_color":"#FFFFFF","alpha_required":true,"no_text":true,"no_logo":true},
+        {"asset_id":"slide-01-market-icons","asset_class":"icons","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-01-market-icons.txt","backend":"native-imagegen","key_color":"#FFFFFF","alpha_required":true,"no_text":true,"no_logo":true},
+        {"asset_id":"slide-01-bottom-icons","asset_class":"icons","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-01-bottom-icons.txt","backend":"native-imagegen","key_color":"#FFFFFF","alpha_required":true,"no_text":true,"no_logo":true},
         {"asset_id":"slide-01-logo-lockup","asset_class":"brand_lockup","route":"source_reuse","provenance_mode":"source_reuse","source_ref":"authoritative-brand-asset","no_text":false,"no_logo":false}
       ],
       "typography": {"calibration_manifest":"typography/slide-01.json","required_roles":["section_title","header_title","card_label","diagram_label","footer_slogan"]}
@@ -22,9 +22,9 @@
       "page_id": "slide-02",
       "reference_image": "48fc317b-aec5-4d05-bd16-d904a2bed4b0.png",
       "assets": [
-        {"asset_id":"slide-02-process-icons","asset_class":"icons","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-02-process-icons.txt","alpha_required":true,"no_text":true,"no_logo":true},
-        {"asset_id":"slide-02-role-vignettes","asset_class":"illustration","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-02-role-vignettes.txt","alpha_required":false,"no_text":true,"no_logo":true},
-        {"asset_id":"slide-02-footer-rural-art","asset_class":"gradient_visual","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-02-footer-rural-art.txt","alpha_required":true,"no_text":true,"no_logo":true},
+        {"asset_id":"slide-02-process-icons","asset_class":"icons","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-02-process-icons.txt","backend":"native-imagegen","key_color":"#FFFFFF","alpha_required":true,"no_text":true,"no_logo":true},
+        {"asset_id":"slide-02-role-vignettes","asset_class":"illustration","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-02-role-vignettes.txt","backend":"native-imagegen","key_color":"#FFFFFF","alpha_required":false,"no_text":true,"no_logo":true},
+        {"asset_id":"slide-02-footer-rural-art","asset_class":"gradient_visual","route":"B4","provenance_mode":"imagegen","prompt_file":"prompts/slide-02-footer-rural-art.txt","backend":"native-imagegen","key_color":"#FFFFFF","alpha_required":true,"no_text":true,"no_logo":true},
         {"asset_id":"slide-02-logo-lockup","asset_class":"brand_lockup","route":"source_reuse","provenance_mode":"source_reuse","source_ref":"authoritative-brand-asset","no_text":false,"no_logo":false}
       ],
       "typography": {"calibration_manifest":"typography/slide-02.json","required_roles":["section_title","banner","step_title","rail_heading","role_heading","footer_slogan"]}
