@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-  package_revision: 2026.08.31.04
+  package_revision: 2026.09.01.12
 ---
 
 # AI PPT Editable
@@ -25,23 +25,27 @@ python3 scripts/validate_routing_contract.py
 ```
 
 The reconstruction engine and shared QA contracts are byte-synchronized with
-the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Verify that source
-relationship before authoring:
+the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Two explicitly
+documented post-baseline adapters extend that frozen core for portable resource
+paths and explicit font-directory precedence; they do not change the visual
+decomposition contract. Verify that source relationship before authoring:
 
 ```bash
 python3 scripts/validate_perfect_sync.py
 ```
 
-The exact source commit, file mapping, and intentional package-boundary
-exceptions are recorded in `references/perfect-source-sync.md` and
-`assets/upstream-perfect-sync.json`. The worker remains independently runnable;
+The exact source commit, file mapping, and intentional package-boundary or
+post-baseline adapter exceptions are recorded in
+`references/perfect-source-sync.md` and `assets/upstream-perfect-sync.json`.
+The worker remains independently runnable;
 when called by `ai-ppt-plus`, it consumes the orchestrator's approved handoff
 and returns worker-level technical evidence. It never owns deck-wide narrative,
 release eligibility, or human sign-off.
 
-The split changes ownership and invocation only. Do not alter the checked-in
-image-to-PPTX decomposition, asset extraction, composition, rendering, or QA
-algorithms merely to satisfy this skill boundary.
+The split changes ownership and invocation only. Keep the checked-in
+image-to-PPTX decomposition, asset extraction, composition, rendering, and QA
+algorithms stable; any generality fix must be isolated, documented as an
+explicit post-baseline adapter, and covered by a regression test.
 
 ## Authority model
 
@@ -63,10 +67,37 @@ In standalone mode:
 - missing brand assets, chart data, or illegible text are blockers or explicit
   placeholders, never invention.
 
-Read `references/reconstruction-contract.md`,
-`references/editability-levels.md`, `references/native-object-protocol.md`,
-`references/source-crop-integrity.md`, `references/ooxml-compatibility.md`,
-and the asset/text/chart protocols relevant to the page.
+Read `references/perfect-replica-practice.md`,
+`references/case-intake-protocol.md`,
+`references/image-to-editable-ppt-contract.md`,
+`references/reference-fidelity-audit.md`,
+`references/three-round-distillation-methodology.md`,
+`references/automatic-distillation.md`,
+`references/automatic-training-driver.md`,
+`references/candidate-repair-protocol.md`,
+`references/source-crop-integrity.md`,
+`references/training-data-protocol.md`,
+`references/reconstruction-contract.md`,
+`references/editability-levels.md`, `references/native-object-protocol.md`, and
+the asset/text/chart protocols relevant to the page.
+For last-mile viewer compatibility and preservation, also read
+`references/ooxml-compatibility.md`.
+For the mandatory final visual-asset route, also read
+`references/imagegen-final-asset-policy.md`.
+For the five post-baseline contracts and their shared adapter, also read
+`references/perfect-first-extensions.md` and use
+`scripts/perfect_first_adapter.py`; do not replace the synchronized core with
+a simplified reconstruction path.
+
+For every reference-led page, build and validate a
+`reference-fidelity/v1` manifest with `scripts/validate_reference_fidelity.py
+--strict`. It is a hard pre-composition and post-render gate for one-to-one
+icon provenance, exact native text/style evidence, gradient treatment and
+aspect-ratio mapping. Generic symbols, missing source bboxes, sentinel `1×1`
+boxes, unresolved object IDs, stale source/candidate hashes, silent flat-fill
+fallbacks, and undeclared 3:2-to-16:9 stretching block the page. A technical
+pass remains `accept-for-human-review` until visual fidelity, formal text and
+editability are confirmed by a person.
 
 ## E0 — Intake, isolation, and preflight
 
@@ -111,20 +142,129 @@ spatial relationships, palette, and visible styling. Separate:
 4. editable formal text;
 5. charts/tables with their own data/representation authority.
 
+When the corresponding evidence exists, the perfect-first extension boundary
+is mandatory: verified chart records may be promoted to native charts; simple
+gradients may remain native while complex B2/B3/B4 gradients stay traceable
+assets; canonical font aliases and nested run styles must survive composition;
+object manifests must carry geometry for object-level acceptance; and
+human-confirmed cases may be ingested automatically only after explicit
+approval. `compose_pptx.py` runs the shared adapter before the frozen backend,
+and `run_pipeline.py` runs its contract preflight.
+
+The authoring boundary accepts both legacy flat text records and the canonical
+nested `text-layout-manifest` form. In the latter, `bbox` supplies geometry,
+`content` supplies immutable copy, `style` supplies the base font metrics, and
+each run's nested `style` supplies local color/weight/size overrides. Never
+flatten runs before composition: a manifest can validate successfully while
+still losing brand colors if the authoring adapter only reads flat fields.
+
+For native rich-text authoring, apply the shape-level base style before
+writing `runs[]`, then write the runs once and do not reapply a whole-shape
+font/color style afterward. Reapplying the base style after runs silently
+overwrites local emphasis while leaving the text object technically editable.
+The P0 gate must therefore verify both the canonical manifest and the final
+OOXML `a:r`/run-level properties, followed by a rendered comparison.
+
 Use `references/icon-asset-protocol.md` for B4/B5 provenance and cutout QA,
 `references/panel-asset-protocol.md` for independent panels,
 `references/text-style-protocol.md` for mixed color/weight/line breaks, and
-`references/chart-reconstruction.md` for every chart. For every `source_reuse`
-asset, also run `scripts/validate_source_crop_integrity.py`: an `exact` crop
-must match the declared source bbox pixel-for-pixel after canonical RGBA
-normalization; a `derived` crop must record the processing step and resulting
-asset hash. A source crop is not valid from file hashes alone. Missing assets
-use the declared generation route and remain independent assets after
-extraction.
+`references/chart-reconstruction.md` for every chart. A source crop is valid
+only with bbox and source hash; missing assets use the declared generation
+route and remain independent assets after extraction. For `source_reuse` crops,
+the delivered-file hash alone is insufficient: record `source_crop_policy` and
+the canonical RGBA `source_crop_sha256`, then run
+`validate_source_crop_integrity.py`. For icons, gradient visuals and complex
+artistic elements, source crops are reference/QA evidence only and never the
+delivered final asset: those classes must use native `imagegen` and remain
+independent assets. Run `validate_imagegen_final_assets.py --strict` before
+composition and after the final render. Exact crops must
+match the declared source bbox pixel-for-pixel; derived crops must explicitly
+declare their alpha/processing step. This prevents a neighboring crop from
+passing merely because its metadata and file hash are internally consistent.
 
-Do not call `$ai-ppt-visual-gen` to replace an approved fixed reference. An
-isolated missing icon/decoration generation event is allowed under the asset
-provenance contract and does not change the page route.
+Run the reference-fidelity asset-boundary subgate after the contact sheet and
+after the final render. It must check for neighboring text/separators/header
+bands inside each icon crop, unintended matte rectangles on decorative art,
+replayable pixel bboxes for source reuse, and an effect-layer inventory for
+complex artwork. Hash/visibility/object-count passes do not waive these checks.
+If a complex visual contains glow, volume gradients, connector arrows, rings,
+shadows or brush/wave edges, preserve or explicitly account for each effect;
+flat editable substitutes must be marked as bounded degradation rather than
+accepted as a faithful pass.
+
+Do not use deck-wide visual generation to redesign an approved fixed reference.
+Instead, invoke native imagegen as a scoped element-generation event for every
+icon, gradient visual, complex illustration, decorative art or artistic-
+typography asset. This is mandatory even when a source crop exists; source
+reuse is reference evidence only. If generation fails, block the asset or emit
+an explicit placeholder—never silently fall back to the source crop, a generic
+symbol or a flat fill. Official brand marks remain authorized-source assets
+under the brand exception.
+
+For every reference-led page, run the final-imagegen-asset gate before
+composition and again after the final render. In addition, run the
+cross-manifest gate below:
+
+```bash
+python3 scripts/validate_reference_fidelity.py reference-fidelity.json \
+  --strict --require-imagegen \
+  --icon-generation-manifest icon-generation-manifest.json \
+  --icon-assets-manifest icon-asset-manifest.json \
+  --imagegen-assets-manifest imagegen-assets-manifest.json \
+  --render-report render-report.json
+```
+
+The generation manifest is not a status note: every family must enumerate
+`asset_ids`, `generated_asset_paths`, and `legacy_replaced_asset_ids`. The gate
+must resolve each ID to the same delivered file in all three manifests, inspect
+the actual PNG alpha channel, require per-icon split evidence, reject a sprite
+sheet or stale source-reuse record, and reject an unresolved reference object.
+Do not omit `--require-imagegen` for icon, gradient-visual or complex-art
+records. The ordinary source/hash and boundary checks remain required for the
+reference evidence and official brand exception.
+
+For image-led improvements, run the three-round protocol: visual diagnostic,
+semantic-panel decomposition, then native-text/object distillation. Preserve
+the visual-best and editable-best candidates as separate evidence, and use the
+actual panel manifest count rather than a hand-count when configuring gates.
+The image-to-editable contract is a hard gate: a complex正文 panel may retain
+only a text-free substrate as an independent asset; formal text must be native
+text objects with resolvable `text_layer_ids`. A raster panel that lacks
+`raster_text_audit` evidence, contains formal text, or uses a flattened full
+slide blocks delivery.
+
+For repeated improvement runs, use `scripts/distillation_loop.py`: score the
+existing reports, classify feedback by owning layer, gate the candidate against
+the previous baseline, and record hash-bound cases. A technical acceptance is
+only `accept-for-human-review`; never treat it as automatic release or model
+training approval. Only human-approved, fresh, non-flattened cases may enter a
+later retrieval or supervised-training export.
+Use `scripts/candidate_controller.py` to generate isolated, region-scoped repair
+proposals and rank only gated candidates. Candidate plans are opt-in and must
+not overwrite the previous baseline; stop automatic repair after three rounds
+or at the first new blocker.
+After a person confirms visual fidelity, formal content, and editability, use
+`scripts/training_export.py approve-case` followed by `export`. The exporter
+must reject stale hashes, duplicates, incomplete approvals, and unreviewed
+cases; it prepares retrieval data but does not claim that model weights were
+trained. Use `scripts/run_training_cycle.py` as the automation boundary from
+GitHub Actions or another trusted scheduler. It records skipped,
+waiting-for-approval, prepared, blocked, and trained-candidate states. A
+trained candidate remains pending human evaluation and promotion; the driver
+does not invent a trainer, GPU, checkpoint registry, or release approval.
+
+For any post-composition compatibility repair, use only the ZIP-level
+`scripts/normalize_ooxml_relationships.py` adapter. Never reopen and resave the
+authored deck through `python-pptx` after rich text, independent assets, or
+gradients have been composed. Run
+`scripts/validate_repackaging_invariants.py` and block delivery if the slide
+part set, media bytes, picture count, text-run/style digest, or gradient count
+changes. This is a technical preservation gate; the repaired file still needs
+rendered visual comparison and human review.
+When no GPU is available, let the driver build the CPU-only retrieval index
+with `scripts/build_retrieval_index.py`. Treat it as retrieval enhancement and
+split-leakage evaluation, not as semantic vision-model training or weight
+更新.
 
 ## E3 — Author editable objects
 
@@ -137,20 +277,34 @@ provenance contract and does not change the page route.
    declared hybrid/static representation and preserve labels as native text.
 5. Keep PPTX and preview drawing order equivalent so technical previews are
    meaningful.
-6. If viewer compatibility repair is needed after composition, use only the
-   ZIP-level `scripts/normalize_ooxml_relationships.py` adapter. Never reopen
-   and re-save the authored deck through `python-pptx` after rich text,
-   independent assets, or gradients have been composed. Run
-   `scripts/validate_repackaging_invariants.py` before handoff; changes to
-   picture/media bytes, text-run/style digest, gradient count, or slide part
-   set are blockers.
+6. Treat an adapter preview with missing CJK glyphs as a renderer diagnostic,
+   not as permission to rasterize text. Embed the task-local font, render the
+   exact embedded PPTX with the release renderer, and require preview/final
+   render consistency plus native-text object evidence before delivery.
+
+For native chart promotion, pass `--chart-manifest` to the composer or let the
+pipeline validate the project manifest. Never promote `unverified` chart data;
+the adapter rejects a non-native chart that would otherwise be silently
+rendered by the native chart primitive. Adapter, typography, gradient, and
+object-audit reports are evidence, not human sign-off.
 
 ## E4 — Render and validate
 
 Render every page and run structural, object, asset-hash, font, text-layout,
 overflow, overlap, panel, chart, route, and preview-consistency gates applicable
-to the project. Compare against the authoritative reference when one exists.
-Review both a deck strip and full-resolution pages.
+to the project. Run `semantic_object_audit.py` with the final object manifest,
+text manifest, `--require-source-hashes`, and
+`--require-independent-text-manifest`; `inspect_editable_objects.py` alone is
+not a completeness gate because it can prove the declared objects while still
+missing undeclared shapes in the deck. Compare against the authoritative
+reference when one exists. Review both a deck strip and full-resolution pages.
+
+For strict object acceptance, run
+`inspect_editable_objects.py --require-types --require-geometry
+--require-complete-manifest`; geometry is compared in normalized slide
+coordinates with a declared tolerance, and every final shape must be present in
+the object manifest. A passing pixel score does not waive a type, geometry,
+gradient, font, chart provenance, or source-hash failure.
 
 Automated checks are technical evidence. Record `human_visual_review_required`
 when applicable and never synthesize approval metadata.
@@ -174,8 +328,15 @@ deck-wide evidence and determine release eligibility.
 
 - missing formal-text or visual authority;
 - whole-page bitmap presented as editable output;
+- complex正文/card/panel raster containing formal text, or missing
+  `raster_text_audit` and native `text_layer_ids` evidence;
 - icon/panel/chart/text objects missing provenance or required independence;
 - source/reference hashes drifted after planning;
 - font, render, overflow, overlap, or package blockers remain;
 - technical pass represented as human approval;
 - reconstruction redesigns the approved reference without explicit user scope.
+
+After human confirmation, `scripts/ingest_approved_case.py` or the scheduled
+`scripts/run_training_cycle.py` may export the fresh case to the hash-bound
+dataset and CPU retrieval index. Model training and weight promotion remain
+separate external stages and require independent evaluation.
