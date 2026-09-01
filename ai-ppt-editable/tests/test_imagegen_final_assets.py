@@ -19,6 +19,9 @@ def main() -> int:
         report = validate(bad, strict=True)
         assert not report["valid"]
         assert any(item["code"] == "final_asset_not_imagegen" for item in report["errors"])
+        fallback = root / "fallback.json"
+        fallback.write_text(json.dumps({"provenance_policy": "imagegen_final_assets", "assets": [{"asset_id": "g1", "asset_class": "icon", "provenance_mode": "source_reuse", "fallback_decision": "user_approved", "decision_id": "decision-1", "decision_reason": "user selected crop", "decision_timestamp": "2026-09-01T00:00:00Z", "source_ref": "source.png", "source_bbox": [1, 2, 3, 4], "source_sha256": "abc", "copied_to": "editable/g1.png", "prompt_file": "not-used", "backend": "source-crop"}]}), encoding="utf-8")
+        assert validate(fallback, strict=True)["valid"]
     print("imagegen final-asset policy: ok")
     return 0
 
