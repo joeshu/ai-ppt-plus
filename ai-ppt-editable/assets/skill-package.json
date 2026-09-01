@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.01.04",
+  "package_revision": "2026.09.01.05",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -33,6 +33,8 @@
     "assets/schemas/distillation-case-registry.schema.json",
     "assets/schemas/distillation-score.schema.json",
     "assets/schemas/distillation-feedback.schema.json",
+    "assets/schemas/distillation-candidate-plan.schema.json",
+    "assets/schemas/distillation-candidate-selection.schema.json",
     "assets/fonts/NotoSansSC-Regular.ttf",
     "assets/fonts/font-manifest.json",
     "scripts/validate_skill_package.py",
@@ -45,6 +47,7 @@
     "scripts/build_perfect_sync_manifest.py",
     "scripts/validate_perfect_sync.py",
     "scripts/distillation_loop.py",
+    "scripts/candidate_controller.py",
     "scripts/validate_visual_generation_plan.py",
     "scripts/validate_workflow_state.py",
     "scripts/validate_handoff.py",
@@ -54,6 +57,7 @@
     "references/icon-asset-protocol.md",
     "references/three-round-distillation-methodology.md",
     "references/automatic-distillation.md",
+    "references/candidate-repair-protocol.md",
     "references/perfect-source-sync.md",
     "examples/component-library/standard-components.deck.json",
     "tests/test_perfect_sync.py",

@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.09.01.04
+package_revision: 2026.09.01.05
 ---
 
 # AI PPT Editable
@@ -70,6 +70,7 @@ In standalone mode:
 Read `references/perfect-replica-practice.md`,
 `references/three-round-distillation-methodology.md`,
 `references/automatic-distillation.md`,
+`references/candidate-repair-protocol.md`,
 `references/reconstruction-contract.md`,
 `references/editability-levels.md`, `references/native-object-protocol.md`, and
 the asset/text/chart protocols relevant to the page.
@@ -135,6 +136,10 @@ the previous baseline, and record hash-bound cases. A technical acceptance is
 only `accept-for-human-review`; never treat it as automatic release or model
 training approval. Only human-approved, fresh, non-flattened cases may enter a
 later retrieval or supervised-training export.
+Use `scripts/candidate_controller.py` to generate isolated, region-scoped repair
+proposals and rank only gated candidates. Candidate plans are opt-in and must
+not overwrite the previous baseline; stop automatic repair after three rounds
+or at the first new blocker.
 
 ## E3 — Author editable objects
 

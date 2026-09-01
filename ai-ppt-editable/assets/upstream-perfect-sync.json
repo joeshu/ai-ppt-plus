@@ -1083,6 +1083,10 @@
       "reason": "standalone automatic distillation and training-data policy"
     },
     {
+      "path": "references/candidate-repair-protocol.md",
+      "reason": "post-baseline isolated candidate and region repair protocol"
+    },
+    {
       "path": "assets/schemas/distillation-case-registry.schema.json",
       "reason": "post-baseline automatic distillation case registry schema"
     },
@@ -1095,6 +1099,14 @@
       "reason": "post-baseline repair feedback and rollback schema"
     },
     {
+      "path": "assets/schemas/distillation-candidate-plan.schema.json",
+      "reason": "post-baseline candidate repair plan schema"
+    },
+    {
+      "path": "assets/schemas/distillation-candidate-selection.schema.json",
+      "reason": "post-baseline candidate selection schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
     },
@@ -1105,6 +1117,10 @@
     {
       "path": "scripts/distillation_loop.py",
       "reason": "post-baseline automatic distillation controller"
+    },
+    {
+      "path": "scripts/candidate_controller.py",
+      "reason": "post-baseline isolated candidate and region repair controller"
     },
     {
       "path": "scripts/component_expander.py",
@@ -1189,6 +1205,10 @@
     {
       "path": "tests/test_distillation_loop.py",
       "reason": "post-baseline automatic distillation regression"
+    },
+    {
+      "path": "tests/test_candidate_controller.py",
+      "reason": "post-baseline candidate branching regression"
     },
     {
       "path": "tests/test_self_contained.py",

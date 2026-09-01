@@ -338,6 +338,8 @@ def record_case(args: argparse.Namespace) -> dict[str, Any]:
             "training_eligible": score.get("training_eligible") is True,
         },
     }
+    if args.plan:
+        candidate["proposal_plan"] = artifact_ref(Path(args.plan).resolve(), role="candidate-plan")
     case = {
         "case_id": args.case_id,
         "created_at": datetime.now(timezone.utc).isoformat(),
@@ -379,6 +381,7 @@ def parser() -> argparse.ArgumentParser:
     case.add_argument("--source", action="append", required=True)
     case.add_argument("--deck", required=True)
     case.add_argument("--score", required=True)
+    case.add_argument("--plan")
     case.add_argument("--report", action="append", default=[])
     return root
 

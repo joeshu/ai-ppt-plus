@@ -27,6 +27,11 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "assets/schemas/distillation-score.schema.json",
     "assets/schemas/distillation-feedback.schema.json",
     "tests/test_distillation_loop.py",
+    "scripts/candidate_controller.py",
+    "references/candidate-repair-protocol.md",
+    "assets/schemas/distillation-candidate-plan.schema.json",
+    "assets/schemas/distillation-candidate-selection.schema.json",
+    "tests/test_candidate_controller.py",
 })
 
 
