@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.09.01.11
+  package_revision: 2026.09.01.11
 ---
 
 # AI PPT Editable
@@ -69,6 +69,7 @@ In standalone mode:
 
 Read `references/perfect-replica-practice.md`,
 `references/case-intake-protocol.md`,
+`references/image-to-editable-ppt-contract.md`,
 `references/three-round-distillation-methodology.md`,
 `references/automatic-distillation.md`,
 `references/automatic-training-driver.md`,
@@ -152,6 +153,11 @@ For image-led improvements, run the three-round protocol: visual diagnostic,
 semantic-panel decomposition, then native-text/object distillation. Preserve
 the visual-best and editable-best candidates as separate evidence, and use the
 actual panel manifest count rather than a hand-count when configuring gates.
+The image-to-editable contract is a hard gate: a complex正文 panel may retain
+only a text-free substrate as an independent asset; formal text must be native
+text objects with resolvable `text_layer_ids`. A raster panel that lacks
+`raster_text_audit` evidence, contains formal text, or uses a flattened full
+slide blocks delivery.
 
 For repeated improvement runs, use `scripts/distillation_loop.py`: score the
 existing reports, classify feedback by owning layer, gate the candidate against
@@ -230,6 +236,8 @@ deck-wide evidence and determine release eligibility.
 
 - missing formal-text or visual authority;
 - whole-page bitmap presented as editable output;
+- complex正文/card/panel raster containing formal text, or missing
+  `raster_text_audit` and native `text_layer_ids` evidence;
 - icon/panel/chart/text objects missing provenance or required independence;
 - source/reference hashes drifted after planning;
 - font, render, overflow, overlap, or package blockers remain;

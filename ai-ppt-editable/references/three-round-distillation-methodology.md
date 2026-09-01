@@ -29,7 +29,9 @@ layout baseline. Then audit the object types.
 
 If the candidate contains one whole-slide picture and no native formal text,
 label it `visual-diagnostic-only`, even when its SSIM is excellent. This is a
-valid diagnostic baseline and an invalid editable deliverable.
+valid diagnostic baseline and an invalid editable deliverable. A visual-best
+full-page image or panel-raster candidate must never be promoted to the final
+PPTX merely because its pixel score is higher.
 
 ### Round 2 — semantic decomposition
 
@@ -37,8 +39,10 @@ Split the page into independently movable semantic regions: panels, frame
 parts, logos, illustrations, and page furniture. Keep formal text out of a
 panel whenever its wording is known. Every extracted panel gets a record with
 `panel_id`, `file`, `source_bbox`, `asset_size`, treatment, baked-text status,
-and current SHA-256. The panel manifest must be approved before it is used as
-delivery evidence.
+`raster_text_audit`, native `text_layer_ids`, and current SHA-256. A panel may
+contain only a text-free substrate; when its source region contains formal copy,
+the audit must point to the native text objects. The panel manifest must be
+approved before it is used as delivery evidence.
 
 Count panels from the manifest after all pages are loaded; do not hand-count
 from memory. A two-page example may have seven panels on each page, for a
@@ -51,6 +55,10 @@ headings or containers with native shapes. Preserve complex artwork as
 independent raster/vector assets when reconstructing it natively would reduce
 fidelity. Embed the task-local CJK font and keep line breaks, emphasis, and
 text bboxes explicit.
+
+Run the strict image-to-editable contract before composition. If any complex
+正文 panel still contains formal text, stop the candidate and repair the panel;
+do not call it editable-best or hide it behind a high visual score.
 
 Build the object manifest with the panel manifest, so each panel resolves to a
 project-relative path and carries source-bbox/hash evidence. Then build the

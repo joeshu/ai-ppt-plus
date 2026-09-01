@@ -32,7 +32,10 @@ manifest can be checked with `validate_panel_assets.py --assets-dir PROJECT`.
 ## Manifest
 
 Record each panel in `panel-asset-manifest.json` with `panel_id`, `file`,
-`sha256`, `source_bbox`, `editability_level`, `treatment` and `text_layer_ids`. The six
+`sha256`, `source_bbox`, `editability_level`, `treatment`, `text_layer_ids` and
+`raster_text_audit`. The audit must be `verified-clear` for a text-free substrate
+or `verified-excluded` when native text is placed above it; a bare
+`formal_text_baked_in: false` declaration is insufficient. The six
 containers in a six-card reference therefore produce six entries, not one
 `frame` entry. If a whole-frame asset remains, record the exact non-semantic
 regions it covers and why it does not prevent panel movement.
@@ -44,9 +47,12 @@ Logo wordmark) is not valid evidence for the full asset placement.
 
 ## Gate
 
-Before composition, run `validate_panel_assets.py --require-independent`.
+Before composition, run `validate_panel_assets.py --require-independent` and
+`validate_image_to_editable_contract.py --strict` for a fixed-reference route.
 Missing panel entries, duplicate panel files, overlapping panel ownership or
 formal text baked into a panel image are repair items; in strict mode they block
-delivery. For strict release, also pass `--require-hashes`; `sha256` must be the
-hash of the independent panel file named by `file`, while `source_sha256`
-remains the hash of the original full-resolution reference.
+delivery. Missing `raster_text_audit`, unresolved `text_layer_ids`, or any
+flattened full-slide object also block delivery. For strict release, also pass
+`--require-hashes`; `sha256` must be the hash of the independent panel file
+named by `file`, while `source_sha256` remains the hash of the original
+full-resolution reference.

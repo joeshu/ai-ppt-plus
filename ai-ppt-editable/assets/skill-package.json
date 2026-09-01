@@ -65,9 +65,11 @@
     "scripts/distillation_scheduler.py",
     "scripts/validate_visual_generation_plan.py",
     "scripts/validate_workflow_state.py",
+    "scripts/validate_image_to_editable_contract.py",
     "scripts/validate_handoff.py",
     "scripts/run_tests.py",
     "references/reconstruction-contract.md",
+    "references/image-to-editable-ppt-contract.md",
     "references/editability-levels.md",
     "references/icon-asset-protocol.md",
     "references/three-round-distillation-methodology.md",
@@ -89,7 +91,8 @@
     "tests/test_case_intake.py",
     "tests/test_perfect_first_extensions.py",
     "tests/test_approved_case_ingestion.py",
-    "tests/test_distillation_scheduler.py"
+    "tests/test_distillation_scheduler.py",
+    "tests/test_image_to_editable_contract.py"
   ],
   "runtime_sync": {
     "required": true,

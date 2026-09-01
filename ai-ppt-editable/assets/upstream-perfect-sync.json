@@ -337,12 +337,6 @@
       "executable": false
     },
     {
-      "source_path": "references/panel-asset-protocol.md",
-      "target_path": "references/panel-asset-protocol.md",
-      "sha256": "d36d5be1d40e9cb27464a5e3502aaae38435ed2c72ebbc34327aa08e2ae318e8",
-      "executable": false
-    },
-    {
       "source_path": "references/panel-detection.md",
       "target_path": "references/panel-detection.md",
       "sha256": "2ba8210456d05a60ac8867c16aefa48141825328517a3906f359449b9c6e49c3",
@@ -358,12 +352,6 @@
       "source_path": "references/quality-rubric.md",
       "target_path": "references/quality-rubric.md",
       "sha256": "796d23245b2fd078519357a6173ed4929244e4dd96884bb1c3fac29de394b433",
-      "executable": false
-    },
-    {
-      "source_path": "references/reconstruction-contract.md",
-      "target_path": "references/reconstruction-contract.md",
-      "sha256": "ebddf9ff3aff73775d3b5293ab3aceee14c5a7b908486b0931b692550ab0399a",
       "executable": false
     },
     {
@@ -1251,6 +1239,22 @@
       "reason": "post-baseline compatibility validator"
     },
     {
+      "path": "references/image-to-editable-ppt-contract.md",
+      "reason": "post-baseline strict image-to-editable text boundary contract"
+    },
+    {
+      "path": "references/panel-asset-protocol.md",
+      "reason": "post-baseline strict raster panel text boundary extension"
+    },
+    {
+      "path": "references/reconstruction-contract.md",
+      "reason": "post-baseline image-to-editable hard-gate extension"
+    },
+    {
+      "path": "scripts/validate_image_to_editable_contract.py",
+      "reason": "post-baseline strict image-to-editable raster/text gate"
+    },
+    {
       "path": "scripts/embed_fonts.py",
       "reason": "post-baseline orphan-font cleanup and artifact-tool compatibility"
     },
@@ -1293,6 +1297,10 @@
     {
       "path": "tests/test_font_embedding.py",
       "reason": "post-baseline artifact-tool orphan-font regression"
+    },
+    {
+      "path": "tests/test_image_to_editable_contract.py",
+      "reason": "post-baseline rasterized formal-text regression"
     }
   ],
   "generated_by": "scripts/build_perfect_sync_manifest.py"

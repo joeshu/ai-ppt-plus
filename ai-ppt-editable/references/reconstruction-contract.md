@@ -8,10 +8,16 @@ If the user says “先讨论任务，不要立即生成”, acknowledge this co
 
 Preserve, in order: information hierarchy → page structure → spatial relationships → typography metrics → graphics/icons → decoration.
 
+The detailed task protocol is `references/image-to-editable-ppt-contract.md`.
+It is binding for every image-led reconstruction: a complex正文 panel may
+retain only a text-free substrate; its formal text must be rebuilt as native
+text objects and linked by `text_layer_ids`.
+
 ## Hard requirements
 
 - Default to 16:9 unless the confirmed design system says otherwise.
 - Use real editable text boxes for every title, body paragraph, label, note and number. Never bake required text into a whole-slide image.
+- Never export a complex正文/card/panel region containing formal text as one PNG/JPEG image object. If the panel cannot be separated into a text-free substrate and native text, block editable delivery and emit a precise placeholder/material request.
 - Rebuild simple cards, lines, color blocks, tags, process nodes and geometry with PowerPoint native shapes or editable vector objects whenever reliable.
 - Use `references/chart-reconstruction.md` for every chart. Use an editable
   native chart only with verified source data; for image-only visual

@@ -12,6 +12,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--visual-threshold N]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
        [--route-decision ROUTE.json] [--require-route] [--require-editability]
+       [--require-image-to-editable-contract]
        [--outline-contract CONTRACT.json] [--content-authority AUTHORITY.json]
        [--quality-gates QUALITY.json] [--require-root-p0]
        [--design-system DESIGN.yaml] [--require-p1]
@@ -305,6 +306,8 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"chart_count": report.get("chart_count"), "charts": report.get("charts", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "perfect_first_contract":
         summary.update({"charts": report.get("charts"), "gradients": report.get("gradients"), "typography": report.get("typography"), "core": report.get("core"), "post_baseline": report.get("post_baseline")})
+    elif name == "image_to_editable_contract":
+        summary.update({"formal_text_object_count": report.get("formal_text_object_count"), "raster_object_count": report.get("raster_object_count"), "panel_count": report.get("panel_count"), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "dual_comparison":
         summary.update({"pixel": report.get("pixel_comparison", {}), "object": report.get("object_comparison", {}), "human_visual_review_required": report.get("human_visual_review_required", True)})
     return summary
@@ -350,6 +353,7 @@ def main() -> int:
     parser.add_argument("--require-chart-manifest", action="store_true", help="require and validate the chart data/representation manifest")
     parser.add_argument("--gradient-manifest", help="gradient-visual-manifest.json; defaults to project/gradient-visual-manifest.json")
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
+    parser.add_argument("--require-image-to-editable-contract", action="store_true", help="block rasterized formal text in image-led reconstruction")
     parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
     parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
     parser.add_argument("--object-manifest", help="canonical slide-object-manifest.json")
@@ -520,6 +524,11 @@ def main() -> int:
             return 2
     reference_route = isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction"
     visual_creation_route = isinstance(route_data, dict) and route_data.get("route") == "visual-creation"
+    # Fixed-reference reconstruction must prove that every raster asset is a
+    # text-free substrate (or an explicitly approved brand lockup) and that
+    # formal text resolves to native objects. The explicit flag also enables
+    # the same gate for standalone runs without a route decision.
+    editable_contract_required = bool(args.require_image_to_editable_contract or reference_route)
     visual_generation_mode = route_data.get("visual_generation_mode", "layout-reference") if visual_creation_route else None
     if visual_creation_route and visual_generation_mode == "image-slide":
         args.require_visual_generation = True
@@ -968,6 +977,7 @@ def main() -> int:
                 font_asset_args.append("--require-cjk")
             add_step("font-asset", font_asset_args, deps=["fonts"], outputs=[run_dir / "font-asset-validation.json"], inputs=[Path(args.font_dir).resolve()])
     layout_path = project / "layout.json"
+    panel_manifest = project / "panel-asset-manifest.json"
     typography_enabled = args.require_typography_calibration or typography_calibration.is_file()
     object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
     content_inventory = Path(args.content_inventory).resolve() if args.content_inventory else project / "content-inventory.json"
@@ -1037,6 +1047,35 @@ def main() -> int:
         if args.require_independent_panels:
             object_args.append("--require-panels")
         add_step("object-manifest", object_args, outputs=[run_dir / "object-manifest-validation.json"], inputs=[object_manifest, deck])
+    editable_contract_report = run_dir / "image-to-editable-contract-validation.json"
+    if editable_contract_required:
+        contract_args = [
+            str(SCRIPT_DIR / "validate_image_to_editable_contract.py"),
+            "--layout", str(layout_path),
+            "--object-manifest", str(object_manifest),
+            "--report", str(editable_contract_report),
+            "--strict",
+        ]
+        contract_inputs = [layout_path, object_manifest]
+        if panel_manifest.is_file():
+            contract_args.extend(["--panel-manifest", str(panel_manifest)])
+            contract_inputs.append(panel_manifest)
+        if not layout_path.is_file() or not object_manifest.is_file():
+            add_step(
+                "image-to-editable-contract",
+                static_result={"name": "image-to-editable-contract", "command": contract_args, "exit_code": 2, "ok": False, "failure": "required_contract_manifest_missing", "stdout": "", "stderr": ""},
+                cacheable=False,
+                deps=route_deps,
+                outputs=[editable_contract_report],
+            )
+        else:
+            add_step(
+                "image-to-editable-contract",
+                contract_args,
+                deps=route_deps,
+                outputs=[editable_contract_report],
+                inputs=contract_inputs,
+            )
     perfect_first_report = run_dir / "perfect-first-contract.json"
     perfect_first_enabled = layout_path.is_file()
     if perfect_first_enabled:
@@ -1543,6 +1582,7 @@ def main() -> int:
             ("content_inventory_validation", run_dir / "content-inventory-validation.json"),
             ("chart_manifest_validation", run_dir / "chart-manifest-validation.json"),
             ("perfect_first_contract", run_dir / "perfect-first-contract.json"),
+            ("image_to_editable_contract", run_dir / "image-to-editable-contract-validation.json"),
             ("visual_compare_qa", run_dir / "visual-qa/report.json"),
             ("project_report_aggregate", run_dir / "project-report.json"),
             (bundle_key, bundle_path),
@@ -1680,6 +1720,8 @@ def main() -> int:
         ])
     if perfect_first_enabled:
         report_entries.append({"report_type": "perfect-first-contract", "path": "perfect-first-contract.json", "required": True, "stage": "validated"})
+    if editable_contract_required:
+        report_entries.append({"report_type": "image-to-editable-contract", "path": "image-to-editable-contract-validation.json", "required": True, "stage": "validated"})
     if panel_gate_required:
         report_entries.append({"report_type": "panel-assets-validation", "path": "panel-assets-validation.json", "required": True, "stage": "validated"})
     if args.require_text_style_map and layout_path.is_file():
@@ -1748,7 +1790,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest", "perfect-first-contract": "perfect-first-contract"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest", "perfect-first-contract": "perfect-first-contract", "image-to-editable-contract": "image-to-editable-contract"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"

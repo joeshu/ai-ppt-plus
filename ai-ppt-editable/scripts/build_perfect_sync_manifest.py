@@ -44,9 +44,14 @@ EXCLUDED_PATHS = [
     {"path": "scripts/validate_signoff.py", "reason": "post-baseline deck-bound human sign-off evidence"},
     {"path": "scripts/validate_visual_generation_plan.py", "reason": "post-baseline compatibility validator"},
     {"path": "scripts/validate_workflow_state.py", "reason": "post-baseline compatibility validator"},
+    {"path": "references/image-to-editable-ppt-contract.md", "reason": "post-baseline strict image-to-editable text boundary contract"},
+    {"path": "references/panel-asset-protocol.md", "reason": "post-baseline strict raster panel text boundary extension"},
+    {"path": "references/reconstruction-contract.md", "reason": "post-baseline image-to-editable hard-gate extension"},
+    {"path": "scripts/validate_image_to_editable_contract.py", "reason": "post-baseline strict image-to-editable raster/text gate"},
     {"path": "tests/test_editable_object_audit.py", "reason": "standalone page-scoped audit regression"},
     {"path": "tests/test_perfect_sync.py", "reason": "standalone synchronization regression"},
     {"path": "tests/test_self_contained.py", "reason": "standalone package smoke test"},
+    {"path": "tests/test_image_to_editable_contract.py", "reason": "post-baseline rasterized formal-text regression"},
 ]
 
 
