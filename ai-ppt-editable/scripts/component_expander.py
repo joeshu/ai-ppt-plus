@@ -19,6 +19,7 @@ SLIDE_KEYS = {
 
 
 def _load_deck(path: Path) -> dict:
+    path = path.resolve()
     data = json.loads(path.read_text(encoding="utf-8"))
     if "slides" not in data:
         # Treat the whole object as a single slide; lift deck-level keys out.
@@ -30,6 +31,14 @@ def _load_deck(path: Path) -> dict:
     data.setdefault("slide_height_in", 7.5)
     data.setdefault("units", "fraction")
     data.setdefault("assets_dir", str(path.parent))
+    # Deck specifications are portable inputs.  Resolve their resource paths
+    # from the specification itself instead of the caller's current working
+    # directory.  This is especially important when an editable skill is
+    # invoked from a temporary project directory or by another worker.
+    for key in ("assets_dir", "font_dir", "font_manifest"):
+        value = data.get(key)
+        if isinstance(value, str) and value.strip() and not Path(value).expanduser().is_absolute():
+            data[key] = str((path.parent / Path(value).expanduser()).resolve())
     if data["units"] not in {"fraction", "px"}:
         _die(f"unsupported coordinate units: {data['units']}")
     return data
@@ -37,7 +46,17 @@ def _load_deck(path: Path) -> dict:
 
 def _resolve(assets_dir: Path, file: str) -> Path:
     path = Path(file)
-    return path if path.is_absolute() else assets_dir / path
+    if path.is_absolute():
+        return path
+    candidate = assets_dir / path
+    if candidate.exists():
+        return candidate
+    # Keep legacy examples portable when they use ``assets_dir: "."`` but
+    # are invoked from the repository root.  The layout-relative candidate
+    # remains authoritative whenever it exists; the CWD fallback only keeps
+    # older root-relative component libraries working.
+    cwd_candidate = Path.cwd() / path
+    return cwd_candidate if cwd_candidate.exists() else candidate
 
 
 def _frac(deck: dict, item: dict, key_xy: str, axis: str, reference: float) -> float:

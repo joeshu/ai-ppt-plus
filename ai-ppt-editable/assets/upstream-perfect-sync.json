@@ -475,18 +475,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/component_expander.py",
-      "target_path": "scripts/component_expander.py",
-      "sha256": "efcb2632317d6a40bc267bf7f714327481e5d8766af322baf6c65ac1cfc68a73",
-      "executable": false
-    },
-    {
-      "source_path": "scripts/compose_pptx.py",
-      "target_path": "scripts/compose_pptx.py",
-      "sha256": "2afb38099ae3e00069f3540cd8fa1b509af533b63395b6110bf43743415de1ed",
-      "executable": false
-    },
-    {
       "source_path": "scripts/detect_panel_candidates.py",
       "target_path": "scripts/detect_panel_candidates.py",
       "sha256": "ff71c3f7105d8aa9eb4b5a081e589ce7c2663f75236e35a57428611c4c9e817b",
@@ -1089,8 +1077,20 @@
       "reason": "standalone synchronization documentation"
     },
     {
+      "path": "references/perfect-replica-practice.md",
+      "reason": "standalone repeatable practice protocol"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
+    },
+    {
+      "path": "scripts/component_expander.py",
+      "reason": "post-baseline portable layout/component path resolution"
+    },
+    {
+      "path": "scripts/compose_pptx.py",
+      "reason": "post-baseline portable font-manifest resolution"
     },
     {
       "path": "scripts/compare_visual.py",

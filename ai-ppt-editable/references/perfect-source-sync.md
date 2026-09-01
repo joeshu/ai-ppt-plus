@@ -29,6 +29,10 @@ python3 scripts/validate_perfect_sync.py \
 The excluded paths are intentional package-boundary files: the standalone
 entrypoint, package/routing validators, the current orchestrator integration
 adapters, and a small set of post-baseline compatibility or correctness tests.
-They must not contain a second reconstruction engine. Any change to the
-synchronized list requires a new source commit, a refreshed manifest and a
-passing full worker test run.
+`scripts/component_expander.py` and `scripts/compose_pptx.py` are the two
+explicit post-baseline adapters: they preserve the baseline algorithms while
+making layout-relative assets and explicit font directories work from an
+arbitrary caller directory. They must not contain a second reconstruction
+engine. Any change to the synchronized list or adapter set requires a refreshed
+manifest and a passing full worker test run. The repeatable practice protocol
+is in `references/perfect-replica-practice.md`.

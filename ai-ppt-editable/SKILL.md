@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.08.31.04
+package_revision: 2026.09.01.01
 ---
 
 # AI PPT Editable
@@ -25,23 +25,27 @@ python3 scripts/validate_routing_contract.py
 ```
 
 The reconstruction engine and shared QA contracts are byte-synchronized with
-the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Verify that source
-relationship before authoring:
+the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Two explicitly
+documented post-baseline adapters extend that frozen core for portable resource
+paths and explicit font-directory precedence; they do not change the visual
+decomposition contract. Verify that source relationship before authoring:
 
 ```bash
 python3 scripts/validate_perfect_sync.py
 ```
 
-The exact source commit, file mapping, and intentional package-boundary
-exceptions are recorded in `references/perfect-source-sync.md` and
-`assets/upstream-perfect-sync.json`. The worker remains independently runnable;
+The exact source commit, file mapping, and intentional package-boundary or
+post-baseline adapter exceptions are recorded in
+`references/perfect-source-sync.md` and `assets/upstream-perfect-sync.json`.
+The worker remains independently runnable;
 when called by `ai-ppt-plus`, it consumes the orchestrator's approved handoff
 and returns worker-level technical evidence. It never owns deck-wide narrative,
 release eligibility, or human sign-off.
 
-The split changes ownership and invocation only. Do not alter the checked-in
-image-to-PPTX decomposition, asset extraction, composition, rendering, or QA
-algorithms merely to satisfy this skill boundary.
+The split changes ownership and invocation only. Keep the checked-in
+image-to-PPTX decomposition, asset extraction, composition, rendering, and QA
+algorithms stable; any generality fix must be isolated, documented as an
+explicit post-baseline adapter, and covered by a regression test.
 
 ## Authority model
 
@@ -63,7 +67,8 @@ In standalone mode:
 - missing brand assets, chart data, or illegible text are blockers or explicit
   placeholders, never invention.
 
-Read `references/reconstruction-contract.md`,
+Read `references/perfect-replica-practice.md`,
+`references/reconstruction-contract.md`,
 `references/editability-levels.md`, `references/native-object-protocol.md`, and
 the asset/text/chart protocols relevant to the page.
 

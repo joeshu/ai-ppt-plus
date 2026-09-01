@@ -65,7 +65,13 @@ def main() -> None:
 
     if args.embed_fonts:
         font_dir = args.font_dir or deck.get("font_dir")
-        font_manifest = args.font_manifest or deck.get("font_manifest")
+        # An explicit font directory owns its sibling manifest.  Passing a
+        # relative manifest from the layout here used to resolve it against
+        # the repository CWD (and could even override the directory's valid
+        # manifest), making portable layouts fail outside that CWD.  Let
+        # load_specs discover FONT_DIR/font-manifest.json unless the caller
+        # explicitly supplied a manifest.
+        font_manifest = args.font_manifest or (None if args.font_dir else deck.get("font_manifest"))
         if not font_dir and not font_manifest:
             _die("--embed-fonts requires --font-dir or --font-manifest")
         try:
