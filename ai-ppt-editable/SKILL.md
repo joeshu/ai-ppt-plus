@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.08.31.04
+  package_revision: 2026.08.31.04
 ---
 
 # AI PPT Editable
@@ -64,8 +64,9 @@ In standalone mode:
   placeholders, never invention.
 
 Read `references/reconstruction-contract.md`,
-`references/editability-levels.md`, `references/native-object-protocol.md`, and
-the asset/text/chart protocols relevant to the page.
+`references/editability-levels.md`, `references/native-object-protocol.md`,
+`references/source-crop-integrity.md`, and the asset/text/chart protocols
+relevant to the page.
 
 ## E0 — Intake, isolation, and preflight
 
@@ -109,9 +110,13 @@ spatial relationships, palette, and visible styling. Separate:
 Use `references/icon-asset-protocol.md` for B4/B5 provenance and cutout QA,
 `references/panel-asset-protocol.md` for independent panels,
 `references/text-style-protocol.md` for mixed color/weight/line breaks, and
-`references/chart-reconstruction.md` for every chart. A source crop is valid
-only with bbox and source hash; missing assets use the declared generation
-route and remain independent assets after extraction.
+`references/chart-reconstruction.md` for every chart. For every `source_reuse`
+asset, also run `scripts/validate_source_crop_integrity.py`: an `exact` crop
+must match the declared source bbox pixel-for-pixel after canonical RGBA
+normalization; a `derived` crop must record the processing step and resulting
+asset hash. A source crop is not valid from file hashes alone. Missing assets
+use the declared generation route and remain independent assets after
+extraction.
 
 Do not call `$ai-ppt-visual-gen` to replace an approved fixed reference. An
 isolated missing icon/decoration generation event is allowed under the asset
