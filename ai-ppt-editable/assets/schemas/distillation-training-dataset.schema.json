@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "dataset_version", "registry", "records_path", "records_sha256", "record_count", "splits", "rejected_count", "retrieval_ready", "supervised_training_ready", "approval_policy"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-training-dataset/v1"},
+    "dataset_version": {"const": 1},
+    "generated_at": {"type": "string"},
+    "registry": {"type": "object", "required": ["path", "sha256"]},
+    "records_path": {"type": "string"},
+    "records_sha256": {"type": "string"},
+    "record_count": {"type": "integer", "minimum": 0},
+    "splits": {"type": "object"},
+    "rejected_count": {"type": "integer", "minimum": 0},
+    "rejected": {"type": "array"},
+    "self_contained": {"type": "boolean"},
+    "retrieval_ready": {"type": "boolean"},
+    "supervised_training_ready": {"type": "boolean", "const": false},
+    "supervised_training_note": {"type": "string"},
+    "human_review_required": {"type": "boolean", "const": false},
+    "approval_policy": {"type": "string"}
+  }
+}

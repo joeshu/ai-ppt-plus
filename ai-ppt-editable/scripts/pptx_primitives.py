@@ -526,6 +526,20 @@ def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, r
     strict_input = bool(deck.get("strict_input"))
     slide_height_pt = float(deck["slide_height_in"]) * 72.0
     for spec in specs:
+        # Accept both the historical flat authoring shape and the canonical
+        # text-layout-manifest shape used by the perfect baseline. Normalize
+        # at the authoring boundary so validated nested font/color data cannot
+        # be silently lost during composition.
+        spec = dict(spec)
+        nested_style = spec.get("style") if isinstance(spec.get("style"), dict) else {}
+        for key, value in nested_style.items():
+            spec.setdefault(key, value)
+        if isinstance(spec.get("bbox"), dict):
+            for key in ("x", "y", "w", "h"):
+                if key not in spec and key in spec["bbox"]:
+                    spec[key] = spec["bbox"][key]
+        if "text" not in spec and spec.get("content") is not None:
+            spec["text"] = spec["content"]
         fx = _frac(deck, spec, "x", ref_w)
         fy = _frac(deck, spec, "y", ref_h)
         fw = _frac(deck, spec, "w", ref_w)
@@ -568,7 +582,13 @@ def add_texts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, r
             paragraph.alignment = alignment
             if line_spacing:
                 paragraph.line_spacing = float(line_spacing)
-            for run_spec in runs:
+            for raw_run_spec in runs:
+                if not isinstance(raw_run_spec, dict):
+                    raw_run_spec = {"text": str(raw_run_spec)}
+                run_spec = dict(raw_run_spec)
+                run_style = run_spec.get("style") if isinstance(run_spec.get("style"), dict) else {}
+                for key, value in run_style.items():
+                    run_spec.setdefault(key, value)
                 run = paragraph.add_run()
                 run.text = str(run_spec.get("text", ""))
                 run.font.size = Pt(text_size_pt(run_spec, slide_height_pt, ref_h, default=size_pt))

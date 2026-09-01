@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_SYNCED_FILE_COUNT = 169
+EXPECTED_SYNCED_FILE_COUNT = 168
 POST_BASELINE_EXCLUSIONS = frozenset({
     "assets/route-decision.template.json",
     "scripts/component_expander.py",
@@ -20,6 +20,40 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "scripts/delivery_check.py",
     "scripts/validate_project.py",
     "scripts/validate_signoff.py",
+    "scripts/build_object_manifest.py",
+    "scripts/distillation_loop.py",
+    "references/automatic-distillation.md",
+    "assets/schemas/distillation-case-registry.schema.json",
+    "assets/schemas/distillation-score.schema.json",
+    "assets/schemas/distillation-feedback.schema.json",
+    "tests/test_distillation_loop.py",
+    "scripts/candidate_controller.py",
+    "references/candidate-repair-protocol.md",
+    "assets/schemas/distillation-candidate-plan.schema.json",
+    "assets/schemas/distillation-candidate-selection.schema.json",
+    "tests/test_candidate_controller.py",
+    "scripts/training_export.py",
+    "references/training-data-protocol.md",
+    "assets/schemas/distillation-human-approval.schema.json",
+    "assets/schemas/distillation-training-example.schema.json",
+    "assets/schemas/distillation-training-dataset.schema.json",
+    "assets/schemas/distillation-training-cycle.schema.json",
+    "tests/test_training_export.py",
+    "scripts/run_training_cycle.py",
+    "references/automatic-training-driver.md",
+    "tests/test_training_cycle.py",
+    "assets/schemas/distillation-retrieval-index.schema.json",
+    "assets/schemas/distillation-retrieval-evaluation.schema.json",
+    "scripts/build_retrieval_index.py",
+    "tests/test_retrieval_index.py",
+    "assets/schemas/distillation-case-intake.schema.json",
+    "scripts/prepare_case.py",
+    "references/case-intake-protocol.md",
+    "tests/test_case_intake.py",
+    "assets/schemas/distillation-scheduler-decision.schema.json",
+    "scripts/distillation_scheduler.py",
+    "tests/test_distillation_scheduler.py",
+    "references/three-round-distillation-methodology.md",
 })
 
 

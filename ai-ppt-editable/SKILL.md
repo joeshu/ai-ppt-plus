@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.09.01.01
+package_revision: 2026.09.01.11
 ---
 
 # AI PPT Editable
@@ -68,9 +68,19 @@ In standalone mode:
   placeholders, never invention.
 
 Read `references/perfect-replica-practice.md`,
+`references/case-intake-protocol.md`,
+`references/three-round-distillation-methodology.md`,
+`references/automatic-distillation.md`,
+`references/automatic-training-driver.md`,
+`references/candidate-repair-protocol.md`,
+`references/training-data-protocol.md`,
 `references/reconstruction-contract.md`,
 `references/editability-levels.md`, `references/native-object-protocol.md`, and
 the asset/text/chart protocols relevant to the page.
+For the five post-baseline contracts and their shared adapter, also read
+`references/perfect-first-extensions.md` and use
+`scripts/perfect_first_adapter.py`; do not replace the synchronized core with
+a simplified reconstruction path.
 
 ## E0 — Intake, isolation, and preflight
 
@@ -111,6 +121,22 @@ spatial relationships, palette, and visible styling. Separate:
 4. editable formal text;
 5. charts/tables with their own data/representation authority.
 
+When the corresponding evidence exists, the perfect-first extension boundary
+is mandatory: verified chart records may be promoted to native charts; simple
+gradients may remain native while complex B2/B3/B4 gradients stay traceable
+assets; canonical font aliases and nested run styles must survive composition;
+object manifests must carry geometry for object-level acceptance; and
+human-confirmed cases may be ingested automatically only after explicit
+approval. `compose_pptx.py` runs the shared adapter before the frozen backend,
+and `run_pipeline.py` runs its contract preflight.
+
+The authoring boundary accepts both legacy flat text records and the canonical
+nested `text-layout-manifest` form. In the latter, `bbox` supplies geometry,
+`content` supplies immutable copy, `style` supplies the base font metrics, and
+each run's nested `style` supplies local color/weight/size overrides. Never
+flatten runs before composition: a manifest can validate successfully while
+still losing brand colors if the authoring adapter only reads flat fields.
+
 Use `references/icon-asset-protocol.md` for B4/B5 provenance and cutout QA,
 `references/panel-asset-protocol.md` for independent panels,
 `references/text-style-protocol.md` for mixed color/weight/line breaks, and
@@ -121,6 +147,35 @@ route and remain independent assets after extraction.
 Do not call `$ai-ppt-visual-gen` to replace an approved fixed reference. An
 isolated missing icon/decoration generation event is allowed under the asset
 provenance contract and does not change the page route.
+
+For image-led improvements, run the three-round protocol: visual diagnostic,
+semantic-panel decomposition, then native-text/object distillation. Preserve
+the visual-best and editable-best candidates as separate evidence, and use the
+actual panel manifest count rather than a hand-count when configuring gates.
+
+For repeated improvement runs, use `scripts/distillation_loop.py`: score the
+existing reports, classify feedback by owning layer, gate the candidate against
+the previous baseline, and record hash-bound cases. A technical acceptance is
+only `accept-for-human-review`; never treat it as automatic release or model
+training approval. Only human-approved, fresh, non-flattened cases may enter a
+later retrieval or supervised-training export.
+Use `scripts/candidate_controller.py` to generate isolated, region-scoped repair
+proposals and rank only gated candidates. Candidate plans are opt-in and must
+not overwrite the previous baseline; stop automatic repair after three rounds
+or at the first new blocker.
+After a person confirms visual fidelity, formal content, and editability, use
+`scripts/training_export.py approve-case` followed by `export`. The exporter
+must reject stale hashes, duplicates, incomplete approvals, and unreviewed
+cases; it prepares retrieval data but does not claim that model weights were
+trained. Use `scripts/run_training_cycle.py` as the automation boundary from
+GitHub Actions or another trusted scheduler. It records skipped,
+waiting-for-approval, prepared, blocked, and trained-candidate states. A
+trained candidate remains pending human evaluation and promotion; the driver
+does not invent a trainer, GPU, checkpoint registry, or release approval.
+When no GPU is available, let the driver build the CPU-only retrieval index
+with `scripts/build_retrieval_index.py`. Treat it as retrieval enhancement and
+split-leakage evaluation, not as semantic vision-model training or weight
+更新.
 
 ## E3 — Author editable objects
 
@@ -134,12 +189,24 @@ provenance contract and does not change the page route.
 5. Keep PPTX and preview drawing order equivalent so technical previews are
    meaningful.
 
+For native chart promotion, pass `--chart-manifest` to the composer or let the
+pipeline validate the project manifest. Never promote `unverified` chart data;
+the adapter rejects a non-native chart that would otherwise be silently
+rendered by the native chart primitive. Adapter, typography, gradient, and
+object-audit reports are evidence, not human sign-off.
+
 ## E4 — Render and validate
 
 Render every page and run structural, object, asset-hash, font, text-layout,
 overflow, overlap, panel, chart, route, and preview-consistency gates applicable
 to the project. Compare against the authoritative reference when one exists.
 Review both a deck strip and full-resolution pages.
+
+For strict object acceptance, run
+`inspect_editable_objects.py --require-types --require-geometry`; geometry is
+compared in normalized slide coordinates with a declared tolerance. A passing
+pixel score does not waive a type, geometry, gradient, font, chart provenance,
+or source-hash failure.
 
 Automated checks are technical evidence. Record `human_visual_review_required`
 when applicable and never synthesize approval metadata.
@@ -168,3 +235,8 @@ deck-wide evidence and determine release eligibility.
 - font, render, overflow, overlap, or package blockers remain;
 - technical pass represented as human approval;
 - reconstruction redesigns the approved reference without explicit user scope.
+
+After human confirmation, `scripts/ingest_approved_case.py` or the scheduled
+`scripts/run_training_cycle.py` may export the fresh case to the hash-bound
+dataset and CPU retrieval index. Model training and weight promotion remain
+separate external stages and require independent evaluation.

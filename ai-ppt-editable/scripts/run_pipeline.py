@@ -303,6 +303,8 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"sample_count": report.get("sample_count"), "max_drift": report.get("max_drift"), "samples": report.get("samples", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "chart_manifest_validation":
         summary.update({"chart_count": report.get("chart_count"), "charts": report.get("charts", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "perfect_first_contract":
+        summary.update({"charts": report.get("charts"), "gradients": report.get("gradients"), "typography": report.get("typography"), "core": report.get("core"), "post_baseline": report.get("post_baseline")})
     elif name == "dual_comparison":
         summary.update({"pixel": report.get("pixel_comparison", {}), "object": report.get("object_comparison", {}), "human_visual_review_required": report.get("human_visual_review_required", True)})
     return summary
@@ -346,6 +348,7 @@ def main() -> int:
     parser.add_argument("--require-content-inventory", action="store_true", help="require and validate the independent visible-content inventory")
     parser.add_argument("--chart-manifest", help="traceable chart data and representation manifest; defaults to project/chart-reconstruction.json")
     parser.add_argument("--require-chart-manifest", action="store_true", help="require and validate the chart data/representation manifest")
+    parser.add_argument("--gradient-manifest", help="gradient-visual-manifest.json; defaults to project/gradient-visual-manifest.json")
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
     parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
     parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
@@ -363,6 +366,8 @@ def main() -> int:
     parser.add_argument("--require-source-hashes", action="store_true", help="require declared source hashes for raster/data assets")
     parser.add_argument("--require-asset-hashes", action="store_true", help="require current SHA-256 declarations for all file-backed asset manifests")
     parser.add_argument("--require-gradient-visual", action="store_true", help="require and validate the gradient visual manifest")
+    parser.add_argument("--require-object-types", action="store_true", help="require manifest object types to match observed native PPTX types")
+    parser.add_argument("--require-object-geometry", action="store_true", help="require and compare manifest object geometry against observed PPTX boxes")
     parser.add_argument("--release", action="store_true", help="run the strict release gate after technical validation")
     parser.add_argument("--handoff", help="handoff.json; required by --release")
     parser.add_argument("--human-signoff", help="human-closeout.json; required by --release")
@@ -576,6 +581,8 @@ def main() -> int:
         args.require_text_style_map = args.require_text_style_map or gate_requirements.get("text_style_map", False)
         args.require_gradient_visual = args.require_gradient_visual or gate_requirements.get("gradient_visual", False)
         args.require_asset_hashes = args.require_asset_hashes or gate_requirements.get("asset_hashes", False)
+        args.require_object_types = args.require_object_types or args.release
+        args.require_object_geometry = args.require_object_geometry or args.release
     if args.require_route and reference_route:
         if not (args.reference or args.reference_dir):
             result = {"schema": "ai-ppt-plus/pipeline-run/v1", "valid": False, "code": "reference_route_without_reference", "message": "reference-reconstruction requires --reference or --reference-dir for visual comparison"}
@@ -917,7 +924,7 @@ def main() -> int:
     if unique_reference_sources:
         source_args = [str(SCRIPT_DIR / "validate_source_images.py"), *[str(path) for path in unique_reference_sources], "--report", str(run_dir / "source-image-validation.json")]
         add_step("source-images", source_args, deps=route_deps, outputs=[run_dir / "source-image-validation.json"], inputs=unique_reference_sources)
-    gradient_manifest = project / "gradient-visual-manifest.json"
+    gradient_manifest = Path(args.gradient_manifest).resolve() if args.gradient_manifest else project / "gradient-visual-manifest.json"
     gradient_required = args.require_gradient_visual or gradient_manifest.is_file()
     if args.require_gradient_visual and not gradient_manifest.is_file():
         add_step("gradient-visual", static_result={"name": "gradient-visual", "command": [], "exit_code": 2, "ok": False, "failure": "gradient_manifest_missing", "stdout": "", "stderr": ""}, cacheable=False, deps=route_deps, outputs=[run_dir / "gradient-visual-validation.json"])
@@ -1030,6 +1037,26 @@ def main() -> int:
         if args.require_independent_panels:
             object_args.append("--require-panels")
         add_step("object-manifest", object_args, outputs=[run_dir / "object-manifest-validation.json"], inputs=[object_manifest, deck])
+    perfect_first_report = run_dir / "perfect-first-contract.json"
+    perfect_first_enabled = layout_path.is_file()
+    if perfect_first_enabled:
+        adapter_args = [str(SCRIPT_DIR / "perfect_first_adapter.py"), "validate", str(layout_path), "--report", str(perfect_first_report)]
+        adapter_inputs = [layout_path]
+        if chart_manifest.is_file():
+            adapter_args.extend(["--chart-manifest", str(chart_manifest)])
+            adapter_inputs.append(chart_manifest)
+        if gradient_manifest.is_file():
+            adapter_args.extend(["--gradient-manifest", str(gradient_manifest)])
+            adapter_inputs.append(gradient_manifest)
+        if args.font_dir:
+            adapter_args.extend(["--font-dir", str(Path(args.font_dir).resolve())])
+            adapter_inputs.append(Path(args.font_dir).resolve())
+            if font_manifest.is_file():
+                adapter_args.extend(["--font-manifest", str(font_manifest)])
+                adapter_inputs.append(font_manifest)
+        if args.release:
+            adapter_args.append("--strict")
+        add_step("perfect-first-contract", adapter_args, deps=route_deps, outputs=[perfect_first_report], inputs=list(dict.fromkeys(adapter_inputs)))
     hash_manifests: list[Path] = []
     for candidate in [*(Path(path).resolve() for path in args.asset_manifest), *(project / name for name in ("asset-manifest.json", "panel-asset-manifest.json", "icon-asset-manifest.json", "imagegen-assets-manifest.json"))]:
         candidate = candidate.resolve()
@@ -1118,6 +1145,10 @@ def main() -> int:
         audit_args = [str(SCRIPT_DIR / "inspect_editable_objects.py"), str(deck), "--object-manifest", str(object_manifest), "--report", str(run_dir / "editable-object-audit.json")]
         if args.require_independent_panels:
             audit_args.append("--require-independent-panels")
+        if args.require_object_types:
+            audit_args.append("--require-types")
+        if args.require_object_geometry:
+            audit_args.append("--require-geometry")
         add_step("editable-object-audit", audit_args, outputs=[run_dir / "editable-object-audit.json"], inputs=[deck, object_manifest])
         semantic_text_manifest = Path(args.text_manifest).resolve() if args.text_manifest else project / "text-layout-manifest.json"
         semantic_asset_manifests = [Path(path).resolve() for path in args.asset_manifest]
@@ -1511,6 +1542,7 @@ def main() -> int:
             ("reference_audit", run_dir / "reference-audit.json"),
             ("content_inventory_validation", run_dir / "content-inventory-validation.json"),
             ("chart_manifest_validation", run_dir / "chart-manifest-validation.json"),
+            ("perfect_first_contract", run_dir / "perfect-first-contract.json"),
             ("visual_compare_qa", run_dir / "visual-qa/report.json"),
             ("project_report_aggregate", run_dir / "project-report.json"),
             (bundle_key, bundle_path),
@@ -1646,6 +1678,8 @@ def main() -> int:
             {"report_type": "editable-object-audit", "path": "editable-object-audit.json", "required": True, "stage": "validated"},
             {"report_type": "semantic-object-audit", "path": "semantic-object-audit.json", "required": True, "stage": "validated"},
         ])
+    if perfect_first_enabled:
+        report_entries.append({"report_type": "perfect-first-contract", "path": "perfect-first-contract.json", "required": True, "stage": "validated"})
     if panel_gate_required:
         report_entries.append({"report_type": "panel-assets-validation", "path": "panel-assets-validation.json", "required": True, "stage": "validated"})
     if args.require_text_style_map and layout_path.is_file():
@@ -1714,7 +1748,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest", "perfect-first-contract": "perfect-first-contract"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
