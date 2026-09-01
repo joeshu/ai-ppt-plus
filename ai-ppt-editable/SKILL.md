@@ -117,6 +117,13 @@ Do not call `$ai-ppt-visual-gen` to replace an approved fixed reference. An
 isolated missing icon/decoration generation event is allowed under the asset
 provenance contract and does not change the page route.
 
+
+## Reference-fidelity extension
+
+When a fixed reference is being matched, read `references/reference-fidelity-protocol.md` before decomposition. If the user requires native image generation, route every `icons`, `illustration`, `complex_art`, and `gradient_visual` object through the native ImageGen B4 asset route. Keep each delivered asset independent and record the native output, copied asset, prompt, backend, alpha/key-color evidence, no-text/no-logo constraints, source/target bbox, and iteration. Complete brand lockups remain authoritative source-reuse objects.
+
+Formal copy is always native text. Build a typography-calibration manifest for each page and measure title, section heading, body/bullets, labels, diagram text, and footer copy against source/render ink bounds. Lock explicit line breaks and mixed runs; do not use generated text or `shrink_to_fit` as a repair strategy. Run `scripts/validate_reference_fidelity.py` before render and again with `--require-delivery` after assets are copied.
+
 ## E3 — Author editable objects
 
 1. Build/update the canonical slide-object manifest before composition.
