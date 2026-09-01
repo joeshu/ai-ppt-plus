@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.01.07",
+  "package_revision": "2026.09.01.08",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -39,6 +39,8 @@
     "assets/schemas/distillation-training-example.schema.json",
     "assets/schemas/distillation-training-dataset.schema.json",
     "assets/schemas/distillation-training-cycle.schema.json",
+    "assets/schemas/distillation-retrieval-index.schema.json",
+    "assets/schemas/distillation-retrieval-evaluation.schema.json",
     "assets/fonts/NotoSansSC-Regular.ttf",
     "assets/fonts/font-manifest.json",
     "scripts/validate_skill_package.py",
@@ -54,6 +56,7 @@
     "scripts/candidate_controller.py",
     "scripts/training_export.py",
     "scripts/run_training_cycle.py",
+    "scripts/build_retrieval_index.py",
     "scripts/validate_visual_generation_plan.py",
     "scripts/validate_workflow_state.py",
     "scripts/validate_handoff.py",
@@ -73,7 +76,8 @@
     "tests/test_distillation_loop.py",
     "tests/test_candidate_controller.py",
     "tests/test_training_export.py",
-    "tests/test_training_cycle.py"
+    "tests/test_training_cycle.py",
+    "tests/test_retrieval_index.py"
   ],
   "runtime_sync": {
     "required": true,

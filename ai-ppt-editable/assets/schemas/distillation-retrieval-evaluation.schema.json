@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ai-ppt-plus/distillation-retrieval-evaluation/v1",
+  "type": "object",
+  "required": ["schema", "evaluation_version", "valid", "status", "split_counts", "holdout_count", "overlaps", "issues", "cpu_only"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-retrieval-evaluation/v1"},
+    "evaluation_version": {"const": 1},
+    "generated_at": {"type": "string"},
+    "index": {"type": "string"},
+    "dataset_manifest": {"type": "string"},
+    "valid": {"type": "boolean"},
+    "status": {"enum": ["passed", "insufficient-holdout", "blocked"]},
+    "split_counts": {"type": "object"},
+    "holdout_count": {"type": "integer", "minimum": 0},
+    "source_hash_counts": {"type": "object"},
+    "overlaps": {"type": "array"},
+    "issues": {"type": "array"},
+    "cpu_only": {"const": true},
+    "semantic_quality": {"type": "string"}
+  }
+}

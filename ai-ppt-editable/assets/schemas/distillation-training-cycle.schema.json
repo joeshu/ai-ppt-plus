@@ -10,6 +10,7 @@
     "status",
     "registry",
     "dataset",
+    "retrieval",
     "retrieval_ready",
     "model_training_status",
     "human_approval_required",
@@ -33,6 +34,15 @@
     },
     "approved_candidate_count": {"type": "integer", "minimum": 0},
     "retrieval_ready": {"type": "boolean"},
+    "retrieval": {
+      "type": "object",
+      "required": ["index_path", "evaluation_path", "status"],
+      "properties": {
+        "index_path": {"type": "string", "minLength": 1},
+        "evaluation_path": {"type": "string", "minLength": 1},
+        "status": {"enum": ["not-started", "passed", "insufficient-holdout", "blocked"]}
+      }
+    },
     "model_training_status": {"enum": ["not-started", "not-configured", "candidate-produced", "failed"]},
     "model_promotion_status": {"const": "pending-human-approval"},
     "trainer": {"type": "object"},

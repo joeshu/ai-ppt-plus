@@ -1131,6 +1131,14 @@
       "reason": "post-baseline automatic training cycle report schema"
     },
     {
+      "path": "assets/schemas/distillation-retrieval-index.schema.json",
+      "reason": "post-baseline CPU retrieval index schema"
+    },
+    {
+      "path": "assets/schemas/distillation-retrieval-evaluation.schema.json",
+      "reason": "post-baseline retrieval leakage evaluation schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
     },
@@ -1153,6 +1161,10 @@
     {
       "path": "scripts/run_training_cycle.py",
       "reason": "post-baseline automatic training cycle driver"
+    },
+    {
+      "path": "scripts/build_retrieval_index.py",
+      "reason": "post-baseline CPU retrieval index builder"
     },
     {
       "path": "scripts/component_expander.py",
@@ -1249,6 +1261,10 @@
     {
       "path": "tests/test_training_cycle.py",
       "reason": "post-baseline automatic training cycle regression"
+    },
+    {
+      "path": "tests/test_retrieval_index.py",
+      "reason": "post-baseline CPU retrieval index regression"
     },
     {
       "path": "tests/test_self_contained.py",

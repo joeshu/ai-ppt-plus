@@ -14,10 +14,14 @@ report per invocation.
 3. Calls `scripts/training_export.py export`, which rechecks all artifact
    hashes, deduplicates source groups, and writes the retrieval-ready JSONL
    plus manifest.
-4. Optionally invokes a trusted external trainer through `--trainer-command`
+4. Builds a dependency-free CPU retrieval index and checks that source hashes
+   do not leak across train/validation/test splits. This is immediately
+   runnable without a GPU, but it is not semantic embedding or weight
+   training.
+5. Optionally invokes a trusted external trainer through `--trainer-command`
    or `AI_PPT_TRAINER_COMMAND`. The dataset manifest and JSONL paths are passed
    through `AI_PPT_DATASET_MANIFEST` and `AI_PPT_DATASET_RECORDS`.
-5. Records a `prepared` or `trained-candidate` state. Even a passing trainer
+6. Records a `prepared` or `trained-candidate` state. Even a passing trainer
    remains `release_eligible: false` and `pending-human-approval`.
 
 The command is intentionally not a model trainer. A model-specific adapter

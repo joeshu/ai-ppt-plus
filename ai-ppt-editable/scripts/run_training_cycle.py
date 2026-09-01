@@ -24,6 +24,7 @@ from atomic_output import atomic_write_json
 CYCLE_SCHEMA = "ai-ppt-plus/distillation-training-cycle/v1"
 REGISTRY_SCHEMA = "ai-ppt-plus/distillation-case-registry/v1"
 SCRIPT = Path(__file__).resolve().with_name("training_export.py")
+RETRIEVAL_SCRIPT = Path(__file__).resolve().with_name("build_retrieval_index.py")
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -63,6 +64,11 @@ def base_report(args: argparse.Namespace) -> dict[str, Any]:
         },
         "approved_candidate_count": 0,
         "retrieval_ready": False,
+        "retrieval": {
+            "index_path": str(Path(args.retrieval_index).resolve()),
+            "evaluation_path": str(Path(args.retrieval_evaluation).resolve()),
+            "status": "not-started",
+        },
         "model_training_status": "not-started",
         "model_promotion_status": "pending-human-approval",
         "trainer": {"configured": bool(args.trainer_command), "status": "not-configured" if not args.trainer_command else "configured"},
@@ -144,6 +150,39 @@ def run_cycle(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         report["issues"].append({"code": "dataset-not-retrieval-ready"})
         return write_report(report_path, report), 2
 
+    retrieval_command = [
+        sys.executable,
+        str(RETRIEVAL_SCRIPT),
+        "--records",
+        str(Path(args.output).resolve()),
+        "--manifest",
+        str(Path(args.manifest).resolve()),
+        "--index",
+        str(Path(args.retrieval_index).resolve()),
+        "--evaluation",
+        str(Path(args.retrieval_evaluation).resolve()),
+    ]
+    retrieval = subprocess.run(retrieval_command, capture_output=True, text=True, check=False)
+    retrieval_evaluation: dict[str, Any] = {}
+    if Path(args.retrieval_evaluation).resolve().is_file():
+        try:
+            retrieval_evaluation = read_json(Path(args.retrieval_evaluation).resolve())
+        except (OSError, ValueError, json.JSONDecodeError):
+            retrieval_evaluation = {}
+    report["retrieval"] = {
+        "index_path": str(Path(args.retrieval_index).resolve()),
+        "evaluation_path": str(Path(args.retrieval_evaluation).resolve()),
+        "returncode": retrieval.returncode,
+        "status": retrieval_evaluation.get("status") if retrieval.returncode == 0 else "blocked",
+        "stdout_tail": retrieval.stdout[-2000:],
+        "stderr_tail": retrieval.stderr[-2000:],
+    }
+    if retrieval.returncode != 0:
+        report["status"] = "blocked"
+        report["code"] = "retrieval-index-blocked"
+        report["issues"].append({"code": "retrieval-index-blocked", "returncode": retrieval.returncode})
+        return write_report(report_path, report), 2
+
     trainer_command = args.trainer_command
     if not trainer_command:
         report["status"] = "prepared"
@@ -162,6 +201,7 @@ def run_cycle(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     trainer_env = os.environ.copy()
     trainer_env["AI_PPT_DATASET_MANIFEST"] = str(Path(args.manifest).resolve())
     trainer_env["AI_PPT_DATASET_RECORDS"] = str(Path(args.output).resolve())
+    trainer_env["AI_PPT_RETRIEVAL_INDEX"] = str(Path(args.retrieval_index).resolve())
     trained = subprocess.run(tokens, cwd=Path.cwd(), env=trainer_env, capture_output=True, text=True, check=False)
     report["trainer"] = {
         "configured": True,
@@ -190,6 +230,8 @@ def main() -> int:
     parser.add_argument("--manifest", default="build/ai-ppt-editable/dataset-manifest.json")
     parser.add_argument("--materialize-dir", default="build/ai-ppt-editable/artifacts")
     parser.add_argument("--report", default="build/ai-ppt-editable/training-cycle-report.json")
+    parser.add_argument("--retrieval-index", default="build/ai-ppt-editable/retrieval-index.json")
+    parser.add_argument("--retrieval-evaluation", default="build/ai-ppt-editable/retrieval-evaluation.json")
     parser.add_argument("--split-seed", default="ai-ppt-editable-v1")
     parser.add_argument("--trainer-command", default=os.environ.get("AI_PPT_TRAINER_COMMAND"))
     parser.add_argument("--require-approved", action="store_true")

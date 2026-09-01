@@ -42,6 +42,10 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "scripts/run_training_cycle.py",
     "references/automatic-training-driver.md",
     "tests/test_training_cycle.py",
+    "assets/schemas/distillation-retrieval-index.schema.json",
+    "assets/schemas/distillation-retrieval-evaluation.schema.json",
+    "scripts/build_retrieval_index.py",
+    "tests/test_retrieval_index.py",
 })
 
 

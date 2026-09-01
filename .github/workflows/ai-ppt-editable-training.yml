@@ -50,6 +50,7 @@ jobs:
           python ai-ppt-editable/scripts/validate_perfect_sync.py
           python ai-ppt-editable/tests/test_training_export.py
           python ai-ppt-editable/tests/test_training_cycle.py
+          python ai-ppt-editable/tests/test_retrieval_index.py
 
       - name: Run automatic training cycle
         run: |

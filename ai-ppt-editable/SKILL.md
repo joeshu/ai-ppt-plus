@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.09.01.07
+package_revision: 2026.09.01.08
 ---
 
 # AI PPT Editable
@@ -151,6 +151,10 @@ GitHub Actions or another trusted scheduler. It records skipped,
 waiting-for-approval, prepared, blocked, and trained-candidate states. A
 trained candidate remains pending human evaluation and promotion; the driver
 does not invent a trainer, GPU, checkpoint registry, or release approval.
+When no GPU is available, let the driver build the CPU-only retrieval index
+with `scripts/build_retrieval_index.py`. Treat it as retrieval enhancement and
+split-leakage evaluation, not as semantic vision-model training or weight
+更新.
 
 ## E3 — Author editable objects
 
