@@ -225,7 +225,7 @@
     {
       "source_path": "references/authoring-backend.md",
       "target_path": "references/authoring-backend.md",
-      "sha256": "da2bf00347a2c2659b431ac90681e1afde2a3397ad45253a844df9914bbf7977",
+      "sha256": "2a9e5dc4d690ae4c3dada86426196bc21b9be1d942ada145b5c7b419fea6b11f",
       "executable": false
     },
     {
@@ -337,12 +337,6 @@
       "executable": false
     },
     {
-      "source_path": "references/panel-asset-protocol.md",
-      "target_path": "references/panel-asset-protocol.md",
-      "sha256": "d36d5be1d40e9cb27464a5e3502aaae38435ed2c72ebbc34327aa08e2ae318e8",
-      "executable": false
-    },
-    {
       "source_path": "references/panel-detection.md",
       "target_path": "references/panel-detection.md",
       "sha256": "2ba8210456d05a60ac8867c16aefa48141825328517a3906f359449b9c6e49c3",
@@ -358,12 +352,6 @@
       "source_path": "references/quality-rubric.md",
       "target_path": "references/quality-rubric.md",
       "sha256": "796d23245b2fd078519357a6173ed4929244e4dd96884bb1c3fac29de394b433",
-      "executable": false
-    },
-    {
-      "source_path": "references/reconstruction-contract.md",
-      "target_path": "references/reconstruction-contract.md",
-      "sha256": "ebddf9ff3aff73775d3b5293ab3aceee14c5a7b908486b0931b692550ab0399a",
       "executable": false
     },
     {
@@ -457,12 +445,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/build_object_manifest.py",
-      "target_path": "scripts/build_object_manifest.py",
-      "sha256": "7537c5b02357b4494a6b4707f52efb4e247dd4c1c7d031a2ad416a5ccd2182e3",
-      "executable": false
-    },
-    {
       "source_path": "scripts/build_slide_manifest.py",
       "target_path": "scripts/build_slide_manifest.py",
       "sha256": "7aa16feb12a4b87eb949efd2f64d12cc4133635ba632bdfbb26f23f0e0944fd2",
@@ -475,18 +457,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/component_expander.py",
-      "target_path": "scripts/component_expander.py",
-      "sha256": "efcb2632317d6a40bc267bf7f714327481e5d8766af322baf6c65ac1cfc68a73",
-      "executable": false
-    },
-    {
-      "source_path": "scripts/compose_pptx.py",
-      "target_path": "scripts/compose_pptx.py",
-      "sha256": "2afb38099ae3e00069f3540cd8fa1b509af533b63395b6110bf43743415de1ed",
-      "executable": false
-    },
-    {
       "source_path": "scripts/detect_panel_candidates.py",
       "target_path": "scripts/detect_panel_candidates.py",
       "sha256": "ff71c3f7105d8aa9eb4b5a081e589ce7c2663f75236e35a57428611c4c9e817b",
@@ -496,12 +466,6 @@
       "source_path": "scripts/editability.py",
       "target_path": "scripts/editability.py",
       "sha256": "306f51123085124efb99bf090dd42fad2218f2a8e6d8570075dd0051171841b1",
-      "executable": false
-    },
-    {
-      "source_path": "scripts/embed_fonts.py",
-      "target_path": "scripts/embed_fonts.py",
-      "sha256": "3448fea8c73488430c5bcf24d68f0898f3dfadb59e49a96cf11df9385cf16afb",
       "executable": false
     },
     {
@@ -567,7 +531,7 @@
     {
       "source_path": "scripts/pptx_primitives.py",
       "target_path": "scripts/pptx_primitives.py",
-      "sha256": "901c1731af621ecee37ec5b07eff752341382414422e96c0257cc832196fb75a",
+      "sha256": "09070cca34db2d1d659a03fa8a598810844f5e018db433ea6d4471466e1b9045",
       "executable": false
     },
     {
@@ -793,12 +757,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/validate_text_style_map.py",
-      "target_path": "scripts/validate_text_style_map.py",
-      "sha256": "0cf0794dc2f6c785c0fef531a8d071f681c126a00072055abb569e1bff089a5a",
-      "executable": false
-    },
-    {
       "source_path": "scripts/validate_typography_calibration.py",
       "target_path": "scripts/validate_typography_calibration.py",
       "sha256": "e1484c6e0224168634b0940b77d92a0c5f325865904bf56f505b5c8f4e15c4be",
@@ -862,12 +820,6 @@
       "source_path": "tests/test_font_delivery.py",
       "target_path": "tests/test_font_delivery.py",
       "sha256": "d6a4e79628fb7fa767881eeb5bef6bc00f38a0ed677420dd3e5644c0aa39bb37",
-      "executable": false
-    },
-    {
-      "source_path": "tests/test_font_embedding.py",
-      "target_path": "tests/test_font_embedding.py",
-      "sha256": "a61c2f570d000801b36f96caffeccac873e5eba4c33880befea21f2ed8bc35cf",
       "executable": false
     },
     {
@@ -1089,8 +1041,136 @@
       "reason": "standalone synchronization documentation"
     },
     {
+      "path": "references/perfect-replica-practice.md",
+      "reason": "standalone repeatable practice protocol"
+    },
+    {
+      "path": "references/three-round-distillation-methodology.md",
+      "reason": "standalone three-round improvement methodology"
+    },
+    {
+      "path": "references/automatic-distillation.md",
+      "reason": "standalone automatic distillation and training-data policy"
+    },
+    {
+      "path": "references/candidate-repair-protocol.md",
+      "reason": "post-baseline isolated candidate and region repair protocol"
+    },
+    {
+      "path": "references/training-data-protocol.md",
+      "reason": "post-baseline approved-case training export protocol"
+    },
+    {
+      "path": "references/automatic-training-driver.md",
+      "reason": "post-baseline automatic training cycle driver protocol"
+    },
+    {
+      "path": "assets/schemas/distillation-case-registry.schema.json",
+      "reason": "post-baseline automatic distillation case registry schema"
+    },
+    {
+      "path": "assets/schemas/distillation-score.schema.json",
+      "reason": "post-baseline multi-objective candidate score schema"
+    },
+    {
+      "path": "assets/schemas/distillation-feedback.schema.json",
+      "reason": "post-baseline repair feedback and rollback schema"
+    },
+    {
+      "path": "assets/schemas/distillation-candidate-plan.schema.json",
+      "reason": "post-baseline candidate repair plan schema"
+    },
+    {
+      "path": "assets/schemas/distillation-candidate-selection.schema.json",
+      "reason": "post-baseline candidate selection schema"
+    },
+    {
+      "path": "assets/schemas/distillation-human-approval.schema.json",
+      "reason": "post-baseline explicit human approval schema"
+    },
+    {
+      "path": "assets/schemas/distillation-training-example.schema.json",
+      "reason": "post-baseline training example schema"
+    },
+    {
+      "path": "assets/schemas/distillation-training-dataset.schema.json",
+      "reason": "post-baseline training dataset manifest schema"
+    },
+    {
+      "path": "assets/schemas/distillation-training-cycle.schema.json",
+      "reason": "post-baseline automatic training cycle report schema"
+    },
+    {
+      "path": "assets/schemas/distillation-retrieval-index.schema.json",
+      "reason": "post-baseline CPU retrieval index schema"
+    },
+    {
+      "path": "assets/schemas/distillation-retrieval-evaluation.schema.json",
+      "reason": "post-baseline retrieval leakage evaluation schema"
+    },
+    {
+      "path": "assets/schemas/distillation-case-intake.schema.json",
+      "reason": "post-baseline image/PPTX case intake schema"
+    },
+    {
+      "path": "assets/schemas/distillation-scheduler-decision.schema.json",
+      "reason": "post-baseline self-driving scheduler decision schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
+    },
+    {
+      "path": "scripts/build_object_manifest.py",
+      "reason": "post-baseline layout-relative asset provenance resolution"
+    },
+    {
+      "path": "scripts/distillation_loop.py",
+      "reason": "post-baseline automatic distillation controller"
+    },
+    {
+      "path": "scripts/candidate_controller.py",
+      "reason": "post-baseline isolated candidate and region repair controller"
+    },
+    {
+      "path": "scripts/training_export.py",
+      "reason": "post-baseline human-approved training export controller"
+    },
+    {
+      "path": "scripts/run_training_cycle.py",
+      "reason": "post-baseline automatic training cycle driver"
+    },
+    {
+      "path": "scripts/build_retrieval_index.py",
+      "reason": "post-baseline CPU retrieval index builder"
+    },
+    {
+      "path": "scripts/prepare_case.py",
+      "reason": "post-baseline operator-only image/PPTX case intake adapter"
+    },
+    {
+      "path": "references/case-intake-protocol.md",
+      "reason": "post-baseline image/PPTX case intake protocol"
+    },
+    {
+      "path": "tests/test_case_intake.py",
+      "reason": "post-baseline case intake regression test"
+    },
+    {
+      "path": "scripts/distillation_scheduler.py",
+      "reason": "post-baseline bounded self-driving distillation scheduler"
+    },
+    {
+      "path": "tests/test_distillation_scheduler.py",
+      "reason": "post-baseline scheduler regression test"
+    },
+    {
+      "path": "scripts/component_expander.py",
+      "reason": "post-baseline portable layout/component path resolution"
+    },
+    {
+      "path": "scripts/compose_pptx.py",
+      "reason": "post-baseline portable font-manifest resolution"
     },
     {
       "path": "scripts/compare_visual.py",
@@ -1129,6 +1209,14 @@
       "reason": "standalone synchronization validator"
     },
     {
+      "path": "scripts/validate_text_style_map.py",
+      "reason": "post-baseline canonical rich-text validation extension"
+    },
+    {
+      "path": "scripts/validate_source_crop_integrity.py",
+      "reason": "post-baseline source-reuse pixel-to-bbox integrity adapter"
+    },
+    {
       "path": "scripts/validate_skill_package.py",
       "reason": "standalone package validator"
     },
@@ -1153,6 +1241,34 @@
       "reason": "post-baseline compatibility validator"
     },
     {
+      "path": "references/image-to-editable-ppt-contract.md",
+      "reason": "post-baseline strict image-to-editable text boundary contract"
+    },
+    {
+      "path": "references/reference-fidelity-audit.md",
+      "reason": "post-baseline one-to-one icon, typography, gradient and ratio fidelity gate"
+    },
+    {
+      "path": "references/panel-asset-protocol.md",
+      "reason": "post-baseline strict raster panel text boundary extension"
+    },
+    {
+      "path": "references/reconstruction-contract.md",
+      "reason": "post-baseline image-to-editable hard-gate extension"
+    },
+    {
+      "path": "scripts/validate_image_to_editable_contract.py",
+      "reason": "post-baseline strict image-to-editable raster/text gate"
+    },
+    {
+      "path": "scripts/validate_reference_fidelity.py",
+      "reason": "post-baseline reference object-family fidelity validator"
+    },
+    {
+      "path": "scripts/embed_fonts.py",
+      "reason": "post-baseline orphan-font cleanup and artifact-tool compatibility"
+    },
+    {
       "path": "tests/test_editable_object_audit.py",
       "reason": "standalone page-scoped audit regression"
     },
@@ -1161,20 +1277,52 @@
       "reason": "standalone synchronization regression"
     },
     {
+      "path": "tests/test_three_round_distillation.py",
+      "reason": "standalone three-round provenance regression"
+    },
+    {
+      "path": "tests/test_distillation_loop.py",
+      "reason": "post-baseline automatic distillation regression"
+    },
+    {
+      "path": "tests/test_candidate_controller.py",
+      "reason": "post-baseline candidate branching regression"
+    },
+    {
+      "path": "tests/test_training_export.py",
+      "reason": "post-baseline approved training export regression"
+    },
+    {
+      "path": "tests/test_training_cycle.py",
+      "reason": "post-baseline automatic training cycle regression"
+    },
+    {
+      "path": "tests/test_retrieval_index.py",
+      "reason": "post-baseline CPU retrieval index regression"
+    },
+    {
       "path": "tests/test_self_contained.py",
       "reason": "standalone package smoke test"
     },
     {
-      "path": "scripts/validate_source_crop_integrity.py",
-      "reason": "post-baseline source-reuse pixel-to-bbox integrity adapter"
+      "path": "tests/test_font_embedding.py",
+      "reason": "post-baseline artifact-tool orphan-font regression"
     },
     {
-      "path": "references/source-crop-integrity.md",
-      "reason": "post-baseline source-reuse pixel-to-bbox protocol"
+      "path": "tests/test_image_to_editable_contract.py",
+      "reason": "post-baseline rasterized formal-text regression"
+    },
+    {
+      "path": "tests/test_reference_fidelity.py",
+      "reason": "post-baseline icon, typography, gradient and ratio fidelity regression"
     },
     {
       "path": "tests/test_source_crop_integrity.py",
       "reason": "post-baseline source-reuse crop regression"
+    },
+    {
+      "path": "references/source-crop-integrity.md",
+      "reason": "post-baseline source-reuse pixel-to-bbox protocol"
     },
     {
       "path": "scripts/normalize_ooxml_relationships.py",
