@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "base_candidate", "proposal_count", "proposals", "human_visual_review_required"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-candidate-plan/v1"},
+    "generated_at": {"type": "string"},
+    "base_candidate": {"type": "string"},
+    "proposal_count": {"type": "integer", "minimum": 1},
+    "source_issue_count": {"type": "integer", "minimum": 0},
+    "proposals": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["proposal_id", "candidate_id", "parent_candidate", "owner", "scope", "operation", "mutations", "expected_checks", "stop_conditions", "auto_apply"]}},
+    "execution_policy": {"type": "string"},
+    "human_visual_review_required": {"const": true}
+  }
+}

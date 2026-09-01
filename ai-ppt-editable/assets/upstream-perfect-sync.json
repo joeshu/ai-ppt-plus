@@ -457,12 +457,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/build_object_manifest.py",
-      "target_path": "scripts/build_object_manifest.py",
-      "sha256": "7537c5b02357b4494a6b4707f52efb4e247dd4c1c7d031a2ad416a5ccd2182e3",
-      "executable": false
-    },
-    {
       "source_path": "scripts/build_slide_manifest.py",
       "target_path": "scripts/build_slide_manifest.py",
       "sha256": "7aa16feb12a4b87eb949efd2f64d12cc4133635ba632bdfbb26f23f0e0944fd2",
@@ -472,18 +466,6 @@
       "source_path": "scripts/chroma_key.py",
       "target_path": "scripts/chroma_key.py",
       "sha256": "7a61d3307795a5cd5103479f10be62c64b13ef4fa91ec6c64c791ca2ef1ab205",
-      "executable": false
-    },
-    {
-      "source_path": "scripts/component_expander.py",
-      "target_path": "scripts/component_expander.py",
-      "sha256": "efcb2632317d6a40bc267bf7f714327481e5d8766af322baf6c65ac1cfc68a73",
-      "executable": false
-    },
-    {
-      "source_path": "scripts/compose_pptx.py",
-      "target_path": "scripts/compose_pptx.py",
-      "sha256": "2afb38099ae3e00069f3540cd8fa1b509af533b63395b6110bf43743415de1ed",
       "executable": false
     },
     {
@@ -567,7 +549,7 @@
     {
       "source_path": "scripts/pptx_primitives.py",
       "target_path": "scripts/pptx_primitives.py",
-      "sha256": "901c1731af621ecee37ec5b07eff752341382414422e96c0257cc832196fb75a",
+      "sha256": "09070cca34db2d1d659a03fa8a598810844f5e018db433ea6d4471466e1b9045",
       "executable": false
     },
     {
@@ -1089,8 +1071,136 @@
       "reason": "standalone synchronization documentation"
     },
     {
+      "path": "references/perfect-replica-practice.md",
+      "reason": "standalone repeatable practice protocol"
+    },
+    {
+      "path": "references/three-round-distillation-methodology.md",
+      "reason": "standalone three-round improvement methodology"
+    },
+    {
+      "path": "references/automatic-distillation.md",
+      "reason": "standalone automatic distillation and training-data policy"
+    },
+    {
+      "path": "references/candidate-repair-protocol.md",
+      "reason": "post-baseline isolated candidate and region repair protocol"
+    },
+    {
+      "path": "references/training-data-protocol.md",
+      "reason": "post-baseline approved-case training export protocol"
+    },
+    {
+      "path": "references/automatic-training-driver.md",
+      "reason": "post-baseline automatic training cycle driver protocol"
+    },
+    {
+      "path": "assets/schemas/distillation-case-registry.schema.json",
+      "reason": "post-baseline automatic distillation case registry schema"
+    },
+    {
+      "path": "assets/schemas/distillation-score.schema.json",
+      "reason": "post-baseline multi-objective candidate score schema"
+    },
+    {
+      "path": "assets/schemas/distillation-feedback.schema.json",
+      "reason": "post-baseline repair feedback and rollback schema"
+    },
+    {
+      "path": "assets/schemas/distillation-candidate-plan.schema.json",
+      "reason": "post-baseline candidate repair plan schema"
+    },
+    {
+      "path": "assets/schemas/distillation-candidate-selection.schema.json",
+      "reason": "post-baseline candidate selection schema"
+    },
+    {
+      "path": "assets/schemas/distillation-human-approval.schema.json",
+      "reason": "post-baseline explicit human approval schema"
+    },
+    {
+      "path": "assets/schemas/distillation-training-example.schema.json",
+      "reason": "post-baseline training example schema"
+    },
+    {
+      "path": "assets/schemas/distillation-training-dataset.schema.json",
+      "reason": "post-baseline training dataset manifest schema"
+    },
+    {
+      "path": "assets/schemas/distillation-training-cycle.schema.json",
+      "reason": "post-baseline automatic training cycle report schema"
+    },
+    {
+      "path": "assets/schemas/distillation-retrieval-index.schema.json",
+      "reason": "post-baseline CPU retrieval index schema"
+    },
+    {
+      "path": "assets/schemas/distillation-retrieval-evaluation.schema.json",
+      "reason": "post-baseline retrieval leakage evaluation schema"
+    },
+    {
+      "path": "assets/schemas/distillation-case-intake.schema.json",
+      "reason": "post-baseline image/PPTX case intake schema"
+    },
+    {
+      "path": "assets/schemas/distillation-scheduler-decision.schema.json",
+      "reason": "post-baseline self-driving scheduler decision schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
+    },
+    {
+      "path": "scripts/build_object_manifest.py",
+      "reason": "post-baseline layout-relative asset provenance resolution"
+    },
+    {
+      "path": "scripts/distillation_loop.py",
+      "reason": "post-baseline automatic distillation controller"
+    },
+    {
+      "path": "scripts/candidate_controller.py",
+      "reason": "post-baseline isolated candidate and region repair controller"
+    },
+    {
+      "path": "scripts/training_export.py",
+      "reason": "post-baseline human-approved training export controller"
+    },
+    {
+      "path": "scripts/run_training_cycle.py",
+      "reason": "post-baseline automatic training cycle driver"
+    },
+    {
+      "path": "scripts/build_retrieval_index.py",
+      "reason": "post-baseline CPU retrieval index builder"
+    },
+    {
+      "path": "scripts/prepare_case.py",
+      "reason": "post-baseline operator-only image/PPTX case intake adapter"
+    },
+    {
+      "path": "references/case-intake-protocol.md",
+      "reason": "post-baseline image/PPTX case intake protocol"
+    },
+    {
+      "path": "tests/test_case_intake.py",
+      "reason": "post-baseline case intake regression test"
+    },
+    {
+      "path": "scripts/distillation_scheduler.py",
+      "reason": "post-baseline bounded self-driving distillation scheduler"
+    },
+    {
+      "path": "tests/test_distillation_scheduler.py",
+      "reason": "post-baseline scheduler regression test"
+    },
+    {
+      "path": "scripts/component_expander.py",
+      "reason": "post-baseline portable layout/component path resolution"
+    },
+    {
+      "path": "scripts/compose_pptx.py",
+      "reason": "post-baseline portable font-manifest resolution"
     },
     {
       "path": "scripts/compare_visual.py",
@@ -1159,6 +1269,30 @@
     {
       "path": "tests/test_perfect_sync.py",
       "reason": "standalone synchronization regression"
+    },
+    {
+      "path": "tests/test_three_round_distillation.py",
+      "reason": "standalone three-round provenance regression"
+    },
+    {
+      "path": "tests/test_distillation_loop.py",
+      "reason": "post-baseline automatic distillation regression"
+    },
+    {
+      "path": "tests/test_candidate_controller.py",
+      "reason": "post-baseline candidate branching regression"
+    },
+    {
+      "path": "tests/test_training_export.py",
+      "reason": "post-baseline approved training export regression"
+    },
+    {
+      "path": "tests/test_training_cycle.py",
+      "reason": "post-baseline automatic training cycle regression"
+    },
+    {
+      "path": "tests/test_retrieval_index.py",
+      "reason": "post-baseline CPU retrieval index regression"
     },
     {
       "path": "tests/test_self_contained.py",

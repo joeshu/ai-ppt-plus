@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ai-ppt-plus/distillation-retrieval-index/v1",
+  "type": "object",
+  "required": ["schema", "index_version", "dataset_manifest", "entry_count", "entries", "source_lookup", "retrieval_mode", "semantic_embedding", "trainable_weights", "cpu_only"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-retrieval-index/v1"},
+    "index_version": {"const": 1},
+    "generated_at": {"type": "string"},
+    "dataset_manifest": {"type": "object", "required": ["path", "sha256"]},
+    "records_sha256": {"type": ["string", "null"]},
+    "entry_count": {"type": "integer", "minimum": 0},
+    "entries": {"type": "array"},
+    "source_lookup": {"type": "object"},
+    "retrieval_mode": {"const": "exact-source-hash-and-structured-metadata"},
+    "semantic_embedding": {"const": false},
+    "trainable_weights": {"const": false},
+    "cpu_only": {"const": true}
+  }
+}

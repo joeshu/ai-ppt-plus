@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "human_confirmed", "approved_by", "approval_note", "approved_at", "reviewed_dimensions"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-human-approval/v1"},
+    "human_confirmed": {"const": true},
+    "approved_by": {"type": "string", "minLength": 1},
+    "approval_note": {"type": "string", "minLength": 1},
+    "approved_at": {"type": "string"},
+    "reviewed_dimensions": {"type": "array", "minItems": 3}
+  }
+}

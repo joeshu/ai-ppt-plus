@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.08.31.04
+package_revision: 2026.09.01.10
 ---
 
 # AI PPT Editable
@@ -25,23 +25,27 @@ python3 scripts/validate_routing_contract.py
 ```
 
 The reconstruction engine and shared QA contracts are byte-synchronized with
-the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Verify that source
-relationship before authoring:
+the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Two explicitly
+documented post-baseline adapters extend that frozen core for portable resource
+paths and explicit font-directory precedence; they do not change the visual
+decomposition contract. Verify that source relationship before authoring:
 
 ```bash
 python3 scripts/validate_perfect_sync.py
 ```
 
-The exact source commit, file mapping, and intentional package-boundary
-exceptions are recorded in `references/perfect-source-sync.md` and
-`assets/upstream-perfect-sync.json`. The worker remains independently runnable;
+The exact source commit, file mapping, and intentional package-boundary or
+post-baseline adapter exceptions are recorded in
+`references/perfect-source-sync.md` and `assets/upstream-perfect-sync.json`.
+The worker remains independently runnable;
 when called by `ai-ppt-plus`, it consumes the orchestrator's approved handoff
 and returns worker-level technical evidence. It never owns deck-wide narrative,
 release eligibility, or human sign-off.
 
-The split changes ownership and invocation only. Do not alter the checked-in
-image-to-PPTX decomposition, asset extraction, composition, rendering, or QA
-algorithms merely to satisfy this skill boundary.
+The split changes ownership and invocation only. Keep the checked-in
+image-to-PPTX decomposition, asset extraction, composition, rendering, and QA
+algorithms stable; any generality fix must be isolated, documented as an
+explicit post-baseline adapter, and covered by a regression test.
 
 ## Authority model
 
@@ -63,7 +67,14 @@ In standalone mode:
 - missing brand assets, chart data, or illegible text are blockers or explicit
   placeholders, never invention.
 
-Read `references/reconstruction-contract.md`,
+Read `references/perfect-replica-practice.md`,
+`references/case-intake-protocol.md`,
+`references/three-round-distillation-methodology.md`,
+`references/automatic-distillation.md`,
+`references/automatic-training-driver.md`,
+`references/candidate-repair-protocol.md`,
+`references/training-data-protocol.md`,
+`references/reconstruction-contract.md`,
 `references/editability-levels.md`, `references/native-object-protocol.md`, and
 the asset/text/chart protocols relevant to the page.
 
@@ -106,6 +117,13 @@ spatial relationships, palette, and visible styling. Separate:
 4. editable formal text;
 5. charts/tables with their own data/representation authority.
 
+The authoring boundary accepts both legacy flat text records and the canonical
+nested `text-layout-manifest` form. In the latter, `bbox` supplies geometry,
+`content` supplies immutable copy, `style` supplies the base font metrics, and
+each run's nested `style` supplies local color/weight/size overrides. Never
+flatten runs before composition: a manifest can validate successfully while
+still losing brand colors if the authoring adapter only reads flat fields.
+
 Use `references/icon-asset-protocol.md` for B4/B5 provenance and cutout QA,
 `references/panel-asset-protocol.md` for independent panels,
 `references/text-style-protocol.md` for mixed color/weight/line breaks, and
@@ -116,6 +134,35 @@ route and remain independent assets after extraction.
 Do not call `$ai-ppt-visual-gen` to replace an approved fixed reference. An
 isolated missing icon/decoration generation event is allowed under the asset
 provenance contract and does not change the page route.
+
+For image-led improvements, run the three-round protocol: visual diagnostic,
+semantic-panel decomposition, then native-text/object distillation. Preserve
+the visual-best and editable-best candidates as separate evidence, and use the
+actual panel manifest count rather than a hand-count when configuring gates.
+
+For repeated improvement runs, use `scripts/distillation_loop.py`: score the
+existing reports, classify feedback by owning layer, gate the candidate against
+the previous baseline, and record hash-bound cases. A technical acceptance is
+only `accept-for-human-review`; never treat it as automatic release or model
+training approval. Only human-approved, fresh, non-flattened cases may enter a
+later retrieval or supervised-training export.
+Use `scripts/candidate_controller.py` to generate isolated, region-scoped repair
+proposals and rank only gated candidates. Candidate plans are opt-in and must
+not overwrite the previous baseline; stop automatic repair after three rounds
+or at the first new blocker.
+After a person confirms visual fidelity, formal content, and editability, use
+`scripts/training_export.py approve-case` followed by `export`. The exporter
+must reject stale hashes, duplicates, incomplete approvals, and unreviewed
+cases; it prepares retrieval data but does not claim that model weights were
+trained. Use `scripts/run_training_cycle.py` as the automation boundary from
+GitHub Actions or another trusted scheduler. It records skipped,
+waiting-for-approval, prepared, blocked, and trained-candidate states. A
+trained candidate remains pending human evaluation and promotion; the driver
+does not invent a trainer, GPU, checkpoint registry, or release approval.
+When no GPU is available, let the driver build the CPU-only retrieval index
+with `scripts/build_retrieval_index.py`. Treat it as retrieval enhancement and
+split-leakage evaluation, not as semantic vision-model training or weight
+更新.
 
 ## E3 — Author editable objects
 

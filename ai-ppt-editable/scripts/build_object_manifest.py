@@ -21,7 +21,14 @@ from text_model import normalize_text_spec
 
 
 def read(path: str | None):
-    return json.loads(Path(path).read_text(encoding="utf-8")) if path else {}
+    if not path:
+        return {}
+    layout_path = Path(path).resolve()
+    data = json.loads(layout_path.read_text(encoding="utf-8"))
+    # Keep the authoring contract portable: assets_dir is relative to the
+    # layout file, not to whichever directory invoked this utility.
+    data["_layout_dir"] = str(layout_path.parent)
+    return data
 
 
 def _file_sha256(path: Path) -> str:
@@ -45,7 +52,11 @@ def _asset_path(layout: dict, value: object) -> Path | None:
     if not str(candidate):
         return None
     if not candidate.is_absolute():
-        candidate = Path(layout.get("assets_dir") or ".") / candidate
+        assets_dir = Path(layout.get("assets_dir") or ".")
+        layout_dir = Path(str(layout.get("_layout_dir") or "."))
+        if not assets_dir.is_absolute():
+            assets_dir = layout_dir / assets_dir
+        candidate = assets_dir / candidate
     return candidate.resolve()
 
 

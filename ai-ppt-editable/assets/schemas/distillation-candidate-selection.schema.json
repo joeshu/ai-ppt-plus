@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "decision", "selected_candidate_id", "eligible_count", "rejected", "rollback_action", "human_visual_review_required", "release_eligible"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-candidate-selection/v1"},
+    "decision": {"enum": ["select-for-human-review", "keep-previous-candidate"]},
+    "selected_candidate_id": {"type": ["string", "null"]},
+    "selected_score": {"type": ["number", "null"]},
+    "selected_gate": {"type": ["object", "null"]},
+    "eligible_count": {"type": "integer", "minimum": 0},
+    "rejected": {"type": "array"},
+    "rollback_action": {"enum": ["promote_selected_candidate", "keep_previous_candidate"]},
+    "human_visual_review_required": {"const": true},
+    "human_review_status": {"type": "string"},
+    "release_eligible": {"const": false}
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ai-ppt-plus/distillation-training-cycle/v1",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema",
+    "cycle_version",
+    "generated_at",
+    "status",
+    "registry",
+    "dataset",
+    "retrieval",
+    "retrieval_ready",
+    "model_training_status",
+    "human_approval_required",
+    "release_eligible",
+    "issues"
+  ],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-training-cycle/v1"},
+    "cycle_version": {"const": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["skipped", "waiting-human-approval", "prepared", "trained-candidate", "blocked"]},
+    "registry": {"type": "string", "minLength": 1},
+    "dataset": {
+      "type": "object",
+      "required": ["records_path", "manifest_path", "materialize_dir"],
+      "properties": {
+        "records_path": {"type": "string", "minLength": 1},
+        "manifest_path": {"type": "string", "minLength": 1},
+        "materialize_dir": {"type": ["string", "null"]}
+      }
+    },
+    "approved_candidate_count": {"type": "integer", "minimum": 0},
+    "retrieval_ready": {"type": "boolean"},
+    "retrieval": {
+      "type": "object",
+      "required": ["index_path", "evaluation_path", "status"],
+      "properties": {
+        "index_path": {"type": "string", "minLength": 1},
+        "evaluation_path": {"type": "string", "minLength": 1},
+        "status": {"enum": ["not-started", "passed", "insufficient-holdout", "blocked"]}
+      }
+    },
+    "model_training_status": {"enum": ["not-started", "not-configured", "candidate-produced", "failed"]},
+    "model_promotion_status": {"const": "pending-human-approval"},
+    "trainer": {"type": "object"},
+    "human_approval_required": {"const": true},
+    "release_eligible": {"const": false},
+    "issues": {"type": "array", "items": {"type": "object"}}
+  }
+}

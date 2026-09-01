@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "candidate_id", "profile", "metrics", "weights", "weighted_score", "technical_valid", "feedback", "human_visual_review_required"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-score/v1"},
+    "candidate_id": {"type": "string"},
+    "profile": {"enum": ["visual-best", "editable-best", "hybrid"]},
+    "metrics": {"type": "object", "required": ["visual_layout", "pixel_fidelity", "editability", "technical", "provenance"]},
+    "weights": {"type": "object"},
+    "weighted_score": {"type": "number", "minimum": 0, "maximum": 1},
+    "technical_valid": {"type": "boolean"},
+    "feedback": {"type": "array"},
+    "blocker_count": {"type": "integer", "minimum": 0},
+    "human_visual_review_required": {"const": true},
+    "human_review_status": {"type": "string"},
+    "training_eligible": {"type": "boolean"}
+  }
+}
