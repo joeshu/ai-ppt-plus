@@ -66,6 +66,10 @@ FAMILY_STYLE_SUFFIXES = {
     "thin", "extralight", "extra light", "light", "regular", "medium",
     "semibold", "semi bold", "bold", "extrabold", "extra bold", "black",
 }
+KNOWN_FAMILY_ALIASES = {
+    frozenset({"noto sans sc", "noto sans cjk sc"}),
+    frozenset({"noto sans tc", "noto sans cjk tc"}),
+}
 
 
 class EmbeddingError(ValueError):
@@ -459,6 +463,8 @@ def _families_compatible(declared: str, actual: str) -> bool:
     declared_norm = re.sub(r"\s+", " ", declared).strip().casefold()
     actual_norm = re.sub(r"\s+", " ", actual).strip().casefold()
     if declared_norm == actual_norm:
+        return True
+    if frozenset({declared_norm, actual_norm}) in KNOWN_FAMILY_ALIASES:
         return True
     if not actual_norm.startswith(declared_norm + " "):
         return False
