@@ -150,6 +150,21 @@ def main() -> int:
         assert alias_data["valid"] is True
         assert alias_data["fonts"][0]["metadata"]["family"] == alias_family
 
+        # The bundled CJK fallback is named Noto Sans CJK SC while authored
+        # runs commonly use the shorter Noto Sans SC alias.
+        cjk_alias_dir = root / "cjk-alias-fonts"
+        cjk_alias_dir.mkdir()
+        cjk_actual = "Noto Sans CJK SC"
+        (cjk_alias_dir / "fixture.otf").write_bytes(synthetic_sfnt(cjk_actual))
+        write_manifest(cjk_alias_dir, "fixture.otf", "Noto Sans SC")
+        cjk_alias_output = root / "cjk-alias-embedded.pptx"
+        cjk_alias_report = root / "cjk-alias-embedding.json"
+        cjk_aliased = run("scripts/embed_fonts.py", str(input_pptx), str(cjk_alias_output), "--font-dir", str(cjk_alias_dir), "--report", str(cjk_alias_report))
+        assert cjk_aliased.returncode == 0, cjk_aliased.stdout + cjk_aliased.stderr
+        cjk_alias_data = json.loads(cjk_alias_report.read_text(encoding="utf-8"))
+        assert cjk_alias_data["valid"] is True
+        assert cjk_alias_data["fonts"][0]["metadata"]["family"] == "Noto Sans SC"
+
         malformed = root / "malformed.pptx"
         rewrite_package(output, malformed, {"ppt/fonts/font1.fntdata": b"not-an-eot"})
         malformed_report = root / "malformed-inspection.json"
