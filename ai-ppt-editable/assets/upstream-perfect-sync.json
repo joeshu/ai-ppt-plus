@@ -481,12 +481,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/embed_fonts.py",
-      "target_path": "scripts/embed_fonts.py",
-      "sha256": "3448fea8c73488430c5bcf24d68f0898f3dfadb59e49a96cf11df9385cf16afb",
-      "executable": false
-    },
-    {
       "source_path": "scripts/extract_panels.py",
       "target_path": "scripts/extract_panels.py",
       "sha256": "ceb426567a6f325f8a2a6a2d7b83244935e901a9c646b38b7f9bcbffc875b8c6",
@@ -844,12 +838,6 @@
       "source_path": "tests/test_font_delivery.py",
       "target_path": "tests/test_font_delivery.py",
       "sha256": "d6a4e79628fb7fa767881eeb5bef6bc00f38a0ed677420dd3e5644c0aa39bb37",
-      "executable": false
-    },
-    {
-      "source_path": "tests/test_font_embedding.py",
-      "target_path": "tests/test_font_embedding.py",
-      "sha256": "a61c2f570d000801b36f96caffeccac873e5eba4c33880befea21f2ed8bc35cf",
       "executable": false
     },
     {
@@ -1263,6 +1251,10 @@
       "reason": "post-baseline compatibility validator"
     },
     {
+      "path": "scripts/embed_fonts.py",
+      "reason": "post-baseline orphan-font cleanup and artifact-tool compatibility"
+    },
+    {
       "path": "tests/test_editable_object_audit.py",
       "reason": "standalone page-scoped audit regression"
     },
@@ -1297,6 +1289,10 @@
     {
       "path": "tests/test_self_contained.py",
       "reason": "standalone package smoke test"
+    },
+    {
+      "path": "tests/test_font_embedding.py",
+      "reason": "post-baseline artifact-tool orphan-font regression"
     }
   ],
   "generated_by": "scripts/build_perfect_sync_manifest.py"

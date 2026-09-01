@@ -388,6 +388,35 @@ def _next_font_part(entries: dict[str, bytes]) -> str:
     return f"ppt/fonts/font{max(numbers, default=0) + 1}.fntdata"
 
 
+def _prune_unreferenced_font_parts(
+    entries: dict[str, bytes],
+    rels_root: ET.Element,
+) -> list[str]:
+    """Remove font payloads that no presentation relationship can reach.
+
+    A few PPTX writers leave a legacy ``ppt/fonts/font.dat`` payload behind
+    while emitting a relationship with a malformed/absolute target.  Keeping
+    that payload makes the final package look like it contains an orphaned
+    embedded font, so the structural inspection gate blocks an otherwise
+    usable deck.  Only files below ``ppt/fonts/`` are considered here; valid
+    parts remain because their relationship targets are normalized to the
+    package path before comparison.
+    """
+    referenced: set[str] = set()
+    for rel in rels_root.findall(f"{{{REL_NS}}}Relationship"):
+        target = rel.get("Target", "")
+        if rel.get("Type") != FONT_REL_TYPE or not target:
+            continue
+        referenced.add(_relationship_target(target))
+    removed: list[str] = []
+    for name in list(entries):
+        if not name.startswith("ppt/fonts/") or name in referenced:
+            continue
+        removed.append(name)
+        entries.pop(name, None)
+    return removed
+
+
 def _remove_existing_family(
     presentation: ET.Element,
     rels_root: ET.Element,
@@ -552,6 +581,7 @@ def embed_pptx_fonts(
         content_types = ET.fromstring(entries["[Content_Types].xml"])
         presentation = ET.fromstring(entries["ppt/presentation.xml"])
         rels_root = ET.fromstring(entries["ppt/_rels/presentation.xml.rels"])
+        pruned_orphan_font_parts = _prune_unreferenced_font_parts(entries, rels_root)
         prepared = [_validate_spec(spec, None) for spec in specs]
         grouped: dict[str, list[dict]] = {}
         for _, _, item in prepared:
@@ -622,6 +652,7 @@ def embed_pptx_fonts(
             "saveSubsetFonts": False,
             "content_type": FONT_CONTENT_TYPE,
             "font_parts": [item["part"] for item in result["fonts"]],
+            "pruned_orphan_font_parts": pruned_orphan_font_parts,
             "output_sha256": sha256(output_path),
         }
     except Exception as exc:

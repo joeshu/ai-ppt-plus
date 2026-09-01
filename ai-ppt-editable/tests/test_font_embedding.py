@@ -199,6 +199,29 @@ def main() -> int:
         assert composed_checked.returncode == 0, composed_checked.stdout + composed_checked.stderr
         assert json.loads(composed_inspection.read_text(encoding="utf-8"))["embedded_fonts"]["present"] is True
 
+        # Some artifact-tool exports leave an unreferenced legacy font.dat
+        # beside the actual PresentationML font relationship.  Re-embedding
+        # must remove only that orphan and preserve a valid final font part.
+        artifact_tool_like = root / "artifact-tool-like.pptx"
+        rewrite_package(output, artifact_tool_like, additions={"ppt/fonts/font.dat": b"orphan-font-payload"})
+        repaired = root / "artifact-tool-like-repaired.pptx"
+        repaired_report = root / "artifact-tool-like-repaired.json"
+        repaired_result = run(
+            "scripts/embed_fonts.py", str(artifact_tool_like), str(repaired),
+            "--font-dir", str(good_dir), "--report", str(repaired_report), "--force",
+        )
+        assert repaired_result.returncode == 0, repaired_result.stdout + repaired_result.stderr
+        repaired_data = json.loads(repaired_report.read_text(encoding="utf-8"))
+        assert repaired_data["valid"] is True
+        assert "ppt/fonts/font.dat" in repaired_data["package"]["pruned_orphan_font_parts"]
+        repaired_inspection = root / "artifact-tool-like-repaired-inspection.json"
+        repaired_checked = run("scripts/inspect_pptx.py", str(repaired), "--report", str(repaired_inspection))
+        assert repaired_checked.returncode == 0, repaired_checked.stdout + repaired_checked.stderr
+        repaired_evidence = json.loads(repaired_inspection.read_text(encoding="utf-8"))["embedded_fonts"]
+        assert repaired_evidence["present"] is True
+        with zipfile.ZipFile(repaired) as package:
+            assert "ppt/fonts/font.dat" not in package.namelist()
+
         restricted_dir = root / "restricted-fonts"
         restricted_dir.mkdir()
         (restricted_dir / "restricted.otf").write_bytes(synthetic_sfnt(family, restricted=True))
