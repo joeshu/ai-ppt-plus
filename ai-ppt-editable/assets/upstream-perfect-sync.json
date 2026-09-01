@@ -225,7 +225,7 @@
     {
       "source_path": "references/authoring-backend.md",
       "target_path": "references/authoring-backend.md",
-      "sha256": "da2bf00347a2c2659b431ac90681e1afde2a3397ad45253a844df9914bbf7977",
+      "sha256": "5b83a1dd4541387b033de049b9fd0fa77a1872c6e0631587a7b78e35d0b187dd",
       "executable": false
     },
     {
@@ -1243,6 +1243,10 @@
       "reason": "post-baseline strict image-to-editable text boundary contract"
     },
     {
+      "path": "references/reference-fidelity-audit.md",
+      "reason": "post-baseline one-to-one icon, typography, gradient and ratio fidelity gate"
+    },
+    {
       "path": "references/panel-asset-protocol.md",
       "reason": "post-baseline strict raster panel text boundary extension"
     },
@@ -1253,6 +1257,10 @@
     {
       "path": "scripts/validate_image_to_editable_contract.py",
       "reason": "post-baseline strict image-to-editable raster/text gate"
+    },
+    {
+      "path": "scripts/validate_reference_fidelity.py",
+      "reason": "post-baseline reference object-family fidelity validator"
     },
     {
       "path": "scripts/embed_fonts.py",
@@ -1301,6 +1309,10 @@
     {
       "path": "tests/test_image_to_editable_contract.py",
       "reason": "post-baseline rasterized formal-text regression"
+    },
+    {
+      "path": "tests/test_reference_fidelity.py",
+      "reason": "post-baseline icon, typography, gradient and ratio fidelity regression"
     }
   ],
   "generated_by": "scripts/build_perfect_sync_manifest.py"

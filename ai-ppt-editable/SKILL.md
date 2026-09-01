@@ -70,6 +70,7 @@ In standalone mode:
 Read `references/perfect-replica-practice.md`,
 `references/case-intake-protocol.md`,
 `references/image-to-editable-ppt-contract.md`,
+`references/reference-fidelity-audit.md`,
 `references/three-round-distillation-methodology.md`,
 `references/automatic-distillation.md`,
 `references/automatic-training-driver.md`,
@@ -82,6 +83,15 @@ For the five post-baseline contracts and their shared adapter, also read
 `references/perfect-first-extensions.md` and use
 `scripts/perfect_first_adapter.py`; do not replace the synchronized core with
 a simplified reconstruction path.
+
+For every reference-led page, build and validate a
+`reference-fidelity/v1` manifest with `scripts/validate_reference_fidelity.py
+--strict`. It is a hard pre-composition and post-render gate for one-to-one
+icon provenance, exact native text/style evidence, gradient treatment and
+aspect-ratio mapping. Generic symbols, missing source bboxes, silent flat-fill
+fallbacks, and undeclared 3:2-to-16:9 stretching block the page. A technical
+pass remains `accept-for-human-review` until visual fidelity, formal text and
+editability are confirmed by a person.
 
 ## E0 — Intake, isolation, and preflight
 
