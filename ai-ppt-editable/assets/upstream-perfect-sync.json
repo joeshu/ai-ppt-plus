@@ -1175,6 +1175,22 @@
     {
       "path": "tests/test_source_crop_integrity.py",
       "reason": "post-baseline source-reuse crop regression"
+    },
+    {
+      "path": "scripts/normalize_ooxml_relationships.py",
+      "reason": "post-baseline ZIP-level viewer compatibility adapter"
+    },
+    {
+      "path": "scripts/validate_repackaging_invariants.py",
+      "reason": "post-baseline rich-text, asset and gradient preservation gate"
+    },
+    {
+      "path": "references/ooxml-compatibility.md",
+      "reason": "post-baseline OOXML compatibility and preservation protocol"
+    },
+    {
+      "path": "tests/test_ooxml_compatibility.py",
+      "reason": "post-baseline ZIP-level compatibility regression"
     }
   ],
   "generated_by": "scripts/build_perfect_sync_manifest.py"
