@@ -170,7 +170,13 @@ Use `references/icon-asset-protocol.md` for B4/B5 provenance and cutout QA,
 `references/text-style-protocol.md` for mixed color/weight/line breaks, and
 `references/chart-reconstruction.md` for every chart. A source crop is valid
 only with bbox and source hash; missing assets use the declared generation
-route and remain independent assets after extraction. For `source_reuse` crops,
+route and remain independent assets after extraction. For icons, gradient
+visuals and complex artistic elements, the route is native `imagegen` by
+default; if generation fails, pause and ask the user to choose exactly one:
+continue/retry native imagegen, or use original-image crop/cutout
+(`source_reuse`). Never make that choice implicitly. Record the explicit user
+decision, reason and timestamp in the asset manifest; an undecided asset is
+blocked. For `source_reuse` crops,
 the delivered-file hash alone is insufficient: record `source_crop_policy` and
 the canonical RGBA `source_crop_sha256`, then run
 `validate_source_crop_integrity.py`. For icons, gradient visuals and complex
@@ -196,9 +202,10 @@ Do not use deck-wide visual generation to redesign an approved fixed reference.
 Instead, invoke native imagegen as a scoped element-generation event for every
 icon, gradient visual, complex illustration, decorative art or artistic-
 typography asset. This is mandatory even when a source crop exists; source
-reuse is reference evidence only. If generation fails, block the asset or emit
-an explicit placeholder—never silently fall back to the source crop, a generic
-symbol or a flat fill. Official brand marks remain authorized-source assets
+reuse is reference evidence only unless the user explicitly approves the
+fallback above. If generation fails, invoke that user-decision gate—never
+silently fall back to the source crop, a generic symbol or a flat fill. Official
+brand marks remain authorized-source assets
 under the brand exception.
 
 For every reference-led page, run the final-imagegen-asset gate before
