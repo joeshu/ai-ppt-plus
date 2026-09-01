@@ -76,6 +76,10 @@ and the asset/text/chart protocols relevant to the page.
    authoritative and keeps its own hash.
 3. Probe authoring/render/font/OCR capabilities and validate the selected
    backend binding. For CJK, validate the task-local font and rendering evidence.
+   When embedding fonts, the declared run family and the font's internal family
+   must match exactly or through an explicit, audited alias map; unknown family
+   mismatches are blockers. Record the resolved family and alias in the font
+   report.
 4. Persist route and formal-text authority. A blocked or undecided route cannot
    enter composition.
 
