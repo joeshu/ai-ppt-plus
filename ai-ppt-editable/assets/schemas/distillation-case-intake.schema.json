@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "version", "case_id", "input_mode", "source_references", "human_approval_required", "training_eligible"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-case-intake/v1"},
+    "version": {"const": 1},
+    "case_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string"},
+    "input_mode": {"enum": ["image", "pptx", "paired"]},
+    "source_references": {"type": "array", "minItems": 1},
+    "canonical_target_references": {"type": "array"},
+    "rendered_reference_references": {"type": "array"},
+    "render_status": {"type": "array"},
+    "candidate_status": {"enum": ["awaiting-reconstruction", "candidate-ready"]},
+    "human_approval_required": {"const": true},
+    "training_eligible": {"const": false},
+    "next_action": {"type": "string"}
+  }
+}

@@ -46,6 +46,10 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "assets/schemas/distillation-retrieval-evaluation.schema.json",
     "scripts/build_retrieval_index.py",
     "tests/test_retrieval_index.py",
+    "assets/schemas/distillation-case-intake.schema.json",
+    "scripts/prepare_case.py",
+    "references/case-intake-protocol.md",
+    "tests/test_case_intake.py",
 })
 
 

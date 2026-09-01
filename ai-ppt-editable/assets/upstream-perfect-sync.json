@@ -1139,6 +1139,10 @@
       "reason": "post-baseline retrieval leakage evaluation schema"
     },
     {
+      "path": "assets/schemas/distillation-case-intake.schema.json",
+      "reason": "post-baseline image/PPTX case intake schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
     },
@@ -1165,6 +1169,18 @@
     {
       "path": "scripts/build_retrieval_index.py",
       "reason": "post-baseline CPU retrieval index builder"
+    },
+    {
+      "path": "scripts/prepare_case.py",
+      "reason": "post-baseline operator-only image/PPTX case intake adapter"
+    },
+    {
+      "path": "references/case-intake-protocol.md",
+      "reason": "post-baseline image/PPTX case intake protocol"
+    },
+    {
+      "path": "tests/test_case_intake.py",
+      "reason": "post-baseline case intake regression test"
     },
     {
       "path": "scripts/component_expander.py",
