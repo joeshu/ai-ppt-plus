@@ -65,8 +65,8 @@ In standalone mode:
 
 Read `references/reconstruction-contract.md`,
 `references/editability-levels.md`, `references/native-object-protocol.md`,
-`references/source-crop-integrity.md`, and the asset/text/chart protocols
-relevant to the page.
+`references/source-crop-integrity.md`, `references/ooxml-compatibility.md`,
+and the asset/text/chart protocols relevant to the page.
 
 ## E0 — Intake, isolation, and preflight
 
@@ -133,6 +133,13 @@ provenance contract and does not change the page route.
    declared hybrid/static representation and preserve labels as native text.
 5. Keep PPTX and preview drawing order equivalent so technical previews are
    meaningful.
+6. If viewer compatibility repair is needed after composition, use only the
+   ZIP-level `scripts/normalize_ooxml_relationships.py` adapter. Never reopen
+   and re-save the authored deck through `python-pptx` after rich text,
+   independent assets, or gradients have been composed. Run
+   `scripts/validate_repackaging_invariants.py` before handoff; changes to
+   picture/media bytes, text-run/style digest, gradient count, or slide part
+   set are blockers.
 
 ## E4 — Render and validate
 
