@@ -1163,6 +1163,18 @@
     {
       "path": "tests/test_self_contained.py",
       "reason": "standalone package smoke test"
+    },
+    {
+      "path": "scripts/validate_source_crop_integrity.py",
+      "reason": "post-baseline source-reuse pixel-to-bbox integrity adapter"
+    },
+    {
+      "path": "references/source-crop-integrity.md",
+      "reason": "post-baseline source-reuse pixel-to-bbox protocol"
+    },
+    {
+      "path": "tests/test_source_crop_integrity.py",
+      "reason": "post-baseline source-reuse crop regression"
     }
   ],
   "generated_by": "scripts/build_perfect_sync_manifest.py"
