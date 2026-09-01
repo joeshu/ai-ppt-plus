@@ -8,6 +8,11 @@ If the user says “先讨论任务，不要立即生成”, acknowledge this co
 
 Preserve, in order: information hierarchy → page structure → spatial relationships → typography metrics → graphics/icons → decoration.
 
+
+## Native asset and typography fidelity gate
+
+For a user-directed native-imagegen reconstruction, apply `references/reference-fidelity-protocol.md`. The required route is native ImageGen B4 for icons, illustrations, complex art and complex gradient visuals; complete brand lockups remain source-reused. Formal copy must be native text with measured source/render ink bounds, locked line breaks, and mixed runs where colors or emphasis differ. Validate the page plan with `scripts/validate_reference_fidelity.py`, then validate delivered files with `--require-delivery`. A missing asset record, generated text/logo, unmeasured typography role, or material metric drift is a blocker.
+
 ## Hard requirements
 
 - Default to 16:9 unless the confirmed design system says otherwise.
