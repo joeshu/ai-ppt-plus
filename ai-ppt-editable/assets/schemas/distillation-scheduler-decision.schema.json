@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "version", "action", "reason", "budget", "human_boundary", "safe_to_auto_apply", "release_eligible"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/distillation-scheduler-decision/v1"},
+    "version": {"const": 1},
+    "action": {"enum": ["run-cycle", "repair-and-rerun", "request-human-approval", "run-external-trainer", "collect-more-approved-cases", "request-human-promotion", "escalate-human"]},
+    "reason": {"type": "string"},
+    "status_observed": {"type": "string"},
+    "repair_owner": {"type": ["string", "null"]},
+    "repair_round": {"type": "integer", "minimum": 0},
+    "budget": {"type": "object", "required": ["attempts_used", "max_attempts", "max_repair_rounds", "remaining_attempts"]},
+    "human_boundary": {"const": "approval-and-promotion-never-automated"},
+    "safe_to_auto_apply": {"type": "boolean"},
+    "release_eligible": {"const": false}
+  }
+}

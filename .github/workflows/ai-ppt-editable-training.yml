@@ -52,6 +52,7 @@ jobs:
           python ai-ppt-editable/tests/test_training_cycle.py
           python ai-ppt-editable/tests/test_retrieval_index.py
           python ai-ppt-editable/tests/test_case_intake.py
+          python ai-ppt-editable/tests/test_distillation_scheduler.py
 
       - name: Run automatic training cycle
         run: |

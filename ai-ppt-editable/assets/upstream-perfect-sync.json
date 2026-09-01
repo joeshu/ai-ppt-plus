@@ -1143,6 +1143,10 @@
       "reason": "post-baseline image/PPTX case intake schema"
     },
     {
+      "path": "assets/schemas/distillation-scheduler-decision.schema.json",
+      "reason": "post-baseline self-driving scheduler decision schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
     },
@@ -1181,6 +1185,14 @@
     {
       "path": "tests/test_case_intake.py",
       "reason": "post-baseline case intake regression test"
+    },
+    {
+      "path": "scripts/distillation_scheduler.py",
+      "reason": "post-baseline bounded self-driving distillation scheduler"
+    },
+    {
+      "path": "tests/test_distillation_scheduler.py",
+      "reason": "post-baseline scheduler regression test"
     },
     {
       "path": "scripts/component_expander.py",

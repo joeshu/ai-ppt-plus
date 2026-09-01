@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.01.09",
+  "package_revision": "2026.09.01.10",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -42,6 +42,7 @@
     "assets/schemas/distillation-retrieval-index.schema.json",
     "assets/schemas/distillation-retrieval-evaluation.schema.json",
     "assets/schemas/distillation-case-intake.schema.json",
+    "assets/schemas/distillation-scheduler-decision.schema.json",
     "assets/fonts/NotoSansSC-Regular.ttf",
     "assets/fonts/font-manifest.json",
     "scripts/validate_skill_package.py",
@@ -59,6 +60,7 @@
     "scripts/run_training_cycle.py",
     "scripts/build_retrieval_index.py",
     "scripts/prepare_case.py",
+    "scripts/distillation_scheduler.py",
     "scripts/validate_visual_generation_plan.py",
     "scripts/validate_workflow_state.py",
     "scripts/validate_handoff.py",
@@ -81,7 +83,8 @@
     "tests/test_training_export.py",
     "tests/test_training_cycle.py",
     "tests/test_retrieval_index.py",
-    "tests/test_case_intake.py"
+    "tests/test_case_intake.py",
+    "tests/test_distillation_scheduler.py"
   ],
   "runtime_sync": {
     "required": true,

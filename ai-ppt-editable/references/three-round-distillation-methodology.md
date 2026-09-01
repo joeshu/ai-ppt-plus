@@ -100,3 +100,16 @@ reconstruction engine for a single reference. Practice images and generated
 reports stay outside the skill package unless deliberately promoted as a
 versioned golden fixture.
 
+## 6. Self-driving policy
+
+The loop may automate deterministic work, but it must emit one explicit next
+action rather than silently retrying forever. Use
+`scripts/distillation_scheduler.py` after each cycle. It reads the latest
+cycle report and a bounded history, then chooses safe repair, human approval,
+more-case collection, external training, or escalation.
+
+The scheduler records the responsible owner, repair round, attempts used, and
+remaining budget. Automatic repair is isolated and reversible; human approval,
+model promotion, and release eligibility remain false in every machine-
+generated decision. This converts repeated practice into a controlled active-
+learning queue instead of an unbounded retry loop.

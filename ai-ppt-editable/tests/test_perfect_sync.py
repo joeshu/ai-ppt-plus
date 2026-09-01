@@ -50,6 +50,10 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "scripts/prepare_case.py",
     "references/case-intake-protocol.md",
     "tests/test_case_intake.py",
+    "assets/schemas/distillation-scheduler-decision.schema.json",
+    "scripts/distillation_scheduler.py",
+    "tests/test_distillation_scheduler.py",
+    "references/three-round-distillation-methodology.md",
 })
 
 
