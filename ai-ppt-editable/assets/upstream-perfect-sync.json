@@ -1087,6 +1087,10 @@
       "reason": "post-baseline isolated candidate and region repair protocol"
     },
     {
+      "path": "references/training-data-protocol.md",
+      "reason": "post-baseline approved-case training export protocol"
+    },
+    {
       "path": "assets/schemas/distillation-case-registry.schema.json",
       "reason": "post-baseline automatic distillation case registry schema"
     },
@@ -1107,6 +1111,18 @@
       "reason": "post-baseline candidate selection schema"
     },
     {
+      "path": "assets/schemas/distillation-human-approval.schema.json",
+      "reason": "post-baseline explicit human approval schema"
+    },
+    {
+      "path": "assets/schemas/distillation-training-example.schema.json",
+      "reason": "post-baseline training example schema"
+    },
+    {
+      "path": "assets/schemas/distillation-training-dataset.schema.json",
+      "reason": "post-baseline training dataset manifest schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
     },
@@ -1121,6 +1137,10 @@
     {
       "path": "scripts/candidate_controller.py",
       "reason": "post-baseline isolated candidate and region repair controller"
+    },
+    {
+      "path": "scripts/training_export.py",
+      "reason": "post-baseline human-approved training export controller"
     },
     {
       "path": "scripts/component_expander.py",
@@ -1209,6 +1229,10 @@
     {
       "path": "tests/test_candidate_controller.py",
       "reason": "post-baseline candidate branching regression"
+    },
+    {
+      "path": "tests/test_training_export.py",
+      "reason": "post-baseline approved training export regression"
     },
     {
       "path": "tests/test_self_contained.py",

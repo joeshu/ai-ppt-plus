@@ -328,6 +328,7 @@ def record_case(args: argparse.Namespace) -> dict[str, Any]:
         "candidate_id": args.candidate_id,
         "profile": args.profile,
         "status": args.status,
+        "training_eligible": False,
         "deck": artifact_ref(Path(args.deck).resolve(), role="candidate-deck"),
         "score": artifact_ref(score_path, role="candidate-score"),
         "reports": reports,

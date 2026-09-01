@@ -32,6 +32,12 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "assets/schemas/distillation-candidate-plan.schema.json",
     "assets/schemas/distillation-candidate-selection.schema.json",
     "tests/test_candidate_controller.py",
+    "scripts/training_export.py",
+    "references/training-data-protocol.md",
+    "assets/schemas/distillation-human-approval.schema.json",
+    "assets/schemas/distillation-training-example.schema.json",
+    "assets/schemas/distillation-training-dataset.schema.json",
+    "tests/test_training_export.py",
 })
 
 
