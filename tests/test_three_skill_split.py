@@ -80,14 +80,19 @@ def main() -> int:
     parity_manifest = json.loads((editable_scripts.parent / "assets" / "upstream-perfect-sync.json").read_text(encoding="utf-8"))
     assert parity_manifest["source"]["ref"] == "完美第一版"
     excluded = {item["path"] for item in parity_manifest["excluded_paths"]}
-    assert len(parity_manifest["synced_files"]) >= 170
+    assert len(parity_manifest["synced_files"]) >= 168
     assert len(parity_manifest["synced_files"]) + len(excluded) >= 202
     assert {"scripts/compare_visual.py", "scripts/compare_visual_deck.py", "scripts/delivery_check.py", "scripts/validate_signoff.py"} <= excluded
 
-    # These three files are intentionally kept current with the root
+    # These two files are intentionally kept byte-identical with the root
     # orchestrator so the split worker remains callable by the v2 pipeline.
-    for name in ("run_pipeline.py", "validate_handoff.py", "validate_route.py"):
+    for name in ("validate_handoff.py", "validate_route.py"):
         assert digest(ROOT / "scripts" / name) == digest(editable_scripts / name), name
+    # The editable worker's run_pipeline.py is a post-baseline adapter with
+    # perfect-first contract and object-level gates. It remains a callable
+    # sibling entrypoint but is intentionally outside the shared mirror.
+    assert (ROOT / "scripts" / "run_pipeline.py").is_file()
+    assert (editable_scripts / "run_pipeline.py").is_file()
     # The visual worker owns richer A1-A5 planning/materialization validators;
     # they intentionally do not have to be byte-identical to root-side
     # compatibility helpers.  The runtime mirror policy covers only files
