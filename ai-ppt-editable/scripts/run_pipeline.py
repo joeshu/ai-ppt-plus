@@ -349,6 +349,7 @@ def main() -> int:
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
     parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
     parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
+    parser.add_argument("--require-source-crop-integrity", action="store_true", help="verify source_reuse crops against their declared source bbox pixels")
     parser.add_argument("--object-manifest", help="canonical slide-object-manifest.json")
     parser.add_argument("--require-object-manifest", action="store_true", help="require and validate the canonical object inventory")
     parser.add_argument("--require-independent-panels", action="store_true", help="reverse-audit independently movable semantic panels")
@@ -1105,6 +1106,19 @@ def main() -> int:
         if args.require_asset_hashes:
             imagegen_args.append("--require-hashes")
         add_step("imagegen-assets", imagegen_args, outputs=[run_dir / "imagegen-assets-validation.json"], inputs=[project / "imagegen-assets-manifest.json"])
+        # Reference-led source_reuse assets need a pixel-to-bbox binding. File
+        # hashes alone cannot detect a neighboring crop copied consistently.
+        # Keep this as a post-baseline adapter so the frozen validator stays
+        # synchronized with the perfect-first core.
+        if args.require_source_crop_integrity or args.reference or args.reference_dir or args.release:
+            crop_args = [str(SCRIPT_DIR / "validate_source_crop_integrity.py"), str(project / "imagegen-assets-manifest.json"), "--report", str(run_dir / "source-crop-integrity.json")]
+            add_step(
+                "source-crop-integrity",
+                crop_args,
+                deps=("imagegen-assets",),
+                outputs=[run_dir / "source-crop-integrity.json"],
+                inputs=[project / "imagegen-assets-manifest.json"],
+            )
     if icon_required:
         icon_args = [str(SCRIPT_DIR / "validate_icon_assets.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-assets-validation.json")]
         if args.require_asset_hashes:
@@ -1499,6 +1513,7 @@ def main() -> int:
             ("manifest_registry_validation", run_dir / "manifest-registry-validation.json"),
             ("text_layout_validation", run_dir / "text-layout-validation.json"),
             ("imagegen_assets_validation", run_dir / "imagegen-assets-validation.json"),
+            ("source_crop_integrity", run_dir / "source-crop-integrity.json"),
             ("icon_assets_validation", run_dir / "icon-assets-validation.json"),
             ("icon_layer_audit", run_dir / "icon-layer-audit.json"),
             ("object_manifest_validation", run_dir / "object-manifest-validation.json"),
@@ -1654,6 +1669,8 @@ def main() -> int:
         report_entries.append({"report_type": "text-layout-validation", "path": "text-layout-validation.json", "required": args.require_text_model, "stage": "validated"})
     if imagegen_required:
         report_entries.append({"report_type": "imagegen-assets-validation", "path": "imagegen-assets-validation.json", "required": True, "stage": "validated"})
+    if any(task.name == "source-crop-integrity" for task in executor.tasks):
+        report_entries.append({"report_type": "source-crop-integrity", "path": "source-crop-integrity.json", "required": True, "stage": "validated"})
     if icon_required:
         report_entries.extend([
             {"report_type": "icon-assets-validation", "path": "icon-assets-validation.json", "required": True, "stage": "validated"},
@@ -1714,7 +1731,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "source-crop-integrity": "source-crop-integrity", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
