@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.09.01.06
+package_revision: 2026.09.01.07
 ---
 
 # AI PPT Editable
@@ -70,6 +70,7 @@ In standalone mode:
 Read `references/perfect-replica-practice.md`,
 `references/three-round-distillation-methodology.md`,
 `references/automatic-distillation.md`,
+`references/automatic-training-driver.md`,
 `references/candidate-repair-protocol.md`,
 `references/training-data-protocol.md`,
 `references/reconstruction-contract.md`,
@@ -145,7 +146,11 @@ After a person confirms visual fidelity, formal content, and editability, use
 `scripts/training_export.py approve-case` followed by `export`. The exporter
 must reject stale hashes, duplicates, incomplete approvals, and unreviewed
 cases; it prepares retrieval data but does not claim that model weights were
-trained.
+trained. Use `scripts/run_training_cycle.py` as the automation boundary from
+GitHub Actions or another trusted scheduler. It records skipped,
+waiting-for-approval, prepared, blocked, and trained-candidate states. A
+trained candidate remains pending human evaluation and promotion; the driver
+does not invent a trainer, GPU, checkpoint registry, or release approval.
 
 ## E3 — Author editable objects
 

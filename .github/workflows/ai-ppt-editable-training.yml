@@ -1,0 +1,84 @@
+name: ai-ppt-editable automatic distillation
+
+on:
+  workflow_dispatch:
+    inputs:
+      require_approved:
+        description: Fail when no human-approved case is available
+        required: false
+        default: false
+        type: boolean
+      require_trainer:
+        description: Fail unless a trusted external trainer is configured
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "17 2 * * 1"
+  push:
+    paths:
+      - ".github/workflows/ai-ppt-editable-training.yml"
+      - "ai-ppt-editable/scripts/**"
+      - "ai-ppt-editable/assets/schemas/distillation-*.json"
+      - "datasets/ai-ppt-editable/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-ppt-editable-training
+  cancel-in-progress: false
+
+jobs:
+  prepare-and-train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      AI_PPT_TRAINER_COMMAND: ${{ vars.AI_PPT_TRAINER_COMMAND }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate package and driver
+        run: |
+          python ai-ppt-editable/scripts/validate_skill_package.py --skill-dir ai-ppt-editable
+          python ai-ppt-editable/scripts/validate_perfect_sync.py
+          python ai-ppt-editable/tests/test_training_export.py
+          python ai-ppt-editable/tests/test_training_cycle.py
+
+      - name: Run automatic training cycle
+        run: |
+          args=(
+            --registry datasets/ai-ppt-editable/cases.json
+            --output build/ai-ppt-editable/training.jsonl
+            --manifest build/ai-ppt-editable/dataset-manifest.json
+            --materialize-dir build/ai-ppt-editable/artifacts
+            --report build/ai-ppt-editable/training-cycle-report.json
+          )
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.require_approved }}" == "true" ]]; then
+            args+=(--require-approved)
+          fi
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.require_trainer }}" == "true" ]]; then
+            args+=(--require-trainer)
+          fi
+          python ai-ppt-editable/scripts/run_training_cycle.py "${args[@]}"
+
+      - name: Publish cycle summary
+        if: always()
+        run: |
+          if [[ -f build/ai-ppt-editable/training-cycle-report.json ]]; then
+            cat build/ai-ppt-editable/training-cycle-report.json >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload training-cycle evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-ppt-editable-training-cycle-${{ github.run_id }}
+          path: build/ai-ppt-editable
+          if-no-files-found: warn

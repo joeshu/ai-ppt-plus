@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.01.06",
+  "package_revision": "2026.09.01.07",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -38,6 +38,7 @@
     "assets/schemas/distillation-human-approval.schema.json",
     "assets/schemas/distillation-training-example.schema.json",
     "assets/schemas/distillation-training-dataset.schema.json",
+    "assets/schemas/distillation-training-cycle.schema.json",
     "assets/fonts/NotoSansSC-Regular.ttf",
     "assets/fonts/font-manifest.json",
     "scripts/validate_skill_package.py",
@@ -52,6 +53,7 @@
     "scripts/distillation_loop.py",
     "scripts/candidate_controller.py",
     "scripts/training_export.py",
+    "scripts/run_training_cycle.py",
     "scripts/validate_visual_generation_plan.py",
     "scripts/validate_workflow_state.py",
     "scripts/validate_handoff.py",
@@ -63,13 +65,15 @@
     "references/automatic-distillation.md",
     "references/candidate-repair-protocol.md",
     "references/training-data-protocol.md",
+    "references/automatic-training-driver.md",
     "references/perfect-source-sync.md",
     "examples/component-library/standard-components.deck.json",
     "tests/test_perfect_sync.py",
     "tests/test_three_round_distillation.py",
     "tests/test_distillation_loop.py",
     "tests/test_candidate_controller.py",
-    "tests/test_training_export.py"
+    "tests/test_training_export.py",
+    "tests/test_training_cycle.py"
   ],
   "runtime_sync": {
     "required": true,

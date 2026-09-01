@@ -48,7 +48,7 @@ def read_registry(path: Path) -> dict[str, Any]:
     return data
 
 
-def validate_ref(ref: Any, *, role: str, issues: list[dict[str, Any]]) -> dict[str, Any] | None:
+def validate_ref(ref: Any, *, role: str, issues: list[dict[str, Any]], base_dir: Path | None = None) -> dict[str, Any] | None:
     if not isinstance(ref, dict):
         issues.append({"code": "artifact_ref_invalid", "role": role})
         return None
@@ -57,7 +57,10 @@ def validate_ref(ref: Any, *, role: str, issues: list[dict[str, Any]]) -> dict[s
     if not isinstance(path_value, str) or not path_value.strip():
         issues.append({"code": "artifact_path_missing", "role": role})
         return None
-    path = Path(path_value).resolve()
+    path = Path(path_value)
+    if not path.is_absolute():
+        path = (base_dir or Path.cwd()) / path
+    path = path.resolve()
     if not path.is_file():
         issues.append({"code": "artifact_missing", "role": role, "path": str(path)})
         return None
@@ -92,7 +95,7 @@ def approval_record(args: argparse.Namespace) -> dict[str, Any]:
         raise ValueError("case or candidate not found")
     score_ref = found_candidate.get("score")
     issues: list[dict[str, Any]] = []
-    checked_score_ref = validate_ref(score_ref, role="candidate-score", issues=issues)
+    checked_score_ref = validate_ref(score_ref, role="candidate-score", issues=issues, base_dir=registry_path.parent)
     if issues or checked_score_ref is None:
         raise ValueError(f"candidate score is not fresh: {issues}")
     score = read_json(Path(checked_score_ref["path"]))
@@ -166,15 +169,15 @@ def export_dataset(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             eligible.append(candidates[0])
     seen_sources: set[tuple[str, ...]] = set()
     records: list[dict[str, Any]] = []
-    for _, candidate, case in sorted(eligible, key=lambda item: str(case.get("case_id"))):
+    for _, candidate, case in sorted(eligible, key=lambda item: str(item[2].get("case_id"))):
         case_id = str(case.get("case_id"))
         candidate_id = str(candidate.get("candidate_id"))
         issues: list[dict[str, Any]] = []
-        sources = [validate_ref(ref, role="source", issues=issues) for ref in case.get("source_references") or []]
+        sources = [validate_ref(ref, role="source", issues=issues, base_dir=registry_path.parent) for ref in case.get("source_references") or []]
         sources = [ref for ref in sources if ref is not None]
-        deck = validate_ref(candidate.get("deck"), role="candidate-deck", issues=issues)
-        score_ref = validate_ref(candidate.get("score"), role="candidate-score", issues=issues)
-        reports = [validate_ref(ref, role="report", issues=issues) for ref in candidate.get("reports") or []]
+        deck = validate_ref(candidate.get("deck"), role="candidate-deck", issues=issues, base_dir=registry_path.parent)
+        score_ref = validate_ref(candidate.get("score"), role="candidate-score", issues=issues, base_dir=registry_path.parent)
+        reports = [validate_ref(ref, role="report", issues=issues, base_dir=registry_path.parent) for ref in candidate.get("reports") or []]
         reports = [ref for ref in reports if ref is not None]
         if not sources:
             issues.append({"code": "source_references_missing"})

@@ -1091,6 +1091,10 @@
       "reason": "post-baseline approved-case training export protocol"
     },
     {
+      "path": "references/automatic-training-driver.md",
+      "reason": "post-baseline automatic training cycle driver protocol"
+    },
+    {
       "path": "assets/schemas/distillation-case-registry.schema.json",
       "reason": "post-baseline automatic distillation case registry schema"
     },
@@ -1123,6 +1127,10 @@
       "reason": "post-baseline training dataset manifest schema"
     },
     {
+      "path": "assets/schemas/distillation-training-cycle.schema.json",
+      "reason": "post-baseline automatic training cycle report schema"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
     },
@@ -1141,6 +1149,10 @@
     {
       "path": "scripts/training_export.py",
       "reason": "post-baseline human-approved training export controller"
+    },
+    {
+      "path": "scripts/run_training_cycle.py",
+      "reason": "post-baseline automatic training cycle driver"
     },
     {
       "path": "scripts/component_expander.py",
@@ -1233,6 +1245,10 @@
     {
       "path": "tests/test_training_export.py",
       "reason": "post-baseline approved training export regression"
+    },
+    {
+      "path": "tests/test_training_cycle.py",
+      "reason": "post-baseline automatic training cycle regression"
     },
     {
       "path": "tests/test_self_contained.py",
