@@ -50,12 +50,15 @@ def validate(path: Path, *, strict: bool = False) -> dict:
         route = str(item.get("provenance_mode", "")).lower()
         required = ("generated_source", "copied_to", "prompt_file", "backend")
         missing = [key for key in required if not item.get(key)]
-        if route != "imagegen":
+        approved_fallback = route == "source_reuse" and item.get("fallback_decision") == "user_approved" and item.get("decision_id") and item.get("decision_reason") and item.get("decision_timestamp")
+        if route != "imagegen" and not approved_fallback:
             errors.append({"code": "final_asset_not_imagegen", "asset_id": asset_id, "asset_class": cls, "observed": route})
-        if missing:
+        if missing and not approved_fallback:
             errors.append({"code": "imagegen_evidence_missing", "asset_id": asset_id, "missing": missing})
-        if item.get("source_reuse") is True or item.get("extraction_method") in {"source_reuse", "exact_crop", "crop"}:
+        if (item.get("source_reuse") is True or item.get("extraction_method") in {"source_reuse", "exact_crop", "crop"}) and not approved_fallback:
             errors.append({"code": "source_reuse_final_asset_forbidden", "asset_id": asset_id})
+        if approved_fallback and not (item.get("source_ref") and item.get("source_bbox") and item.get("source_sha256")):
+            errors.append({"code": "approved_fallback_missing_source_evidence", "asset_id": asset_id})
         if item.get("sprite_sheet") is True or "sheet" in str(item.get("copied_to", "")).lower():
             errors.append({"code": "sprite_sheet_not_independent_asset", "asset_id": asset_id})
         copied = Path(str(item.get("copied_to", "")))
