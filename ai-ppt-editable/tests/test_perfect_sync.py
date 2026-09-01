@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_SYNCED_FILE_COUNT = 169
+EXPECTED_SYNCED_FILE_COUNT = 168
 POST_BASELINE_EXCLUSIONS = frozenset({
     "assets/route-decision.template.json",
     "scripts/component_expander.py",
@@ -20,6 +20,7 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "scripts/delivery_check.py",
     "scripts/validate_project.py",
     "scripts/validate_signoff.py",
+    "scripts/build_object_manifest.py",
 })
 
 

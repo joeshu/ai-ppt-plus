@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.01.01",
+  "package_revision": "2026.09.01.03",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -48,9 +48,11 @@
     "references/reconstruction-contract.md",
     "references/editability-levels.md",
     "references/icon-asset-protocol.md",
+    "references/three-round-distillation-methodology.md",
     "references/perfect-source-sync.md",
     "examples/component-library/standard-components.deck.json",
-    "tests/test_perfect_sync.py"
+    "tests/test_perfect_sync.py",
+    "tests/test_three_round_distillation.py"
   ],
   "runtime_sync": {
     "required": true,

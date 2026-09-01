@@ -457,12 +457,6 @@
       "executable": false
     },
     {
-      "source_path": "scripts/build_object_manifest.py",
-      "target_path": "scripts/build_object_manifest.py",
-      "sha256": "7537c5b02357b4494a6b4707f52efb4e247dd4c1c7d031a2ad416a5ccd2182e3",
-      "executable": false
-    },
-    {
       "source_path": "scripts/build_slide_manifest.py",
       "target_path": "scripts/build_slide_manifest.py",
       "sha256": "7aa16feb12a4b87eb949efd2f64d12cc4133635ba632bdfbb26f23f0e0944fd2",
@@ -1081,8 +1075,16 @@
       "reason": "standalone repeatable practice protocol"
     },
     {
+      "path": "references/three-round-distillation-methodology.md",
+      "reason": "standalone three-round improvement methodology"
+    },
+    {
       "path": "scripts/build_perfect_sync_manifest.py",
       "reason": "standalone synchronization utility"
+    },
+    {
+      "path": "scripts/build_object_manifest.py",
+      "reason": "post-baseline layout-relative asset provenance resolution"
     },
     {
       "path": "scripts/component_expander.py",
@@ -1159,6 +1161,10 @@
     {
       "path": "tests/test_perfect_sync.py",
       "reason": "standalone synchronization regression"
+    },
+    {
+      "path": "tests/test_three_round_distillation.py",
+      "reason": "standalone three-round provenance regression"
     },
     {
       "path": "tests/test_self_contained.py",

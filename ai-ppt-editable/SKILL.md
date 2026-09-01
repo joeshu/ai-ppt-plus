@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-package_revision: 2026.09.01.01
+package_revision: 2026.09.01.03
 ---
 
 # AI PPT Editable
@@ -68,6 +68,7 @@ In standalone mode:
   placeholders, never invention.
 
 Read `references/perfect-replica-practice.md`,
+`references/three-round-distillation-methodology.md`,
 `references/reconstruction-contract.md`,
 `references/editability-levels.md`, `references/native-object-protocol.md`, and
 the asset/text/chart protocols relevant to the page.
@@ -121,6 +122,11 @@ route and remain independent assets after extraction.
 Do not call `$ai-ppt-visual-gen` to replace an approved fixed reference. An
 isolated missing icon/decoration generation event is allowed under the asset
 provenance contract and does not change the page route.
+
+For image-led improvements, run the three-round protocol: visual diagnostic,
+semantic-panel decomposition, then native-text/object distillation. Preserve
+the visual-best and editable-best candidates as separate evidence, and use the
+actual panel manifest count rather than a hand-count when configuring gates.
 
 ## E3 — Author editable objects
 
