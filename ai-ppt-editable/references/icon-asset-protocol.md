@@ -19,9 +19,14 @@ may appear in both the frame and icon layers. If image generation is used,
 record the actual generator/backend, prompt file, generated source, and copied
 asset path. The image prompt must request only frame-excluded elements, and a
 contact sheet must have evenly spaced cells with no intentional divider lines.
-Small icons may use a 4x4 sheet; larger decoration, objects, or artistic
-typography should use a 2x2 sheet or a separate sheet. A contact sheet is an
-intermediate, never the delivered PPT object.
+Small icons may use a 4x4 sheet only when the actual generated sheet has a
+uniform 4x4 alpha layout. Do not infer that layout from the prompt: inspect
+alpha row/column spans first. A variable-row sheet requires explicit row-aware
+crops, and complex artistic typography must be cropped as one full visual line
+per delivered asset, never as character tiles. A contact sheet is an
+intermediate, never the delivered PPT object. See
+`references/imagegen-sheet-slicing.md` for the required classification and
+reject conditions.
 
 Original icon files may be supplied as the authoritative source for a
 deterministic `source_reuse` asset when the pixels are already complete and
