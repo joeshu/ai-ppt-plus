@@ -1,32 +1,101 @@
 # Skill routing and ownership
 
-`ai-ppt-plus` is the routing authority for an orchestrated deck. `ai-ppt-editable` is the default editable worker for fixed references, screenshots, rasterized PDF pages, existing PPTX repair, and structured-content-to-editable-PPTX work.
+The package has exactly three business skill entrypoints. Adapters and tools
+sit below this layer and are not counted as skills. `GordenImage2PPTX` is a
+named compatibility fallback in the engine policy, not a fourth business skill,
+not a default route, and not a release authority.
 
-`GordenImage2PPTX` is not the default worker and is not a second route definition. It is a controlled compatibility fallback for a scoped visual asset only, after the editable worker's native path or the approved native image-generation path has failed and the user has explicitly approved the fallback.
-
-| Capability | Default owner | Boundary |
+| Skill | Owns | Does not own |
 |---|---|---|
-| Route, authority, release | `ai-ppt-plus` | Decides the route and owns delivery claims |
-| Editable reconstruction and native authoring | `ai-ppt-editable` | Owns decomposition, object mapping, authoring and technical QA |
-| Visual-only fallback asset | `GordenImage2PPTX` | Region-only, asset-recorded, user-approved; never formal text, panels, tables, charts or whole pages |
-| Rendering and package adapters | `Presentations`, `python-pptx`, LibreOffice, Poppler | Implement declared operations; do not acquire route or release ownership |
+| `ai-ppt-plus` | intake, source authority, narrative, approved outline, route, design authority, manifest reconciliation, QA aggregation, reports, human closeout and release gates | worker-internal generation/decomposition algorithms |
+| `ai-ppt-visual-gen` | A1–A5 planning and prompts, raster generation, page-local retry, generated-source retention and deck-strip review | orchestrated narrative/formal-text authority, editable reconstruction, release or human sign-off |
+| `ai-ppt-editable` | reference decomposition, editable-layer/object plan, PPTX authoring/rendering and technical QA | narrative redesign, release eligibility or human sign-off |
+
+`Presentations`, `python-pptx`, image generation, OCR, and rendering are
+adapters/tools. They may implement an operation but cannot acquire business
+ownership or create a fourth release authority.
 
 ## Routing rules
 
-1. Complete deck requests start in `ai-ppt-plus`, which records the route, formal-text authority, engine selection and fallback policy.
-2. `reference-reconstruction`, `editable-pptx` and `native-authoring` use `ai-ppt-editable` as the primary engine and target native semantic objects whenever the semantics are known.
-3. `visual-creation` uses `ai-ppt-visual-gen` as the visual worker and returns evidence to `ai-ppt-plus`; it is not an editable reconstruction route.
-4. A fallback event must be region-bounded, contain no formal content, carry a reason and asset record, and include an explicit user decision. The root engine-route validator is the hard gate.
-5. The worker may run standalone, but standalone invocation does not relax the route, authority, editability, asset-provenance or technical-QA contracts.
+1. A complete deck request, source bundle, mixed route, or resumed project
+   starts in `ai-ppt-plus`.
+2. A request only for image-format slides or a visual intermediate may invoke
+   `ai-ppt-visual-gen` directly. Under orchestration, the worker consumes the
+   approved outline/design revisions and returns evidence without replacing
+   them.
+3. A fixed reference image, screenshot, rasterized PDF page, existing deck, or
+   structured-content-to-editable-PPTX request may invoke `ai-ppt-editable`
+   directly. Its standalone text authority rules must be explicit.
+4. `visual-creation:image-slide` binds to `ai-ppt-visual-gen` as a checked-in
+   sibling skill. Resolve the image tool at runtime: user-named compatible
+   backend first, preferred native imagegen second, another native raster tool
+   third, otherwise blocked/unavailable. SVG/HTML/Canvas/code-added bitmap text
+   does not satisfy the generation event.
+5. `reference-reconstruction`, `editable-pptx`, and `native-authoring` bind to
+   `ai-ppt-editable` as a checked-in sibling skill. A fixed reference is not
+   routed through whole-page visual generation merely to satisfy another path.
+   `native-authoring` requires a v2 route decision with
+   `visual_authority=approved_design_system`, `requires_image_generation=false`,
+   and a `native_content_manifest`; it must not silently fall back to image
+   generation or reference reconstruction.
+6. Editable and reference routes use `ai-ppt-editable` as the primary engine.
+   `GordenImage2PPTX` may run only as a recorded, region-only visual-asset
+   fallback after the editable/imagegen failure decision. It is forbidden for
+   formal text, semantic panels, card frames, tables, charts and whole pages.
+   The fallback event must carry a reason, region, asset record and explicit
+   user decision.
+7. PPTX operations use the declared authoring adapter. No skill may silently
+   replace the adapter, lower L0–L5 editability, or turn automated technical
+   success into delivery/human approval.
+7. Orchestrated results return to `ai-ppt-plus` for canonical manifest
+   reconciliation, deck-wide QA, human closeout, and release eligibility.
 
-The machine-readable root contract is `ai-ppt-plus/assets/skill-routing.template.json`; the worker-local contract is only the package boundary and authoring binding. Keep both names visible so a worker invocation cannot be mistaken for route ownership.
+## Shared runtime and contracts
 
-## Executable checks
+Each skill directory contains its own versioned `scripts/`, `assets/`, and
+`references/` runtime. Every package validates independently and declares the
+same bundle revision. The root Super package also checks both child manifests,
+entrypoints, required directories, managed files, and revision parity so copied
+runtime files cannot drift silently.
+
+Shared contracts include:
+
+- `references/editability-levels.md` for L0–L5 semantics;
+- `references/native-object-protocol.md` for native/vector/object evidence;
+- `references/report-protocol.md` for automated/human/release state separation;
+- `references/chart-reconstruction.md` for chart authority and representation;
+- `ai-ppt-plus/visual-generation-tool/v1` for raster tool resolution,
+  source retention, and no-code-overlay policy;
+- font embedding/portability contracts;
+- machine-readable ownership in `assets/skill-routing.template.json`;
+- machine-readable engine/fallback policy in the same routing contract and
+  `ai-ppt-plus/engine-route-validation/v1`.
+- `ai-ppt-plus/route-decision/v2` for native-authoring route authority;
+- `ai-ppt-plus/handoff/v2` for hash-backed A-to-B recovery and page coverage.
+- `ai-ppt-plus/workflow-state/v1` for phase readiness, approvals and blockers.
+- `ai-ppt-plus/runtime-mirror/v1` for shared-runtime SHA-256 drift checks;
+- `ai-ppt-plus/environment-contract/v1` for explicit capability and renderer
+  requirements.
+
+Validate before any downstream work:
 
 ```bash
 python3 scripts/validate_skill_package.py --skill-dir .
 python3 scripts/validate_routing_contract.py
-python3 scripts/validate_perfect_sync.py
 ```
 
-In orchestrated mode, consume the immutable route decision and handoff supplied by `ai-ppt-plus`, then return worker-level PPTX and technical evidence. The worker never claims narrative ownership, release eligibility or human sign-off.
+When a runtime-installed bundle exists, pass it to
+`validate_skill_package.py --runtime-skill-dir`. Missing files, entrypoint
+revision drift, or a managed-file hash mismatch is blocking.
+
+```mermaid
+flowchart TD
+    A[ai-ppt-plus intake and authority] --> B{route}
+    B -->|image slides| C[ai-ppt-visual-gen A1-A5]
+    B -->|editable or reference| D[ai-ppt-editable]
+    C -->|visual evidence| D
+    D -->|PPTX and technical QA| E[ai-ppt-plus closeout]
+```
+
+Direct worker invocation omits the outer orchestrator nodes but does not relax
+the worker's authority, evidence, or blocking rules.
