@@ -260,3 +260,9 @@ When an unattended maintenance cycle is enabled, use `scripts/unattended_distill
 
 Unattended distillation may be promoted only when the checked-out baseline is reproducibly red, the candidate is green, the candidate declares a real behavioural change, regression metrics do not degrade, and the improvement validator returns `promotion=improved`. A passing gate without this red-green proof is not a promotion signal.
 <!-- /unattended-distillation:improvement-proof -->
+
+<!-- unattended-distillation:case-replay -->
+## Case-level replay requirement
+
+A generic repository test is never sufficient evidence that a PPTX reconstruction improved. For native-structure or text/visual distillation, require a fresh baseline/candidate case replay with the actual deck, source/process hashes, rendered output, OOXML `a:tbl` count, table merge topology, native panel audit, native text audit, visual comparison, object comparison and mutation smoke test. Promote only when the candidate is bound to the current repair fingerprint and returns `promotion=improved`.
+<!-- /unattended-distillation:case-replay -->

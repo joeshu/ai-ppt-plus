@@ -44,6 +44,37 @@ jobs:
           python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
       - name: Run schema, DAG, package and golden regressions
         run: python scripts/run_tests.py --parallel-workers 4 --report test-report.json
+      - name: Replay social-channel editable PPTX case
+        run: |
+          set +e
+          mkdir -p .distillation/case-baseline .distillation/case-candidate
+          python scripts/replay_pptx_case.py \\
+            --phase baseline \\
+            --case-spec ai-ppt-editable/evals/social-channel-commission-native-01.json \\
+            --deck ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \\
+            --source-pptx ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \\
+            --process-image ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png \\
+            --output-dir .distillation/case-baseline \\
+            --output .distillation/case-baseline/baseline-evaluation.json
+          baseline_rc=$?
+          set -e
+          test "$baseline_rc" -eq 2
+          python scripts/replay_pptx_case.py \\
+            --phase candidate \\
+            --case-spec ai-ppt-editable/evals/social-channel-commission-native-01.json \\
+            --deck ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx \\
+            --source-pptx ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \\
+            --process-image ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png \\
+            --baseline-evaluation .distillation/case-baseline/baseline-evaluation.json \\
+            --output-dir .distillation/case-candidate \\
+            --output .distillation/case-candidate/candidate-evaluation.json
+          python scripts/validate_distillation_improvement.py \\
+            --baseline .distillation/case-baseline/baseline-evaluation.json \\
+            --candidate .distillation/case-candidate/candidate-evaluation.json \\
+            --case-spec ai-ppt-editable/evals/social-channel-commission-native-01.json \\
+            --mode replay \\
+            --report .distillation/case-candidate/case-improvement.json
+
       - name: Run strict P2 guard smoke tests
         run: python tests/test_p2_guards.py
       - name: Check whitespace
@@ -60,3 +91,4 @@ jobs:
             environment-report.json
             environment-validation.json
             runtime-mirror-report.json
+            .distillation

@@ -20,6 +20,7 @@ from typing import Any
 
 SCHEMA = "ai-ppt-plus/distillation-improvement/v1"
 EVALUATION_SCHEMA = "ai-ppt-plus/distillation-evaluation/v1"
+CASE_EVALUATION_SCHEMA = "ai-ppt-plus/pptx-case-evaluation/v1"
 
 LOWER_IS_BETTER = {
     "error_count",
@@ -99,6 +100,7 @@ def numeric_metrics(value: dict[str, Any]) -> dict[str, float | int]:
 
 def metric_checks(
     baseline: dict[str, Any], candidate: dict[str, Any], checks: list[dict[str, Any]],
+    case_spec: dict[str, Any] | None = None,
 ) -> None:
     baseline_metrics = baseline.get("metrics")
     candidate_metrics = candidate.get("metrics")
@@ -108,7 +110,13 @@ def metric_checks(
     if not isinstance(baseline_metrics, dict) or not isinstance(candidate_metrics, dict):
         check(checks, "metric-evidence", False, "both evaluations must provide metrics objects")
         return
-    shared = sorted(set(baseline_metrics) & set(candidate_metrics))
+    visual_thresholds = ((case_spec or {}).get("quality_thresholds") or {}).get("visual", {})
+    threshold_metrics = {
+        str(key)[4:]
+        for key in visual_thresholds
+        if isinstance(key, str) and (key.startswith("min_") or key.startswith("max_"))
+    }
+    shared = sorted((set(baseline_metrics) & set(candidate_metrics)) - threshold_metrics)
     missing = sorted(set(baseline_metrics) - set(candidate_metrics))
     check(
         checks,
@@ -127,6 +135,20 @@ def metric_checks(
         passed = after <= before if lower_is_better else after >= before
         direction = "not higher" if lower_is_better else "not lower"
         check(checks, f"metric:{key}", passed, f"baseline={before}, candidate={after}; candidate is {direction}")
+    for key, threshold in visual_thresholds.items():
+        if not isinstance(key, str) or not isinstance(threshold, (int, float)):
+            continue
+        metric = key[4:] if key.startswith(("min_", "max_")) else key
+        observed = candidate_metrics.get(metric)
+        if key.startswith("min_"):
+            passed = isinstance(observed, (int, float)) and observed >= threshold
+            detail = f"candidate={observed}, minimum={threshold}"
+        elif key.startswith("max_"):
+            passed = isinstance(observed, (int, float)) and observed <= threshold
+            detail = f"candidate={observed}, maximum={threshold}"
+        else:
+            continue
+        check(checks, f"case-metric:{metric}", passed, detail)
 
 
 def _path_label(path: tuple[str, ...]) -> str:
@@ -193,15 +215,16 @@ def regressions_pass(candidate: dict[str, Any], external: list[dict[str, Any]]) 
 def validate(
     baseline: dict[str, Any], candidate: dict[str, Any], *, mode: str,
     case_spec: dict[str, Any] | None, external_regressions: list[dict[str, Any]],
+    expected_repair_fingerprint: str | None = None,
 ) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
     reasons: list[str] = []
-    if baseline.get("schema") not in {EVALUATION_SCHEMA, None}:
+    if baseline.get("schema") not in {EVALUATION_SCHEMA, CASE_EVALUATION_SCHEMA, None}:
         check(checks, "baseline-schema", False, f"unexpected baseline schema: {baseline.get('schema')!r}")
         reasons.append("baseline schema is invalid")
     else:
         check(checks, "baseline-schema", True, "baseline schema accepted")
-    if candidate.get("schema") not in {EVALUATION_SCHEMA, None}:
+    if candidate.get("schema") not in {EVALUATION_SCHEMA, CASE_EVALUATION_SCHEMA, None}:
         check(checks, "candidate-schema", False, f"unexpected candidate schema: {candidate.get('schema')!r}")
         reasons.append("candidate schema is invalid")
     else:
@@ -232,12 +255,26 @@ def validate(
 
     changed_files = candidate.get("changed_files")
     behavior_changed = candidate.get("behavioral_change") is True
-    changed = behavior_changed and isinstance(changed_files, list) and bool(changed_files)
-    check(checks, "behavioral-change", changed, "candidate declares a non-empty implementation change" if changed else "candidate lacks explicit behavioural-change evidence")
+    baseline_deck = baseline.get("deck") if isinstance(baseline.get("deck"), dict) else {}
+    candidate_deck = candidate.get("deck") if isinstance(candidate.get("deck"), dict) else {}
+    deck_changed = bool(
+        baseline_deck.get("sha256")
+        and candidate_deck.get("sha256")
+        and baseline_deck.get("sha256") != candidate_deck.get("sha256")
+    )
+    changed = behavior_changed and (
+        (isinstance(changed_files, list) and bool(changed_files)) or deck_changed
+    )
+    check(
+        checks,
+        "behavioral-change",
+        changed,
+        "candidate declares a non-empty implementation/deck change" if changed else "candidate lacks explicit behavioural-change evidence",
+    )
     if not changed:
         reasons.append("no explicit behavioural change was proven")
 
-    metric_checks(baseline, candidate, checks)
+    metric_checks(baseline, candidate, checks, case_spec)
 
     if mode == "replay" or (mode == "auto" and case_spec is not None):
         expected = (case_spec or {}).get("expected") if isinstance(case_spec, dict) else None
@@ -251,6 +288,17 @@ def validate(
         check(checks, "case-replay", replay_ok, replay_detail)
         if not replay_ok:
             reasons.append("case replay did not satisfy the expected editable structure")
+        if expected_repair_fingerprint:
+            observed_fingerprint = candidate.get("repair_fingerprint")
+            fingerprint_ok = observed_fingerprint == expected_repair_fingerprint
+            check(
+                checks,
+                "repair-fingerprint",
+                fingerprint_ok,
+                "case candidate is bound to the current repair diff" if fingerprint_ok else "case candidate is not bound to the current repair diff",
+            )
+            if not fingerprint_ok:
+                reasons.append("case replay was not generated from the candidate repair")
 
     regression_ok, regression_detail = regressions_pass(candidate, external_regressions)
     check(checks, "regression-evidence", regression_ok, regression_detail)
@@ -278,6 +326,7 @@ def main() -> int:
     parser.add_argument("--case-spec")
     parser.add_argument("--regression", action="append", default=[])
     parser.add_argument("--mode", choices=("auto", "gates", "replay"), default="auto")
+    parser.add_argument("--repair-fingerprint")
     parser.add_argument("--report", required=True)
     args = parser.parse_args()
     try:
@@ -300,7 +349,14 @@ def main() -> int:
         mode = args.mode
         if mode == "auto":
             mode = "replay" if case_spec is not None else "gates"
-        result = validate(baseline, candidate, mode=mode, case_spec=case_spec, external_regressions=external)
+        result = validate(
+            baseline,
+            candidate,
+            mode=mode,
+            case_spec=case_spec,
+            external_regressions=external,
+            expected_repair_fingerprint=args.repair_fingerprint,
+        )
         write_json(Path(args.report).resolve(), result)
         print(json.dumps(result, ensure_ascii=False))
         return 0 if result["valid"] else 2

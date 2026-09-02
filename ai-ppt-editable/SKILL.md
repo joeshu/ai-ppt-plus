@@ -431,3 +431,9 @@ This worker can be checked by the root unattended distillation controller, but i
 
 The editable worker must not claim that a semantic panel or table became editable from a generic test pass. Any unattended native-structure or text/visual repair requires the corresponding case replay, native-object evidence, mutation smoke test and rendered comparison; missing replay evidence stops promotion.
 <!-- /unattended-distillation:improvement-proof -->
+
+<!-- unattended-distillation:case-replay -->
+## Case-level replay requirement
+
+For every native table/panel or text-visual repair, rerun the actual reconstruction case after the change. A candidate must carry source and deck hashes, rendered comparison, OOXML `a:tbl` evidence, merge topology, native text/run audit and mutation smoke-test evidence; a unit-test pass alone cannot establish editability.
+<!-- /unattended-distillation:case-replay -->

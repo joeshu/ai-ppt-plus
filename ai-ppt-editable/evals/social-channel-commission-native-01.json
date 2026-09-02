@@ -60,5 +60,23 @@
     "text-content-and-run-style",
     "mutation-smoke-test",
     "visual-best-and-editable-best"
-  ]
+  ],
+  "reference_text_free": true,
+  "quality_thresholds": {
+    "visual": {
+      "min_visual_score": 0.8,
+      "min_pixel_match_ratio": 0.55,
+      "max_mae": 0.25,
+      "max_rmse": 0.45
+    }
+  },
+  "replay": {
+    "runner": "scripts/replay_pptx_case.py",
+    "source_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx",
+    "process_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png",
+    "candidate_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx",
+    "baseline_artifact": "case-baseline-evaluation.json",
+    "candidate_artifact": "case-candidate-evaluation.json",
+    "improvement_artifact": "case-improvement.json"
+  }
 }

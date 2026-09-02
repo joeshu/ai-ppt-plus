@@ -81,3 +81,11 @@ report for human repair.
 Technical acceptance is not a claim of human visual sign-off. For PPTX
 reconstruction, the normal native-object, source-hash, visual comparison and
 human closeout contracts remain authoritative.
+
+## Case replay evidence contract
+
+A unit test proves that a validator executes; it does not prove that an editable PPTX improved. For each accepted reconstruction case, run `scripts/replay_pptx_case.py` twice: once on the pre-distillation deck to write `baseline-evaluation.json`, and once on the post-distillation deck to write `candidate-evaluation.json`. Both reports must bind the original PPTX hash and process-image hash, rendered slide hashes, native object counts, table/panel/text audits, visual metrics and object deltas.
+
+The social-channel anchor case must verify five native `a:tbl` tables, the three commission-card bodies, the policy table's four vertical merges, the monthly incentive table dimensions, native panels, native body text, the allowed text-free background, visual comparison, object comparison, and a mutation smoke test that edits a cell and moves a panel. The candidate is not promotion evidence unless its deck hash, source hashes and optional repair fingerprint are tied to the current repair. A prebuilt fixture is a CI sentinel; a real distillation candidate must be regenerated after the skill change.
+
+Use a case matrix as the coverage unit rather than treating one case as universal coverage. The anchor case covers dense reference reconstruction with panels and tables; add separate cases for routing ownership, rich-text/font fidelity, icons/gradients, charts/data provenance, multi-slide consistency and package/runtime portability before claiming deck-wide improvement.
