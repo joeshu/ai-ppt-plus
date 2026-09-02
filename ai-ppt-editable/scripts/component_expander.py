@@ -75,6 +75,11 @@ def _promote_native_structures(deck: dict) -> dict:
         for raw_panel in native_panels:
             panel = dict(raw_panel)
             treatment = str(panel.get("treatment", "")).casefold()
+            if panel.get("file"):
+                _die(
+                    f"slide {slide_no}: native-required panel {panel.get('object_id') or panel.get('panel_id') or panel.get('name') or 'unnamed'} "
+                    "cannot be promoted from a raster file; provide native geometry or mark it raster-only"
+                )
             object_id = str(panel.get("object_id") or panel.get("panel_id") or panel.get("name") or f"native-panel-{slide_no:02d}")
             children = panel.get("children")
             is_group = treatment in {"native-group", "native_group"} or isinstance(children, list) and bool(children)
@@ -98,7 +103,17 @@ def _promote_native_structures(deck: dict) -> dict:
                 slide.setdefault("shapes", []).append(shape)
         native_tables = slide.pop("native_tables", []) or []
         if native_tables:
-            slide.setdefault("tables", []).extend(dict(table, representation="native") for table in native_tables if isinstance(table, dict))
+            promoted_tables = []
+            for table in native_tables:
+                if not isinstance(table, dict):
+                    _die(f"slide {slide_no}: native table must be an object")
+                if table.get("file"):
+                    _die(
+                        f"slide {slide_no}: native-required table {table.get('object_id') or table.get('name') or 'unnamed'} "
+                        "cannot be promoted from a raster file; provide rows/columns data"
+                    )
+                promoted_tables.append(dict(table, representation="native"))
+            slide.setdefault("tables", []).extend(promoted_tables)
     return deck
 
 
