@@ -407,7 +407,8 @@ def _set_cell_border(cell, border: dict | None) -> None:
         for child in list(line):
             line.remove(child)
         width = value.get("width", border.get("width", 0.75))
-        line.set("w", str(max(1, int(Pt(float(width)))))
+        width_emu = max(1, int(Pt(float(width))))
+        line.set("w", str(width_emu))
         if str(value.get("style", "solid")).casefold() == "none":
             line.append(OxmlElement("a:noFill"))
             continue

@@ -405,6 +405,10 @@ def main() -> int:
         args.handoff = args.handoff or str(project / "handoff.json")
     if args.require_p1:
         args.require_root_p0 = True
+        args.require_route = True
+        args.require_engine_route = True
+        args.require_workflow_state = True
+        args.require_formal_content = True
         args.require_native_structure = True
         args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
         args.content_authority = args.content_authority or str(project / "content-authority.json")

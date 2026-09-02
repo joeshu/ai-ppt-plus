@@ -164,7 +164,7 @@ def validate_native_editability(
     for slide_no, slide in enumerate(prs.slides, 1):
         index: dict[str, list[dict]] = {}
         top_level = _walk_shapes(slide.shapes, int(prs.slide_width), int(prs.slide_height), index)
-        tables = [record for record in index.values() for record in record if record["kind"] == "editable_table"]
+        tables = [record for records in index.values() for record in records if record["kind"] == "editable_table"]
         native_table_count += len(tables)
         for record in top_level:
             if record["kind"] == "picture" and record["width"] >= prs.slide_width * 0.95 and record["height"] >= prs.slide_height * 0.95:

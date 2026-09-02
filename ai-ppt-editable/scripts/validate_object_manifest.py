@@ -73,7 +73,7 @@ def main() -> int:
             if oid in seen_global:
                 errors.append({"code": "duplicate_object_id_global", "object_id": oid})
             seen_global.add(oid)
-            if obj.get("role") in {"semantic-panel", "panel", "frame-panel", "card", "card-frame"}:
+            if obj.get("role") in {"semantic-panel", "panel", "frame-panel", "card", "card-frame", "framework"}:
                 panel_ids.append(oid)
                 if obj.get("independent") is not True:
                     errors.append({"code": "panel_not_independent", "slide": si, "object_id": oid})

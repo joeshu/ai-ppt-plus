@@ -27,7 +27,7 @@
           "native_required": true,
           "required_for_delivery": true,
           "human_review_required": true,
-          "reduced_editability_accepted": true,
+          "reduced_editability_accepted": false,
           "independent": true,
           "contains_formal_content": false,
           "provenance": "reference.png#panel-01",
