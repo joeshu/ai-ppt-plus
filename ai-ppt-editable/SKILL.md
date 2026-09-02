@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.01.12
+  package_revision: 2026.09.02.01
 ---
 
 # AI PPT Editable
@@ -165,7 +165,7 @@ overwrites local emphasis while leaving the text object technically editable.
 The P0 gate must therefore verify both the canonical manifest and the final
 OOXML `a:r`/run-level properties, followed by a rendered comparison.
 
-Use `references/icon-asset-protocol.md` for B4/B5 provenance and cutout QA,
+Use `references/icon-asset-protocol.md` and `references/imagegen-sheet-slicing.md` for B4/B5 provenance, sheet slicing and cutout QA,
 `references/panel-asset-protocol.md` for independent panels,
 `references/text-style-protocol.md` for mixed color/weight/line breaks, and
 `references/chart-reconstruction.md` for every chart. A source crop is valid
@@ -229,6 +229,15 @@ sheet or stale source-reuse record, and reject an unresolved reference object.
 Do not omit `--require-imagegen` for icon, gradient-visual or complex-art
 records. The ordinary source/hash and boundary checks remain required for the
 reference evidence and official brand exception.
+
+Never assume a generated asset sheet is a uniform grid. Before B5, inspect
+alpha row/column spans and classify the sheet as `uniform_grid`, `variable_row`,
+or `artistic_row`. Fixed `4x4` slicing is permitted only after uniform-grid
+evidence is recorded; variable-row sheets require row-aware explicit crops,
+and complex artistic typography requires one full-row asset per visual line.
+Contact-sheet review must reject clipped glyphs, edge-touching circles, merged
+neighboring objects, or an art row split into character fragments. See
+`references/imagegen-sheet-slicing.md`.
 
 For image-led improvements, run the three-round protocol: visual diagnostic,
 semantic-panel decomposition, then native-text/object distillation. Preserve
