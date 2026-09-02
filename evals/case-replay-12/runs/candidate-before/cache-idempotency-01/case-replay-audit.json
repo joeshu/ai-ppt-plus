@@ -1,0 +1,276 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/cache-idempotency-01/editable.pptx",
+  "deck_sha256": "36e9635eae7c5a97ece998f9f0db189df64a4e95865c508a00e3cd186980f405",
+  "object_manifest": "runs/candidate-before/cache-idempotency-01/object-manifest.json",
+  "object_manifest_sha256": "64b13652586793b13fcbdff797277c365afdcc57d78a0e67ec9f02b6ae9382aa",
+  "native_table_count": 0,
+  "native_panel_count": 11,
+  "formal_text_count": 24,
+  "formal_text_native_count": 24,
+  "a_tbl_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [],
+      "panels": [
+        {
+          "object_id": "pipeline-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "pipeline-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "pipeline-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "pipeline-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "pipeline-5",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "parallel-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "parallel-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "parallel-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "metric-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "metric-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "metric-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "增量渲染与缓存幂等流水线",
+          "observed": "增量渲染与缓存幂等流水线",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "页面级缓存、并行QA、重复运行结果稳定",
+          "observed": "页面级缓存、并行QA、重复运行结果稳定",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-1-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "01",
+          "observed": "01",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-1-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "源文件哈希",
+          "observed": "源文件哈希",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-2-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "02",
+          "observed": "02",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-2-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "页面级缓存",
+          "observed": "页面级缓存",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-3-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "03",
+          "observed": "03",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-3-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "受影响区域",
+          "observed": "受影响区域",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-4-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "04",
+          "observed": "04",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-4-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "并行QA",
+          "observed": "并行QA",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-5-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "05",
+          "observed": "05",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-5-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "重复运行",
+          "observed": "重复运行",
+          "run_count": 1
+        },
+        {
+          "object_id": "parallel-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "视觉比较",
+          "observed": "视觉比较",
+          "run_count": 1
+        },
+        {
+          "object_id": "parallel-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "对象审计",
+          "observed": "对象审计",
+          "run_count": 1
+        },
+        {
+          "object_id": "parallel-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "字体检查",
+          "observed": "字体检查",
+          "run_count": 1
+        },
+        {
+          "object_id": "metric-1-value",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "86%",
+          "observed": "86%",
+          "run_count": 1
+        },
+        {
+          "object_id": "metric-1-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "缓存命中率",
+          "observed": "缓存命中率",
+          "run_count": 1
+        },
+        {
+          "object_id": "metric-2-value",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "1",
+          "observed": "1",
+          "run_count": 1
+        },
+        {
+          "object_id": "metric-2-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "返工次数",
+          "observed": "返工次数",
+          "run_count": 1
+        },
+        {
+          "object_id": "metric-3-value",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "100%",
+          "observed": "100%",
+          "run_count": 1
+        },
+        {
+          "object_id": "metric-3-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "结果稳定",
+          "observed": "结果稳定",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-timeline",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "首轮 → 修复轮 → 回归轮",
+          "observed": "首轮 → 修复轮 → 回归轮",
+          "run_count": 1
+        },
+        {
+          "object_id": "pipeline-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "5-stage pipeline / 3 parallel QA branches / idempotent replay",
+          "observed": "5-stage pipeline / 3 parallel QA branches / idempotent replay",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 45
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

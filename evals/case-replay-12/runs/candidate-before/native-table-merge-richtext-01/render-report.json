@@ -1,0 +1,48 @@
+{
+  "schema": "ai-ppt-plus/render/v1",
+  "ok": true,
+  "source": "runs/candidate-before/native-table-merge-richtext-01/editable.pptx",
+  "deck_sha256": "57e7a1fd4b6f00fe62589de24c74622977e2153057618a5592d8eb173f6153d6",
+  "renderer": "LibreOffice+pdftoppm",
+  "render_attempts": [
+    {
+      "backend": "pdftoppm",
+      "page": 1,
+      "exit_code": 0,
+      "decoded": true,
+      "stderr": ""
+    }
+  ],
+  "conversion": {
+    "attempted": true,
+    "skipped": false,
+    "reason": "cache_disabled"
+  },
+  "font_dir": "../../ai-ppt-editable/assets/fonts",
+  "dpi": 126,
+  "selected_pages": "all",
+  "page_fingerprints": [
+    {
+      "page": 1,
+      "part": "ppt/slides/slide1.xml",
+      "fingerprint": "1ba5edc45f4531b1271d712abce190c5f10302e2d7d44e6901395ad26ad56d18",
+      "selected": true,
+      "cache_hit": false
+    }
+  ],
+  "page_cache": {
+    "schema": "ai-ppt-plus/page-render-cache/v1",
+    "enabled": false,
+    "dir": null,
+    "namespace": null,
+    "requested": 1,
+    "hits": 0,
+    "misses": 0,
+    "stored": 0,
+    "warnings": []
+  },
+  "pages": [
+    "runs/candidate-before/native-table-merge-richtext-01/render/slide-1.png"
+  ],
+  "errors": []
+}

@@ -1,0 +1,813 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/failure-fallback-stop-01/editable.pptx",
+  "object_manifest": "runs/candidate/failure-fallback-stop-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 6,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 49,
+      "object_count_recursive": 49,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-link-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2560255,
+          "top": 2756916,
+          "width": 304793,
+          "height": 0,
+          "normalized_box": [
+            0.21,
+            0.402,
+            0.025,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-link-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4510927,
+          "top": 2756916,
+          "width": 304792,
+          "height": 0,
+          "normalized_box": [
+            0.37,
+            0.402,
+            0.025,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-link-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 6461598,
+          "top": 2756916,
+          "width": 304792,
+          "height": 0,
+          "normalized_box": [
+            0.53,
+            0.402,
+            0.025,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-link-4",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 8412269,
+          "top": 2756916,
+          "width": 304792,
+          "height": 0,
+          "normalized_box": [
+            0.69,
+            0.402,
+            0.025,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "failure-branch",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 8778020,
+          "top": 2948940,
+          "width": 975336,
+          "height": 617220,
+          "normalized_box": [
+            0.72,
+            0.43,
+            0.08,
+            0.09
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 975335,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.08,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-1-fill",
+          "kind": "native_shape",
+          "parent": "gate-1",
+          "left": 975335,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.08,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-1-accent",
+          "kind": "native_shape",
+          "parent": "gate-1",
+          "left": 975335,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 39604,
+          "normalized_box": [
+            0.08,
+            0.35,
+            0.13,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-1-rule",
+          "kind": "native_shape",
+          "parent": "gate-1",
+          "left": 1022883,
+          "top": 3048381,
+          "width": 1489825,
+          "height": 720,
+          "normalized_box": [
+            0.0839,
+            0.4445,
+            0.1222,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 2926006,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.24,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-2-fill",
+          "kind": "native_shape",
+          "parent": "gate-2",
+          "left": 2926006,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.24,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-2-accent",
+          "kind": "native_shape",
+          "parent": "gate-2",
+          "left": 2926006,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 39604,
+          "normalized_box": [
+            0.24,
+            0.35,
+            0.13,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-2-rule",
+          "kind": "native_shape",
+          "parent": "gate-2",
+          "left": 2973554,
+          "top": 3048381,
+          "width": 1489825,
+          "height": 720,
+          "normalized_box": [
+            0.2439,
+            0.4445,
+            0.1222,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4876678,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.4,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-3-fill",
+          "kind": "native_shape",
+          "parent": "gate-3",
+          "left": 4876678,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.4,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-3-accent",
+          "kind": "native_shape",
+          "parent": "gate-3",
+          "left": 4876678,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 39604,
+          "normalized_box": [
+            0.4,
+            0.35,
+            0.13,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-3-rule",
+          "kind": "native_shape",
+          "parent": "gate-3",
+          "left": 4924225,
+          "top": 3048381,
+          "width": 1489825,
+          "height": 720,
+          "normalized_box": [
+            0.4039,
+            0.4445,
+            0.1222,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-4",
+          "kind": "native_group",
+          "parent": null,
+          "left": 6827349,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.56,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-4-fill",
+          "kind": "native_shape",
+          "parent": "gate-4",
+          "left": 6827349,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.56,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-4-accent",
+          "kind": "native_shape",
+          "parent": "gate-4",
+          "left": 6827349,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 39604,
+          "normalized_box": [
+            0.56,
+            0.35,
+            0.13,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-4-rule",
+          "kind": "native_shape",
+          "parent": "gate-4",
+          "left": 6874896,
+          "top": 3048381,
+          "width": 1489825,
+          "height": 720,
+          "normalized_box": [
+            0.5639,
+            0.4445,
+            0.1222,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-5",
+          "kind": "native_group",
+          "parent": null,
+          "left": 8778020,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.72,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-5-fill",
+          "kind": "native_shape",
+          "parent": "gate-5",
+          "left": 8778020,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 720090,
+          "normalized_box": [
+            0.72,
+            0.35,
+            0.13,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-5-accent",
+          "kind": "native_shape",
+          "parent": "gate-5",
+          "left": 8778020,
+          "top": 2400300,
+          "width": 1584920,
+          "height": 39604,
+          "normalized_box": [
+            0.72,
+            0.35,
+            0.13,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "gate-5-rule",
+          "kind": "native_shape",
+          "parent": "gate-5",
+          "left": 8825568,
+          "top": 3048381,
+          "width": 1489825,
+          "height": 720,
+          "normalized_box": [
+            0.7239,
+            0.4445,
+            0.1222,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "stop-panel",
+          "kind": "native_group",
+          "parent": null,
+          "left": 8534186,
+          "top": 3566160,
+          "width": 2804089,
+          "height": 1645920,
+          "normalized_box": [
+            0.7,
+            0.52,
+            0.23,
+            0.24
+          ],
+          "text": ""
+        },
+        {
+          "name": "stop-panel-fill",
+          "kind": "native_shape",
+          "parent": "stop-panel",
+          "left": 8534186,
+          "top": 3566160,
+          "width": 2804089,
+          "height": 1645920,
+          "normalized_box": [
+            0.7,
+            0.52,
+            0.23,
+            0.24
+          ],
+          "text": ""
+        },
+        {
+          "name": "stop-panel-accent",
+          "kind": "native_shape",
+          "parent": "stop-panel",
+          "left": 8534186,
+          "top": 3566160,
+          "width": 2804089,
+          "height": 90525,
+          "normalized_box": [
+            0.7,
+            0.52,
+            0.23,
+            0.0132
+          ],
+          "text": ""
+        },
+        {
+          "name": "stop-panel-rule",
+          "kind": "native_shape",
+          "parent": "stop-panel",
+          "left": 8618309,
+          "top": 5047488,
+          "width": 2635844,
+          "height": 1645,
+          "normalized_box": [
+            0.7069,
+            0.736,
+            0.2162,
+            0.00024
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "AI-PPT质量门禁与停机机制"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "未知问题不猜测，证据不足就停机"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "gate-1-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1194786,
+          "top": 2592324,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.098,
+            0.378,
+            0.05,
+            0.04
+          ],
+          "text": "01"
+        },
+        {
+          "name": "gate-1-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1889712,
+          "top": 2585466,
+          "width": 487667,
+          "height": 308610,
+          "normalized_box": [
+            0.155,
+            0.377,
+            0.04,
+            0.045
+          ],
+          "text": "输入校验"
+        },
+        {
+          "name": "gate-2-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3145457,
+          "top": 2592324,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.258,
+            0.378,
+            0.05,
+            0.04
+          ],
+          "text": "02"
+        },
+        {
+          "name": "gate-2-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3840383,
+          "top": 2585466,
+          "width": 487667,
+          "height": 308610,
+          "normalized_box": [
+            0.315,
+            0.377,
+            0.04,
+            0.045
+          ],
+          "text": "路由确认"
+        },
+        {
+          "name": "gate-3-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5096128,
+          "top": 2592324,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.418,
+            0.378,
+            0.05,
+            0.04
+          ],
+          "text": "03"
+        },
+        {
+          "name": "gate-3-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5791055,
+          "top": 2585466,
+          "width": 487667,
+          "height": 308610,
+          "normalized_box": [
+            0.475,
+            0.377,
+            0.04,
+            0.045
+          ],
+          "text": "原生结构"
+        },
+        {
+          "name": "gate-4-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7046799,
+          "top": 2592324,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.578,
+            0.378,
+            0.05,
+            0.04
+          ],
+          "text": "04"
+        },
+        {
+          "name": "gate-4-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7741726,
+          "top": 2585466,
+          "width": 487667,
+          "height": 308610,
+          "normalized_box": [
+            0.635,
+            0.377,
+            0.04,
+            0.045
+          ],
+          "text": "视觉回归"
+        },
+        {
+          "name": "gate-5-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8997470,
+          "top": 2592324,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.738,
+            0.378,
+            0.05,
+            0.04
+          ],
+          "text": "05"
+        },
+        {
+          "name": "gate-5-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9692397,
+          "top": 2585466,
+          "width": 487667,
+          "height": 308610,
+          "normalized_box": [
+            0.795,
+            0.377,
+            0.04,
+            0.045
+          ],
+          "text": "人工收口"
+        },
+        {
+          "name": "stop-panel-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8899937,
+          "top": 3909059,
+          "width": 2072588,
+          "height": 342900,
+          "normalized_box": [
+            0.73,
+            0.57,
+            0.17,
+            0.05
+          ],
+          "text": "立即停机"
+        },
+        {
+          "name": "stop-panel-copy",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8899937,
+          "top": 4457700,
+          "width": 2072588,
+          "height": 411480,
+          "normalized_box": [
+            0.73,
+            0.65,
+            0.17,
+            0.06
+          ],
+          "text": "未知问题\n不得静默回退"
+        },
+        {
+          "name": "evidence-chain",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 975335,
+          "top": 4937760,
+          "width": 6705432,
+          "height": 274320,
+          "normalized_box": [
+            0.08,
+            0.72,
+            0.55,
+            0.04
+          ],
+          "text": "baseline → candidate → object audit → visual compare → mutation smoke"
+        },
+        {
+          "name": "governance-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8046518,
+          "top": 6172200,
+          "width": 3291757,
+          "height": 205740,
+          "normalized_box": [
+            0.66,
+            0.9,
+            0.27,
+            0.03
+          ],
+          "text": "5 gates / 1 failure branch / hard stop"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

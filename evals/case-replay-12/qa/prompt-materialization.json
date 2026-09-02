@@ -1,0 +1,110 @@
+{
+  "schema": "ai-ppt-plus/visual-prompt-materialization/v1",
+  "valid": true,
+  "technical_valid": true,
+  "status": "passed",
+  "plan_path": "visual-generation-plan.json",
+  "issues": [],
+  "in_place": true,
+  "dry_run": false,
+  "force": true,
+  "slides": [
+    {
+      "slide_no": 1,
+      "prompt_file": "prompts/01-route-editable-default-01.md",
+      "path": "prompts/01-route-editable-default-01.md",
+      "characters": 6792,
+      "text_items": 17,
+      "prompt_sha256": "47b9fef60a1ba1696ae561faf7fa1470116c2d064a84604834c91b066d1462c9"
+    },
+    {
+      "slide_no": 2,
+      "prompt_file": "prompts/02-native-shape-card-01.md",
+      "path": "prompts/02-native-shape-card-01.md",
+      "characters": 6452,
+      "text_items": 11,
+      "prompt_sha256": "8c3bb040f10ae23abaadb18118a6d1f6185c4afa430dcfb12056f70ffef5ac42"
+    },
+    {
+      "slide_no": 3,
+      "prompt_file": "prompts/03-native-table-basic-01.md",
+      "path": "prompts/03-native-table-basic-01.md",
+      "characters": 6333,
+      "text_items": 11,
+      "prompt_sha256": "b3f3d61e83da65ae8c9697942454d898e784756fd0bd3440dd579509280a4eda"
+    },
+    {
+      "slide_no": 4,
+      "prompt_file": "prompts/04-native-table-merge-richtext-01.md",
+      "path": "prompts/04-native-table-merge-richtext-01.md",
+      "characters": 6803,
+      "text_items": 22,
+      "prompt_sha256": "35c46aaea35dece86b005c02b2354fecb00b4cd0f8d5f8c07dc0c1ad13b317aa"
+    },
+    {
+      "slide_no": 5,
+      "prompt_file": "prompts/05-native-text-cjk-font-01.md",
+      "path": "prompts/05-native-text-cjk-font-01.md",
+      "characters": 6394,
+      "text_items": 10,
+      "prompt_sha256": "54fe3caafd0a5562838461dd56f6389be24d4ea80072f59e522186734da3a60c"
+    },
+    {
+      "slide_no": 6,
+      "prompt_file": "prompts/06-chart-data-provenance-01.md",
+      "path": "prompts/06-chart-data-provenance-01.md",
+      "characters": 6514,
+      "text_items": 20,
+      "prompt_sha256": "28dd3e124c594541d735a58b2e04895e0a4e5c5db8dd23e288f2f67a81231e4a"
+    },
+    {
+      "slide_no": 7,
+      "prompt_file": "prompts/07-visual-assets-gradient-icon-01.md",
+      "path": "prompts/07-visual-assets-gradient-icon-01.md",
+      "characters": 6393,
+      "text_items": 14,
+      "prompt_sha256": "0f7f6afbd979c69b2bdaa89f748bb6a724dee9f0b9c168d3a79bab3e804adb21"
+    },
+    {
+      "slide_no": 8,
+      "prompt_file": "prompts/08-framework-irregular-layer-01.md",
+      "path": "prompts/08-framework-irregular-layer-01.md",
+      "characters": 6458,
+      "text_items": 12,
+      "prompt_sha256": "a8050b3ee565bea95e924dceeab4bd5c5cfefb0d5ef6bcd4c729fdcf8660fb68"
+    },
+    {
+      "slide_no": 9,
+      "prompt_file": "prompts/09-multi-slide-consistency-01.md",
+      "path": "prompts/09-multi-slide-consistency-01.md",
+      "characters": 6347,
+      "text_items": 11,
+      "prompt_sha256": "39f77a3841673e78e89c6c16cf8578032a8a6d7a09f6d4d848cdd776fe501e2c"
+    },
+    {
+      "slide_no": 10,
+      "prompt_file": "prompts/10-failure-fallback-stop-01.md",
+      "path": "prompts/10-failure-fallback-stop-01.md",
+      "characters": 6395,
+      "text_items": 10,
+      "prompt_sha256": "ecc1d5d33ca5e60ad6a9494524cb40cb4f5fc6df99defd31b139433bdc3d5a93"
+    },
+    {
+      "slide_no": 11,
+      "prompt_file": "prompts/11-package-render-portability-01.md",
+      "path": "prompts/11-package-render-portability-01.md",
+      "characters": 6491,
+      "text_items": 12,
+      "prompt_sha256": "ac3e8800111ee0f5111aa4180f5ba11506b90dc192ab61c3160be84f54c4e663"
+    },
+    {
+      "slide_no": 12,
+      "prompt_file": "prompts/12-cache-idempotency-01.md",
+      "path": "prompts/12-cache-idempotency-01.md",
+      "characters": 6375,
+      "text_items": 13,
+      "prompt_sha256": "6cadc3b77b404c0b2297865fdf922ce48adec30a5d0231eb3020592172f3c960"
+    }
+  ],
+  "production_prompts_materialized": true
+}

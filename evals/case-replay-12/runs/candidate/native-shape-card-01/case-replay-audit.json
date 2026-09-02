@@ -1,0 +1,176 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/native-shape-card-01/editable.pptx",
+  "deck_sha256": "7ddd03d7fde05efd9df7cbd9b79d5f40ea43b5a19f9b90e23728ed7479067091",
+  "object_manifest": "runs/candidate/native-shape-card-01/object-manifest.json",
+  "object_manifest_sha256": "f8af7c60108d3ef13653a0403e5b9f4762ff9ba8e27735a87ea9d6fde0ea54fa",
+  "native_table_count": 0,
+  "native_panel_count": 7,
+  "formal_text_count": 14,
+  "formal_text_native_count": 14,
+  "a_tbl_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [],
+      "panels": [
+        {
+          "object_id": "layer-foundation",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "layer-value",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "result-cabin",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "card-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "card-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "card-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "card-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "新质生产力经营框架",
+          "observed": "新质生产力经营框架",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "战略牵引 × 能力筑基 × 场景突破 × 价值兑现",
+          "observed": "战略牵引 × 能力筑基 × 场景突破 × 价值兑现",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "card-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "战略牵引",
+          "observed": "战略牵引",
+          "run_count": 1
+        },
+        {
+          "object_id": "card-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "能力筑基",
+          "observed": "能力筑基",
+          "run_count": 1
+        },
+        {
+          "object_id": "card-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "场景突破",
+          "observed": "场景突破",
+          "run_count": 1
+        },
+        {
+          "object_id": "card-4-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "价值兑现",
+          "observed": "价值兑现",
+          "run_count": 1
+        },
+        {
+          "object_id": "foundation-1",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "组织",
+          "observed": "组织",
+          "run_count": 1
+        },
+        {
+          "object_id": "foundation-2",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "技术",
+          "observed": "技术",
+          "run_count": 1
+        },
+        {
+          "object_id": "foundation-3",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "数据",
+          "observed": "数据",
+          "run_count": 1
+        },
+        {
+          "object_id": "foundation-4",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "生态",
+          "observed": "生态",
+          "run_count": 1
+        },
+        {
+          "object_id": "result-cabin-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "经营结果",
+          "observed": "经营结果",
+          "run_count": 1
+        },
+        {
+          "object_id": "framework-footnote",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "组织、技术、数据、生态共同支撑四个经营跃迁层",
+          "observed": "组织、技术、数据、生态共同支撑四个经营跃迁层",
+          "run_count": 1
+        },
+        {
+          "object_id": "framework-score",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "可移动卡片 / 3层结构 / 连接线",
+          "observed": "可移动卡片 / 3层结构 / 连接线",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 27
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

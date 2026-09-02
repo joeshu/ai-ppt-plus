@@ -1,0 +1,48 @@
+{
+  "schema": "ai-ppt-plus/render/v1",
+  "ok": true,
+  "source": "runs/candidate-before/visual-assets-gradient-icon-01/mutation.pptx",
+  "deck_sha256": "bbf6f674543ee3dfe22d6f6547c20ea35008191ab8518dbc4924ded4475f3838",
+  "renderer": "LibreOffice+pdftoppm",
+  "render_attempts": [
+    {
+      "backend": "pdftoppm",
+      "page": 1,
+      "exit_code": 0,
+      "decoded": true,
+      "stderr": ""
+    }
+  ],
+  "conversion": {
+    "attempted": true,
+    "skipped": false,
+    "reason": "cache_disabled"
+  },
+  "font_dir": "../../ai-ppt-editable/assets/fonts",
+  "dpi": 126,
+  "selected_pages": "all",
+  "page_fingerprints": [
+    {
+      "page": 1,
+      "part": "ppt/slides/slide1.xml",
+      "fingerprint": "3043ecdd2e064f24d2214e5a3799e176ead08d679f618e56fd05545ac335419c",
+      "selected": true,
+      "cache_hit": false
+    }
+  ],
+  "page_cache": {
+    "schema": "ai-ppt-plus/page-render-cache/v1",
+    "enabled": false,
+    "dir": null,
+    "namespace": null,
+    "requested": 1,
+    "hits": 0,
+    "misses": 0,
+    "stored": 0,
+    "warnings": []
+  },
+  "pages": [
+    "runs/candidate-before/visual-assets-gradient-icon-01/mutation-render/slide-1.png"
+  ],
+  "errors": []
+}

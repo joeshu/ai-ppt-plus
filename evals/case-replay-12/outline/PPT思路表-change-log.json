@@ -1,0 +1,55 @@
+{
+  "schema": "ai-ppt-plus/outline-change-log/v1",
+  "revision": "R1-case-replay-12",
+  "source": "user-directed case replay suite",
+  "changes": [
+    {
+      "slide_no": 1,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 2,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 3,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 4,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 5,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 6,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 7,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 8,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 9,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 10,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 11,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    },
+    {
+      "slide_no": 12,
+      "change": "建立单页高密度视觉回放案例，正式文字和数据绑定 case-suite.json。"
+    }
+  ]
+}

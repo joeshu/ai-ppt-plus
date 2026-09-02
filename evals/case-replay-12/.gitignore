@@ -1,0 +1,8 @@
+# LibreOffice creates disposable profiles and PDFs while rendering evidence.
+runs/**/render/pptx-replay-*/
+runs/**/mutation-render/pptx-replay-*/
+runs/**/render/.selected-*.png
+runs/**/mutation-render/.selected-*.png
+runs/**/.*.tmp.pptx
+runs/**/render/**/*.pdf
+runs/**/mutation-render/**/*.pdf

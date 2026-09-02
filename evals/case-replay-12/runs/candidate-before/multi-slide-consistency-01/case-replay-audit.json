@@ -1,0 +1,214 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/multi-slide-consistency-01/editable.pptx",
+  "deck_sha256": "43fdc3e1e555b89a0b40e28d97de364ff614584276ffda48672484e4edb21e31",
+  "object_manifest": "runs/candidate-before/multi-slide-consistency-01/object-manifest.json",
+  "object_manifest_sha256": "fa47d3c5a5e6d3d5dbf4fcf25d4ece56fa09ab8d3b2eeb1efc8b96499267fd60",
+  "native_table_count": 0,
+  "native_panel_count": 5,
+  "formal_text_count": 20,
+  "formal_text_native_count": 20,
+  "a_tbl_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [],
+      "panels": [
+        {
+          "object_id": "module-card-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "module-card-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "module-card-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "module-card-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "module-card-5",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "经营闭环一页总览",
+          "observed": "经营闭环一页总览",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "统一口径｜统一节奏｜统一动作",
+          "observed": "统一口径｜统一节奏｜统一动作",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-1-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "01",
+          "observed": "01",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-1-title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "目标设定",
+          "observed": "目标设定",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-1-tag",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "同源组件",
+          "observed": "同源组件",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-2-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "02",
+          "observed": "02",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-2-title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "过程经营",
+          "observed": "过程经营",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-2-tag",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "同源组件",
+          "observed": "同源组件",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-3-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "03",
+          "observed": "03",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-3-title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "问题诊断",
+          "observed": "问题诊断",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-3-tag",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "同源组件",
+          "observed": "同源组件",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-4-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "04",
+          "observed": "04",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-4-title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "资源调度",
+          "observed": "资源调度",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-4-tag",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "同源组件",
+          "observed": "同源组件",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-5-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "05",
+          "observed": "05",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-5-title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "结果复盘",
+          "observed": "结果复盘",
+          "run_count": 1
+        },
+        {
+          "object_id": "module-card-5-tag",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "同源组件",
+          "observed": "同源组件",
+          "run_count": 1
+        },
+        {
+          "object_id": "loop-center-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "统一口径\n统一节奏\n统一动作",
+          "observed": "统一口径\n统一节奏\n统一动作",
+          "run_count": 3
+        },
+        {
+          "object_id": "consistency-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "五个重复模块使用同一组件 token、几何和文字基线",
+          "observed": "五个重复模块使用同一组件 token、几何和文字基线",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 34
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

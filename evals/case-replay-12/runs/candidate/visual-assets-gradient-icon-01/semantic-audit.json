@@ -1,0 +1,915 @@
+{
+  "schema": "ai-ppt-plus/semantic-object-audit/v2",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/visual-assets-gradient-icon-01/editable.pptx",
+  "deck_sha256": "6e1c772ebb48576b5c1e21c7dd8c9e1da303a49fb5b64d41f25a31329edb22c5",
+  "object_manifest": "runs/candidate/visual-assets-gradient-icon-01/object-manifest.json",
+  "object_manifest_sha256": "572984a696f9c9ce9dbc2b90b08a5bb376b68a95be765b1a2704ff376be1499c",
+  "text_manifest": "runs/candidate/visual-assets-gradient-icon-01/text-manifest.json",
+  "text_manifest_sha256": "bf611fac46e8ea9dcbfdd4e47f9d9541dc137a9b34eeec459b2111facd4e7755",
+  "expected_object_count": 45,
+  "audited_object_count": 45,
+  "observed_top_level_shape_count": 24,
+  "undeclared_shape_count": 0,
+  "text_manifest_coverage": {
+    "required": true,
+    "declared": 11,
+    "slide_numbers": [
+      1
+    ],
+    "orphan_count": 0,
+    "orphans": []
+  },
+  "coverage": [
+    {
+      "slide_no": 1,
+      "declared_object_count": 45,
+      "observed_top_level_shape_count": 24,
+      "audited_object_count": 45,
+      "undeclared_shape_count": 0,
+      "undeclared_shapes": [],
+      "complete": true
+    }
+  ],
+  "objects": [
+    {
+      "slide_no": 1,
+      "object_id": "background",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "orbital-core",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "orbit-ring-1",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "orbit-ring-2",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-1",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "capability-1-fill",
+          "capability-1-accent",
+          "capability-1-rule"
+        ],
+        "observed_children": [
+          "capability-1-fill",
+          "capability-1-accent",
+          "capability-1-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-1-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "capability-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-1-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "capability-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-1-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "capability-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-2",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "capability-2-fill",
+          "capability-2-accent",
+          "capability-2-rule"
+        ],
+        "observed_children": [
+          "capability-2-fill",
+          "capability-2-accent",
+          "capability-2-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-2-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "capability-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-2-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "capability-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-2-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "capability-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-3",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "capability-3-fill",
+          "capability-3-accent",
+          "capability-3-rule"
+        ],
+        "observed_children": [
+          "capability-3-fill",
+          "capability-3-accent",
+          "capability-3-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-3-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "capability-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-3-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "capability-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-3-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "capability-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-4",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "capability-4-fill",
+          "capability-4-accent",
+          "capability-4-rule"
+        ],
+        "observed_children": [
+          "capability-4-fill",
+          "capability-4-accent",
+          "capability-4-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-4-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "capability-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-4-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "capability-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-4-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "capability-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-1",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "value-1-fill",
+          "value-1-accent",
+          "value-1-rule"
+        ],
+        "observed_children": [
+          "value-1-fill",
+          "value-1-accent",
+          "value-1-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-1-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "value-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-1-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "value-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-1-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "value-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-2",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "value-2-fill",
+          "value-2-accent",
+          "value-2-rule"
+        ],
+        "observed_children": [
+          "value-2-fill",
+          "value-2-accent",
+          "value-2-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-2-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "value-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-2-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "value-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-2-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "value-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-3",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "value-3-fill",
+          "value-3-accent",
+          "value-3-rule"
+        ],
+        "observed_children": [
+          "value-3-fill",
+          "value-3-accent",
+          "value-3-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-3-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "value-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-3-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "value-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-3-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "value-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "5G-A能力全景",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "5G-A能力全景",
+      "observed_text_sha256": "df89021766bb75b5a8fe297d48a22cd083ce3d697426724a85b991c8def5acd2",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "5G-A能力全景"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "subtitle",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "连接 × 算力 × 感知 × 智能",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "连接 × 算力 × 感知 × 智能",
+      "observed_text_sha256": "f7064d66cb319d389c3adf5a76ac08302f3014de54830b9b18b76d923776838a",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "连接 × 算力 × 感知 × 智能"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "case-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "CASE REPLAY / NATIVE EDITABLE",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "CASE REPLAY / NATIVE EDITABLE",
+      "observed_text_sha256": "1e68904ccf235bd4e08ad9a3b81497719dbb076c3e69d5657daa46f1cabf6398",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "CASE REPLAY / NATIVE EDITABLE"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-1-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "连接",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "连接",
+      "observed_text_sha256": "16ab82ef32f4295264ba542957a24019e2dd450640ae6e37cebd36605adbc776",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "连接"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-2-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "算力",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "算力",
+      "observed_text_sha256": "651aa5d1e070fb1972f1ee4825d2b3ade7103108337dc78de72fe57f20a5c57a",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "算力"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-3-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "感知",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "感知",
+      "observed_text_sha256": "141202a4bccad0fb85ace93175d8fd4c2851c296d76e4a5ed914e9372d4a3e77",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "感知"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "capability-4-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "智能",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "智能",
+      "observed_text_sha256": "d853a0e85aef7c04173f9d6850cb3babcc9d13af5918b131193fb9a67f302a24",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "智能"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-1-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "低时延",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "低时延",
+      "observed_text_sha256": "951e2a881315db34d3898235773a220f22d2c3718c891776a6a6a71e3e9ddead",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "低时延"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-2-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "大上行",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "大上行",
+      "observed_text_sha256": "0fb75791c9329654f2efea1e4fbb7a7bef2d601632af67627d0653c67bde647e",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "大上行"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "value-3-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "确定性网络",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "确定性网络",
+      "observed_text_sha256": "e1b44a56d54c7758826d8805bbf24ca1a04c0d4dd78c658d1f5926ca0649359f",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "确定性网络"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "asset-note",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "独立视觉资产边界：轨道、渐变、节点、标签",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "独立视觉资产边界：轨道、渐变、节点、标签",
+      "observed_text_sha256": "1c20a8fedd39798d460ba81a95437e3bc1a19baf1fe0bb28a062f340c54c0633",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "独立视觉资产边界：轨道、渐变、节点、标签"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

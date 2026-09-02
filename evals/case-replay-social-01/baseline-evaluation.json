@@ -1,0 +1,241 @@
+{
+  "schema": "ai-ppt-plus/pptx-case-evaluation/v1",
+  "evaluation_schema": "ai-ppt-plus/distillation-evaluation/v1",
+  "generated_at": "2026-09-02T17:59:31.659275+00:00",
+  "phase": "baseline",
+  "case_id": "social-channel-commission-native-01",
+  "status": "failed",
+  "valid": false,
+  "failure_codes": [
+    "case-expected-structure",
+    "native-table-xml",
+    "native-panel-object",
+    "mutation-smoke-test",
+    "visual-comparison"
+  ],
+  "source_hashes": {
+    "source_pptx_sha256": "576d2800f2edd35382658d5edb4f274e73327bf93b7ed77713b7c43ba0b34f30",
+    "source_reference_sha256": "b6c88cae8af3908eab7e3917447af05426b5407326a0979257b97e6b1a30124c",
+    "source_reference_path": "../../ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg",
+    "process_image_sha256": "da3e67b65b50ad6e0e8cea68360ea94dd9fc98fe9d87dfc95bd1eb15420a5ce4"
+  },
+  "deck": {
+    "path": "../../ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx",
+    "sha256": "576d2800f2edd35382658d5edb4f274e73327bf93b7ed77713b7c43ba0b34f30",
+    "slides": 1
+  },
+  "rendered": {
+    "directory": "../case-replay-social-01/runs/baseline/rendered",
+    "files": [
+      {
+        "path": "../case-replay-social-01/runs/baseline/rendered/slide-1.png",
+        "sha256": "b8b5bc3ac4af6c62a6fbe0dc3d984e4d6d956eb23ed4c60b32ae4a41a8c972bc"
+      }
+    ],
+    "valid": true,
+    "error": null
+  },
+  "observed": {
+    "slides": 1,
+    "shape_count": 134,
+    "shape_types": {
+      "PICTURE (13)": 18,
+      "TEXT_BOX (17)": 116
+    },
+    "pictures": 18,
+    "full_slide_pictures": 2,
+    "permitted_full_slide_pictures": 2,
+    "semantic_frame_pictures": 0,
+    "native_tables": 0,
+    "a_tbl_count": 0,
+    "native_table_shapes": [],
+    "tables": {},
+    "policy_fee_table": null,
+    "monthly_incentive_table": null,
+    "native_panel_count": 0,
+    "native_panel_names": [],
+    "native_panel_groups": false,
+    "native_text_objects": 116,
+    "native_text_runs": 135,
+    "formal_text_in_raster": false,
+    "body_native_text": true,
+    "source_full_slide_picture_detected": false,
+    "media_hashes": [
+      "02a2f2decadcf6dd94079579fbbaa44cabb9d174d2b0e7851854755040341e69",
+      "05ae56fff072d50e0d9b67f1e31d7b2a513c24e01c75a60cb4758f8a600d842e",
+      "0abf892ec60658274c12a5ea4e53e542e1de37034f4dab0bd8a00898785f6a2b",
+      "0dc7b284f69993a5a3e6e388d5386cbb1a1c1871692d4b6106613353b7f9d263",
+      "10465873ead4417b8c2368b14409d15d6fc404a226578a6c09e7b9534bc57952",
+      "1fe5b1d48bdba8f34284e161a70e26a01258b84f902fb7e54588f82d44a9c80d",
+      "21535cadb96acd8d62c9c4366a43e828eb8d8bfc05ff4a42f7ab0921f3b71ebe",
+      "40689435e1b6535f7dbc3e0efd19ecf75ae9083b903a783da758c12974501d86",
+      "761f5489f681dd3a511d1b18cecda3bb47be3bfdfd3c5ead3cda17b882c734f8",
+      "79a6a9bbdefc0d73bbbc1b06bb93b8311a0321f57ff0cd84f5cea8d844d73aa5",
+      "81bef579c1420f4719bb665cd4fc5457cfe01ba89b46f4fa29d9b3d456cd6ba3",
+      "89510f240a51169838fb81a5c10fd8bacdd710178208f6625e74e218eaffeb86",
+      "8fad744cb428b8884d67f8cebca2b0225f42e07924dfb1ccd18b5fb843888ceb",
+      "d1ee9fffe650a334c57a9d0b3c104ceb16ef0735d874b10e68ad5adbebc0b518",
+      "d5f7eb9902f8eed400278d38089ae0fb8a073874c9060fa9556de7901c3d1da8"
+    ]
+  },
+  "native_object_audit": {
+    "valid": false,
+    "detail": "permitted_full_slide_pictures observed=2, max=1",
+    "observed": {
+      "slides": 1,
+      "shape_count": 134,
+      "shape_types": {
+        "PICTURE (13)": 18,
+        "TEXT_BOX (17)": 116
+      },
+      "pictures": 18,
+      "full_slide_pictures": 2,
+      "permitted_full_slide_pictures": 2,
+      "semantic_frame_pictures": 0,
+      "native_tables": 0,
+      "a_tbl_count": 0,
+      "native_table_shapes": [],
+      "tables": {},
+      "policy_fee_table": null,
+      "monthly_incentive_table": null,
+      "native_panel_count": 0,
+      "native_panel_names": [],
+      "native_panel_groups": false,
+      "native_text_objects": 116,
+      "native_text_runs": 135,
+      "formal_text_in_raster": false,
+      "body_native_text": true,
+      "source_full_slide_picture_detected": false,
+      "media_hashes": [
+        "02a2f2decadcf6dd94079579fbbaa44cabb9d174d2b0e7851854755040341e69",
+        "05ae56fff072d50e0d9b67f1e31d7b2a513c24e01c75a60cb4758f8a600d842e",
+        "0abf892ec60658274c12a5ea4e53e542e1de37034f4dab0bd8a00898785f6a2b",
+        "0dc7b284f69993a5a3e6e388d5386cbb1a1c1871692d4b6106613353b7f9d263",
+        "10465873ead4417b8c2368b14409d15d6fc404a226578a6c09e7b9534bc57952",
+        "1fe5b1d48bdba8f34284e161a70e26a01258b84f902fb7e54588f82d44a9c80d",
+        "21535cadb96acd8d62c9c4366a43e828eb8d8bfc05ff4a42f7ab0921f3b71ebe",
+        "40689435e1b6535f7dbc3e0efd19ecf75ae9083b903a783da758c12974501d86",
+        "761f5489f681dd3a511d1b18cecda3bb47be3bfdfd3c5ead3cda17b882c734f8",
+        "79a6a9bbdefc0d73bbbc1b06bb93b8311a0321f57ff0cd84f5cea8d844d73aa5",
+        "81bef579c1420f4719bb665cd4fc5457cfe01ba89b46f4fa29d9b3d456cd6ba3",
+        "89510f240a51169838fb81a5c10fd8bacdd710178208f6625e74e218eaffeb86",
+        "8fad744cb428b8884d67f8cebca2b0225f42e07924dfb1ccd18b5fb843888ceb",
+        "d1ee9fffe650a334c57a9d0b3c104ceb16ef0735d874b10e68ad5adbebc0b518",
+        "d5f7eb9902f8eed400278d38089ae0fb8a073874c9060fa9556de7901c3d1da8"
+      ]
+    }
+  },
+  "table_audit": {
+    "valid": false,
+    "a_tbl_count": 0,
+    "native_table_count": 0,
+    "required_shapes": [
+      "commission-card-1-body",
+      "commission-card-2-body",
+      "commission-card-3-body",
+      "policy-fee-table",
+      "monthly-incentive-table"
+    ],
+    "observed_shapes": [],
+    "policy_fee_table": null,
+    "monthly_incentive_table": null
+  },
+  "panel_audit": {
+    "valid": false,
+    "native_panel_count": 0,
+    "native_panel_names": [],
+    "semantic_frame_pictures": 0
+  },
+  "text_audit": {
+    "valid": true,
+    "native_text_objects": 116,
+    "native_text_runs": 135,
+    "formal_text_in_raster": false,
+    "body_native_text": true
+  },
+  "mutation_smoke_test": {
+    "valid": false,
+    "table_cell_mutated": false,
+    "panel_moved": false,
+    "rendered_change": false,
+    "reason": "native table or native panel is missing"
+  },
+  "visual_comparison": {
+    "valid": false,
+    "rendered": "../case-replay-social-01/runs/baseline/rendered/slide-1.png",
+    "rendered_sha256": "b8b5bc3ac4af6c62a6fbe0dc3d984e4d6d956eb23ed4c60b32ae4a41a8c972bc",
+    "reference": "../../ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg",
+    "reference_sha256": "b6c88cae8af3908eab7e3917447af05426b5407326a0979257b97e6b1a30124c",
+    "metrics": {
+      "visual_score": 0.5945,
+      "mae": 0.327524,
+      "rmse": 0.550312,
+      "pixel_match_ratio": 0.571865
+    },
+    "original_sizes": {
+      "rendered": [
+        1920,
+        1080
+      ],
+      "reference": [
+        1920,
+        1080
+      ]
+    },
+    "comparison_size": [
+      1920,
+      1080
+    ],
+    "resized_for_comparison": false,
+    "issues": [
+      {
+        "code": "visual_metric_below_visual_score",
+        "observed": 0.5945,
+        "minimum": 0.8
+      },
+      {
+        "code": "visual_metric_above_mae",
+        "observed": 0.327524,
+        "maximum": 0.25
+      },
+      {
+        "code": "visual_metric_above_rmse",
+        "observed": 0.550312,
+        "maximum": 0.45
+      }
+    ],
+    "human_visual_review_required": true,
+    "reference_kind": "source-reference",
+    "thresholds": {
+      "min_visual_score": 0.8,
+      "min_pixel_match_ratio": 0.55,
+      "max_mae": 0.25,
+      "max_rmse": 0.45
+    }
+  },
+  "object_comparison": {
+    "valid": false,
+    "detail": "permitted_full_slide_pictures observed=2, max=1"
+  },
+  "metrics": {
+    "visual_score": 0.5945,
+    "mae": 0.327524,
+    "rmse": 0.550312,
+    "pixel_match_ratio": 0.571865,
+    "native_tables": 0,
+    "native_panel_count": 0,
+    "formal_text_in_raster": false,
+    "whole_slide_picture_count": 2,
+    "failed_gate_count": 5
+  },
+  "behavioral_change": false,
+  "repair_fingerprint": null,
+  "regressions": [
+    {
+      "case_id": "social-channel-commission-native-01",
+      "status": "failed",
+      "valid": false
+    }
+  ],
+  "human_visual_review_required": true
+}

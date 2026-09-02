@@ -1,0 +1,671 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/native-table-merge-richtext-01/editable.pptx",
+  "object_manifest": "runs/candidate-before/native-table-merge-richtext-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 3,
+  "native_panel_count": 4,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 34,
+      "object_count_recursive": 34,
+      "native_tables": 3,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "section-divider",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 853418,
+          "top": 2948940,
+          "width": 10484857,
+          "height": 171450,
+          "normalized_box": [
+            0.07,
+            0.43,
+            0.86,
+            0.025
+          ],
+          "text": ""
+        },
+        {
+          "name": "principle-badge",
+          "kind": "native_group",
+          "parent": null,
+          "left": 9265688,
+          "top": 377190,
+          "width": 2072588,
+          "height": 754380,
+          "normalized_box": [
+            0.76,
+            0.055,
+            0.17,
+            0.11
+          ],
+          "text": ""
+        },
+        {
+          "name": "principle-badge-fill",
+          "kind": "native_shape",
+          "parent": "principle-badge",
+          "left": 9265688,
+          "top": 377190,
+          "width": 2072588,
+          "height": 754380,
+          "normalized_box": [
+            0.76,
+            0.055,
+            0.17,
+            0.11
+          ],
+          "text": ""
+        },
+        {
+          "name": "principle-badge-accent",
+          "kind": "native_shape",
+          "parent": "principle-badge",
+          "left": 9265688,
+          "top": 377190,
+          "width": 2072588,
+          "height": 41490,
+          "normalized_box": [
+            0.76,
+            0.055,
+            0.17,
+            0.00605
+          ],
+          "text": ""
+        },
+        {
+          "name": "principle-badge-rule",
+          "kind": "native_shape",
+          "parent": "principle-badge",
+          "left": 9327865,
+          "top": 1056132,
+          "width": 1948233,
+          "height": 754,
+          "normalized_box": [
+            0.7651,
+            0.154,
+            0.1598,
+            0.00011
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 853418,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 1165860,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.25,
+            0.17
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-1-fill",
+          "kind": "native_shape",
+          "parent": "commission-card-1",
+          "left": 853418,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 1165860,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.25,
+            0.17
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-1-accent",
+          "kind": "native_shape",
+          "parent": "commission-card-1",
+          "left": 853418,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 64122,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.25,
+            0.00935
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-1-rule",
+          "kind": "native_shape",
+          "parent": "commission-card-1",
+          "left": 944856,
+          "top": 2558034,
+          "width": 2865048,
+          "height": 1165,
+          "normalized_box": [
+            0.0775,
+            0.373,
+            0.235,
+            0.00017
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4389010,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 1165860,
+          "normalized_box": [
+            0.36,
+            0.22,
+            0.25,
+            0.17
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-2-fill",
+          "kind": "native_shape",
+          "parent": "commission-card-2",
+          "left": 4389010,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 1165860,
+          "normalized_box": [
+            0.36,
+            0.22,
+            0.25,
+            0.17
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-2-accent",
+          "kind": "native_shape",
+          "parent": "commission-card-2",
+          "left": 4389010,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 64122,
+          "normalized_box": [
+            0.36,
+            0.22,
+            0.25,
+            0.00935
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-2-rule",
+          "kind": "native_shape",
+          "parent": "commission-card-2",
+          "left": 4480447,
+          "top": 2558034,
+          "width": 2865049,
+          "height": 1165,
+          "normalized_box": [
+            0.3675,
+            0.373,
+            0.235,
+            0.00017
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 7924601,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 1165860,
+          "normalized_box": [
+            0.65,
+            0.22,
+            0.25,
+            0.17
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-3-fill",
+          "kind": "native_shape",
+          "parent": "commission-card-3",
+          "left": 7924601,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 1165860,
+          "normalized_box": [
+            0.65,
+            0.22,
+            0.25,
+            0.17
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-3-accent",
+          "kind": "native_shape",
+          "parent": "commission-card-3",
+          "left": 7924601,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 64122,
+          "normalized_box": [
+            0.65,
+            0.22,
+            0.25,
+            0.00935
+          ],
+          "text": ""
+        },
+        {
+          "name": "commission-card-3-rule",
+          "kind": "native_shape",
+          "parent": "commission-card-3",
+          "left": 8016039,
+          "top": 2558034,
+          "width": 2865048,
+          "height": 1165,
+          "normalized_box": [
+            0.6575,
+            0.373,
+            0.235,
+            0.00017
+          ],
+          "text": ""
+        },
+        {
+          "name": "policy-merged-table",
+          "kind": "editable_table",
+          "parent": null,
+          "left": 853418,
+          "top": 3429000,
+          "width": 6217763,
+          "height": 2468880,
+          "normalized_box": [
+            0.07,
+            0.5,
+            0.51,
+            0.36
+          ],
+          "text": "",
+          "rows": 9,
+          "columns": 4,
+          "cell_text": [
+            [
+              "场景",
+              "收入变化",
+              "服务费标准",
+              "计提周期"
+            ],
+            [
+              "月度发展",
+              "增收有奖",
+              "达量补贴标准 / 已绑定",
+              "月度"
+            ],
+            [
+              "",
+              "减收不罚",
+              "按政策",
+              "月度"
+            ],
+            [
+              "适用渠道",
+              "增收有奖",
+              "结果可核对",
+              "周期锁定"
+            ],
+            [
+              "",
+              "减收不罚",
+              "统一标准",
+              "可回放"
+            ],
+            [
+              "场景",
+              "增收有奖",
+              "来源绑定",
+              "月度"
+            ],
+            [
+              "",
+              "减收不罚",
+              "可追溯",
+              "月度"
+            ],
+            [
+              "结果",
+              "可核对",
+              "按政策",
+              "结果"
+            ],
+            [
+              "",
+              "可核对",
+              "可追溯",
+              "复核"
+            ]
+          ]
+        },
+        {
+          "name": "monthly-incentive-table",
+          "kind": "editable_table",
+          "parent": null,
+          "left": 7436933,
+          "top": 3429000,
+          "width": 3901341,
+          "height": 1097280,
+          "normalized_box": [
+            0.61,
+            0.5,
+            0.32,
+            0.16
+          ],
+          "text": "",
+          "rows": 4,
+          "columns": 3,
+          "cell_text": [
+            [
+              "月度发展",
+              "达量补贴标准",
+              "适用渠道"
+            ],
+            [
+              "增收有奖",
+              "结果可核对",
+              "渠道"
+            ],
+            [
+              "减收不罚",
+              "统一标准",
+              "渠道"
+            ],
+            [
+              "结果",
+              "可回放",
+              "全部"
+            ]
+          ]
+        },
+        {
+          "name": "policy-summary-table",
+          "kind": "editable_table",
+          "parent": null,
+          "left": 7436933,
+          "top": 4937760,
+          "width": 3291757,
+          "height": 822960,
+          "normalized_box": [
+            0.61,
+            0.72,
+            0.27,
+            0.12
+          ],
+          "text": "",
+          "rows": 3,
+          "columns": 2,
+          "cell_text": [
+            [
+              "指标",
+              "状态"
+            ],
+            [
+              "合并单元格",
+              "已绑定"
+            ],
+            [
+              "富文本",
+              "已绑定"
+            ]
+          ]
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "FTTR渠道激励政策明白卡"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "增收有奖｜减收不罚"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6461598,
+          "top": 514350,
+          "width": 2194505,
+          "height": 274320,
+          "normalized_box": [
+            0.53,
+            0.075,
+            0.18,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "principle-badge-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9448563,
+          "top": 534924,
+          "width": 1706837,
+          "height": 445770,
+          "normalized_box": [
+            0.775,
+            0.078,
+            0.14,
+            0.065
+          ],
+          "text": "增收有奖\n减收不罚"
+        },
+        {
+          "name": "commission-card-1-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1097252,
+          "top": 1714500,
+          "width": 2560255,
+          "height": 240030,
+          "normalized_box": [
+            0.09,
+            0.25,
+            0.21,
+            0.035
+          ],
+          "text": "核心原则"
+        },
+        {
+          "name": "commission-card-1-copy",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1097252,
+          "top": 2125980,
+          "width": 2560255,
+          "height": 274320,
+          "normalized_box": [
+            0.09,
+            0.31,
+            0.21,
+            0.04
+          ],
+          "text": "增收有奖"
+        },
+        {
+          "name": "commission-card-2-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4632844,
+          "top": 1714500,
+          "width": 2560255,
+          "height": 240030,
+          "normalized_box": [
+            0.38,
+            0.25,
+            0.21,
+            0.035
+          ],
+          "text": "场景"
+        },
+        {
+          "name": "commission-card-2-copy",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4632844,
+          "top": 2125980,
+          "width": 2560255,
+          "height": 274320,
+          "normalized_box": [
+            0.38,
+            0.31,
+            0.21,
+            0.04
+          ],
+          "text": "达量补贴标准"
+        },
+        {
+          "name": "commission-card-3-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8168435,
+          "top": 1714500,
+          "width": 2560255,
+          "height": 240030,
+          "normalized_box": [
+            0.67,
+            0.25,
+            0.21,
+            0.035
+          ],
+          "text": "结果"
+        },
+        {
+          "name": "commission-card-3-copy",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8168435,
+          "top": 2125980,
+          "width": 2560255,
+          "height": 274320,
+          "normalized_box": [
+            0.67,
+            0.31,
+            0.21,
+            0.04
+          ],
+          "text": "结果可核对"
+        },
+        {
+          "name": "merge-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 853418,
+          "top": 6172200,
+          "width": 10484857,
+          "height": 205740,
+          "normalized_box": [
+            0.07,
+            0.9,
+            0.86,
+            0.03
+          ],
+          "text": "3 native tables / merged first column / rich-text runs"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

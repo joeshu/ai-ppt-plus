@@ -34,7 +34,25 @@ def array(path: Path, target_size=None):
         image = image.convert("RGB")
         if target_size and image.size != tuple(target_size):
             image = image.resize(tuple(target_size), Image.Resampling.LANCZOS)
-        return np.asarray(image, dtype=np.float32) / 255.0, image.size
+    return np.asarray(image, dtype=np.float32) / 255.0, image.size
+
+
+def raw_image(path: Path):
+    """Load an authored slide image without viewer-crop heuristics."""
+    with Image.open(path) as image:
+        image = image.convert("RGB")
+        return image.copy(), {
+            "detected": False,
+            "crop_box": [0, 0, image.width, image.height],
+            "original_size": [image.width, image.height],
+            "content_size": [image.width, image.height],
+            "original_ratio": round(image.width / image.height, 7) if image.height else None,
+            "content_ratio": round(image.width / image.height, 7) if image.height else None,
+            "bar_pixels": {"left": 0, "top": 0, "right": 0, "bottom": 0},
+            "confidence": 1.0,
+            "reason": "raw_slide_canvas",
+            "artifact_classification": "authored_slide_canvas",
+        }
 
 
 def ssim(a, b):
@@ -53,18 +71,23 @@ def main() -> int:
     parser.add_argument("reference")
     parser.add_argument("--expected-ratio", type=float, help="optional slide ratio used to validate viewer-capture crops")
     parser.add_argument("--threshold", type=float)
+    parser.add_argument("--raw-slide", action="store_true", help="compare the complete authored canvases; disable viewer letterbox-crop detection")
     parser.add_argument("--report")
     args = parser.parse_args()
     rendered_path, reference_path = Path(args.rendered), Path(args.reference)
-    rendered_image, rendered_viewport = load_viewport(rendered_path)
-    reference_image, reference_viewport = load_viewport(
-        reference_path,
-        expected_ratio=args.expected_ratio,
-    )
+    if args.raw_slide:
+        rendered_image, rendered_viewport = raw_image(rendered_path)
+        reference_image, reference_viewport = raw_image(reference_path)
+    else:
+        rendered_image, rendered_viewport = load_viewport(rendered_path)
+        reference_image, reference_viewport = load_viewport(
+            reference_path,
+            expected_ratio=args.expected_ratio,
+        )
     # If the caller did not declare a ratio, use the normalized reference
     # viewport as the contract for a viewer-captured candidate as well.
     reference_ratio = reference_image.width / reference_image.height if reference_image.height else 0
-    if not args.expected_ratio and reference_viewport["detected"]:
+    if not args.raw_slide and not args.expected_ratio and reference_viewport["detected"]:
         rendered_image, rendered_viewport = load_viewport(
             rendered_path,
             expected_ratio=reference_ratio,

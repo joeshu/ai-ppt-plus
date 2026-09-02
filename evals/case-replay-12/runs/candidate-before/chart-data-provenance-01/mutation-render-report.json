@@ -1,0 +1,48 @@
+{
+  "schema": "ai-ppt-plus/render/v1",
+  "ok": true,
+  "source": "runs/candidate-before/chart-data-provenance-01/mutation.pptx",
+  "deck_sha256": "6e0b3b3061920f61f8295a2f6b3079712c02583b8bf26bd3f752ad4d43e03b66",
+  "renderer": "LibreOffice+pdftoppm",
+  "render_attempts": [
+    {
+      "backend": "pdftoppm",
+      "page": 1,
+      "exit_code": 0,
+      "decoded": true,
+      "stderr": ""
+    }
+  ],
+  "conversion": {
+    "attempted": true,
+    "skipped": false,
+    "reason": "cache_disabled"
+  },
+  "font_dir": "../../ai-ppt-editable/assets/fonts",
+  "dpi": 126,
+  "selected_pages": "all",
+  "page_fingerprints": [
+    {
+      "page": 1,
+      "part": "ppt/slides/slide1.xml",
+      "fingerprint": "08afda18181f42c2bf5d3231ee3d7b780aef97057cab0c38ac4f5a5802b89981",
+      "selected": true,
+      "cache_hit": false
+    }
+  ],
+  "page_cache": {
+    "schema": "ai-ppt-plus/page-render-cache/v1",
+    "enabled": false,
+    "dir": null,
+    "namespace": null,
+    "requested": 1,
+    "hits": 0,
+    "misses": 0,
+    "stored": 0,
+    "warnings": []
+  },
+  "pages": [
+    "runs/candidate-before/chart-data-provenance-01/mutation-render/slide-1.png"
+  ],
+  "errors": []
+}

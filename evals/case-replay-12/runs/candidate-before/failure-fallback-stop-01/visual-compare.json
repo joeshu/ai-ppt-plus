@@ -1,0 +1,103 @@
+{
+  "schema": "ai-ppt-plus/visual-comparison/v1",
+  "valid": true,
+  "rendered": "runs/candidate-before/failure-fallback-stop-01/render/slide-1.png",
+  "rendered_sha256": "66e79caead73411d98d1d4c9ed0eb76c863fd7e6b8fea39c08f3014efdc4baac",
+  "reference": "visual/failure-fallback-stop-01-reference.png",
+  "reference_sha256": "b09c0d93332fce28399bc1174b215c4e4ab9e3989010e61ff78854d48ce6d9f1",
+  "original_sizes": {
+    "rendered": [
+      1680,
+      945
+    ],
+    "reference": [
+      1672,
+      941
+    ]
+  },
+  "normalized_sizes": {
+    "rendered": [
+      1680,
+      945
+    ],
+    "reference": [
+      1672,
+      941
+    ]
+  },
+  "viewer_crops": {
+    "rendered": {
+      "detected": false,
+      "crop_box": [
+        0,
+        0,
+        1680,
+        945
+      ],
+      "original_size": [
+        1680,
+        945
+      ],
+      "content_size": [
+        1680,
+        945
+      ],
+      "original_ratio": 1.7777778,
+      "content_ratio": 1.7777778,
+      "bar_pixels": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "confidence": 1.0,
+      "reason": "raw_slide_canvas",
+      "artifact_classification": "authored_slide_canvas"
+    },
+    "reference": {
+      "detected": false,
+      "crop_box": [
+        0,
+        0,
+        1672,
+        941
+      ],
+      "original_size": [
+        1672,
+        941
+      ],
+      "content_size": [
+        1672,
+        941
+      ],
+      "original_ratio": 1.7768332,
+      "content_ratio": 1.7768332,
+      "bar_pixels": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "confidence": 1.0,
+      "reason": "raw_slide_canvas",
+      "artifact_classification": "authored_slide_canvas"
+    }
+  },
+  "aspect_ratio_delta": 0.000945,
+  "aspect_ratio_tolerance": 0.015,
+  "comparison_size": [
+    1672,
+    941
+  ],
+  "resized_for_comparison": true,
+  "metrics": {
+    "global_ssim": 0.051328,
+    "blurred_layout_ssim": 0.142282,
+    "mean_absolute_error": 0.133023,
+    "rmse": 0.227028,
+    "pixel_fidelity_score": 0.866977
+  },
+  "issues": [],
+  "human_visual_review_required": true,
+  "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"
+}

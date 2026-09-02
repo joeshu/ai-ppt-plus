@@ -1,0 +1,48 @@
+{
+  "schema": "ai-ppt-plus/render/v1",
+  "ok": true,
+  "source": "runs/candidate-before/route-editable-default-01/editable.pptx",
+  "deck_sha256": "50732288f7bfe29fc755e21e6dddf14e5057f7e19a4f6ae0f334ebd63addde04",
+  "renderer": "LibreOffice+pdftoppm",
+  "render_attempts": [
+    {
+      "backend": "pdftoppm",
+      "page": 1,
+      "exit_code": 0,
+      "decoded": true,
+      "stderr": ""
+    }
+  ],
+  "conversion": {
+    "attempted": true,
+    "skipped": false,
+    "reason": "cache_disabled"
+  },
+  "font_dir": "../../ai-ppt-editable/assets/fonts",
+  "dpi": 126,
+  "selected_pages": "all",
+  "page_fingerprints": [
+    {
+      "page": 1,
+      "part": "ppt/slides/slide1.xml",
+      "fingerprint": "53b4a4b24167978a567eafaa886dd3118f2f25196e531b7d62d40a1fb3dda58e",
+      "selected": true,
+      "cache_hit": false
+    }
+  ],
+  "page_cache": {
+    "schema": "ai-ppt-plus/page-render-cache/v1",
+    "enabled": false,
+    "dir": null,
+    "namespace": null,
+    "requested": 1,
+    "hits": 0,
+    "misses": 0,
+    "stored": 0,
+    "warnings": []
+  },
+  "pages": [
+    "runs/candidate-before/route-editable-default-01/render/slide-1.png"
+  ],
+  "errors": []
+}

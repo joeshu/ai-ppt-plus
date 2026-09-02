@@ -1,0 +1,207 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/native-text-cjk-font-01/editable.pptx",
+  "deck_sha256": "3f847b348833a0193abb1ffd8372c5cdc3cd1faac59d65f13a956c13635ec29e",
+  "object_manifest": "runs/candidate/native-text-cjk-font-01/object-manifest.json",
+  "object_manifest_sha256": "47cb70b4beeb7d576f37c9fb2b4c6a8f35a341d980c3f61d53ab3b18e97f51e9",
+  "native_table_count": 0,
+  "native_panel_count": 10,
+  "formal_text_count": 16,
+  "formal_text_native_count": 16,
+  "a_tbl_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [],
+      "panels": [
+        {
+          "object_id": "service-principle",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "journey-panel",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "journey-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "journey-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "journey-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "journey-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "closure-ring",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "responsibility-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "responsibility-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "responsibility-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "政企客户服务攻坚战",
+          "observed": "政企客户服务攻坚战",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "Service Excellence",
+          "observed": "Service Excellence",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "service-label-1",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "一线响应",
+          "observed": "一线响应",
+          "run_count": 1
+        },
+        {
+          "object_id": "service-label-2",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "专业交付",
+          "observed": "专业交付",
+          "run_count": 1
+        },
+        {
+          "object_id": "service-label-3",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "客户成功",
+          "observed": "客户成功",
+          "run_count": 1
+        },
+        {
+          "object_id": "journey-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "触达",
+          "observed": "触达",
+          "run_count": 1
+        },
+        {
+          "object_id": "journey-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "诊断",
+          "observed": "诊断",
+          "run_count": 1
+        },
+        {
+          "object_id": "journey-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "交付",
+          "observed": "交付",
+          "run_count": 1
+        },
+        {
+          "object_id": "journey-4-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "复盘",
+          "observed": "复盘",
+          "run_count": 1
+        },
+        {
+          "object_id": "closure-rate",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "96.8%",
+          "observed": "96.8%",
+          "run_count": 1
+        },
+        {
+          "object_id": "responsibility-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "本周重点",
+          "observed": "本周重点",
+          "run_count": 1
+        },
+        {
+          "object_id": "responsibility-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "关键动作",
+          "observed": "关键动作",
+          "run_count": 1
+        },
+        {
+          "object_id": "responsibility-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "责任到人",
+          "observed": "责任到人",
+          "run_count": 1
+        },
+        {
+          "object_id": "bilingual-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CJK + English / run-level emphasis / native text",
+          "observed": "CJK + English / run-level emphasis / native text",
+          "run_count": 1
+        },
+        {
+          "object_id": "mixed-run-callout",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "闭环率 96.8%",
+          "observed": "闭环率 96.8%",
+          "run_count": 2
+        }
+      ],
+      "top_level_objects": 36
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

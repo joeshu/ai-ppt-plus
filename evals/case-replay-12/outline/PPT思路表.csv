@@ -1,0 +1,13 @@
+slide_no,title_core_idea,page_outline,owner_notes,status,data_sources,visual_type
+1,政企客户增长作战舱｜dashboard关系可回放、可编辑、可核对,政企客户增长作战舱；覆盖dashboard主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[0],dashboard
+2,新质生产力经营框架｜framework关系可回放、可编辑、可核对,新质生产力经营框架；覆盖framework主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[1],framework
+3,渠道服务费标准总览｜table关系可回放、可编辑、可核对,渠道服务费标准总览；覆盖table主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[2],table
+4,FTTR渠道激励政策明白卡｜policy-table关系可回放、可编辑、可核对,FTTR渠道激励政策明白卡；覆盖policy-table主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[3],policy-table
+5,政企客户服务攻坚战｜text-visual关系可回放、可编辑、可核对,政企客户服务攻坚战；覆盖text-visual主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[4],text-visual
+6,政企行业增长结构｜chart关系可回放、可编辑、可核对,政企行业增长结构；覆盖chart主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[5],chart
+7,5G-A能力全景｜visual-system关系可回放、可编辑、可核对,5G-A能力全景；覆盖visual-system主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[6],visual-system
+8,存量用户价值提升作战图｜irregular-framework关系可回放、可编辑、可核对,存量用户价值提升作战图；覆盖irregular-framework主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[7],irregular-framework
+9,经营闭环一页总览｜multi-module-overview关系可回放、可编辑、可核对,经营闭环一页总览；覆盖multi-module-overview主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[8],multi-module-overview
+10,AI-PPT质量门禁与停机机制｜governance-flow关系可回放、可编辑、可核对,AI-PPT质量门禁与停机机制；覆盖governance-flow主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[9],governance-flow
+11,可编辑PPT交付运行矩阵｜architecture-matrix关系可回放、可编辑、可核对,可编辑PPT交付运行矩阵；覆盖architecture-matrix主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[10],architecture-matrix
+12,增量渲染与缓存幂等流水线｜pipeline关系可回放、可编辑、可核对,增量渲染与缓存幂等流水线；覆盖pipeline主框架、正式文字、可核对数据和对应的原生对象要求。,用户已授权本轮为蒸馏回放案例集设定主题并生成单页视觉稿。,approved,case-suite.json#cases[11],pipeline

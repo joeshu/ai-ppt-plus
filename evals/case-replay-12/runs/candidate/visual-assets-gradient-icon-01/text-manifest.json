@@ -1,0 +1,76 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "5G-A能力全景",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "连接 × 算力 × 感知 × 智能",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "capability-1-label",
+          "text_id": "capability-1-label",
+          "content": "连接",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "capability-2-label",
+          "text_id": "capability-2-label",
+          "content": "算力",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "capability-3-label",
+          "text_id": "capability-3-label",
+          "content": "感知",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "capability-4-label",
+          "text_id": "capability-4-label",
+          "content": "智能",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "value-1-text",
+          "text_id": "value-1-text",
+          "content": "低时延",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "value-2-text",
+          "text_id": "value-2-text",
+          "content": "大上行",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "value-3-text",
+          "text_id": "value-3-text",
+          "content": "确定性网络",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "asset-note",
+          "text_id": "asset-note",
+          "content": "独立视觉资产边界：轨道、渐变、节点、标签",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

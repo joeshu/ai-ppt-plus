@@ -1,0 +1,94 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "新质生产力经营框架",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "战略牵引 × 能力筑基 × 场景突破 × 价值兑现",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "card-1-text",
+          "text_id": "card-1-text",
+          "content": "战略牵引",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "card-2-text",
+          "text_id": "card-2-text",
+          "content": "能力筑基",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "card-3-text",
+          "text_id": "card-3-text",
+          "content": "场景突破",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "card-4-text",
+          "text_id": "card-4-text",
+          "content": "价值兑现",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "foundation-1",
+          "text_id": "foundation-1",
+          "content": "组织",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "foundation-2",
+          "text_id": "foundation-2",
+          "content": "技术",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "foundation-3",
+          "text_id": "foundation-3",
+          "content": "数据",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "foundation-4",
+          "text_id": "foundation-4",
+          "content": "生态",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "result-cabin-text",
+          "text_id": "result-cabin-text",
+          "content": "经营结果",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "framework-footnote",
+          "text_id": "framework-footnote",
+          "content": "组织、技术、数据、生态共同支撑四个经营跃迁层",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "framework-score",
+          "text_id": "framework-score",
+          "content": "可移动卡片 / 3层结构 / 连接线",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

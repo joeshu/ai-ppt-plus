@@ -1,0 +1,813 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/multi-slide-consistency-01/editable.pptx",
+  "object_manifest": "runs/candidate-before/multi-slide-consistency-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 5,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 49,
+      "object_count_recursive": 49,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "loop-center",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4876678,
+          "top": 2606040,
+          "width": 2438339,
+          "height": 1234440,
+          "normalized_box": [
+            0.4,
+            0.38,
+            0.2,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "loop-link-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2133546,
+          "top": 2743200,
+          "width": 3962301,
+          "height": 480060,
+          "normalized_box": [
+            0.175,
+            0.4,
+            0.325,
+            0.07
+          ],
+          "text": ""
+        },
+        {
+          "name": "loop-link-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4693802,
+          "top": 1988820,
+          "width": 1402045,
+          "height": 1234440,
+          "normalized_box": [
+            0.385,
+            0.29,
+            0.115,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "loop-link-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 6095847,
+          "top": 1988820,
+          "width": 1889713,
+          "height": 1234440,
+          "normalized_box": [
+            0.5,
+            0.29,
+            0.155,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "loop-link-4",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 6095847,
+          "top": 2743200,
+          "width": 4449969,
+          "height": 480060,
+          "normalized_box": [
+            0.5,
+            0.4,
+            0.365,
+            0.07
+          ],
+          "text": ""
+        },
+        {
+          "name": "loop-link-5",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5669138,
+          "top": 3223260,
+          "width": 426709,
+          "height": 1577340,
+          "normalized_box": [
+            0.465,
+            0.47,
+            0.035,
+            0.23
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 1097252,
+          "top": 2125980,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.09,
+            0.31,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-1-fill",
+          "kind": "native_shape",
+          "parent": "module-card-1",
+          "left": 1097252,
+          "top": 2125980,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.09,
+            0.31,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-1-accent",
+          "kind": "native_shape",
+          "parent": "module-card-1",
+          "left": 1097252,
+          "top": 2125980,
+          "width": 2072588,
+          "height": 67894,
+          "normalized_box": [
+            0.09,
+            0.31,
+            0.17,
+            0.0099
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-1-rule",
+          "kind": "native_shape",
+          "parent": "module-card-1",
+          "left": 1159430,
+          "top": 3236976,
+          "width": 1948233,
+          "height": 1234,
+          "normalized_box": [
+            0.0951,
+            0.472,
+            0.1598,
+            0.00018
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 3657508,
+          "top": 1371600,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.3,
+            0.2,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-2-fill",
+          "kind": "native_shape",
+          "parent": "module-card-2",
+          "left": 3657508,
+          "top": 1371600,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.3,
+            0.2,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-2-accent",
+          "kind": "native_shape",
+          "parent": "module-card-2",
+          "left": 3657508,
+          "top": 1371600,
+          "width": 2072588,
+          "height": 67894,
+          "normalized_box": [
+            0.3,
+            0.2,
+            0.17,
+            0.0099
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-2-rule",
+          "kind": "native_shape",
+          "parent": "module-card-2",
+          "left": 3719686,
+          "top": 2482596,
+          "width": 1948233,
+          "height": 1234,
+          "normalized_box": [
+            0.3051,
+            0.362,
+            0.1598,
+            0.00018
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 6949266,
+          "top": 1371600,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.57,
+            0.2,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-3-fill",
+          "kind": "native_shape",
+          "parent": "module-card-3",
+          "left": 6949266,
+          "top": 1371600,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.57,
+            0.2,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-3-accent",
+          "kind": "native_shape",
+          "parent": "module-card-3",
+          "left": 6949266,
+          "top": 1371600,
+          "width": 2072588,
+          "height": 67894,
+          "normalized_box": [
+            0.57,
+            0.2,
+            0.17,
+            0.0099
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-3-rule",
+          "kind": "native_shape",
+          "parent": "module-card-3",
+          "left": 7011443,
+          "top": 2482596,
+          "width": 1948233,
+          "height": 1234,
+          "normalized_box": [
+            0.5751,
+            0.362,
+            0.1598,
+            0.00018
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-4",
+          "kind": "native_group",
+          "parent": null,
+          "left": 9509522,
+          "top": 2125980,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.78,
+            0.31,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-4-fill",
+          "kind": "native_shape",
+          "parent": "module-card-4",
+          "left": 9509522,
+          "top": 2125980,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.78,
+            0.31,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-4-accent",
+          "kind": "native_shape",
+          "parent": "module-card-4",
+          "left": 9509522,
+          "top": 2125980,
+          "width": 2072588,
+          "height": 67894,
+          "normalized_box": [
+            0.78,
+            0.31,
+            0.17,
+            0.0099
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-4-rule",
+          "kind": "native_shape",
+          "parent": "module-card-4",
+          "left": 9571699,
+          "top": 3236976,
+          "width": 1948233,
+          "height": 1234,
+          "normalized_box": [
+            0.7851,
+            0.472,
+            0.1598,
+            0.00018
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-5",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4632844,
+          "top": 4183380,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.38,
+            0.61,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-5-fill",
+          "kind": "native_shape",
+          "parent": "module-card-5",
+          "left": 4632844,
+          "top": 4183380,
+          "width": 2072588,
+          "height": 1234440,
+          "normalized_box": [
+            0.38,
+            0.61,
+            0.17,
+            0.18
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-5-accent",
+          "kind": "native_shape",
+          "parent": "module-card-5",
+          "left": 4632844,
+          "top": 4183380,
+          "width": 2072588,
+          "height": 67894,
+          "normalized_box": [
+            0.38,
+            0.61,
+            0.17,
+            0.0099
+          ],
+          "text": ""
+        },
+        {
+          "name": "module-card-5-rule",
+          "kind": "native_shape",
+          "parent": "module-card-5",
+          "left": 4695021,
+          "top": 5294376,
+          "width": 1948233,
+          "height": 1234,
+          "normalized_box": [
+            0.3851,
+            0.772,
+            0.1598,
+            0.00018
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "经营闭环一页总览"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "统一口径｜统一节奏｜统一动作"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "module-card-1-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1280127,
+          "top": 2297430,
+          "width": 487667,
+          "height": 205740,
+          "normalized_box": [
+            0.105,
+            0.335,
+            0.04,
+            0.03
+          ],
+          "text": "01"
+        },
+        {
+          "name": "module-card-1-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1280127,
+          "top": 2606040,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.105,
+            0.38,
+            0.14,
+            0.04
+          ],
+          "text": "目标设定"
+        },
+        {
+          "name": "module-card-1-tag",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1280127,
+          "top": 3017520,
+          "width": 1706837,
+          "height": 205740,
+          "normalized_box": [
+            0.105,
+            0.44,
+            0.14,
+            0.03
+          ],
+          "text": "同源组件"
+        },
+        {
+          "name": "module-card-2-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3840383,
+          "top": 1543050,
+          "width": 487667,
+          "height": 205740,
+          "normalized_box": [
+            0.315,
+            0.225,
+            0.04,
+            0.03
+          ],
+          "text": "02"
+        },
+        {
+          "name": "module-card-2-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3840383,
+          "top": 1851660,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.315,
+            0.27,
+            0.14,
+            0.04
+          ],
+          "text": "过程经营"
+        },
+        {
+          "name": "module-card-2-tag",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3840383,
+          "top": 2263140,
+          "width": 1706837,
+          "height": 205740,
+          "normalized_box": [
+            0.315,
+            0.33,
+            0.14,
+            0.03
+          ],
+          "text": "同源组件"
+        },
+        {
+          "name": "module-card-3-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7132141,
+          "top": 1543050,
+          "width": 487667,
+          "height": 205740,
+          "normalized_box": [
+            0.585,
+            0.225,
+            0.04,
+            0.03
+          ],
+          "text": "03"
+        },
+        {
+          "name": "module-card-3-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7132141,
+          "top": 1851660,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.585,
+            0.27,
+            0.14,
+            0.04
+          ],
+          "text": "问题诊断"
+        },
+        {
+          "name": "module-card-3-tag",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7132141,
+          "top": 2263140,
+          "width": 1706837,
+          "height": 205740,
+          "normalized_box": [
+            0.585,
+            0.33,
+            0.14,
+            0.03
+          ],
+          "text": "同源组件"
+        },
+        {
+          "name": "module-card-4-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9692397,
+          "top": 2297430,
+          "width": 487667,
+          "height": 205740,
+          "normalized_box": [
+            0.795,
+            0.335,
+            0.04,
+            0.03
+          ],
+          "text": "04"
+        },
+        {
+          "name": "module-card-4-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9692397,
+          "top": 2606040,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.795,
+            0.38,
+            0.14,
+            0.04
+          ],
+          "text": "资源调度"
+        },
+        {
+          "name": "module-card-4-tag",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9692397,
+          "top": 3017520,
+          "width": 1706837,
+          "height": 205740,
+          "normalized_box": [
+            0.795,
+            0.44,
+            0.14,
+            0.03
+          ],
+          "text": "同源组件"
+        },
+        {
+          "name": "module-card-5-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4815719,
+          "top": 4354830,
+          "width": 487667,
+          "height": 205740,
+          "normalized_box": [
+            0.395,
+            0.635,
+            0.04,
+            0.03
+          ],
+          "text": "05"
+        },
+        {
+          "name": "module-card-5-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4815719,
+          "top": 4663440,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.395,
+            0.68,
+            0.14,
+            0.04
+          ],
+          "text": "结果复盘"
+        },
+        {
+          "name": "module-card-5-tag",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4815719,
+          "top": 5074920,
+          "width": 1706837,
+          "height": 205740,
+          "normalized_box": [
+            0.395,
+            0.74,
+            0.14,
+            0.03
+          ],
+          "text": "同源组件"
+        },
+        {
+          "name": "loop-center-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5059553,
+          "top": 2846070,
+          "width": 2072588,
+          "height": 685800,
+          "normalized_box": [
+            0.415,
+            0.415,
+            0.17,
+            0.1
+          ],
+          "text": "统一口径\n统一节奏\n统一动作"
+        },
+        {
+          "name": "consistency-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 853418,
+          "top": 6172200,
+          "width": 7315017,
+          "height": 205740,
+          "normalized_box": [
+            0.07,
+            0.9,
+            0.6,
+            0.03
+          ],
+          "text": "五个重复模块使用同一组件 token、几何和文字基线"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

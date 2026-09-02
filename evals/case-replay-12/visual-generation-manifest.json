@@ -1,0 +1,312 @@
+{
+  "schema": "ai-ppt-plus/visual-generation-manifest/v1",
+  "project_id": "distillation-case-replay-12",
+  "generator_skill": "ai-ppt-visual-gen",
+  "tool_resolution": "runtime-discovery",
+  "backend_policy": "raster-only",
+  "source_retention": "generated-source-and-project-copy",
+  "no_code_overlay": true,
+  "plan_sha256": "35b2ab4784f565aaf272131421d0dc780b3d63aa7c0e95de17e6c9d39fb557c7",
+  "generation_session_id": "case-replay-12-imagegen-session-R1",
+  "continuity_policy": "single-model-single-context",
+  "slides": [
+    {
+      "slide_no": 1,
+      "prompt_file": "prompts/01-route-editable-default-01.md",
+      "prompt_sha256": "47b9fef60a1ba1696ae561faf7fa1470116c2d064a84604834c91b066d1462c9",
+      "generated_source": "visual/source/route-editable-default-01.png",
+      "copied_to": "visual/generated/route-editable-default-01.png",
+      "generated_source_sha256": "303afb920cd0ef8520ffdff65a2bc93f5950cca663a4a22041a1a0f530bf6a80",
+      "copied_to_sha256": "303afb920cd0ef8520ffdff65a2bc93f5950cca663a4a22041a1a0f530bf6a80",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 2,
+      "prompt_file": "prompts/02-native-shape-card-01.md",
+      "prompt_sha256": "8c3bb040f10ae23abaadb18118a6d1f6185c4afa430dcfb12056f70ffef5ac42",
+      "generated_source": "visual/source/native-shape-card-01.png",
+      "copied_to": "visual/generated/native-shape-card-01.png",
+      "generated_source_sha256": "a885401f79dbb20491ff75ee78408bc354ac3bc3d3828cf63f77cddd8c68180d",
+      "copied_to_sha256": "a885401f79dbb20491ff75ee78408bc354ac3bc3d3828cf63f77cddd8c68180d",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 3,
+      "prompt_file": "prompts/03-native-table-basic-01.md",
+      "prompt_sha256": "b3f3d61e83da65ae8c9697942454d898e784756fd0bd3440dd579509280a4eda",
+      "generated_source": "visual/source/native-table-basic-01.png",
+      "copied_to": "visual/generated/native-table-basic-01.png",
+      "generated_source_sha256": "42c47c5de12ec8b609e94bdf82e21337c7ac4156ec815c9739c33a3ff364e8ae",
+      "copied_to_sha256": "42c47c5de12ec8b609e94bdf82e21337c7ac4156ec815c9739c33a3ff364e8ae",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 4,
+      "prompt_file": "prompts/04-native-table-merge-richtext-01.md",
+      "prompt_sha256": "35c46aaea35dece86b005c02b2354fecb00b4cd0f8d5f8c07dc0c1ad13b317aa",
+      "generated_source": "visual/source/native-table-merge-richtext-01.png",
+      "copied_to": "visual/generated/native-table-merge-richtext-01.png",
+      "generated_source_sha256": "1820c8da67fe083e600115eda1dc4b0a644f2f1b3132a058e77f5f2e813206f2",
+      "copied_to_sha256": "1820c8da67fe083e600115eda1dc4b0a644f2f1b3132a058e77f5f2e813206f2",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 5,
+      "prompt_file": "prompts/05-native-text-cjk-font-01.md",
+      "prompt_sha256": "54fe3caafd0a5562838461dd56f6389be24d4ea80072f59e522186734da3a60c",
+      "generated_source": "visual/source/native-text-cjk-font-01.png",
+      "copied_to": "visual/generated/native-text-cjk-font-01.png",
+      "generated_source_sha256": "1e5e8281182c704b0495f4fb3a2993642a14feec2d3704ed6bd670eedfca7e43",
+      "copied_to_sha256": "1e5e8281182c704b0495f4fb3a2993642a14feec2d3704ed6bd670eedfca7e43",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 6,
+      "prompt_file": "prompts/06-chart-data-provenance-01.md",
+      "prompt_sha256": "28dd3e124c594541d735a58b2e04895e0a4e5c5db8dd23e288f2f67a81231e4a",
+      "generated_source": "visual/source/chart-data-provenance-01.png",
+      "copied_to": "visual/generated/chart-data-provenance-01.png",
+      "generated_source_sha256": "db98715758a9d7cbf57623c284590d1097e64e89244074db483a747d9a88c0c3",
+      "copied_to_sha256": "db98715758a9d7cbf57623c284590d1097e64e89244074db483a747d9a88c0c3",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 7,
+      "prompt_file": "prompts/07-visual-assets-gradient-icon-01.md",
+      "prompt_sha256": "0f7f6afbd979c69b2bdaa89f748bb6a724dee9f0b9c168d3a79bab3e804adb21",
+      "generated_source": "visual/source/visual-assets-gradient-icon-01.png",
+      "copied_to": "visual/generated/visual-assets-gradient-icon-01.png",
+      "generated_source_sha256": "b5da2389f0f0462ca19c0dab7424e440f668f676ff743afb5a63357ba041d57e",
+      "copied_to_sha256": "b5da2389f0f0462ca19c0dab7424e440f668f676ff743afb5a63357ba041d57e",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 8,
+      "prompt_file": "prompts/08-framework-irregular-layer-01.md",
+      "prompt_sha256": "a8050b3ee565bea95e924dceeab4bd5c5cfefb0d5ef6bcd4c729fdcf8660fb68",
+      "generated_source": "visual/source/framework-irregular-layer-01.png",
+      "copied_to": "visual/generated/framework-irregular-layer-01.png",
+      "generated_source_sha256": "d8f62301b29ac482513a4056698ff906e385181dbb821fadae1d55c4c9fea064",
+      "copied_to_sha256": "d8f62301b29ac482513a4056698ff906e385181dbb821fadae1d55c4c9fea064",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 9,
+      "prompt_file": "prompts/09-multi-slide-consistency-01.md",
+      "prompt_sha256": "39f77a3841673e78e89c6c16cf8578032a8a6d7a09f6d4d848cdd776fe501e2c",
+      "generated_source": "visual/source/multi-slide-consistency-01.png",
+      "copied_to": "visual/generated/multi-slide-consistency-01.png",
+      "generated_source_sha256": "da73409fe5225ee064bfe60748681124b92acc12ad0ec57bb6bf18dd7ce0ceb7",
+      "copied_to_sha256": "da73409fe5225ee064bfe60748681124b92acc12ad0ec57bb6bf18dd7ce0ceb7",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 10,
+      "prompt_file": "prompts/10-failure-fallback-stop-01.md",
+      "prompt_sha256": "ecc1d5d33ca5e60ad6a9494524cb40cb4f5fc6df99defd31b139433bdc3d5a93",
+      "generated_source": "visual/source/failure-fallback-stop-01.png",
+      "copied_to": "visual/generated/failure-fallback-stop-01.png",
+      "generated_source_sha256": "b09c0d93332fce28399bc1174b215c4e4ab9e3989010e61ff78854d48ce6d9f1",
+      "copied_to_sha256": "b09c0d93332fce28399bc1174b215c4e4ab9e3989010e61ff78854d48ce6d9f1",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 11,
+      "prompt_file": "prompts/11-package-render-portability-01.md",
+      "prompt_sha256": "ac3e8800111ee0f5111aa4180f5ba11506b90dc192ab61c3160be84f54c4e663",
+      "generated_source": "visual/source/package-render-portability-01.png",
+      "copied_to": "visual/generated/package-render-portability-01.png",
+      "generated_source_sha256": "30c018fdd1a7dfc687d61cf1c5ba6bcb879b252c2bc6fdf4a82469fb2439a2a1",
+      "copied_to_sha256": "30c018fdd1a7dfc687d61cf1c5ba6bcb879b252c2bc6fdf4a82469fb2439a2a1",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    },
+    {
+      "slide_no": 12,
+      "prompt_file": "prompts/12-cache-idempotency-01.md",
+      "prompt_sha256": "6cadc3b77b404c0b2297865fdf922ce48adec30a5d0231eb3020592172f3c960",
+      "generated_source": "visual/source/cache-idempotency-01.png",
+      "copied_to": "visual/generated/cache-idempotency-01.png",
+      "generated_source_sha256": "8e55bf397885b556e863367b0f4d473144a111b69940bc691d8d2d6140c50bcb",
+      "copied_to_sha256": "8e55bf397885b556e863367b0f4d473144a111b69940bc691d8d2d6140c50bcb",
+      "backend": "runtime-discovered-raster-imagegen",
+      "model_or_tool": "imagegen",
+      "generation_session_id": "case-replay-12-imagegen-session-R1",
+      "context_continuity_status": "preserved",
+      "attempt": 1,
+      "canvas": {
+        "width_px": 1672,
+        "height_px": 941,
+        "ratio": "16:9"
+      }
+    }
+  ],
+  "deck_strip": {
+    "path": "qa/visual-deck-strip.png",
+    "source_slides": [
+      {
+        "slide_no": 1,
+        "image": "visual/generated/route-editable-default-01.png",
+        "sha256": "303afb920cd0ef8520ffdff65a2bc93f5950cca663a4a22041a1a0f530bf6a80"
+      },
+      {
+        "slide_no": 2,
+        "image": "visual/generated/native-shape-card-01.png",
+        "sha256": "a885401f79dbb20491ff75ee78408bc354ac3bc3d3828cf63f77cddd8c68180d"
+      },
+      {
+        "slide_no": 3,
+        "image": "visual/generated/native-table-basic-01.png",
+        "sha256": "42c47c5de12ec8b609e94bdf82e21337c7ac4156ec815c9739c33a3ff364e8ae"
+      },
+      {
+        "slide_no": 4,
+        "image": "visual/generated/native-table-merge-richtext-01.png",
+        "sha256": "1820c8da67fe083e600115eda1dc4b0a644f2f1b3132a058e77f5f2e813206f2"
+      },
+      {
+        "slide_no": 5,
+        "image": "visual/generated/native-text-cjk-font-01.png",
+        "sha256": "1e5e8281182c704b0495f4fb3a2993642a14feec2d3704ed6bd670eedfca7e43"
+      },
+      {
+        "slide_no": 6,
+        "image": "visual/generated/chart-data-provenance-01.png",
+        "sha256": "db98715758a9d7cbf57623c284590d1097e64e89244074db483a747d9a88c0c3"
+      },
+      {
+        "slide_no": 7,
+        "image": "visual/generated/visual-assets-gradient-icon-01.png",
+        "sha256": "b5da2389f0f0462ca19c0dab7424e440f668f676ff743afb5a63357ba041d57e"
+      },
+      {
+        "slide_no": 8,
+        "image": "visual/generated/framework-irregular-layer-01.png",
+        "sha256": "d8f62301b29ac482513a4056698ff906e385181dbb821fadae1d55c4c9fea064"
+      },
+      {
+        "slide_no": 9,
+        "image": "visual/generated/multi-slide-consistency-01.png",
+        "sha256": "da73409fe5225ee064bfe60748681124b92acc12ad0ec57bb6bf18dd7ce0ceb7"
+      },
+      {
+        "slide_no": 10,
+        "image": "visual/generated/failure-fallback-stop-01.png",
+        "sha256": "b09c0d93332fce28399bc1174b215c4e4ab9e3989010e61ff78854d48ce6d9f1"
+      },
+      {
+        "slide_no": 11,
+        "image": "visual/generated/package-render-portability-01.png",
+        "sha256": "30c018fdd1a7dfc687d61cf1c5ba6bcb879b252c2bc6fdf4a82469fb2439a2a1"
+      },
+      {
+        "slide_no": 12,
+        "image": "visual/generated/cache-idempotency-01.png",
+        "sha256": "8e55bf397885b556e863367b0f4d473144a111b69940bc691d8d2d6140c50bcb"
+      }
+    ],
+    "columns": 3,
+    "thumbnail_width": 512,
+    "sha256": "65d5cb999aef6b6a98a163e76a441ce99b57940e1efb9923f8b192e7f01aa54b",
+    "generated_by": "scripts/build_visual_generation_strip.py",
+    "review_status": "pending-human-review"
+  }
+}

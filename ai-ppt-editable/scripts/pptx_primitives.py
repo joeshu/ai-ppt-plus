@@ -611,6 +611,53 @@ def add_charts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
         for series_item, color in zip(chart.series, spec.get("colors") or theme.get("chart_colors") or []):
             series_item.format.fill.solid()
             series_item.format.fill.fore_color.rgb = _hex_to_rgb(color)
+
+        # Charts are often placed on the same dark navy canvas as the rest of
+        # the editable slide.  python-pptx leaves tick labels, legends and
+        # data labels at Office's black default, which makes an otherwise
+        # native chart visually unreadable.  Apply the deck theme explicitly
+        # while keeping all chart data and axes native.
+        chart_text_color = theme.get("chart_text_color") or theme.get("text_color") or "#FFFFFF"
+        chart_muted_color = theme.get("chart_muted_color") or chart_text_color
+        try:
+            chart.font.name = str(theme.get("font") or "Aptos")
+            chart.font.color.rgb = _hex_to_rgb(chart_text_color)
+        except Exception:
+            pass
+        for axis in (getattr(chart, "category_axis", None), getattr(chart, "value_axis", None)):
+            if axis is None:
+                continue
+            try:
+                axis.tick_labels.font.name = str(theme.get("font") or "Aptos")
+                axis.tick_labels.font.color.rgb = _hex_to_rgb(chart_text_color)
+                axis.tick_labels.font.size = Pt(float(theme.get("chart_tick_size", 8)))
+            except Exception:
+                pass
+            try:
+                axis.format.line.color.rgb = _hex_to_rgb(chart_muted_color)
+                axis.format.line.width = Pt(0.7)
+            except Exception:
+                pass
+            try:
+                if axis.has_major_gridlines:
+                    axis.major_gridlines.format.line.color.rgb = _hex_to_rgb(theme.get("chart_grid_color") or chart_muted_color)
+                    axis.major_gridlines.format.line.width = Pt(0.5)
+            except Exception:
+                pass
+        if chart.has_legend and chart.legend is not None:
+            try:
+                chart.legend.font.name = str(theme.get("font") or "Aptos")
+                chart.legend.font.color.rgb = _hex_to_rgb(chart_text_color)
+                chart.legend.font.size = Pt(float(theme.get("chart_legend_size", 8)))
+            except Exception:
+                pass
+        for series_item in chart.series:
+            try:
+                series_item.data_labels.font.name = str(theme.get("font") or "Aptos")
+                series_item.data_labels.font.color.rgb = _hex_to_rgb(chart_text_color)
+                series_item.data_labels.font.size = Pt(float(theme.get("chart_label_size", 7)))
+            except Exception:
+                pass
         set_alt_text(graphic_frame, spec.get("alt_text"))
 
 

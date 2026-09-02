@@ -1,0 +1,764 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/candidate/package-render-portability-01",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#F4F7FB",
+    "size": 10,
+    "table_header_fill": "#9B0B1B",
+    "table_fill": "#F5F8FC",
+    "chart_colors": [
+      "#E60012",
+      "#1687FF"
+    ],
+    "chart_text_color": "#F4F7FB",
+    "chart_muted_color": "#A9BED5",
+    "chart_grid_color": "#355A7D",
+    "chart_tick_size": 8,
+    "chart_legend_size": 8,
+    "chart_label_size": 7
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "background",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#061A35"
+        },
+        {
+          "object_id": "title-accent",
+          "type": "rect",
+          "x": 0.055,
+          "y": 0.065,
+          "w": 0.006,
+          "h": 0.075,
+          "fill": "#E60012"
+        },
+        {
+          "object_id": "title-rule",
+          "type": "line",
+          "x": 0.055,
+          "y": 0.17,
+          "x2": 0.945,
+          "y2": 0.17,
+          "line": "#355A7D",
+          "line_width": 0.7
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "layer-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.08,
+          "y": 0.28,
+          "w": 0.42,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "layer-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "layer-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "layer-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "layer-1"
+        },
+        {
+          "object_id": "layer-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.125,
+          "y": 0.335,
+          "w": 0.40499999999999997,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "layer-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "layer-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "layer-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "layer-2"
+        },
+        {
+          "object_id": "layer-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.16999999999999998,
+          "y": 0.39,
+          "w": 0.39,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "layer-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "layer-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "layer-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "layer-3"
+        },
+        {
+          "object_id": "layer-4",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.21500000000000002,
+          "y": 0.44500000000000006,
+          "w": 0.375,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "layer-4-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "layer-4-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "layer-4-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "layer-4"
+        },
+        {
+          "object_id": "layer-5",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.26,
+          "y": 0.5,
+          "w": 0.36,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "layer-5-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "layer-5-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "layer-5-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "layer-5"
+        },
+        {
+          "object_id": "lock-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.08,
+          "y": 0.72,
+          "w": 0.18,
+          "h": 0.09,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "lock-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "lock-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "lock-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "lock-1"
+        },
+        {
+          "object_id": "lock-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.3,
+          "y": 0.72,
+          "w": 0.18,
+          "h": 0.09,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "lock-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "lock-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "lock-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "lock-2"
+        },
+        {
+          "object_id": "lock-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.52,
+          "y": 0.72,
+          "w": 0.18,
+          "h": 0.09,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "lock-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "lock-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "lock-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "lock-3"
+        },
+        {
+          "object_id": "lock-4",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.74,
+          "y": 0.72,
+          "w": 0.18,
+          "h": 0.09,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "lock-4-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "lock-4-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "lock-4-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "lock-4"
+        }
+      ],
+      "tables": [
+        {
+          "object_id": "environment-matrix",
+          "native_required": true,
+          "x": 0.57,
+          "y": 0.28,
+          "w": 0.36,
+          "h": 0.3,
+          "rows": [
+            [
+              "环境",
+              "字体",
+              "渲染器",
+              "PPTX包"
+            ],
+            [
+              "桌面WPS",
+              "可见",
+              "一致",
+              "通过"
+            ],
+            [
+              "移动端WPS",
+              "可见",
+              "一致",
+              "通过"
+            ],
+            [
+              "CI Runner",
+              "可见",
+              "一致",
+              "哈希锁定"
+            ]
+          ],
+          "columns": 4,
+          "header_fill": "#9B0B1B",
+          "fill": "#F5F8FC",
+          "border": {
+            "all": {
+              "color": "#9EB3C8",
+              "width": 0.7
+            }
+          },
+          "cell_margins": {
+            "left": 0.04,
+            "right": 0.04,
+            "top": 0.025,
+            "bottom": 0.025
+          },
+          "cell_styles": {
+            "0": {
+              "fill": "#9B0B1B",
+              "color": "#FFFFFF",
+              "bold": true,
+              "size": 9
+            },
+            "1": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "2": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "3": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            }
+          },
+          "rich_text_required": false,
+          "column_widths": [
+            0.13,
+            0.08,
+            0.08,
+            0.1
+          ],
+          "row_heights": [
+            0.06,
+            0.08,
+            0.08,
+            0.08
+          ]
+        }
+      ],
+      "charts": [],
+      "texts": [
+        {
+          "object_id": "title",
+          "text": "可编辑PPT交付运行矩阵",
+          "x": 0.073,
+          "y": 0.052,
+          "w": 0.66,
+          "h": 0.09,
+          "size": 25,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "subtitle",
+          "text": "同一源文件 → 同一证据 → 可复现交付",
+          "x": 0.075,
+          "y": 0.145,
+          "w": 0.62,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "case-label",
+          "text": "CASE REPLAY / NATIVE EDITABLE",
+          "x": 0.72,
+          "y": 0.075,
+          "w": 0.22,
+          "h": 0.04,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "layer-1-text",
+          "text": "技能包",
+          "x": 0.11,
+          "y": 0.31200000000000006,
+          "w": 0.36,
+          "h": 0.035,
+          "size": 10,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "layer-2-text",
+          "text": "运行时",
+          "x": 0.155,
+          "y": 0.367,
+          "w": 0.345,
+          "h": 0.035,
+          "size": 10,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "layer-3-text",
+          "text": "字体",
+          "x": 0.19999999999999998,
+          "y": 0.42200000000000004,
+          "w": 0.33,
+          "h": 0.035,
+          "size": 10,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "layer-4-text",
+          "text": "渲染器",
+          "x": 0.24500000000000002,
+          "y": 0.4770000000000001,
+          "w": 0.315,
+          "h": 0.035,
+          "size": 10,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "layer-5-text",
+          "text": "PPTX包",
+          "x": 0.29000000000000004,
+          "y": 0.532,
+          "w": 0.3,
+          "h": 0.035,
+          "size": 10,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "lock-1-text",
+          "text": "包完整",
+          "x": 0.08,
+          "y": 0.748,
+          "w": 0.18,
+          "h": 0.03,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "lock-2-text",
+          "text": "字体可见",
+          "x": 0.3,
+          "y": 0.748,
+          "w": 0.18,
+          "h": 0.03,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "lock-3-text",
+          "text": "渲染一致",
+          "x": 0.52,
+          "y": 0.748,
+          "w": 0.18,
+          "h": 0.03,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "lock-4-text",
+          "text": "哈希锁定",
+          "x": 0.74,
+          "y": 0.748,
+          "w": 0.18,
+          "h": 0.03,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "package-note",
+          "text": "5-layer architecture / 3 target environments / native matrix",
+          "x": 0.52,
+          "y": 0.9,
+          "w": 0.41,
+          "h": 0.03,
+          "size": 7.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        }
+      ],
+      "icons": []
+    }
+  ]
+}

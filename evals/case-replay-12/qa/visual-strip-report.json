@@ -1,0 +1,110 @@
+{
+  "schema": "ai-ppt-plus/visual-deck-strip/v1",
+  "valid": true,
+  "technical_valid": true,
+  "status": "passed",
+  "manifest_path": "visual-generation-manifest.json",
+  "output": "qa/visual-deck-strip.png",
+  "output_sha256": "65d5cb999aef6b6a98a163e76a441ce99b57940e1efb9923f8b192e7f01aa54b",
+  "slides": [
+    {
+      "slide_no": 1,
+      "image": "visual/generated/route-editable-default-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 2,
+      "image": "visual/generated/native-shape-card-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 3,
+      "image": "visual/generated/native-table-basic-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 4,
+      "image": "visual/generated/native-table-merge-richtext-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 5,
+      "image": "visual/generated/native-text-cjk-font-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 6,
+      "image": "visual/generated/chart-data-provenance-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 7,
+      "image": "visual/generated/visual-assets-gradient-icon-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 8,
+      "image": "visual/generated/framework-irregular-layer-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 9,
+      "image": "visual/generated/multi-slide-consistency-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 10,
+      "image": "visual/generated/failure-fallback-stop-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 11,
+      "image": "visual/generated/package-render-portability-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "slide_no": 12,
+      "image": "visual/generated/cache-idempotency-01.png",
+      "size": [
+        1672,
+        941
+      ]
+    }
+  ],
+  "recorded_in_manifest": true,
+  "human_visual_review_required": true,
+  "issues": []
+}

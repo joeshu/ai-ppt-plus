@@ -1,0 +1,354 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/candidate/native-table-basic-01",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#F4F7FB",
+    "size": 10,
+    "table_header_fill": "#9B0B1B",
+    "table_fill": "#F5F8FC",
+    "chart_colors": [
+      "#E60012",
+      "#1687FF"
+    ],
+    "chart_text_color": "#F4F7FB",
+    "chart_muted_color": "#A9BED5",
+    "chart_grid_color": "#355A7D",
+    "chart_tick_size": 8,
+    "chart_legend_size": 8,
+    "chart_label_size": 7
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "background",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#061A35"
+        },
+        {
+          "object_id": "title-accent",
+          "type": "rect",
+          "x": 0.055,
+          "y": 0.065,
+          "w": 0.006,
+          "h": 0.075,
+          "fill": "#E60012"
+        },
+        {
+          "object_id": "title-rule",
+          "type": "line",
+          "x": 0.055,
+          "y": 0.17,
+          "x2": 0.945,
+          "y2": 0.17,
+          "line": "#355A7D",
+          "line_width": 0.7
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "policy-panel",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.07,
+          "y": 0.22,
+          "w": 0.18,
+          "h": 0.58,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "policy-panel-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0B2747",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "policy-panel-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "policy-panel-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "policy-panel"
+        }
+      ],
+      "tables": [
+        {
+          "object_id": "service-fee-table",
+          "native_required": true,
+          "x": 0.28,
+          "y": 0.22,
+          "w": 0.65,
+          "h": 0.58,
+          "rows": [
+            [
+              "业务场景",
+              "收入变化",
+              "服务费标准",
+              "计提周期"
+            ],
+            [
+              "存量升档",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "指定套餐",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "新装发展",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "渠道激励",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "增收场景",
+              "结果留痕",
+              "按政策",
+              "周期锁定"
+            ],
+            [
+              "复核口径",
+              "来源绑定",
+              "可追溯",
+              "可回放"
+            ]
+          ],
+          "columns": 4,
+          "header_fill": "#9B0B1B",
+          "fill": "#F5F8FC",
+          "border": {
+            "all": {
+              "color": "#9EB3C8",
+              "width": 0.7
+            }
+          },
+          "cell_margins": {
+            "left": 0.04,
+            "right": 0.04,
+            "top": 0.025,
+            "bottom": 0.025
+          },
+          "cell_styles": {
+            "0": {
+              "fill": "#9B0B1B",
+              "color": "#FFFFFF",
+              "bold": true,
+              "size": 9
+            },
+            "1": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "2": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "3": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "4": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "5": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "6": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            }
+          },
+          "rich_text_required": false,
+          "column_widths": [
+            0.16,
+            0.16,
+            0.18,
+            0.15
+          ],
+          "row_heights": [
+            0.075,
+            0.084,
+            0.084,
+            0.084,
+            0.084,
+            0.084,
+            0.084
+          ]
+        }
+      ],
+      "charts": [],
+      "texts": [
+        {
+          "object_id": "title",
+          "text": "渠道服务费标准总览",
+          "x": 0.073,
+          "y": 0.052,
+          "w": 0.66,
+          "h": 0.09,
+          "size": 25,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "subtitle",
+          "text": "统一标准、清晰计提、结果可核对",
+          "x": 0.075,
+          "y": 0.145,
+          "w": 0.62,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "case-label",
+          "text": "CASE REPLAY / NATIVE EDITABLE",
+          "x": 0.72,
+          "y": 0.075,
+          "w": 0.22,
+          "h": 0.04,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "policy-panel-title",
+          "text": "POLICY\nMATRIX",
+          "x": 0.09,
+          "y": 0.31,
+          "w": 0.14,
+          "h": 0.1,
+          "size": 15,
+          "color": "#E60012",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "policy-panel-copy",
+          "text": "场景\n收入\n标准\n周期",
+          "x": 0.09,
+          "y": 0.49,
+          "w": 0.12,
+          "h": 0.17,
+          "size": 11,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "table-callout",
+          "text": "TABLE / NATIVE",
+          "x": 0.73,
+          "y": 0.26,
+          "w": 0.15,
+          "h": 0.03,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "table-footnote",
+          "text": "行高、列宽、网格、单元格文字均保留为可编辑语义对象",
+          "x": 0.28,
+          "y": 0.84,
+          "w": 0.65,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        }
+      ],
+      "icons": []
+    }
+  ]
+}

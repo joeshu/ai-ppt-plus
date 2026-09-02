@@ -1,0 +1,941 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/framework-irregular-layer-01/editable.pptx",
+  "object_manifest": "runs/candidate-before/framework-irregular-layer-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 9,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 57,
+      "object_count_recursive": 57,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-link-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2255463,
+          "top": 2674620,
+          "width": 304792,
+          "height": 548640,
+          "normalized_box": [
+            0.185,
+            0.39,
+            0.025,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-link-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 3840383,
+          "top": 2674620,
+          "width": 304793,
+          "height": 548640,
+          "normalized_box": [
+            0.315,
+            0.39,
+            0.025,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-link-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5425304,
+          "top": 2674620,
+          "width": 304792,
+          "height": 548640,
+          "normalized_box": [
+            0.445,
+            0.39,
+            0.025,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-link-4",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 7010224,
+          "top": 2674620,
+          "width": 304793,
+          "height": 548640,
+          "normalized_box": [
+            0.575,
+            0.39,
+            0.025,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 975335,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.08,
+            0.33,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-1-fill",
+          "kind": "native_shape",
+          "parent": "stage-1",
+          "left": 975335,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.08,
+            0.33,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-1-accent",
+          "kind": "native_shape",
+          "parent": "stage-1",
+          "left": 975335,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 45262,
+          "normalized_box": [
+            0.08,
+            0.33,
+            0.105,
+            0.0066
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-1-rule",
+          "kind": "native_shape",
+          "parent": "stage-1",
+          "left": 1013739,
+          "top": 3003804,
+          "width": 1203320,
+          "height": 822,
+          "normalized_box": [
+            0.08315,
+            0.438,
+            0.0987,
+            0.00012
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 2560255,
+          "top": 2811780,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.21,
+            0.41,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-2-fill",
+          "kind": "native_shape",
+          "parent": "stage-2",
+          "left": 2560255,
+          "top": 2811780,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.21,
+            0.41,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-2-accent",
+          "kind": "native_shape",
+          "parent": "stage-2",
+          "left": 2560255,
+          "top": 2811780,
+          "width": 1280127,
+          "height": 45262,
+          "normalized_box": [
+            0.21,
+            0.41,
+            0.105,
+            0.0066
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-2-rule",
+          "kind": "native_shape",
+          "parent": "stage-2",
+          "left": 2598659,
+          "top": 3552444,
+          "width": 1203321,
+          "height": 822,
+          "normalized_box": [
+            0.21315,
+            0.518,
+            0.0987,
+            0.00012
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4145176,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.34,
+            0.33,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-3-fill",
+          "kind": "native_shape",
+          "parent": "stage-3",
+          "left": 4145176,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.34,
+            0.33,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-3-accent",
+          "kind": "native_shape",
+          "parent": "stage-3",
+          "left": 4145176,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 45262,
+          "normalized_box": [
+            0.34,
+            0.33,
+            0.105,
+            0.0066
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-3-rule",
+          "kind": "native_shape",
+          "parent": "stage-3",
+          "left": 4183580,
+          "top": 3003804,
+          "width": 1203320,
+          "height": 822,
+          "normalized_box": [
+            0.34315,
+            0.438,
+            0.0987,
+            0.00012
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-4",
+          "kind": "native_group",
+          "parent": null,
+          "left": 5730096,
+          "top": 2811780,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.47,
+            0.41,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-4-fill",
+          "kind": "native_shape",
+          "parent": "stage-4",
+          "left": 5730096,
+          "top": 2811780,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.47,
+            0.41,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-4-accent",
+          "kind": "native_shape",
+          "parent": "stage-4",
+          "left": 5730096,
+          "top": 2811780,
+          "width": 1280127,
+          "height": 45262,
+          "normalized_box": [
+            0.47,
+            0.41,
+            0.105,
+            0.0066
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-4-rule",
+          "kind": "native_shape",
+          "parent": "stage-4",
+          "left": 5768500,
+          "top": 3552444,
+          "width": 1203320,
+          "height": 822,
+          "normalized_box": [
+            0.47315,
+            0.518,
+            0.0987,
+            0.00012
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-5",
+          "kind": "native_group",
+          "parent": null,
+          "left": 7315017,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.6,
+            0.33,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-5-fill",
+          "kind": "native_shape",
+          "parent": "stage-5",
+          "left": 7315017,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 822960,
+          "normalized_box": [
+            0.6,
+            0.33,
+            0.105,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-5-accent",
+          "kind": "native_shape",
+          "parent": "stage-5",
+          "left": 7315017,
+          "top": 2263140,
+          "width": 1280127,
+          "height": 45262,
+          "normalized_box": [
+            0.6,
+            0.33,
+            0.105,
+            0.0066
+          ],
+          "text": ""
+        },
+        {
+          "name": "stage-5-rule",
+          "kind": "native_shape",
+          "parent": "stage-5",
+          "left": 7353420,
+          "top": 3003804,
+          "width": 1203321,
+          "height": 822,
+          "normalized_box": [
+            0.60315,
+            0.438,
+            0.0987,
+            0.00012
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 3657508,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 1097280,
+          "normalized_box": [
+            0.3,
+            0.57,
+            0.14,
+            0.16
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-1-fill",
+          "kind": "native_shape",
+          "parent": "segment-1",
+          "left": 3657508,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 1097280,
+          "normalized_box": [
+            0.3,
+            0.57,
+            0.14,
+            0.16
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-1-accent",
+          "kind": "native_shape",
+          "parent": "segment-1",
+          "left": 3657508,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 60350,
+          "normalized_box": [
+            0.3,
+            0.57,
+            0.14,
+            0.0088
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-1-rule",
+          "kind": "native_shape",
+          "parent": "segment-1",
+          "left": 3708713,
+          "top": 4896612,
+          "width": 1604427,
+          "height": 1097,
+          "normalized_box": [
+            0.3042,
+            0.714,
+            0.1316,
+            0.00016
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 5852013,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 1097280,
+          "normalized_box": [
+            0.48,
+            0.57,
+            0.14,
+            0.16
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-2-fill",
+          "kind": "native_shape",
+          "parent": "segment-2",
+          "left": 5852013,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 1097280,
+          "normalized_box": [
+            0.48,
+            0.57,
+            0.14,
+            0.16
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-2-accent",
+          "kind": "native_shape",
+          "parent": "segment-2",
+          "left": 5852013,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 60350,
+          "normalized_box": [
+            0.48,
+            0.57,
+            0.14,
+            0.0088
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-2-rule",
+          "kind": "native_shape",
+          "parent": "segment-2",
+          "left": 5903218,
+          "top": 4896612,
+          "width": 1604427,
+          "height": 1097,
+          "normalized_box": [
+            0.4842,
+            0.714,
+            0.1316,
+            0.00016
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 8046518,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 1097280,
+          "normalized_box": [
+            0.66,
+            0.57,
+            0.14,
+            0.16
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-3-fill",
+          "kind": "native_shape",
+          "parent": "segment-3",
+          "left": 8046518,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 1097280,
+          "normalized_box": [
+            0.66,
+            0.57,
+            0.14,
+            0.16
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-3-accent",
+          "kind": "native_shape",
+          "parent": "segment-3",
+          "left": 8046518,
+          "top": 3909059,
+          "width": 1706837,
+          "height": 60350,
+          "normalized_box": [
+            0.66,
+            0.57,
+            0.14,
+            0.0088
+          ],
+          "text": ""
+        },
+        {
+          "name": "segment-3-rule",
+          "kind": "native_shape",
+          "parent": "segment-3",
+          "left": 8097723,
+          "top": 4896612,
+          "width": 1604427,
+          "height": 1097,
+          "normalized_box": [
+            0.6642,
+            0.714,
+            0.1316,
+            0.00016
+          ],
+          "text": ""
+        },
+        {
+          "name": "battle-result",
+          "kind": "native_group",
+          "parent": null,
+          "left": 9143771,
+          "top": 2263140,
+          "width": 2194505,
+          "height": 2606040,
+          "normalized_box": [
+            0.75,
+            0.33,
+            0.18,
+            0.38
+          ],
+          "text": ""
+        },
+        {
+          "name": "battle-result-fill",
+          "kind": "native_shape",
+          "parent": "battle-result",
+          "left": 9143771,
+          "top": 2263140,
+          "width": 2194505,
+          "height": 2606040,
+          "normalized_box": [
+            0.75,
+            0.33,
+            0.18,
+            0.38
+          ],
+          "text": ""
+        },
+        {
+          "name": "battle-result-accent",
+          "kind": "native_shape",
+          "parent": "battle-result",
+          "left": 9143771,
+          "top": 2263140,
+          "width": 2194505,
+          "height": 143332,
+          "normalized_box": [
+            0.75,
+            0.33,
+            0.18,
+            0.0209
+          ],
+          "text": ""
+        },
+        {
+          "name": "battle-result-rule",
+          "kind": "native_shape",
+          "parent": "battle-result",
+          "left": 9209606,
+          "top": 4608576,
+          "width": 2062835,
+          "height": 2606,
+          "normalized_box": [
+            0.7554,
+            0.672,
+            0.1692,
+            0.00038
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "存量用户价值提升作战图"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "识别—分层—触达—转化—留存"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "stage-1-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 975335,
+          "top": 2571750,
+          "width": 1280127,
+          "height": 274320,
+          "normalized_box": [
+            0.08,
+            0.375,
+            0.105,
+            0.04
+          ],
+          "text": "识别"
+        },
+        {
+          "name": "stage-2-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 2560255,
+          "top": 3120390,
+          "width": 1280127,
+          "height": 274320,
+          "normalized_box": [
+            0.21,
+            0.455,
+            0.105,
+            0.04
+          ],
+          "text": "分层"
+        },
+        {
+          "name": "stage-3-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4145176,
+          "top": 2571750,
+          "width": 1280127,
+          "height": 274320,
+          "normalized_box": [
+            0.34,
+            0.375,
+            0.105,
+            0.04
+          ],
+          "text": "触达"
+        },
+        {
+          "name": "stage-4-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5730096,
+          "top": 3120390,
+          "width": 1280127,
+          "height": 274320,
+          "normalized_box": [
+            0.47,
+            0.455,
+            0.105,
+            0.04
+          ],
+          "text": "转化"
+        },
+        {
+          "name": "stage-5-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7315017,
+          "top": 2571750,
+          "width": 1280127,
+          "height": 274320,
+          "normalized_box": [
+            0.6,
+            0.375,
+            0.105,
+            0.04
+          ],
+          "text": "留存"
+        },
+        {
+          "name": "segment-1-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3779425,
+          "top": 4320540,
+          "width": 1463003,
+          "height": 274320,
+          "normalized_box": [
+            0.31,
+            0.63,
+            0.12,
+            0.04
+          ],
+          "text": "高价值"
+        },
+        {
+          "name": "segment-2-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5973930,
+          "top": 4320540,
+          "width": 1463003,
+          "height": 274320,
+          "normalized_box": [
+            0.49,
+            0.63,
+            0.12,
+            0.04
+          ],
+          "text": "潜力用户"
+        },
+        {
+          "name": "segment-3-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8168435,
+          "top": 4320540,
+          "width": 1463003,
+          "height": 274320,
+          "normalized_box": [
+            0.67,
+            0.63,
+            0.12,
+            0.04
+          ],
+          "text": "风险用户"
+        },
+        {
+          "name": "battle-result-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9387605,
+          "top": 3223260,
+          "width": 1706837,
+          "height": 342900,
+          "normalized_box": [
+            0.77,
+            0.47,
+            0.14,
+            0.05
+          ],
+          "text": "作战结果"
+        },
+        {
+          "name": "irregular-actions",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 975335,
+          "top": 5212080,
+          "width": 4632844,
+          "height": 754380,
+          "normalized_box": [
+            0.08,
+            0.76,
+            0.38,
+            0.11
+          ],
+          "text": "行动清单\n01 识别高价值\n02 分层定策略\n03 复盘沉淀"
+        },
+        {
+          "name": "irregular-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6949266,
+          "top": 6172200,
+          "width": 4267093,
+          "height": 205740,
+          "normalized_box": [
+            0.57,
+            0.9,
+            0.35,
+            0.03
+          ],
+          "text": "折角面板 / 斜切节奏 / 连接线层级 / native groups"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "ai-ppt-plus/render/v1",
+  "ok": true,
+  "source": "runs/candidate-before/native-text-cjk-font-01/editable.pptx",
+  "deck_sha256": "e130c8ca339df5f0964d777cc5ad53666b50a0b61050d47babb8673f76e80806",
+  "renderer": "LibreOffice+pdftoppm",
+  "render_attempts": [
+    {
+      "backend": "pdftoppm",
+      "page": 1,
+      "exit_code": 0,
+      "decoded": true,
+      "stderr": ""
+    }
+  ],
+  "conversion": {
+    "attempted": true,
+    "skipped": false,
+    "reason": "cache_disabled"
+  },
+  "font_dir": "../../ai-ppt-editable/assets/fonts",
+  "dpi": 126,
+  "selected_pages": "all",
+  "page_fingerprints": [
+    {
+      "page": 1,
+      "part": "ppt/slides/slide1.xml",
+      "fingerprint": "7bd2ebe6e2069eac9002afed1dc56b00f15689ddd71310f3a89916665bc4ffc4",
+      "selected": true,
+      "cache_hit": false
+    }
+  ],
+  "page_cache": {
+    "schema": "ai-ppt-plus/page-render-cache/v1",
+    "enabled": false,
+    "dir": null,
+    "namespace": null,
+    "requested": 1,
+    "hits": 0,
+    "misses": 0,
+    "stored": 0,
+    "warnings": []
+  },
+  "pages": [
+    "runs/candidate-before/native-text-cjk-font-01/render/slide-1.png"
+  ],
+  "errors": []
+}

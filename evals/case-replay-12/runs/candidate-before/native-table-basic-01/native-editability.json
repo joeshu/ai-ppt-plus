@@ -1,0 +1,315 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/native-table-basic-01/editable.pptx",
+  "object_manifest": "runs/candidate-before/native-table-basic-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 1,
+  "native_panel_count": 1,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 15,
+      "object_count_recursive": 15,
+      "native_tables": 1,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "policy-panel",
+          "kind": "native_group",
+          "parent": null,
+          "left": 853418,
+          "top": 1508760,
+          "width": 2194505,
+          "height": 3977639,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.18,
+            0.58
+          ],
+          "text": ""
+        },
+        {
+          "name": "policy-panel-fill",
+          "kind": "native_shape",
+          "parent": "policy-panel",
+          "left": 853418,
+          "top": 1508760,
+          "width": 2194505,
+          "height": 3977639,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.18,
+            0.58
+          ],
+          "text": ""
+        },
+        {
+          "name": "policy-panel-accent",
+          "kind": "native_shape",
+          "parent": "policy-panel",
+          "left": 853418,
+          "top": 1508760,
+          "width": 2194505,
+          "height": 218770,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.18,
+            0.0319
+          ],
+          "text": ""
+        },
+        {
+          "name": "policy-panel-rule",
+          "kind": "native_shape",
+          "parent": "policy-panel",
+          "left": 919253,
+          "top": 5088636,
+          "width": 2062835,
+          "height": 3977,
+          "normalized_box": [
+            0.0754,
+            0.742,
+            0.1692,
+            0.00058
+          ],
+          "text": ""
+        },
+        {
+          "name": "service-fee-table",
+          "kind": "editable_table",
+          "parent": null,
+          "left": 3413674,
+          "top": 1508760,
+          "width": 7924601,
+          "height": 3970782,
+          "normalized_box": [
+            0.28,
+            0.22,
+            0.65,
+            0.579
+          ],
+          "text": "",
+          "rows": 7,
+          "columns": 4,
+          "cell_text": [
+            [
+              "业务场景",
+              "收入变化",
+              "服务费标准",
+              "计提周期"
+            ],
+            [
+              "存量升档",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "指定套餐",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "新装发展",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "渠道激励",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "增收场景",
+              "结果留痕",
+              "按政策",
+              "周期锁定"
+            ],
+            [
+              "复核口径",
+              "来源绑定",
+              "可追溯",
+              "可回放"
+            ]
+          ]
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "渠道服务费标准总览"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "统一标准、清晰计提、结果可核对"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "policy-panel-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1097252,
+          "top": 2125980,
+          "width": 1706837,
+          "height": 685800,
+          "normalized_box": [
+            0.09,
+            0.31,
+            0.14,
+            0.1
+          ],
+          "text": "POLICY\nMATRIX"
+        },
+        {
+          "name": "policy-panel-copy",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1097252,
+          "top": 3360420,
+          "width": 1463003,
+          "height": 1165860,
+          "normalized_box": [
+            0.09,
+            0.49,
+            0.12,
+            0.17
+          ],
+          "text": "场景\n收入\n标准\n周期"
+        },
+        {
+          "name": "table-callout",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8899937,
+          "top": 1783080,
+          "width": 1828754,
+          "height": 205740,
+          "normalized_box": [
+            0.73,
+            0.26,
+            0.15,
+            0.03
+          ],
+          "text": "TABLE / NATIVE"
+        },
+        {
+          "name": "table-footnote",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3413674,
+          "top": 5760720,
+          "width": 7924601,
+          "height": 240030,
+          "normalized_box": [
+            0.28,
+            0.84,
+            0.65,
+            0.035
+          ],
+          "text": "行高、列宽、网格、单元格文字均保留为可编辑语义对象"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

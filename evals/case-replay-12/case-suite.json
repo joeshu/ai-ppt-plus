@@ -1,0 +1,153 @@
+{
+  "schema": "ai-ppt-plus/case-replay-suite/v1",
+  "version": "2026.09.02",
+  "suite_id": "distillation-case-replay-12",
+  "canvas": {"width": 1920, "height": 1080, "ratio": "16:9"},
+  "design_lock": {
+    "audience": "国企经营管理层、业务负责人和专业评审",
+    "language": "简体中文，必要时保留短英文标签",
+    "style": "豪华、克制、信息密度高、复杂但清晰的商业信息设计",
+    "palette": ["联通红 #E60012", "深海蓝 #061A35", "电光蓝 #1687FF", "银白 #F4F7FB"],
+    "font": "Noto Sans CJK SC",
+    "shared_rules": [
+      "保持16:9和安全边距",
+      "用明确网格、层级、留白和视觉焦点组织高密度内容",
+      "表格、面板、卡片、流程节点、正文和数字必须可被后续原生重建",
+      "复杂光效、插画和图标仅作为独立视觉资产，不承载正式文字"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "route-editable-default-01",
+      "title": "政企客户增长作战舱",
+      "page_type": "dashboard",
+      "responsibility": "routing",
+      "priority": "P0",
+      "formal_text": ["政企客户增长作战舱", "目标", "路径", "结果", "Q3", "目标洞察", "线索获取", "商机转化", "合同签约", "交付增值", "行业增长TOP5", "重点项目进展TOP5"],
+      "data": {"kpis": [["目标", "28.6", "亿元"], ["路径", "18.7", "亿元"], ["结果", "17.3", "亿元"]], "table_rows": 5, "table_columns": 5},
+      "native_requirements": ["three_independent_kpi_cards", "five_process_nodes", "two_native_tables", "native_text", "native_route_metadata"],
+      "prompt": "生成一张16:9单页高端国企经营管理PPT视觉稿，主题是‘政企客户增长作战舱’。深海蓝黑底色，联通红和电光蓝作为主强调色，豪华但克制，信息密度高，复杂网格排版，适合管理层会议室远距离阅读。顶部是大标题‘政企客户增长作战舱’，左上角红色Q3标签；上方三张独立KPI卡写‘目标 28.6亿元’、‘路径 18.7亿元’、‘结果 17.3亿元’，每张卡带微型柱状趋势。中部左侧是五步发光箭头流程：01目标洞察、02线索获取、03商机转化、04合同签约、05交付增值；右侧是多环完成率指标。底部左右各一张高密度原生表格，左表标题‘行业增长TOP5’，右表标题‘重点项目进展TOP5’，表头和进度条清晰。使用精细边框、玻璃面板、局部光晕、细线地图纹理和统一线性图标；所有文本清楚、准确、不要水印、不要手机框、不要整页照片。"
+    },
+    {
+      "case_id": "native-shape-card-01",
+      "title": "新质生产力经营框架",
+      "page_type": "framework",
+      "responsibility": "native-structure",
+      "priority": "P0",
+      "formal_text": ["新质生产力经营框架", "战略牵引", "能力筑基", "场景突破", "价值兑现", "组织", "技术", "数据", "生态", "经营结果"],
+      "data": {"cards": ["战略牵引", "能力筑基", "场景突破", "价值兑现"], "layers": 3},
+      "native_requirements": ["four_movable_cards", "three_native_layers", "connectors", "native_text", "no_full_slide_picture"],
+      "prompt": "生成一张16:9单页高端国企战略框架PPT，主题‘新质生产力经营框架’。采用深海蓝到墨黑的高级渐变背景，联通红作为战略主线，电光蓝作为能力线，银白文字。标题置于顶部左侧，右上角放精致的战略罗盘和抽象城市网络光效。中央用三层复杂但清晰的立体框架：底层是‘组织、技术、数据、生态’四个独立支撑模块；中层是四张可移动的玻璃圆角卡片‘战略牵引、能力筑基、场景突破、价值兑现’，按从左到右形成递进；顶层是红色结果舱‘经营结果’。用细箭头、连接线、编号徽章、局部光晕和层级阴影表现因果关系。页面信息密度高、留白有节奏、卡片边界明确、所有框和文字可被后续原生重建，不要大段不可读文字、不要水印。"
+    },
+    {
+      "case_id": "native-table-basic-01",
+      "title": "渠道服务费标准总览",
+      "page_type": "table",
+      "responsibility": "native-structure",
+      "priority": "P1",
+      "formal_text": ["渠道服务费标准总览", "业务场景", "收入变化", "服务费标准", "计提周期", "存量升档", "指定套餐", "新装发展", "渠道激励"],
+      "data": {"table_rows": 7, "table_columns": 4},
+      "native_requirements": ["one_native_table", "seven_rows", "four_columns", "header_fill", "border_grid", "native_cell_text"],
+      "prompt": "生成一张16:9高端国企政策发布PPT单页，主题‘渠道服务费标准总览’。采用深海蓝背景和联通红标题带，画面以一张占据主体的高密度四列表格为核心，表头为‘业务场景、收入变化、服务费标准、计提周期’，表格分为存量升档、指定套餐、新装发展、渠道激励等业务段落。表头使用红色金属质感，重点结果行用浅红和电光蓝细线强调，单元格有清晰内边距、细灰蓝网格、行组标签和右侧小型政策图标。顶部左侧是标题和一句结论‘统一标准、清晰计提、结果可核对’，右侧是一个精致的政策盾牌图形。信息密度高、排版复杂、表格文字必须可读、线条和列宽严谨，不能把表格做成图片，不能出现水印。"
+    },
+    {
+      "case_id": "native-table-merge-richtext-01",
+      "title": "FTTR渠道激励政策明白卡",
+      "page_type": "policy-table",
+      "responsibility": "native-structure",
+      "priority": "P1",
+      "formal_text": ["FTTR渠道激励政策明白卡", "核心原则", "增收有奖", "减收不罚", "场景", "收入变化", "服务费标准", "计提周期", "月度发展", "达量补贴标准", "适用渠道", "结果"],
+      "data": {"table_rows": 9, "table_columns": 4, "merge_spans": [[1, 0, 2, 0], [3, 0, 4, 0], [5, 0, 6, 0], [7, 0, 8, 0]]},
+      "native_requirements": ["three_native_tables", "merged_first_column", "rich_text_cells", "red_emphasis_runs", "native_panels", "mutation_smoke"],
+      "prompt": "生成一张16:9单页豪华高密度国企政策明白卡PPT，主题‘FTTR渠道激励政策明白卡’。联通红、深海蓝和浅粉白为主色，采用清晰的上中下分区。顶部左侧放标题‘FTTR渠道激励政策明白卡’，右侧放红色核心原则徽章‘增收有奖｜减收不罚’。中部横向排列三张独立佣金卡，每张卡有红色标题条、依据、周期、结果和小型线性图标；下方是贯穿页面的红色分隔带。底部左侧是一张政策表，第一列为合并分组单元格，表头为‘场景、收入变化、服务费标准、计提周期’，重点数字和‘增收’用红色粗体；右侧是一张‘月度发展’达量补贴表，包含清晰行列、浅红结果行和蓝色进度标记。所有框、标题条、表格、单元格、合并关系和正文都应有明确边界，不能把框架图或表格做成一张整图，不能出现水印。"
+    },
+    {
+      "case_id": "native-text-cjk-font-01",
+      "title": "政企客户服务攻坚战",
+      "page_type": "text-visual",
+      "responsibility": "text-visual",
+      "priority": "P0",
+      "formal_text": ["政企客户服务攻坚战", "Service Excellence", "一线响应", "专业交付", "客户成功", "本周重点", "关键动作", "责任到人", "闭环率 96.8%"],
+      "data": {"bilingual": true, "mixed_styles": true, "text_blocks": 8},
+      "native_requirements": ["native_cjk_text", "native_english_text", "run_level_color", "font_manifest", "no_raster_formal_text"],
+      "prompt": "生成一张16:9高端国企客户服务主题PPT，标题‘政企客户服务攻坚战’，副标题用短英文‘Service Excellence’。整体为深海蓝黑底，联通红强调关键数字，电光蓝表现流程和连接。左侧是大标题、结论句和三个纵向重点：一线响应、专业交付、客户成功；中间是复杂的客户旅程路径图，包含触达、诊断、交付、复盘四个节点；右侧是一个大型96.8%闭环率环形指标和本周重点列表。底部放三列责任卡：关键动作、责任到人、结果复盘。要求中英文混排清晰，数字红色粗体，英文细体，中文正文层级分明，字距、行距和基线精致，整体信息密度高但远看清楚，所有正式文字清晰可读，不要水印。"
+    },
+    {
+      "case_id": "chart-data-provenance-01",
+      "title": "政企行业增长结构",
+      "page_type": "chart",
+      "responsibility": "native-structure",
+      "priority": "P1",
+      "formal_text": ["2026上半年政企行业增长结构", "政府", "教育", "医疗", "交通", "制造", "目标", "实际", "同比增长"],
+      "data": {"categories": ["政府", "教育", "医疗", "交通", "制造"], "target": [8.6, 5.2, 4.6, 3.8, 3.4], "actual": [5.2, 3.1, 2.6, 2.2, 1.9], "unit": "亿元"},
+      "native_requirements": ["native_chart_or_primitives", "source_exact_data", "axis_labels", "legend", "native_annotations"],
+      "prompt": "生成一张16:9豪华高密度政企经营分析PPT，主题‘2026上半年政企行业增长结构’。深海蓝背景，联通红和电光蓝双系列数据配色。左侧是大型横向分组柱状图，五个行业依次为政府、教育、医疗、交通、制造，红色表示目标，蓝色表示实际，轴单位为亿元；右侧是一个带同比增长箭头的结构解读面板，列出政府8.6/5.2、教育5.2/3.1、医疗4.6/2.6、交通3.8/2.2、制造3.4/1.9。顶部有标题和一句结论‘政府与教育仍是规模增长主引擎’，底部有小型排名条和数据口径说明。图表标尺、图例、标签和数字清楚准确，构图复杂但阅读路径明确，不能使用虚构数据，不能出现水印。"
+    },
+    {
+      "case_id": "visual-assets-gradient-icon-01",
+      "title": "5G-A能力全景",
+      "page_type": "visual-system",
+      "responsibility": "text-visual",
+      "priority": "P1",
+      "formal_text": ["5G-A能力全景", "连接", "算力", "感知", "智能", "行业价值", "低时延", "大上行", "确定性网络"],
+      "data": {"pillars": 4, "visual_assets": ["orbital_ring", "network_node", "gradient_wave", "industry_icons"]},
+      "native_requirements": ["independent_visual_assets", "native_labels", "gradient_inventory", "no_text_in_assets", "asset_provenance"],
+      "prompt": "生成一张16:9高端科技国企发布会PPT，主题‘5G-A能力全景’。使用深海蓝黑空间背景、红蓝紫渐变光带、悬浮玻璃面板和高质量独立科技图标。中央是一个巨大的发光轨道球体，四周环绕四个能力模块：连接、算力、感知、智能；每个模块有独立的线性图标、短标签和细小数据指示。左右两侧用不对称的高级面板呈现低时延、大上行、确定性网络三项能力，底部用一条渐变波纹连接到行业价值。画面要有豪华发布会质感、复杂层次、精确透视、细腻光晕和清晰留白，图标与渐变视觉资产保持独立，不要在复杂视觉资产中嵌入大段文字，不要水印。"
+    },
+    {
+      "case_id": "framework-irregular-layer-01",
+      "title": "存量用户价值提升作战图",
+      "page_type": "irregular-framework",
+      "responsibility": "native-structure",
+      "priority": "P1",
+      "formal_text": ["存量用户价值提升作战图", "识别", "分层", "触达", "转化", "留存", "高价值", "潜力用户", "风险用户", "作战结果"],
+      "data": {"stages": 5, "segments": 3, "irregular": true},
+      "native_requirements": ["irregular_native_regions", "layer_order", "connectors", "independent_panels", "native_text"],
+      "prompt": "生成一张16:9高端国企经营作战图PPT，主题‘存量用户价值提升作战图’。背景采用深蓝网格和轻微地图纹理，联通红作为作战主轴。画面不是规整四宫格，而是一个有明显层级和不对称节奏的复杂作战地图：左侧五个递进节点‘识别、分层、触达、转化、留存’，通过红蓝发光连接线穿过中央三类用户分群‘高价值、潜力用户、风险用户’，右侧汇聚到大型结果面板‘作战结果’。顶部有策略结论，底部有三条行动清单。使用折角面板、斜切标签、半透明区域、箭头、编号、光晕和细线，保持每个语义面板独立可移动的视觉边界；不要把所有内容做成一张整图，不要水印。"
+    },
+    {
+      "case_id": "multi-slide-consistency-01",
+      "title": "经营闭环一页总览",
+      "page_type": "multi-module-overview",
+      "responsibility": "cache-integrity",
+      "priority": "P2",
+      "formal_text": ["经营闭环一页总览", "目标设定", "过程经营", "问题诊断", "资源调度", "结果复盘", "统一口径", "统一节奏", "统一动作"],
+      "data": {"modules": 5, "repeated_component": "module-card"},
+      "native_requirements": ["five_repeated_modules", "consistent_tokens", "full_deck_identity", "native_text", "stable_geometry"],
+      "prompt": "生成一张16:9高端国企经营管理PPT，主题‘经营闭环一页总览’。全页采用统一深海蓝、联通红、电光蓝设计系统，展示五个同源但内容不同的模块卡：目标设定、过程经营、问题诊断、资源调度、结果复盘，沿着一个巨大的环形箭头顺时针排列。每个模块有相同的标题基线、编号徽章、图标位置、指标条和小型说明；中心是‘统一口径｜统一节奏｜统一动作’三行核心原则。顶部标题区和底部复盘横条保持严格对齐，页面信息密度高、视觉节奏复杂、组件重复一致、边距和圆角统一，不要水印、不要照片背景。"
+    },
+    {
+      "case_id": "failure-fallback-stop-01",
+      "title": "AI-PPT质量门禁与停机机制",
+      "page_type": "governance-flow",
+      "responsibility": "package-contract",
+      "priority": "P0",
+      "formal_text": ["AI-PPT质量门禁与停机机制", "输入校验", "路由确认", "原生结构", "视觉回归", "人工收口", "未知问题", "立即停机", "不得静默回退"],
+      "data": {"gates": 5, "failure_branch": true},
+      "native_requirements": ["five_gate_nodes", "failure_branch", "red_stop_panel", "native_text", "audit_labels"],
+      "prompt": "生成一张16:9高端企业AI工程治理PPT，主题‘AI-PPT质量门禁与停机机制’。深海蓝黑底，联通红用于警示和停机，电光蓝用于正常流程。顶部是标题和结论‘未知问题不猜测，证据不足就停机’。中部是一条复杂五段流程：输入校验、路由确认、原生结构、视觉回归、人工收口；每段有独立面板、编号、校验图标和状态灯。右侧分出醒目的红色异常分支面板：未知问题、立即停机、不得静默回退；配合锁、盾牌和断路器图标。底部是证据链条：baseline、candidate、object audit、visual compare、mutation smoke。信息密度高、治理感强、结构边界清晰，不要水印。"
+    },
+    {
+      "case_id": "package-render-portability-01",
+      "title": "可编辑PPT交付运行矩阵",
+      "page_type": "architecture-matrix",
+      "responsibility": "package-contract",
+      "priority": "P0",
+      "formal_text": ["可编辑PPT交付运行矩阵", "技能包", "运行时", "字体", "渲染器", "PPTX包", "桌面WPS", "移动端WPS", "CI Runner", "可复现交付"],
+      "data": {"layers": 5, "targets": 3},
+      "native_requirements": ["layered_architecture", "native_matrix", "environment_labels", "native_text", "package_evidence"],
+      "prompt": "生成一张16:9高端软件工程与企业交付PPT，主题‘可编辑PPT交付运行矩阵’。深海蓝背景，红色用于契约锁定，蓝色用于运行链路，银白用于说明文字。左侧用五层叠加架构展示技能包、运行时、字体、渲染器、PPTX包；右侧用三列环境矩阵展示桌面WPS、移动端WPS、CI Runner，每个单元格有清晰的通过/风险状态和小型设备或服务器图标。中部用一条粗细有节奏的连接线说明‘同一源文件→同一证据→可复现交付’，底部放四个硬门禁标签：包完整、字体可见、渲染一致、哈希锁定。画面复杂、专业、网格精准、文本可读，不要水印。"
+    },
+    {
+      "case_id": "cache-idempotency-01",
+      "title": "增量渲染与缓存幂等流水线",
+      "page_type": "pipeline",
+      "responsibility": "cache-integrity",
+      "priority": "P2",
+      "formal_text": ["增量渲染与缓存幂等流水线", "源文件哈希", "页面级缓存", "受影响区域", "并行QA", "重复运行", "缓存命中率", "返工次数", "结果稳定"],
+      "data": {"stages": 5, "metrics": [["缓存命中率", "86%"], ["返工次数", "1"], ["结果稳定", "100%"]]},
+      "native_requirements": ["five_pipeline_nodes", "cache_metrics", "parallel_branches", "native_text", "stable_connectors"],
+      "prompt": "生成一张16:9高端AI工程效率PPT，主题‘增量渲染与缓存幂等流水线’。深海蓝黑背景，联通红强调哈希与锁，电光蓝表现并行流水线，银白表现证据。顶部放标题和三个指标：缓存命中率86%、返工次数1、结果稳定100%。中央是一条五段流水线：源文件哈希、页面级缓存、受影响区域、并行QA、重复运行；第二和第三阶段分出三条并行支路，分别是视觉比较、对象审计、字体检查，最后汇聚到绿色/蓝色稳定结果舱。底部用小型时间轴表现首轮、修复轮、回归轮的耗时变化。要求结构复杂、连接线清楚、层级统一、所有节点和指标边界可后续原生重建，不要水印。"
+    }
+  ]
+}

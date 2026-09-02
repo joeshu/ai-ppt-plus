@@ -1,0 +1,797 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/native-shape-card-01/editable.pptx",
+  "object_manifest": "runs/candidate-before/native-shape-card-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 7,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 48,
+      "object_count_recursive": 48,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "framework-arrow-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 3291757,
+          "top": 2468880,
+          "width": 487668,
+          "height": 0,
+          "normalized_box": [
+            0.27,
+            0.36,
+            0.04,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "framework-arrow-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5730096,
+          "top": 2468880,
+          "width": 487668,
+          "height": 0,
+          "normalized_box": [
+            0.47,
+            0.36,
+            0.04,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "framework-arrow-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 8168435,
+          "top": 2468880,
+          "width": 487668,
+          "height": 0,
+          "normalized_box": [
+            0.67,
+            0.36,
+            0.04,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "layer-foundation",
+          "kind": "native_group",
+          "parent": null,
+          "left": 853418,
+          "top": 2125980,
+          "width": 10484857,
+          "height": 2057400,
+          "normalized_box": [
+            0.07,
+            0.31,
+            0.86,
+            0.3
+          ],
+          "text": ""
+        },
+        {
+          "name": "layer-foundation-fill",
+          "kind": "native_shape",
+          "parent": "layer-foundation",
+          "left": 853418,
+          "top": 2125980,
+          "width": 10484857,
+          "height": 2057400,
+          "normalized_box": [
+            0.07,
+            0.31,
+            0.86,
+            0.3
+          ],
+          "text": ""
+        },
+        {
+          "name": "layer-foundation-accent",
+          "kind": "native_shape",
+          "parent": "layer-foundation",
+          "left": 853418,
+          "top": 2125980,
+          "width": 10484857,
+          "height": 113157,
+          "normalized_box": [
+            0.07,
+            0.31,
+            0.86,
+            0.0165
+          ],
+          "text": ""
+        },
+        {
+          "name": "layer-foundation-rule",
+          "kind": "native_shape",
+          "parent": "layer-foundation",
+          "left": 1167964,
+          "top": 3977640,
+          "width": 9855766,
+          "height": 2057,
+          "normalized_box": [
+            0.0958,
+            0.58,
+            0.8084,
+            0.0003
+          ],
+          "text": ""
+        },
+        {
+          "name": "layer-value",
+          "kind": "native_group",
+          "parent": null,
+          "left": 1950671,
+          "top": 1645920,
+          "width": 8290352,
+          "height": 1165860,
+          "normalized_box": [
+            0.16,
+            0.24,
+            0.68,
+            0.17
+          ],
+          "text": ""
+        },
+        {
+          "name": "layer-value-fill",
+          "kind": "native_shape",
+          "parent": "layer-value",
+          "left": 1950671,
+          "top": 1645920,
+          "width": 8290352,
+          "height": 1165860,
+          "normalized_box": [
+            0.16,
+            0.24,
+            0.68,
+            0.17
+          ],
+          "text": ""
+        },
+        {
+          "name": "layer-value-accent",
+          "kind": "native_shape",
+          "parent": "layer-value",
+          "left": 1950671,
+          "top": 1645920,
+          "width": 8290352,
+          "height": 64122,
+          "normalized_box": [
+            0.16,
+            0.24,
+            0.68,
+            0.00935
+          ],
+          "text": ""
+        },
+        {
+          "name": "layer-value-rule",
+          "kind": "native_shape",
+          "parent": "layer-value",
+          "left": 2199381,
+          "top": 2695194,
+          "width": 7792932,
+          "height": 1165,
+          "normalized_box": [
+            0.1804,
+            0.393,
+            0.6392,
+            0.00017
+          ],
+          "text": ""
+        },
+        {
+          "name": "result-cabin",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4389010,
+          "top": 4869180,
+          "width": 3413674,
+          "height": 822960,
+          "normalized_box": [
+            0.36,
+            0.71,
+            0.28,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "result-cabin-fill",
+          "kind": "native_shape",
+          "parent": "result-cabin",
+          "left": 4389010,
+          "top": 4869180,
+          "width": 3413674,
+          "height": 822960,
+          "normalized_box": [
+            0.36,
+            0.71,
+            0.28,
+            0.12
+          ],
+          "text": ""
+        },
+        {
+          "name": "result-cabin-accent",
+          "kind": "native_shape",
+          "parent": "result-cabin",
+          "left": 4389010,
+          "top": 4869180,
+          "width": 3413674,
+          "height": 45262,
+          "normalized_box": [
+            0.36,
+            0.71,
+            0.28,
+            0.0066
+          ],
+          "text": ""
+        },
+        {
+          "name": "result-cabin-rule",
+          "kind": "native_shape",
+          "parent": "result-cabin",
+          "left": 4491420,
+          "top": 5609844,
+          "width": 3208854,
+          "height": 822,
+          "normalized_box": [
+            0.3684,
+            0.818,
+            0.2632,
+            0.00012
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 1463003,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 960120,
+          "normalized_box": [
+            0.12,
+            0.28,
+            0.16,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-1-fill",
+          "kind": "native_shape",
+          "parent": "card-1",
+          "left": 1463003,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 960120,
+          "normalized_box": [
+            0.12,
+            0.28,
+            0.16,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-1-accent",
+          "kind": "native_shape",
+          "parent": "card-1",
+          "left": 1463003,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 52806,
+          "normalized_box": [
+            0.12,
+            0.28,
+            0.16,
+            0.0077
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-1-rule",
+          "kind": "native_shape",
+          "parent": "card-1",
+          "left": 1521523,
+          "top": 2784348,
+          "width": 1833631,
+          "height": 960,
+          "normalized_box": [
+            0.1248,
+            0.406,
+            0.1504,
+            0.00014
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 3901342,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 960120,
+          "normalized_box": [
+            0.32,
+            0.28,
+            0.16,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-2-fill",
+          "kind": "native_shape",
+          "parent": "card-2",
+          "left": 3901342,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 960120,
+          "normalized_box": [
+            0.32,
+            0.28,
+            0.16,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-2-accent",
+          "kind": "native_shape",
+          "parent": "card-2",
+          "left": 3901342,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 52806,
+          "normalized_box": [
+            0.32,
+            0.28,
+            0.16,
+            0.0077
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-2-rule",
+          "kind": "native_shape",
+          "parent": "card-2",
+          "left": 3959862,
+          "top": 2784348,
+          "width": 1833631,
+          "height": 960,
+          "normalized_box": [
+            0.3248,
+            0.406,
+            0.1504,
+            0.00014
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 6339681,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 960120,
+          "normalized_box": [
+            0.52,
+            0.28,
+            0.16,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-3-fill",
+          "kind": "native_shape",
+          "parent": "card-3",
+          "left": 6339681,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 960120,
+          "normalized_box": [
+            0.52,
+            0.28,
+            0.16,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-3-accent",
+          "kind": "native_shape",
+          "parent": "card-3",
+          "left": 6339681,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 52806,
+          "normalized_box": [
+            0.52,
+            0.28,
+            0.16,
+            0.0077
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-3-rule",
+          "kind": "native_shape",
+          "parent": "card-3",
+          "left": 6398201,
+          "top": 2784348,
+          "width": 1833631,
+          "height": 960,
+          "normalized_box": [
+            0.5248,
+            0.406,
+            0.1504,
+            0.00014
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-4",
+          "kind": "native_group",
+          "parent": null,
+          "left": 8778020,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 960120,
+          "normalized_box": [
+            0.72,
+            0.28,
+            0.16,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-4-fill",
+          "kind": "native_shape",
+          "parent": "card-4",
+          "left": 8778020,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 960120,
+          "normalized_box": [
+            0.72,
+            0.28,
+            0.16,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-4-accent",
+          "kind": "native_shape",
+          "parent": "card-4",
+          "left": 8778020,
+          "top": 1920240,
+          "width": 1950671,
+          "height": 52806,
+          "normalized_box": [
+            0.72,
+            0.28,
+            0.16,
+            0.0077
+          ],
+          "text": ""
+        },
+        {
+          "name": "card-4-rule",
+          "kind": "native_shape",
+          "parent": "card-4",
+          "left": 8836540,
+          "top": 2784348,
+          "width": 1833631,
+          "height": 960,
+          "normalized_box": [
+            0.7248,
+            0.406,
+            0.1504,
+            0.00014
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "新质生产力经营框架"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "战略牵引 × 能力筑基 × 场景突破 × 价值兑现"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "card-1-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1584920,
+          "top": 2228850,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.13,
+            0.325,
+            0.14,
+            0.04
+          ],
+          "text": "战略牵引"
+        },
+        {
+          "name": "card-2-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4023259,
+          "top": 2228850,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.33,
+            0.325,
+            0.14,
+            0.04
+          ],
+          "text": "能力筑基"
+        },
+        {
+          "name": "card-3-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6461598,
+          "top": 2228850,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.53,
+            0.325,
+            0.14,
+            0.04
+          ],
+          "text": "场景突破"
+        },
+        {
+          "name": "card-4-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8899937,
+          "top": 2228850,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.73,
+            0.325,
+            0.14,
+            0.04
+          ],
+          "text": "价值兑现"
+        },
+        {
+          "name": "foundation-1",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1584920,
+          "top": 3291840,
+          "width": 1950671,
+          "height": 308610,
+          "normalized_box": [
+            0.13,
+            0.48,
+            0.16,
+            0.045
+          ],
+          "text": "组织"
+        },
+        {
+          "name": "foundation-2",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4023259,
+          "top": 3291840,
+          "width": 1950671,
+          "height": 308610,
+          "normalized_box": [
+            0.33,
+            0.48,
+            0.16,
+            0.045
+          ],
+          "text": "技术"
+        },
+        {
+          "name": "foundation-3",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6461598,
+          "top": 3291840,
+          "width": 1950671,
+          "height": 308610,
+          "normalized_box": [
+            0.53,
+            0.48,
+            0.16,
+            0.045
+          ],
+          "text": "数据"
+        },
+        {
+          "name": "foundation-4",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8899937,
+          "top": 3291840,
+          "width": 1950671,
+          "height": 308610,
+          "normalized_box": [
+            0.73,
+            0.48,
+            0.16,
+            0.045
+          ],
+          "text": "生态"
+        },
+        {
+          "name": "result-cabin-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4632844,
+          "top": 5122926,
+          "width": 2926006,
+          "height": 274320,
+          "normalized_box": [
+            0.38,
+            0.747,
+            0.24,
+            0.04
+          ],
+          "text": "经营结果"
+        },
+        {
+          "name": "framework-footnote",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1097252,
+          "top": 5966460,
+          "width": 7071183,
+          "height": 240030,
+          "normalized_box": [
+            0.09,
+            0.87,
+            0.58,
+            0.035
+          ],
+          "text": "组织、技术、数据、生态共同支撑四个经营跃迁层"
+        },
+        {
+          "name": "framework-score",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8534186,
+          "top": 5966460,
+          "width": 2682172,
+          "height": 240030,
+          "normalized_box": [
+            0.7,
+            0.87,
+            0.22,
+            0.035
+          ],
+          "text": "可移动卡片 / 3层结构 / 连接线"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

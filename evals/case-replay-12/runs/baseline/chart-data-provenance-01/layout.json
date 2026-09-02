@@ -1,0 +1,17 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/baseline/chart-data-provenance-01",
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "frame": "../../../visual/chart-data-provenance-01-reference.png",
+      "frame_object_id": "legacy-full-slide-frame",
+      "frame_role": "legacy-flattened-control"
+    }
+  ]
+}

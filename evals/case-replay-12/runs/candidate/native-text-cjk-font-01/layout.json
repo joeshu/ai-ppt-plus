@@ -1,0 +1,853 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/candidate/native-text-cjk-font-01",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#F4F7FB",
+    "size": 10,
+    "table_header_fill": "#9B0B1B",
+    "table_fill": "#F5F8FC",
+    "chart_colors": [
+      "#E60012",
+      "#1687FF"
+    ],
+    "chart_text_color": "#F4F7FB",
+    "chart_muted_color": "#A9BED5",
+    "chart_grid_color": "#355A7D",
+    "chart_tick_size": 8,
+    "chart_legend_size": 8,
+    "chart_label_size": 7
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "background",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#061A35"
+        },
+        {
+          "object_id": "title-accent",
+          "type": "rect",
+          "x": 0.055,
+          "y": 0.065,
+          "w": 0.006,
+          "h": 0.075,
+          "fill": "#E60012"
+        },
+        {
+          "object_id": "title-rule",
+          "type": "line",
+          "x": 0.055,
+          "y": 0.17,
+          "x2": 0.945,
+          "y2": 0.17,
+          "line": "#355A7D",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "service-line-1",
+          "type": "line",
+          "x": 0.1,
+          "y": 0.38,
+          "x2": 0.27,
+          "y2": 0.38,
+          "line": "#E60012",
+          "line_width": 1.8
+        },
+        {
+          "object_id": "service-line-2",
+          "type": "line",
+          "x": 0.1,
+          "y": 0.5,
+          "x2": 0.27,
+          "y2": 0.5,
+          "line": "#1687FF",
+          "line_width": 1.8
+        },
+        {
+          "object_id": "service-line-3",
+          "type": "line",
+          "x": 0.1,
+          "y": 0.62,
+          "x2": 0.27,
+          "y2": 0.62,
+          "line": "#1687FF",
+          "line_width": 1.8
+        },
+        {
+          "object_id": "journey-link-1",
+          "type": "line",
+          "x": 0.46,
+          "y": 0.5,
+          "x2": 0.47300000000000003,
+          "y2": 0.5,
+          "line": "#E60012",
+          "line_width": 1.5
+        },
+        {
+          "object_id": "journey-link-2",
+          "type": "line",
+          "x": 0.532,
+          "y": 0.5,
+          "x2": 0.545,
+          "y2": 0.5,
+          "line": "#E60012",
+          "line_width": 1.5
+        },
+        {
+          "object_id": "journey-link-3",
+          "type": "line",
+          "x": 0.6040000000000001,
+          "y": 0.5,
+          "x2": 0.617,
+          "y2": 0.5,
+          "line": "#E60012",
+          "line_width": 1.5
+        },
+        {
+          "object_id": "closure-ring-circle",
+          "type": "oval",
+          "x": 0.79,
+          "y": 0.33,
+          "w": 0.2,
+          "h": 0.2,
+          "fill": "#55D6A1",
+          "line": "#55D6A1",
+          "line_width": 1.5
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "service-principle",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.07,
+          "y": 0.22,
+          "w": 0.25,
+          "h": 0.57,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "service-principle-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "service-principle-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "service-principle-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "service-principle"
+        },
+        {
+          "object_id": "journey-panel",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.36,
+          "y": 0.22,
+          "w": 0.34,
+          "h": 0.57,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "journey-panel-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0B2747",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "journey-panel-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "journey-panel-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "journey-panel"
+        },
+        {
+          "object_id": "journey-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.4,
+          "y": 0.45,
+          "w": 0.06,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "journey-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "journey-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "journey-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "journey-1"
+        },
+        {
+          "object_id": "journey-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.47200000000000003,
+          "y": 0.45,
+          "w": 0.06,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "journey-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "journey-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "journey-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "journey-2"
+        },
+        {
+          "object_id": "journey-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.544,
+          "y": 0.45,
+          "w": 0.06,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "journey-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "journey-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "journey-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "journey-3"
+        },
+        {
+          "object_id": "journey-4",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.616,
+          "y": 0.45,
+          "w": 0.06,
+          "h": 0.1,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "journey-4-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "journey-4-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "journey-4-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "journey-4"
+        },
+        {
+          "object_id": "closure-ring",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.75,
+          "y": 0.27,
+          "w": 0.18,
+          "h": 0.28,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "closure-ring-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#103B4B",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "closure-ring-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#55D6A1"
+            },
+            {
+              "object_id": "closure-ring-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "closure-ring"
+        },
+        {
+          "object_id": "responsibility-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.36,
+          "y": 0.84,
+          "w": 0.17,
+          "h": 0.08,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "responsibility-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "responsibility-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "responsibility-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "responsibility-1"
+        },
+        {
+          "object_id": "responsibility-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.56,
+          "y": 0.84,
+          "w": 0.17,
+          "h": 0.08,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "responsibility-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "responsibility-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "responsibility-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "responsibility-2"
+        },
+        {
+          "object_id": "responsibility-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.76,
+          "y": 0.84,
+          "w": 0.17,
+          "h": 0.08,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "responsibility-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "responsibility-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "responsibility-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "responsibility-3"
+        }
+      ],
+      "tables": [],
+      "charts": [],
+      "texts": [
+        {
+          "object_id": "title",
+          "text": "政企客户服务攻坚战",
+          "x": 0.073,
+          "y": 0.052,
+          "w": 0.66,
+          "h": 0.09,
+          "size": 25,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "subtitle",
+          "text": "Service Excellence",
+          "x": 0.075,
+          "y": 0.145,
+          "w": 0.62,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "case-label",
+          "text": "CASE REPLAY / NATIVE EDITABLE",
+          "x": 0.72,
+          "y": 0.075,
+          "w": 0.22,
+          "h": 0.04,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "service-label-1",
+          "text": "一线响应",
+          "x": 0.1,
+          "y": 0.31,
+          "w": 0.18,
+          "h": 0.05,
+          "size": 13,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "service-label-2",
+          "text": "专业交付",
+          "x": 0.1,
+          "y": 0.43,
+          "w": 0.18,
+          "h": 0.05,
+          "size": 13,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "service-label-3",
+          "text": "客户成功",
+          "x": 0.1,
+          "y": 0.55,
+          "w": 0.18,
+          "h": 0.05,
+          "size": 13,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "journey-1-text",
+          "text": "触达",
+          "x": 0.39,
+          "y": 0.58,
+          "w": 0.08,
+          "h": 0.04,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "journey-2-text",
+          "text": "诊断",
+          "x": 0.462,
+          "y": 0.58,
+          "w": 0.08,
+          "h": 0.04,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "journey-3-text",
+          "text": "交付",
+          "x": 0.534,
+          "y": 0.58,
+          "w": 0.08,
+          "h": 0.04,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "journey-4-text",
+          "text": "复盘",
+          "x": 0.606,
+          "y": 0.58,
+          "w": 0.08,
+          "h": 0.04,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "closure-rate",
+          "text": "96.8%",
+          "x": 0.78,
+          "y": 0.395,
+          "w": 0.22,
+          "h": 0.06,
+          "size": 17,
+          "color": "#061A35",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "responsibility-1-text",
+          "text": "本周重点",
+          "x": 0.36,
+          "y": 0.86,
+          "w": 0.17,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "responsibility-2-text",
+          "text": "关键动作",
+          "x": 0.56,
+          "y": 0.86,
+          "w": 0.17,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "responsibility-3-text",
+          "text": "责任到人",
+          "x": 0.76,
+          "y": 0.86,
+          "w": 0.17,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "bilingual-note",
+          "text": "CJK + English / run-level emphasis / native text",
+          "x": 0.72,
+          "y": 0.9,
+          "w": 0.22,
+          "h": 0.03,
+          "size": 7.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "mixed-run-callout",
+          "x": 0.75,
+          "y": 0.61,
+          "w": 0.18,
+          "h": 0.05,
+          "size": 11,
+          "color": "#F4F7FB",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005,
+          "runs": [
+            {
+              "text": "闭环率 ",
+              "color": "#F4F7FB"
+            },
+            {
+              "text": "96.8%",
+              "color": "#E60012",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "icons": []
+    }
+  ]
+}

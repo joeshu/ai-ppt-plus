@@ -1,0 +1,785 @@
+{
+  "schema": "ai-ppt-plus/baseline-evaluation/v1",
+  "evaluation_kind": "pre-distillation legacy image-only control replay",
+  "suite_id": "distillation-case-replay-12",
+  "source_case_suite_sha256": "2f57ae1decfb61a93e604e4d7a5ec07e757290f2c6741f117cdb18cf0674f00d",
+  "cases": [
+    {
+      "case_id": "route-editable-default-01",
+      "reference_sha256": "303afb920cd0ef8520ffdff65a2bc93f5950cca663a4a22041a1a0f530bf6a80",
+      "deck": "runs/baseline/route-editable-default-01/legacy-image-only.pptx",
+      "deck_sha256": "305ed604a1658c961ddd521ba3ad25f331f707293ac9236e30431fb9e0b2ff9c",
+      "rendered": "runs/baseline/route-editable-default-01/render/slide-1.png",
+      "rendered_sha256": "cbb16188e26d0cf42e29e0bafa0b44be11ef65c7c63c477d6e02cbab20d2f3e0",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.960852,
+          "blurred_layout_ssim": 0.99858,
+          "mean_absolute_error": 0.018094,
+          "rmse": 0.050642,
+          "pixel_fidelity_score": 0.981906
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "native-shape-card-01",
+      "reference_sha256": "a885401f79dbb20491ff75ee78408bc354ac3bc3d3828cf63f77cddd8c68180d",
+      "deck": "runs/baseline/native-shape-card-01/legacy-image-only.pptx",
+      "deck_sha256": "38869833f49308bd7a71ab7e27f5566f3a03389168514ee8c77998e96ee35f8b",
+      "rendered": "runs/baseline/native-shape-card-01/render/slide-1.png",
+      "rendered_sha256": "3f812cbc2b3d2452f98e1218a9916d83402627822d5ae6f9e566c33271e54921",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.948147,
+          "blurred_layout_ssim": 0.998657,
+          "mean_absolute_error": 0.020845,
+          "rmse": 0.058369,
+          "pixel_fidelity_score": 0.979155
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "native-table-basic-01",
+      "reference_sha256": "42c47c5de12ec8b609e94bdf82e21337c7ac4156ec815c9739c33a3ff364e8ae",
+      "deck": "runs/baseline/native-table-basic-01/legacy-image-only.pptx",
+      "deck_sha256": "90dde99e56a0af2f698e91cac30649ea1ccb01f6753f4ee3e298053167891555",
+      "rendered": "runs/baseline/native-table-basic-01/render/slide-1.png",
+      "rendered_sha256": "e26e856cc850e0ff180c77d01f208ca62efbfaf370c229c11dc1ceeff54a25d0",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.927288,
+          "blurred_layout_ssim": 0.998259,
+          "mean_absolute_error": 0.03125,
+          "rmse": 0.075962,
+          "pixel_fidelity_score": 0.96875
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "native-table-merge-richtext-01",
+      "reference_sha256": "1820c8da67fe083e600115eda1dc4b0a644f2f1b3132a058e77f5f2e813206f2",
+      "deck": "runs/baseline/native-table-merge-richtext-01/legacy-image-only.pptx",
+      "deck_sha256": "298bc387fe010a93ae5ac88455faa5d55bf1ba857cfa87723ebd5a6949f6c04e",
+      "rendered": "runs/baseline/native-table-merge-richtext-01/render/slide-1.png",
+      "rendered_sha256": "920a53ea8a37a80c4461b8dacdd4fa66738d654842d6d49bc233ee672049003c",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.965808,
+          "blurred_layout_ssim": 0.99878,
+          "mean_absolute_error": 0.02969,
+          "rmse": 0.078043,
+          "pixel_fidelity_score": 0.97031
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "native-text-cjk-font-01",
+      "reference_sha256": "1e5e8281182c704b0495f4fb3a2993642a14feec2d3704ed6bd670eedfca7e43",
+      "deck": "runs/baseline/native-text-cjk-font-01/legacy-image-only.pptx",
+      "deck_sha256": "1dc4efd3a52cc1eeb35de3c83ef707ea5e97ce46e80efbe1503f30beb78b8118",
+      "rendered": "runs/baseline/native-text-cjk-font-01/render/slide-1.png",
+      "rendered_sha256": "56c0a76ef71e5549e62e9f1dce0062ece13352dd2f526bf0f72ddd45b6bcabd3",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.946805,
+          "blurred_layout_ssim": 0.998281,
+          "mean_absolute_error": 0.023056,
+          "rmse": 0.061621,
+          "pixel_fidelity_score": 0.976944
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "chart-data-provenance-01",
+      "reference_sha256": "db98715758a9d7cbf57623c284590d1097e64e89244074db483a747d9a88c0c3",
+      "deck": "runs/baseline/chart-data-provenance-01/legacy-image-only.pptx",
+      "deck_sha256": "d6e836326b3fd3ea87c763d7e9a41807ab36a15aebdb5b146c983c70fc18d762",
+      "rendered": "runs/baseline/chart-data-provenance-01/render/slide-1.png",
+      "rendered_sha256": "af953f2d8f270a55307c41210a328ecfd480388c021914d75f9c422ba20d997c",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.957179,
+          "blurred_layout_ssim": 0.998487,
+          "mean_absolute_error": 0.020995,
+          "rmse": 0.061059,
+          "pixel_fidelity_score": 0.979005
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "visual-assets-gradient-icon-01",
+      "reference_sha256": "b5da2389f0f0462ca19c0dab7424e440f668f676ff743afb5a63357ba041d57e",
+      "deck": "runs/baseline/visual-assets-gradient-icon-01/legacy-image-only.pptx",
+      "deck_sha256": "6f8a6d157cead33f13fd3351c9464ffcc5c015300c5def75d5f1e5983e705a1d",
+      "rendered": "runs/baseline/visual-assets-gradient-icon-01/render/slide-1.png",
+      "rendered_sha256": "94b3371d405c57fa2f1fa3046a9344cfb2ab66f72e0e6fc6b27151d486112594",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.964673,
+          "blurred_layout_ssim": 0.998766,
+          "mean_absolute_error": 0.016894,
+          "rmse": 0.048948,
+          "pixel_fidelity_score": 0.983106
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "framework-irregular-layer-01",
+      "reference_sha256": "d8f62301b29ac482513a4056698ff906e385181dbb821fadae1d55c4c9fea064",
+      "deck": "runs/baseline/framework-irregular-layer-01/legacy-image-only.pptx",
+      "deck_sha256": "57792b165ca07fd4b8f7b7a1c50af8d3ff76d4ba31c43f12e03a7b9669a94dfe",
+      "rendered": "runs/baseline/framework-irregular-layer-01/render/slide-1.png",
+      "rendered_sha256": "cd84121303cb74c17c0ea844d3a9adbe4c1cf4ed09b45f1919bb2b5908663e88",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.93873,
+          "blurred_layout_ssim": 0.998479,
+          "mean_absolute_error": 0.024617,
+          "rmse": 0.064872,
+          "pixel_fidelity_score": 0.975383
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "multi-slide-consistency-01",
+      "reference_sha256": "da73409fe5225ee064bfe60748681124b92acc12ad0ec57bb6bf18dd7ce0ceb7",
+      "deck": "runs/baseline/multi-slide-consistency-01/legacy-image-only.pptx",
+      "deck_sha256": "fac01c409f0ade9bfa77650a45bafbd2a70865f5b2bc480a303d13d61fe476df",
+      "rendered": "runs/baseline/multi-slide-consistency-01/render/slide-1.png",
+      "rendered_sha256": "c703d382562476c3a2962f38d13c7eac5096aec5e490155cce4dad64a073441e",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.947873,
+          "blurred_layout_ssim": 0.998612,
+          "mean_absolute_error": 0.019207,
+          "rmse": 0.056859,
+          "pixel_fidelity_score": 0.980793
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "failure-fallback-stop-01",
+      "reference_sha256": "b09c0d93332fce28399bc1174b215c4e4ab9e3989010e61ff78854d48ce6d9f1",
+      "deck": "runs/baseline/failure-fallback-stop-01/legacy-image-only.pptx",
+      "deck_sha256": "7791ad92ded9ea5f5951d70fb2ce44388ddf3fc64607875688085f429e6e15a6",
+      "rendered": "runs/baseline/failure-fallback-stop-01/render/slide-1.png",
+      "rendered_sha256": "ba6c73379d954c431d2e88001016aa6ff7eb5994f3691a40aef1b0a687f81519",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.945501,
+          "blurred_layout_ssim": 0.99839,
+          "mean_absolute_error": 0.024935,
+          "rmse": 0.065951,
+          "pixel_fidelity_score": 0.975065
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "package-render-portability-01",
+      "reference_sha256": "30c018fdd1a7dfc687d61cf1c5ba6bcb879b252c2bc6fdf4a82469fb2439a2a1",
+      "deck": "runs/baseline/package-render-portability-01/legacy-image-only.pptx",
+      "deck_sha256": "bd52af5ff6cc1d55783c0af51647006ed84f56400bdf9fbd5d919ae3518b0938",
+      "rendered": "runs/baseline/package-render-portability-01/render/slide-1.png",
+      "rendered_sha256": "5ff0bd80372e29e32104909ca8b4a08ca2937a5e1bc3b6c3805aaf0ecf159369",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.948834,
+          "blurred_layout_ssim": 0.998582,
+          "mean_absolute_error": 0.023801,
+          "rmse": 0.06253,
+          "pixel_fidelity_score": 0.976199
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    },
+    {
+      "case_id": "cache-idempotency-01",
+      "reference_sha256": "8e55bf397885b556e863367b0f4d473144a111b69940bc691d8d2d6140c50bcb",
+      "deck": "runs/baseline/cache-idempotency-01/legacy-image-only.pptx",
+      "deck_sha256": "76ea8ea63c95a760df10f17b7a8720b671d0881c099715eba50b903eb21ecc4e",
+      "rendered": "runs/baseline/cache-idempotency-01/render/slide-1.png",
+      "rendered_sha256": "e7bb4e0242ce2b77506f007ce3cb7066909a0efc8276b6f7a0bec96d33d3fded",
+      "failure_codes": [
+        {
+          "code": "native_structure_missing"
+        },
+        {
+          "code": "formal_text_rasterized"
+        }
+      ],
+      "original_pptx_object_counts": {
+        "native_table_count": 0,
+        "native_panel_count": 0,
+        "formal_text_count": 0,
+        "formal_text_native_count": 0,
+        "a_tbl_count": 0,
+        "whole_slide_pictures": [
+          {
+            "name": "legacy-full-slide-frame"
+          }
+        ],
+        "native_editability_valid": false,
+        "semantic_audit_valid": false,
+        "case_replay_audit_valid": false,
+        "semantic_errors": [
+          {
+            "code": "legacy_full_slide_picture"
+          }
+        ],
+        "case_replay_errors": [
+          {
+            "code": "native_structure_missing"
+          },
+          {
+            "code": "formal_text_rasterized"
+          }
+        ]
+      },
+      "rendered_visual_metrics": {
+        "valid": true,
+        "metrics": {
+          "global_ssim": 0.948038,
+          "blurred_layout_ssim": 0.998586,
+          "mean_absolute_error": 0.022474,
+          "rmse": 0.062514,
+          "pixel_fidelity_score": 0.977526
+        },
+        "issues": []
+      },
+      "table_panel_text_audit": {
+        "tables": 0,
+        "panels": 0,
+        "formal_text_native": false
+      },
+      "mutation_smoke": {
+        "status": "blocked",
+        "reason": "legacy image-only control has no native table/panel to mutate"
+      }
+    }
+  ],
+  "rollup": {
+    "case_count": 12,
+    "native_table_total": 0,
+    "full_slide_picture_cases": 12,
+    "formal_text_native_cases": 0,
+    "visual_pass_cases": 12
+  },
+  "human_visual_review_required": true,
+  "release_eligible": false
+}

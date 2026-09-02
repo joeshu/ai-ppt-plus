@@ -1,0 +1,112 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "AI-PPT质量门禁与停机机制",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "未知问题不猜测，证据不足就停机",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-1-index",
+          "text_id": "gate-1-index",
+          "content": "01",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-1-label",
+          "text_id": "gate-1-label",
+          "content": "输入校验",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-2-index",
+          "text_id": "gate-2-index",
+          "content": "02",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-2-label",
+          "text_id": "gate-2-label",
+          "content": "路由确认",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-3-index",
+          "text_id": "gate-3-index",
+          "content": "03",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-3-label",
+          "text_id": "gate-3-label",
+          "content": "原生结构",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-4-index",
+          "text_id": "gate-4-index",
+          "content": "04",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-4-label",
+          "text_id": "gate-4-label",
+          "content": "视觉回归",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-5-index",
+          "text_id": "gate-5-index",
+          "content": "05",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "gate-5-label",
+          "text_id": "gate-5-label",
+          "content": "人工收口",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "stop-panel-title",
+          "text_id": "stop-panel-title",
+          "content": "立即停机",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "stop-panel-copy",
+          "text_id": "stop-panel-copy",
+          "content": "未知问题\n不得静默回退",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "evidence-chain",
+          "text_id": "evidence-chain",
+          "content": "baseline → candidate → object audit → visual compare → mutation smoke",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "governance-note",
+          "text_id": "governance-note",
+          "content": "5 gates / 1 failure branch / hard stop",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

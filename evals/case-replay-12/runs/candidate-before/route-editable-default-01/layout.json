@@ -1,0 +1,1155 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/candidate-before/route-editable-default-01",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#F4F7FB",
+    "size": 10,
+    "table_header_fill": "#9B0B1B",
+    "table_fill": "#F5F8FC",
+    "chart_colors": [
+      "#E60012",
+      "#1687FF"
+    ],
+    "chart_text_color": "#F4F7FB",
+    "chart_muted_color": "#A9BED5",
+    "chart_grid_color": "#355A7D",
+    "chart_tick_size": 8,
+    "chart_legend_size": 8,
+    "chart_label_size": 7
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "background",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#061A35"
+        },
+        {
+          "object_id": "title-accent",
+          "type": "rect",
+          "x": 0.055,
+          "y": 0.065,
+          "w": 0.006,
+          "h": 0.075,
+          "fill": "#E60012"
+        },
+        {
+          "object_id": "title-rule",
+          "type": "line",
+          "x": 0.055,
+          "y": 0.17,
+          "x2": 0.945,
+          "y2": 0.17,
+          "line": "#355A7D",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "flow-link-1",
+          "type": "line",
+          "x": 0.216,
+          "y": 0.502,
+          "x2": 0.238,
+          "y2": 0.502,
+          "line": "#E60012",
+          "line_width": 1.5
+        },
+        {
+          "object_id": "flow-link-2",
+          "type": "line",
+          "x": 0.386,
+          "y": 0.502,
+          "x2": 0.40800000000000003,
+          "y2": 0.502,
+          "line": "#E60012",
+          "line_width": 1.5
+        },
+        {
+          "object_id": "flow-link-3",
+          "type": "line",
+          "x": 0.556,
+          "y": 0.502,
+          "x2": 0.5780000000000001,
+          "y2": 0.502,
+          "line": "#E60012",
+          "line_width": 1.5
+        },
+        {
+          "object_id": "flow-link-4",
+          "type": "line",
+          "x": 0.726,
+          "y": 0.502,
+          "x2": 0.748,
+          "y2": 0.502,
+          "line": "#E60012",
+          "line_width": 1.5
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "kpi-target",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.07,
+          "y": 0.21,
+          "w": 0.25,
+          "h": 0.15,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "kpi-target-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0B2747",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "kpi-target-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "kpi-target-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "kpi-target"
+        },
+        {
+          "object_id": "kpi-path",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.375,
+          "y": 0.21,
+          "w": 0.25,
+          "h": 0.15,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "kpi-path-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0B2747",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "kpi-path-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "kpi-path-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "kpi-path"
+        },
+        {
+          "object_id": "kpi-result",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.68,
+          "y": 0.21,
+          "w": 0.25,
+          "h": 0.15,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "kpi-result-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0B2747",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "kpi-result-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#55D6A1"
+            },
+            {
+              "object_id": "kpi-result-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "kpi-result"
+        },
+        {
+          "object_id": "flow-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.07,
+          "y": 0.45,
+          "w": 0.145,
+          "h": 0.105,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "flow-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "flow-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "flow-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "flow-1"
+        },
+        {
+          "object_id": "flow-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.24000000000000002,
+          "y": 0.45,
+          "w": 0.145,
+          "h": 0.105,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "flow-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "flow-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "flow-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "flow-2"
+        },
+        {
+          "object_id": "flow-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.41000000000000003,
+          "y": 0.45,
+          "w": 0.145,
+          "h": 0.105,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "flow-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "flow-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "flow-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "flow-3"
+        },
+        {
+          "object_id": "flow-4",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.5800000000000001,
+          "y": 0.45,
+          "w": 0.145,
+          "h": 0.105,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "flow-4-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "flow-4-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "flow-4-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "flow-4"
+        },
+        {
+          "object_id": "flow-5",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.75,
+          "y": 0.45,
+          "w": 0.145,
+          "h": 0.105,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "flow-5-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "flow-5-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "flow-5-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "flow-5"
+        },
+        {
+          "object_id": "insight-panel",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.84,
+          "y": 0.39,
+          "w": 0.09,
+          "h": 0.23,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "insight-panel-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#103B4B",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "insight-panel-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#55D6A1"
+            },
+            {
+              "object_id": "insight-panel-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "insight-panel"
+        }
+      ],
+      "tables": [
+        {
+          "object_id": "industry-growth-table",
+          "native_required": true,
+          "x": 0.07,
+          "y": 0.59,
+          "w": 0.42,
+          "h": 0.28,
+          "rows": [
+            [
+              "行业",
+              "增长结构",
+              "状态",
+              "口径",
+              "证据"
+            ],
+            [
+              "政府",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ],
+            [
+              "教育",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ],
+            [
+              "医疗",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ],
+            [
+              "交通",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ],
+            [
+              "制造",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ]
+          ],
+          "columns": 5,
+          "header_fill": "#9B0B1B",
+          "fill": "#F5F8FC",
+          "border": {
+            "all": {
+              "color": "#9EB3C8",
+              "width": 0.7
+            }
+          },
+          "cell_margins": {
+            "left": 0.04,
+            "right": 0.04,
+            "top": 0.025,
+            "bottom": 0.025
+          },
+          "cell_styles": {
+            "0": {
+              "fill": "#9B0B1B",
+              "color": "#FFFFFF",
+              "bold": true,
+              "size": 9
+            },
+            "1": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "2": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "3": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "4": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "5": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            }
+          },
+          "rich_text_required": false,
+          "column_widths": [
+            0.08,
+            0.13,
+            0.09,
+            0.07,
+            0.05
+          ],
+          "row_heights": [
+            0.04,
+            0.048,
+            0.048,
+            0.048,
+            0.048,
+            0.048
+          ]
+        },
+        {
+          "object_id": "project-progress-table",
+          "native_required": true,
+          "x": 0.52,
+          "y": 0.59,
+          "w": 0.41,
+          "h": 0.28,
+          "rows": [
+            [
+              "项目",
+              "阶段",
+              "风险",
+              "进度",
+              "证据"
+            ],
+            [
+              "重点项目 1",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ],
+            [
+              "重点项目 2",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ],
+            [
+              "重点项目 3",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ],
+            [
+              "重点项目 4",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ],
+            [
+              "重点项目 5",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ]
+          ],
+          "columns": 5,
+          "header_fill": "#9B0B1B",
+          "fill": "#F5F8FC",
+          "border": {
+            "all": {
+              "color": "#9EB3C8",
+              "width": 0.7
+            }
+          },
+          "cell_margins": {
+            "left": 0.04,
+            "right": 0.04,
+            "top": 0.025,
+            "bottom": 0.025
+          },
+          "cell_styles": {
+            "0": {
+              "fill": "#9B0B1B",
+              "color": "#FFFFFF",
+              "bold": true,
+              "size": 9
+            },
+            "1": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "2": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "3": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "4": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "5": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            }
+          },
+          "rich_text_required": false,
+          "column_widths": [
+            0.12,
+            0.09,
+            0.09,
+            0.08,
+            0.05
+          ],
+          "row_heights": [
+            0.04,
+            0.048,
+            0.048,
+            0.048,
+            0.048,
+            0.048
+          ]
+        }
+      ],
+      "charts": [],
+      "texts": [
+        {
+          "object_id": "title",
+          "text": "政企客户增长作战舱",
+          "x": 0.073,
+          "y": 0.052,
+          "w": 0.66,
+          "h": 0.09,
+          "size": 25,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "subtitle",
+          "text": "以目标—路径—结果组织经营管理阅读路径",
+          "x": 0.075,
+          "y": 0.145,
+          "w": 0.62,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "case-label",
+          "text": "CASE REPLAY / NATIVE EDITABLE",
+          "x": 0.72,
+          "y": 0.075,
+          "w": 0.22,
+          "h": 0.04,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-target-label",
+          "text": "目标",
+          "x": 0.095,
+          "y": 0.24,
+          "w": 0.105,
+          "h": 0.04,
+          "size": 9,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-target-value",
+          "text": "28.6",
+          "x": 0.185,
+          "y": 0.22799999999999998,
+          "w": 0.08,
+          "h": 0.065,
+          "size": 20,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-target-unit",
+          "text": "亿元",
+          "x": 0.2675,
+          "y": 0.255,
+          "w": 0.0425,
+          "h": 0.035,
+          "size": 8,
+          "color": "#E60012",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-path-label",
+          "text": "路径",
+          "x": 0.4,
+          "y": 0.24,
+          "w": 0.105,
+          "h": 0.04,
+          "size": 9,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-path-value",
+          "text": "18.7",
+          "x": 0.49,
+          "y": 0.22799999999999998,
+          "w": 0.08,
+          "h": 0.065,
+          "size": 20,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-path-unit",
+          "text": "亿元",
+          "x": 0.5725,
+          "y": 0.255,
+          "w": 0.0425,
+          "h": 0.035,
+          "size": 8,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-result-label",
+          "text": "结果",
+          "x": 0.7050000000000001,
+          "y": 0.24,
+          "w": 0.105,
+          "h": 0.04,
+          "size": 9,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-result-value",
+          "text": "17.3",
+          "x": 0.795,
+          "y": 0.22799999999999998,
+          "w": 0.08,
+          "h": 0.065,
+          "size": 20,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "kpi-result-unit",
+          "text": "亿元",
+          "x": 0.8775000000000001,
+          "y": 0.255,
+          "w": 0.0425,
+          "h": 0.035,
+          "size": 8,
+          "color": "#55D6A1",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-label",
+          "text": "增长路径 / FIVE-STAGE OPERATING LOOP",
+          "x": 0.07,
+          "y": 0.405,
+          "w": 0.4,
+          "h": 0.035,
+          "size": 8,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-1-index",
+          "text": "01",
+          "x": 0.08800000000000001,
+          "y": 0.47800000000000004,
+          "w": 0.05,
+          "h": 0.04,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-1-label",
+          "text": "目标洞察",
+          "x": 0.14500000000000002,
+          "y": 0.47700000000000004,
+          "w": 0.05499999999999999,
+          "h": 0.045,
+          "size": 10.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-2-index",
+          "text": "02",
+          "x": 0.258,
+          "y": 0.47800000000000004,
+          "w": 0.05,
+          "h": 0.04,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-2-label",
+          "text": "线索获取",
+          "x": 0.315,
+          "y": 0.47700000000000004,
+          "w": 0.05499999999999999,
+          "h": 0.045,
+          "size": 10.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-3-index",
+          "text": "03",
+          "x": 0.42800000000000005,
+          "y": 0.47800000000000004,
+          "w": 0.05,
+          "h": 0.04,
+          "size": 10,
+          "color": "#E60012",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-3-label",
+          "text": "商机转化",
+          "x": 0.48500000000000004,
+          "y": 0.47700000000000004,
+          "w": 0.05499999999999999,
+          "h": 0.045,
+          "size": 10.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-4-index",
+          "text": "04",
+          "x": 0.5980000000000001,
+          "y": 0.47800000000000004,
+          "w": 0.05,
+          "h": 0.04,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-4-label",
+          "text": "合同签约",
+          "x": 0.655,
+          "y": 0.47700000000000004,
+          "w": 0.05499999999999999,
+          "h": 0.045,
+          "size": 10.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-5-index",
+          "text": "05",
+          "x": 0.768,
+          "y": 0.47800000000000004,
+          "w": 0.05,
+          "h": 0.04,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "flow-5-label",
+          "text": "交付增值",
+          "x": 0.825,
+          "y": 0.47700000000000004,
+          "w": 0.05499999999999999,
+          "h": 0.045,
+          "size": 10.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "insight-panel-text",
+          "text": "TOP5\n进展",
+          "x": 0.85,
+          "y": 0.445,
+          "w": 0.07,
+          "h": 0.09,
+          "size": 11,
+          "color": "#55D6A1",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "dashboard-note",
+          "text": "原生KPI卡 / 原生流程节点 / 2张原生表格",
+          "x": 0.07,
+          "y": 0.91,
+          "w": 0.5,
+          "h": 0.03,
+          "size": 7.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        }
+      ],
+      "icons": []
+    }
+  ]
+}

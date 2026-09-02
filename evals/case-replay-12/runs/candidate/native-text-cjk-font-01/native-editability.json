@@ -1,0 +1,1085 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/native-text-cjk-font-01/editable.pptx",
+  "object_manifest": "runs/candidate/native-text-cjk-font-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 10,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 66,
+      "object_count_recursive": 66,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "service-line-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1219169,
+          "top": 2606040,
+          "width": 2072588,
+          "height": 0,
+          "normalized_box": [
+            0.1,
+            0.38,
+            0.17,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "service-line-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1219169,
+          "top": 3429000,
+          "width": 2072588,
+          "height": 0,
+          "normalized_box": [
+            0.1,
+            0.5,
+            0.17,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "service-line-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1219169,
+          "top": 4251960,
+          "width": 2072588,
+          "height": 0,
+          "normalized_box": [
+            0.1,
+            0.62,
+            0.17,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-link-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5608179,
+          "top": 3429000,
+          "width": 158492,
+          "height": 0,
+          "normalized_box": [
+            0.46,
+            0.5,
+            0.013,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-link-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 6485981,
+          "top": 3429000,
+          "width": 158492,
+          "height": 0,
+          "normalized_box": [
+            0.532,
+            0.5,
+            0.013,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-link-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 7363783,
+          "top": 3429000,
+          "width": 158492,
+          "height": 0,
+          "normalized_box": [
+            0.604,
+            0.5,
+            0.013,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "closure-ring-circle",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9631439,
+          "top": 2263140,
+          "width": 2438339,
+          "height": 1371600,
+          "normalized_box": [
+            0.79,
+            0.33,
+            0.2,
+            0.2
+          ],
+          "text": ""
+        },
+        {
+          "name": "service-principle",
+          "kind": "native_group",
+          "parent": null,
+          "left": 853418,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 3909059,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.25,
+            0.57
+          ],
+          "text": ""
+        },
+        {
+          "name": "service-principle-fill",
+          "kind": "native_shape",
+          "parent": "service-principle",
+          "left": 853418,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 3909059,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.25,
+            0.57
+          ],
+          "text": ""
+        },
+        {
+          "name": "service-principle-accent",
+          "kind": "native_shape",
+          "parent": "service-principle",
+          "left": 853418,
+          "top": 1508760,
+          "width": 3047923,
+          "height": 214998,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.25,
+            0.03135
+          ],
+          "text": ""
+        },
+        {
+          "name": "service-principle-rule",
+          "kind": "native_shape",
+          "parent": "service-principle",
+          "left": 944856,
+          "top": 5026914,
+          "width": 2865048,
+          "height": 3909,
+          "normalized_box": [
+            0.0775,
+            0.733,
+            0.235,
+            0.00057
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-panel",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4389010,
+          "top": 1508760,
+          "width": 4145176,
+          "height": 3909059,
+          "normalized_box": [
+            0.36,
+            0.22,
+            0.34,
+            0.57
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-panel-fill",
+          "kind": "native_shape",
+          "parent": "journey-panel",
+          "left": 4389010,
+          "top": 1508760,
+          "width": 4145176,
+          "height": 3909059,
+          "normalized_box": [
+            0.36,
+            0.22,
+            0.34,
+            0.57
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-panel-accent",
+          "kind": "native_shape",
+          "parent": "journey-panel",
+          "left": 4389010,
+          "top": 1508760,
+          "width": 4145176,
+          "height": 214998,
+          "normalized_box": [
+            0.36,
+            0.22,
+            0.34,
+            0.03135
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-panel-rule",
+          "kind": "native_shape",
+          "parent": "journey-panel",
+          "left": 4513365,
+          "top": 5026914,
+          "width": 3896466,
+          "height": 3909,
+          "normalized_box": [
+            0.3702,
+            0.733,
+            0.3196,
+            0.00057
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4876678,
+          "top": 3086100,
+          "width": 731501,
+          "height": 685800,
+          "normalized_box": [
+            0.4,
+            0.45,
+            0.06,
+            0.1
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-1-fill",
+          "kind": "native_shape",
+          "parent": "journey-1",
+          "left": 4876678,
+          "top": 3086100,
+          "width": 731501,
+          "height": 685800,
+          "normalized_box": [
+            0.4,
+            0.45,
+            0.06,
+            0.1
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-1-accent",
+          "kind": "native_shape",
+          "parent": "journey-1",
+          "left": 4876678,
+          "top": 3086100,
+          "width": 731501,
+          "height": 37719,
+          "normalized_box": [
+            0.4,
+            0.45,
+            0.06,
+            0.0055
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-1-rule",
+          "kind": "native_shape",
+          "parent": "journey-1",
+          "left": 4898623,
+          "top": 3703320,
+          "width": 687611,
+          "height": 685,
+          "normalized_box": [
+            0.4018,
+            0.54,
+            0.0564,
+            0.0001
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 5754480,
+          "top": 3086100,
+          "width": 731501,
+          "height": 685800,
+          "normalized_box": [
+            0.472,
+            0.45,
+            0.06,
+            0.1
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-2-fill",
+          "kind": "native_shape",
+          "parent": "journey-2",
+          "left": 5754480,
+          "top": 3086100,
+          "width": 731501,
+          "height": 685800,
+          "normalized_box": [
+            0.472,
+            0.45,
+            0.06,
+            0.1
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-2-accent",
+          "kind": "native_shape",
+          "parent": "journey-2",
+          "left": 5754480,
+          "top": 3086100,
+          "width": 731501,
+          "height": 37719,
+          "normalized_box": [
+            0.472,
+            0.45,
+            0.06,
+            0.0055
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-2-rule",
+          "kind": "native_shape",
+          "parent": "journey-2",
+          "left": 5776425,
+          "top": 3703320,
+          "width": 687611,
+          "height": 685,
+          "normalized_box": [
+            0.4738,
+            0.54,
+            0.0564,
+            0.0001
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 6632282,
+          "top": 3086100,
+          "width": 731501,
+          "height": 685800,
+          "normalized_box": [
+            0.544,
+            0.45,
+            0.06,
+            0.1
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-3-fill",
+          "kind": "native_shape",
+          "parent": "journey-3",
+          "left": 6632282,
+          "top": 3086100,
+          "width": 731501,
+          "height": 685800,
+          "normalized_box": [
+            0.544,
+            0.45,
+            0.06,
+            0.1
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-3-accent",
+          "kind": "native_shape",
+          "parent": "journey-3",
+          "left": 6632282,
+          "top": 3086100,
+          "width": 731501,
+          "height": 37719,
+          "normalized_box": [
+            0.544,
+            0.45,
+            0.06,
+            0.0055
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-3-rule",
+          "kind": "native_shape",
+          "parent": "journey-3",
+          "left": 6654227,
+          "top": 3703320,
+          "width": 687611,
+          "height": 685,
+          "normalized_box": [
+            0.5458,
+            0.54,
+            0.0564,
+            0.0001
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-4",
+          "kind": "native_group",
+          "parent": null,
+          "left": 7510084,
+          "top": 3086100,
+          "width": 731501,
+          "height": 685800,
+          "normalized_box": [
+            0.616,
+            0.45,
+            0.06,
+            0.1
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-4-fill",
+          "kind": "native_shape",
+          "parent": "journey-4",
+          "left": 7510084,
+          "top": 3086100,
+          "width": 731501,
+          "height": 685800,
+          "normalized_box": [
+            0.616,
+            0.45,
+            0.06,
+            0.1
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-4-accent",
+          "kind": "native_shape",
+          "parent": "journey-4",
+          "left": 7510084,
+          "top": 3086100,
+          "width": 731501,
+          "height": 37719,
+          "normalized_box": [
+            0.616,
+            0.45,
+            0.06,
+            0.0055
+          ],
+          "text": ""
+        },
+        {
+          "name": "journey-4-rule",
+          "kind": "native_shape",
+          "parent": "journey-4",
+          "left": 7532029,
+          "top": 3703320,
+          "width": 687611,
+          "height": 685,
+          "normalized_box": [
+            0.6178,
+            0.54,
+            0.0564,
+            0.0001
+          ],
+          "text": ""
+        },
+        {
+          "name": "closure-ring",
+          "kind": "native_group",
+          "parent": null,
+          "left": 9143771,
+          "top": 1851660,
+          "width": 2194505,
+          "height": 1920240,
+          "normalized_box": [
+            0.75,
+            0.27,
+            0.18,
+            0.28
+          ],
+          "text": ""
+        },
+        {
+          "name": "closure-ring-fill",
+          "kind": "native_shape",
+          "parent": "closure-ring",
+          "left": 9143771,
+          "top": 1851660,
+          "width": 2194505,
+          "height": 1920240,
+          "normalized_box": [
+            0.75,
+            0.27,
+            0.18,
+            0.28
+          ],
+          "text": ""
+        },
+        {
+          "name": "closure-ring-accent",
+          "kind": "native_shape",
+          "parent": "closure-ring",
+          "left": 9143771,
+          "top": 1851660,
+          "width": 2194505,
+          "height": 105613,
+          "normalized_box": [
+            0.75,
+            0.27,
+            0.18,
+            0.0154
+          ],
+          "text": ""
+        },
+        {
+          "name": "closure-ring-rule",
+          "kind": "native_shape",
+          "parent": "closure-ring",
+          "left": 9209606,
+          "top": 3579876,
+          "width": 2062835,
+          "height": 1920,
+          "normalized_box": [
+            0.7554,
+            0.522,
+            0.1692,
+            0.00028
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4389010,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 548640,
+          "normalized_box": [
+            0.36,
+            0.84,
+            0.17,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-1-fill",
+          "kind": "native_shape",
+          "parent": "responsibility-1",
+          "left": 4389010,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 548640,
+          "normalized_box": [
+            0.36,
+            0.84,
+            0.17,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-1-accent",
+          "kind": "native_shape",
+          "parent": "responsibility-1",
+          "left": 4389010,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 30175,
+          "normalized_box": [
+            0.36,
+            0.84,
+            0.17,
+            0.0044
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-1-rule",
+          "kind": "native_shape",
+          "parent": "responsibility-1",
+          "left": 4451187,
+          "top": 6254495,
+          "width": 1948233,
+          "height": 549,
+          "normalized_box": [
+            0.3651,
+            0.912,
+            0.1598,
+            8e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 6827349,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 548640,
+          "normalized_box": [
+            0.56,
+            0.84,
+            0.17,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-2-fill",
+          "kind": "native_shape",
+          "parent": "responsibility-2",
+          "left": 6827349,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 548640,
+          "normalized_box": [
+            0.56,
+            0.84,
+            0.17,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-2-accent",
+          "kind": "native_shape",
+          "parent": "responsibility-2",
+          "left": 6827349,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 30175,
+          "normalized_box": [
+            0.56,
+            0.84,
+            0.17,
+            0.0044
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-2-rule",
+          "kind": "native_shape",
+          "parent": "responsibility-2",
+          "left": 6889526,
+          "top": 6254495,
+          "width": 1948233,
+          "height": 549,
+          "normalized_box": [
+            0.5651,
+            0.912,
+            0.1598,
+            8e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 9265688,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 548640,
+          "normalized_box": [
+            0.76,
+            0.84,
+            0.17,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-3-fill",
+          "kind": "native_shape",
+          "parent": "responsibility-3",
+          "left": 9265688,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 548640,
+          "normalized_box": [
+            0.76,
+            0.84,
+            0.17,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-3-accent",
+          "kind": "native_shape",
+          "parent": "responsibility-3",
+          "left": 9265688,
+          "top": 5760720,
+          "width": 2072588,
+          "height": 30175,
+          "normalized_box": [
+            0.76,
+            0.84,
+            0.17,
+            0.0044
+          ],
+          "text": ""
+        },
+        {
+          "name": "responsibility-3-rule",
+          "kind": "native_shape",
+          "parent": "responsibility-3",
+          "left": 9327865,
+          "top": 6254495,
+          "width": 1948233,
+          "height": 549,
+          "normalized_box": [
+            0.7651,
+            0.912,
+            0.1598,
+            8e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "政企客户服务攻坚战"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "Service Excellence"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "service-label-1",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1219169,
+          "top": 2125980,
+          "width": 2194505,
+          "height": 342900,
+          "normalized_box": [
+            0.1,
+            0.31,
+            0.18,
+            0.05
+          ],
+          "text": "一线响应"
+        },
+        {
+          "name": "service-label-2",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1219169,
+          "top": 2948940,
+          "width": 2194505,
+          "height": 342900,
+          "normalized_box": [
+            0.1,
+            0.43,
+            0.18,
+            0.05
+          ],
+          "text": "专业交付"
+        },
+        {
+          "name": "service-label-3",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1219169,
+          "top": 3771900,
+          "width": 2194505,
+          "height": 342900,
+          "normalized_box": [
+            0.1,
+            0.55,
+            0.18,
+            0.05
+          ],
+          "text": "客户成功"
+        },
+        {
+          "name": "journey-1-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4754761,
+          "top": 3977639,
+          "width": 975335,
+          "height": 274320,
+          "normalized_box": [
+            0.39,
+            0.58,
+            0.08,
+            0.04
+          ],
+          "text": "触达"
+        },
+        {
+          "name": "journey-2-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5632563,
+          "top": 3977639,
+          "width": 975335,
+          "height": 274320,
+          "normalized_box": [
+            0.462,
+            0.58,
+            0.08,
+            0.04
+          ],
+          "text": "诊断"
+        },
+        {
+          "name": "journey-3-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6510365,
+          "top": 3977639,
+          "width": 975335,
+          "height": 274320,
+          "normalized_box": [
+            0.534,
+            0.58,
+            0.08,
+            0.04
+          ],
+          "text": "交付"
+        },
+        {
+          "name": "journey-4-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7388167,
+          "top": 3977639,
+          "width": 975335,
+          "height": 274320,
+          "normalized_box": [
+            0.606,
+            0.58,
+            0.08,
+            0.04
+          ],
+          "text": "复盘"
+        },
+        {
+          "name": "closure-rate",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9509522,
+          "top": 2708910,
+          "width": 2682172,
+          "height": 411480,
+          "normalized_box": [
+            0.78,
+            0.395,
+            0.22,
+            0.06
+          ],
+          "text": "96.8%"
+        },
+        {
+          "name": "responsibility-1-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4389010,
+          "top": 5897880,
+          "width": 2072588,
+          "height": 240030,
+          "normalized_box": [
+            0.36,
+            0.86,
+            0.17,
+            0.035
+          ],
+          "text": "本周重点"
+        },
+        {
+          "name": "responsibility-2-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6827349,
+          "top": 5897880,
+          "width": 2072588,
+          "height": 240030,
+          "normalized_box": [
+            0.56,
+            0.86,
+            0.17,
+            0.035
+          ],
+          "text": "关键动作"
+        },
+        {
+          "name": "responsibility-3-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9265688,
+          "top": 5897880,
+          "width": 2072588,
+          "height": 240030,
+          "normalized_box": [
+            0.76,
+            0.86,
+            0.17,
+            0.035
+          ],
+          "text": "责任到人"
+        },
+        {
+          "name": "bilingual-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 6172200,
+          "width": 2682172,
+          "height": 205740,
+          "normalized_box": [
+            0.72,
+            0.9,
+            0.22,
+            0.03
+          ],
+          "text": "CJK + English / run-level emphasis / native text"
+        },
+        {
+          "name": "mixed-run-callout",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9143771,
+          "top": 4183380,
+          "width": 2194505,
+          "height": 342900,
+          "normalized_box": [
+            0.75,
+            0.61,
+            0.18,
+            0.05
+          ],
+          "text": "闭环率 96.8%"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

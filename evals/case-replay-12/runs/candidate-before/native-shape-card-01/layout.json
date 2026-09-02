@@ -1,0 +1,639 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/candidate-before/native-shape-card-01",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#F4F7FB",
+    "size": 10,
+    "table_header_fill": "#9B0B1B",
+    "table_fill": "#F5F8FC",
+    "chart_colors": [
+      "#E60012",
+      "#1687FF"
+    ],
+    "chart_text_color": "#F4F7FB",
+    "chart_muted_color": "#A9BED5",
+    "chart_grid_color": "#355A7D",
+    "chart_tick_size": 8,
+    "chart_legend_size": 8,
+    "chart_label_size": 7
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "background",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#061A35"
+        },
+        {
+          "object_id": "title-accent",
+          "type": "rect",
+          "x": 0.055,
+          "y": 0.065,
+          "w": 0.006,
+          "h": 0.075,
+          "fill": "#E60012"
+        },
+        {
+          "object_id": "title-rule",
+          "type": "line",
+          "x": 0.055,
+          "y": 0.17,
+          "x2": 0.945,
+          "y2": 0.17,
+          "line": "#355A7D",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "framework-arrow-1",
+          "type": "line",
+          "x": 0.27,
+          "y": 0.36,
+          "x2": 0.31,
+          "y2": 0.36,
+          "line": "#E60012",
+          "line_width": 2.2
+        },
+        {
+          "object_id": "framework-arrow-2",
+          "type": "line",
+          "x": 0.47000000000000003,
+          "y": 0.36,
+          "x2": 0.51,
+          "y2": 0.36,
+          "line": "#E60012",
+          "line_width": 2.2
+        },
+        {
+          "object_id": "framework-arrow-3",
+          "type": "line",
+          "x": 0.67,
+          "y": 0.36,
+          "x2": 0.71,
+          "y2": 0.36,
+          "line": "#E60012",
+          "line_width": 2.2
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "layer-foundation",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.07,
+          "y": 0.31,
+          "w": 0.86,
+          "h": 0.3,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "layer-foundation-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0A2544",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "layer-foundation-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "layer-foundation-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "layer-foundation"
+        },
+        {
+          "object_id": "layer-value",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.16,
+          "y": 0.24,
+          "w": 0.68,
+          "h": 0.17,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "layer-value-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "layer-value-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "layer-value-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "layer-value"
+        },
+        {
+          "object_id": "result-cabin",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.36,
+          "y": 0.71,
+          "w": 0.28,
+          "h": 0.12,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "result-cabin-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#5C1120",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "result-cabin-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "result-cabin-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "result-cabin"
+        },
+        {
+          "object_id": "card-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.12,
+          "y": 0.28,
+          "w": 0.16,
+          "h": 0.14,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "card-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "card-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "card-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "card-1"
+        },
+        {
+          "object_id": "card-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.32,
+          "y": 0.28,
+          "w": 0.16,
+          "h": 0.14,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "card-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "card-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "card-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "card-2"
+        },
+        {
+          "object_id": "card-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.52,
+          "y": 0.28,
+          "w": 0.16,
+          "h": 0.14,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "card-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "card-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "card-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "card-3"
+        },
+        {
+          "object_id": "card-4",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.7200000000000001,
+          "y": 0.28,
+          "w": 0.16,
+          "h": 0.14,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "card-4-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "card-4-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "card-4-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "card-4"
+        }
+      ],
+      "tables": [],
+      "charts": [],
+      "texts": [
+        {
+          "object_id": "title",
+          "text": "新质生产力经营框架",
+          "x": 0.073,
+          "y": 0.052,
+          "w": 0.66,
+          "h": 0.09,
+          "size": 25,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "subtitle",
+          "text": "战略牵引 × 能力筑基 × 场景突破 × 价值兑现",
+          "x": 0.075,
+          "y": 0.145,
+          "w": 0.62,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "case-label",
+          "text": "CASE REPLAY / NATIVE EDITABLE",
+          "x": 0.72,
+          "y": 0.075,
+          "w": 0.22,
+          "h": 0.04,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "card-1-text",
+          "text": "战略牵引",
+          "x": 0.13,
+          "y": 0.325,
+          "w": 0.14,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "card-2-text",
+          "text": "能力筑基",
+          "x": 0.33,
+          "y": 0.325,
+          "w": 0.14,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "card-3-text",
+          "text": "场景突破",
+          "x": 0.53,
+          "y": 0.325,
+          "w": 0.14,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "card-4-text",
+          "text": "价值兑现",
+          "x": 0.7300000000000001,
+          "y": 0.325,
+          "w": 0.14,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "foundation-1",
+          "text": "组织",
+          "x": 0.13,
+          "y": 0.48,
+          "w": 0.16,
+          "h": 0.045,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "foundation-2",
+          "text": "技术",
+          "x": 0.33,
+          "y": 0.48,
+          "w": 0.16,
+          "h": 0.045,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "foundation-3",
+          "text": "数据",
+          "x": 0.53,
+          "y": 0.48,
+          "w": 0.16,
+          "h": 0.045,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "foundation-4",
+          "text": "生态",
+          "x": 0.7300000000000001,
+          "y": 0.48,
+          "w": 0.16,
+          "h": 0.045,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "result-cabin-text",
+          "text": "经营结果",
+          "x": 0.38,
+          "y": 0.747,
+          "w": 0.24,
+          "h": 0.04,
+          "size": 14,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "framework-footnote",
+          "text": "组织、技术、数据、生态共同支撑四个经营跃迁层",
+          "x": 0.09,
+          "y": 0.87,
+          "w": 0.58,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "framework-score",
+          "text": "可移动卡片 / 3层结构 / 连接线",
+          "x": 0.7,
+          "y": 0.87,
+          "w": 0.22,
+          "h": 0.035,
+          "size": 8,
+          "color": "#1687FF",
+          "bold": false,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        }
+      ],
+      "icons": []
+    }
+  ]
+}

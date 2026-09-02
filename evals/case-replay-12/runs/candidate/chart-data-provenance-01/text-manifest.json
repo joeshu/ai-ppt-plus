@@ -1,0 +1,70 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "2026上半年政企行业增长结构",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "政府与教育仍是规模增长主引擎",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "chart-insight-1",
+          "text_id": "chart-insight-1",
+          "content": "政府 8.6 / 5.2",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "chart-insight-2",
+          "text_id": "chart-insight-2",
+          "content": "教育 5.2 / 3.1",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "chart-insight-3",
+          "text_id": "chart-insight-3",
+          "content": "医疗 4.6 / 2.6",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "chart-insight-4",
+          "text_id": "chart-insight-4",
+          "content": "交通 3.8 / 2.2",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "chart-insight-5",
+          "text_id": "chart-insight-5",
+          "content": "制造 3.4 / 1.9",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "chart-legend-note",
+          "text_id": "chart-legend-note",
+          "content": "目标 / 实际（亿元）",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "chart-source-note",
+          "text_id": "chart-source-note",
+          "content": "数据口径：case-suite.json / exact data snapshot",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

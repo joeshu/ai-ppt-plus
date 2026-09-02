@@ -1,0 +1,982 @@
+{
+  "schema": "ai-ppt-plus/semantic-object-audit/v2",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/native-table-merge-richtext-01/editable.pptx",
+  "deck_sha256": "57e7a1fd4b6f00fe62589de24c74622977e2153057618a5592d8eb173f6153d6",
+  "object_manifest": "runs/candidate-before/native-table-merge-richtext-01/object-manifest.json",
+  "object_manifest_sha256": "daea0fa2d776036202ac73ebca504c646ff7938cd8d93093f92ef96a65c6a902",
+  "text_manifest": "runs/candidate-before/native-table-merge-richtext-01/text-manifest.json",
+  "text_manifest_sha256": "7541377474f03a3cd95fd7299853f348c9ae257a3bb943ac6380dc8a45615239",
+  "expected_object_count": 34,
+  "audited_object_count": 34,
+  "observed_top_level_shape_count": 22,
+  "undeclared_shape_count": 0,
+  "text_manifest_coverage": {
+    "required": true,
+    "declared": 11,
+    "slide_numbers": [
+      1
+    ],
+    "orphan_count": 0,
+    "orphans": []
+  },
+  "coverage": [
+    {
+      "slide_no": 1,
+      "declared_object_count": 34,
+      "observed_top_level_shape_count": 22,
+      "audited_object_count": 34,
+      "undeclared_shape_count": 0,
+      "undeclared_shapes": [],
+      "complete": true
+    }
+  ],
+  "objects": [
+    {
+      "slide_no": 1,
+      "object_id": "background",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "section-divider",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "principle-badge",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "principle-badge-fill",
+          "principle-badge-accent",
+          "principle-badge-rule"
+        ],
+        "observed_children": [
+          "principle-badge-fill",
+          "principle-badge-accent",
+          "principle-badge-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "principle-badge-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "principle-badge",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "principle-badge-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "principle-badge",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "principle-badge-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "principle-badge",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-1",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "commission-card-1-fill",
+          "commission-card-1-accent",
+          "commission-card-1-rule"
+        ],
+        "observed_children": [
+          "commission-card-1-fill",
+          "commission-card-1-accent",
+          "commission-card-1-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-1-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "commission-card-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-1-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "commission-card-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-1-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "commission-card-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-2",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "commission-card-2-fill",
+          "commission-card-2-accent",
+          "commission-card-2-rule"
+        ],
+        "observed_children": [
+          "commission-card-2-fill",
+          "commission-card-2-accent",
+          "commission-card-2-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-2-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "commission-card-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-2-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "commission-card-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-2-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "commission-card-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-3",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "commission-card-3-fill",
+          "commission-card-3-accent",
+          "commission-card-3-rule"
+        ],
+        "observed_children": [
+          "commission-card-3-fill",
+          "commission-card-3-accent",
+          "commission-card-3-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-3-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "commission-card-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-3-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "commission-card-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-3-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "commission-card-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "policy-merged-table",
+      "role": "data-table",
+      "expected_type": "editable_table",
+      "actual_type": "editable_table",
+      "shape_type": "TABLE (19)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "native_table": true,
+        "native_table_data": true,
+        "table_data_present": true,
+        "table_data_matches_source": true
+      },
+      "table": {
+        "observed": {
+          "rows": 9,
+          "columns": 4,
+          "rectangular": true,
+          "nonempty_cells": 32,
+          "values": [
+            [
+              "场景",
+              "收入变化",
+              "服务费标准",
+              "计提周期"
+            ],
+            [
+              "月度发展",
+              "增收有奖",
+              "达量补贴标准 / 已绑定",
+              "月度"
+            ],
+            [
+              "",
+              "减收不罚",
+              "按政策",
+              "月度"
+            ],
+            [
+              "适用渠道",
+              "增收有奖",
+              "结果可核对",
+              "周期锁定"
+            ],
+            [
+              "",
+              "减收不罚",
+              "统一标准",
+              "可回放"
+            ],
+            [
+              "场景",
+              "增收有奖",
+              "来源绑定",
+              "月度"
+            ],
+            [
+              "",
+              "减收不罚",
+              "可追溯",
+              "月度"
+            ],
+            [
+              "结果",
+              "可核对",
+              "按政策",
+              "结果"
+            ],
+            [
+              "",
+              "可核对",
+              "可追溯",
+              "复核"
+            ]
+          ],
+          "values_sha256": "d846db369408b38ef4418f791f6d3fd53c7c5c627596ef16f453b7e8a4f60372"
+        },
+        "expected_values": [
+          [
+            "场景",
+            "收入变化",
+            "服务费标准",
+            "计提周期"
+          ],
+          [
+            "月度发展",
+            "增收有奖",
+            "达量补贴标准 / 已绑定",
+            "月度"
+          ],
+          [
+            "",
+            "减收不罚",
+            "按政策",
+            "月度"
+          ],
+          [
+            "适用渠道",
+            "增收有奖",
+            "结果可核对",
+            "周期锁定"
+          ],
+          [
+            "",
+            "减收不罚",
+            "统一标准",
+            "可回放"
+          ],
+          [
+            "场景",
+            "增收有奖",
+            "来源绑定",
+            "月度"
+          ],
+          [
+            "",
+            "减收不罚",
+            "可追溯",
+            "月度"
+          ],
+          [
+            "结果",
+            "可核对",
+            "按政策",
+            "结果"
+          ],
+          [
+            "",
+            "可核对",
+            "可追溯",
+            "复核"
+          ]
+        ],
+        "expected_values_sha256": "d846db369408b38ef4418f791f6d3fd53c7c5c627596ef16f453b7e8a4f60372",
+        "data_source": {
+          "declared_sha256": "8ae7d6cedd736569730b7b3f1cb37dce4775da3b9c1a8c634a3b3d1f0b0c13d8",
+          "declared_key": "data_source_sha256",
+          "invalid_declared_hashes": [],
+          "path": null,
+          "available": false,
+          "inline": true,
+          "explicit_path": false,
+          "observed_sha256": "8ae7d6cedd736569730b7b3f1cb37dce4775da3b9c1a8c634a3b3d1f0b0c13d8",
+          "hash_match": true
+        }
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "monthly-incentive-table",
+      "role": "data-table",
+      "expected_type": "editable_table",
+      "actual_type": "editable_table",
+      "shape_type": "TABLE (19)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "native_table": true,
+        "native_table_data": true,
+        "table_data_present": true,
+        "table_data_matches_source": true
+      },
+      "table": {
+        "observed": {
+          "rows": 4,
+          "columns": 3,
+          "rectangular": true,
+          "nonempty_cells": 12,
+          "values": [
+            [
+              "月度发展",
+              "达量补贴标准",
+              "适用渠道"
+            ],
+            [
+              "增收有奖",
+              "结果可核对",
+              "渠道"
+            ],
+            [
+              "减收不罚",
+              "统一标准",
+              "渠道"
+            ],
+            [
+              "结果",
+              "可回放",
+              "全部"
+            ]
+          ],
+          "values_sha256": "dce9ffd89d8c7d091643d9638d127bb76014254ac03fce75a5e9aeedb7a02d51"
+        },
+        "expected_values": [
+          [
+            "月度发展",
+            "达量补贴标准",
+            "适用渠道"
+          ],
+          [
+            "增收有奖",
+            "结果可核对",
+            "渠道"
+          ],
+          [
+            "减收不罚",
+            "统一标准",
+            "渠道"
+          ],
+          [
+            "结果",
+            "可回放",
+            "全部"
+          ]
+        ],
+        "expected_values_sha256": "dce9ffd89d8c7d091643d9638d127bb76014254ac03fce75a5e9aeedb7a02d51",
+        "data_source": {
+          "declared_sha256": "74509bf36f20bcfee2de49440f830fb5ddb0272c1bccb8a46512abe647a56557",
+          "declared_key": "data_source_sha256",
+          "invalid_declared_hashes": [],
+          "path": null,
+          "available": false,
+          "inline": true,
+          "explicit_path": false,
+          "observed_sha256": "74509bf36f20bcfee2de49440f830fb5ddb0272c1bccb8a46512abe647a56557",
+          "hash_match": true
+        }
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "policy-summary-table",
+      "role": "data-table",
+      "expected_type": "editable_table",
+      "actual_type": "editable_table",
+      "shape_type": "TABLE (19)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "native_table": true,
+        "native_table_data": true,
+        "table_data_present": true,
+        "table_data_matches_source": true
+      },
+      "table": {
+        "observed": {
+          "rows": 3,
+          "columns": 2,
+          "rectangular": true,
+          "nonempty_cells": 6,
+          "values": [
+            [
+              "指标",
+              "状态"
+            ],
+            [
+              "合并单元格",
+              "已绑定"
+            ],
+            [
+              "富文本",
+              "已绑定"
+            ]
+          ],
+          "values_sha256": "552d193e9bca25a754424f4b032b36855013a75cb8fc0471dd75f175e079360b"
+        },
+        "expected_values": [
+          [
+            "指标",
+            "状态"
+          ],
+          [
+            "合并单元格",
+            "已绑定"
+          ],
+          [
+            "富文本",
+            "已绑定"
+          ]
+        ],
+        "expected_values_sha256": "552d193e9bca25a754424f4b032b36855013a75cb8fc0471dd75f175e079360b",
+        "data_source": {
+          "declared_sha256": "6775d987bfc6938b61f06e5052de52a69fdbe147b4bfa6b81789a5e1d48ec623",
+          "declared_key": "data_source_sha256",
+          "invalid_declared_hashes": [],
+          "path": null,
+          "available": false,
+          "inline": true,
+          "explicit_path": false,
+          "observed_sha256": "6775d987bfc6938b61f06e5052de52a69fdbe147b4bfa6b81789a5e1d48ec623",
+          "hash_match": true
+        }
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "FTTR渠道激励政策明白卡",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "FTTR渠道激励政策明白卡",
+      "observed_text_sha256": "76f66dbed9d2df4b5909c1e6d96afdcfc768b8667945e36689d3777b653947b1",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "FTTR渠道激励政策明白卡"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "subtitle",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "增收有奖｜减收不罚",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "增收有奖｜减收不罚",
+      "observed_text_sha256": "af6b0b1491c7d64dfad74c156316890f03c9e2988f084bc16a6c502f122af205",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "增收有奖｜减收不罚"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "case-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "CASE REPLAY / NATIVE EDITABLE",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "CASE REPLAY / NATIVE EDITABLE",
+      "observed_text_sha256": "1e68904ccf235bd4e08ad9a3b81497719dbb076c3e69d5657daa46f1cabf6398",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "CASE REPLAY / NATIVE EDITABLE"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "principle-badge-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "增收有奖\n减收不罚",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "增收有奖\n减收不罚",
+      "observed_text_sha256": "3bb2a28ea95133844ec1ab3d073ea7f689e13cbf3cc8300672985cb1e8129d0f",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "增收有奖",
+          "减收不罚"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-1-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "核心原则",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "核心原则",
+      "observed_text_sha256": "d13cc8213a59ed0df0166ece2115c64bbc9c8a64d35a92de6004814dcc8c0369",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "核心原则"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-1-copy",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "增收有奖",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "增收有奖",
+      "observed_text_sha256": "b6c7c44e42ef3a9456a880721a8171e26a0db75b1a3c3d4c962eda0cc0303bf7",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "增收有奖"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-2-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "场景",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "场景",
+      "observed_text_sha256": "97f1f98fd2cf2b78fb96d0bbcd7ea76f549577cdacf9a423abf2c329a3965d7c",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "场景"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-2-copy",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "达量补贴标准",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "达量补贴标准",
+      "observed_text_sha256": "4618e39f6fef33676e3c05b35afadfbb63d10793854a75fbb7858c53edc45d76",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "达量补贴标准"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-3-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "结果",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "结果",
+      "observed_text_sha256": "43ceb88957f21ccd9dff38de21d0677070de6323749cff4db06da8b5f0314c1f",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "结果"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "commission-card-3-copy",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "结果可核对",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "结果可核对",
+      "observed_text_sha256": "4c67b2fcf105023e961dc578fd544168f9ce1c18cf3a12f31b295211b7b5c5fd",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "结果可核对"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "merge-note",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "3 native tables / merged first column / rich-text runs",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "3 native tables / merged first column / rich-text runs",
+      "observed_text_sha256": "452bc579cfa700e4cd5ff8cbea499df7f901a32827ba160eb4b3e6cf6237e2fe",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "3 native tables / merged first column / rich-text runs"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

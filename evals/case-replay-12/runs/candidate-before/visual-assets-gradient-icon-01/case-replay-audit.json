@@ -1,0 +1,152 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/visual-assets-gradient-icon-01/editable.pptx",
+  "deck_sha256": "cc5c23062dbd0c32350fc45df3d5aaef76127364e26aa843e0864dc46667dd66",
+  "object_manifest": "runs/candidate-before/visual-assets-gradient-icon-01/object-manifest.json",
+  "object_manifest_sha256": "572984a696f9c9ce9dbc2b90b08a5bb376b68a95be765b1a2704ff376be1499c",
+  "native_table_count": 0,
+  "native_panel_count": 7,
+  "formal_text_count": 11,
+  "formal_text_native_count": 11,
+  "a_tbl_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [],
+      "panels": [
+        {
+          "object_id": "capability-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "capability-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "capability-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "capability-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "value-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "value-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "value-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "5G-A能力全景",
+          "observed": "5G-A能力全景",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "连接 × 算力 × 感知 × 智能",
+          "observed": "连接 × 算力 × 感知 × 智能",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "capability-1-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "连接",
+          "observed": "连接",
+          "run_count": 1
+        },
+        {
+          "object_id": "capability-2-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "算力",
+          "observed": "算力",
+          "run_count": 1
+        },
+        {
+          "object_id": "capability-3-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "感知",
+          "observed": "感知",
+          "run_count": 1
+        },
+        {
+          "object_id": "capability-4-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "智能",
+          "observed": "智能",
+          "run_count": 1
+        },
+        {
+          "object_id": "value-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "低时延",
+          "observed": "低时延",
+          "run_count": 1
+        },
+        {
+          "object_id": "value-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "大上行",
+          "observed": "大上行",
+          "run_count": 1
+        },
+        {
+          "object_id": "value-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "确定性网络",
+          "observed": "确定性网络",
+          "run_count": 1
+        },
+        {
+          "object_id": "asset-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "独立视觉资产边界：轨道、渐变、节点、标签",
+          "observed": "独立视觉资产边界：轨道、渐变、节点、标签",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 24
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

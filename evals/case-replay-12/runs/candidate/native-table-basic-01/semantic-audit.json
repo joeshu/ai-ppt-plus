@@ -1,0 +1,478 @@
+{
+  "schema": "ai-ppt-plus/semantic-object-audit/v2",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/native-table-basic-01/editable.pptx",
+  "deck_sha256": "82ba559d6f9ab52795adb47f07046cc3cb16b22f38714934f353783edfa70342",
+  "object_manifest": "runs/candidate/native-table-basic-01/object-manifest.json",
+  "object_manifest_sha256": "bc8d1205bc87dc08f501d07099d85ddf5afe65f33c8fa6ef48c467e0e439538b",
+  "text_manifest": "runs/candidate/native-table-basic-01/text-manifest.json",
+  "text_manifest_sha256": "d27a0fd1d1781daa9140b6945d7e9b4d09aed9f3e77ea40cd8584801e0809bf0",
+  "expected_object_count": 15,
+  "audited_object_count": 15,
+  "observed_top_level_shape_count": 12,
+  "undeclared_shape_count": 0,
+  "text_manifest_coverage": {
+    "required": true,
+    "declared": 7,
+    "slide_numbers": [
+      1
+    ],
+    "orphan_count": 0,
+    "orphans": []
+  },
+  "coverage": [
+    {
+      "slide_no": 1,
+      "declared_object_count": 15,
+      "observed_top_level_shape_count": 12,
+      "audited_object_count": 15,
+      "undeclared_shape_count": 0,
+      "undeclared_shapes": [],
+      "complete": true
+    }
+  ],
+  "objects": [
+    {
+      "slide_no": 1,
+      "object_id": "background",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "policy-panel",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "policy-panel-fill",
+          "policy-panel-accent",
+          "policy-panel-rule"
+        ],
+        "observed_children": [
+          "policy-panel-fill",
+          "policy-panel-accent",
+          "policy-panel-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "policy-panel-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "policy-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "policy-panel-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "policy-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "policy-panel-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "policy-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "service-fee-table",
+      "role": "data-table",
+      "expected_type": "editable_table",
+      "actual_type": "editable_table",
+      "shape_type": "TABLE (19)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "native_table": true,
+        "native_table_data": true,
+        "table_data_present": true,
+        "table_data_matches_source": true
+      },
+      "table": {
+        "observed": {
+          "rows": 7,
+          "columns": 4,
+          "rectangular": true,
+          "nonempty_cells": 28,
+          "values": [
+            [
+              "业务场景",
+              "收入变化",
+              "服务费标准",
+              "计提周期"
+            ],
+            [
+              "存量升档",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "指定套餐",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "新装发展",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "渠道激励",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "增收场景",
+              "结果留痕",
+              "按政策",
+              "周期锁定"
+            ],
+            [
+              "复核口径",
+              "来源绑定",
+              "可追溯",
+              "可回放"
+            ]
+          ],
+          "values_sha256": "65370c02e8ef0905992db3ed026ecb1eba439531b5d1fdc173eb6586029759cc"
+        },
+        "expected_values": [
+          [
+            "业务场景",
+            "收入变化",
+            "服务费标准",
+            "计提周期"
+          ],
+          [
+            "存量升档",
+            "可核对",
+            "统一标准",
+            "月度"
+          ],
+          [
+            "指定套餐",
+            "可核对",
+            "统一标准",
+            "月度"
+          ],
+          [
+            "新装发展",
+            "可核对",
+            "统一标准",
+            "月度"
+          ],
+          [
+            "渠道激励",
+            "可核对",
+            "统一标准",
+            "月度"
+          ],
+          [
+            "增收场景",
+            "结果留痕",
+            "按政策",
+            "周期锁定"
+          ],
+          [
+            "复核口径",
+            "来源绑定",
+            "可追溯",
+            "可回放"
+          ]
+        ],
+        "expected_values_sha256": "65370c02e8ef0905992db3ed026ecb1eba439531b5d1fdc173eb6586029759cc",
+        "data_source": {
+          "declared_sha256": "42a580d13c2c37f0f8267d98934931a80c590e82c4d23ff1b50389ab241e3fbe",
+          "declared_key": "data_source_sha256",
+          "invalid_declared_hashes": [],
+          "path": null,
+          "available": false,
+          "inline": true,
+          "explicit_path": false,
+          "observed_sha256": "42a580d13c2c37f0f8267d98934931a80c590e82c4d23ff1b50389ab241e3fbe",
+          "hash_match": true
+        }
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "渠道服务费标准总览",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "渠道服务费标准总览",
+      "observed_text_sha256": "044d0ca5cb79338030babd6d57f5a565a140f24c64c06a89c8a8bca85fb4d0bb",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "渠道服务费标准总览"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "subtitle",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "统一标准、清晰计提、结果可核对",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "统一标准、清晰计提、结果可核对",
+      "observed_text_sha256": "240a388d978277935e1968ff646d6ecfa6936b6fca77c6180603a1e263ff4baa",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "统一标准、清晰计提、结果可核对"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "case-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "CASE REPLAY / NATIVE EDITABLE",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "CASE REPLAY / NATIVE EDITABLE",
+      "observed_text_sha256": "1e68904ccf235bd4e08ad9a3b81497719dbb076c3e69d5657daa46f1cabf6398",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "CASE REPLAY / NATIVE EDITABLE"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "policy-panel-title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "POLICY\nMATRIX",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "POLICY\nMATRIX",
+      "observed_text_sha256": "f9d4aaf43b7dbe9b90906ab4033461ee435cbb7a72df80500ac4c3d248febebb",
+      "text_runs": {
+        "count": 2,
+        "values": [
+          "POLICY",
+          "MATRIX"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "policy-panel-copy",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "场景\n收入\n标准\n周期",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "场景\n收入\n标准\n周期",
+      "observed_text_sha256": "91ffcd9258e2605a25358a141375ba1740170c3031e5bf4a7b94871276a1662a",
+      "text_runs": {
+        "count": 4,
+        "values": [
+          "场景",
+          "收入",
+          "标准",
+          "周期"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "table-callout",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "TABLE / NATIVE",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "TABLE / NATIVE",
+      "observed_text_sha256": "400e25de55122ff28c58341aac3e9254cd8a5a4602460fff79edf35322cdc194",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "TABLE / NATIVE"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "table-footnote",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "行高、列宽、网格、单元格文字均保留为可编辑语义对象",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "行高、列宽、网格、单元格文字均保留为可编辑语义对象",
+      "observed_text_sha256": "e26c6ac639f130a08fe090a7590cede3ac73a54fc75d8d99974f08540afb19cd",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "行高、列宽、网格、单元格文字均保留为可编辑语义对象"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "渠道服务费标准总览",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "统一标准、清晰计提、结果可核对",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "policy-panel-title",
+          "text_id": "policy-panel-title",
+          "content": "POLICY\nMATRIX",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "policy-panel-copy",
+          "text_id": "policy-panel-copy",
+          "content": "场景\n收入\n标准\n周期",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "table-callout",
+          "text_id": "table-callout",
+          "content": "TABLE / NATIVE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "table-footnote",
+          "text_id": "table-footnote",
+          "content": "行高、列宽、网格、单元格文字均保留为可编辑语义对象",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

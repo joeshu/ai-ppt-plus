@@ -1,0 +1,1277 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/cache-idempotency-01/editable.pptx",
+  "object_manifest": "runs/candidate/cache-idempotency-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 11,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 78,
+      "object_count_recursive": 78,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-link-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2560255,
+          "top": 3031236,
+          "width": 365751,
+          "height": 0,
+          "normalized_box": [
+            0.21,
+            0.442,
+            0.03,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-link-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4632844,
+          "top": 3031236,
+          "width": 365750,
+          "height": 0,
+          "normalized_box": [
+            0.38,
+            0.442,
+            0.03,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-link-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 6705432,
+          "top": 3031236,
+          "width": 365751,
+          "height": 0,
+          "normalized_box": [
+            0.55,
+            0.442,
+            0.03,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-link-4",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 8778020,
+          "top": 3031236,
+          "width": 365751,
+          "height": 0,
+          "normalized_box": [
+            0.72,
+            0.442,
+            0.03,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-link-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4998594,
+          "top": 3394710,
+          "width": 121917,
+          "height": 582929,
+          "normalized_box": [
+            0.41,
+            0.495,
+            0.01,
+            0.085
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-link-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4998594,
+          "top": 3394710,
+          "width": 121917,
+          "height": 1131569,
+          "normalized_box": [
+            0.41,
+            0.495,
+            0.01,
+            0.165
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-link-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4998594,
+          "top": 3394710,
+          "width": 121917,
+          "height": 1680210,
+          "normalized_box": [
+            0.41,
+            0.495,
+            0.01,
+            0.245
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 853418,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.07,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-1-fill",
+          "kind": "native_shape",
+          "parent": "pipeline-1",
+          "left": 853418,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.07,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-1-accent",
+          "kind": "native_shape",
+          "parent": "pipeline-1",
+          "left": 853418,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 39604,
+          "normalized_box": [
+            0.07,
+            0.39,
+            0.14,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-1-rule",
+          "kind": "native_shape",
+          "parent": "pipeline-1",
+          "left": 904623,
+          "top": 3322701,
+          "width": 1604427,
+          "height": 720,
+          "normalized_box": [
+            0.0742,
+            0.4845,
+            0.1316,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 2926006,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.24,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-2-fill",
+          "kind": "native_shape",
+          "parent": "pipeline-2",
+          "left": 2926006,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.24,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-2-accent",
+          "kind": "native_shape",
+          "parent": "pipeline-2",
+          "left": 2926006,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 39604,
+          "normalized_box": [
+            0.24,
+            0.39,
+            0.14,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-2-rule",
+          "kind": "native_shape",
+          "parent": "pipeline-2",
+          "left": 2977211,
+          "top": 3322701,
+          "width": 1604427,
+          "height": 720,
+          "normalized_box": [
+            0.2442,
+            0.4845,
+            0.1316,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4998594,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.41,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-3-fill",
+          "kind": "native_shape",
+          "parent": "pipeline-3",
+          "left": 4998594,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.41,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-3-accent",
+          "kind": "native_shape",
+          "parent": "pipeline-3",
+          "left": 4998594,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 39604,
+          "normalized_box": [
+            0.41,
+            0.39,
+            0.14,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-3-rule",
+          "kind": "native_shape",
+          "parent": "pipeline-3",
+          "left": 5049800,
+          "top": 3322701,
+          "width": 1604427,
+          "height": 720,
+          "normalized_box": [
+            0.4142,
+            0.4845,
+            0.1316,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-4",
+          "kind": "native_group",
+          "parent": null,
+          "left": 7071183,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.58,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-4-fill",
+          "kind": "native_shape",
+          "parent": "pipeline-4",
+          "left": 7071183,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.58,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-4-accent",
+          "kind": "native_shape",
+          "parent": "pipeline-4",
+          "left": 7071183,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 39604,
+          "normalized_box": [
+            0.58,
+            0.39,
+            0.14,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-4-rule",
+          "kind": "native_shape",
+          "parent": "pipeline-4",
+          "left": 7122388,
+          "top": 3322701,
+          "width": 1604427,
+          "height": 720,
+          "normalized_box": [
+            0.5842,
+            0.4845,
+            0.1316,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-5",
+          "kind": "native_group",
+          "parent": null,
+          "left": 9143771,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.75,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-5-fill",
+          "kind": "native_shape",
+          "parent": "pipeline-5",
+          "left": 9143771,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 720090,
+          "normalized_box": [
+            0.75,
+            0.39,
+            0.14,
+            0.105
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-5-accent",
+          "kind": "native_shape",
+          "parent": "pipeline-5",
+          "left": 9143771,
+          "top": 2674620,
+          "width": 1706837,
+          "height": 39604,
+          "normalized_box": [
+            0.75,
+            0.39,
+            0.14,
+            0.005775
+          ],
+          "text": ""
+        },
+        {
+          "name": "pipeline-5-rule",
+          "kind": "native_shape",
+          "parent": "pipeline-5",
+          "left": 9194976,
+          "top": 3322701,
+          "width": 1604427,
+          "height": 720,
+          "normalized_box": [
+            0.7542,
+            0.4845,
+            0.1316,
+            0.000105
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4145176,
+          "top": 3977639,
+          "width": 1950671,
+          "height": 377190,
+          "normalized_box": [
+            0.34,
+            0.58,
+            0.16,
+            0.055
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-1-fill",
+          "kind": "native_shape",
+          "parent": "parallel-1",
+          "left": 4145176,
+          "top": 3977639,
+          "width": 1950671,
+          "height": 377190,
+          "normalized_box": [
+            0.34,
+            0.58,
+            0.16,
+            0.055
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-1-accent",
+          "kind": "native_shape",
+          "parent": "parallel-1",
+          "left": 4145176,
+          "top": 3977639,
+          "width": 1950671,
+          "height": 20745,
+          "normalized_box": [
+            0.34,
+            0.58,
+            0.16,
+            0.003025
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-1-rule",
+          "kind": "native_shape",
+          "parent": "parallel-1",
+          "left": 4203696,
+          "top": 4317111,
+          "width": 1833631,
+          "height": 377,
+          "normalized_box": [
+            0.3448,
+            0.6295,
+            0.1504,
+            5.5e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4145176,
+          "top": 4526279,
+          "width": 1950671,
+          "height": 377190,
+          "normalized_box": [
+            0.34,
+            0.66,
+            0.16,
+            0.055
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-2-fill",
+          "kind": "native_shape",
+          "parent": "parallel-2",
+          "left": 4145176,
+          "top": 4526279,
+          "width": 1950671,
+          "height": 377190,
+          "normalized_box": [
+            0.34,
+            0.66,
+            0.16,
+            0.055
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-2-accent",
+          "kind": "native_shape",
+          "parent": "parallel-2",
+          "left": 4145176,
+          "top": 4526279,
+          "width": 1950671,
+          "height": 20745,
+          "normalized_box": [
+            0.34,
+            0.66,
+            0.16,
+            0.003025
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-2-rule",
+          "kind": "native_shape",
+          "parent": "parallel-2",
+          "left": 4203696,
+          "top": 4865750,
+          "width": 1833631,
+          "height": 378,
+          "normalized_box": [
+            0.3448,
+            0.7095,
+            0.1504,
+            5.5e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4145176,
+          "top": 5074920,
+          "width": 1950671,
+          "height": 377190,
+          "normalized_box": [
+            0.34,
+            0.74,
+            0.16,
+            0.055
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-3-fill",
+          "kind": "native_shape",
+          "parent": "parallel-3",
+          "left": 4145176,
+          "top": 5074920,
+          "width": 1950671,
+          "height": 377190,
+          "normalized_box": [
+            0.34,
+            0.74,
+            0.16,
+            0.055
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-3-accent",
+          "kind": "native_shape",
+          "parent": "parallel-3",
+          "left": 4145176,
+          "top": 5074920,
+          "width": 1950671,
+          "height": 20745,
+          "normalized_box": [
+            0.34,
+            0.74,
+            0.16,
+            0.003025
+          ],
+          "text": ""
+        },
+        {
+          "name": "parallel-3-rule",
+          "kind": "native_shape",
+          "parent": "parallel-3",
+          "left": 4203696,
+          "top": 5414391,
+          "width": 1833631,
+          "height": 377,
+          "normalized_box": [
+            0.3448,
+            0.7895,
+            0.1504,
+            5.5e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 7802684,
+          "top": 4114800,
+          "width": 975335,
+          "height": 960120,
+          "normalized_box": [
+            0.64,
+            0.6,
+            0.08,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-1-fill",
+          "kind": "native_shape",
+          "parent": "metric-1",
+          "left": 7802684,
+          "top": 4114800,
+          "width": 975335,
+          "height": 960120,
+          "normalized_box": [
+            0.64,
+            0.6,
+            0.08,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-1-accent",
+          "kind": "native_shape",
+          "parent": "metric-1",
+          "left": 7802684,
+          "top": 4114800,
+          "width": 975335,
+          "height": 52806,
+          "normalized_box": [
+            0.64,
+            0.6,
+            0.08,
+            0.0077
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-1-rule",
+          "kind": "native_shape",
+          "parent": "metric-1",
+          "left": 7831944,
+          "top": 4978908,
+          "width": 916816,
+          "height": 960,
+          "normalized_box": [
+            0.6424,
+            0.726,
+            0.0752,
+            0.00014
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 9021854,
+          "top": 4114800,
+          "width": 975335,
+          "height": 960120,
+          "normalized_box": [
+            0.74,
+            0.6,
+            0.08,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-2-fill",
+          "kind": "native_shape",
+          "parent": "metric-2",
+          "left": 9021854,
+          "top": 4114800,
+          "width": 975335,
+          "height": 960120,
+          "normalized_box": [
+            0.74,
+            0.6,
+            0.08,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-2-accent",
+          "kind": "native_shape",
+          "parent": "metric-2",
+          "left": 9021854,
+          "top": 4114800,
+          "width": 975335,
+          "height": 52806,
+          "normalized_box": [
+            0.74,
+            0.6,
+            0.08,
+            0.0077
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-2-rule",
+          "kind": "native_shape",
+          "parent": "metric-2",
+          "left": 9051114,
+          "top": 4978908,
+          "width": 916815,
+          "height": 960,
+          "normalized_box": [
+            0.7424,
+            0.726,
+            0.0752,
+            0.00014
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 10241023,
+          "top": 4114800,
+          "width": 975335,
+          "height": 960120,
+          "normalized_box": [
+            0.84,
+            0.6,
+            0.08,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-3-fill",
+          "kind": "native_shape",
+          "parent": "metric-3",
+          "left": 10241023,
+          "top": 4114800,
+          "width": 975335,
+          "height": 960120,
+          "normalized_box": [
+            0.84,
+            0.6,
+            0.08,
+            0.14
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-3-accent",
+          "kind": "native_shape",
+          "parent": "metric-3",
+          "left": 10241023,
+          "top": 4114800,
+          "width": 975335,
+          "height": 52806,
+          "normalized_box": [
+            0.84,
+            0.6,
+            0.08,
+            0.0077
+          ],
+          "text": ""
+        },
+        {
+          "name": "metric-3-rule",
+          "kind": "native_shape",
+          "parent": "metric-3",
+          "left": 10270283,
+          "top": 4978908,
+          "width": 916816,
+          "height": 960,
+          "normalized_box": [
+            0.8424,
+            0.726,
+            0.0752,
+            0.00014
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "增量渲染与缓存幂等流水线"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "页面级缓存、并行QA、重复运行结果稳定"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "pipeline-1-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1072869,
+          "top": 2866644,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.088,
+            0.418,
+            0.05,
+            0.04
+          ],
+          "text": "01"
+        },
+        {
+          "name": "pipeline-1-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1767795,
+          "top": 2859786,
+          "width": 609584,
+          "height": 308610,
+          "normalized_box": [
+            0.145,
+            0.417,
+            0.05,
+            0.045
+          ],
+          "text": "源文件哈希"
+        },
+        {
+          "name": "pipeline-2-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3145457,
+          "top": 2866644,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.258,
+            0.418,
+            0.05,
+            0.04
+          ],
+          "text": "02"
+        },
+        {
+          "name": "pipeline-2-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3840383,
+          "top": 2859786,
+          "width": 609584,
+          "height": 308610,
+          "normalized_box": [
+            0.315,
+            0.417,
+            0.05,
+            0.045
+          ],
+          "text": "页面级缓存"
+        },
+        {
+          "name": "pipeline-3-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5218045,
+          "top": 2866644,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.428,
+            0.418,
+            0.05,
+            0.04
+          ],
+          "text": "03"
+        },
+        {
+          "name": "pipeline-3-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5912972,
+          "top": 2859786,
+          "width": 609584,
+          "height": 308610,
+          "normalized_box": [
+            0.485,
+            0.417,
+            0.05,
+            0.045
+          ],
+          "text": "受影响区域"
+        },
+        {
+          "name": "pipeline-4-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7290633,
+          "top": 2866644,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.598,
+            0.418,
+            0.05,
+            0.04
+          ],
+          "text": "04"
+        },
+        {
+          "name": "pipeline-4-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7985560,
+          "top": 2859786,
+          "width": 609584,
+          "height": 308610,
+          "normalized_box": [
+            0.655,
+            0.417,
+            0.05,
+            0.045
+          ],
+          "text": "并行QA"
+        },
+        {
+          "name": "pipeline-5-index",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9363221,
+          "top": 2866644,
+          "width": 609584,
+          "height": 274320,
+          "normalized_box": [
+            0.768,
+            0.418,
+            0.05,
+            0.04
+          ],
+          "text": "05"
+        },
+        {
+          "name": "pipeline-5-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10058148,
+          "top": 2859786,
+          "width": 609584,
+          "height": 308610,
+          "normalized_box": [
+            0.825,
+            0.417,
+            0.05,
+            0.045
+          ],
+          "text": "重复运行"
+        },
+        {
+          "name": "parallel-1-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4145176,
+          "top": 4046220,
+          "width": 1950671,
+          "height": 205740,
+          "normalized_box": [
+            0.34,
+            0.59,
+            0.16,
+            0.03
+          ],
+          "text": "视觉比较"
+        },
+        {
+          "name": "parallel-2-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4145176,
+          "top": 4594859,
+          "width": 1950671,
+          "height": 205740,
+          "normalized_box": [
+            0.34,
+            0.67,
+            0.16,
+            0.03
+          ],
+          "text": "对象审计"
+        },
+        {
+          "name": "parallel-3-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4145176,
+          "top": 5143500,
+          "width": 1950671,
+          "height": 205740,
+          "normalized_box": [
+            0.34,
+            0.75,
+            0.16,
+            0.03
+          ],
+          "text": "字体检查"
+        },
+        {
+          "name": "metric-1-value",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7802684,
+          "top": 4286250,
+          "width": 975335,
+          "height": 274320,
+          "normalized_box": [
+            0.64,
+            0.625,
+            0.08,
+            0.04
+          ],
+          "text": "86%"
+        },
+        {
+          "name": "metric-1-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7619809,
+          "top": 4732020,
+          "width": 1341086,
+          "height": 205740,
+          "normalized_box": [
+            0.625,
+            0.69,
+            0.11,
+            0.03
+          ],
+          "text": "缓存命中率"
+        },
+        {
+          "name": "metric-2-value",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9021854,
+          "top": 4286250,
+          "width": 975335,
+          "height": 274320,
+          "normalized_box": [
+            0.74,
+            0.625,
+            0.08,
+            0.04
+          ],
+          "text": "1"
+        },
+        {
+          "name": "metric-2-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8838978,
+          "top": 4732020,
+          "width": 1341086,
+          "height": 205740,
+          "normalized_box": [
+            0.725,
+            0.69,
+            0.11,
+            0.03
+          ],
+          "text": "返工次数"
+        },
+        {
+          "name": "metric-3-value",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10241023,
+          "top": 4286250,
+          "width": 975335,
+          "height": 274320,
+          "normalized_box": [
+            0.84,
+            0.625,
+            0.08,
+            0.04
+          ],
+          "text": "100%"
+        },
+        {
+          "name": "metric-3-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10058148,
+          "top": 4732020,
+          "width": 1341086,
+          "height": 205740,
+          "normalized_box": [
+            0.825,
+            0.69,
+            0.11,
+            0.03
+          ],
+          "text": "结果稳定"
+        },
+        {
+          "name": "pipeline-timeline",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 853418,
+          "top": 5897880,
+          "width": 4389010,
+          "height": 205740,
+          "normalized_box": [
+            0.07,
+            0.86,
+            0.36,
+            0.03
+          ],
+          "text": "首轮 → 修复轮 → 回归轮"
+        },
+        {
+          "name": "pipeline-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5973930,
+          "top": 6172200,
+          "width": 5364345,
+          "height": 205740,
+          "normalized_box": [
+            0.49,
+            0.9,
+            0.44,
+            0.03
+          ],
+          "text": "5-stage pipeline / 3 parallel QA branches / idempotent replay"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

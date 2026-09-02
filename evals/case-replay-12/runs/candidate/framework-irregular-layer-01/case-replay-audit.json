@@ -1,0 +1,186 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/framework-irregular-layer-01/editable.pptx",
+  "deck_sha256": "8ea44ad3efd07c63136c982c0c5a8c9ac4f7a703c0971880956db9c14990ed9d",
+  "object_manifest": "runs/candidate/framework-irregular-layer-01/object-manifest.json",
+  "object_manifest_sha256": "e5bbb7e4ac4bc2b99d6dfab3d37b8a7ea0cdf47b7f74cb4cc875c6bdf2873776",
+  "native_table_count": 0,
+  "native_panel_count": 9,
+  "formal_text_count": 14,
+  "formal_text_native_count": 14,
+  "a_tbl_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [],
+      "panels": [
+        {
+          "object_id": "stage-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "stage-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "stage-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "stage-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "stage-5",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "segment-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "segment-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "segment-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "battle-result",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "存量用户价值提升作战图",
+          "observed": "存量用户价值提升作战图",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "识别—分层—触达—转化—留存",
+          "observed": "识别—分层—触达—转化—留存",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "stage-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "识别",
+          "observed": "识别",
+          "run_count": 1
+        },
+        {
+          "object_id": "stage-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "分层",
+          "observed": "分层",
+          "run_count": 1
+        },
+        {
+          "object_id": "stage-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "触达",
+          "observed": "触达",
+          "run_count": 1
+        },
+        {
+          "object_id": "stage-4-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "转化",
+          "observed": "转化",
+          "run_count": 1
+        },
+        {
+          "object_id": "stage-5-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "留存",
+          "observed": "留存",
+          "run_count": 1
+        },
+        {
+          "object_id": "segment-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "高价值",
+          "observed": "高价值",
+          "run_count": 1
+        },
+        {
+          "object_id": "segment-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "潜力用户",
+          "observed": "潜力用户",
+          "run_count": 1
+        },
+        {
+          "object_id": "segment-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "风险用户",
+          "observed": "风险用户",
+          "run_count": 1
+        },
+        {
+          "object_id": "battle-result-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "作战结果",
+          "observed": "作战结果",
+          "run_count": 1
+        },
+        {
+          "object_id": "irregular-actions",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "行动清单\n01 识别高价值\n02 分层定策略\n03 复盘沉淀",
+          "observed": "行动清单\n01 识别高价值\n02 分层定策略\n03 复盘沉淀",
+          "run_count": 4
+        },
+        {
+          "object_id": "irregular-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "折角面板 / 斜切节奏 / 连接线层级 / native groups",
+          "observed": "折角面板 / 斜切节奏 / 连接线层级 / native groups",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 30
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

@@ -1,0 +1,154 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "增量渲染与缓存幂等流水线",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "页面级缓存、并行QA、重复运行结果稳定",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-1-index",
+          "text_id": "pipeline-1-index",
+          "content": "01",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-1-label",
+          "text_id": "pipeline-1-label",
+          "content": "源文件哈希",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-2-index",
+          "text_id": "pipeline-2-index",
+          "content": "02",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-2-label",
+          "text_id": "pipeline-2-label",
+          "content": "页面级缓存",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-3-index",
+          "text_id": "pipeline-3-index",
+          "content": "03",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-3-label",
+          "text_id": "pipeline-3-label",
+          "content": "受影响区域",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-4-index",
+          "text_id": "pipeline-4-index",
+          "content": "04",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-4-label",
+          "text_id": "pipeline-4-label",
+          "content": "并行QA",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-5-index",
+          "text_id": "pipeline-5-index",
+          "content": "05",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-5-label",
+          "text_id": "pipeline-5-label",
+          "content": "重复运行",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "parallel-1-text",
+          "text_id": "parallel-1-text",
+          "content": "视觉比较",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "parallel-2-text",
+          "text_id": "parallel-2-text",
+          "content": "对象审计",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "parallel-3-text",
+          "text_id": "parallel-3-text",
+          "content": "字体检查",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "metric-1-value",
+          "text_id": "metric-1-value",
+          "content": "86%",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "metric-1-label",
+          "text_id": "metric-1-label",
+          "content": "缓存命中率",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "metric-2-value",
+          "text_id": "metric-2-value",
+          "content": "1",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "metric-2-label",
+          "text_id": "metric-2-label",
+          "content": "返工次数",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "metric-3-value",
+          "text_id": "metric-3-value",
+          "content": "100%",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "metric-3-label",
+          "text_id": "metric-3-label",
+          "content": "结果稳定",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-timeline",
+          "text_id": "pipeline-timeline",
+          "content": "首轮 → 修复轮 → 回归轮",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "pipeline-note",
+          "text_id": "pipeline-note",
+          "content": "5-stage pipeline / 3 parallel QA branches / idempotent replay",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

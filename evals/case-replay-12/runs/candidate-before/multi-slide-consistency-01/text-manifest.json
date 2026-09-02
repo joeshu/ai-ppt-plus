@@ -1,0 +1,130 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "经营闭环一页总览",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "统一口径｜统一节奏｜统一动作",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-1-index",
+          "text_id": "module-card-1-index",
+          "content": "01",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-1-title",
+          "text_id": "module-card-1-title",
+          "content": "目标设定",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-1-tag",
+          "text_id": "module-card-1-tag",
+          "content": "同源组件",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-2-index",
+          "text_id": "module-card-2-index",
+          "content": "02",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-2-title",
+          "text_id": "module-card-2-title",
+          "content": "过程经营",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-2-tag",
+          "text_id": "module-card-2-tag",
+          "content": "同源组件",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-3-index",
+          "text_id": "module-card-3-index",
+          "content": "03",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-3-title",
+          "text_id": "module-card-3-title",
+          "content": "问题诊断",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-3-tag",
+          "text_id": "module-card-3-tag",
+          "content": "同源组件",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-4-index",
+          "text_id": "module-card-4-index",
+          "content": "04",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-4-title",
+          "text_id": "module-card-4-title",
+          "content": "资源调度",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-4-tag",
+          "text_id": "module-card-4-tag",
+          "content": "同源组件",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-5-index",
+          "text_id": "module-card-5-index",
+          "content": "05",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-5-title",
+          "text_id": "module-card-5-title",
+          "content": "结果复盘",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "module-card-5-tag",
+          "text_id": "module-card-5-tag",
+          "content": "同源组件",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "loop-center-text",
+          "text_id": "loop-center-text",
+          "content": "统一口径\n统一节奏\n统一动作",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "consistency-note",
+          "text_id": "consistency-note",
+          "content": "五个重复模块使用同一组件 token、几何和文字基线",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

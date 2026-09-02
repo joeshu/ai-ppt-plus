@@ -112,6 +112,10 @@
           "reason": "P1 native semantic structure input gate adapter"
         },
         {
+          "path": "scripts/build_object_manifest.py",
+          "reason": "worker-only native semantic object and merge manifest adapter"
+        },
+        {
           "path": "scripts/component_expander.py",
           "reason": "P1 native panel/table promotion adapter"
         },
@@ -126,6 +130,14 @@
         {
           "path": "scripts/normalize_ooxml_relationships.py",
           "reason": "worker-only ZIP-level viewer compatibility adapter"
+        },
+        {
+          "path": "scripts/case_replay_audit.py",
+          "reason": "worker-only case-level OOXML merge and native-text replay gate"
+        },
+        {
+          "path": "scripts/compare_visual.py",
+          "reason": "worker-only authored-canvas raw-slide comparison adapter"
         },
         {
           "path": "scripts/pptx_primitives.py",

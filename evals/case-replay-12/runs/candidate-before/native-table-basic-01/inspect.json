@@ -1,0 +1,50 @@
+{
+  "schema": "ai-ppt-plus/pptx-inspection/v1",
+  "ok": true,
+  "file": "runs/candidate-before/native-table-basic-01/editable.pptx",
+  "slide_count": 1,
+  "width_emu": 12191695,
+  "height_emu": 6858000,
+  "ratio": 1.777733304170312,
+  "is_16_9": true,
+  "slides": [
+    {
+      "slide": 1,
+      "shapes": 12,
+      "groups": 1,
+      "text_objects": 7,
+      "pictures": 0,
+      "graphic_frames": 1,
+      "gradient_fills": 0,
+      "charts": 0,
+      "tables": 3,
+      "off_canvas": 0,
+      "overlap_risks": 0,
+      "overflow_risks": 0,
+      "fonts": [
+        "Noto Sans CJK SC"
+      ]
+    }
+  ],
+  "vector_assets": [],
+  "embedded_fonts": {
+    "present": false,
+    "declared": false,
+    "parts": [],
+    "declared_relationship_ids": [],
+    "resolved_parts": [],
+    "part_evidence": [],
+    "content_types": {},
+    "invalid_content_types": {},
+    "missing_relationship_ids": [],
+    "missing_parts": [],
+    "orphan_parts": []
+  },
+  "issues": [],
+  "limitations": [
+    "overlap and text overflow are heuristics; confirm from renders",
+    "semantic correctness and native editability require artifact/user review",
+    "embedded font detection verifies declaration, font relationships, content types, EOT envelopes and package parts; it does not prove every glyph is covered or that a target application will honor embedding"
+  ],
+  "deck_sha256": "ca222d9b143a3b192319301c73221373118addb4c689844f45bb13fab4f3d61d"
+}

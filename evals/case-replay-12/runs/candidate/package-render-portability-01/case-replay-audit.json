@@ -1,0 +1,216 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/package-render-portability-01/editable.pptx",
+  "deck_sha256": "5bd4ff1a5be58c0334239f20ea75247830db68cd6b1671208a700e529884af2c",
+  "object_manifest": "runs/candidate/package-render-portability-01/object-manifest.json",
+  "object_manifest_sha256": "1c06286e32d44deab7284de307208575005bebb734a160e34f0e9256dc3aed66",
+  "native_table_count": 1,
+  "native_panel_count": 9,
+  "formal_text_count": 13,
+  "formal_text_native_count": 13,
+  "a_tbl_count": 1,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [
+        {
+          "object_id": "environment-matrix",
+          "actual_type": "editable_table",
+          "expected_merges": [],
+          "observed_merges": [],
+          "merge_count": 0,
+          "rows": 4,
+          "columns": 4,
+          "values": [
+            [
+              "环境",
+              "字体",
+              "渲染器",
+              "PPTX包"
+            ],
+            [
+              "桌面WPS",
+              "可见",
+              "一致",
+              "通过"
+            ],
+            [
+              "移动端WPS",
+              "可见",
+              "一致",
+              "通过"
+            ],
+            [
+              "CI Runner",
+              "可见",
+              "一致",
+              "哈希锁定"
+            ]
+          ],
+          "rich_text_runs": 16,
+          "rich_text_cells": 0
+        }
+      ],
+      "panels": [
+        {
+          "object_id": "layer-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "layer-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "layer-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "layer-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "layer-5",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "lock-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "lock-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "lock-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "lock-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "可编辑PPT交付运行矩阵",
+          "observed": "可编辑PPT交付运行矩阵",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "同一源文件 → 同一证据 → 可复现交付",
+          "observed": "同一源文件 → 同一证据 → 可复现交付",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "layer-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "技能包",
+          "observed": "技能包",
+          "run_count": 1
+        },
+        {
+          "object_id": "layer-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "运行时",
+          "observed": "运行时",
+          "run_count": 1
+        },
+        {
+          "object_id": "layer-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "字体",
+          "observed": "字体",
+          "run_count": 1
+        },
+        {
+          "object_id": "layer-4-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "渲染器",
+          "observed": "渲染器",
+          "run_count": 1
+        },
+        {
+          "object_id": "layer-5-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "PPTX包",
+          "observed": "PPTX包",
+          "run_count": 1
+        },
+        {
+          "object_id": "lock-1-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "包完整",
+          "observed": "包完整",
+          "run_count": 1
+        },
+        {
+          "object_id": "lock-2-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "字体可见",
+          "observed": "字体可见",
+          "run_count": 1
+        },
+        {
+          "object_id": "lock-3-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "渲染一致",
+          "observed": "渲染一致",
+          "run_count": 1
+        },
+        {
+          "object_id": "lock-4-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "哈希锁定",
+          "observed": "哈希锁定",
+          "run_count": 1
+        },
+        {
+          "object_id": "package-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "5-layer architecture / 3 target environments / native matrix",
+          "observed": "5-layer architecture / 3 target environments / native matrix",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 26
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

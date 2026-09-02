@@ -1,0 +1,160 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "政企客户增长作战舱",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "以目标—路径—结果组织经营管理阅读路径",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-target-label",
+          "text_id": "kpi-target-label",
+          "content": "目标",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-target-value",
+          "text_id": "kpi-target-value",
+          "content": "28.6",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-target-unit",
+          "text_id": "kpi-target-unit",
+          "content": "亿元",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-path-label",
+          "text_id": "kpi-path-label",
+          "content": "路径",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-path-value",
+          "text_id": "kpi-path-value",
+          "content": "18.7",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-path-unit",
+          "text_id": "kpi-path-unit",
+          "content": "亿元",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-result-label",
+          "text_id": "kpi-result-label",
+          "content": "结果",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-result-value",
+          "text_id": "kpi-result-value",
+          "content": "17.3",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "kpi-result-unit",
+          "text_id": "kpi-result-unit",
+          "content": "亿元",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-label",
+          "text_id": "flow-label",
+          "content": "增长路径 / FIVE-STAGE OPERATING LOOP",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-1-index",
+          "text_id": "flow-1-index",
+          "content": "01",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-1-label",
+          "text_id": "flow-1-label",
+          "content": "目标洞察",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-2-index",
+          "text_id": "flow-2-index",
+          "content": "02",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-2-label",
+          "text_id": "flow-2-label",
+          "content": "线索获取",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-3-index",
+          "text_id": "flow-3-index",
+          "content": "03",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-3-label",
+          "text_id": "flow-3-label",
+          "content": "商机转化",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-4-index",
+          "text_id": "flow-4-index",
+          "content": "04",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-4-label",
+          "text_id": "flow-4-label",
+          "content": "合同签约",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-5-index",
+          "text_id": "flow-5-index",
+          "content": "05",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "flow-5-label",
+          "text_id": "flow-5-label",
+          "content": "交付增值",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "insight-panel-text",
+          "text_id": "insight-panel-text",
+          "content": "TOP5\n进展",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "dashboard-note",
+          "text_id": "dashboard-note",
+          "content": "原生KPI卡 / 原生流程节点 / 2张原生表格",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

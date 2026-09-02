@@ -1,0 +1,381 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/chart-data-provenance-01/editable.pptx",
+  "object_manifest": "runs/candidate-before/chart-data-provenance-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 2,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 22,
+      "object_count_recursive": 22,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-panel",
+          "kind": "native_group",
+          "parent": null,
+          "left": 853418,
+          "top": 1508760,
+          "width": 7071183,
+          "height": 3977639,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.58,
+            0.58
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-panel-fill",
+          "kind": "native_shape",
+          "parent": "chart-panel",
+          "left": 853418,
+          "top": 1508760,
+          "width": 7071183,
+          "height": 3977639,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.58,
+            0.58
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-panel-accent",
+          "kind": "native_shape",
+          "parent": "chart-panel",
+          "left": 853418,
+          "top": 1508760,
+          "width": 7071183,
+          "height": 218770,
+          "normalized_box": [
+            0.07,
+            0.22,
+            0.58,
+            0.0319
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-panel-rule",
+          "kind": "native_shape",
+          "parent": "chart-panel",
+          "left": 1065554,
+          "top": 5088636,
+          "width": 6646912,
+          "height": 3977,
+          "normalized_box": [
+            0.0874,
+            0.742,
+            0.5452,
+            0.00058
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-insight-panel",
+          "kind": "native_group",
+          "parent": null,
+          "left": 8412269,
+          "top": 1508760,
+          "width": 2926006,
+          "height": 3977639,
+          "normalized_box": [
+            0.69,
+            0.22,
+            0.24,
+            0.58
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-insight-panel-fill",
+          "kind": "native_shape",
+          "parent": "chart-insight-panel",
+          "left": 8412269,
+          "top": 1508760,
+          "width": 2926006,
+          "height": 3977639,
+          "normalized_box": [
+            0.69,
+            0.22,
+            0.24,
+            0.58
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-insight-panel-accent",
+          "kind": "native_shape",
+          "parent": "chart-insight-panel",
+          "left": 8412269,
+          "top": 1508760,
+          "width": 2926006,
+          "height": 218770,
+          "normalized_box": [
+            0.69,
+            0.22,
+            0.24,
+            0.0319
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-insight-panel-rule",
+          "kind": "native_shape",
+          "parent": "chart-insight-panel",
+          "left": 8500049,
+          "top": 5088636,
+          "width": 2750447,
+          "height": 3977,
+          "normalized_box": [
+            0.6972,
+            0.742,
+            0.2256,
+            0.00058
+          ],
+          "text": ""
+        },
+        {
+          "name": "industry-growth-chart",
+          "kind": "editable_chart",
+          "parent": null,
+          "left": 1341086,
+          "top": 2057400,
+          "width": 6095847,
+          "height": 2880360,
+          "normalized_box": [
+            0.11,
+            0.3,
+            0.5,
+            0.42
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "2026上半年政企行业增长结构"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "政府与教育仍是规模增长主引擎"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "chart-insight-1",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 2125980,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.31,
+            0.22,
+            0.04
+          ],
+          "text": "政府 8.6 / 5.2"
+        },
+        {
+          "name": "chart-insight-2",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 2640330,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.385,
+            0.22,
+            0.04
+          ],
+          "text": "教育 5.2 / 3.1"
+        },
+        {
+          "name": "chart-insight-3",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 3154679,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.46,
+            0.22,
+            0.04
+          ],
+          "text": "医疗 4.6 / 2.6"
+        },
+        {
+          "name": "chart-insight-4",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 3669029,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.535,
+            0.22,
+            0.04
+          ],
+          "text": "交通 3.8 / 2.2"
+        },
+        {
+          "name": "chart-insight-5",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 4183380,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.61,
+            0.22,
+            0.04
+          ],
+          "text": "制造 3.4 / 1.9"
+        },
+        {
+          "name": "chart-legend-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1219169,
+          "top": 5143500,
+          "width": 3657508,
+          "height": 205740,
+          "normalized_box": [
+            0.1,
+            0.75,
+            0.3,
+            0.03
+          ],
+          "text": "目标 / 实际（亿元）"
+        },
+        {
+          "name": "chart-source-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7071183,
+          "top": 6172200,
+          "width": 4267093,
+          "height": 205740,
+          "normalized_box": [
+            0.58,
+            0.9,
+            0.35,
+            0.03
+          ],
+          "text": "数据口径：case-suite.json / exact data snapshot"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "ai-ppt-plus/pptx-inspection/v1",
+  "ok": false,
+  "file": "runs/baseline/native-text-cjk-font-01/legacy-image-only.pptx",
+  "slide_count": 1,
+  "width_emu": 12191695,
+  "height_emu": 6858000,
+  "ratio": 1.777733304170312,
+  "is_16_9": true,
+  "slides": [
+    {
+      "slide": 1,
+      "shapes": 1,
+      "groups": 0,
+      "text_objects": 0,
+      "pictures": 1,
+      "graphic_frames": 0,
+      "gradient_fills": 0,
+      "charts": 0,
+      "tables": 0,
+      "off_canvas": 0,
+      "overlap_risks": 0,
+      "overflow_risks": 0,
+      "fonts": []
+    }
+  ],
+  "vector_assets": [],
+  "embedded_fonts": {
+    "present": false,
+    "declared": false,
+    "parts": [],
+    "declared_relationship_ids": [],
+    "resolved_parts": [],
+    "part_evidence": [],
+    "content_types": {},
+    "invalid_content_types": {},
+    "missing_relationship_ids": [],
+    "missing_parts": [],
+    "orphan_parts": []
+  },
+  "issues": [
+    {
+      "slide": 1,
+      "severity": "critical",
+      "code": "possible_full_slide_flattening"
+    }
+  ],
+  "limitations": [
+    "overlap and text overflow are heuristics; confirm from renders",
+    "semantic correctness and native editability require artifact/user review",
+    "embedded font detection verifies declaration, font relationships, content types, EOT envelopes and package parts; it does not prove every glyph is covered or that a target application will honor embedding"
+  ],
+  "deck_sha256": "1dc4efd3a52cc1eeb35de3c83ef707ea5e97ce46e80efbe1503f30beb78b8118"
+}

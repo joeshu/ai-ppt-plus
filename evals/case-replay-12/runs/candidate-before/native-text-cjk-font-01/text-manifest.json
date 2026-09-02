@@ -1,0 +1,106 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "政企客户服务攻坚战",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "Service Excellence",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "service-label-1",
+          "text_id": "service-label-1",
+          "content": "一线响应",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "service-label-2",
+          "text_id": "service-label-2",
+          "content": "专业交付",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "service-label-3",
+          "text_id": "service-label-3",
+          "content": "客户成功",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "journey-1-text",
+          "text_id": "journey-1-text",
+          "content": "触达",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "journey-2-text",
+          "text_id": "journey-2-text",
+          "content": "诊断",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "journey-3-text",
+          "text_id": "journey-3-text",
+          "content": "交付",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "journey-4-text",
+          "text_id": "journey-4-text",
+          "content": "复盘",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "closure-rate",
+          "text_id": "closure-rate",
+          "content": "96.8%",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "responsibility-1-text",
+          "text_id": "responsibility-1-text",
+          "content": "本周重点",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "responsibility-2-text",
+          "text_id": "responsibility-2-text",
+          "content": "关键动作",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "responsibility-3-text",
+          "text_id": "responsibility-3-text",
+          "content": "责任到人",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "bilingual-note",
+          "text_id": "bilingual-note",
+          "content": "CJK + English / run-level emphasis / native text",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "mixed-run-callout",
+          "text_id": "mixed-run-callout",
+          "content": "闭环率 96.8%",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

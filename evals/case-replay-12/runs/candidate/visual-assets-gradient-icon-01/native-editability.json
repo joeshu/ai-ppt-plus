@@ -1,0 +1,749 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/visual-assets-gradient-icon-01/editable.pptx",
+  "object_manifest": "runs/candidate/visual-assets-gradient-icon-01/object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 7,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 45,
+      "object_count_recursive": 45,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6858000,
+          "normalized_box": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-accent",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 445770,
+          "width": 73150,
+          "height": 514350,
+          "normalized_box": [
+            0.055,
+            0.065,
+            0.006,
+            0.075
+          ],
+          "text": ""
+        },
+        {
+          "name": "title-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 670543,
+          "top": 1165860,
+          "width": 10850608,
+          "height": 0,
+          "normalized_box": [
+            0.055,
+            0.17,
+            0.89,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "orbital-core",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4632844,
+          "top": 2057400,
+          "width": 2926006,
+          "height": 2331720,
+          "normalized_box": [
+            0.38,
+            0.3,
+            0.24,
+            0.34
+          ],
+          "text": ""
+        },
+        {
+          "name": "orbit-ring-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 3901342,
+          "top": 1714500,
+          "width": 4389010,
+          "height": 3017520,
+          "normalized_box": [
+            0.32,
+            0.25,
+            0.36,
+            0.44
+          ],
+          "text": ""
+        },
+        {
+          "name": "orbit-ring-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4267093,
+          "top": 2331720,
+          "width": 3657508,
+          "height": 1783080,
+          "normalized_box": [
+            0.35,
+            0.34,
+            0.3,
+            0.26
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 1463003,
+          "top": 2125980,
+          "width": 2194505,
+          "height": 891540,
+          "normalized_box": [
+            0.12,
+            0.31,
+            0.18,
+            0.13
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-1-fill",
+          "kind": "native_shape",
+          "parent": "capability-1",
+          "left": 1463003,
+          "top": 2125980,
+          "width": 2194505,
+          "height": 891540,
+          "normalized_box": [
+            0.12,
+            0.31,
+            0.18,
+            0.13
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-1-accent",
+          "kind": "native_shape",
+          "parent": "capability-1",
+          "left": 1463003,
+          "top": 2125980,
+          "width": 2194505,
+          "height": 49034,
+          "normalized_box": [
+            0.12,
+            0.31,
+            0.18,
+            0.00715
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-1-rule",
+          "kind": "native_shape",
+          "parent": "capability-1",
+          "left": 1528838,
+          "top": 2928366,
+          "width": 2062835,
+          "height": 891,
+          "normalized_box": [
+            0.1254,
+            0.427,
+            0.1692,
+            0.00013
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 8290352,
+          "top": 2125980,
+          "width": 2194505,
+          "height": 891540,
+          "normalized_box": [
+            0.68,
+            0.31,
+            0.18,
+            0.13
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-2-fill",
+          "kind": "native_shape",
+          "parent": "capability-2",
+          "left": 8290352,
+          "top": 2125980,
+          "width": 2194505,
+          "height": 891540,
+          "normalized_box": [
+            0.68,
+            0.31,
+            0.18,
+            0.13
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-2-accent",
+          "kind": "native_shape",
+          "parent": "capability-2",
+          "left": 8290352,
+          "top": 2125980,
+          "width": 2194505,
+          "height": 49034,
+          "normalized_box": [
+            0.68,
+            0.31,
+            0.18,
+            0.00715
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-2-rule",
+          "kind": "native_shape",
+          "parent": "capability-2",
+          "left": 8356187,
+          "top": 2928366,
+          "width": 2062835,
+          "height": 891,
+          "normalized_box": [
+            0.6854,
+            0.427,
+            0.1692,
+            0.00013
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 1463003,
+          "top": 3909059,
+          "width": 2194505,
+          "height": 891540,
+          "normalized_box": [
+            0.12,
+            0.57,
+            0.18,
+            0.13
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-3-fill",
+          "kind": "native_shape",
+          "parent": "capability-3",
+          "left": 1463003,
+          "top": 3909059,
+          "width": 2194505,
+          "height": 891540,
+          "normalized_box": [
+            0.12,
+            0.57,
+            0.18,
+            0.13
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-3-accent",
+          "kind": "native_shape",
+          "parent": "capability-3",
+          "left": 1463003,
+          "top": 3909059,
+          "width": 2194505,
+          "height": 49034,
+          "normalized_box": [
+            0.12,
+            0.57,
+            0.18,
+            0.00715
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-3-rule",
+          "kind": "native_shape",
+          "parent": "capability-3",
+          "left": 1528838,
+          "top": 4711446,
+          "width": 2062835,
+          "height": 891,
+          "normalized_box": [
+            0.1254,
+            0.687,
+            0.1692,
+            0.00013
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-4",
+          "kind": "native_group",
+          "parent": null,
+          "left": 8290352,
+          "top": 3909059,
+          "width": 2194505,
+          "height": 891540,
+          "normalized_box": [
+            0.68,
+            0.57,
+            0.18,
+            0.13
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-4-fill",
+          "kind": "native_shape",
+          "parent": "capability-4",
+          "left": 8290352,
+          "top": 3909059,
+          "width": 2194505,
+          "height": 891540,
+          "normalized_box": [
+            0.68,
+            0.57,
+            0.18,
+            0.13
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-4-accent",
+          "kind": "native_shape",
+          "parent": "capability-4",
+          "left": 8290352,
+          "top": 3909059,
+          "width": 2194505,
+          "height": 49034,
+          "normalized_box": [
+            0.68,
+            0.57,
+            0.18,
+            0.00715
+          ],
+          "text": ""
+        },
+        {
+          "name": "capability-4-rule",
+          "kind": "native_shape",
+          "parent": "capability-4",
+          "left": 8356187,
+          "top": 4711446,
+          "width": 2062835,
+          "height": 891,
+          "normalized_box": [
+            0.6854,
+            0.687,
+            0.1692,
+            0.00013
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 4267093,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 548640,
+          "normalized_box": [
+            0.35,
+            0.8,
+            0.18,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-1-fill",
+          "kind": "native_shape",
+          "parent": "value-1",
+          "left": 4267093,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 548640,
+          "normalized_box": [
+            0.35,
+            0.8,
+            0.18,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-1-accent",
+          "kind": "native_shape",
+          "parent": "value-1",
+          "left": 4267093,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 30175,
+          "normalized_box": [
+            0.35,
+            0.8,
+            0.18,
+            0.0044
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-1-rule",
+          "kind": "native_shape",
+          "parent": "value-1",
+          "left": 4332928,
+          "top": 5980176,
+          "width": 2062835,
+          "height": 548,
+          "normalized_box": [
+            0.3554,
+            0.872,
+            0.1692,
+            8e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 6949266,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 548640,
+          "normalized_box": [
+            0.57,
+            0.8,
+            0.18,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-2-fill",
+          "kind": "native_shape",
+          "parent": "value-2",
+          "left": 6949266,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 548640,
+          "normalized_box": [
+            0.57,
+            0.8,
+            0.18,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-2-accent",
+          "kind": "native_shape",
+          "parent": "value-2",
+          "left": 6949266,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 30175,
+          "normalized_box": [
+            0.57,
+            0.8,
+            0.18,
+            0.0044
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-2-rule",
+          "kind": "native_shape",
+          "parent": "value-2",
+          "left": 7015101,
+          "top": 5980176,
+          "width": 2062835,
+          "height": 548,
+          "normalized_box": [
+            0.5754,
+            0.872,
+            0.1692,
+            8e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 9631439,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 548640,
+          "normalized_box": [
+            0.79,
+            0.8,
+            0.18,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-3-fill",
+          "kind": "native_shape",
+          "parent": "value-3",
+          "left": 9631439,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 548640,
+          "normalized_box": [
+            0.79,
+            0.8,
+            0.18,
+            0.08
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-3-accent",
+          "kind": "native_shape",
+          "parent": "value-3",
+          "left": 9631439,
+          "top": 5486400,
+          "width": 2194505,
+          "height": 30175,
+          "normalized_box": [
+            0.79,
+            0.8,
+            0.18,
+            0.0044
+          ],
+          "text": ""
+        },
+        {
+          "name": "value-3-rule",
+          "kind": "native_shape",
+          "parent": "value-3",
+          "left": 9697274,
+          "top": 5980176,
+          "width": 2062834,
+          "height": 548,
+          "normalized_box": [
+            0.7954,
+            0.872,
+            0.1692,
+            8e-05
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 889993,
+          "top": 356616,
+          "width": 8046518,
+          "height": 617220,
+          "normalized_box": [
+            0.073,
+            0.052,
+            0.66,
+            0.09
+          ],
+          "text": "5G-A能力全景"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914377,
+          "top": 994409,
+          "width": 7558850,
+          "height": 240030,
+          "normalized_box": [
+            0.075,
+            0.145,
+            0.62,
+            0.035
+          ],
+          "text": "连接 × 算力 × 感知 × 智能"
+        },
+        {
+          "name": "case-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8778020,
+          "top": 514350,
+          "width": 2682172,
+          "height": 274320,
+          "normalized_box": [
+            0.72,
+            0.075,
+            0.22,
+            0.04
+          ],
+          "text": "CASE REPLAY / NATIVE EDITABLE"
+        },
+        {
+          "name": "capability-1-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1706837,
+          "top": 2434590,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.14,
+            0.355,
+            0.14,
+            0.04
+          ],
+          "text": "连接"
+        },
+        {
+          "name": "capability-2-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8534186,
+          "top": 2434590,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.7,
+            0.355,
+            0.14,
+            0.04
+          ],
+          "text": "算力"
+        },
+        {
+          "name": "capability-3-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1706837,
+          "top": 4217670,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.14,
+            0.615,
+            0.14,
+            0.04
+          ],
+          "text": "感知"
+        },
+        {
+          "name": "capability-4-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8534186,
+          "top": 4217670,
+          "width": 1706837,
+          "height": 274320,
+          "normalized_box": [
+            0.7,
+            0.615,
+            0.14,
+            0.04
+          ],
+          "text": "智能"
+        },
+        {
+          "name": "value-1-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4267093,
+          "top": 5637276,
+          "width": 2194505,
+          "height": 205740,
+          "normalized_box": [
+            0.35,
+            0.822,
+            0.18,
+            0.03
+          ],
+          "text": "低时延"
+        },
+        {
+          "name": "value-2-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6949266,
+          "top": 5637276,
+          "width": 2194505,
+          "height": 205740,
+          "normalized_box": [
+            0.57,
+            0.822,
+            0.18,
+            0.03
+          ],
+          "text": "大上行"
+        },
+        {
+          "name": "value-3-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9631439,
+          "top": 5637276,
+          "width": 2194505,
+          "height": 205740,
+          "normalized_box": [
+            0.79,
+            0.822,
+            0.18,
+            0.03
+          ],
+          "text": "确定性网络"
+        },
+        {
+          "name": "asset-note",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8290352,
+          "top": 6172200,
+          "width": 3047923,
+          "height": 205740,
+          "normalized_box": [
+            0.68,
+            0.9,
+            0.25,
+            0.03
+          ],
+          "text": "独立视觉资产边界：轨道、渐变、节点、标签"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

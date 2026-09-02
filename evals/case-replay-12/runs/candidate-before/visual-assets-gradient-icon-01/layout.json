@@ -1,0 +1,605 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/candidate-before/visual-assets-gradient-icon-01",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#F4F7FB",
+    "size": 10,
+    "table_header_fill": "#9B0B1B",
+    "table_fill": "#F5F8FC",
+    "chart_colors": [
+      "#E60012",
+      "#1687FF"
+    ],
+    "chart_text_color": "#F4F7FB",
+    "chart_muted_color": "#A9BED5",
+    "chart_grid_color": "#355A7D",
+    "chart_tick_size": 8,
+    "chart_legend_size": 8,
+    "chart_label_size": 7
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "background",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#061A35"
+        },
+        {
+          "object_id": "title-accent",
+          "type": "rect",
+          "x": 0.055,
+          "y": 0.065,
+          "w": 0.006,
+          "h": 0.075,
+          "fill": "#E60012"
+        },
+        {
+          "object_id": "title-rule",
+          "type": "line",
+          "x": 0.055,
+          "y": 0.17,
+          "x2": 0.945,
+          "y2": 0.17,
+          "line": "#355A7D",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "orbital-core",
+          "type": "oval",
+          "x": 0.38,
+          "y": 0.3,
+          "w": 0.24,
+          "h": 0.34,
+          "line": "#1687FF",
+          "line_width": 1.2,
+          "gradient": {
+            "angle": 45,
+            "stops": [
+              {
+                "position": 0,
+                "color": "#1687FF"
+              },
+              {
+                "position": 0.55,
+                "color": "#7B4DFF"
+              },
+              {
+                "position": 1,
+                "color": "#E60012"
+              }
+            ]
+          }
+        },
+        {
+          "object_id": "orbit-ring-1",
+          "type": "oval",
+          "x": 0.32,
+          "y": 0.25,
+          "w": 0.36,
+          "h": 0.44,
+          "line": "#1687FF",
+          "line_width": 1.0
+        },
+        {
+          "object_id": "orbit-ring-2",
+          "type": "oval",
+          "x": 0.35,
+          "y": 0.34,
+          "w": 0.3,
+          "h": 0.26,
+          "line": "#E60012",
+          "line_width": 0.8
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "capability-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.12,
+          "y": 0.31,
+          "w": 0.18,
+          "h": 0.13,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "capability-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "capability-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "capability-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "capability-1"
+        },
+        {
+          "object_id": "capability-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.68,
+          "y": 0.31,
+          "w": 0.18,
+          "h": 0.13,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "capability-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "capability-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "capability-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "capability-2"
+        },
+        {
+          "object_id": "capability-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.12,
+          "y": 0.57,
+          "w": 0.18,
+          "h": 0.13,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "capability-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "capability-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "capability-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "capability-3"
+        },
+        {
+          "object_id": "capability-4",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.68,
+          "y": 0.57,
+          "w": 0.18,
+          "h": 0.13,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "capability-4-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#102F4F",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "capability-4-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "capability-4-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "capability-4"
+        },
+        {
+          "object_id": "value-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.35,
+          "y": 0.8,
+          "w": 0.18,
+          "h": 0.08,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "value-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "value-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "value-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "value-1"
+        },
+        {
+          "object_id": "value-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.57,
+          "y": 0.8,
+          "w": 0.18,
+          "h": 0.08,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "value-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "value-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "value-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "value-2"
+        },
+        {
+          "object_id": "value-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.79,
+          "y": 0.8,
+          "w": 0.18,
+          "h": 0.08,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "value-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "value-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "value-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "value-3"
+        }
+      ],
+      "tables": [],
+      "charts": [],
+      "texts": [
+        {
+          "object_id": "title",
+          "text": "5G-A能力全景",
+          "x": 0.073,
+          "y": 0.052,
+          "w": 0.66,
+          "h": 0.09,
+          "size": 25,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "subtitle",
+          "text": "连接 × 算力 × 感知 × 智能",
+          "x": 0.075,
+          "y": 0.145,
+          "w": 0.62,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "case-label",
+          "text": "CASE REPLAY / NATIVE EDITABLE",
+          "x": 0.72,
+          "y": 0.075,
+          "w": 0.22,
+          "h": 0.04,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "capability-1-label",
+          "text": "连接",
+          "x": 0.13999999999999999,
+          "y": 0.355,
+          "w": 0.14,
+          "h": 0.04,
+          "size": 11,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "capability-2-label",
+          "text": "算力",
+          "x": 0.7000000000000001,
+          "y": 0.355,
+          "w": 0.14,
+          "h": 0.04,
+          "size": 11,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "capability-3-label",
+          "text": "感知",
+          "x": 0.13999999999999999,
+          "y": 0.615,
+          "w": 0.14,
+          "h": 0.04,
+          "size": 11,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "capability-4-label",
+          "text": "智能",
+          "x": 0.7000000000000001,
+          "y": 0.615,
+          "w": 0.14,
+          "h": 0.04,
+          "size": 11,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "value-1-text",
+          "text": "低时延",
+          "x": 0.35,
+          "y": 0.822,
+          "w": 0.18,
+          "h": 0.03,
+          "size": 8.2,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "value-2-text",
+          "text": "大上行",
+          "x": 0.57,
+          "y": 0.822,
+          "w": 0.18,
+          "h": 0.03,
+          "size": 8.2,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "value-3-text",
+          "text": "确定性网络",
+          "x": 0.79,
+          "y": 0.822,
+          "w": 0.18,
+          "h": 0.03,
+          "size": 8.2,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "asset-note",
+          "text": "独立视觉资产边界：轨道、渐变、节点、标签",
+          "x": 0.68,
+          "y": 0.9,
+          "w": 0.25,
+          "h": 0.03,
+          "size": 7.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        }
+      ],
+      "icons": []
+    }
+  ]
+}

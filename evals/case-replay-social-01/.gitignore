@@ -1,0 +1,3 @@
+# Keep the rendered slide and audit JSON, not disposable LibreOffice profiles.
+runs/**/rendered/pptx-replay-*/
+runs/**/mutation-render/pptx-replay-*/

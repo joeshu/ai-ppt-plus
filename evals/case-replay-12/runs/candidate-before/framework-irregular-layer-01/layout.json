@@ -1,0 +1,735 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/candidate-before/framework-irregular-layer-01",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#F4F7FB",
+    "size": 10,
+    "table_header_fill": "#9B0B1B",
+    "table_fill": "#F5F8FC",
+    "chart_colors": [
+      "#E60012",
+      "#1687FF"
+    ],
+    "chart_text_color": "#F4F7FB",
+    "chart_muted_color": "#A9BED5",
+    "chart_grid_color": "#355A7D",
+    "chart_tick_size": 8,
+    "chart_legend_size": 8,
+    "chart_label_size": 7
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "background",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#061A35"
+        },
+        {
+          "object_id": "title-accent",
+          "type": "rect",
+          "x": 0.055,
+          "y": 0.065,
+          "w": 0.006,
+          "h": 0.075,
+          "fill": "#E60012"
+        },
+        {
+          "object_id": "title-rule",
+          "type": "line",
+          "x": 0.055,
+          "y": 0.17,
+          "x2": 0.945,
+          "y2": 0.17,
+          "line": "#355A7D",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "stage-link-1",
+          "type": "line",
+          "x": 0.185,
+          "y": 0.39,
+          "x2": 0.21000000000000002,
+          "y2": 0.47000000000000003,
+          "line": "#E60012",
+          "line_width": 1.4
+        },
+        {
+          "object_id": "stage-link-2",
+          "type": "line",
+          "x": 0.315,
+          "y": 0.47000000000000003,
+          "x2": 0.34,
+          "y2": 0.39,
+          "line": "#E60012",
+          "line_width": 1.4
+        },
+        {
+          "object_id": "stage-link-3",
+          "type": "line",
+          "x": 0.445,
+          "y": 0.39,
+          "x2": 0.47000000000000003,
+          "y2": 0.47000000000000003,
+          "line": "#E60012",
+          "line_width": 1.4
+        },
+        {
+          "object_id": "stage-link-4",
+          "type": "line",
+          "x": 0.5750000000000001,
+          "y": 0.47000000000000003,
+          "x2": 0.6000000000000001,
+          "y2": 0.39,
+          "line": "#E60012",
+          "line_width": 1.4
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "stage-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.08,
+          "y": 0.33,
+          "w": 0.105,
+          "h": 0.12,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "stage-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "stage-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "stage-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "stage-1"
+        },
+        {
+          "object_id": "stage-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.21000000000000002,
+          "y": 0.41000000000000003,
+          "w": 0.105,
+          "h": 0.12,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "stage-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "stage-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "stage-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "stage-2"
+        },
+        {
+          "object_id": "stage-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.34,
+          "y": 0.33,
+          "w": 0.105,
+          "h": 0.12,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "stage-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "stage-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "stage-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "stage-3"
+        },
+        {
+          "object_id": "stage-4",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.47000000000000003,
+          "y": 0.41000000000000003,
+          "w": 0.105,
+          "h": 0.12,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "stage-4-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "stage-4-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "stage-4-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "stage-4"
+        },
+        {
+          "object_id": "stage-5",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.6,
+          "y": 0.33,
+          "w": 0.105,
+          "h": 0.12,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "stage-5-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "stage-5-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "stage-5-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "stage-5"
+        },
+        {
+          "object_id": "segment-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.3,
+          "y": 0.57,
+          "w": 0.14,
+          "h": 0.16,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "segment-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "segment-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "segment-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "segment-1"
+        },
+        {
+          "object_id": "segment-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.48,
+          "y": 0.57,
+          "w": 0.14,
+          "h": 0.16,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "segment-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "segment-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "segment-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "segment-2"
+        },
+        {
+          "object_id": "segment-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.6599999999999999,
+          "y": 0.57,
+          "w": 0.14,
+          "h": 0.16,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "segment-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#123758",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "segment-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#F3B849"
+            },
+            {
+              "object_id": "segment-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "segment-3"
+        },
+        {
+          "object_id": "battle-result",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.75,
+          "y": 0.33,
+          "w": 0.18,
+          "h": 0.38,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "battle-result-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#5C1120",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "battle-result-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "battle-result-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "battle-result"
+        }
+      ],
+      "tables": [],
+      "charts": [],
+      "texts": [
+        {
+          "object_id": "title",
+          "text": "存量用户价值提升作战图",
+          "x": 0.073,
+          "y": 0.052,
+          "w": 0.66,
+          "h": 0.09,
+          "size": 25,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "subtitle",
+          "text": "识别—分层—触达—转化—留存",
+          "x": 0.075,
+          "y": 0.145,
+          "w": 0.62,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "case-label",
+          "text": "CASE REPLAY / NATIVE EDITABLE",
+          "x": 0.72,
+          "y": 0.075,
+          "w": 0.22,
+          "h": 0.04,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "stage-1-text",
+          "text": "识别",
+          "x": 0.08,
+          "y": 0.375,
+          "w": 0.105,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "stage-2-text",
+          "text": "分层",
+          "x": 0.21000000000000002,
+          "y": 0.455,
+          "w": 0.105,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "stage-3-text",
+          "text": "触达",
+          "x": 0.34,
+          "y": 0.375,
+          "w": 0.105,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "stage-4-text",
+          "text": "转化",
+          "x": 0.47000000000000003,
+          "y": 0.455,
+          "w": 0.105,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "stage-5-text",
+          "text": "留存",
+          "x": 0.6,
+          "y": 0.375,
+          "w": 0.105,
+          "h": 0.04,
+          "size": 9.5,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "segment-1-text",
+          "text": "高价值",
+          "x": 0.31,
+          "y": 0.63,
+          "w": 0.12,
+          "h": 0.04,
+          "size": 9,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "segment-2-text",
+          "text": "潜力用户",
+          "x": 0.49,
+          "y": 0.63,
+          "w": 0.12,
+          "h": 0.04,
+          "size": 9,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "segment-3-text",
+          "text": "风险用户",
+          "x": 0.6699999999999999,
+          "y": 0.63,
+          "w": 0.12,
+          "h": 0.04,
+          "size": 9,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "battle-result-text",
+          "text": "作战结果",
+          "x": 0.77,
+          "y": 0.47,
+          "w": 0.14,
+          "h": 0.05,
+          "size": 14,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "irregular-actions",
+          "text": "行动清单\n01 识别高价值\n02 分层定策略\n03 复盘沉淀",
+          "x": 0.08,
+          "y": 0.76,
+          "w": 0.38,
+          "h": 0.11,
+          "size": 9,
+          "color": "#F4F7FB",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "irregular-note",
+          "text": "折角面板 / 斜切节奏 / 连接线层级 / native groups",
+          "x": 0.57,
+          "y": 0.9,
+          "w": 0.35,
+          "h": 0.03,
+          "size": 7.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        }
+      ],
+      "icons": []
+    }
+  ]
+}

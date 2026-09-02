@@ -1,0 +1,195 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/failure-fallback-stop-01/editable.pptx",
+  "deck_sha256": "885288f194d3f88b6e5ff080ecf553b315d6243c521c36cdcb18f9121ec93190",
+  "object_manifest": "runs/candidate/failure-fallback-stop-01/object-manifest.json",
+  "object_manifest_sha256": "3efcbb4886bdd4e5d3842054b211ab1faf4bb4667958cffa11211b154fec2986",
+  "native_table_count": 0,
+  "native_panel_count": 6,
+  "formal_text_count": 17,
+  "formal_text_native_count": 17,
+  "a_tbl_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [],
+      "panels": [
+        {
+          "object_id": "gate-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "gate-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "gate-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "gate-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "gate-5",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "stop-panel",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "AI-PPT质量门禁与停机机制",
+          "observed": "AI-PPT质量门禁与停机机制",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "未知问题不猜测，证据不足就停机",
+          "observed": "未知问题不猜测，证据不足就停机",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-1-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "01",
+          "observed": "01",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-1-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "输入校验",
+          "observed": "输入校验",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-2-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "02",
+          "observed": "02",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-2-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "路由确认",
+          "observed": "路由确认",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-3-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "03",
+          "observed": "03",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-3-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "原生结构",
+          "observed": "原生结构",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-4-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "04",
+          "observed": "04",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-4-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "视觉回归",
+          "observed": "视觉回归",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-5-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "05",
+          "observed": "05",
+          "run_count": 1
+        },
+        {
+          "object_id": "gate-5-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "人工收口",
+          "observed": "人工收口",
+          "run_count": 1
+        },
+        {
+          "object_id": "stop-panel-title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "立即停机",
+          "observed": "立即停机",
+          "run_count": 1
+        },
+        {
+          "object_id": "stop-panel-copy",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "未知问题\n不得静默回退",
+          "observed": "未知问题\n不得静默回退",
+          "run_count": 2
+        },
+        {
+          "object_id": "evidence-chain",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "baseline → candidate → object audit → visual compare → mutation smoke",
+          "observed": "baseline → candidate → object audit → visual compare → mutation smoke",
+          "run_count": 1
+        },
+        {
+          "object_id": "governance-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "5 gates / 1 failure branch / hard stop",
+          "observed": "5 gates / 1 failure branch / hard stop",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 31
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

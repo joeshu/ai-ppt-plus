@@ -1,0 +1,789 @@
+{
+  "project_id": "distillation-case-replay-12",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "ref_width": 1920,
+  "ref_height": 1080,
+  "units": "fraction",
+  "assets_dir": "evals/case-replay-12/runs/candidate/native-table-merge-richtext-01",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#F4F7FB",
+    "size": 10,
+    "table_header_fill": "#9B0B1B",
+    "table_fill": "#F5F8FC",
+    "chart_colors": [
+      "#E60012",
+      "#1687FF"
+    ],
+    "chart_text_color": "#F4F7FB",
+    "chart_muted_color": "#A9BED5",
+    "chart_grid_color": "#355A7D",
+    "chart_tick_size": 8,
+    "chart_legend_size": 8,
+    "chart_label_size": 7
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "background",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#061A35"
+        },
+        {
+          "object_id": "title-accent",
+          "type": "rect",
+          "x": 0.055,
+          "y": 0.065,
+          "w": 0.006,
+          "h": 0.075,
+          "fill": "#E60012"
+        },
+        {
+          "object_id": "title-rule",
+          "type": "line",
+          "x": 0.055,
+          "y": 0.17,
+          "x2": 0.945,
+          "y2": 0.17,
+          "line": "#355A7D",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "section-divider",
+          "type": "rect",
+          "x": 0.07,
+          "y": 0.43,
+          "w": 0.86,
+          "h": 0.025,
+          "fill": "#E60012"
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "principle-badge",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.76,
+          "y": 0.055,
+          "w": 0.17,
+          "h": 0.11,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "principle-badge-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#5C1120",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "principle-badge-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "principle-badge-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "principle-badge"
+        },
+        {
+          "object_id": "commission-card-1",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.07,
+          "y": 0.22,
+          "w": 0.25,
+          "h": 0.17,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "commission-card-1-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "commission-card-1-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#E60012"
+            },
+            {
+              "object_id": "commission-card-1-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "commission-card-1"
+        },
+        {
+          "object_id": "commission-card-2",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.36,
+          "y": 0.22,
+          "w": 0.25,
+          "h": 0.17,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "commission-card-2-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "commission-card-2-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "commission-card-2-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "commission-card-2"
+        },
+        {
+          "object_id": "commission-card-3",
+          "role": "semantic-panel",
+          "native_required": true,
+          "x": 0.6499999999999999,
+          "y": 0.22,
+          "w": 0.25,
+          "h": 0.17,
+          "children_coordinate_space": "local",
+          "children": [
+            {
+              "object_id": "commission-card-3-fill",
+              "type": "rounded_rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "fill": "#0D2F52",
+              "line": "#355A7D",
+              "line_width": 0.8
+            },
+            {
+              "object_id": "commission-card-3-accent",
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 0.055,
+              "fill": "#1687FF"
+            },
+            {
+              "object_id": "commission-card-3-rule",
+              "type": "line",
+              "x": 0.03,
+              "y": 0.9,
+              "w": 0.94,
+              "h": 0.001,
+              "line": "#355A7D",
+              "line_width": 0.6
+            }
+          ],
+          "alt_text": "commission-card-3"
+        }
+      ],
+      "tables": [
+        {
+          "object_id": "policy-merged-table",
+          "native_required": true,
+          "x": 0.07,
+          "y": 0.5,
+          "w": 0.51,
+          "h": 0.36,
+          "rows": [
+            [
+              "场景",
+              "收入变化",
+              "服务费标准",
+              "计提周期"
+            ],
+            [
+              "月度发展",
+              "增收有奖",
+              {
+                "runs": [
+                  {
+                    "text": "达量补贴标准",
+                    "bold": true,
+                    "color": "#E60012"
+                  },
+                  {
+                    "text": " / 已绑定",
+                    "color": "#061A35"
+                  }
+                ]
+              },
+              "月度"
+            ],
+            [
+              "",
+              "减收不罚",
+              "按政策",
+              "月度"
+            ],
+            [
+              "适用渠道",
+              "增收有奖",
+              {
+                "runs": [
+                  {
+                    "text": "结果",
+                    "bold": true,
+                    "color": "#E60012"
+                  },
+                  {
+                    "text": "可核对",
+                    "color": "#061A35"
+                  }
+                ]
+              },
+              "周期锁定"
+            ],
+            [
+              "",
+              "减收不罚",
+              "统一标准",
+              "可回放"
+            ],
+            [
+              "场景",
+              "增收有奖",
+              "来源绑定",
+              "月度"
+            ],
+            [
+              "",
+              "减收不罚",
+              "可追溯",
+              "月度"
+            ],
+            [
+              "结果",
+              "可核对",
+              "按政策",
+              "结果"
+            ],
+            [
+              "",
+              "可核对",
+              "可追溯",
+              "复核"
+            ]
+          ],
+          "columns": 4,
+          "header_fill": "#9B0B1B",
+          "fill": "#F5F8FC",
+          "border": {
+            "all": {
+              "color": "#9EB3C8",
+              "width": 0.7
+            }
+          },
+          "cell_margins": {
+            "left": 0.04,
+            "right": 0.04,
+            "top": 0.025,
+            "bottom": 0.025
+          },
+          "cell_styles": {
+            "0": {
+              "fill": "#9B0B1B",
+              "color": "#FFFFFF",
+              "bold": true,
+              "size": 9
+            },
+            "1": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "2": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "3": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "4": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "5": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "6": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "7": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "8": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "1,2": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "3,2": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            }
+          },
+          "rich_text_required": true,
+          "merges": [
+            [
+              1,
+              0,
+              2,
+              0
+            ],
+            [
+              3,
+              0,
+              4,
+              0
+            ],
+            [
+              5,
+              0,
+              6,
+              0
+            ],
+            [
+              7,
+              0,
+              8,
+              0
+            ]
+          ],
+          "column_widths": [
+            0.12,
+            0.12,
+            0.17,
+            0.1
+          ],
+          "row_heights": [
+            0.04,
+            0.04,
+            0.04,
+            0.04,
+            0.04,
+            0.04,
+            0.04,
+            0.04,
+            0.04
+          ]
+        },
+        {
+          "object_id": "monthly-incentive-table",
+          "native_required": true,
+          "x": 0.61,
+          "y": 0.5,
+          "w": 0.32,
+          "h": 0.18,
+          "rows": [
+            [
+              "月度发展",
+              "达量补贴标准",
+              "适用渠道"
+            ],
+            [
+              "增收有奖",
+              "结果可核对",
+              "渠道"
+            ],
+            [
+              "减收不罚",
+              "统一标准",
+              "渠道"
+            ],
+            [
+              "结果",
+              "可回放",
+              "全部"
+            ]
+          ],
+          "columns": 3,
+          "header_fill": "#9B0B1B",
+          "fill": "#F5F8FC",
+          "border": {
+            "all": {
+              "color": "#9EB3C8",
+              "width": 0.7
+            }
+          },
+          "cell_margins": {
+            "left": 0.04,
+            "right": 0.04,
+            "top": 0.025,
+            "bottom": 0.025
+          },
+          "cell_styles": {
+            "0": {
+              "fill": "#9B0B1B",
+              "color": "#FFFFFF",
+              "bold": true,
+              "size": 9
+            },
+            "1": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "2": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "3": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            }
+          },
+          "rich_text_required": false,
+          "column_widths": [
+            0.1,
+            0.14,
+            0.08
+          ],
+          "row_heights": [
+            0.04,
+            0.04,
+            0.04,
+            0.04
+          ]
+        },
+        {
+          "object_id": "policy-summary-table",
+          "native_required": true,
+          "x": 0.61,
+          "y": 0.72,
+          "w": 0.32,
+          "h": 0.14,
+          "rows": [
+            [
+              "指标",
+              "状态"
+            ],
+            [
+              "合并单元格",
+              "已绑定"
+            ],
+            [
+              "富文本",
+              "已绑定"
+            ]
+          ],
+          "columns": 2,
+          "header_fill": "#9B0B1B",
+          "fill": "#F5F8FC",
+          "border": {
+            "all": {
+              "color": "#9EB3C8",
+              "width": 0.7
+            }
+          },
+          "cell_margins": {
+            "left": 0.04,
+            "right": 0.04,
+            "top": 0.025,
+            "bottom": 0.025
+          },
+          "cell_styles": {
+            "0": {
+              "fill": "#9B0B1B",
+              "color": "#FFFFFF",
+              "bold": true,
+              "size": 9
+            },
+            "1": {
+              "fill": "#F5F8FC",
+              "color": "#061A35",
+              "size": 8.5
+            },
+            "2": {
+              "fill": "#EAF1F8",
+              "color": "#061A35",
+              "size": 8.5
+            }
+          },
+          "rich_text_required": false,
+          "column_widths": [
+            0.15,
+            0.12
+          ],
+          "row_heights": [
+            0.04,
+            0.04,
+            0.04
+          ]
+        }
+      ],
+      "charts": [],
+      "texts": [
+        {
+          "object_id": "title",
+          "text": "FTTR渠道激励政策明白卡",
+          "x": 0.073,
+          "y": 0.052,
+          "w": 0.66,
+          "h": 0.09,
+          "size": 25,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "subtitle",
+          "text": "增收有奖｜减收不罚",
+          "x": 0.075,
+          "y": 0.145,
+          "w": 0.62,
+          "h": 0.035,
+          "size": 8.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "case-label",
+          "text": "CASE REPLAY / NATIVE EDITABLE",
+          "x": 0.53,
+          "y": 0.075,
+          "w": 0.18,
+          "h": 0.04,
+          "size": 7.5,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "principle-badge-text",
+          "text": "增收有奖\n减收不罚",
+          "x": 0.775,
+          "y": 0.078,
+          "w": 0.14,
+          "h": 0.065,
+          "size": 10,
+          "color": "#F4F7FB",
+          "bold": true,
+          "align": "center",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "commission-card-1-title",
+          "text": "核心原则",
+          "x": 0.09000000000000001,
+          "y": 0.25,
+          "w": 0.21,
+          "h": 0.035,
+          "size": 10,
+          "color": "#E60012",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "commission-card-1-copy",
+          "text": "增收有奖",
+          "x": 0.09000000000000001,
+          "y": 0.31,
+          "w": 0.21,
+          "h": 0.04,
+          "size": 9,
+          "color": "#F4F7FB",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "commission-card-2-title",
+          "text": "场景",
+          "x": 0.38,
+          "y": 0.25,
+          "w": 0.21,
+          "h": 0.035,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "commission-card-2-copy",
+          "text": "达量补贴标准",
+          "x": 0.38,
+          "y": 0.31,
+          "w": 0.21,
+          "h": 0.04,
+          "size": 9,
+          "color": "#F4F7FB",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "commission-card-3-title",
+          "text": "结果",
+          "x": 0.6699999999999999,
+          "y": 0.25,
+          "w": 0.21,
+          "h": 0.035,
+          "size": 10,
+          "color": "#1687FF",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "commission-card-3-copy",
+          "text": "结果可核对",
+          "x": 0.6699999999999999,
+          "y": 0.31,
+          "w": 0.21,
+          "h": 0.04,
+          "size": 9,
+          "color": "#F4F7FB",
+          "bold": false,
+          "align": "left",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        },
+        {
+          "object_id": "merge-note",
+          "text": "3 native tables / merged first column / rich-text runs",
+          "x": 0.07,
+          "y": 0.9,
+          "w": 0.86,
+          "h": 0.03,
+          "size": 7.5,
+          "color": "#A9BED5",
+          "bold": false,
+          "align": "right",
+          "valign": "top",
+          "margin_left": 0.01,
+          "margin_right": 0.01,
+          "margin_top": 0.005,
+          "margin_bottom": 0.005
+        }
+      ],
+      "icons": []
+    }
+  ]
+}

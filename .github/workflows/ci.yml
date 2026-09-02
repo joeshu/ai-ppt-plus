@@ -98,6 +98,12 @@ jobs:
             --mode replay \
             --report .distillation/case-candidate/case-improvement.json
 
+      - name: Replay 12-case visual and native-editability suite
+        run: |
+          python evals/case-replay-12/run_replay_suite.py \
+            --output-dir .distillation/case-replay-12-runs \
+            --strict
+
       - name: Validate and select distillation case matrix
         run: |
           python scripts/validate_distillation_case_matrix.py --matrix evals/distillation-case-matrix.json --strict --output distillation-case-matrix-validation.json
@@ -121,3 +127,6 @@ jobs:
             distillation-case-matrix-validation.json
             distillation-case-matrix-selection.json
             .distillation
+            evals/case-replay-12/baseline-evaluation.json
+            evals/case-replay-12/candidate-evaluation.json
+            evals/case-replay-12/case-improvement.json

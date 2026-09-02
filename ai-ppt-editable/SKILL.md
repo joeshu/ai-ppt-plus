@@ -436,6 +436,16 @@ The editable worker must not claim that a semantic panel or table became editabl
 ## Case-level replay requirement
 
 For every native table/panel or text-visual repair, rerun the actual reconstruction case after the change. A candidate must carry source and deck hashes, rendered comparison, OOXML `a:tbl` evidence, merge topology, native text/run audit and mutation smoke-test evidence; a unit-test pass alone cannot establish editability.
+
+When the reference and the final render are authored slide canvases (rather
+than viewer screenshots with black bars), run `compare_visual.py --raw-slide`;
+otherwise the viewer-crop heuristic can report a false visual blocker. Use
+`case_replay_audit.py` as the case-level hard gate: it checks real PowerPoint
+table objects, exact OOXML `<a:tbl>` elements, declared merge topology,
+rich-text runs, native formal text, and full-slide-picture absence. Count the
+actual `<a:tbl>` element, not the prefix shared by `<a:tblPr>` and
+`<a:tblGrid>`. Keep its report beside the baseline/candidate evidence and
+rerun the mutation smoke after every repair.
 <!-- /unattended-distillation:case-replay -->
 
 

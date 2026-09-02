@@ -1,0 +1,890 @@
+{
+  "schema": "ai-ppt-plus/visual-generation-validation/v1",
+  "valid": true,
+  "technical_valid": true,
+  "status": "passed",
+  "plan_path": "visual-generation-plan.json",
+  "plan_sha256": "35b2ab4784f565aaf272131421d0dc780b3d63aa7c0e95de17e6c9d39fb557c7",
+  "project_id": "distillation-case-replay-12",
+  "route": "visual-creation",
+  "mode": "image-slide",
+  "canvas": {
+    "ratio": "16:9",
+    "width_px": 2048,
+    "height_px": 1152
+  },
+  "density_profile": "dense",
+  "generation_context": {
+    "audience": "国企经营管理层、业务负责人和专业评审",
+    "language": "简体中文，必要时保留短英文标签",
+    "presentation_context": "高端管理层会议室单页评审"
+  },
+  "retry_policy": {
+    "max_attempts_per_slide": 2,
+    "scope": "single-slide",
+    "triggers": [
+      "image-generation failure",
+      "missing or garbled approved copy",
+      "collapsed reading path or unusable layout"
+    ]
+  },
+  "page_count": 12,
+  "framework_count": 12,
+  "slides": [
+    {
+      "slide_no": 1,
+      "page_type": "dashboard",
+      "visual_framework": "dashboard：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 12,
+      "prompt_file": "prompts/01-route-editable-default-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "目标",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[0]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "结果",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[0]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "目标洞察",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[0]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "商机转化",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[0]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 2,
+      "page_type": "framework",
+      "visual_framework": "framework：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 10,
+      "prompt_file": "prompts/02-native-shape-card-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "战略牵引",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[1]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "场景突破",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[1]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "组织",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[1]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "数据",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[1]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 3,
+      "page_type": "table",
+      "visual_framework": "table：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 9,
+      "prompt_file": "prompts/03-native-table-basic-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "业务场景",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[2]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "服务费标准",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[2]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "存量升档",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[2]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "新装发展",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[2]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 4,
+      "page_type": "policy-table",
+      "visual_framework": "policy-table：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 12,
+      "prompt_file": "prompts/04-native-table-merge-richtext-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "核心原则",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[3]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "减收不罚",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[3]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "收入变化",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[3]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "计提周期",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[3]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 5,
+      "page_type": "text-visual",
+      "visual_framework": "text-visual：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 9,
+      "prompt_file": "prompts/05-native-text-cjk-font-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "Service Excellence",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[4]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "专业交付",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[4]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "本周重点",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[4]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "责任到人",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[4]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 6,
+      "page_type": "chart",
+      "visual_framework": "chart：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 10,
+      "prompt_file": "prompts/06-chart-data-provenance-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "2026上半年政企行业增长结构",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[5]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "教育",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[5]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "交通",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[5]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "目标",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[5]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 7,
+      "page_type": "visual-system",
+      "visual_framework": "visual-system：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 9,
+      "prompt_file": "prompts/07-visual-assets-gradient-icon-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "连接",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[6]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "感知",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[6]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "行业价值",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[6]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "大上行",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[6]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 8,
+      "page_type": "irregular-framework",
+      "visual_framework": "irregular-framework：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 10,
+      "prompt_file": "prompts/08-framework-irregular-layer-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "识别",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[7]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "触达",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[7]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "留存",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[7]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "潜力用户",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[7]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 9,
+      "page_type": "multi-module-overview",
+      "visual_framework": "multi-module-overview：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 9,
+      "prompt_file": "prompts/09-multi-slide-consistency-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "目标设定",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[8]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "问题诊断",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[8]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "结果复盘",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[8]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "统一节奏",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[8]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 10,
+      "page_type": "governance-flow",
+      "visual_framework": "governance-flow：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 9,
+      "prompt_file": "prompts/10-failure-fallback-stop-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "输入校验",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[9]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "原生结构",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[9]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "人工收口",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[9]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "立即停机",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[9]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 11,
+      "page_type": "architecture-matrix",
+      "visual_framework": "architecture-matrix：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 10,
+      "prompt_file": "prompts/11-package-render-portability-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "技能包",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[10]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "字体",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[10]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "PPTX包",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[10]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "移动端WPS",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[10]"
+          ]
+        }
+      ]
+    },
+    {
+      "slide_no": 12,
+      "page_type": "pipeline",
+      "visual_framework": "pipeline：以语义对象和证据链构成复杂信息框架",
+      "density_profile": "dense",
+      "modules": 4,
+      "minimum_bullets": 2,
+      "info_points": 26,
+      "formal_text_count": 9,
+      "prompt_file": "prompts/12-cache-idempotency-01.md",
+      "layout_blueprint_zones": 4,
+      "keyword_emphasis_items": 1,
+      "diagram_annotation_count": 1,
+      "detailed_content_paragraph_count": 3,
+      "reference_image_count": 0,
+      "reference_treatment_mode": "none",
+      "module_details": [
+        {
+          "index": 1,
+          "title": "源文件哈希",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[11]"
+          ]
+        },
+        {
+          "index": 2,
+          "title": "受影响区域",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[11]"
+          ]
+        },
+        {
+          "index": 3,
+          "title": "重复运行",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[11]"
+          ]
+        },
+        {
+          "index": 4,
+          "title": "返工次数",
+          "bullets": 2,
+          "info_points": 6,
+          "source_refs": [
+            "case-suite.json#cases[11]"
+          ]
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "manifest_path": "visual-generation-manifest.json",
+    "slides": [
+      {
+        "slide_no": 1,
+        "files": {
+          "generated_source": "visual/source/route-editable-default-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/route-editable-default-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 2,
+        "files": {
+          "generated_source": "visual/source/native-shape-card-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/native-shape-card-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 3,
+        "files": {
+          "generated_source": "visual/source/native-table-basic-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/native-table-basic-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 4,
+        "files": {
+          "generated_source": "visual/source/native-table-merge-richtext-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/native-table-merge-richtext-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 5,
+        "files": {
+          "generated_source": "visual/source/native-text-cjk-font-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/native-text-cjk-font-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 6,
+        "files": {
+          "generated_source": "visual/source/chart-data-provenance-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/chart-data-provenance-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 7,
+        "files": {
+          "generated_source": "visual/source/visual-assets-gradient-icon-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/visual-assets-gradient-icon-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 8,
+        "files": {
+          "generated_source": "visual/source/framework-irregular-layer-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/framework-irregular-layer-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 9,
+        "files": {
+          "generated_source": "visual/source/multi-slide-consistency-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/multi-slide-consistency-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 10,
+        "files": {
+          "generated_source": "visual/source/failure-fallback-stop-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/failure-fallback-stop-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 11,
+        "files": {
+          "generated_source": "visual/source/package-render-portability-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/package-render-portability-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      },
+      {
+        "slide_no": 12,
+        "files": {
+          "generated_source": "visual/source/cache-idempotency-01.png",
+          "generated_source_size": [
+            1672,
+            941
+          ],
+          "copied_to": "visual/generated/cache-idempotency-01.png",
+          "copied_to_size": [
+            1672,
+            941
+          ]
+        }
+      }
+    ],
+    "plan_sha256": "35b2ab4784f565aaf272131421d0dc780b3d63aa7c0e95de17e6c9d39fb557c7",
+    "record_count": 12,
+    "deck_strip": {
+      "path": "qa/visual-deck-strip.png",
+      "review_status": "pending-human-review",
+      "slide_count": 12
+    }
+  },
+  "issues": [],
+  "human_visual_review_required": true,
+  "release_eligible": false
+}

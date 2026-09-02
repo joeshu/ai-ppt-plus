@@ -1,0 +1,507 @@
+{
+  "schema": "ai-ppt-plus/slide-object-manifest/v1",
+  "project_id": "distillation-case-replay-12",
+  "layout_ref": "layout.json",
+  "slides": [
+    {
+      "slide_no": 1,
+      "objects": [
+        {
+          "object_id": "background",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "component_ref": null
+        },
+        {
+          "object_id": "title-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "component_ref": null
+        },
+        {
+          "object_id": "title-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "component_ref": null
+        },
+        {
+          "object_id": "policy-panel",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "policy-panel-fill",
+            "policy-panel-accent",
+            "policy-panel-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "policy-panel-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "policy-panel"
+        },
+        {
+          "object_id": "policy-panel-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "policy-panel"
+        },
+        {
+          "object_id": "policy-panel-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "policy-panel"
+        },
+        {
+          "object_id": "service-fee-table",
+          "role": "data-table",
+          "object_type": "editable_table",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "contains_formal_content": true,
+          "data_source": null,
+          "data_snapshot": {
+            "kind": "table",
+            "values": [
+              [
+                "业务场景",
+                "收入变化",
+                "服务费标准",
+                "计提周期"
+              ],
+              [
+                "存量升档",
+                "可核对",
+                "统一标准",
+                "月度"
+              ],
+              [
+                "指定套餐",
+                "可核对",
+                "统一标准",
+                "月度"
+              ],
+              [
+                "新装发展",
+                "可核对",
+                "统一标准",
+                "月度"
+              ],
+              [
+                "渠道激励",
+                "可核对",
+                "统一标准",
+                "月度"
+              ],
+              [
+                "增收场景",
+                "结果留痕",
+                "按政策",
+                "周期锁定"
+              ],
+              [
+                "复核口径",
+                "来源绑定",
+                "可追溯",
+                "可回放"
+              ]
+            ],
+            "rows": 7,
+            "columns": 4
+          },
+          "merges": [],
+          "rich_text_required": false,
+          "data_source_sha256": "42a580d13c2c37f0f8267d98934931a80c590e82c4d23ff1b50389ab241e3fbe",
+          "component_ref": null
+        },
+        {
+          "object_id": "title",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "title",
+            "slide_no": 1,
+            "content": "渠道服务费标准总览",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.073,
+              "y": 0.052,
+              "w": 0.66,
+              "h": 0.09
+            },
+            "style": {
+              "size": 25,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 1,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "渠道服务费标准总览"
+          }
+        },
+        {
+          "object_id": "subtitle",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "subtitle",
+            "slide_no": 1,
+            "content": "统一标准、清晰计提、结果可核对",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.075,
+              "y": 0.145,
+              "w": 0.62,
+              "h": 0.035
+            },
+            "style": {
+              "size": 8.5,
+              "color": "#A9BED5",
+              "bold": false,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 2,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "统一标准、清晰计提、结果可核对"
+          }
+        },
+        {
+          "object_id": "case-label",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "case-label",
+            "slide_no": 1,
+            "content": "CASE REPLAY / NATIVE EDITABLE",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.72,
+              "y": 0.075,
+              "w": 0.22,
+              "h": 0.04
+            },
+            "style": {
+              "size": 7.5,
+              "color": "#1687FF",
+              "bold": true,
+              "align": "right",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 3,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "CASE REPLAY / NATIVE EDITABLE"
+          }
+        },
+        {
+          "object_id": "policy-panel-title",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "policy-panel-title",
+            "slide_no": 1,
+            "content": "POLICY\nMATRIX",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.09,
+              "y": 0.31,
+              "w": 0.14,
+              "h": 0.1
+            },
+            "style": {
+              "size": 15,
+              "color": "#E60012",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 4,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "POLICY\nMATRIX"
+          }
+        },
+        {
+          "object_id": "policy-panel-copy",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "policy-panel-copy",
+            "slide_no": 1,
+            "content": "场景\n收入\n标准\n周期",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.09,
+              "y": 0.49,
+              "w": 0.12,
+              "h": 0.17
+            },
+            "style": {
+              "size": 11,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 5,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "场景\n收入\n标准\n周期"
+          }
+        },
+        {
+          "object_id": "table-callout",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "table-callout",
+            "slide_no": 1,
+            "content": "TABLE / NATIVE",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.73,
+              "y": 0.26,
+              "w": 0.15,
+              "h": 0.03
+            },
+            "style": {
+              "size": 7.5,
+              "color": "#1687FF",
+              "bold": true,
+              "align": "right",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 6,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "TABLE / NATIVE"
+          }
+        },
+        {
+          "object_id": "table-footnote",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "table-footnote",
+            "slide_no": 1,
+            "content": "行高、列宽、网格、单元格文字均保留为可编辑语义对象",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.28,
+              "y": 0.84,
+              "w": 0.65,
+              "h": 0.035
+            },
+            "style": {
+              "size": 8.5,
+              "color": "#A9BED5",
+              "bold": false,
+              "align": "right",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 7,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "行高、列宽、网格、单元格文字均保留为可编辑语义对象"
+          }
+        }
+      ]
+    }
+  ],
+  "component_usage": {
+    "instances": 0,
+    "distinct_components": 0,
+    "by_component": {},
+    "reused_component_types": 0
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "可编辑PPT交付运行矩阵",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "同一源文件 → 同一证据 → 可复现交付",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "layer-1-text",
+          "text_id": "layer-1-text",
+          "content": "技能包",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "layer-2-text",
+          "text_id": "layer-2-text",
+          "content": "运行时",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "layer-3-text",
+          "text_id": "layer-3-text",
+          "content": "字体",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "layer-4-text",
+          "text_id": "layer-4-text",
+          "content": "渲染器",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "layer-5-text",
+          "text_id": "layer-5-text",
+          "content": "PPTX包",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "lock-1-text",
+          "text_id": "lock-1-text",
+          "content": "包完整",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "lock-2-text",
+          "text_id": "lock-2-text",
+          "content": "字体可见",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "lock-3-text",
+          "text_id": "lock-3-text",
+          "content": "渲染一致",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "lock-4-text",
+          "text_id": "lock-4-text",
+          "content": "哈希锁定",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "package-note",
+          "text_id": "package-note",
+          "content": "5-layer architecture / 3 target environments / native matrix",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

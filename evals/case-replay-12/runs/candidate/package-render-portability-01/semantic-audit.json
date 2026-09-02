@@ -1,0 +1,1158 @@
+{
+  "schema": "ai-ppt-plus/semantic-object-audit/v2",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/package-render-portability-01/editable.pptx",
+  "deck_sha256": "5bd4ff1a5be58c0334239f20ea75247830db68cd6b1671208a700e529884af2c",
+  "object_manifest": "runs/candidate/package-render-portability-01/object-manifest.json",
+  "object_manifest_sha256": "1c06286e32d44deab7284de307208575005bebb734a160e34f0e9256dc3aed66",
+  "text_manifest": "runs/candidate/package-render-portability-01/text-manifest.json",
+  "text_manifest_sha256": "c23cf36ad175edb4197b5d36cc08234badde00ddfb0dd59c2f21ca8d09a0fccc",
+  "expected_object_count": 53,
+  "audited_object_count": 53,
+  "observed_top_level_shape_count": 26,
+  "undeclared_shape_count": 0,
+  "text_manifest_coverage": {
+    "required": true,
+    "declared": 13,
+    "slide_numbers": [
+      1
+    ],
+    "orphan_count": 0,
+    "orphans": []
+  },
+  "coverage": [
+    {
+      "slide_no": 1,
+      "declared_object_count": 53,
+      "observed_top_level_shape_count": 26,
+      "audited_object_count": 53,
+      "undeclared_shape_count": 0,
+      "undeclared_shapes": [],
+      "complete": true
+    }
+  ],
+  "objects": [
+    {
+      "slide_no": 1,
+      "object_id": "background",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-1",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "layer-1-fill",
+          "layer-1-accent",
+          "layer-1-rule"
+        ],
+        "observed_children": [
+          "layer-1-fill",
+          "layer-1-accent",
+          "layer-1-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-1-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-1-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-1-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "layer-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-2",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "layer-2-fill",
+          "layer-2-accent",
+          "layer-2-rule"
+        ],
+        "observed_children": [
+          "layer-2-fill",
+          "layer-2-accent",
+          "layer-2-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-2-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-2-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-2-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "layer-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-3",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "layer-3-fill",
+          "layer-3-accent",
+          "layer-3-rule"
+        ],
+        "observed_children": [
+          "layer-3-fill",
+          "layer-3-accent",
+          "layer-3-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-3-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-3-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-3-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "layer-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-4",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "layer-4-fill",
+          "layer-4-accent",
+          "layer-4-rule"
+        ],
+        "observed_children": [
+          "layer-4-fill",
+          "layer-4-accent",
+          "layer-4-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-4-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-4-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-4-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "layer-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-5",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "layer-5-fill",
+          "layer-5-accent",
+          "layer-5-rule"
+        ],
+        "observed_children": [
+          "layer-5-fill",
+          "layer-5-accent",
+          "layer-5-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-5-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-5",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-5-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "layer-5",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-5-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "layer-5",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-1",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "lock-1-fill",
+          "lock-1-accent",
+          "lock-1-rule"
+        ],
+        "observed_children": [
+          "lock-1-fill",
+          "lock-1-accent",
+          "lock-1-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-1-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "lock-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-1-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "lock-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-1-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "lock-1",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-2",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "lock-2-fill",
+          "lock-2-accent",
+          "lock-2-rule"
+        ],
+        "observed_children": [
+          "lock-2-fill",
+          "lock-2-accent",
+          "lock-2-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-2-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "lock-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-2-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "lock-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-2-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "lock-2",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-3",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "lock-3-fill",
+          "lock-3-accent",
+          "lock-3-rule"
+        ],
+        "observed_children": [
+          "lock-3-fill",
+          "lock-3-accent",
+          "lock-3-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-3-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "lock-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-3-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "lock-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-3-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "lock-3",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-4",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "lock-4-fill",
+          "lock-4-accent",
+          "lock-4-rule"
+        ],
+        "observed_children": [
+          "lock-4-fill",
+          "lock-4-accent",
+          "lock-4-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-4-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "lock-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-4-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "lock-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-4-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "lock-4",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "environment-matrix",
+      "role": "data-table",
+      "expected_type": "editable_table",
+      "actual_type": "editable_table",
+      "shape_type": "TABLE (19)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "native_table": true,
+        "native_table_data": true,
+        "table_data_present": true,
+        "table_data_matches_source": true
+      },
+      "table": {
+        "observed": {
+          "rows": 4,
+          "columns": 4,
+          "rectangular": true,
+          "nonempty_cells": 16,
+          "values": [
+            [
+              "环境",
+              "字体",
+              "渲染器",
+              "PPTX包"
+            ],
+            [
+              "桌面WPS",
+              "可见",
+              "一致",
+              "通过"
+            ],
+            [
+              "移动端WPS",
+              "可见",
+              "一致",
+              "通过"
+            ],
+            [
+              "CI Runner",
+              "可见",
+              "一致",
+              "哈希锁定"
+            ]
+          ],
+          "values_sha256": "84c931bae64b453a42750d1d26ae8be9cc267f3d9d8e20d18d291ded61c05ad1"
+        },
+        "expected_values": [
+          [
+            "环境",
+            "字体",
+            "渲染器",
+            "PPTX包"
+          ],
+          [
+            "桌面WPS",
+            "可见",
+            "一致",
+            "通过"
+          ],
+          [
+            "移动端WPS",
+            "可见",
+            "一致",
+            "通过"
+          ],
+          [
+            "CI Runner",
+            "可见",
+            "一致",
+            "哈希锁定"
+          ]
+        ],
+        "expected_values_sha256": "84c931bae64b453a42750d1d26ae8be9cc267f3d9d8e20d18d291ded61c05ad1",
+        "data_source": {
+          "declared_sha256": "b67b352b7a7b145ca22df62ce3a3620eb0b4a38132a236f7d95737f4dd47ca7a",
+          "declared_key": "data_source_sha256",
+          "invalid_declared_hashes": [],
+          "path": null,
+          "available": false,
+          "inline": true,
+          "explicit_path": false,
+          "observed_sha256": "b67b352b7a7b145ca22df62ce3a3620eb0b4a38132a236f7d95737f4dd47ca7a",
+          "hash_match": true
+        }
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "可编辑PPT交付运行矩阵",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "可编辑PPT交付运行矩阵",
+      "observed_text_sha256": "0e16e7faac74d4a6a1b388c8931db2c93eec1604e152693088894d395f66cdb5",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "可编辑PPT交付运行矩阵"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "subtitle",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "同一源文件 → 同一证据 → 可复现交付",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "同一源文件 → 同一证据 → 可复现交付",
+      "observed_text_sha256": "4f7c4e1fd2900c49d9455b35eceb9c145147a9708f976753dc822931f7d825bd",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "同一源文件 → 同一证据 → 可复现交付"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "case-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "CASE REPLAY / NATIVE EDITABLE",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "CASE REPLAY / NATIVE EDITABLE",
+      "observed_text_sha256": "1e68904ccf235bd4e08ad9a3b81497719dbb076c3e69d5657daa46f1cabf6398",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "CASE REPLAY / NATIVE EDITABLE"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-1-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "技能包",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "技能包",
+      "observed_text_sha256": "bb8d3d10aea37d64bf495073ba094f159d99ac5685dbf10e1b71226171819ca1",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "技能包"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-2-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "运行时",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "运行时",
+      "observed_text_sha256": "726ad2deb03f1047325fb703692365f1831262d782237cf2b24d36d3b90858ea",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "运行时"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-3-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "字体",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "字体",
+      "observed_text_sha256": "3df5b6c6300d7aca563a318f5379ab9c05f277b369c49497ef55ec9038ab927a",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "字体"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-4-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "渲染器",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "渲染器",
+      "observed_text_sha256": "4f2c618c298dcc4cffa33a2613ba4b1e49305e1e4bb0c683e98efd5c5ef403c1",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "渲染器"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "layer-5-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "PPTX包",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "PPTX包",
+      "observed_text_sha256": "3b865ec42afcdbce7f5bcb6185f17d0f141d56912db7b2d87c2f8b6c5cbbc39a",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "PPTX包"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-1-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "包完整",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "包完整",
+      "observed_text_sha256": "9ff6dd7cf86536c43c0a897cf418919f1e1ecf0aad6f9795626a387cb13dd015",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "包完整"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-2-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "字体可见",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "字体可见",
+      "observed_text_sha256": "f0cc23082fe78b3d3b709b46a7977165f3b297432c67fb1155786f42a4251689",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "字体可见"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-3-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "渲染一致",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "渲染一致",
+      "observed_text_sha256": "cfb387cbb1d8dbcf1f0532b4185c1fbb09a8c1e664b31b0191992a0da756e2d4",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "渲染一致"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "lock-4-text",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "哈希锁定",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "哈希锁定",
+      "observed_text_sha256": "f5e96d54f993961b063f02ed588c78e4574a92967877a81ffe6895deba1b0b6d",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "哈希锁定"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "package-note",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "5-layer architecture / 3 target environments / native matrix",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "5-layer architecture / 3 target environments / native matrix",
+      "observed_text_sha256": "eee120b82ab9761621083ff5b8d8002690053504f7386608bb32c1897ed1bd6d",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "5-layer architecture / 3 target environments / native matrix"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

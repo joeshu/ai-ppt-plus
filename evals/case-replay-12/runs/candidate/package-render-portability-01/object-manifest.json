@@ -1,0 +1,1183 @@
+{
+  "schema": "ai-ppt-plus/slide-object-manifest/v1",
+  "project_id": "distillation-case-replay-12",
+  "layout_ref": "layout.json",
+  "slides": [
+    {
+      "slide_no": 1,
+      "objects": [
+        {
+          "object_id": "background",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "component_ref": null
+        },
+        {
+          "object_id": "title-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "component_ref": null
+        },
+        {
+          "object_id": "title-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "component_ref": null
+        },
+        {
+          "object_id": "layer-1",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "layer-1-fill",
+            "layer-1-accent",
+            "layer-1-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "layer-1-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-1"
+        },
+        {
+          "object_id": "layer-1-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-1"
+        },
+        {
+          "object_id": "layer-1-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-1"
+        },
+        {
+          "object_id": "layer-2",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "layer-2-fill",
+            "layer-2-accent",
+            "layer-2-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "layer-2-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-2"
+        },
+        {
+          "object_id": "layer-2-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-2"
+        },
+        {
+          "object_id": "layer-2-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-2"
+        },
+        {
+          "object_id": "layer-3",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "layer-3-fill",
+            "layer-3-accent",
+            "layer-3-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "layer-3-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-3"
+        },
+        {
+          "object_id": "layer-3-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-3"
+        },
+        {
+          "object_id": "layer-3-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-3"
+        },
+        {
+          "object_id": "layer-4",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "layer-4-fill",
+            "layer-4-accent",
+            "layer-4-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "layer-4-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-4"
+        },
+        {
+          "object_id": "layer-4-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-4"
+        },
+        {
+          "object_id": "layer-4-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-4"
+        },
+        {
+          "object_id": "layer-5",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "layer-5-fill",
+            "layer-5-accent",
+            "layer-5-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "layer-5-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-5"
+        },
+        {
+          "object_id": "layer-5-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-5"
+        },
+        {
+          "object_id": "layer-5-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "layer-5"
+        },
+        {
+          "object_id": "lock-1",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "lock-1-fill",
+            "lock-1-accent",
+            "lock-1-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "lock-1-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-1"
+        },
+        {
+          "object_id": "lock-1-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-1"
+        },
+        {
+          "object_id": "lock-1-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-1"
+        },
+        {
+          "object_id": "lock-2",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "lock-2-fill",
+            "lock-2-accent",
+            "lock-2-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "lock-2-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-2"
+        },
+        {
+          "object_id": "lock-2-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-2"
+        },
+        {
+          "object_id": "lock-2-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-2"
+        },
+        {
+          "object_id": "lock-3",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "lock-3-fill",
+            "lock-3-accent",
+            "lock-3-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "lock-3-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-3"
+        },
+        {
+          "object_id": "lock-3-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-3"
+        },
+        {
+          "object_id": "lock-3-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-3"
+        },
+        {
+          "object_id": "lock-4",
+          "role": "semantic-panel",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [
+            "lock-4-fill",
+            "lock-4-accent",
+            "lock-4-rule"
+          ],
+          "component_ref": null
+        },
+        {
+          "object_id": "lock-4-fill",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-4"
+        },
+        {
+          "object_id": "lock-4-accent",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-4"
+        },
+        {
+          "object_id": "lock-4-rule",
+          "role": "native-shape",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": false,
+          "parent_group": "lock-4"
+        },
+        {
+          "object_id": "environment-matrix",
+          "role": "data-table",
+          "object_type": "editable_table",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "contains_formal_content": true,
+          "data_source": null,
+          "data_snapshot": {
+            "kind": "table",
+            "values": [
+              [
+                "环境",
+                "字体",
+                "渲染器",
+                "PPTX包"
+              ],
+              [
+                "桌面WPS",
+                "可见",
+                "一致",
+                "通过"
+              ],
+              [
+                "移动端WPS",
+                "可见",
+                "一致",
+                "通过"
+              ],
+              [
+                "CI Runner",
+                "可见",
+                "一致",
+                "哈希锁定"
+              ]
+            ],
+            "rows": 4,
+            "columns": 4
+          },
+          "merges": [],
+          "rich_text_required": false,
+          "data_source_sha256": "b67b352b7a7b145ca22df62ce3a3620eb0b4a38132a236f7d95737f4dd47ca7a",
+          "component_ref": null
+        },
+        {
+          "object_id": "title",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "title",
+            "slide_no": 1,
+            "content": "可编辑PPT交付运行矩阵",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.073,
+              "y": 0.052,
+              "w": 0.66,
+              "h": 0.09
+            },
+            "style": {
+              "size": 25,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 1,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "可编辑PPT交付运行矩阵"
+          }
+        },
+        {
+          "object_id": "subtitle",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "subtitle",
+            "slide_no": 1,
+            "content": "同一源文件 → 同一证据 → 可复现交付",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.075,
+              "y": 0.145,
+              "w": 0.62,
+              "h": 0.035
+            },
+            "style": {
+              "size": 8.5,
+              "color": "#A9BED5",
+              "bold": false,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 2,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "同一源文件 → 同一证据 → 可复现交付"
+          }
+        },
+        {
+          "object_id": "case-label",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "case-label",
+            "slide_no": 1,
+            "content": "CASE REPLAY / NATIVE EDITABLE",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.72,
+              "y": 0.075,
+              "w": 0.22,
+              "h": 0.04
+            },
+            "style": {
+              "size": 7.5,
+              "color": "#1687FF",
+              "bold": true,
+              "align": "right",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 3,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "CASE REPLAY / NATIVE EDITABLE"
+          }
+        },
+        {
+          "object_id": "layer-1-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "layer-1-text",
+            "slide_no": 1,
+            "content": "技能包",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.11,
+              "y": 0.31200000000000006,
+              "w": 0.36,
+              "h": 0.035
+            },
+            "style": {
+              "size": 10,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 4,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "技能包"
+          }
+        },
+        {
+          "object_id": "layer-2-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "layer-2-text",
+            "slide_no": 1,
+            "content": "运行时",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.155,
+              "y": 0.367,
+              "w": 0.345,
+              "h": 0.035
+            },
+            "style": {
+              "size": 10,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 5,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "运行时"
+          }
+        },
+        {
+          "object_id": "layer-3-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "layer-3-text",
+            "slide_no": 1,
+            "content": "字体",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.19999999999999998,
+              "y": 0.42200000000000004,
+              "w": 0.33,
+              "h": 0.035
+            },
+            "style": {
+              "size": 10,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 6,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "字体"
+          }
+        },
+        {
+          "object_id": "layer-4-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "layer-4-text",
+            "slide_no": 1,
+            "content": "渲染器",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.24500000000000002,
+              "y": 0.4770000000000001,
+              "w": 0.315,
+              "h": 0.035
+            },
+            "style": {
+              "size": 10,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 7,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "渲染器"
+          }
+        },
+        {
+          "object_id": "layer-5-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "layer-5-text",
+            "slide_no": 1,
+            "content": "PPTX包",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.29000000000000004,
+              "y": 0.532,
+              "w": 0.3,
+              "h": 0.035
+            },
+            "style": {
+              "size": 10,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 8,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "PPTX包"
+          }
+        },
+        {
+          "object_id": "lock-1-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "lock-1-text",
+            "slide_no": 1,
+            "content": "包完整",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.08,
+              "y": 0.748,
+              "w": 0.18,
+              "h": 0.03
+            },
+            "style": {
+              "size": 8.5,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "center",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 9,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "包完整"
+          }
+        },
+        {
+          "object_id": "lock-2-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "lock-2-text",
+            "slide_no": 1,
+            "content": "字体可见",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.3,
+              "y": 0.748,
+              "w": 0.18,
+              "h": 0.03
+            },
+            "style": {
+              "size": 8.5,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "center",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 10,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "字体可见"
+          }
+        },
+        {
+          "object_id": "lock-3-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "lock-3-text",
+            "slide_no": 1,
+            "content": "渲染一致",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.52,
+              "y": 0.748,
+              "w": 0.18,
+              "h": 0.03
+            },
+            "style": {
+              "size": 8.5,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "center",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 11,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "渲染一致"
+          }
+        },
+        {
+          "object_id": "lock-4-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "lock-4-text",
+            "slide_no": 1,
+            "content": "哈希锁定",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.74,
+              "y": 0.748,
+              "w": 0.18,
+              "h": 0.03
+            },
+            "style": {
+              "size": 8.5,
+              "color": "#F4F7FB",
+              "bold": true,
+              "align": "center",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 12,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "哈希锁定"
+          }
+        },
+        {
+          "object_id": "package-note",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "package-note",
+            "slide_no": 1,
+            "content": "5-layer architecture / 3 target environments / native matrix",
+            "coordinate_space": "fraction",
+            "bbox": {
+              "x": 0.52,
+              "y": 0.9,
+              "w": 0.41,
+              "h": 0.03
+            },
+            "style": {
+              "size": 7.5,
+              "color": "#A9BED5",
+              "bold": false,
+              "align": "right",
+              "valign": "top",
+              "margin_left": 0.01,
+              "margin_right": 0.01,
+              "margin_top": 0.005,
+              "margin_bottom": 0.005
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 13,
+            "reference_size": {
+              "width": 1920,
+              "height": 1080
+            },
+            "raw_text_present": true,
+            "declared_text": "5-layer architecture / 3 target environments / native matrix"
+          }
+        }
+      ]
+    }
+  ],
+  "component_usage": {
+    "instances": 0,
+    "distinct_components": 0,
+    "by_component": {},
+    "reused_component_types": 0
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "schema": "ai-ppt-plus/distillation-improvement/v1",
+  "generated_at": "2026-09-02T17:59:39.347238+00:00",
+  "mode": "replay",
+  "case_id": "social-channel-commission-native-01",
+  "valid": true,
+  "promotion": "improved",
+  "checks": [
+    {
+      "id": "baseline-schema",
+      "status": "passed",
+      "detail": "baseline schema accepted"
+    },
+    {
+      "id": "candidate-schema",
+      "status": "passed",
+      "detail": "candidate schema accepted"
+    },
+    {
+      "id": "same-case",
+      "status": "passed",
+      "detail": "baseline='social-channel-commission-native-01', candidate='social-channel-commission-native-01'"
+    },
+    {
+      "id": "same-source",
+      "status": "passed",
+      "detail": "source fingerprints match or were not declared"
+    },
+    {
+      "id": "red-baseline",
+      "status": "passed",
+      "detail": "baseline contains a reproducible failure"
+    },
+    {
+      "id": "green-candidate",
+      "status": "passed",
+      "detail": "candidate gates passed"
+    },
+    {
+      "id": "behavioral-change",
+      "status": "passed",
+      "detail": "candidate declares a non-empty implementation/deck change"
+    },
+    {
+      "id": "metric-completeness",
+      "status": "passed",
+      "detail": "candidate contains all baseline metrics"
+    },
+    {
+      "id": "metric:failed_gate_count",
+      "status": "passed",
+      "detail": "baseline=5, candidate=0; candidate is not higher"
+    },
+    {
+      "id": "metric:native_panel_count",
+      "status": "passed",
+      "detail": "baseline=0, candidate=21; candidate is not lower"
+    },
+    {
+      "id": "metric:native_tables",
+      "status": "passed",
+      "detail": "baseline=0, candidate=5; candidate is not lower"
+    },
+    {
+      "id": "metric:whole_slide_picture_count",
+      "status": "passed",
+      "detail": "baseline=2, candidate=1; candidate is not higher"
+    },
+    {
+      "id": "case-metric:visual_score",
+      "status": "passed",
+      "detail": "candidate=0.907946, minimum=0.8"
+    },
+    {
+      "id": "case-metric:pixel_match_ratio",
+      "status": "passed",
+      "detail": "candidate=0.664833, minimum=0.55"
+    },
+    {
+      "id": "case-metric:mae",
+      "status": "passed",
+      "detail": "candidate=0.060379, maximum=0.25"
+    },
+    {
+      "id": "case-metric:rmse",
+      "status": "passed",
+      "detail": "candidate=0.150879, maximum=0.45"
+    },
+    {
+      "id": "case-replay",
+      "status": "passed",
+      "detail": "matched $"
+    },
+    {
+      "id": "regression-evidence",
+      "status": "passed",
+      "detail": "all regression reports passed"
+    }
+  ],
+  "reasons": []
+}

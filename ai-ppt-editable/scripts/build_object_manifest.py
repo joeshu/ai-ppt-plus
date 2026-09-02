@@ -95,6 +95,17 @@ def _rectangular_rows(rows: object, columns: int | None = None) -> list[list[obj
     return [[row[index] if index < len(row) else "" for index in range(width)] for row in rows]
 
 
+def _table_cell_value(value: object) -> object:
+    """Normalize a rich-text cell to its visible text for data snapshots."""
+    if isinstance(value, dict):
+        runs = value.get("runs")
+        if isinstance(runs, list):
+            return "".join(str(run.get("text", "")) for run in runs if isinstance(run, dict))
+        if "text" in value:
+            return str(value.get("text") or "")
+    return value
+
+
 def _table_snapshot(spec: dict) -> dict | None:
     rows = _rectangular_rows(spec.get("rows"), int(spec["columns"]) if spec.get("columns") is not None else None)
     if rows is None:
@@ -110,7 +121,7 @@ def _table_snapshot(spec: dict) -> dict | None:
             for column in range(max(0, c1), min(len(rows[row]), c2 + 1)):
                 if row != r1 or column != c1:
                     rows[row][column] = ""
-    return {"kind": "table", "values": rows, "rows": len(rows), "columns": len(rows[0])}
+    return {"kind": "table", "values": [[_table_cell_value(value) for value in row] for row in rows], "rows": len(rows), "columns": len(rows[0])}
 
 
 def _chart_snapshot(spec: dict) -> dict | None:
@@ -181,18 +192,71 @@ def build(
             objects.append(obj(pid, "semantic-panel", "traceable_static_graphic", "L3", review=True, reduced_editability_accepted=True, independent=True, contains_formal_content=baked, provenance=str(evidence.get("source") or panel.get("file")), source_path=_source_reference(layout, layout_file, output_base), source_bbox=evidence.get("source_bbox"), **_source_fields(layout, layout_file)))
         for i, shape in enumerate(slide.get("shapes", []), 1):
             sid = str(shape.get("object_id") or shape.get("name") or f"shape-{i:02d}")
-            objects.append(obj(sid, "native-shape", "native_shape", "L1", review=False, contains_formal_content=False, component_ref=shape.get("component_id")))
+            role = str(shape.get("role") or shape.get("semantic_role") or ("semantic-panel" if shape.get("native_required") else "native-shape"))
+            objects.append(obj(
+                sid,
+                role,
+                "native_shape",
+                "L1",
+                review=False,
+                contains_formal_content=False,
+                native_required=bool(shape.get("native_required") or role in {"semantic-panel", "panel", "card", "framework"}),
+                component_ref=shape.get("component_id"),
+            ))
         for i, group in enumerate(slide.get("groups", []), 1):
             gid = str(group.get("object_id") or group.get("name") or f"group-{i:02d}")
             children = [child.get("object_id") or child.get("name") for child in group.get("children", []) if isinstance(child, dict)]
-            objects.append(obj(gid, "component-group", "native_group", "L1", review=False, contains_formal_content=False, editable_components=True, children=[child for child in children if child], component_ref=group.get("component_id")))
+            group_role = str(group.get("role") or group.get("semantic_role") or ("semantic-panel" if group.get("native_required") else "component-group"))
+            objects.append(obj(
+                gid,
+                group_role,
+                "native_group",
+                "L1",
+                review=False,
+                contains_formal_content=False,
+                native_required=bool(group.get("native_required") or group_role in {"semantic-panel", "panel", "card", "framework"}),
+                editable_components=True,
+                children=[child for child in children if child],
+                component_ref=group.get("component_id"),
+            ))
+            # Group children are real editable objects too.  Keeping them in
+            # the manifest makes --require-complete-manifest meaningful while
+            # the parent group still records the movable semantic container.
+            for child_index, child in enumerate(group.get("children", []), 1):
+                if not isinstance(child, dict):
+                    continue
+                child_id = str(child.get("object_id") or child.get("name") or f"{gid}-child-{child_index:02d}")
+                child_role = str(child.get("role") or child.get("semantic_role") or "native-shape")
+                objects.append(obj(
+                    child_id,
+                    child_role,
+                    "native_shape",
+                    "L1",
+                    review=False,
+                    contains_formal_content=False,
+                    native_required=bool(child.get("native_required") or child_role in {"semantic-panel", "panel", "card", "framework"}),
+                    parent_group=gid,
+                ))
         for i, table in enumerate(slide.get("tables", []), 1):
             tid = str(table.get("object_id") or table.get("name") or f"table-{i:02d}")
             snapshot = _table_snapshot(table)
             source_fields = _data_source_fields(layout, table.get("data_source"))
             if snapshot is not None and "data_source_sha256" not in source_fields:
                 source_fields["data_source_sha256"] = _json_sha256(snapshot)
-            objects.append(obj(tid, "data-table", "editable_table", "L1", review=True, contains_formal_content=True, data_source=table.get("data_source"), data_snapshot=snapshot, **source_fields, component_ref=table.get("component_id")))
+            objects.append(obj(
+                tid,
+                "data-table",
+                "editable_table",
+                "L1",
+                review=True,
+                contains_formal_content=True,
+                data_source=table.get("data_source"),
+                data_snapshot=snapshot,
+                merges=[list(merge) for merge in table.get("merges", []) if isinstance(merge, list) and len(merge) == 4],
+                rich_text_required=bool(table.get("rich_text_required")),
+                **source_fields,
+                component_ref=table.get("component_id"),
+            ))
         for i, chart in enumerate(slide.get("charts", []), 1):
             cid = str(chart.get("object_id") or chart.get("name") or f"chart-{i:02d}")
             snapshot = _chart_snapshot(chart)

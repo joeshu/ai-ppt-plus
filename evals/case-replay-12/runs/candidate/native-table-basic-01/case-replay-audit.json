@@ -1,0 +1,146 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/native-table-basic-01/editable.pptx",
+  "deck_sha256": "82ba559d6f9ab52795adb47f07046cc3cb16b22f38714934f353783edfa70342",
+  "object_manifest": "runs/candidate/native-table-basic-01/object-manifest.json",
+  "object_manifest_sha256": "bc8d1205bc87dc08f501d07099d85ddf5afe65f33c8fa6ef48c467e0e439538b",
+  "native_table_count": 1,
+  "native_panel_count": 1,
+  "formal_text_count": 7,
+  "formal_text_native_count": 7,
+  "a_tbl_count": 1,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [
+        {
+          "object_id": "service-fee-table",
+          "actual_type": "editable_table",
+          "expected_merges": [],
+          "observed_merges": [],
+          "merge_count": 0,
+          "rows": 7,
+          "columns": 4,
+          "values": [
+            [
+              "业务场景",
+              "收入变化",
+              "服务费标准",
+              "计提周期"
+            ],
+            [
+              "存量升档",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "指定套餐",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "新装发展",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "渠道激励",
+              "可核对",
+              "统一标准",
+              "月度"
+            ],
+            [
+              "增收场景",
+              "结果留痕",
+              "按政策",
+              "周期锁定"
+            ],
+            [
+              "复核口径",
+              "来源绑定",
+              "可追溯",
+              "可回放"
+            ]
+          ],
+          "rich_text_runs": 28,
+          "rich_text_cells": 0
+        }
+      ],
+      "panels": [
+        {
+          "object_id": "policy-panel",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "渠道服务费标准总览",
+          "observed": "渠道服务费标准总览",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "统一标准、清晰计提、结果可核对",
+          "observed": "统一标准、清晰计提、结果可核对",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "policy-panel-title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "POLICY\nMATRIX",
+          "observed": "POLICY\nMATRIX",
+          "run_count": 2
+        },
+        {
+          "object_id": "policy-panel-copy",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "场景\n收入\n标准\n周期",
+          "observed": "场景\n收入\n标准\n周期",
+          "run_count": 4
+        },
+        {
+          "object_id": "table-callout",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "TABLE / NATIVE",
+          "observed": "TABLE / NATIVE",
+          "run_count": 1
+        },
+        {
+          "object_id": "table-footnote",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "行高、列宽、网格、单元格文字均保留为可编辑语义对象",
+          "observed": "行高、列宽、网格、单元格文字均保留为可编辑语义对象",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 12
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

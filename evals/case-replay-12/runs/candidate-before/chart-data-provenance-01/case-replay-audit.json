@@ -1,0 +1,119 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/chart-data-provenance-01/editable.pptx",
+  "deck_sha256": "7bdefb0fea1f6c904dbb7f7642fdfd4d73146c01a04fbb6477127d30217e8a0c",
+  "object_manifest": "runs/candidate-before/chart-data-provenance-01/object-manifest.json",
+  "object_manifest_sha256": "c8e60995687cff34a6495fce773591a10338696c1720def4b61c597bda5a653b",
+  "native_table_count": 0,
+  "native_panel_count": 2,
+  "formal_text_count": 10,
+  "formal_text_native_count": 10,
+  "a_tbl_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [],
+      "panels": [
+        {
+          "object_id": "chart-panel",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "chart-insight-panel",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "2026上半年政企行业增长结构",
+          "observed": "2026上半年政企行业增长结构",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "政府与教育仍是规模增长主引擎",
+          "observed": "政府与教育仍是规模增长主引擎",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "chart-insight-1",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "政府 8.6 / 5.2",
+          "observed": "政府 8.6 / 5.2",
+          "run_count": 1
+        },
+        {
+          "object_id": "chart-insight-2",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "教育 5.2 / 3.1",
+          "observed": "教育 5.2 / 3.1",
+          "run_count": 1
+        },
+        {
+          "object_id": "chart-insight-3",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "医疗 4.6 / 2.6",
+          "observed": "医疗 4.6 / 2.6",
+          "run_count": 1
+        },
+        {
+          "object_id": "chart-insight-4",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "交通 3.8 / 2.2",
+          "observed": "交通 3.8 / 2.2",
+          "run_count": 1
+        },
+        {
+          "object_id": "chart-insight-5",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "制造 3.4 / 1.9",
+          "observed": "制造 3.4 / 1.9",
+          "run_count": 1
+        },
+        {
+          "object_id": "chart-legend-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "目标 / 实际（亿元）",
+          "observed": "目标 / 实际（亿元）",
+          "run_count": 1
+        },
+        {
+          "object_id": "chart-source-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "数据口径：case-suite.json / exact data snapshot",
+          "observed": "数据口径：case-suite.json / exact data snapshot",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 16
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

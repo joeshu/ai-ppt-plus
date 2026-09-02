@@ -1,0 +1,1070 @@
+{
+  "schema": "ai-ppt-plus/pptx-case-evaluation/v1",
+  "evaluation_schema": "ai-ppt-plus/distillation-evaluation/v1",
+  "generated_at": "2026-09-02T17:59:39.290345+00:00",
+  "phase": "candidate",
+  "case_id": "social-channel-commission-native-01",
+  "status": "passed",
+  "valid": true,
+  "failure_codes": [],
+  "source_hashes": {
+    "source_pptx_sha256": "576d2800f2edd35382658d5edb4f274e73327bf93b7ed77713b7c43ba0b34f30",
+    "source_reference_sha256": "b6c88cae8af3908eab7e3917447af05426b5407326a0979257b97e6b1a30124c",
+    "source_reference_path": "../../ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg",
+    "process_image_sha256": "da3e67b65b50ad6e0e8cea68360ea94dd9fc98fe9d87dfc95bd1eb15420a5ce4"
+  },
+  "deck": {
+    "path": "../../ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx",
+    "sha256": "a0282fe9db8a23e216bdc68b10d6cf92b5ed5759c211787478079a2ce4108372",
+    "slides": 1
+  },
+  "rendered": {
+    "directory": "../case-replay-social-01/runs/candidate/rendered",
+    "files": [
+      {
+        "path": "../case-replay-social-01/runs/candidate/rendered/slide-1.png",
+        "sha256": "38a27cfac5746c0fb59bbd85679c9b7f06f6fa9addbed50491468f6aa1cdda90"
+      }
+    ],
+    "valid": true,
+    "error": null
+  },
+  "observed": {
+    "slides": 1,
+    "shape_count": 93,
+    "shape_types": {
+      "PICTURE (13)": 17,
+      "AUTO_SHAPE (1)": 27,
+      "LINE (9)": 2,
+      "TABLE (19)": 5,
+      "TEXT_BOX (17)": 42
+    },
+    "pictures": 17,
+    "full_slide_pictures": 1,
+    "permitted_full_slide_pictures": 1,
+    "semantic_frame_pictures": 0,
+    "native_tables": 5,
+    "a_tbl_count": 5,
+    "native_table_shapes": [
+      "commission-card-1-body",
+      "commission-card-2-body",
+      "commission-card-3-body",
+      "monthly-incentive-table",
+      "policy-fee-table"
+    ],
+    "tables": {
+      "commission-card-1-body": {
+        "rows": 3,
+        "columns": 2,
+        "values": [
+          [
+            "依据",
+            "收入变化31.2元 × 3倍"
+          ],
+          [
+            "周期",
+            "T2—T4，每期31.2元"
+          ],
+          [
+            "结果",
+            "93.6元"
+          ]
+        ],
+        "merged_cells": []
+      },
+      "commission-card-2-body": {
+        "rows": 3,
+        "columns": 2,
+        "values": [
+          [
+            "依据",
+            "T1一次性佣金"
+          ],
+          [
+            "周期",
+            "T1计提"
+          ],
+          [
+            "结果",
+            "150元"
+          ]
+        ],
+        "merged_cells": []
+      },
+      "commission-card-3-body": {
+        "rows": 3,
+        "columns": 2,
+        "values": [
+          [
+            "依据",
+            "3—4户档：50元/户 × 系数0.33"
+          ],
+          [
+            "周期",
+            "T3计提，本案例计入1户"
+          ],
+          [
+            "结果",
+            "16.5元"
+          ]
+        ],
+        "merged_cells": []
+      },
+      "policy-fee-table": {
+        "rows": 9,
+        "columns": 4,
+        "values": [
+          [
+            "用户/办理场景",
+            "收入变化",
+            "服务费标准",
+            "计提周期"
+          ],
+          [
+            "1. 存量用户办理指定套餐\n升档产品须知FTTR\n（指定FTTR附加产品）",
+            "增收",
+            "套餐迁转后收入变化部分 ×3倍",
+            "T2—T4"
+          ],
+          [
+            "",
+            "减收",
+            "不罚",
+            "—"
+          ],
+          [
+            "2. 存量用户办理指定套餐\n金融终端合约套餐升档",
+            "增收",
+            "套餐迁转后收入变化部分 ×6倍",
+            "T2—T7"
+          ],
+          [
+            "",
+            "减收",
+            "不罚",
+            "—"
+          ],
+          [
+            "3. 办理其他指定套餐/合约",
+            "增收",
+            "套餐迁转后收入变化部分 ×2倍",
+            "T2—T3"
+          ],
+          [
+            "",
+            "减收",
+            "不罚",
+            "—"
+          ],
+          [
+            "4. 未办理指定套餐/合约",
+            "增收",
+            "套餐迁转后收入变化部分 ×2倍",
+            "T2—T3"
+          ],
+          [
+            "",
+            "减收",
+            "套餐迁转后收入变化部分 ×2倍扣罚",
+            "扣罚周期T2—T3"
+          ]
+        ],
+        "merged_cells": [
+          [
+            1,
+            0,
+            2,
+            0
+          ],
+          [
+            3,
+            0,
+            4,
+            0
+          ],
+          [
+            5,
+            0,
+            6,
+            0
+          ],
+          [
+            7,
+            0,
+            8,
+            0
+          ]
+        ]
+      },
+      "monthly-incentive-table": {
+        "rows": 6,
+        "columns": 4,
+        "values": [
+          [
+            "FTTR月度发展",
+            "达量补贴标准",
+            "适用渠道",
+            "计提周期"
+          ],
+          [
+            "3—4户",
+            "50元/户",
+            "除电话营销外其他渠道全参与",
+            "T3"
+          ],
+          [
+            "5—7户（含5户）",
+            "110元/户",
+            "除电话营销外其他渠道全参与",
+            "T3"
+          ],
+          [
+            "8户及以上",
+            "210元/户",
+            "除电话营销外其他渠道全参与",
+            "T3"
+          ],
+          [
+            "12—19户",
+            "110元/户",
+            "电话营销渠道",
+            "T3"
+          ],
+          [
+            "20户及以上",
+            "210元/户",
+            "电话营销渠道",
+            "T3"
+          ]
+        ],
+        "merged_cells": []
+      }
+    },
+    "policy_fee_table": {
+      "rows": 9,
+      "columns": 4,
+      "values": [
+        [
+          "用户/办理场景",
+          "收入变化",
+          "服务费标准",
+          "计提周期"
+        ],
+        [
+          "1. 存量用户办理指定套餐\n升档产品须知FTTR\n（指定FTTR附加产品）",
+          "增收",
+          "套餐迁转后收入变化部分 ×3倍",
+          "T2—T4"
+        ],
+        [
+          "",
+          "减收",
+          "不罚",
+          "—"
+        ],
+        [
+          "2. 存量用户办理指定套餐\n金融终端合约套餐升档",
+          "增收",
+          "套餐迁转后收入变化部分 ×6倍",
+          "T2—T7"
+        ],
+        [
+          "",
+          "减收",
+          "不罚",
+          "—"
+        ],
+        [
+          "3. 办理其他指定套餐/合约",
+          "增收",
+          "套餐迁转后收入变化部分 ×2倍",
+          "T2—T3"
+        ],
+        [
+          "",
+          "减收",
+          "不罚",
+          "—"
+        ],
+        [
+          "4. 未办理指定套餐/合约",
+          "增收",
+          "套餐迁转后收入变化部分 ×2倍",
+          "T2—T3"
+        ],
+        [
+          "",
+          "减收",
+          "套餐迁转后收入变化部分 ×2倍扣罚",
+          "扣罚周期T2—T3"
+        ]
+      ],
+      "merged_cells": [
+        [
+          1,
+          0,
+          2,
+          0
+        ],
+        [
+          3,
+          0,
+          4,
+          0
+        ],
+        [
+          5,
+          0,
+          6,
+          0
+        ],
+        [
+          7,
+          0,
+          8,
+          0
+        ]
+      ]
+    },
+    "monthly_incentive_table": {
+      "rows": 6,
+      "columns": 4,
+      "values": [
+        [
+          "FTTR月度发展",
+          "达量补贴标准",
+          "适用渠道",
+          "计提周期"
+        ],
+        [
+          "3—4户",
+          "50元/户",
+          "除电话营销外其他渠道全参与",
+          "T3"
+        ],
+        [
+          "5—7户（含5户）",
+          "110元/户",
+          "除电话营销外其他渠道全参与",
+          "T3"
+        ],
+        [
+          "8户及以上",
+          "210元/户",
+          "除电话营销外其他渠道全参与",
+          "T3"
+        ],
+        [
+          "12—19户",
+          "110元/户",
+          "电话营销渠道",
+          "T3"
+        ],
+        [
+          "20户及以上",
+          "210元/户",
+          "电话营销渠道",
+          "T3"
+        ]
+      ],
+      "merged_cells": []
+    },
+    "native_panel_count": 21,
+    "native_panel_names": [
+      "commission-card-1",
+      "commission-card-1-header",
+      "commission-card-2",
+      "commission-card-2-header",
+      "commission-card-3",
+      "commission-card-3-header",
+      "conditions-callout",
+      "conditions-label",
+      "conditions-note-button",
+      "flow-card-1",
+      "flow-card-2",
+      "flow-card-3",
+      "flow-card-4",
+      "flow-card-5",
+      "monthly-title-band",
+      "policy-title-band",
+      "policy-vertical-label",
+      "top-channel-badge",
+      "top-earnings",
+      "top-partner",
+      "top-total"
+    ],
+    "native_panel_groups": true,
+    "native_text_objects": 69,
+    "native_text_runs": 52,
+    "formal_text_in_raster": false,
+    "body_native_text": true,
+    "source_full_slide_picture_detected": false,
+    "media_hashes": [
+      "242006156c527f2ba79a5fe617db69050d151b0765a7823c810f1183524501c0",
+      "30709ce997c83705fed08553627bf61e1f25db71921aa6456d2b2be7bc7a5495",
+      "3a339f39f30e597cdf836938abc43d779bf0dc2597e3bbd812430d86a98cdbf1",
+      "41dd34f5ae009f1ee895a0987c87398904bf245d657ae47b4d0e7192398dd4aa",
+      "4cb7e244923d8d800b87ac90d195edb7c3177bc7b75f169e891227e2633a103f",
+      "73c1bcf8558b2088ff80e6a853599122388bc1cd012716c9fd5e56222acf950c",
+      "91f4831c3100d162f7aabde831a078c10a07f33630cad80ce586547f41ba4246",
+      "9c72ad298134bb0985ab1cc63d83b79ee9a3e755782864723e8bb3e08b8745dc",
+      "cd79e56c3761ba6dc93fd74fff8fcd8c2f30ca04db4450686ac7cfb52d26eaa8",
+      "d0786b8f5c7db01361159faeb30d3dd1b4df360db1414d931eaee309f6209682",
+      "d262a2872a5067791def10e39930a771a832f8a5c7fec0a9305e4e572497af0d",
+      "d30b0c6c72b395d8d39c1958417744e94e27e3a430ce42a87ee06348d25f3a04",
+      "e6819619dd4d3b4d31c813be4281da7a8e6324559336fdf263de6ac4657f7555",
+      "faceaf554a3fc9d17c7f05fd486f99d6b528544da819a6530c897d55939da061"
+    ]
+  },
+  "native_object_audit": {
+    "valid": true,
+    "detail": "expected structure matched",
+    "observed": {
+      "slides": 1,
+      "shape_count": 93,
+      "shape_types": {
+        "PICTURE (13)": 17,
+        "AUTO_SHAPE (1)": 27,
+        "LINE (9)": 2,
+        "TABLE (19)": 5,
+        "TEXT_BOX (17)": 42
+      },
+      "pictures": 17,
+      "full_slide_pictures": 1,
+      "permitted_full_slide_pictures": 1,
+      "semantic_frame_pictures": 0,
+      "native_tables": 5,
+      "a_tbl_count": 5,
+      "native_table_shapes": [
+        "commission-card-1-body",
+        "commission-card-2-body",
+        "commission-card-3-body",
+        "monthly-incentive-table",
+        "policy-fee-table"
+      ],
+      "tables": {
+        "commission-card-1-body": {
+          "rows": 3,
+          "columns": 2,
+          "values": [
+            [
+              "依据",
+              "收入变化31.2元 × 3倍"
+            ],
+            [
+              "周期",
+              "T2—T4，每期31.2元"
+            ],
+            [
+              "结果",
+              "93.6元"
+            ]
+          ],
+          "merged_cells": []
+        },
+        "commission-card-2-body": {
+          "rows": 3,
+          "columns": 2,
+          "values": [
+            [
+              "依据",
+              "T1一次性佣金"
+            ],
+            [
+              "周期",
+              "T1计提"
+            ],
+            [
+              "结果",
+              "150元"
+            ]
+          ],
+          "merged_cells": []
+        },
+        "commission-card-3-body": {
+          "rows": 3,
+          "columns": 2,
+          "values": [
+            [
+              "依据",
+              "3—4户档：50元/户 × 系数0.33"
+            ],
+            [
+              "周期",
+              "T3计提，本案例计入1户"
+            ],
+            [
+              "结果",
+              "16.5元"
+            ]
+          ],
+          "merged_cells": []
+        },
+        "policy-fee-table": {
+          "rows": 9,
+          "columns": 4,
+          "values": [
+            [
+              "用户/办理场景",
+              "收入变化",
+              "服务费标准",
+              "计提周期"
+            ],
+            [
+              "1. 存量用户办理指定套餐\n升档产品须知FTTR\n（指定FTTR附加产品）",
+              "增收",
+              "套餐迁转后收入变化部分 ×3倍",
+              "T2—T4"
+            ],
+            [
+              "",
+              "减收",
+              "不罚",
+              "—"
+            ],
+            [
+              "2. 存量用户办理指定套餐\n金融终端合约套餐升档",
+              "增收",
+              "套餐迁转后收入变化部分 ×6倍",
+              "T2—T7"
+            ],
+            [
+              "",
+              "减收",
+              "不罚",
+              "—"
+            ],
+            [
+              "3. 办理其他指定套餐/合约",
+              "增收",
+              "套餐迁转后收入变化部分 ×2倍",
+              "T2—T3"
+            ],
+            [
+              "",
+              "减收",
+              "不罚",
+              "—"
+            ],
+            [
+              "4. 未办理指定套餐/合约",
+              "增收",
+              "套餐迁转后收入变化部分 ×2倍",
+              "T2—T3"
+            ],
+            [
+              "",
+              "减收",
+              "套餐迁转后收入变化部分 ×2倍扣罚",
+              "扣罚周期T2—T3"
+            ]
+          ],
+          "merged_cells": [
+            [
+              1,
+              0,
+              2,
+              0
+            ],
+            [
+              3,
+              0,
+              4,
+              0
+            ],
+            [
+              5,
+              0,
+              6,
+              0
+            ],
+            [
+              7,
+              0,
+              8,
+              0
+            ]
+          ]
+        },
+        "monthly-incentive-table": {
+          "rows": 6,
+          "columns": 4,
+          "values": [
+            [
+              "FTTR月度发展",
+              "达量补贴标准",
+              "适用渠道",
+              "计提周期"
+            ],
+            [
+              "3—4户",
+              "50元/户",
+              "除电话营销外其他渠道全参与",
+              "T3"
+            ],
+            [
+              "5—7户（含5户）",
+              "110元/户",
+              "除电话营销外其他渠道全参与",
+              "T3"
+            ],
+            [
+              "8户及以上",
+              "210元/户",
+              "除电话营销外其他渠道全参与",
+              "T3"
+            ],
+            [
+              "12—19户",
+              "110元/户",
+              "电话营销渠道",
+              "T3"
+            ],
+            [
+              "20户及以上",
+              "210元/户",
+              "电话营销渠道",
+              "T3"
+            ]
+          ],
+          "merged_cells": []
+        }
+      },
+      "policy_fee_table": {
+        "rows": 9,
+        "columns": 4,
+        "values": [
+          [
+            "用户/办理场景",
+            "收入变化",
+            "服务费标准",
+            "计提周期"
+          ],
+          [
+            "1. 存量用户办理指定套餐\n升档产品须知FTTR\n（指定FTTR附加产品）",
+            "增收",
+            "套餐迁转后收入变化部分 ×3倍",
+            "T2—T4"
+          ],
+          [
+            "",
+            "减收",
+            "不罚",
+            "—"
+          ],
+          [
+            "2. 存量用户办理指定套餐\n金融终端合约套餐升档",
+            "增收",
+            "套餐迁转后收入变化部分 ×6倍",
+            "T2—T7"
+          ],
+          [
+            "",
+            "减收",
+            "不罚",
+            "—"
+          ],
+          [
+            "3. 办理其他指定套餐/合约",
+            "增收",
+            "套餐迁转后收入变化部分 ×2倍",
+            "T2—T3"
+          ],
+          [
+            "",
+            "减收",
+            "不罚",
+            "—"
+          ],
+          [
+            "4. 未办理指定套餐/合约",
+            "增收",
+            "套餐迁转后收入变化部分 ×2倍",
+            "T2—T3"
+          ],
+          [
+            "",
+            "减收",
+            "套餐迁转后收入变化部分 ×2倍扣罚",
+            "扣罚周期T2—T3"
+          ]
+        ],
+        "merged_cells": [
+          [
+            1,
+            0,
+            2,
+            0
+          ],
+          [
+            3,
+            0,
+            4,
+            0
+          ],
+          [
+            5,
+            0,
+            6,
+            0
+          ],
+          [
+            7,
+            0,
+            8,
+            0
+          ]
+        ]
+      },
+      "monthly_incentive_table": {
+        "rows": 6,
+        "columns": 4,
+        "values": [
+          [
+            "FTTR月度发展",
+            "达量补贴标准",
+            "适用渠道",
+            "计提周期"
+          ],
+          [
+            "3—4户",
+            "50元/户",
+            "除电话营销外其他渠道全参与",
+            "T3"
+          ],
+          [
+            "5—7户（含5户）",
+            "110元/户",
+            "除电话营销外其他渠道全参与",
+            "T3"
+          ],
+          [
+            "8户及以上",
+            "210元/户",
+            "除电话营销外其他渠道全参与",
+            "T3"
+          ],
+          [
+            "12—19户",
+            "110元/户",
+            "电话营销渠道",
+            "T3"
+          ],
+          [
+            "20户及以上",
+            "210元/户",
+            "电话营销渠道",
+            "T3"
+          ]
+        ],
+        "merged_cells": []
+      },
+      "native_panel_count": 21,
+      "native_panel_names": [
+        "commission-card-1",
+        "commission-card-1-header",
+        "commission-card-2",
+        "commission-card-2-header",
+        "commission-card-3",
+        "commission-card-3-header",
+        "conditions-callout",
+        "conditions-label",
+        "conditions-note-button",
+        "flow-card-1",
+        "flow-card-2",
+        "flow-card-3",
+        "flow-card-4",
+        "flow-card-5",
+        "monthly-title-band",
+        "policy-title-band",
+        "policy-vertical-label",
+        "top-channel-badge",
+        "top-earnings",
+        "top-partner",
+        "top-total"
+      ],
+      "native_panel_groups": true,
+      "native_text_objects": 69,
+      "native_text_runs": 52,
+      "formal_text_in_raster": false,
+      "body_native_text": true,
+      "source_full_slide_picture_detected": false,
+      "media_hashes": [
+        "242006156c527f2ba79a5fe617db69050d151b0765a7823c810f1183524501c0",
+        "30709ce997c83705fed08553627bf61e1f25db71921aa6456d2b2be7bc7a5495",
+        "3a339f39f30e597cdf836938abc43d779bf0dc2597e3bbd812430d86a98cdbf1",
+        "41dd34f5ae009f1ee895a0987c87398904bf245d657ae47b4d0e7192398dd4aa",
+        "4cb7e244923d8d800b87ac90d195edb7c3177bc7b75f169e891227e2633a103f",
+        "73c1bcf8558b2088ff80e6a853599122388bc1cd012716c9fd5e56222acf950c",
+        "91f4831c3100d162f7aabde831a078c10a07f33630cad80ce586547f41ba4246",
+        "9c72ad298134bb0985ab1cc63d83b79ee9a3e755782864723e8bb3e08b8745dc",
+        "cd79e56c3761ba6dc93fd74fff8fcd8c2f30ca04db4450686ac7cfb52d26eaa8",
+        "d0786b8f5c7db01361159faeb30d3dd1b4df360db1414d931eaee309f6209682",
+        "d262a2872a5067791def10e39930a771a832f8a5c7fec0a9305e4e572497af0d",
+        "d30b0c6c72b395d8d39c1958417744e94e27e3a430ce42a87ee06348d25f3a04",
+        "e6819619dd4d3b4d31c813be4281da7a8e6324559336fdf263de6ac4657f7555",
+        "faceaf554a3fc9d17c7f05fd486f99d6b528544da819a6530c897d55939da061"
+      ]
+    }
+  },
+  "table_audit": {
+    "valid": true,
+    "a_tbl_count": 5,
+    "native_table_count": 5,
+    "required_shapes": [
+      "commission-card-1-body",
+      "commission-card-2-body",
+      "commission-card-3-body",
+      "policy-fee-table",
+      "monthly-incentive-table"
+    ],
+    "observed_shapes": [
+      "commission-card-1-body",
+      "commission-card-2-body",
+      "commission-card-3-body",
+      "monthly-incentive-table",
+      "policy-fee-table"
+    ],
+    "policy_fee_table": {
+      "rows": 9,
+      "columns": 4,
+      "values": [
+        [
+          "用户/办理场景",
+          "收入变化",
+          "服务费标准",
+          "计提周期"
+        ],
+        [
+          "1. 存量用户办理指定套餐\n升档产品须知FTTR\n（指定FTTR附加产品）",
+          "增收",
+          "套餐迁转后收入变化部分 ×3倍",
+          "T2—T4"
+        ],
+        [
+          "",
+          "减收",
+          "不罚",
+          "—"
+        ],
+        [
+          "2. 存量用户办理指定套餐\n金融终端合约套餐升档",
+          "增收",
+          "套餐迁转后收入变化部分 ×6倍",
+          "T2—T7"
+        ],
+        [
+          "",
+          "减收",
+          "不罚",
+          "—"
+        ],
+        [
+          "3. 办理其他指定套餐/合约",
+          "增收",
+          "套餐迁转后收入变化部分 ×2倍",
+          "T2—T3"
+        ],
+        [
+          "",
+          "减收",
+          "不罚",
+          "—"
+        ],
+        [
+          "4. 未办理指定套餐/合约",
+          "增收",
+          "套餐迁转后收入变化部分 ×2倍",
+          "T2—T3"
+        ],
+        [
+          "",
+          "减收",
+          "套餐迁转后收入变化部分 ×2倍扣罚",
+          "扣罚周期T2—T3"
+        ]
+      ],
+      "merged_cells": [
+        [
+          1,
+          0,
+          2,
+          0
+        ],
+        [
+          3,
+          0,
+          4,
+          0
+        ],
+        [
+          5,
+          0,
+          6,
+          0
+        ],
+        [
+          7,
+          0,
+          8,
+          0
+        ]
+      ]
+    },
+    "monthly_incentive_table": {
+      "rows": 6,
+      "columns": 4,
+      "values": [
+        [
+          "FTTR月度发展",
+          "达量补贴标准",
+          "适用渠道",
+          "计提周期"
+        ],
+        [
+          "3—4户",
+          "50元/户",
+          "除电话营销外其他渠道全参与",
+          "T3"
+        ],
+        [
+          "5—7户（含5户）",
+          "110元/户",
+          "除电话营销外其他渠道全参与",
+          "T3"
+        ],
+        [
+          "8户及以上",
+          "210元/户",
+          "除电话营销外其他渠道全参与",
+          "T3"
+        ],
+        [
+          "12—19户",
+          "110元/户",
+          "电话营销渠道",
+          "T3"
+        ],
+        [
+          "20户及以上",
+          "210元/户",
+          "电话营销渠道",
+          "T3"
+        ]
+      ],
+      "merged_cells": []
+    }
+  },
+  "panel_audit": {
+    "valid": true,
+    "native_panel_count": 21,
+    "native_panel_names": [
+      "commission-card-1",
+      "commission-card-1-header",
+      "commission-card-2",
+      "commission-card-2-header",
+      "commission-card-3",
+      "commission-card-3-header",
+      "conditions-callout",
+      "conditions-label",
+      "conditions-note-button",
+      "flow-card-1",
+      "flow-card-2",
+      "flow-card-3",
+      "flow-card-4",
+      "flow-card-5",
+      "monthly-title-band",
+      "policy-title-band",
+      "policy-vertical-label",
+      "top-channel-badge",
+      "top-earnings",
+      "top-partner",
+      "top-total"
+    ],
+    "semantic_frame_pictures": 0
+  },
+  "text_audit": {
+    "valid": true,
+    "native_text_objects": 69,
+    "native_text_runs": 52,
+    "formal_text_in_raster": false,
+    "body_native_text": true
+  },
+  "mutation_smoke_test": {
+    "valid": true,
+    "table_cell_mutated": true,
+    "panel_moved": true,
+    "rendered_change": true,
+    "rendered_change_ratio": 0.036144,
+    "mutated_deck": "../case-replay-social-01/runs/candidate/mutation-smoke.pptx"
+  },
+  "visual_comparison": {
+    "valid": true,
+    "rendered": "../case-replay-social-01/runs/candidate/rendered/slide-1.png",
+    "rendered_sha256": "38a27cfac5746c0fb59bbd85679c9b7f06f6fa9addbed50491468f6aa1cdda90",
+    "reference": "../../ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg",
+    "reference_sha256": "b6c88cae8af3908eab7e3917447af05426b5407326a0979257b97e6b1a30124c",
+    "metrics": {
+      "visual_score": 0.907946,
+      "mae": 0.060379,
+      "rmse": 0.150879,
+      "pixel_match_ratio": 0.664833
+    },
+    "original_sizes": {
+      "rendered": [
+        1920,
+        1080
+      ],
+      "reference": [
+        1920,
+        1080
+      ]
+    },
+    "comparison_size": [
+      1920,
+      1080
+    ],
+    "resized_for_comparison": false,
+    "issues": [],
+    "human_visual_review_required": true,
+    "reference_kind": "source-reference",
+    "thresholds": {
+      "min_visual_score": 0.8,
+      "min_pixel_match_ratio": 0.55,
+      "max_mae": 0.25,
+      "max_rmse": 0.45
+    }
+  },
+  "object_comparison": {
+    "valid": true,
+    "detail": "expected structure matched",
+    "baseline_evaluation": "../case-replay-social-01/baseline-evaluation.json",
+    "delta": {
+      "native_tables": 5,
+      "a_tbl_count": 5,
+      "native_panel_count": 21,
+      "native_text_runs": -83
+    }
+  },
+  "metrics": {
+    "visual_score": 0.907946,
+    "mae": 0.060379,
+    "rmse": 0.150879,
+    "pixel_match_ratio": 0.664833,
+    "native_tables": 5,
+    "native_panel_count": 21,
+    "formal_text_in_raster": false,
+    "whole_slide_picture_count": 1,
+    "failed_gate_count": 0
+  },
+  "behavioral_change": true,
+  "repair_fingerprint": "native-structure-merge-topology-chart-readability",
+  "regressions": [
+    {
+      "case_id": "social-channel-commission-native-01",
+      "status": "passed",
+      "valid": true
+    }
+  ],
+  "human_visual_review_required": true
+}

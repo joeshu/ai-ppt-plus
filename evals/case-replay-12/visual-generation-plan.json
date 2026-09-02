@@ -1,0 +1,3251 @@
+{
+  "schema": "ai-ppt-plus/visual-generation-plan/v1",
+  "project_id": "distillation-case-replay-12",
+  "route": "visual-creation",
+  "mode": "image-slide",
+  "outline_revision": "R1-case-replay-12",
+  "design_system_revision": "R1-luxury-dense-navy-red",
+  "narrative_gate": {
+    "schema": "ai-ppt-plus/narrative-gate/v1",
+    "workflow": "ppt-thought-table-first",
+    "outline_table": "outline/PPT思路表.csv",
+    "outline_table_sha256": "2c919987d2aa09d648e08b0ab8407d37c0ea3f00596722860ebc5ef1e0f74cb9",
+    "revision": "R1-case-replay-12",
+    "status": "approved",
+    "approval_required": true,
+    "approved_by": "user-directed case suite",
+    "approved_at": "2026-09-02T00:00:00Z",
+    "feedback_round": 0,
+    "owner_notes_preserved": true,
+    "formal_text_authority": "approved-outline-table",
+    "change_log": "outline/PPT思路表-change-log.json"
+  },
+  "page_count": 12,
+  "canvas": {
+    "ratio": "16:9",
+    "width_px": 2048,
+    "height_px": 1152
+  },
+  "canvas_policy": {
+    "require_exact_dimensions": false,
+    "minimum_width_px": 1600,
+    "minimum_height_px": 900,
+    "on_mismatch": "warn"
+  },
+  "density_profile": "dense",
+  "density_override_reason": "",
+  "generation_context": {
+    "audience": "国企经营管理层、业务负责人和专业评审",
+    "language": "简体中文，必要时保留短英文标签",
+    "presentation_context": "高端管理层会议室单页评审"
+  },
+  "retry_policy": {
+    "max_attempts_per_slide": 2,
+    "scope": "single-slide",
+    "triggers": [
+      "image-generation failure",
+      "missing or garbled approved copy",
+      "collapsed reading path or unusable layout"
+    ]
+  },
+  "style_lock": {
+    "name": "case-replay-luxury-dense-v1",
+    "palette": [
+      {
+        "name": "primary",
+        "hex": "#061A35"
+      },
+      {
+        "name": "accent-red",
+        "hex": "#E60012"
+      },
+      {
+        "name": "electric-blue",
+        "hex": "#1687FF"
+      },
+      {
+        "name": "silver",
+        "hex": "#F4F7FB"
+      }
+    ],
+    "font_style": "Noto Sans CJK SC / clean executive sans-serif",
+    "surface": "deep-sea navy glass, restrained metallic red and electric blue",
+    "icon_style": "consistent fine-line enterprise icons",
+    "grid": "12-column 16:9 executive grid with stable title baseline and safe margins",
+    "shared_chrome": "same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local",
+    "material_language": "luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise",
+    "avoid_items": [
+      "placeholder text",
+      "invented numbers",
+      "watermark",
+      "random icon collage",
+      "full-slide screenshot skin"
+    ]
+  },
+  "quality_target": {
+    "tier": "premium-commercial",
+    "visual_language": "luxury high-density executive information design with complex but legible semantic structure",
+    "must_have": [
+      "one unambiguous focal point per page",
+      "complex but readable layout",
+      "presentation-scale typography",
+      "precise alignment and layered material depth",
+      "semantic regions suitable for later native reconstruction"
+    ],
+    "avoid_items": [
+      "generic four-card template",
+      "neon HUD",
+      "fake charts",
+      "unapproved English labels",
+      "watermarks"
+    ],
+    "readability": {
+      "target_viewing": "16:9 meeting-room presentation",
+      "min_title_px": 56,
+      "min_body_px": 28,
+      "min_annotation_px": 22,
+      "max_visible_copy_items": 30
+    },
+    "commercial_policy": {
+      "exclude_unlicensed_logos": true,
+      "exclude_watermarks": true,
+      "exclude_celebrity_and_trademark_imitation": true,
+      "external_asset_provenance_required": true
+    }
+  },
+  "generation_session": {
+    "session_id": "case-replay-12-imagegen-session-R1",
+    "continuity_policy": "single-model-single-context",
+    "batch_size": 6,
+    "style_anchor": "design-system:case-replay-luxury-dense-v1",
+    "shared_preamble": "同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。"
+  },
+  "generation_contract": {
+    "skill": "ai-ppt-visual-gen",
+    "tool_resolution": "runtime-discovery",
+    "preferred_tool": "imagegen",
+    "backend_policy": "raster-only",
+    "source_retention": "generated-source-and-project-copy",
+    "no_code_overlay": true
+  },
+  "evidence_manifest": "visual-generation-manifest.json",
+  "slides": [
+    {
+      "slide_no": 1,
+      "outline_row_ref": "outline/PPT思路表.csv#row:2",
+      "page_type": "dashboard",
+      "title": "政企客户增长作战舱",
+      "core_logic": "围绕‘政企客户增长作战舱’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "dashboard：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9单页高端国企经营管理PPT视觉稿，主题是‘政企客户增长作战舱’。深海蓝黑底色，联通红和电光蓝作为主强调色，豪华但克制，信息密度高，复杂网格排版，适合管理层会议室远距离阅读。顶部是大标题‘政企客户增长作战舱’，左上角红色Q3标签；上方三张独立KPI卡写‘目标 28.6亿元’、‘路径 18.7亿元’、‘结果 17.3亿元’，每张卡带微型柱状趋势。中部左侧是五步发光箭头流程：01目标洞察、02线索获取、03商机转化、04合同签约、05交付增值；右侧是多环完成率指标。底部左右各一张高密度原生表格，左表标题‘行业增长TOP5’，右表标题‘重点项目进展TOP5’，表头和进度条清晰。使用精细边框、玻璃面板、局部光晕、细线地图纹理和统一线性图标；所有文本清楚、准确、不要水印、不要手机框、不要整页照片。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以政企客户增长作战舱为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用dashboard框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "政企客户增长作战舱的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "重点项目进展TOP5",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "政企客户增长作战舱"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "目标",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[0].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "政企客户增长作战舱",
+          "目标",
+          "路径",
+          "结果",
+          "Q3",
+          "目标洞察",
+          "线索获取",
+          "商机转化",
+          "合同签约",
+          "交付增值",
+          "行业增长TOP5",
+          "重点项目进展TOP5",
+          "28.6",
+          "亿元",
+          "18.7",
+          "17.3",
+          "5"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "政企客户增长作战舱",
+        "modules": [
+          {
+            "label": "政企客户增长作战舱",
+            "title": "目标",
+            "bullets": [
+              "路径",
+              "结果"
+            ],
+            "kpi": "Q3",
+            "tag": "目标洞察",
+            "source_refs": [
+              "case-suite.json#cases[0]"
+            ]
+          },
+          {
+            "label": "路径",
+            "title": "结果",
+            "bullets": [
+              "Q3",
+              "目标洞察"
+            ],
+            "kpi": "线索获取",
+            "tag": "商机转化",
+            "source_refs": [
+              "case-suite.json#cases[0]"
+            ]
+          },
+          {
+            "label": "Q3",
+            "title": "目标洞察",
+            "bullets": [
+              "线索获取",
+              "商机转化"
+            ],
+            "kpi": "合同签约",
+            "tag": "交付增值",
+            "source_refs": [
+              "case-suite.json#cases[0]"
+            ]
+          },
+          {
+            "label": "线索获取",
+            "title": "商机转化",
+            "bullets": [
+              "合同签约",
+              "交付增值"
+            ],
+            "kpi": "行业增长TOP5",
+            "tag": "重点项目进展TOP5",
+            "source_refs": [
+              "case-suite.json#cases[0]"
+            ]
+          }
+        ],
+        "footer_banner": "5"
+      },
+      "formal_text": [
+        {
+          "id": "case-01-text-01",
+          "role": "title",
+          "text": "政企客户增长作战舱",
+          "source_ref": "case-suite.json#cases[0].formal_text[0]"
+        },
+        {
+          "id": "case-01-text-02",
+          "role": "copy",
+          "text": "目标",
+          "source_ref": "case-suite.json#cases[0].formal_text[1]"
+        },
+        {
+          "id": "case-01-text-03",
+          "role": "copy",
+          "text": "路径",
+          "source_ref": "case-suite.json#cases[0].formal_text[2]"
+        },
+        {
+          "id": "case-01-text-04",
+          "role": "copy",
+          "text": "结果",
+          "source_ref": "case-suite.json#cases[0].formal_text[3]"
+        },
+        {
+          "id": "case-01-text-05",
+          "role": "copy",
+          "text": "Q3",
+          "source_ref": "case-suite.json#cases[0].formal_text[4]"
+        },
+        {
+          "id": "case-01-text-06",
+          "role": "copy",
+          "text": "目标洞察",
+          "source_ref": "case-suite.json#cases[0].formal_text[5]"
+        },
+        {
+          "id": "case-01-text-07",
+          "role": "copy",
+          "text": "线索获取",
+          "source_ref": "case-suite.json#cases[0].formal_text[6]"
+        },
+        {
+          "id": "case-01-text-08",
+          "role": "copy",
+          "text": "商机转化",
+          "source_ref": "case-suite.json#cases[0].formal_text[7]"
+        },
+        {
+          "id": "case-01-text-09",
+          "role": "copy",
+          "text": "合同签约",
+          "source_ref": "case-suite.json#cases[0].formal_text[8]"
+        },
+        {
+          "id": "case-01-text-10",
+          "role": "copy",
+          "text": "交付增值",
+          "source_ref": "case-suite.json#cases[0].formal_text[9]"
+        },
+        {
+          "id": "case-01-text-11",
+          "role": "copy",
+          "text": "行业增长TOP5",
+          "source_ref": "case-suite.json#cases[0].formal_text[10]"
+        },
+        {
+          "id": "case-01-text-12",
+          "role": "copy",
+          "text": "重点项目进展TOP5",
+          "source_ref": "case-suite.json#cases[0].formal_text[11]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "three_independent_kpi_cards",
+          "five_process_nodes",
+          "two_native_tables",
+          "native_text",
+          "native_route_metadata"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/01-route-editable-default-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：dashboard\n本页标题：「政企客户增长作战舱」\n核心逻辑：「围绕‘政企客户增长作战舱’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：dashboard：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 dashboard：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「政企客户增长作战舱的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「重点项目进展TOP5」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「政企客户增长作战舱」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9单页高端国企经营管理PPT视觉稿，主题是‘政企客户增长作战舱’。深海蓝黑底色，联通红和电光蓝作为主强调色，豪华但克制，信息密度高，复杂网格排版，适合管理层会议室远距离阅读。顶部是大标题‘政企客户增长作战舱’，左上角红色Q3标签；上方三张独立KPI卡写‘目标 28.6亿元’、‘路径 18.7亿元’、‘结果 17.3亿元’，每张卡带微型柱状趋势。中部左侧是五步发光箭头流程：01目标洞察、02线索获取、03商机转化、04合同签约、05交付增值；右侧是多环完成率指标。底部左右各一张高密度原生表格，左表标题‘行业增长TOP5’，右表标题‘重点项目进展TOP5’，表头和进度条清晰。使用精细边框、玻璃面板、局部光晕、细线地图纹理和统一线性图标；所有文本清楚、准确、不要水印、不要手机框、不要整页照片。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「政企客户增长作战舱」\n- 「目标」\n- 「路径」\n- 「结果」\n- 「Q3」\n- 「目标洞察」\n- 「线索获取」\n- 「商机转化」\n- 「合同签约」\n- 「交付增值」\n- 「行业增长TOP5」\n- 「重点项目进展TOP5」\n- 「28.6」\n- 「亿元」\n- 「18.7」\n- 「17.3」\n- 「5」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-01-text-01；来源：case-suite.json#cases[0].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-02；来源：case-suite.json#cases[0].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-03；来源：case-suite.json#cases[0].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-04；来源：case-suite.json#cases[0].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-05；来源：case-suite.json#cases[0].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-06；来源：case-suite.json#cases[0].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-07；来源：case-suite.json#cases[0].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-08；来源：case-suite.json#cases[0].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-09；来源：case-suite.json#cases[0].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-10；来源：case-suite.json#cases[0].formal_text[9]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-11；来源：case-suite.json#cases[0].formal_text[10]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-01-text-12；来源：case-suite.json#cases[0].formal_text[11]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「目标」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[0].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：three_independent_kpi_cards、five_process_nodes、two_native_tables、native_text、native_route_metadata\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 2,
+      "outline_row_ref": "outline/PPT思路表.csv#row:3",
+      "page_type": "framework",
+      "title": "新质生产力经营框架",
+      "core_logic": "围绕‘新质生产力经营框架’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "framework：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9单页高端国企战略框架PPT，主题‘新质生产力经营框架’。采用深海蓝到墨黑的高级渐变背景，联通红作为战略主线，电光蓝作为能力线，银白文字。标题置于顶部左侧，右上角放精致的战略罗盘和抽象城市网络光效。中央用三层复杂但清晰的立体框架：底层是‘组织、技术、数据、生态’四个独立支撑模块；中层是四张可移动的玻璃圆角卡片‘战略牵引、能力筑基、场景突破、价值兑现’，按从左到右形成递进；顶层是红色结果舱‘经营结果’。用细箭头、连接线、编号徽章、局部光晕和层级阴影表现因果关系。页面信息密度高、留白有节奏、卡片边界明确、所有框和文字可被后续原生重建，不要大段不可读文字、不要水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以新质生产力经营框架为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用framework框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "新质生产力经营框架的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "经营结果",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "新质生产力经营框架"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "战略牵引",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[1].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "新质生产力经营框架",
+          "战略牵引",
+          "能力筑基",
+          "场景突破",
+          "价值兑现",
+          "组织",
+          "技术",
+          "数据",
+          "生态",
+          "经营结果",
+          "3"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "新质生产力经营框架",
+        "modules": [
+          {
+            "label": "新质生产力经营框架",
+            "title": "战略牵引",
+            "bullets": [
+              "能力筑基",
+              "场景突破"
+            ],
+            "kpi": "价值兑现",
+            "tag": "组织",
+            "source_refs": [
+              "case-suite.json#cases[1]"
+            ]
+          },
+          {
+            "label": "能力筑基",
+            "title": "场景突破",
+            "bullets": [
+              "价值兑现",
+              "组织"
+            ],
+            "kpi": "技术",
+            "tag": "数据",
+            "source_refs": [
+              "case-suite.json#cases[1]"
+            ]
+          },
+          {
+            "label": "价值兑现",
+            "title": "组织",
+            "bullets": [
+              "技术",
+              "数据"
+            ],
+            "kpi": "生态",
+            "tag": "经营结果",
+            "source_refs": [
+              "case-suite.json#cases[1]"
+            ]
+          },
+          {
+            "label": "技术",
+            "title": "数据",
+            "bullets": [
+              "生态",
+              "经营结果"
+            ],
+            "kpi": "3",
+            "tag": "新质生产力经营框架",
+            "source_refs": [
+              "case-suite.json#cases[1]"
+            ]
+          }
+        ],
+        "footer_banner": "3"
+      },
+      "formal_text": [
+        {
+          "id": "case-02-text-01",
+          "role": "title",
+          "text": "新质生产力经营框架",
+          "source_ref": "case-suite.json#cases[1].formal_text[0]"
+        },
+        {
+          "id": "case-02-text-02",
+          "role": "copy",
+          "text": "战略牵引",
+          "source_ref": "case-suite.json#cases[1].formal_text[1]"
+        },
+        {
+          "id": "case-02-text-03",
+          "role": "copy",
+          "text": "能力筑基",
+          "source_ref": "case-suite.json#cases[1].formal_text[2]"
+        },
+        {
+          "id": "case-02-text-04",
+          "role": "copy",
+          "text": "场景突破",
+          "source_ref": "case-suite.json#cases[1].formal_text[3]"
+        },
+        {
+          "id": "case-02-text-05",
+          "role": "copy",
+          "text": "价值兑现",
+          "source_ref": "case-suite.json#cases[1].formal_text[4]"
+        },
+        {
+          "id": "case-02-text-06",
+          "role": "copy",
+          "text": "组织",
+          "source_ref": "case-suite.json#cases[1].formal_text[5]"
+        },
+        {
+          "id": "case-02-text-07",
+          "role": "copy",
+          "text": "技术",
+          "source_ref": "case-suite.json#cases[1].formal_text[6]"
+        },
+        {
+          "id": "case-02-text-08",
+          "role": "copy",
+          "text": "数据",
+          "source_ref": "case-suite.json#cases[1].formal_text[7]"
+        },
+        {
+          "id": "case-02-text-09",
+          "role": "copy",
+          "text": "生态",
+          "source_ref": "case-suite.json#cases[1].formal_text[8]"
+        },
+        {
+          "id": "case-02-text-10",
+          "role": "copy",
+          "text": "经营结果",
+          "source_ref": "case-suite.json#cases[1].formal_text[9]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "four_movable_cards",
+          "three_native_layers",
+          "connectors",
+          "native_text",
+          "no_full_slide_picture"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/02-native-shape-card-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：framework\n本页标题：「新质生产力经营框架」\n核心逻辑：「围绕‘新质生产力经营框架’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：framework：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 framework：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「新质生产力经营框架的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「经营结果」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「新质生产力经营框架」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9单页高端国企战略框架PPT，主题‘新质生产力经营框架’。采用深海蓝到墨黑的高级渐变背景，联通红作为战略主线，电光蓝作为能力线，银白文字。标题置于顶部左侧，右上角放精致的战略罗盘和抽象城市网络光效。中央用三层复杂但清晰的立体框架：底层是‘组织、技术、数据、生态’四个独立支撑模块；中层是四张可移动的玻璃圆角卡片‘战略牵引、能力筑基、场景突破、价值兑现’，按从左到右形成递进；顶层是红色结果舱‘经营结果’。用细箭头、连接线、编号徽章、局部光晕和层级阴影表现因果关系。页面信息密度高、留白有节奏、卡片边界明确、所有框和文字可被后续原生重建，不要大段不可读文字、不要水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「新质生产力经营框架」\n- 「战略牵引」\n- 「能力筑基」\n- 「场景突破」\n- 「价值兑现」\n- 「组织」\n- 「技术」\n- 「数据」\n- 「生态」\n- 「经营结果」\n- 「3」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-02-text-01；来源：case-suite.json#cases[1].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-02；来源：case-suite.json#cases[1].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-03；来源：case-suite.json#cases[1].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-04；来源：case-suite.json#cases[1].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-05；来源：case-suite.json#cases[1].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-06；来源：case-suite.json#cases[1].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-07；来源：case-suite.json#cases[1].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-08；来源：case-suite.json#cases[1].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-09；来源：case-suite.json#cases[1].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-02-text-10；来源：case-suite.json#cases[1].formal_text[9]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「战略牵引」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[1].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：four_movable_cards、three_native_layers、connectors、native_text、no_full_slide_picture\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 3,
+      "outline_row_ref": "outline/PPT思路表.csv#row:4",
+      "page_type": "table",
+      "title": "渠道服务费标准总览",
+      "core_logic": "围绕‘渠道服务费标准总览’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "table：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9高端国企政策发布PPT单页，主题‘渠道服务费标准总览’。采用深海蓝背景和联通红标题带，画面以一张占据主体的高密度四列表格为核心，表头为‘业务场景、收入变化、服务费标准、计提周期’，表格分为存量升档、指定套餐、新装发展、渠道激励等业务段落。表头使用红色金属质感，重点结果行用浅红和电光蓝细线强调，单元格有清晰内边距、细灰蓝网格、行组标签和右侧小型政策图标。顶部左侧是标题和一句结论‘统一标准、清晰计提、结果可核对’，右侧是一个精致的政策盾牌图形。信息密度高、排版复杂、表格文字必须可读、线条和列宽严谨，不能把表格做成图片，不能出现水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以渠道服务费标准总览为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用table框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "渠道服务费标准总览的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "渠道激励",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "渠道服务费标准总览"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "业务场景",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[2].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "渠道服务费标准总览",
+          "业务场景",
+          "收入变化",
+          "服务费标准",
+          "计提周期",
+          "存量升档",
+          "指定套餐",
+          "新装发展",
+          "渠道激励",
+          "7",
+          "4"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "渠道服务费标准总览",
+        "modules": [
+          {
+            "label": "渠道服务费标准总览",
+            "title": "业务场景",
+            "bullets": [
+              "收入变化",
+              "服务费标准"
+            ],
+            "kpi": "计提周期",
+            "tag": "存量升档",
+            "source_refs": [
+              "case-suite.json#cases[2]"
+            ]
+          },
+          {
+            "label": "收入变化",
+            "title": "服务费标准",
+            "bullets": [
+              "计提周期",
+              "存量升档"
+            ],
+            "kpi": "指定套餐",
+            "tag": "新装发展",
+            "source_refs": [
+              "case-suite.json#cases[2]"
+            ]
+          },
+          {
+            "label": "计提周期",
+            "title": "存量升档",
+            "bullets": [
+              "指定套餐",
+              "新装发展"
+            ],
+            "kpi": "渠道激励",
+            "tag": "7",
+            "source_refs": [
+              "case-suite.json#cases[2]"
+            ]
+          },
+          {
+            "label": "指定套餐",
+            "title": "新装发展",
+            "bullets": [
+              "渠道激励",
+              "7"
+            ],
+            "kpi": "4",
+            "tag": "渠道服务费标准总览",
+            "source_refs": [
+              "case-suite.json#cases[2]"
+            ]
+          }
+        ],
+        "footer_banner": "4"
+      },
+      "formal_text": [
+        {
+          "id": "case-03-text-01",
+          "role": "title",
+          "text": "渠道服务费标准总览",
+          "source_ref": "case-suite.json#cases[2].formal_text[0]"
+        },
+        {
+          "id": "case-03-text-02",
+          "role": "copy",
+          "text": "业务场景",
+          "source_ref": "case-suite.json#cases[2].formal_text[1]"
+        },
+        {
+          "id": "case-03-text-03",
+          "role": "copy",
+          "text": "收入变化",
+          "source_ref": "case-suite.json#cases[2].formal_text[2]"
+        },
+        {
+          "id": "case-03-text-04",
+          "role": "copy",
+          "text": "服务费标准",
+          "source_ref": "case-suite.json#cases[2].formal_text[3]"
+        },
+        {
+          "id": "case-03-text-05",
+          "role": "copy",
+          "text": "计提周期",
+          "source_ref": "case-suite.json#cases[2].formal_text[4]"
+        },
+        {
+          "id": "case-03-text-06",
+          "role": "copy",
+          "text": "存量升档",
+          "source_ref": "case-suite.json#cases[2].formal_text[5]"
+        },
+        {
+          "id": "case-03-text-07",
+          "role": "copy",
+          "text": "指定套餐",
+          "source_ref": "case-suite.json#cases[2].formal_text[6]"
+        },
+        {
+          "id": "case-03-text-08",
+          "role": "copy",
+          "text": "新装发展",
+          "source_ref": "case-suite.json#cases[2].formal_text[7]"
+        },
+        {
+          "id": "case-03-text-09",
+          "role": "copy",
+          "text": "渠道激励",
+          "source_ref": "case-suite.json#cases[2].formal_text[8]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "one_native_table",
+          "seven_rows",
+          "four_columns",
+          "header_fill",
+          "border_grid",
+          "native_cell_text"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/03-native-table-basic-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：table\n本页标题：「渠道服务费标准总览」\n核心逻辑：「围绕‘渠道服务费标准总览’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：table：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 table：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「渠道服务费标准总览的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「渠道激励」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「渠道服务费标准总览」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9高端国企政策发布PPT单页，主题‘渠道服务费标准总览’。采用深海蓝背景和联通红标题带，画面以一张占据主体的高密度四列表格为核心，表头为‘业务场景、收入变化、服务费标准、计提周期’，表格分为存量升档、指定套餐、新装发展、渠道激励等业务段落。表头使用红色金属质感，重点结果行用浅红和电光蓝细线强调，单元格有清晰内边距、细灰蓝网格、行组标签和右侧小型政策图标。顶部左侧是标题和一句结论‘统一标准、清晰计提、结果可核对’，右侧是一个精致的政策盾牌图形。信息密度高、排版复杂、表格文字必须可读、线条和列宽严谨，不能把表格做成图片，不能出现水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「渠道服务费标准总览」\n- 「业务场景」\n- 「收入变化」\n- 「服务费标准」\n- 「计提周期」\n- 「存量升档」\n- 「指定套餐」\n- 「新装发展」\n- 「渠道激励」\n- 「7」\n- 「4」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-03-text-01；来源：case-suite.json#cases[2].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-03-text-02；来源：case-suite.json#cases[2].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-03-text-03；来源：case-suite.json#cases[2].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-03-text-04；来源：case-suite.json#cases[2].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-03-text-05；来源：case-suite.json#cases[2].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-03-text-06；来源：case-suite.json#cases[2].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-03-text-07；来源：case-suite.json#cases[2].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-03-text-08；来源：case-suite.json#cases[2].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-03-text-09；来源：case-suite.json#cases[2].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「业务场景」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[2].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：one_native_table、seven_rows、four_columns、header_fill、border_grid、native_cell_text\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 4,
+      "outline_row_ref": "outline/PPT思路表.csv#row:5",
+      "page_type": "policy-table",
+      "title": "FTTR渠道激励政策明白卡",
+      "core_logic": "围绕‘FTTR渠道激励政策明白卡’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "policy-table：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9单页豪华高密度国企政策明白卡PPT，主题‘FTTR渠道激励政策明白卡’。联通红、深海蓝和浅粉白为主色，采用清晰的上中下分区。顶部左侧放标题‘FTTR渠道激励政策明白卡’，右侧放红色核心原则徽章‘增收有奖｜减收不罚’。中部横向排列三张独立佣金卡，每张卡有红色标题条、依据、周期、结果和小型线性图标；下方是贯穿页面的红色分隔带。底部左侧是一张政策表，第一列为合并分组单元格，表头为‘场景、收入变化、服务费标准、计提周期’，重点数字和‘增收’用红色粗体；右侧是一张‘月度发展’达量补贴表，包含清晰行列、浅红结果行和蓝色进度标记。所有框、标题条、表格、单元格、合并关系和正文都应有明确边界，不能把框架图或表格做成一张整图，不能出现水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以FTTR渠道激励政策明白卡为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用policy-table框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "FTTR渠道激励政策明白卡的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "结果",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "FTTR渠道激励政策明白卡"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "核心原则",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[3].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "FTTR渠道激励政策明白卡",
+          "核心原则",
+          "增收有奖",
+          "减收不罚",
+          "场景",
+          "收入变化",
+          "服务费标准",
+          "计提周期",
+          "月度发展",
+          "达量补贴标准",
+          "适用渠道",
+          "结果",
+          "9",
+          "4",
+          "1",
+          "0",
+          "2",
+          "3",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "FTTR渠道激励政策明白卡",
+        "modules": [
+          {
+            "label": "FTTR渠道激励政策明白卡",
+            "title": "核心原则",
+            "bullets": [
+              "增收有奖",
+              "减收不罚"
+            ],
+            "kpi": "场景",
+            "tag": "收入变化",
+            "source_refs": [
+              "case-suite.json#cases[3]"
+            ]
+          },
+          {
+            "label": "增收有奖",
+            "title": "减收不罚",
+            "bullets": [
+              "场景",
+              "收入变化"
+            ],
+            "kpi": "服务费标准",
+            "tag": "计提周期",
+            "source_refs": [
+              "case-suite.json#cases[3]"
+            ]
+          },
+          {
+            "label": "场景",
+            "title": "收入变化",
+            "bullets": [
+              "服务费标准",
+              "计提周期"
+            ],
+            "kpi": "月度发展",
+            "tag": "达量补贴标准",
+            "source_refs": [
+              "case-suite.json#cases[3]"
+            ]
+          },
+          {
+            "label": "服务费标准",
+            "title": "计提周期",
+            "bullets": [
+              "月度发展",
+              "达量补贴标准"
+            ],
+            "kpi": "适用渠道",
+            "tag": "结果",
+            "source_refs": [
+              "case-suite.json#cases[3]"
+            ]
+          }
+        ],
+        "footer_banner": "8"
+      },
+      "formal_text": [
+        {
+          "id": "case-04-text-01",
+          "role": "title",
+          "text": "FTTR渠道激励政策明白卡",
+          "source_ref": "case-suite.json#cases[3].formal_text[0]"
+        },
+        {
+          "id": "case-04-text-02",
+          "role": "copy",
+          "text": "核心原则",
+          "source_ref": "case-suite.json#cases[3].formal_text[1]"
+        },
+        {
+          "id": "case-04-text-03",
+          "role": "copy",
+          "text": "增收有奖",
+          "source_ref": "case-suite.json#cases[3].formal_text[2]"
+        },
+        {
+          "id": "case-04-text-04",
+          "role": "copy",
+          "text": "减收不罚",
+          "source_ref": "case-suite.json#cases[3].formal_text[3]"
+        },
+        {
+          "id": "case-04-text-05",
+          "role": "copy",
+          "text": "场景",
+          "source_ref": "case-suite.json#cases[3].formal_text[4]"
+        },
+        {
+          "id": "case-04-text-06",
+          "role": "copy",
+          "text": "收入变化",
+          "source_ref": "case-suite.json#cases[3].formal_text[5]"
+        },
+        {
+          "id": "case-04-text-07",
+          "role": "copy",
+          "text": "服务费标准",
+          "source_ref": "case-suite.json#cases[3].formal_text[6]"
+        },
+        {
+          "id": "case-04-text-08",
+          "role": "copy",
+          "text": "计提周期",
+          "source_ref": "case-suite.json#cases[3].formal_text[7]"
+        },
+        {
+          "id": "case-04-text-09",
+          "role": "copy",
+          "text": "月度发展",
+          "source_ref": "case-suite.json#cases[3].formal_text[8]"
+        },
+        {
+          "id": "case-04-text-10",
+          "role": "copy",
+          "text": "达量补贴标准",
+          "source_ref": "case-suite.json#cases[3].formal_text[9]"
+        },
+        {
+          "id": "case-04-text-11",
+          "role": "copy",
+          "text": "适用渠道",
+          "source_ref": "case-suite.json#cases[3].formal_text[10]"
+        },
+        {
+          "id": "case-04-text-12",
+          "role": "copy",
+          "text": "结果",
+          "source_ref": "case-suite.json#cases[3].formal_text[11]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "three_native_tables",
+          "merged_first_column",
+          "rich_text_cells",
+          "red_emphasis_runs",
+          "native_panels",
+          "mutation_smoke"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/04-native-table-merge-richtext-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：policy-table\n本页标题：「FTTR渠道激励政策明白卡」\n核心逻辑：「围绕‘FTTR渠道激励政策明白卡’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：policy-table：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 policy-table：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「FTTR渠道激励政策明白卡的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「结果」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「FTTR渠道激励政策明白卡」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9单页豪华高密度国企政策明白卡PPT，主题‘FTTR渠道激励政策明白卡’。联通红、深海蓝和浅粉白为主色，采用清晰的上中下分区。顶部左侧放标题‘FTTR渠道激励政策明白卡’，右侧放红色核心原则徽章‘增收有奖｜减收不罚’。中部横向排列三张独立佣金卡，每张卡有红色标题条、依据、周期、结果和小型线性图标；下方是贯穿页面的红色分隔带。底部左侧是一张政策表，第一列为合并分组单元格，表头为‘场景、收入变化、服务费标准、计提周期’，重点数字和‘增收’用红色粗体；右侧是一张‘月度发展’达量补贴表，包含清晰行列、浅红结果行和蓝色进度标记。所有框、标题条、表格、单元格、合并关系和正文都应有明确边界，不能把框架图或表格做成一张整图，不能出现水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「FTTR渠道激励政策明白卡」\n- 「核心原则」\n- 「增收有奖」\n- 「减收不罚」\n- 「场景」\n- 「收入变化」\n- 「服务费标准」\n- 「计提周期」\n- 「月度发展」\n- 「达量补贴标准」\n- 「适用渠道」\n- 「结果」\n- 「9」\n- 「4」\n- 「1」\n- 「0」\n- 「2」\n- 「3」\n- 「5」\n- 「6」\n- 「7」\n- 「8」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-04-text-01；来源：case-suite.json#cases[3].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-02；来源：case-suite.json#cases[3].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-03；来源：case-suite.json#cases[3].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-04；来源：case-suite.json#cases[3].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-05；来源：case-suite.json#cases[3].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-06；来源：case-suite.json#cases[3].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-07；来源：case-suite.json#cases[3].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-08；来源：case-suite.json#cases[3].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-09；来源：case-suite.json#cases[3].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-10；来源：case-suite.json#cases[3].formal_text[9]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-11；来源：case-suite.json#cases[3].formal_text[10]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-04-text-12；来源：case-suite.json#cases[3].formal_text[11]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「核心原则」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[3].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：three_native_tables、merged_first_column、rich_text_cells、red_emphasis_runs、native_panels、mutation_smoke\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 5,
+      "outline_row_ref": "outline/PPT思路表.csv#row:6",
+      "page_type": "text-visual",
+      "title": "政企客户服务攻坚战",
+      "core_logic": "围绕‘政企客户服务攻坚战’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "text-visual：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9高端国企客户服务主题PPT，标题‘政企客户服务攻坚战’，副标题用短英文‘Service Excellence’。整体为深海蓝黑底，联通红强调关键数字，电光蓝表现流程和连接。左侧是大标题、结论句和三个纵向重点：一线响应、专业交付、客户成功；中间是复杂的客户旅程路径图，包含触达、诊断、交付、复盘四个节点；右侧是一个大型96.8%闭环率环形指标和本周重点列表。底部放三列责任卡：关键动作、责任到人、结果复盘。要求中英文混排清晰，数字红色粗体，英文细体，中文正文层级分明，字距、行距和基线精致，整体信息密度高但远看清楚，所有正式文字清晰可读，不要水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以政企客户服务攻坚战为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用text-visual框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "政企客户服务攻坚战的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "闭环率 96.8%",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "政企客户服务攻坚战"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "Service Excellence",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[4].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "政企客户服务攻坚战",
+          "Service Excellence",
+          "一线响应",
+          "专业交付",
+          "客户成功",
+          "本周重点",
+          "关键动作",
+          "责任到人",
+          "闭环率 96.8%",
+          "8"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "政企客户服务攻坚战",
+        "modules": [
+          {
+            "label": "政企客户服务攻坚战",
+            "title": "Service Excellence",
+            "bullets": [
+              "一线响应",
+              "专业交付"
+            ],
+            "kpi": "客户成功",
+            "tag": "本周重点",
+            "source_refs": [
+              "case-suite.json#cases[4]"
+            ]
+          },
+          {
+            "label": "一线响应",
+            "title": "专业交付",
+            "bullets": [
+              "客户成功",
+              "本周重点"
+            ],
+            "kpi": "关键动作",
+            "tag": "责任到人",
+            "source_refs": [
+              "case-suite.json#cases[4]"
+            ]
+          },
+          {
+            "label": "客户成功",
+            "title": "本周重点",
+            "bullets": [
+              "关键动作",
+              "责任到人"
+            ],
+            "kpi": "闭环率 96.8%",
+            "tag": "8",
+            "source_refs": [
+              "case-suite.json#cases[4]"
+            ]
+          },
+          {
+            "label": "关键动作",
+            "title": "责任到人",
+            "bullets": [
+              "闭环率 96.8%",
+              "8"
+            ],
+            "kpi": "政企客户服务攻坚战",
+            "tag": "Service Excellence",
+            "source_refs": [
+              "case-suite.json#cases[4]"
+            ]
+          }
+        ],
+        "footer_banner": "8"
+      },
+      "formal_text": [
+        {
+          "id": "case-05-text-01",
+          "role": "title",
+          "text": "政企客户服务攻坚战",
+          "source_ref": "case-suite.json#cases[4].formal_text[0]"
+        },
+        {
+          "id": "case-05-text-02",
+          "role": "copy",
+          "text": "Service Excellence",
+          "source_ref": "case-suite.json#cases[4].formal_text[1]"
+        },
+        {
+          "id": "case-05-text-03",
+          "role": "copy",
+          "text": "一线响应",
+          "source_ref": "case-suite.json#cases[4].formal_text[2]"
+        },
+        {
+          "id": "case-05-text-04",
+          "role": "copy",
+          "text": "专业交付",
+          "source_ref": "case-suite.json#cases[4].formal_text[3]"
+        },
+        {
+          "id": "case-05-text-05",
+          "role": "copy",
+          "text": "客户成功",
+          "source_ref": "case-suite.json#cases[4].formal_text[4]"
+        },
+        {
+          "id": "case-05-text-06",
+          "role": "copy",
+          "text": "本周重点",
+          "source_ref": "case-suite.json#cases[4].formal_text[5]"
+        },
+        {
+          "id": "case-05-text-07",
+          "role": "copy",
+          "text": "关键动作",
+          "source_ref": "case-suite.json#cases[4].formal_text[6]"
+        },
+        {
+          "id": "case-05-text-08",
+          "role": "copy",
+          "text": "责任到人",
+          "source_ref": "case-suite.json#cases[4].formal_text[7]"
+        },
+        {
+          "id": "case-05-text-09",
+          "role": "copy",
+          "text": "闭环率 96.8%",
+          "source_ref": "case-suite.json#cases[4].formal_text[8]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "native_cjk_text",
+          "native_english_text",
+          "run_level_color",
+          "font_manifest",
+          "no_raster_formal_text"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/05-native-text-cjk-font-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：text-visual\n本页标题：「政企客户服务攻坚战」\n核心逻辑：「围绕‘政企客户服务攻坚战’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：text-visual：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 text-visual：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「政企客户服务攻坚战的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「闭环率 96.8%」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「政企客户服务攻坚战」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9高端国企客户服务主题PPT，标题‘政企客户服务攻坚战’，副标题用短英文‘Service Excellence’。整体为深海蓝黑底，联通红强调关键数字，电光蓝表现流程和连接。左侧是大标题、结论句和三个纵向重点：一线响应、专业交付、客户成功；中间是复杂的客户旅程路径图，包含触达、诊断、交付、复盘四个节点；右侧是一个大型96.8%闭环率环形指标和本周重点列表。底部放三列责任卡：关键动作、责任到人、结果复盘。要求中英文混排清晰，数字红色粗体，英文细体，中文正文层级分明，字距、行距和基线精致，整体信息密度高但远看清楚，所有正式文字清晰可读，不要水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「政企客户服务攻坚战」\n- 「Service Excellence」\n- 「一线响应」\n- 「专业交付」\n- 「客户成功」\n- 「本周重点」\n- 「关键动作」\n- 「责任到人」\n- 「闭环率 96.8%」\n- 「8」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-05-text-01；来源：case-suite.json#cases[4].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-05-text-02；来源：case-suite.json#cases[4].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-05-text-03；来源：case-suite.json#cases[4].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-05-text-04；来源：case-suite.json#cases[4].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-05-text-05；来源：case-suite.json#cases[4].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-05-text-06；来源：case-suite.json#cases[4].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-05-text-07；来源：case-suite.json#cases[4].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-05-text-08；来源：case-suite.json#cases[4].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-05-text-09；来源：case-suite.json#cases[4].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「Service Excellence」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[4].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：native_cjk_text、native_english_text、run_level_color、font_manifest、no_raster_formal_text\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 6,
+      "outline_row_ref": "outline/PPT思路表.csv#row:7",
+      "page_type": "chart",
+      "title": "政企行业增长结构",
+      "core_logic": "围绕‘政企行业增长结构’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "chart：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9豪华高密度政企经营分析PPT，主题‘2026上半年政企行业增长结构’。深海蓝背景，联通红和电光蓝双系列数据配色。左侧是大型横向分组柱状图，五个行业依次为政府、教育、医疗、交通、制造，红色表示目标，蓝色表示实际，轴单位为亿元；右侧是一个带同比增长箭头的结构解读面板，列出政府8.6/5.2、教育5.2/3.1、医疗4.6/2.6、交通3.8/2.2、制造3.4/1.9。顶部有标题和一句结论‘政府与教育仍是规模增长主引擎’，底部有小型排名条和数据口径说明。图表标尺、图例、标签和数字清楚准确，构图复杂但阅读路径明确，不能使用虚构数据，不能出现水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以政企行业增长结构为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用chart框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "政企行业增长结构的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "同比增长",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "政企行业增长结构"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "2026上半年政企行业增长结构",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[5].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "政企行业增长结构",
+          "2026上半年政企行业增长结构",
+          "政府",
+          "教育",
+          "医疗",
+          "交通",
+          "制造",
+          "目标",
+          "实际",
+          "同比增长",
+          "8.6",
+          "5.2",
+          "4.6",
+          "3.8",
+          "3.4",
+          "3.1",
+          "2.6",
+          "2.2",
+          "1.9",
+          "亿元"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "政企行业增长结构",
+        "modules": [
+          {
+            "label": "政企行业增长结构",
+            "title": "2026上半年政企行业增长结构",
+            "bullets": [
+              "政府",
+              "教育"
+            ],
+            "kpi": "医疗",
+            "tag": "交通",
+            "source_refs": [
+              "case-suite.json#cases[5]"
+            ]
+          },
+          {
+            "label": "政府",
+            "title": "教育",
+            "bullets": [
+              "医疗",
+              "交通"
+            ],
+            "kpi": "制造",
+            "tag": "目标",
+            "source_refs": [
+              "case-suite.json#cases[5]"
+            ]
+          },
+          {
+            "label": "医疗",
+            "title": "交通",
+            "bullets": [
+              "制造",
+              "目标"
+            ],
+            "kpi": "实际",
+            "tag": "同比增长",
+            "source_refs": [
+              "case-suite.json#cases[5]"
+            ]
+          },
+          {
+            "label": "制造",
+            "title": "目标",
+            "bullets": [
+              "实际",
+              "同比增长"
+            ],
+            "kpi": "8.6",
+            "tag": "5.2",
+            "source_refs": [
+              "case-suite.json#cases[5]"
+            ]
+          }
+        ],
+        "footer_banner": "亿元"
+      },
+      "formal_text": [
+        {
+          "id": "case-06-text-01",
+          "role": "title",
+          "text": "政企行业增长结构",
+          "source_ref": "case-suite.json#cases[5].formal_text[0]"
+        },
+        {
+          "id": "case-06-text-02",
+          "role": "copy",
+          "text": "2026上半年政企行业增长结构",
+          "source_ref": "case-suite.json#cases[5].formal_text[1]"
+        },
+        {
+          "id": "case-06-text-03",
+          "role": "copy",
+          "text": "政府",
+          "source_ref": "case-suite.json#cases[5].formal_text[2]"
+        },
+        {
+          "id": "case-06-text-04",
+          "role": "copy",
+          "text": "教育",
+          "source_ref": "case-suite.json#cases[5].formal_text[3]"
+        },
+        {
+          "id": "case-06-text-05",
+          "role": "copy",
+          "text": "医疗",
+          "source_ref": "case-suite.json#cases[5].formal_text[4]"
+        },
+        {
+          "id": "case-06-text-06",
+          "role": "copy",
+          "text": "交通",
+          "source_ref": "case-suite.json#cases[5].formal_text[5]"
+        },
+        {
+          "id": "case-06-text-07",
+          "role": "copy",
+          "text": "制造",
+          "source_ref": "case-suite.json#cases[5].formal_text[6]"
+        },
+        {
+          "id": "case-06-text-08",
+          "role": "copy",
+          "text": "目标",
+          "source_ref": "case-suite.json#cases[5].formal_text[7]"
+        },
+        {
+          "id": "case-06-text-09",
+          "role": "copy",
+          "text": "实际",
+          "source_ref": "case-suite.json#cases[5].formal_text[8]"
+        },
+        {
+          "id": "case-06-text-10",
+          "role": "copy",
+          "text": "同比增长",
+          "source_ref": "case-suite.json#cases[5].formal_text[9]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "native_chart_or_primitives",
+          "source_exact_data",
+          "axis_labels",
+          "legend",
+          "native_annotations"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/06-chart-data-provenance-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：chart\n本页标题：「政企行业增长结构」\n核心逻辑：「围绕‘政企行业增长结构’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：chart：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 chart：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「政企行业增长结构的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「同比增长」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「政企行业增长结构」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9豪华高密度政企经营分析PPT，主题‘2026上半年政企行业增长结构’。深海蓝背景，联通红和电光蓝双系列数据配色。左侧是大型横向分组柱状图，五个行业依次为政府、教育、医疗、交通、制造，红色表示目标，蓝色表示实际，轴单位为亿元；右侧是一个带同比增长箭头的结构解读面板，列出政府8.6/5.2、教育5.2/3.1、医疗4.6/2.6、交通3.8/2.2、制造3.4/1.9。顶部有标题和一句结论‘政府与教育仍是规模增长主引擎’，底部有小型排名条和数据口径说明。图表标尺、图例、标签和数字清楚准确，构图复杂但阅读路径明确，不能使用虚构数据，不能出现水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「政企行业增长结构」\n- 「2026上半年政企行业增长结构」\n- 「政府」\n- 「教育」\n- 「医疗」\n- 「交通」\n- 「制造」\n- 「目标」\n- 「实际」\n- 「同比增长」\n- 「8.6」\n- 「5.2」\n- 「4.6」\n- 「3.8」\n- 「3.4」\n- 「3.1」\n- 「2.6」\n- 「2.2」\n- 「1.9」\n- 「亿元」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-06-text-01；来源：case-suite.json#cases[5].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-02；来源：case-suite.json#cases[5].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-03；来源：case-suite.json#cases[5].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-04；来源：case-suite.json#cases[5].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-05；来源：case-suite.json#cases[5].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-06；来源：case-suite.json#cases[5].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-07；来源：case-suite.json#cases[5].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-08；来源：case-suite.json#cases[5].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-09；来源：case-suite.json#cases[5].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-06-text-10；来源：case-suite.json#cases[5].formal_text[9]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「2026上半年政企行业增长结构」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[5].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：native_chart_or_primitives、source_exact_data、axis_labels、legend、native_annotations\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 7,
+      "outline_row_ref": "outline/PPT思路表.csv#row:8",
+      "page_type": "visual-system",
+      "title": "5G-A能力全景",
+      "core_logic": "围绕‘5G-A能力全景’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "visual-system：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9高端科技国企发布会PPT，主题‘5G-A能力全景’。使用深海蓝黑空间背景、红蓝紫渐变光带、悬浮玻璃面板和高质量独立科技图标。中央是一个巨大的发光轨道球体，四周环绕四个能力模块：连接、算力、感知、智能；每个模块有独立的线性图标、短标签和细小数据指示。左右两侧用不对称的高级面板呈现低时延、大上行、确定性网络三项能力，底部用一条渐变波纹连接到行业价值。画面要有豪华发布会质感、复杂层次、精确透视、细腻光晕和清晰留白，图标与渐变视觉资产保持独立，不要在复杂视觉资产中嵌入大段文字，不要水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以5G-A能力全景为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用visual-system框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "5G-A能力全景的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "确定性网络",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "5G-A能力全景"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "连接",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[6].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "5G-A能力全景",
+          "连接",
+          "算力",
+          "感知",
+          "智能",
+          "行业价值",
+          "低时延",
+          "大上行",
+          "确定性网络",
+          "4",
+          "orbital_ring",
+          "network_node",
+          "gradient_wave",
+          "industry_icons"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "5G-A能力全景",
+        "modules": [
+          {
+            "label": "5G-A能力全景",
+            "title": "连接",
+            "bullets": [
+              "算力",
+              "感知"
+            ],
+            "kpi": "智能",
+            "tag": "行业价值",
+            "source_refs": [
+              "case-suite.json#cases[6]"
+            ]
+          },
+          {
+            "label": "算力",
+            "title": "感知",
+            "bullets": [
+              "智能",
+              "行业价值"
+            ],
+            "kpi": "低时延",
+            "tag": "大上行",
+            "source_refs": [
+              "case-suite.json#cases[6]"
+            ]
+          },
+          {
+            "label": "智能",
+            "title": "行业价值",
+            "bullets": [
+              "低时延",
+              "大上行"
+            ],
+            "kpi": "确定性网络",
+            "tag": "4",
+            "source_refs": [
+              "case-suite.json#cases[6]"
+            ]
+          },
+          {
+            "label": "低时延",
+            "title": "大上行",
+            "bullets": [
+              "确定性网络",
+              "4"
+            ],
+            "kpi": "orbital_ring",
+            "tag": "network_node",
+            "source_refs": [
+              "case-suite.json#cases[6]"
+            ]
+          }
+        ],
+        "footer_banner": "industry_icons"
+      },
+      "formal_text": [
+        {
+          "id": "case-07-text-01",
+          "role": "title",
+          "text": "5G-A能力全景",
+          "source_ref": "case-suite.json#cases[6].formal_text[0]"
+        },
+        {
+          "id": "case-07-text-02",
+          "role": "copy",
+          "text": "连接",
+          "source_ref": "case-suite.json#cases[6].formal_text[1]"
+        },
+        {
+          "id": "case-07-text-03",
+          "role": "copy",
+          "text": "算力",
+          "source_ref": "case-suite.json#cases[6].formal_text[2]"
+        },
+        {
+          "id": "case-07-text-04",
+          "role": "copy",
+          "text": "感知",
+          "source_ref": "case-suite.json#cases[6].formal_text[3]"
+        },
+        {
+          "id": "case-07-text-05",
+          "role": "copy",
+          "text": "智能",
+          "source_ref": "case-suite.json#cases[6].formal_text[4]"
+        },
+        {
+          "id": "case-07-text-06",
+          "role": "copy",
+          "text": "行业价值",
+          "source_ref": "case-suite.json#cases[6].formal_text[5]"
+        },
+        {
+          "id": "case-07-text-07",
+          "role": "copy",
+          "text": "低时延",
+          "source_ref": "case-suite.json#cases[6].formal_text[6]"
+        },
+        {
+          "id": "case-07-text-08",
+          "role": "copy",
+          "text": "大上行",
+          "source_ref": "case-suite.json#cases[6].formal_text[7]"
+        },
+        {
+          "id": "case-07-text-09",
+          "role": "copy",
+          "text": "确定性网络",
+          "source_ref": "case-suite.json#cases[6].formal_text[8]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "independent_visual_assets",
+          "native_labels",
+          "gradient_inventory",
+          "no_text_in_assets",
+          "asset_provenance"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/07-visual-assets-gradient-icon-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：visual-system\n本页标题：「5G-A能力全景」\n核心逻辑：「围绕‘5G-A能力全景’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：visual-system：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 visual-system：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「5G-A能力全景的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「确定性网络」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「5G-A能力全景」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9高端科技国企发布会PPT，主题‘5G-A能力全景’。使用深海蓝黑空间背景、红蓝紫渐变光带、悬浮玻璃面板和高质量独立科技图标。中央是一个巨大的发光轨道球体，四周环绕四个能力模块：连接、算力、感知、智能；每个模块有独立的线性图标、短标签和细小数据指示。左右两侧用不对称的高级面板呈现低时延、大上行、确定性网络三项能力，底部用一条渐变波纹连接到行业价值。画面要有豪华发布会质感、复杂层次、精确透视、细腻光晕和清晰留白，图标与渐变视觉资产保持独立，不要在复杂视觉资产中嵌入大段文字，不要水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「5G-A能力全景」\n- 「连接」\n- 「算力」\n- 「感知」\n- 「智能」\n- 「行业价值」\n- 「低时延」\n- 「大上行」\n- 「确定性网络」\n- 「4」\n- 「orbital_ring」\n- 「network_node」\n- 「gradient_wave」\n- 「industry_icons」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-07-text-01；来源：case-suite.json#cases[6].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-07-text-02；来源：case-suite.json#cases[6].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-07-text-03；来源：case-suite.json#cases[6].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-07-text-04；来源：case-suite.json#cases[6].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-07-text-05；来源：case-suite.json#cases[6].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-07-text-06；来源：case-suite.json#cases[6].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-07-text-07；来源：case-suite.json#cases[6].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-07-text-08；来源：case-suite.json#cases[6].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-07-text-09；来源：case-suite.json#cases[6].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「连接」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[6].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：independent_visual_assets、native_labels、gradient_inventory、no_text_in_assets、asset_provenance\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 8,
+      "outline_row_ref": "outline/PPT思路表.csv#row:9",
+      "page_type": "irregular-framework",
+      "title": "存量用户价值提升作战图",
+      "core_logic": "围绕‘存量用户价值提升作战图’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "irregular-framework：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9高端国企经营作战图PPT，主题‘存量用户价值提升作战图’。背景采用深蓝网格和轻微地图纹理，联通红作为作战主轴。画面不是规整四宫格，而是一个有明显层级和不对称节奏的复杂作战地图：左侧五个递进节点‘识别、分层、触达、转化、留存’，通过红蓝发光连接线穿过中央三类用户分群‘高价值、潜力用户、风险用户’，右侧汇聚到大型结果面板‘作战结果’。顶部有策略结论，底部有三条行动清单。使用折角面板、斜切标签、半透明区域、箭头、编号、光晕和细线，保持每个语义面板独立可移动的视觉边界；不要把所有内容做成一张整图，不要水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以存量用户价值提升作战图为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用irregular-framework框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "存量用户价值提升作战图的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "作战结果",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "存量用户价值提升作战图"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "识别",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[7].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "存量用户价值提升作战图",
+          "识别",
+          "分层",
+          "触达",
+          "转化",
+          "留存",
+          "高价值",
+          "潜力用户",
+          "风险用户",
+          "作战结果",
+          "5",
+          "3"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "存量用户价值提升作战图",
+        "modules": [
+          {
+            "label": "存量用户价值提升作战图",
+            "title": "识别",
+            "bullets": [
+              "分层",
+              "触达"
+            ],
+            "kpi": "转化",
+            "tag": "留存",
+            "source_refs": [
+              "case-suite.json#cases[7]"
+            ]
+          },
+          {
+            "label": "分层",
+            "title": "触达",
+            "bullets": [
+              "转化",
+              "留存"
+            ],
+            "kpi": "高价值",
+            "tag": "潜力用户",
+            "source_refs": [
+              "case-suite.json#cases[7]"
+            ]
+          },
+          {
+            "label": "转化",
+            "title": "留存",
+            "bullets": [
+              "高价值",
+              "潜力用户"
+            ],
+            "kpi": "风险用户",
+            "tag": "作战结果",
+            "source_refs": [
+              "case-suite.json#cases[7]"
+            ]
+          },
+          {
+            "label": "高价值",
+            "title": "潜力用户",
+            "bullets": [
+              "风险用户",
+              "作战结果"
+            ],
+            "kpi": "5",
+            "tag": "3",
+            "source_refs": [
+              "case-suite.json#cases[7]"
+            ]
+          }
+        ],
+        "footer_banner": "3"
+      },
+      "formal_text": [
+        {
+          "id": "case-08-text-01",
+          "role": "title",
+          "text": "存量用户价值提升作战图",
+          "source_ref": "case-suite.json#cases[7].formal_text[0]"
+        },
+        {
+          "id": "case-08-text-02",
+          "role": "copy",
+          "text": "识别",
+          "source_ref": "case-suite.json#cases[7].formal_text[1]"
+        },
+        {
+          "id": "case-08-text-03",
+          "role": "copy",
+          "text": "分层",
+          "source_ref": "case-suite.json#cases[7].formal_text[2]"
+        },
+        {
+          "id": "case-08-text-04",
+          "role": "copy",
+          "text": "触达",
+          "source_ref": "case-suite.json#cases[7].formal_text[3]"
+        },
+        {
+          "id": "case-08-text-05",
+          "role": "copy",
+          "text": "转化",
+          "source_ref": "case-suite.json#cases[7].formal_text[4]"
+        },
+        {
+          "id": "case-08-text-06",
+          "role": "copy",
+          "text": "留存",
+          "source_ref": "case-suite.json#cases[7].formal_text[5]"
+        },
+        {
+          "id": "case-08-text-07",
+          "role": "copy",
+          "text": "高价值",
+          "source_ref": "case-suite.json#cases[7].formal_text[6]"
+        },
+        {
+          "id": "case-08-text-08",
+          "role": "copy",
+          "text": "潜力用户",
+          "source_ref": "case-suite.json#cases[7].formal_text[7]"
+        },
+        {
+          "id": "case-08-text-09",
+          "role": "copy",
+          "text": "风险用户",
+          "source_ref": "case-suite.json#cases[7].formal_text[8]"
+        },
+        {
+          "id": "case-08-text-10",
+          "role": "copy",
+          "text": "作战结果",
+          "source_ref": "case-suite.json#cases[7].formal_text[9]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "irregular_native_regions",
+          "layer_order",
+          "connectors",
+          "independent_panels",
+          "native_text"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/08-framework-irregular-layer-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：irregular-framework\n本页标题：「存量用户价值提升作战图」\n核心逻辑：「围绕‘存量用户价值提升作战图’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：irregular-framework：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 irregular-framework：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「存量用户价值提升作战图的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「作战结果」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「存量用户价值提升作战图」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9高端国企经营作战图PPT，主题‘存量用户价值提升作战图’。背景采用深蓝网格和轻微地图纹理，联通红作为作战主轴。画面不是规整四宫格，而是一个有明显层级和不对称节奏的复杂作战地图：左侧五个递进节点‘识别、分层、触达、转化、留存’，通过红蓝发光连接线穿过中央三类用户分群‘高价值、潜力用户、风险用户’，右侧汇聚到大型结果面板‘作战结果’。顶部有策略结论，底部有三条行动清单。使用折角面板、斜切标签、半透明区域、箭头、编号、光晕和细线，保持每个语义面板独立可移动的视觉边界；不要把所有内容做成一张整图，不要水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「存量用户价值提升作战图」\n- 「识别」\n- 「分层」\n- 「触达」\n- 「转化」\n- 「留存」\n- 「高价值」\n- 「潜力用户」\n- 「风险用户」\n- 「作战结果」\n- 「5」\n- 「3」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-08-text-01；来源：case-suite.json#cases[7].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-02；来源：case-suite.json#cases[7].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-03；来源：case-suite.json#cases[7].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-04；来源：case-suite.json#cases[7].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-05；来源：case-suite.json#cases[7].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-06；来源：case-suite.json#cases[7].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-07；来源：case-suite.json#cases[7].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-08；来源：case-suite.json#cases[7].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-09；来源：case-suite.json#cases[7].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-08-text-10；来源：case-suite.json#cases[7].formal_text[9]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「识别」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[7].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：irregular_native_regions、layer_order、connectors、independent_panels、native_text\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 9,
+      "outline_row_ref": "outline/PPT思路表.csv#row:10",
+      "page_type": "multi-module-overview",
+      "title": "经营闭环一页总览",
+      "core_logic": "围绕‘经营闭环一页总览’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "multi-module-overview：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9高端国企经营管理PPT，主题‘经营闭环一页总览’。全页采用统一深海蓝、联通红、电光蓝设计系统，展示五个同源但内容不同的模块卡：目标设定、过程经营、问题诊断、资源调度、结果复盘，沿着一个巨大的环形箭头顺时针排列。每个模块有相同的标题基线、编号徽章、图标位置、指标条和小型说明；中心是‘统一口径｜统一节奏｜统一动作’三行核心原则。顶部标题区和底部复盘横条保持严格对齐，页面信息密度高、视觉节奏复杂、组件重复一致、边距和圆角统一，不要水印、不要照片背景。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以经营闭环一页总览为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用multi-module-overview框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "经营闭环一页总览的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "统一动作",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "经营闭环一页总览"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "目标设定",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[8].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "经营闭环一页总览",
+          "目标设定",
+          "过程经营",
+          "问题诊断",
+          "资源调度",
+          "结果复盘",
+          "统一口径",
+          "统一节奏",
+          "统一动作",
+          "5",
+          "module-card"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "经营闭环一页总览",
+        "modules": [
+          {
+            "label": "经营闭环一页总览",
+            "title": "目标设定",
+            "bullets": [
+              "过程经营",
+              "问题诊断"
+            ],
+            "kpi": "资源调度",
+            "tag": "结果复盘",
+            "source_refs": [
+              "case-suite.json#cases[8]"
+            ]
+          },
+          {
+            "label": "过程经营",
+            "title": "问题诊断",
+            "bullets": [
+              "资源调度",
+              "结果复盘"
+            ],
+            "kpi": "统一口径",
+            "tag": "统一节奏",
+            "source_refs": [
+              "case-suite.json#cases[8]"
+            ]
+          },
+          {
+            "label": "资源调度",
+            "title": "结果复盘",
+            "bullets": [
+              "统一口径",
+              "统一节奏"
+            ],
+            "kpi": "统一动作",
+            "tag": "5",
+            "source_refs": [
+              "case-suite.json#cases[8]"
+            ]
+          },
+          {
+            "label": "统一口径",
+            "title": "统一节奏",
+            "bullets": [
+              "统一动作",
+              "5"
+            ],
+            "kpi": "module-card",
+            "tag": "经营闭环一页总览",
+            "source_refs": [
+              "case-suite.json#cases[8]"
+            ]
+          }
+        ],
+        "footer_banner": "module-card"
+      },
+      "formal_text": [
+        {
+          "id": "case-09-text-01",
+          "role": "title",
+          "text": "经营闭环一页总览",
+          "source_ref": "case-suite.json#cases[8].formal_text[0]"
+        },
+        {
+          "id": "case-09-text-02",
+          "role": "copy",
+          "text": "目标设定",
+          "source_ref": "case-suite.json#cases[8].formal_text[1]"
+        },
+        {
+          "id": "case-09-text-03",
+          "role": "copy",
+          "text": "过程经营",
+          "source_ref": "case-suite.json#cases[8].formal_text[2]"
+        },
+        {
+          "id": "case-09-text-04",
+          "role": "copy",
+          "text": "问题诊断",
+          "source_ref": "case-suite.json#cases[8].formal_text[3]"
+        },
+        {
+          "id": "case-09-text-05",
+          "role": "copy",
+          "text": "资源调度",
+          "source_ref": "case-suite.json#cases[8].formal_text[4]"
+        },
+        {
+          "id": "case-09-text-06",
+          "role": "copy",
+          "text": "结果复盘",
+          "source_ref": "case-suite.json#cases[8].formal_text[5]"
+        },
+        {
+          "id": "case-09-text-07",
+          "role": "copy",
+          "text": "统一口径",
+          "source_ref": "case-suite.json#cases[8].formal_text[6]"
+        },
+        {
+          "id": "case-09-text-08",
+          "role": "copy",
+          "text": "统一节奏",
+          "source_ref": "case-suite.json#cases[8].formal_text[7]"
+        },
+        {
+          "id": "case-09-text-09",
+          "role": "copy",
+          "text": "统一动作",
+          "source_ref": "case-suite.json#cases[8].formal_text[8]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "five_repeated_modules",
+          "consistent_tokens",
+          "full_deck_identity",
+          "native_text",
+          "stable_geometry"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/09-multi-slide-consistency-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：multi-module-overview\n本页标题：「经营闭环一页总览」\n核心逻辑：「围绕‘经营闭环一页总览’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：multi-module-overview：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 multi-module-overview：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「经营闭环一页总览的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「统一动作」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「经营闭环一页总览」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9高端国企经营管理PPT，主题‘经营闭环一页总览’。全页采用统一深海蓝、联通红、电光蓝设计系统，展示五个同源但内容不同的模块卡：目标设定、过程经营、问题诊断、资源调度、结果复盘，沿着一个巨大的环形箭头顺时针排列。每个模块有相同的标题基线、编号徽章、图标位置、指标条和小型说明；中心是‘统一口径｜统一节奏｜统一动作’三行核心原则。顶部标题区和底部复盘横条保持严格对齐，页面信息密度高、视觉节奏复杂、组件重复一致、边距和圆角统一，不要水印、不要照片背景。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「经营闭环一页总览」\n- 「目标设定」\n- 「过程经营」\n- 「问题诊断」\n- 「资源调度」\n- 「结果复盘」\n- 「统一口径」\n- 「统一节奏」\n- 「统一动作」\n- 「5」\n- 「module-card」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-09-text-01；来源：case-suite.json#cases[8].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-09-text-02；来源：case-suite.json#cases[8].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-09-text-03；来源：case-suite.json#cases[8].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-09-text-04；来源：case-suite.json#cases[8].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-09-text-05；来源：case-suite.json#cases[8].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-09-text-06；来源：case-suite.json#cases[8].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-09-text-07；来源：case-suite.json#cases[8].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-09-text-08；来源：case-suite.json#cases[8].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-09-text-09；来源：case-suite.json#cases[8].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「目标设定」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[8].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：five_repeated_modules、consistent_tokens、full_deck_identity、native_text、stable_geometry\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 10,
+      "outline_row_ref": "outline/PPT思路表.csv#row:11",
+      "page_type": "governance-flow",
+      "title": "AI-PPT质量门禁与停机机制",
+      "core_logic": "围绕‘AI-PPT质量门禁与停机机制’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "governance-flow：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9高端企业AI工程治理PPT，主题‘AI-PPT质量门禁与停机机制’。深海蓝黑底，联通红用于警示和停机，电光蓝用于正常流程。顶部是标题和结论‘未知问题不猜测，证据不足就停机’。中部是一条复杂五段流程：输入校验、路由确认、原生结构、视觉回归、人工收口；每段有独立面板、编号、校验图标和状态灯。右侧分出醒目的红色异常分支面板：未知问题、立即停机、不得静默回退；配合锁、盾牌和断路器图标。底部是证据链条：baseline、candidate、object audit、visual compare、mutation smoke。信息密度高、治理感强、结构边界清晰，不要水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以AI-PPT质量门禁与停机机制为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用governance-flow框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "AI-PPT质量门禁与停机机制的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "不得静默回退",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "AI-PPT质量门禁与停机机制"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "输入校验",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[9].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "AI-PPT质量门禁与停机机制",
+          "输入校验",
+          "路由确认",
+          "原生结构",
+          "视觉回归",
+          "人工收口",
+          "未知问题",
+          "立即停机",
+          "不得静默回退",
+          "5"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "AI-PPT质量门禁与停机机制",
+        "modules": [
+          {
+            "label": "AI-PPT质量门禁与停机机制",
+            "title": "输入校验",
+            "bullets": [
+              "路由确认",
+              "原生结构"
+            ],
+            "kpi": "视觉回归",
+            "tag": "人工收口",
+            "source_refs": [
+              "case-suite.json#cases[9]"
+            ]
+          },
+          {
+            "label": "路由确认",
+            "title": "原生结构",
+            "bullets": [
+              "视觉回归",
+              "人工收口"
+            ],
+            "kpi": "未知问题",
+            "tag": "立即停机",
+            "source_refs": [
+              "case-suite.json#cases[9]"
+            ]
+          },
+          {
+            "label": "视觉回归",
+            "title": "人工收口",
+            "bullets": [
+              "未知问题",
+              "立即停机"
+            ],
+            "kpi": "不得静默回退",
+            "tag": "5",
+            "source_refs": [
+              "case-suite.json#cases[9]"
+            ]
+          },
+          {
+            "label": "未知问题",
+            "title": "立即停机",
+            "bullets": [
+              "不得静默回退",
+              "5"
+            ],
+            "kpi": "AI-PPT质量门禁与停机机制",
+            "tag": "输入校验",
+            "source_refs": [
+              "case-suite.json#cases[9]"
+            ]
+          }
+        ],
+        "footer_banner": "5"
+      },
+      "formal_text": [
+        {
+          "id": "case-10-text-01",
+          "role": "title",
+          "text": "AI-PPT质量门禁与停机机制",
+          "source_ref": "case-suite.json#cases[9].formal_text[0]"
+        },
+        {
+          "id": "case-10-text-02",
+          "role": "copy",
+          "text": "输入校验",
+          "source_ref": "case-suite.json#cases[9].formal_text[1]"
+        },
+        {
+          "id": "case-10-text-03",
+          "role": "copy",
+          "text": "路由确认",
+          "source_ref": "case-suite.json#cases[9].formal_text[2]"
+        },
+        {
+          "id": "case-10-text-04",
+          "role": "copy",
+          "text": "原生结构",
+          "source_ref": "case-suite.json#cases[9].formal_text[3]"
+        },
+        {
+          "id": "case-10-text-05",
+          "role": "copy",
+          "text": "视觉回归",
+          "source_ref": "case-suite.json#cases[9].formal_text[4]"
+        },
+        {
+          "id": "case-10-text-06",
+          "role": "copy",
+          "text": "人工收口",
+          "source_ref": "case-suite.json#cases[9].formal_text[5]"
+        },
+        {
+          "id": "case-10-text-07",
+          "role": "copy",
+          "text": "未知问题",
+          "source_ref": "case-suite.json#cases[9].formal_text[6]"
+        },
+        {
+          "id": "case-10-text-08",
+          "role": "copy",
+          "text": "立即停机",
+          "source_ref": "case-suite.json#cases[9].formal_text[7]"
+        },
+        {
+          "id": "case-10-text-09",
+          "role": "copy",
+          "text": "不得静默回退",
+          "source_ref": "case-suite.json#cases[9].formal_text[8]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "five_gate_nodes",
+          "failure_branch",
+          "red_stop_panel",
+          "native_text",
+          "audit_labels"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/10-failure-fallback-stop-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：governance-flow\n本页标题：「AI-PPT质量门禁与停机机制」\n核心逻辑：「围绕‘AI-PPT质量门禁与停机机制’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：governance-flow：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 governance-flow：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「AI-PPT质量门禁与停机机制的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「不得静默回退」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「AI-PPT质量门禁与停机机制」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9高端企业AI工程治理PPT，主题‘AI-PPT质量门禁与停机机制’。深海蓝黑底，联通红用于警示和停机，电光蓝用于正常流程。顶部是标题和结论‘未知问题不猜测，证据不足就停机’。中部是一条复杂五段流程：输入校验、路由确认、原生结构、视觉回归、人工收口；每段有独立面板、编号、校验图标和状态灯。右侧分出醒目的红色异常分支面板：未知问题、立即停机、不得静默回退；配合锁、盾牌和断路器图标。底部是证据链条：baseline、candidate、object audit、visual compare、mutation smoke。信息密度高、治理感强、结构边界清晰，不要水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「AI-PPT质量门禁与停机机制」\n- 「输入校验」\n- 「路由确认」\n- 「原生结构」\n- 「视觉回归」\n- 「人工收口」\n- 「未知问题」\n- 「立即停机」\n- 「不得静默回退」\n- 「5」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-10-text-01；来源：case-suite.json#cases[9].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-10-text-02；来源：case-suite.json#cases[9].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-10-text-03；来源：case-suite.json#cases[9].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-10-text-04；来源：case-suite.json#cases[9].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-10-text-05；来源：case-suite.json#cases[9].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-10-text-06；来源：case-suite.json#cases[9].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-10-text-07；来源：case-suite.json#cases[9].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-10-text-08；来源：case-suite.json#cases[9].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-10-text-09；来源：case-suite.json#cases[9].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「输入校验」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[9].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：five_gate_nodes、failure_branch、red_stop_panel、native_text、audit_labels\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 11,
+      "outline_row_ref": "outline/PPT思路表.csv#row:12",
+      "page_type": "architecture-matrix",
+      "title": "可编辑PPT交付运行矩阵",
+      "core_logic": "围绕‘可编辑PPT交付运行矩阵’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "architecture-matrix：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9高端软件工程与企业交付PPT，主题‘可编辑PPT交付运行矩阵’。深海蓝背景，红色用于契约锁定，蓝色用于运行链路，银白用于说明文字。左侧用五层叠加架构展示技能包、运行时、字体、渲染器、PPTX包；右侧用三列环境矩阵展示桌面WPS、移动端WPS、CI Runner，每个单元格有清晰的通过/风险状态和小型设备或服务器图标。中部用一条粗细有节奏的连接线说明‘同一源文件→同一证据→可复现交付’，底部放四个硬门禁标签：包完整、字体可见、渲染一致、哈希锁定。画面复杂、专业、网格精准、文本可读，不要水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以可编辑PPT交付运行矩阵为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用architecture-matrix框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "可编辑PPT交付运行矩阵的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "可复现交付",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "可编辑PPT交付运行矩阵"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "技能包",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[10].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "可编辑PPT交付运行矩阵",
+          "技能包",
+          "运行时",
+          "字体",
+          "渲染器",
+          "PPTX包",
+          "桌面WPS",
+          "移动端WPS",
+          "CI Runner",
+          "可复现交付",
+          "5",
+          "3"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "可编辑PPT交付运行矩阵",
+        "modules": [
+          {
+            "label": "可编辑PPT交付运行矩阵",
+            "title": "技能包",
+            "bullets": [
+              "运行时",
+              "字体"
+            ],
+            "kpi": "渲染器",
+            "tag": "PPTX包",
+            "source_refs": [
+              "case-suite.json#cases[10]"
+            ]
+          },
+          {
+            "label": "运行时",
+            "title": "字体",
+            "bullets": [
+              "渲染器",
+              "PPTX包"
+            ],
+            "kpi": "桌面WPS",
+            "tag": "移动端WPS",
+            "source_refs": [
+              "case-suite.json#cases[10]"
+            ]
+          },
+          {
+            "label": "渲染器",
+            "title": "PPTX包",
+            "bullets": [
+              "桌面WPS",
+              "移动端WPS"
+            ],
+            "kpi": "CI Runner",
+            "tag": "可复现交付",
+            "source_refs": [
+              "case-suite.json#cases[10]"
+            ]
+          },
+          {
+            "label": "桌面WPS",
+            "title": "移动端WPS",
+            "bullets": [
+              "CI Runner",
+              "可复现交付"
+            ],
+            "kpi": "5",
+            "tag": "3",
+            "source_refs": [
+              "case-suite.json#cases[10]"
+            ]
+          }
+        ],
+        "footer_banner": "3"
+      },
+      "formal_text": [
+        {
+          "id": "case-11-text-01",
+          "role": "title",
+          "text": "可编辑PPT交付运行矩阵",
+          "source_ref": "case-suite.json#cases[10].formal_text[0]"
+        },
+        {
+          "id": "case-11-text-02",
+          "role": "copy",
+          "text": "技能包",
+          "source_ref": "case-suite.json#cases[10].formal_text[1]"
+        },
+        {
+          "id": "case-11-text-03",
+          "role": "copy",
+          "text": "运行时",
+          "source_ref": "case-suite.json#cases[10].formal_text[2]"
+        },
+        {
+          "id": "case-11-text-04",
+          "role": "copy",
+          "text": "字体",
+          "source_ref": "case-suite.json#cases[10].formal_text[3]"
+        },
+        {
+          "id": "case-11-text-05",
+          "role": "copy",
+          "text": "渲染器",
+          "source_ref": "case-suite.json#cases[10].formal_text[4]"
+        },
+        {
+          "id": "case-11-text-06",
+          "role": "copy",
+          "text": "PPTX包",
+          "source_ref": "case-suite.json#cases[10].formal_text[5]"
+        },
+        {
+          "id": "case-11-text-07",
+          "role": "copy",
+          "text": "桌面WPS",
+          "source_ref": "case-suite.json#cases[10].formal_text[6]"
+        },
+        {
+          "id": "case-11-text-08",
+          "role": "copy",
+          "text": "移动端WPS",
+          "source_ref": "case-suite.json#cases[10].formal_text[7]"
+        },
+        {
+          "id": "case-11-text-09",
+          "role": "copy",
+          "text": "CI Runner",
+          "source_ref": "case-suite.json#cases[10].formal_text[8]"
+        },
+        {
+          "id": "case-11-text-10",
+          "role": "copy",
+          "text": "可复现交付",
+          "source_ref": "case-suite.json#cases[10].formal_text[9]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "layered_architecture",
+          "native_matrix",
+          "environment_labels",
+          "native_text",
+          "package_evidence"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/11-package-render-portability-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：architecture-matrix\n本页标题：「可编辑PPT交付运行矩阵」\n核心逻辑：「围绕‘可编辑PPT交付运行矩阵’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：architecture-matrix：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 architecture-matrix：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「可编辑PPT交付运行矩阵的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「可复现交付」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「可编辑PPT交付运行矩阵」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9高端软件工程与企业交付PPT，主题‘可编辑PPT交付运行矩阵’。深海蓝背景，红色用于契约锁定，蓝色用于运行链路，银白用于说明文字。左侧用五层叠加架构展示技能包、运行时、字体、渲染器、PPTX包；右侧用三列环境矩阵展示桌面WPS、移动端WPS、CI Runner，每个单元格有清晰的通过/风险状态和小型设备或服务器图标。中部用一条粗细有节奏的连接线说明‘同一源文件→同一证据→可复现交付’，底部放四个硬门禁标签：包完整、字体可见、渲染一致、哈希锁定。画面复杂、专业、网格精准、文本可读，不要水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「可编辑PPT交付运行矩阵」\n- 「技能包」\n- 「运行时」\n- 「字体」\n- 「渲染器」\n- 「PPTX包」\n- 「桌面WPS」\n- 「移动端WPS」\n- 「CI Runner」\n- 「可复现交付」\n- 「5」\n- 「3」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-11-text-01；来源：case-suite.json#cases[10].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-02；来源：case-suite.json#cases[10].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-03；来源：case-suite.json#cases[10].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-04；来源：case-suite.json#cases[10].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-05；来源：case-suite.json#cases[10].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-06；来源：case-suite.json#cases[10].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-07；来源：case-suite.json#cases[10].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-08；来源：case-suite.json#cases[10].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-09；来源：case-suite.json#cases[10].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-11-text-10；来源：case-suite.json#cases[10].formal_text[9]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「技能包」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[10].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：layered_architecture、native_matrix、environment_labels、native_text、package_evidence\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    },
+    {
+      "slide_no": 12,
+      "outline_row_ref": "outline/PPT思路表.csv#row:13",
+      "page_type": "pipeline",
+      "title": "增量渲染与缓存幂等流水线",
+      "core_logic": "围绕‘增量渲染与缓存幂等流水线’建立一条可核对、可移动、可回放的页面关系。",
+      "visual_framework": "pipeline：以语义对象和证据链构成复杂信息框架",
+      "visual_generation_prompt": "生成一张16:9高端AI工程效率PPT，主题‘增量渲染与缓存幂等流水线’。深海蓝黑背景，联通红强调哈希与锁，电光蓝表现并行流水线，银白表现证据。顶部放标题和三个指标：缓存命中率86%、返工次数1、结果稳定100%。中央是一条五段流水线：源文件哈希、页面级缓存、受影响区域、并行QA、重复运行；第二和第三阶段分出三条并行支路，分别是视觉比较、对象审计、字体检查，最后汇聚到绿色/蓝色稳定结果舱。底部用小型时间轴表现首轮、修复轮、回归轮的耗时变化。要求结构复杂、连接线清楚、层级统一、所有节点和指标边界可后续原生重建，不要水印。",
+      "closure_treatment": "将结论融入主框架或右侧结果舱；不强制使用全宽底栏。",
+      "detailed_content_paragraphs": [
+        "页面以增量渲染与缓存幂等流水线为唯一主题，使用批准案例中的正式文字和数据，建立清晰的管理层阅读入口。",
+        "页面主关系采用pipeline框架，区分面板、文字、表格、图表、连接线和独立视觉资产，避免重复编码同一关系。",
+        "所有可核对的文字和数据保持可追溯；复杂渐变、图标和装饰只承担视觉语义，不承载正式文字。"
+      ],
+      "layout_blueprint": {
+        "focal_point": "增量渲染与缓存幂等流水线的主关系与结果区域",
+        "reading_path": "标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁",
+        "zones": [
+          {
+            "name": "header",
+            "purpose": "标题、结论和页级识别",
+            "position": "top",
+            "content_capacity": "一个标题与一个短结论"
+          },
+          {
+            "name": "primary-framework",
+            "purpose": "承载页面主关系",
+            "position": "center",
+            "content_capacity": "主要节点、连接线、面板或图表"
+          },
+          {
+            "name": "evidence-rail",
+            "purpose": "承载可核对数据和辅助说明",
+            "position": "right-or-bottom",
+            "content_capacity": "两到三组证据"
+          },
+          {
+            "name": "closure",
+            "purpose": "结果、风险或下一步",
+            "position": "page-local",
+            "content_capacity": "一个短收束，不固定成横幅"
+          }
+        ],
+        "anti_template_rules": [
+          "不得把页面做成无语义的等尺寸卡片墙",
+          "不得用第二套编号重复同一条关系",
+          "表格、面板和正文必须保留明确视觉边界"
+        ]
+      },
+      "keyword_emphasis": {
+        "rules": [
+          "只对批准文字中的关键词做行内强调，不新增或改写正式文字。"
+        ],
+        "items": [
+          {
+            "text": "结果稳定",
+            "color": "#E60012",
+            "scope": "page conclusion or action close",
+            "treatment": "inline emphasis"
+          }
+        ]
+      },
+      "visual_assertions": {
+        "ocr_lang": "chi_sim+eng",
+        "ocr_failure_policy": "manual-review",
+        "readback_scope": "all-render-copy",
+        "must_contain_text": [
+          "增量渲染与缓存幂等流水线"
+        ],
+        "forbidden_text": [
+          "placeholder",
+          "Lorem",
+          "待补充",
+          "示意文字"
+        ],
+        "min_ink_ratio": 0.01
+      },
+      "diagram_annotations": [
+        {
+          "text": "源文件哈希",
+          "purpose": "标记主关系中的一个批准节点",
+          "scope": "primary framework",
+          "approved_by": "user-directed case suite",
+          "source_ref": "case-suite.json#cases[11].formal_text"
+        }
+      ],
+      "reference_treatment": {
+        "mode": "none",
+        "source_role": "无外部参考图；以本案例生成图作为后续还原的固定视觉权威",
+        "preserve": [
+          "本套案例的16:9画布和统一设计锁"
+        ],
+        "exclude": [
+          "未批准文字、虚构数据、未授权品牌标记"
+        ]
+      },
+      "copy_contract": {
+        "render_authority": "render_copy",
+        "render_copy": [
+          "增量渲染与缓存幂等流水线",
+          "源文件哈希",
+          "页面级缓存",
+          "受影响区域",
+          "并行QA",
+          "重复运行",
+          "缓存命中率",
+          "返工次数",
+          "结果稳定",
+          "5",
+          "86%",
+          "1",
+          "100%"
+        ],
+        "exact_once": true,
+        "max_total_chars": 900
+      },
+      "representation_policy": {
+        "one_primary_encoding": true,
+        "avoid_duplicate_summary": true,
+        "secondary_elements": "只增加新的决策线索或证据，不重复主关系、结论或步骤。",
+        "prohibited_patterns": [
+          "同一关系使用两套编号",
+          "重复结论栏",
+          "表格与图片重复承载同一数据"
+        ]
+      },
+      "content_model": {
+        "intro": "增量渲染与缓存幂等流水线",
+        "modules": [
+          {
+            "label": "增量渲染与缓存幂等流水线",
+            "title": "源文件哈希",
+            "bullets": [
+              "页面级缓存",
+              "受影响区域"
+            ],
+            "kpi": "并行QA",
+            "tag": "重复运行",
+            "source_refs": [
+              "case-suite.json#cases[11]"
+            ]
+          },
+          {
+            "label": "页面级缓存",
+            "title": "受影响区域",
+            "bullets": [
+              "并行QA",
+              "重复运行"
+            ],
+            "kpi": "缓存命中率",
+            "tag": "返工次数",
+            "source_refs": [
+              "case-suite.json#cases[11]"
+            ]
+          },
+          {
+            "label": "并行QA",
+            "title": "重复运行",
+            "bullets": [
+              "缓存命中率",
+              "返工次数"
+            ],
+            "kpi": "结果稳定",
+            "tag": "5",
+            "source_refs": [
+              "case-suite.json#cases[11]"
+            ]
+          },
+          {
+            "label": "缓存命中率",
+            "title": "返工次数",
+            "bullets": [
+              "结果稳定",
+              "5"
+            ],
+            "kpi": "86%",
+            "tag": "1",
+            "source_refs": [
+              "case-suite.json#cases[11]"
+            ]
+          }
+        ],
+        "footer_banner": "100%"
+      },
+      "formal_text": [
+        {
+          "id": "case-12-text-01",
+          "role": "title",
+          "text": "增量渲染与缓存幂等流水线",
+          "source_ref": "case-suite.json#cases[11].formal_text[0]"
+        },
+        {
+          "id": "case-12-text-02",
+          "role": "copy",
+          "text": "源文件哈希",
+          "source_ref": "case-suite.json#cases[11].formal_text[1]"
+        },
+        {
+          "id": "case-12-text-03",
+          "role": "copy",
+          "text": "页面级缓存",
+          "source_ref": "case-suite.json#cases[11].formal_text[2]"
+        },
+        {
+          "id": "case-12-text-04",
+          "role": "copy",
+          "text": "受影响区域",
+          "source_ref": "case-suite.json#cases[11].formal_text[3]"
+        },
+        {
+          "id": "case-12-text-05",
+          "role": "copy",
+          "text": "并行QA",
+          "source_ref": "case-suite.json#cases[11].formal_text[4]"
+        },
+        {
+          "id": "case-12-text-06",
+          "role": "copy",
+          "text": "重复运行",
+          "source_ref": "case-suite.json#cases[11].formal_text[5]"
+        },
+        {
+          "id": "case-12-text-07",
+          "role": "copy",
+          "text": "缓存命中率",
+          "source_ref": "case-suite.json#cases[11].formal_text[6]"
+        },
+        {
+          "id": "case-12-text-08",
+          "role": "copy",
+          "text": "返工次数",
+          "source_ref": "case-suite.json#cases[11].formal_text[7]"
+        },
+        {
+          "id": "case-12-text-09",
+          "role": "copy",
+          "text": "结果稳定",
+          "source_ref": "case-suite.json#cases[11].formal_text[8]"
+        }
+      ],
+      "visual_assets": {
+        "icons": [
+          "five_pipeline_nodes",
+          "cache_metrics",
+          "parallel_branches",
+          "native_text",
+          "stable_connectors"
+        ],
+        "background_texture": "深海蓝网格、细线和克制光晕"
+      },
+      "reference_images": [],
+      "prompt_file": "prompts/12-cache-idempotency-01.md",
+      "production_prompt": "生成一张 16:9 横版图片型演示幻灯片，目标约 2048×1152 像素。画面要适合会议室观看，四周保留安全边距，关键文字不要贴边；必须使用真实 raster 图像生成后端。\n\n【整体风格】\n统一遵循本 deck 的设计系统：deep-sea navy glass, restrained metallic red and electric blue；字体为Noto Sans CJK SC / clean executive sans-serif；图标为consistent fine-line enterprise icons；配色固定为：primary #061A35；accent-red #E60012；electric-blue #1687FF；silver #F4F7FB。\n网格：12-column 16:9 executive grid with stable title baseline and safe margins。跨页固定元素：same title baseline, color system, evidence discipline and independent semantic regions; closure remains page-local。材质语言：luxurious through precise hierarchy, glass depth, fine linework, controlled glow and no decorative noise。信息密度与层级要清晰，重点数字最大，标题次之，正文可读，模块严格对齐。\n\n【本页角色与叙事】\n页面类型：pipeline\n本页标题：「增量渲染与缓存幂等流水线」\n核心逻辑：「围绕‘增量渲染与缓存幂等流水线’建立一条可核对、可移动、可回放的页面关系。」\n视觉框架：pipeline：以语义对象和证据链构成复杂信息框架。使用该框架组织阅读路径，但不要把“视觉框架”这个元标签额外渲染到画面上。\n\n【A1 生成上下文】\n受众：「国企经营管理层、业务负责人和专业评审」\n语言：「简体中文，必要时保留短英文标签」\n演示场景：「高端管理层会议室单页评审」\n本 deck 共 12 页；本页必须与整套 deck 共用同一套配色、字体层级和图标语言。\n\n【生图前叙事审批闸门】\n审批思路表：outline/PPT思路表.csv；叙事修订：R1-case-replay-12；审批状态：approved；正式文字权威：approved-outline-table。只按已批准的页序、核心思想和页面大纲组织画面；不要替用户重排故事、扩写结论或新增事实。\n\n【整套连续生成锁】\n会话 ID：case-replay-12-imagegen-session-R1\n连续性策略：single-model-single-context\n建议批量：6 页；风格锚点：design-system:case-replay-luxury-dense-v1\n共享前置语：同一套案例使用同一模型、同一上下文和同一设计锁；只改变页面叙事框架，不改变材质、字级和视觉语言。\n同一套 deck 必须在同一个图像模型和同一连续上下文中生成；页面差异只能来自已批准的叙事框架，不得更换字体气质、材质、光影、图标语言、标题基线或页面收束规则。\n\n【商用级视觉质量标准】\n质量档位：premium-commercial；视觉语言：luxury high-density executive information design with complex but legible semantic structure\n必须具备：one unambiguous focal point per page；complex but readable layout；presentation-scale typography；precise alignment and layered material depth；semantic regions suitable for later native reconstruction。\n可读性下限：标题约 56px、正文约 28px、图示标注约 22px；每页可见文字项目原则上不超过 30 项。\n禁止：generic four-card template、neon HUD、fake charts、unapproved English labels、watermarks。\n商用安全：不使用未授权 Logo；不使用水印；不仿冒名人、商标或品牌；外部素材必须有来源/授权记录。\n豪华感来自信息层级、负空间、材料质感、光影深度、精确对齐和少量高价值装饰，不来自堆叠装饰、无意义英文标签或把页面填满。\n\n【语言与标签规则】\n中文 deck：默认只使用 approved outline/正式文字中的中文、数字和已批准英文；禁止自动添加 Why/What/How、STEP、英文副标题、英文装饰标签或双语微文案。\n\n【A4 有界恢复策略】\n最多每页 2 次；范围：single-slide；触发条件：image-generation failure、missing or garbled approved copy、collapsed reading path or unusable layout。只重试问题页，不重跑已通过页面。\n\n【版式结构】\n沿着“页眉标题区 → 主体视觉框架 → 模块/图表说明 → 页面结论/行动收束”的阅读路径构图；顶部建立标题、导语和短强调线，中部用 pipeline：以语义对象和证据链构成复杂信息框架 承载模块，保留清晰的焦点、留白、连接线和语义化微件。每个模块至少具备标题、要点、重点数字或标签层级；不要退化成无信息的通用卡片模板。\n\n【区域蓝图（必须按区域分配容量）】\n主焦点：「增量渲染与缓存幂等流水线的主关系与结果区域」\n阅读路径：「标题与结论 → 主框架 → 证据面板/表格 → 结果或门禁」\n区域与容量：\n- header：标题、结论和页级识别（top；一个标题与一个短结论）\n- primary-framework：承载页面主关系（center；主要节点、连接线、面板或图表）\n- evidence-rail：承载可核对数据和辅助说明（right-or-bottom；两到三组证据）\n- closure：结果、风险或下一步（page-local；一个短收束，不固定成横幅）\n反模板护栏：\n- 不得把页面做成无语义的等尺寸卡片墙\n- 不得用第二套编号重复同一条关系\n- 表格、面板和正文必须保留明确视觉边界\n区域蓝图优先约束空间关系：主焦点必须比装饰更突出，阅读路径必须可见，区域必须容纳下方全部正式文字；不要把所有内容压缩成等宽等高的孤立卡片。\n\n【页面收束策略】\n将结论融入主框架或右侧结果舱；不强制使用全宽底栏。\n结论文案是内容字段，不是固定组件；除非本页策略明确要求，否则不要生成与其它页面相同的全宽底栏、深色横幅或重复页脚。\n\n【关系表达防重复】\n同一主关系只保留一套主视觉编码：是。\n避免把同一结论再做成第二套摘要/节点/编号：是。\n允许的次级元素：只增加新的决策线索或证据，不重复主关系、结论或步骤。。\n禁止模式：同一关系使用两套编号、重复结论栏、表格与图片重复承载同一数据。\n\n【重点词着色语义（必须保留）】\n执行规则：\n- 只对批准文字中的关键词做行内强调，不新增或改写正式文字。\n逐词颜色映射：\n- 「结果稳定」 → #E60012；范围：page conclusion or action close；处理：inline emphasis\n页面结论或行动收束若列出重点词，必须在原有语句内保留重点词颜色，不得把整句统一成单色；不得把重点词改写成额外标签或数据。\n\n【生成后视觉断言（必须回读）】\n这些是生成后回读断言，不是新增页面文字；生成完成后必须逐页检查并记录结果。\n回读范围：唯一渲染清单中的全部文字；缺失、改写、合并或重复均视为失败。\nOCR 必须识别到：「增量渲染与缓存幂等流水线」\nOCR 不得识别到：「placeholder」、「Lorem」、「待补充」、「示意文字」\n整页非背景墨迹比例至少为：0.01。\n\n【视觉生成描述】\n生成一张16:9高端AI工程效率PPT，主题‘增量渲染与缓存幂等流水线’。深海蓝黑背景，联通红强调哈希与锁，电光蓝表现并行流水线，银白表现证据。顶部放标题和三个指标：缓存命中率86%、返工次数1、结果稳定100%。中央是一条五段流水线：源文件哈希、页面级缓存、受影响区域、并行QA、重复运行；第二和第三阶段分出三条并行支路，分别是视觉比较、对象审计、字体检查，最后汇聚到绿色/蓝色稳定结果舱。底部用小型时间轴表现首轮、修复轮、回归轮的耗时变化。要求结构复杂、连接线清楚、层级统一、所有节点和指标边界可后续原生重建，不要水印。\n以上段落只描述画面、材质、光照和视觉流向；它不是完整出图指令，必须与下面的正式文字合并执行。\n\n【页面内容结构】\n导语槽：1 条\n模块 1：子标签、标题、重点数字、标签、要点 2 条\n模块 2：子标签、标题、重点数字、标签、要点 2 条\n模块 3：子标签、标题、重点数字、标签、要点 2 条\n模块 4：子标签、标题、重点数字、标签、要点 2 条\n页面收束槽：1 条，位置遵循本页 closure_treatment\n\n【A2 内容厚度储备（仅用于容量规划）】\nA2 已准备 3 段详细内容储备；它们只用于理解信息厚度与模块容量，不得原样渲染，也不得从中新增页面文字。\n不要把内容储备段落原样排版；页面只能渲染下方白名单中的正式文字和获批图示标注。\n\n【页面文字唯一渲染清单（逐字照排，每条最多出现一次）】\n以下是唯一允许排版的可见文字，必须原样保留，包含中文标点、数字、大小写和专名；不得改写、删减、翻译、补充事实，也不得把同一条文字复制到第二个模块、摘要、编号或页脚：\n- 「增量渲染与缓存幂等流水线」\n- 「源文件哈希」\n- 「页面级缓存」\n- 「受影响区域」\n- 「并行QA」\n- 「重复运行」\n- 「缓存命中率」\n- 「返工次数」\n- 「结果稳定」\n- 「5」\n- 「86%」\n- 「1」\n- 「100%」\n\n【正式文字来源锚点（只用于审计，不是第二份排版清单）】\n以下来源只用于核对唯一渲染清单的权威性；不要把它们另排一遍，也不要把结构字段和正式文字分别渲染：\n- [title] id=case-12-text-01；来源：case-suite.json#cases[11].formal_text[0]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-12-text-02；来源：case-suite.json#cases[11].formal_text[1]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-12-text-03；来源：case-suite.json#cases[11].formal_text[2]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-12-text-04；来源：case-suite.json#cases[11].formal_text[3]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-12-text-05；来源：case-suite.json#cases[11].formal_text[4]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-12-text-06；来源：case-suite.json#cases[11].formal_text[5]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-12-text-07；来源：case-suite.json#cases[11].formal_text[6]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-12-text-08；来源：case-suite.json#cases[11].formal_text[7]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n- [copy] id=case-12-text-09；来源：case-suite.json#cases[11].formal_text[8]；文本已纳入唯一渲染清单，只用于校对，不得再次排版\n\n【批准的图示标注】\n仅允许以下明确批准的图示标注作为关系层文字：\n- 「源文件哈希」；用途：标记主关系中的一个批准节点；范围：primary framework；批准依据：user-directed case suite；来源：case-suite.json#cases[11].formal_text\n这些词不是经营数据，也不是新增事实；只能放在声明的图示范围内，不得扩写成新的说明句。\n\n【文字白名单（强约束）】\n画面中只能出现【页面文字唯一渲染清单】和【批准的图示标注】中的文字；【正式文字来源锚点】不增加新的可见文字。每条批准文字最多出现一次，除非 copy_contract 明确允许重复；不得新增任何中文或英文标签、图表坐标、装饰性短句、虚构指标、伪数据或参考图文字。若需要表达关系，优先使用图标、连接线、箭头、节点和色彩；只有已批准的图示标注可以作为关系层文字。所有英文缩写也必须已经出现在上述正式文字或批准的图示标注中。\n\n【图标与装饰】\n图标语义：five_pipeline_nodes、cache_metrics、parallel_branches、native_text、stable_connectors\n背景纹理：深海蓝网格、细线和克制光晕\n使用少量精致、语义明确、笔画统一的商务图标、连接线、箭头、进度或节点微件提升信息表达；优先用结构、材质、负空间和光影建立高级感，禁止随机图标拼贴或无意义英文标签；装饰不得抢夺核心文字焦点。\n\n【字体与可读性】\n重点数字 > 主标题 > 模块标题 > 子标签 > 正文要点。标题约为正文 2.5–3 倍，重点数字再放大；正文不要小到会议室不可读，单卡正文控制在 2–4 行，保持高对比与统一字重。\n中文页面禁止通过缩小字号塞入更多内容；宁可合并、删减或拆页，也不要形成密集小字墙。\n\n【参考图隔离规则】\n无外部参考图；不得引入未经批准的文字、配色或品牌元素。\n\n【生成硬约束】\n不得编造任何数据、日期、机构、地名或专名；不得使用 SVG、HTML、Canvas、Pillow、ImageMagick 或其它代码绘图冒充 raster 出图；不得用代码补字或盖字，文字错漏只能修改本提示词后重新生成。不得加入页码、logo、水印或未批准的品牌元素。除非它本身就是批准文案，不得出现 placeholder、Lorem、待补充、示意文字、空白项目符号或用省略号代替正文。避免：placeholder text、invented numbers、watermark、random icon collage、full-slide screenshot skin。成品必须是包含全部上述真实文字的完整图片型幻灯片，不是占位模板、空卡片或无字背景。"
+    }
+  ]
+}

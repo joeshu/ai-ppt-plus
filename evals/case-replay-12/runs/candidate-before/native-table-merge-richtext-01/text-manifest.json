@@ -1,0 +1,76 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "FTTR渠道激励政策明白卡",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "增收有奖｜减收不罚",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "principle-badge-text",
+          "text_id": "principle-badge-text",
+          "content": "增收有奖\n减收不罚",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "commission-card-1-title",
+          "text_id": "commission-card-1-title",
+          "content": "核心原则",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "commission-card-1-copy",
+          "text_id": "commission-card-1-copy",
+          "content": "增收有奖",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "commission-card-2-title",
+          "text_id": "commission-card-2-title",
+          "content": "场景",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "commission-card-2-copy",
+          "text_id": "commission-card-2-copy",
+          "content": "达量补贴标准",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "commission-card-3-title",
+          "text_id": "commission-card-3-title",
+          "content": "结果",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "commission-card-3-copy",
+          "text_id": "commission-card-3-copy",
+          "content": "结果可核对",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "merge-note",
+          "text_id": "merge-note",
+          "content": "3 native tables / merged first column / rich-text runs",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

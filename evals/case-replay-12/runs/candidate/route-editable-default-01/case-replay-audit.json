@@ -1,0 +1,385 @@
+{
+  "schema": "ai-ppt-plus/case-replay-object-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate/route-editable-default-01/editable.pptx",
+  "deck_sha256": "e017220881cb9faf4885c0474c087c8231cfb965be148ab0590150c4c5e0f825",
+  "object_manifest": "runs/candidate/route-editable-default-01/object-manifest.json",
+  "object_manifest_sha256": "649d28e57e261e38d7cddfd0fa5b7737410512b33bd61cdde25c37c79f660f76",
+  "native_table_count": 2,
+  "native_panel_count": 9,
+  "formal_text_count": 25,
+  "formal_text_native_count": 25,
+  "a_tbl_count": 2,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "tables": [
+        {
+          "object_id": "industry-growth-table",
+          "actual_type": "editable_table",
+          "expected_merges": [],
+          "observed_merges": [],
+          "merge_count": 0,
+          "rows": 6,
+          "columns": 5,
+          "values": [
+            [
+              "行业",
+              "增长结构",
+              "状态",
+              "口径",
+              "证据"
+            ],
+            [
+              "政府",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ],
+            [
+              "教育",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ],
+            [
+              "医疗",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ],
+            [
+              "交通",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ],
+            [
+              "制造",
+              "TOP5",
+              "已绑定",
+              "亿元",
+              "可回放"
+            ]
+          ],
+          "rich_text_runs": 30,
+          "rich_text_cells": 0
+        },
+        {
+          "object_id": "project-progress-table",
+          "actual_type": "editable_table",
+          "expected_merges": [],
+          "observed_merges": [],
+          "merge_count": 0,
+          "rows": 6,
+          "columns": 5,
+          "values": [
+            [
+              "项目",
+              "阶段",
+              "风险",
+              "进度",
+              "证据"
+            ],
+            [
+              "重点项目 1",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ],
+            [
+              "重点项目 2",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ],
+            [
+              "重点项目 3",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ],
+            [
+              "重点项目 4",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ],
+            [
+              "重点项目 5",
+              "经营",
+              "可审计",
+              "跟踪",
+              "TOP5"
+            ]
+          ],
+          "rich_text_runs": 30,
+          "rich_text_cells": 0
+        }
+      ],
+      "panels": [
+        {
+          "object_id": "kpi-target",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "kpi-path",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "kpi-result",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "flow-1",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "flow-2",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "flow-3",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "flow-4",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "flow-5",
+          "actual_type": "native_group",
+          "parent_group": null
+        },
+        {
+          "object_id": "insight-panel",
+          "actual_type": "native_group",
+          "parent_group": null
+        }
+      ],
+      "formal_text": [
+        {
+          "object_id": "title",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "政企客户增长作战舱",
+          "observed": "政企客户增长作战舱",
+          "run_count": 1
+        },
+        {
+          "object_id": "subtitle",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "以目标—路径—结果组织经营管理阅读路径",
+          "observed": "以目标—路径—结果组织经营管理阅读路径",
+          "run_count": 1
+        },
+        {
+          "object_id": "case-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "CASE REPLAY / NATIVE EDITABLE",
+          "observed": "CASE REPLAY / NATIVE EDITABLE",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-target-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "目标",
+          "observed": "目标",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-target-value",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "28.6",
+          "observed": "28.6",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-target-unit",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "亿元",
+          "observed": "亿元",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-path-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "路径",
+          "observed": "路径",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-path-value",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "18.7",
+          "observed": "18.7",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-path-unit",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "亿元",
+          "observed": "亿元",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-result-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "结果",
+          "observed": "结果",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-result-value",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "17.3",
+          "observed": "17.3",
+          "run_count": 1
+        },
+        {
+          "object_id": "kpi-result-unit",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "亿元",
+          "observed": "亿元",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "增长路径 / FIVE-STAGE OPERATING LOOP",
+          "observed": "增长路径 / FIVE-STAGE OPERATING LOOP",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-1-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "01",
+          "observed": "01",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-1-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "目标洞察",
+          "observed": "目标洞察",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-2-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "02",
+          "observed": "02",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-2-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "线索获取",
+          "observed": "线索获取",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-3-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "03",
+          "observed": "03",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-3-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "商机转化",
+          "observed": "商机转化",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-4-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "04",
+          "observed": "04",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-4-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "合同签约",
+          "observed": "合同签约",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-5-index",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "05",
+          "observed": "05",
+          "run_count": 1
+        },
+        {
+          "object_id": "flow-5-label",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "交付增值",
+          "observed": "交付增值",
+          "run_count": 1
+        },
+        {
+          "object_id": "insight-panel-text",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "TOP5\n进展",
+          "observed": "TOP5\n进展",
+          "run_count": 2
+        },
+        {
+          "object_id": "dashboard-note",
+          "actual_type": "native_text",
+          "native": true,
+          "expected": "原生KPI卡 / 原生流程节点 / 2张原生表格",
+          "observed": "原生KPI卡 / 原生流程节点 / 2张原生表格",
+          "run_count": 1
+        }
+      ],
+      "top_level_objects": 43
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "object_id": "title",
+          "text_id": "title",
+          "content": "存量用户价值提升作战图",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "subtitle",
+          "text_id": "subtitle",
+          "content": "识别—分层—触达—转化—留存",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "case-label",
+          "text_id": "case-label",
+          "content": "CASE REPLAY / NATIVE EDITABLE",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "stage-1-text",
+          "text_id": "stage-1-text",
+          "content": "识别",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "stage-2-text",
+          "text_id": "stage-2-text",
+          "content": "分层",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "stage-3-text",
+          "text_id": "stage-3-text",
+          "content": "触达",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "stage-4-text",
+          "text_id": "stage-4-text",
+          "content": "转化",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "stage-5-text",
+          "text_id": "stage-5-text",
+          "content": "留存",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "segment-1-text",
+          "text_id": "segment-1-text",
+          "content": "高价值",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "segment-2-text",
+          "text_id": "segment-2-text",
+          "content": "潜力用户",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "segment-3-text",
+          "text_id": "segment-3-text",
+          "content": "风险用户",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "battle-result-text",
+          "text_id": "battle-result-text",
+          "content": "作战结果",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "irregular-actions",
+          "text_id": "irregular-actions",
+          "content": "行动清单\n01 识别高价值\n02 分层定策略\n03 复盘沉淀",
+          "source_ref": "case-suite.json"
+        },
+        {
+          "object_id": "irregular-note",
+          "text_id": "irregular-note",
+          "content": "折角面板 / 斜切节奏 / 连接线层级 / native groups",
+          "source_ref": "case-suite.json"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,642 @@
+{
+  "schema": "ai-ppt-plus/semantic-object-audit/v2",
+  "valid": true,
+  "status": "passed",
+  "deck": "runs/candidate-before/chart-data-provenance-01/editable.pptx",
+  "deck_sha256": "7bdefb0fea1f6c904dbb7f7642fdfd4d73146c01a04fbb6477127d30217e8a0c",
+  "object_manifest": "runs/candidate-before/chart-data-provenance-01/object-manifest.json",
+  "object_manifest_sha256": "c8e60995687cff34a6495fce773591a10338696c1720def4b61c597bda5a653b",
+  "text_manifest": "runs/candidate-before/chart-data-provenance-01/text-manifest.json",
+  "text_manifest_sha256": "311ea5502cb30ae5f8da82d986d812139c086b9cc1733928cc90eac6ee9c9e81",
+  "expected_object_count": 22,
+  "audited_object_count": 22,
+  "observed_top_level_shape_count": 16,
+  "undeclared_shape_count": 0,
+  "text_manifest_coverage": {
+    "required": true,
+    "declared": 10,
+    "slide_numbers": [
+      1
+    ],
+    "orphan_count": 0,
+    "orphans": []
+  },
+  "coverage": [
+    {
+      "slide_no": 1,
+      "declared_object_count": 22,
+      "observed_top_level_shape_count": 16,
+      "audited_object_count": 22,
+      "undeclared_shape_count": 0,
+      "undeclared_shapes": [],
+      "complete": true
+    }
+  ],
+  "objects": [
+    {
+      "slide_no": 1,
+      "object_id": "background",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-panel",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "chart-panel-fill",
+          "chart-panel-accent",
+          "chart-panel-rule"
+        ],
+        "observed_children": [
+          "chart-panel-fill",
+          "chart-panel-accent",
+          "chart-panel-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-panel-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "chart-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-panel-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "chart-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-panel-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "chart-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-panel",
+      "role": "semantic-panel",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [
+          "chart-insight-panel-fill",
+          "chart-insight-panel-accent",
+          "chart-insight-panel-rule"
+        ],
+        "observed_children": [
+          "chart-insight-panel-fill",
+          "chart-insight-panel-accent",
+          "chart-insight-panel-rule"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-panel-fill",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "chart-insight-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-panel-accent",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": "chart-insight-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-panel-rule",
+      "role": "native-shape",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": "chart-insight-panel",
+      "top_level": false,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "industry-growth-chart",
+      "role": "data-chart",
+      "expected_type": "editable_chart",
+      "actual_type": "editable_chart",
+      "shape_type": "CHART (3)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "native_chart": true,
+        "native_chart_data": true,
+        "chart_data_present": true,
+        "embedded_workbook": true,
+        "chart_workbook_consistent": true,
+        "chart_data_matches_source": true
+      },
+      "chart": {
+        "observed": {
+          "series": 2,
+          "nonempty_series": 2,
+          "chart_data": {
+            "kind": "category_chart",
+            "categories": [
+              "政府",
+              "教育",
+              "医疗",
+              "交通",
+              "制造"
+            ],
+            "series": [
+              {
+                "name": "目标",
+                "values": [
+                  8.6,
+                  5.2,
+                  4.6,
+                  3.8,
+                  3.4
+                ]
+              },
+              {
+                "name": "实际",
+                "values": [
+                  5.2,
+                  3.1,
+                  2.6,
+                  2.2,
+                  1.9
+                ]
+              }
+            ]
+          },
+          "chart_data_sha256": "201aad0f44404c09aeffe07decc64687ecbac41b804e7ceb76cf79d148c1e18b",
+          "has_cached_values": true,
+          "has_embedded_workbook": true,
+          "workbook_part": "ppt/embeddings/Microsoft_Excel_Sheet1.xlsx",
+          "workbook_sha256": "39a7e2776d067acad8f460d47bf5d116bf850a0f917f36b21d4065955270f08f",
+          "workbook_data": {
+            "kind": "category_chart",
+            "categories": [
+              "政府",
+              "教育",
+              "医疗",
+              "交通",
+              "制造"
+            ],
+            "series": [
+              {
+                "name": "目标",
+                "values": [
+                  8.6,
+                  5.2,
+                  4.6,
+                  3.8,
+                  3.4
+                ]
+              },
+              {
+                "name": "实际",
+                "values": [
+                  5.2,
+                  3.1,
+                  2.6,
+                  2.2,
+                  1.9
+                ]
+              }
+            ]
+          },
+          "workbook_data_sha256": "201aad0f44404c09aeffe07decc64687ecbac41b804e7ceb76cf79d148c1e18b",
+          "workbook_error": null,
+          "chart_workbook_match": true
+        },
+        "expected_data": {
+          "kind": "category_chart",
+          "categories": [
+            "政府",
+            "教育",
+            "医疗",
+            "交通",
+            "制造"
+          ],
+          "series": [
+            {
+              "name": "目标",
+              "values": [
+                8.6,
+                5.2,
+                4.6,
+                3.8,
+                3.4
+              ]
+            },
+            {
+              "name": "实际",
+              "values": [
+                5.2,
+                3.1,
+                2.6,
+                2.2,
+                1.9
+              ]
+            }
+          ]
+        },
+        "expected_data_sha256": "201aad0f44404c09aeffe07decc64687ecbac41b804e7ceb76cf79d148c1e18b",
+        "data_source": {
+          "declared_sha256": "201aad0f44404c09aeffe07decc64687ecbac41b804e7ceb76cf79d148c1e18b",
+          "declared_key": "data_source_sha256",
+          "invalid_declared_hashes": [],
+          "path": null,
+          "available": false,
+          "inline": true,
+          "explicit_path": false,
+          "observed_sha256": "201aad0f44404c09aeffe07decc64687ecbac41b804e7ceb76cf79d148c1e18b",
+          "hash_match": true
+        }
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "title",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "2026上半年政企行业增长结构",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "2026上半年政企行业增长结构",
+      "observed_text_sha256": "5daba8a55df1732dbd1a2137780ce33a3e1cee016bcf4b0e028722eb3f65513a",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "2026上半年政企行业增长结构"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "subtitle",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "政府与教育仍是规模增长主引擎",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "政府与教育仍是规模增长主引擎",
+      "observed_text_sha256": "52eedc14a15a139af055ddaebe775b7a1c165b4d0c7ceb0bec12d9f916d6c31b",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "政府与教育仍是规模增长主引擎"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "case-label",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "CASE REPLAY / NATIVE EDITABLE",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "CASE REPLAY / NATIVE EDITABLE",
+      "observed_text_sha256": "1e68904ccf235bd4e08ad9a3b81497719dbb076c3e69d5657daa46f1cabf6398",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "CASE REPLAY / NATIVE EDITABLE"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-1",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "政府 8.6 / 5.2",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "政府 8.6 / 5.2",
+      "observed_text_sha256": "9bcf921ce7c071b89ac251b82b094c13011a650c1dcddf67206ed15d8a3ac56c",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "政府 8.6 / 5.2"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-2",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "教育 5.2 / 3.1",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "教育 5.2 / 3.1",
+      "observed_text_sha256": "0501aaa4c3e9d597abd7f380b2b3dcb60fcbd38ad41d3e1f921ad4272aa27f2e",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "教育 5.2 / 3.1"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-3",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "医疗 4.6 / 2.6",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "医疗 4.6 / 2.6",
+      "observed_text_sha256": "9650fc99fc7ce953e9da803454d25962cd63d57d1736bb4f55005b2ab88f75f8",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "医疗 4.6 / 2.6"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-4",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "交通 3.8 / 2.2",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "交通 3.8 / 2.2",
+      "observed_text_sha256": "93f86e1bfd71ad77fd253a5eb6aee3d7f5deb56aa6b609591e90ab5ab9264732",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "交通 3.8 / 2.2"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-insight-5",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "制造 3.4 / 1.9",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "制造 3.4 / 1.9",
+      "observed_text_sha256": "7521c95713f66dd4a4e2089fe853428c950f7c10f798424b2921dd5f3881fedd",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "制造 3.4 / 1.9"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-legend-note",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "目标 / 实际（亿元）",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "目标 / 实际（亿元）",
+      "observed_text_sha256": "73ac56f95760ac9d643563273719376782ed6216b8994495ff871b894280d3c2",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "目标 / 实际（亿元）"
+        ]
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "chart-source-note",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "数据口径：case-suite.json / exact data snapshot",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "数据口径：case-suite.json / exact data snapshot",
+      "observed_text_sha256": "afb1de7133a8498b008c1e1932d90f1e19e960380e2c6a92521ebdd58a9d674e",
+      "text_runs": {
+        "count": 1,
+        "values": [
+          "数据口径：case-suite.json / exact data snapshot"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}
