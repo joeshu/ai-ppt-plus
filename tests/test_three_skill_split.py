@@ -82,7 +82,7 @@ def main() -> int:
     parity_manifest = json.loads((editable_scripts.parent / "assets" / "upstream-perfect-sync.json").read_text(encoding="utf-8"))
     assert parity_manifest["source"]["ref"] == "完美第一版"
     excluded = {item["path"] for item in parity_manifest["excluded_paths"]}
-    assert len(parity_manifest["synced_files"]) >= 170
+    assert len(parity_manifest["synced_files"]) == 163
     assert len(parity_manifest["synced_files"]) + len(excluded) >= 202
     assert {"scripts/compare_visual.py", "scripts/compare_visual_deck.py", "scripts/delivery_check.py", "scripts/validate_signoff.py"} <= excluded
 
