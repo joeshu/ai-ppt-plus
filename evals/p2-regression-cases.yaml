@@ -1,0 +1,33 @@
+schema: ai-ppt-plus/p2-regression/v1
+purpose: "P2 automated regression set for route ownership and native editability"
+cases:
+  - id: editable-route-default
+    route: reference-reconstruction
+    expected_primary_engine: ai-ppt-editable
+    expected_fallback_policy: scoped-visual-only
+    expected_editability_policy: native-semantic-objects
+    expected: pass
+  - id: scoped-complex-visual-fallback
+    route: reference-reconstruction
+    fallback_engine: GordenImage2PPTX
+    fallback_scope: region
+    fallback_role: complex-gradient
+    expected: pass
+  - id: forbidden-semantic-fallback
+    route: reference-reconstruction
+    fallback_engine: GordenImage2PPTX
+    fallback_scope: region
+    fallback_role: table
+    expected: block
+  - id: native-table-output
+    artifact: pptx
+    semantic_requirement: graphic-frame-table
+    expected: pass
+  - id: native-panel-output
+    artifact: pptx
+    semantic_requirement: shape-or-group
+    expected: pass
+  - id: semantic-frame-raster
+    artifact: pptx
+    semantic_requirement: whole-slide-picture
+    expected: block

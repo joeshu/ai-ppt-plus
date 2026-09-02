@@ -63,7 +63,7 @@ def main() -> int:
         source.write_text(tampered_source, encoding="utf-8")
 
         route = project / "route.json"
-        write_json(route, {"schema": "ai-ppt-plus/route-decision/v1", "project_id": "p0", "route": "reference-reconstruction", "status": "decided", "visual_authority": "approved_reference_image", "formal_content_authority": "approved_outline", "requires_image_generation": False, "outline_contract": {"path": contract.name, "sha256": digest(contract)}})
+        write_json(route, {"schema": "ai-ppt-plus/route-decision/v1", "project_id": "p0", "route": "reference-reconstruction", "status": "decided", "visual_authority": "approved_reference_image", "formal_content_authority": "approved_outline", "requires_image_generation": False, "primary_engine": "ai-ppt-editable", "fallback_policy": "scoped-visual-only", "fallback_used": False, "fallback_events": [], "editable_object_policy": "native-semantic-objects", "outline_contract": {"path": contract.name, "sha256": digest(contract)}})
         workflow_artifact = project / "workflow-artifact"
         workflow_artifact.write_text("ok", encoding="utf-8")
         workflow = project / "workflow-state.json"

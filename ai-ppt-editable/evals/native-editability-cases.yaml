@@ -1,0 +1,18 @@
+schema: ai-ppt-editable/p2-regression/v1
+purpose: "P2 native object regression cases"
+cases:
+  - id: panel-group
+    input: native_panels
+    expected_object_type: native_group
+    expected: pass
+  - id: table-grid
+    input: native_tables
+    expected_object_type: editable_table
+    expected: pass
+  - id: raster-semantic-frame
+    input: frame
+    editable_object_policy: native-semantic-objects
+    expected: block
+  - id: raster-native-panel
+    input: native_panels.file
+    expected: block
