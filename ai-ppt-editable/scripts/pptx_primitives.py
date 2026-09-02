@@ -10,6 +10,8 @@ from __future__ import annotations
 import sys
 import math
 
+from pptx.util import Pt
+
 
 def _die(message: str, code: int = 2):
     print(f"Error: {message}", file=sys.stderr)
