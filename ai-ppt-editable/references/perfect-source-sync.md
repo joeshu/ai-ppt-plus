@@ -26,9 +26,9 @@ python3 scripts/validate_perfect_sync.py \
   --require-source
 ```
 
-The excluded paths are intentional package-boundary files: the standalone
-entrypoint, package/routing validators, the current orchestrator integration
-adapters, and a small set of post-baseline compatibility or correctness tests.
-They must not contain a second reconstruction engine. Any change to the
-synchronized list requires a new source commit, a refreshed manifest and a
-passing full worker test run.
+The excluded paths are intentional package-boundary files, post-baseline
+adapters, and their regression tests. The validator skips parity comparison for
+those paths but still requires the local target to exist; the package validator
+and focused tests remain responsible for their integrity. Exclusions must not
+contain a second reconstruction engine. Any new exclusion requires a reason,
+a manifest update and a passing full worker test run.
