@@ -57,8 +57,17 @@ def repo_relative(path: Path) -> str:
 
 
 def case_relative(path: Path) -> str:
-    """Return a portable evidence path relative to this case package."""
-    return str(path.resolve().relative_to(ROOT))
+    """Return a portable evidence path for in-package or CI output paths."""
+    resolved = path.resolve()
+    for anchor in (ROOT, REPO):
+        try:
+            return str(resolved.relative_to(anchor))
+        except ValueError:
+            continue
+    # A caller may intentionally place the replay output outside the checkout.
+    # Keep that path visible in the evidence instead of crashing the replay
+    # after the PPTX and render have already been produced.
+    return str(resolved)
 
 
 def write_json(path: Path, value):
