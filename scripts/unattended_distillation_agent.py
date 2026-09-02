@@ -361,6 +361,17 @@ def tracked_diff(root: Path) -> tuple[list[str], int]:
     return files, lines
 
 
+def diff_fingerprint(root: Path) -> str:
+    """Hash the exact tracked patch bound to a case replay candidate."""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--binary"], cwd=root, capture_output=True, check=False,
+        )
+    except OSError:
+        return ""
+    return hashlib.sha256(result.stdout).hexdigest() if result.returncode == 0 else ""
+
+
 def tracked_worktree_clean(root: Path) -> bool:
     try:
         result = subprocess.run(
@@ -490,6 +501,7 @@ def gate_evaluation(
 def run_improvement_gate(
     root: Path, policy: dict[str, Any], baseline_path: Path, candidate_path: Path,
     report_path: Path, *, case_spec: Path | None = None,
+    repair_fingerprint: str | None = None,
 ) -> dict[str, Any]:
     """Run the separate improvement validator and return its report."""
     validator_text = str(policy.get("improvement_validator") or "scripts/validate_distillation_improvement.py")
@@ -514,6 +526,8 @@ def run_improvement_gate(
     ]
     if case_spec is not None:
         command.extend(["--case-spec", str(case_spec)])
+    if repair_fingerprint:
+        command.extend(["--repair-fingerprint", repair_fingerprint])
     try:
         completed = subprocess.run(command, cwd=root, capture_output=True, text=True, check=False)
     except OSError as exc:
@@ -582,6 +596,9 @@ def command_run(args: argparse.Namespace) -> int:
     policy = load_policy(Path(args.policy).resolve() if args.policy else None)
     require_improvement = bool(args.require_improvement or policy.get("require_improvement", True))
     case_id = str(args.case_id or policy.get("evaluation_case_id") or "distillation-gate-suite")
+    case_spec_path = Path(args.case_spec).resolve() if args.case_spec else None
+    case_baseline_path = Path(args.baseline_case_evaluation).resolve() if args.baseline_case_evaluation else None
+    case_candidate_path = Path(args.candidate_case_evaluation).resolve() if args.candidate_case_evaluation else None
     if policy.get("enabled") is not True:
         result = {
             "schema": RESULT_SCHEMA,
@@ -653,6 +670,7 @@ def command_run(args: argparse.Namespace) -> int:
 
     candidate_evaluation: dict[str, Any] | None = None
     candidate_path = report_dir / "candidate-evaluation.json"
+    case_replay_used = False
 
     if not baseline_valid and not stop_reason:
         for round_no in range(1, max_rounds + 1):
@@ -668,14 +686,21 @@ def command_run(args: argparse.Namespace) -> int:
             selected = candidates[0]
             category = str(selected.get("category") or "unknown")
             replay_required = set(policy.get("replay_required_categories") or [])
-            if category in replay_required and not args.case_spec:
+            case_replay_ready = bool(
+                case_spec_path and case_spec_path.is_file()
+                and case_baseline_path and case_baseline_path.is_file()
+                and case_candidate_path and case_candidate_path.is_file()
+            )
+            if category in replay_required and not case_replay_ready:
                 repairs.append({
                     "rule_id": selected.get("id"),
                     "status": "blocked",
-                    "error": "case replay evidence is required for this category",
+                    "error": "case spec plus baseline/candidate replay evidence is required for this category",
                 })
                 stop_reason = "replay-evidence-required"
                 break
+            if category in replay_required:
+                case_replay_used = True
             try:
                 repair = apply_repair(selected, root, policy)
             except (OSError, ValueError) as exc:
@@ -736,10 +761,13 @@ def command_run(args: argparse.Namespace) -> int:
                 changed_files=diff_files, changed_lines=diff_lines,
             )
             write_json(candidate_path, candidate_evaluation)
+            proof_baseline_path = case_baseline_path if case_replay_used and case_baseline_path and case_baseline_path.is_file() else baseline_path
+            proof_candidate_path = case_candidate_path if case_replay_used and case_candidate_path and case_candidate_path.is_file() else candidate_path
             improvement = run_improvement_gate(
-                root, policy, baseline_path, candidate_path,
+                root, policy, proof_baseline_path, proof_candidate_path,
                 report_dir / "improvement-report.json",
-                case_spec=Path(args.case_spec).resolve() if args.case_spec else None,
+                case_spec=case_spec_path if case_replay_used and case_spec_path and case_spec_path.is_file() else None,
+                repair_fingerprint=(args.repair_fingerprint or diff_fingerprint(root)) if case_replay_used else None,
             )
             if improvement.get("valid") is True and improvement.get("promotion") == "improved":
                 promotion = "improved"
@@ -777,6 +805,11 @@ def command_run(args: argparse.Namespace) -> int:
         "gate_runs": gate_runs,
         "baseline_evaluation": str(baseline_path),
         "candidate_evaluation": str(candidate_path) if candidate_evaluation else None,
+        "case_baseline_evaluation": str(case_baseline_path) if case_baseline_path else None,
+        "case_candidate_evaluation": str(case_candidate_path) if case_candidate_path else None,
+        "case_spec": str(case_spec_path) if case_spec_path else None,
+        "case_replay_used": case_replay_used,
+        "repair_fingerprint": (args.repair_fingerprint or diff_fingerprint(root)) if diff_files else None,
         "improvement_report": str(report_dir / "improvement-report.json") if improvement else None,
         "changed_files": diff_files,
         "changed_lines": diff_lines,
@@ -824,6 +857,9 @@ def main() -> int:
     run.add_argument("--require-improvement", action="store_true")
     run.add_argument("--case-id")
     run.add_argument("--case-spec")
+    run.add_argument("--baseline-case-evaluation")
+    run.add_argument("--candidate-case-evaluation")
+    run.add_argument("--repair-fingerprint")
     run.set_defaults(handler=command_run)
 
     args = parser.parse_args()

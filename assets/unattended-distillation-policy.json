@@ -9,6 +9,15 @@
     "native-structure",
     "text-visual"
   ],
+  "case_replay": {
+    "case_id": "social-channel-commission-native-01",
+    "spec": "ai-ppt-editable/evals/social-channel-commission-native-01.json",
+    "source_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx",
+    "process_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png",
+    "candidate_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx",
+    "baseline_artifact": "case-baseline-evaluation.json",
+    "candidate_artifact": "case-candidate-evaluation.json"
+  },
   "max_rounds": 3,
   "max_changed_files": 4,
   "max_changed_lines": 240,
@@ -66,6 +75,11 @@
       "id": "improvement-proof-tests",
       "argv": ["python", "tests/test_distillation_improvement.py"],
       "timeout_seconds": 120
+    },
+    {
+      "id": "social-case-replay",
+      "argv": ["python", "tests/test_pptx_case_replay.py"],
+      "timeout_seconds": 600
     },
     {
       "id": "repository-regressions",

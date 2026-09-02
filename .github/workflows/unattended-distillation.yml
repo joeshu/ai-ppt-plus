@@ -99,6 +99,17 @@ jobs:
         continue-on-error: true
         run: |
           set -o pipefail
+          case_args=()
+          if [[ -f .distillation/input/case-baseline-evaluation.json &&
+                -f .distillation/input/case-candidate-evaluation.json &&
+                -f ai-ppt-editable/evals/social-channel-commission-native-01.json ]]; then
+            case_args+=(
+              --case-id social-channel-commission-native-01
+              --case-spec ai-ppt-editable/evals/social-channel-commission-native-01.json
+              --baseline-case-evaluation .distillation/input/case-baseline-evaluation.json
+              --candidate-case-evaluation .distillation/input/case-candidate-evaluation.json
+            )
+          fi
           python scripts/unattended_distillation_agent.py run \
             --repo-root . \
             --input-dir .distillation/input \
@@ -106,6 +117,7 @@ jobs:
             --policy assets/unattended-distillation-policy.json \
             --max-rounds "${{ inputs.max_rounds || '3' }}" \
             --require-improvement \
+            "${case_args[@]}" \
             --output .distillation/distillation-result.json \
             --github-output "$GITHUB_OUTPUT" | tee .distillation/agent.log
 
