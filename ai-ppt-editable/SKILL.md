@@ -25,10 +25,10 @@ python3 scripts/validate_routing_contract.py
 ```
 
 The reconstruction engine and shared QA contracts are byte-synchronized with
-the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Two explicitly
+the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Explicitly
 documented post-baseline adapters extend that frozen core for portable resource
-paths and explicit font-directory precedence; they do not change the visual
-decomposition contract. Verify that source relationship before authoring:
+paths, font-directory precedence, native semantic objects and route-bound
+quality evidence; they do not change the visual decomposition contract. Verify that source relationship before authoring:
 
 ```bash
 python3 scripts/validate_perfect_sync.py
