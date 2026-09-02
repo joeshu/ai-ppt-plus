@@ -62,7 +62,9 @@ def main() -> int:
     assert routing["bindings"]["visual_generation"]["runtime_entrypoint"].startswith("ai-ppt-visual-gen/")
     assert routing["bindings"]["reconstruction"]["runtime_entrypoint"].startswith("ai-ppt-editable/")
     assert routing["bindings"]["authoring"]["entrypoint"].startswith("ai-ppt-editable/")
-    assert "GordenImage" not in json.dumps(routing, ensure_ascii=False)
+    # The fallback engine is a policy adapter, not a fourth skill.
+    assert "GordenImage" not in json.dumps(routing["skills"], ensure_ascii=False)
+    assert routing["fallback_policy"]["fallback_engine"] == "GordenImage2PPTX"
 
     # The editable worker is pinned to the reconstruction core from the
     # perfect source branch. Its manifest is the source-of-truth parity gate;

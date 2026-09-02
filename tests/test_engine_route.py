@@ -97,7 +97,7 @@ def main() -> int:
         assert_blocked(blocked_role, "fallback_role_forbidden")
 
         full_page = copy.deepcopy(with_fallback)
-        full_page["fallback_events"][0]["whole_page"] = True
+        full_page["fallback_events"][0]["full_page"] = True
         write(route_path, full_page)
         blocked_full_page = run("scripts/validate_engine_route.py", str(route_path), "--strict")
         assert_blocked(blocked_full_page, "fallback_full_page_forbidden")

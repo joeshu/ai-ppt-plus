@@ -695,7 +695,9 @@ def main() -> int:
             route_inputs.extend(Path(args.reference_dir).resolve() / f"slide-{index}.png" for index in range(1, args.expected_pages + 1))
         add_step("route", route_args, deps=["routing-contract"], outputs=[run_dir / "route-validation.json"], inputs=list(dict.fromkeys(route_inputs)))
 
-    engine_route_enabled = bool(args.route_decision and (args.require_engine_route or args.require_route or args.release))
+    # The legacy route flag remains a compatibility gate. P0/release and
+    # the explicit engine flag opt into the stricter engine contract.
+    engine_route_enabled = bool(args.route_decision and (args.require_engine_route or args.release))
     if engine_route_enabled:
         engine_route_args = [
             str(SCRIPT_DIR / "validate_engine_route.py"),
