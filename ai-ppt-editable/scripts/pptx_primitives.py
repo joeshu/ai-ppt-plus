@@ -416,7 +416,9 @@ def _set_cell_border(cell, border: dict | None) -> None:
         color.set("val", _normalized_hex(value.get("color", border.get("color", "#D9D9D9"))))
         solid.append(color)
         line.append(solid)
-        line.append(OxmlElement("a:prstDash"))
+        dash = OxmlElement("a:prstDash")
+        dash.set("val", "solid")
+        line.append(dash)
 
 
 def _set_cell_margins(cell, margins) -> None:
