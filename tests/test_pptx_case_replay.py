@@ -33,7 +33,11 @@ def materialize_fixture(source: Path, destination: Path, *, binary_zip: bool = F
         if recovered.returncode == 0 and recovered.stdout:
             destination.write_bytes(recovered.stdout)
     if binary_zip and not is_zipfile(destination):
-        raise AssertionError(f"fixture is not a valid PPTX ZIP: {source}")
+        preview = destination.read_bytes()[:24].hex()
+        raise AssertionError(
+            f"fixture is not a valid PPTX ZIP: {source} "
+            f"(size={destination.stat().st_size}, header={preview})"
+        )
     if not destination.is_file() or destination.stat().st_size == 0:
         raise AssertionError(f"fixture is empty: {source}")
     return destination
