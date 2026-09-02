@@ -1,0 +1,259 @@
+{
+  "schema": "ai-ppt-plus/distillation-case-matrix/v1",
+  "version": "2026.09",
+  "description": "蒸馏代理的分层案例矩阵。契约案例验证规则，回放案例验证实际 PPTX 产物。",
+  "policy": {
+    "targeted_selection": "direct-plus-adjacent-plus-p0",
+    "premerge_selection": "full",
+    "nightly_selection": "full",
+    "required_evidence": [
+      "baseline",
+      "candidate",
+      "improvement",
+      "object",
+      "visual",
+      "mutation"
+    ],
+    "static_sentinel_never_promotes": true,
+    "replay_ready_required_for_affected_category": true,
+    "coverage_debt_is_reported": true
+  },
+  "cases": [
+    {
+      "case_id": "route-editable-default-01",
+      "title": "可编辑请求默认路由到 ai-ppt-editable",
+      "priority": "P0",
+      "responsibility": "routing",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_engine_route.py",
+        "tests/test_native_route.py",
+        "tests/test_route_contracts.py"
+      ],
+      "required_checks": [
+        "primary_engine=ai-ppt-editable",
+        "gorden_not_primary",
+        "fallback_is_explicit_and_scoped"
+      ]
+    },
+    {
+      "case_id": "native-shape-card-01",
+      "title": "简单卡片、面板和框使用原生对象",
+      "priority": "P0",
+      "responsibility": "native-structure",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_native_objects.py",
+        "tests/test_semantic_object_types.py",
+        "tests/test_panel_layer_order.py"
+      ],
+      "required_checks": [
+        "native_shape_or_group",
+        "independent_panel_objects",
+        "no_semantic_frame_picture"
+      ]
+    },
+    {
+      "case_id": "native-table-basic-01",
+      "title": "基础规则表格写入原生表格对象",
+      "priority": "P1",
+      "responsibility": "native-structure",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_native_objects.py",
+        "tests/test_semantic_object_audit.py"
+      ],
+      "required_checks": [
+        "a:tbl",
+        "rows_and_columns",
+        "cell_fill_border_and_text"
+      ]
+    },
+    {
+      "case_id": "native-table-merge-richtext-01",
+      "title": "合并单元格和富文本表格实际回放",
+      "priority": "P1",
+      "responsibility": "native-structure",
+      "mode": "replay",
+      "status": "ready",
+      "replay_required": true,
+      "replay": {
+        "spec": "ai-ppt-editable/evals/social-channel-commission-native-01.json",
+        "source_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx",
+        "process_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png",
+        "candidate_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx",
+        "reference_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg",
+        "static_sentinel": true
+      },
+      "contract_tests": [
+        "tests/test_pptx_case_replay.py"
+      ],
+      "required_checks": [
+        "five_native_tables",
+        "a:tbl",
+        "merged_cells",
+        "rich_text_runs",
+        "mutation_smoke"
+      ]
+    },
+    {
+      "case_id": "native-text-cjk-font-01",
+      "title": "中英文正文保持原生文本和字体证据",
+      "priority": "P0",
+      "responsibility": "text-visual",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_text_model.py",
+        "tests/test_font_delivery.py",
+        "tests/test_font_embedding.py",
+        "tests/test_typography_calibration.py"
+      ],
+      "required_checks": [
+        "native_text",
+        "cjk_glyphs",
+        "run_styles",
+        "font_evidence"
+      ]
+    },
+    {
+      "case_id": "chart-data-provenance-01",
+      "title": "图表数据可追溯且不凭视觉臆造",
+      "priority": "P1",
+      "responsibility": "native-structure",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_chart_reconstruction.py"
+      ],
+      "required_checks": [
+        "traceable_data",
+        "native_or_source_exact",
+        "no_invented_values"
+      ]
+    },
+    {
+      "case_id": "visual-assets-gradient-icon-01",
+      "title": "渐变、图标和复杂视觉资产独立保真",
+      "priority": "P1",
+      "responsibility": "text-visual",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_icon_layer_standalone.py",
+        "tests/test_asset_hashes.py",
+        "tests/test_panel_layer_order.py"
+      ],
+      "required_checks": [
+        "independent_visual_assets",
+        "declared_fallback_for_complex_visuals",
+        "gradient_effect_inventory"
+      ]
+    },
+    {
+      "case_id": "framework-irregular-layer-01",
+      "title": "不规则框架保持层级和几何关系",
+      "priority": "P1",
+      "responsibility": "native-structure",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_irregular_regions.py",
+        "tests/test_panel_layer_order.py"
+      ],
+      "required_checks": [
+        "layer_order",
+        "irregular_region_bounds",
+        "text_free_substrate_only"
+      ]
+    },
+    {
+      "case_id": "multi-slide-consistency-01",
+      "title": "多页回放和全稿对象一致性",
+      "priority": "P2",
+      "responsibility": "cache-integrity",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_p2_guards.py",
+        "tests/test_incremental_render.py",
+        "tests/test_pipeline_integration.py"
+      ],
+      "required_checks": [
+        "full_deck",
+        "page_consistency",
+        "cache_idempotent"
+      ]
+    },
+    {
+      "case_id": "failure-fallback-stop-01",
+      "title": "未知问题、OCR 缺失和失败回退必须停机",
+      "priority": "P0",
+      "responsibility": "package-contract",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_validate_source_images.py",
+        "tests/test_route_contracts.py",
+        "tests/test_p0_integrity.py"
+      ],
+      "required_checks": [
+        "unknown_problem_stops",
+        "missing_ocr_requires_review",
+        "no_silent_fallback"
+      ]
+    },
+    {
+      "case_id": "package-render-portability-01",
+      "title": "PPTX 包、渲染器和运行时契约",
+      "priority": "P0",
+      "responsibility": "package-contract",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_pptx_package.py",
+        "tests/test_environment_contract.py",
+        "tests/test_runtime_mirror.py",
+        "tests/test_visual_compare_dimensions.py"
+      ],
+      "required_checks": [
+        "valid_zip_package",
+        "renderer_available",
+        "artifact_hashes",
+        "runtime_portability"
+      ]
+    },
+    {
+      "case_id": "cache-idempotency-01",
+      "title": "缓存键、重复运行和 baseline 不变",
+      "priority": "P2",
+      "responsibility": "cache-integrity",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": [
+        "tests/test_incremental_render.py",
+        "tests/test_pipeline_engine.py",
+        "tests/test_revision_guard.py"
+      ],
+      "required_checks": [
+        "cache_key",
+        "repeatable_output",
+        "baseline_immutable"
+      ]
+    }
+  ]
+}

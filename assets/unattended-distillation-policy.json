@@ -37,53 +37,113 @@
   ],
   "gates": [
     {
+      "id": "case-matrix-contract",
+      "argv": [
+        "python",
+        "scripts/validate_distillation_case_matrix.py",
+        "--matrix",
+        "evals/distillation-case-matrix.json",
+        "--strict"
+      ],
+      "timeout_seconds": 120
+    },
+    {
+      "id": "case-matrix-selection",
+      "argv": [
+        "python",
+        "scripts/select_distillation_cases.py",
+        "--matrix",
+        "evals/distillation-case-matrix.json",
+        "--full"
+      ],
+      "timeout_seconds": 120
+    },
+    {
       "id": "root-package",
-      "argv": ["python", "scripts/validate_skill_package.py", "--skill-dir", "."],
+      "argv": [
+        "python",
+        "scripts/validate_skill_package.py",
+        "--skill-dir",
+        "."
+      ],
       "timeout_seconds": 300
     },
     {
       "id": "root-routing",
-      "argv": ["python", "scripts/validate_routing_contract.py"],
+      "argv": [
+        "python",
+        "scripts/validate_routing_contract.py"
+      ],
       "timeout_seconds": 120
     },
     {
       "id": "editable-package",
-      "argv": ["python", "ai-ppt-editable/scripts/validate_skill_package.py", "--skill-dir", "ai-ppt-editable"],
+      "argv": [
+        "python",
+        "ai-ppt-editable/scripts/validate_skill_package.py",
+        "--skill-dir",
+        "ai-ppt-editable"
+      ],
       "timeout_seconds": 300
     },
     {
       "id": "editable-routing",
-      "argv": ["python", "ai-ppt-editable/scripts/validate_routing_contract.py"],
+      "argv": [
+        "python",
+        "ai-ppt-editable/scripts/validate_routing_contract.py"
+      ],
       "timeout_seconds": 120
     },
     {
       "id": "p0-governance",
-      "argv": ["python", "tests/test_p0_governance.py"],
+      "argv": [
+        "python",
+        "tests/test_p0_governance.py"
+      ],
       "timeout_seconds": 300
     },
     {
       "id": "p1-governance",
-      "argv": ["python", "tests/test_p1_governance.py"],
+      "argv": [
+        "python",
+        "tests/test_p1_governance.py"
+      ],
       "timeout_seconds": 300
     },
     {
       "id": "p2-governance",
-      "argv": ["python", "tests/test_p2_guards.py"],
+      "argv": [
+        "python",
+        "tests/test_p2_guards.py"
+      ],
       "timeout_seconds": 300
     },
     {
       "id": "improvement-proof-tests",
-      "argv": ["python", "tests/test_distillation_improvement.py"],
+      "argv": [
+        "python",
+        "tests/test_distillation_improvement.py"
+      ],
       "timeout_seconds": 120
     },
     {
       "id": "social-case-replay",
-      "argv": ["python", "tests/test_pptx_case_replay.py"],
+      "argv": [
+        "python",
+        "tests/test_pptx_case_replay.py"
+      ],
       "timeout_seconds": 600
     },
     {
       "id": "repository-regressions",
-      "argv": ["python", "scripts/run_tests.py", "--parallel-workers", "4", "--report", ".distillation/repository-test-report.json"],
+      "argv": [
+        "python",
+        "scripts/run_tests.py",
+        "--parallel-workers",
+        "4",
+        "--report",
+        ".distillation/repository-test-report.json"
+      ],
       "timeout_seconds": 900
     }
   ],
@@ -124,5 +184,19 @@
       "marker": "<!-- unattended-distillation:package-lock -->",
       "block": "<!-- unattended-distillation:package-lock -->\n## Automatic distillation package lock\n\nEvery automatic repair must be limited to the policy allowlist, preserve the three-skill package boundary, pass package and route validators, and leave an auditable report. Executable code, workflow files, dependencies and assets are protected from unattended edits.\n<!-- /unattended-distillation:package-lock -->"
     }
-  ]
+  ],
+  "case_matrix": {
+    "path": "evals/distillation-case-matrix.json",
+    "schema": "ai-ppt-plus/distillation-case-matrix/v1",
+    "validator": "scripts/validate_distillation_case_matrix.py",
+    "selector": "scripts/select_distillation_cases.py",
+    "full_matrix_on": [
+      "premerge",
+      "nightly",
+      "manual"
+    ],
+    "targeted_case_policy": "direct-plus-adjacent-plus-p0",
+    "static_sentinel_never_promotes": true,
+    "actual_replay_required_for_affected_category": true
+  }
 }

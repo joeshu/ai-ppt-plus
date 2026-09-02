@@ -93,6 +93,17 @@ jobs:
             gh run download "$SOURCE_RUN_ID" --repo "$GITHUB_REPOSITORY" --name ai-ppt-plus-test-report --dir .distillation/input || true
           fi
 
+      - name: Validate and inventory distillation case matrix
+        if: steps.source.outputs.blocked != 'true'
+        run: |
+          python scripts/validate_distillation_case_matrix.py \
+            --matrix evals/distillation-case-matrix.json \
+            --strict \
+            --output .distillation/reports/case-matrix-validation.json
+          python scripts/select_distillation_cases.py \
+            --matrix evals/distillation-case-matrix.json \
+            --full \
+            --output .distillation/reports/case-matrix-full-selection.json
       - name: Run bounded unattended distillation loop
         id: agent
         if: steps.source.outputs.blocked != 'true'
@@ -115,6 +126,7 @@ jobs:
             --input-dir .distillation/input \
             --report-dir .distillation/reports \
             --policy assets/unattended-distillation-policy.json \
+            --case-matrix evals/distillation-case-matrix.json \
             --max-rounds "${{ inputs.max_rounds || '3' }}" \
             --require-improvement \
             "${case_args[@]}" \

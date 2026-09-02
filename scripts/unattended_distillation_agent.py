@@ -145,6 +145,64 @@ def load_policy(path: Path | None) -> dict[str, Any]:
     return merged
 
 
+def select_case_matrix(
+    root: Path,
+    policy: dict[str, Any],
+    report_dir: Path,
+    categories: set[str],
+    explicit_path: str | None = None,
+) -> dict[str, Any]:
+    """Select the direct-plus-adjacent case set and expose replay debt.
+
+    A missing matrix is tolerated only for isolated controller unit tests. In
+    the production repository the matrix is checked by CI and its static
+    sentinel replay can never make a repair promotable.
+    """
+    config = policy.get("case_matrix")
+    if not isinstance(config, dict):
+        return {"schema": "ai-ppt-plus/distillation-case-selection/v1", "status": "not-configured", "valid": True}
+    matrix_text = explicit_path or config.get("path")
+    selector_text = config.get("selector") or "scripts/select_distillation_cases.py"
+    if not isinstance(matrix_text, str) or not isinstance(selector_text, str):
+        return {"schema": "ai-ppt-plus/distillation-case-selection/v1", "status": "blocked", "valid": False, "error": "case matrix path/selector is invalid"}
+    try:
+        matrix_path = safe_relative(root, matrix_text)
+        selector = safe_relative(root, selector_text)
+    except ValueError as exc:
+        return {"schema": "ai-ppt-plus/distillation-case-selection/v1", "status": "blocked", "valid": False, "error": str(exc)}
+    if not matrix_path.is_file():
+        return {"schema": "ai-ppt-plus/distillation-case-selection/v1", "status": "unavailable", "valid": True, "matrix": matrix_text}
+    if not selector.is_file():
+        return {"schema": "ai-ppt-plus/distillation-case-selection/v1", "status": "blocked", "valid": False, "error": f"selector does not exist: {selector_text}"}
+    report_path = report_dir / "case-matrix-selection.json"
+    command = [sys.executable, str(selector), "--matrix", str(matrix_path), "--output", str(report_path)]
+    for category in sorted(categories):
+        command.extend(["--category", category])
+    try:
+        completed = subprocess.run(command, cwd=root, capture_output=True, text=True, check=False)
+    except OSError as exc:
+        return {"schema": "ai-ppt-plus/distillation-case-selection/v1", "status": "blocked", "valid": False, "error": f"{type(exc).__name__}: {exc}"}
+    if report_path.is_file():
+        try:
+            report = load_json(report_path)
+            if isinstance(report, dict):
+                report["selector_returncode"] = completed.returncode
+                report["selector_stderr"] = completed.stderr[-4000:]
+                write_json(report_path, report)
+                return report
+        except (OSError, ValueError, json.JSONDecodeError):
+            pass
+    return {
+        "schema": "ai-ppt-plus/distillation-case-selection/v1",
+        "status": "blocked",
+        "valid": False,
+        "selector_returncode": completed.returncode,
+        "error": "selector did not produce a readable report",
+        "selector_stdout": completed.stdout[-4000:],
+        "selector_stderr": completed.stderr[-4000:],
+    }
+
+
 def text_excerpt(value: Any, limit: int = 1200) -> str:
     if isinstance(value, str):
         return value[:limit]
@@ -671,6 +729,20 @@ def command_run(args: argparse.Namespace) -> int:
     candidate_evaluation: dict[str, Any] | None = None
     candidate_path = report_dir / "candidate-evaluation.json"
     case_replay_used = False
+    case_matrix_report = select_case_matrix(
+        root,
+        policy,
+        report_dir,
+        set(analysis.get("categories") or []),
+        explicit_path=args.case_matrix,
+    )
+    replay_categories = set(policy.get("replay_required_categories") or [])
+    case_matrix_replay_blocked = bool(
+        case_matrix_report.get("valid") is True
+        and case_matrix_report.get("promotion_blocked_by_replay_debt") is True
+        and set(analysis.get("categories") or []).intersection(replay_categories)
+        and policy.get("case_matrix", {}).get("actual_replay_required_for_affected_category", True) is True
+    )
 
     if not baseline_valid and not stop_reason:
         for round_no in range(1, max_rounds + 1):
@@ -786,6 +858,11 @@ def command_run(args: argparse.Namespace) -> int:
     elif baseline_valid and historical_analysis["status"] == "issues-found":
         stop_reason = stop_reason or "stale-evidence-not-reproduced"
 
+    if case_matrix_replay_blocked and changed:
+        promotion = "blocked"
+        final_status = "blocked"
+        stop_reason = stop_reason or "case-matrix-replay-debt"
+
     promotable = bool(changed and final_status == "passed" and promotion == "improved")
     result = {
         "schema": RESULT_SCHEMA,
@@ -809,6 +886,8 @@ def command_run(args: argparse.Namespace) -> int:
         "case_candidate_evaluation": str(case_candidate_path) if case_candidate_path else None,
         "case_spec": str(case_spec_path) if case_spec_path else None,
         "case_replay_used": case_replay_used,
+        "case_matrix": case_matrix_report,
+        "case_matrix_replay_blocked": case_matrix_replay_blocked,
         "repair_fingerprint": (args.repair_fingerprint or diff_fingerprint(root)) if diff_files else None,
         "improvement_report": str(report_dir / "improvement-report.json") if improvement else None,
         "changed_files": diff_files,
@@ -856,6 +935,7 @@ def main() -> int:
     run.add_argument("--github-output")
     run.add_argument("--require-improvement", action="store_true")
     run.add_argument("--case-id")
+    run.add_argument("--case-matrix")
     run.add_argument("--case-spec")
     run.add_argument("--baseline-case-evaluation")
     run.add_argument("--candidate-case-evaluation")
