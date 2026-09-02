@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -78,6 +79,55 @@ def main() -> int:
         assert analyzed_unknown.returncode == 0, analyzed_unknown.stdout + analyzed_unknown.stderr
         unknown_data = json.loads(unknown_analysis.read_text(encoding="utf-8"))
         assert unknown_data["requires_manual"] is True
+
+    # Exercise the production run path: a reproducible red baseline, an
+    # allowlisted repair, a green candidate, and a positive improvement proof.
+    with tempfile.TemporaryDirectory(prefix="unattended-distillation-run-") as temp:
+        root = Path(temp)
+        (root / "scripts").mkdir()
+        shutil.copy2(SCRIPT, root / "scripts" / SCRIPT.name)
+        shutil.copy2(ROOT / "scripts" / "validate_distillation_improvement.py", root / "scripts" / "validate_distillation_improvement.py")
+        (root / "SKILL.md").write_text("# test skill\n", encoding="utf-8")
+        policy = json.loads(POLICY.read_text(encoding="utf-8"))
+        policy["gates"] = [{
+            "id": "route-contract",
+            "argv": [
+                "python",
+                "-c",
+                "import pathlib,sys; sys.exit(0 if 'unattended-distillation:route-lock' in pathlib.Path('SKILL.md').read_text() else 1)",
+            ],
+            "timeout_seconds": 30,
+        }]
+        policy_path = root / "policy.json"
+        write_json(policy_path, policy)
+        input_dir = root / "input"
+        write_json(input_dir / "failure.json", {
+            "valid": False,
+            "status": "failed",
+            "issues": [{"code": "routing_binding_mismatch", "message": "route mismatch"}],
+        })
+        subprocess.run(["git", "init"], cwd=root, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=root, check=True)
+        subprocess.run(["git", "config", "user.name", "distillation test"], cwd=root, check=True)
+        subprocess.run(["git", "add", "SKILL.md"], cwd=root, check=True)
+        subprocess.run(["git", "commit", "-m", "fixture"], cwd=root, capture_output=True, check=True)
+        report_dir = root / "reports"
+        result_path = root / "result.json"
+        completed = run(
+            "run",
+            "--repo-root", str(root),
+            "--input-dir", str(input_dir),
+            "--report-dir", str(report_dir),
+            "--policy", str(policy_path),
+            "--output", str(result_path),
+            "--require-improvement",
+        )
+        assert completed.returncode == 0, completed.stdout + completed.stderr
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+        assert result["status"] == "passed", result
+        assert result["promotion"] == "improved", result
+        assert result["changed"] is True, result
+        assert "unattended-distillation:route-lock" in (root / "SKILL.md").read_text(encoding="utf-8")
 
     print("unattended distillation controller: ok")
     return 0
