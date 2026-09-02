@@ -11,7 +11,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--region name=x,y,w,h ...] [--reference IMAGE | --reference-dir DIR]
        [--visual-threshold N]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
-       [--route-decision ROUTE.json] [--require-route] [--require-editability]
+       [--route-decision ROUTE.json] [--require-route] [--require-engine-route] [--require-editability]
        [--outline-contract CONTRACT.json] [--content-authority AUTHORITY.json]
        [--quality-gates QUALITY.json] [--require-root-p0]
        [--design-system DESIGN.yaml] [--require-p1]
@@ -326,6 +326,7 @@ def main() -> int:
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
+    parser.add_argument("--require-engine-route", action="store_true", help="require the editable-first engine/fallback contract before downstream gates")
     parser.add_argument("--outline-contract", help="approved outline-contract/v1; defaults to project/outline-contract.json when --require-root-p0 is used")
     parser.add_argument("--content-authority", help="content-authority/v1 provenance contract")
     parser.add_argument("--quality-gates", help="quality-gates/v1 four-dimensional quality contract")
@@ -392,6 +393,7 @@ def main() -> int:
     deck = Path(args.deck).resolve()
     if args.require_root_p0:
         args.require_route = True
+        args.require_engine_route = True
         args.require_workflow_state = True
         args.require_formal_content = True
         args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
@@ -400,6 +402,8 @@ def main() -> int:
         args.handoff = args.handoff or str(project / "handoff.json")
     if args.require_p1:
         args.require_root_p0 = True
+        args.require_route = True
+        args.require_engine_route = True
         args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
         args.content_authority = args.content_authority or str(project / "content-authority.json")
         args.quality_gates = args.quality_gates or str(project / "quality-gates.json")
@@ -407,6 +411,9 @@ def main() -> int:
         args.design_system = args.design_system or str(project / "design-system.yaml")
         args.issue_log = args.issue_log or str(project / "issue-log.json")
         args.review_package_dir = args.review_package_dir or str(project / "review-package")
+    if args.require_engine_route:
+        # Engine selection is part of route readiness; it cannot remain advisory.
+        args.require_route = True
     if args.expected_pages < 1:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "expected_pages_invalid", "message": "--expected-pages must be positive"}, ensure_ascii=False))
         return 2
@@ -415,6 +422,7 @@ def main() -> int:
         # the required evidence explicit instead of allowing a green run to
         # be mistaken for a delivered deck.
         args.require_route = True
+        args.require_engine_route = True
         args.require_editability = True
         args.require_embedded_fonts = True
         args.require_cjk = True
@@ -644,6 +652,8 @@ def main() -> int:
     add_step("routing-contract", [str(SCRIPT_DIR / "validate_routing_contract.py"), str(routing_contract), "--report", str(run_dir / "routing-contract-validation.json")], outputs=[run_dir / "routing-contract-validation.json"], inputs=[routing_contract], deps=["skill-package"])
     if args.route_decision:
         route_args = [str(SCRIPT_DIR / "validate_route.py"), str(Path(args.route_decision).resolve()), "--require-files", "--expected-pages", str(args.expected_pages), "--require-confirmation", "--report", str(run_dir / "route-validation.json")]
+        if args.require_engine_route:
+            route_args.append("--require-engine-route")
         if args.require_formal_content:
             route_args.append("--require-formal-content")
         if args.reference:

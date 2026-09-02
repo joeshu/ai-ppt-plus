@@ -63,9 +63,36 @@ def main() -> int:
         worker = root / str(worker_name)
         globs = [item for item in pair.get("compare_globs", []) if isinstance(item, str)]
         excludes = [item for item in pair.get("exclude", []) if isinstance(item, str)]
+        adapter_exclusions = pair.get("adapter_exclusions", [])
+        adapter_reasons: dict[str, str] = {}
+        if adapter_exclusions is None:
+            adapter_exclusions = []
+        if not isinstance(adapter_exclusions, list):
+            issues.append({"severity": "blocker", "code": "mirror_adapter_exclusions_invalid", "worker": worker_name})
+            adapter_exclusions = []
+        for index, item in enumerate(adapter_exclusions):
+            if not isinstance(item, dict):
+                issues.append({"severity": "blocker", "code": "mirror_adapter_exclusion_invalid", "worker": worker_name, "index": index})
+                continue
+            path = item.get("path")
+            reason = item.get("reason")
+            if not isinstance(path, str) or not path.strip() or not isinstance(reason, str) or not reason.strip():
+                issues.append({"severity": "blocker", "code": "mirror_adapter_exclusion_evidence_missing", "worker": worker_name, "index": index})
+                continue
+            if path in adapter_reasons or path in excludes:
+                issues.append({"severity": "blocker", "code": "mirror_adapter_exclusion_duplicate", "worker": worker_name, "path": path})
+                continue
+            adapter_reasons[path] = reason
+        excludes = list(dict.fromkeys(excludes + list(adapter_reasons)))
         required = [item for item in pair.get("required_paths", []) if isinstance(item, str)]
         compared = 0
         pair_issues = []
+        for relative, reason in adapter_reasons.items():
+            adapter_path = worker / relative
+            if not adapter_path.is_file():
+                issue = {"severity": "blocker", "code": "mirror_adapter_worker_missing", "worker": worker_name, "path": relative, "reason": reason}
+                issues.append(issue)
+                pair_issues.append(issue)
 
         candidates: set[Path] = set()
         for pattern in globs:
@@ -107,7 +134,7 @@ def main() -> int:
             issue = {"severity": "blocker", "code": "mirror_worker_missing", "worker": worker_name, "path": str(worker)}
             issues.append(issue)
             pair_issues.append(issue)
-        pair_results.append({"worker": worker_name, "compared_files": compared, "issues": pair_issues})
+        pair_results.append({"worker": worker_name, "compared_files": compared, "adapter_exclusions": [{"path": path, "reason": reason} for path, reason in adapter_reasons.items()], "issues": pair_issues})
 
     if not pairs:
         issues.append({"severity": "blocker", "code": "mirror_policy_pairs_missing"})

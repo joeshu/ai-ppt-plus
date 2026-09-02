@@ -1,81 +1,32 @@
 # Skill routing and ownership
 
-The project has one orchestration owner and two capability layers. A request
-may pass through several layers, but each contract has one source of truth.
+`ai-ppt-plus` is the routing authority for an orchestrated deck. `ai-ppt-editable` is the default editable worker for fixed references, screenshots, rasterized PDF pages, existing PPTX repair, and structured-content-to-editable-PPTX work.
 
-| Skill | Owns | Does not own |
+`GordenImage2PPTX` is not the default worker and is not a second route definition. It is a controlled compatibility fallback for a scoped visual asset only, after the editable worker's native path or the approved native image-generation path has failed and the user has explicitly approved the fallback.
+
+| Capability | Default owner | Boundary |
 |---|---|---|
-| `ai-ppt-plus` | intake, source authority, narrative/outline, route decision, design system, manifests, QA orchestration, report aggregation, human closeout and release gates | low-level shape-writing implementation details or image-only reconstruction internals |
-| `GordenImage2PPTX` | image/screenshot/reference decomposition into background, frame, icon/asset and formal-text layers; reconstruction-specific object plan and editable PPTX output | narrative redesign, release eligibility, human sign-off, or a second definition of the backend contract |
-| `Presentations` | low-level PPTX/Google Slides creation, mutation, rendering and package manipulation through the selected authoring adapter | choosing the story, deciding the visual route, defining editability policy, or claiming QA/release completion |
+| Route, authority, release | `ai-ppt-plus` | Decides the route and owns delivery claims |
+| Editable reconstruction and native authoring | `ai-ppt-editable` | Owns decomposition, object mapping, authoring and technical QA |
+| Visual-only fallback asset | `GordenImage2PPTX` | Region-only, asset-recorded, user-approved; never formal text, panels, tables, charts or whole pages |
+| Rendering and package adapters | `Presentations`, `python-pptx`, LibreOffice, Poppler | Implement declared operations; do not acquire route or release ownership |
 
 ## Routing rules
 
-1. A topic, outline, source bundle, or existing deck starts in
-   `ai-ppt-plus`.
-2. A fixed slide image or screenshot that must be reconstructed is delegated to
-   `GordenImage2PPTX` for decomposition. The formal text authority remains the
-   approved outline or user transcription, not generated pixels.
-3. PPTX object creation/editing is performed through the presentation
-   capability exposed by `Presentations` or the explicitly selected adapter.
-4. The result returns to `ai-ppt-plus` for manifest reconciliation, rendering,
-   structural/visual checks, report aggregation, human review and release.
-5. The runner must validate the discovered backend against the declared
-   `authoring` binding before any downstream gate. No child skill may silently replace the selected authoring backend, lower the
-   L0-L5 editability standard, or turn an automated pass into a delivery claim.
+1. Complete deck requests start in `ai-ppt-plus`, which records the route, formal-text authority, engine selection and fallback policy.
+2. `reference-reconstruction`, `editable-pptx` and `native-authoring` use `ai-ppt-editable` as the primary engine and target native semantic objects whenever the semantics are known.
+3. `visual-creation` uses `ai-ppt-visual-gen` as the visual worker and returns evidence to `ai-ppt-plus`; it is not an editable reconstruction route.
+4. A fallback event must be region-bounded, contain no formal content, carry a reason and asset record, and include an explicit user decision. The root engine-route validator is the hard gate.
+5. The worker may run standalone, but standalone invocation does not relax the route, authority, editability, asset-provenance or technical-QA contracts.
 
-## Shared contracts
+The machine-readable root contract is `ai-ppt-plus/assets/skill-routing.template.json`; the worker-local contract is only the package boundary and authoring binding. Keep both names visible so a worker invocation cannot be mistaken for route ownership.
 
-These contracts are project-level and must be consumed by all routes:
-
-- `references/editability-levels.md` defines L0-L5 and the distinction between
-  editable content, movable assets and component editability.
-- `references/native-object-protocol.md` defines native shapes, groups, tables,
-  charts and vector asset evidence.
-- `references/report-protocol.md` defines the normalized report envelope and
-  the technical/human/release state split.
-- `references/chart-reconstruction.md` defines chart data authority,
-  representation selection, missing-value handling and chart-specific QA.
-- `references/font-embedding.md` and `references/font-portability.md` define
-  the font evidence and delivery restrictions.
-
-The machine-readable ownership map is kept in
-`assets/skill-routing.template.json` so a future adapter can validate its
-declared scope before it is selected.
-
-## Executable contract
-
-The checked-in package is the source of truth for the orchestrator and its
-managed routing rules. Validate both contracts before intake or authoring:
+## Executable checks
 
 ```bash
-python scripts/validate_skill_package.py --skill-dir .
-python scripts/validate_routing_contract.py
+python3 scripts/validate_skill_package.py --skill-dir .
+python3 scripts/validate_routing_contract.py
+python3 scripts/validate_perfect_sync.py
 ```
 
-`validate_skill_package.py` checks the package revision and SHA-256 of every
-managed file. When a runtime-installed copy is known, pass
-`--runtime-skill-dir RUNTIME_DIR`; a missing or stale runtime file is a
-blocking drift, not a warning. `run_pipeline.py` runs this contract as its
-first prerequisite and includes the managed files in cache inputs.
-
-The route graph is intentionally small and explicit:
-
-```mermaid
-flowchart TD
-    A[ai-ppt-plus intake] --> B{route decision}
-    B -->|visual-creation| C[visual intermediate]
-    B -->|reference-reconstruction| D[GordenImage2PPTX decomposition]
-    C --> E[Presentations authoring adapter]
-    D --> E
-    E --> F[ai-ppt-plus QA and release gates]
-```
-
-The route validator rejects undeclared ownership, missing backend bindings,
-and a non-`decided` route. The pipeline also binds a reference roster to its
-source hashes and makes the supplied route a prerequisite for every
-downstream task; an invalid route therefore cannot be treated as advisory
-metadata. The roster's `path` is the original authoritative source. A
-normalized comparison image, when needed, must be recorded separately as
-`comparison_path` with its own hash and `derived_from_sha256`; it must not
-replace the source authority.
+In orchestrated mode, consume the immutable route decision and handoff supplied by `ai-ppt-plus`, then return worker-level PPTX and technical evidence. The worker never claims narrative ownership, release eligibility or human sign-off.
