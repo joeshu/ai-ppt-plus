@@ -1,0 +1,101 @@
+{
+  "schema": "ai-ppt-plus/unattended-distillation-policy/v1",
+  "enabled": true,
+  "max_rounds": 3,
+  "max_changed_files": 4,
+  "max_changed_lines": 240,
+  "allowed_paths": [
+    "SKILL.md",
+    "references/*.md",
+    "ai-ppt-editable/SKILL.md",
+    "ai-ppt-editable/references/*.md"
+  ],
+  "protected_paths": [
+    ".github/**",
+    "*.yml",
+    "*.yaml",
+    "requirements*.txt",
+    "assets/**",
+    "*.py"
+  ],
+  "gates": [
+    {
+      "id": "root-package",
+      "argv": ["python", "scripts/validate_skill_package.py", "--skill-dir", "."],
+      "timeout_seconds": 300
+    },
+    {
+      "id": "root-routing",
+      "argv": ["python", "scripts/validate_routing_contract.py"],
+      "timeout_seconds": 120
+    },
+    {
+      "id": "editable-package",
+      "argv": ["python", "ai-ppt-editable/scripts/validate_skill_package.py", "--skill-dir", "ai-ppt-editable"],
+      "timeout_seconds": 300
+    },
+    {
+      "id": "editable-routing",
+      "argv": ["python", "ai-ppt-editable/scripts/validate_routing_contract.py"],
+      "timeout_seconds": 120
+    },
+    {
+      "id": "p0-governance",
+      "argv": ["python", "tests/test_p0_governance.py"],
+      "timeout_seconds": 300
+    },
+    {
+      "id": "p1-governance",
+      "argv": ["python", "tests/test_p1_governance.py"],
+      "timeout_seconds": 300
+    },
+    {
+      "id": "p2-governance",
+      "argv": ["python", "tests/test_p2_guards.py"],
+      "timeout_seconds": 300
+    },
+    {
+      "id": "repository-regressions",
+      "argv": ["python", "scripts/run_tests.py", "--parallel-workers", "4", "--report", ".distillation/repository-test-report.json"],
+      "timeout_seconds": 900
+    }
+  ],
+  "repair_rules": [
+    {
+      "id": "restore-route-lock",
+      "category": "routing",
+      "priority": 100,
+      "operation": "ensure_block",
+      "target": "SKILL.md",
+      "marker": "<!-- unattended-distillation:route-lock -->",
+      "block": "<!-- unattended-distillation:route-lock -->\n## Automatic distillation route lock\n\nFor reference reconstruction and editable PPTX work, `ai-ppt-editable` is the only default execution engine. `GordenImage2PPTX` is a region-only fallback and may never replace formal text, semantic panels, cards, tables, charts, or a whole slide. A route or backend mismatch is a blocker, not a reason to silently substitute an engine.\n<!-- /unattended-distillation:route-lock -->"
+    },
+    {
+      "id": "restore-native-structure-lock",
+      "category": "native-structure",
+      "priority": 90,
+      "operation": "ensure_block",
+      "target": "ai-ppt-editable/SKILL.md",
+      "marker": "<!-- unattended-distillation:native-structure-lock -->",
+      "block": "<!-- unattended-distillation:native-structure-lock -->\n## Automatic distillation native-structure lock\n\nSimple frames, cards, panels, dividers and arrows must be native PowerPoint shapes or groups. Verified tables must be native PowerPoint tables with row, column, merge and data-snapshot evidence. Formal text must remain native text or table-cell rich text. A semantic frame image or flattened table is a hard failure.\n<!-- /unattended-distillation:native-structure-lock -->"
+    },
+    {
+      "id": "restore-text-visual-lock",
+      "category": "text-visual",
+      "priority": 80,
+      "operation": "ensure_block",
+      "target": "ai-ppt-editable/SKILL.md",
+      "marker": "<!-- unattended-distillation:text-visual-lock -->",
+      "block": "<!-- unattended-distillation:text-visual-lock -->\n## Automatic distillation text and visual lock\n\nRun both rendered comparison and native text/run-style inspection. Missing glyphs, flattened formal copy, stale font evidence, lost icons, and untracked gradients are blockers; a technically present object is not enough.\n<!-- /unattended-distillation:text-visual-lock -->"
+    },
+    {
+      "id": "restore-package-lock",
+      "category": "package-contract",
+      "priority": 70,
+      "operation": "ensure_block",
+      "target": "SKILL.md",
+      "marker": "<!-- unattended-distillation:package-lock -->",
+      "block": "<!-- unattended-distillation:package-lock -->\n## Automatic distillation package lock\n\nEvery automatic repair must be limited to the policy allowlist, preserve the three-skill package boundary, pass package and route validators, and leave an auditable report. Executable code, workflow files, dependencies and assets are protected from unattended edits.\n<!-- /unattended-distillation:package-lock -->"
+    }
+  ]
+}
