@@ -11,7 +11,8 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--region name=x,y,w,h ...] [--reference IMAGE | --reference-dir DIR]
        [--visual-threshold N]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
-       [--route-decision ROUTE.json] [--require-route] [--require-editability]
+       [--route-decision ROUTE.json] [--require-route] [--require-engine-route]
+       [--require-editability]
        [--outline-contract CONTRACT.json] [--content-authority AUTHORITY.json]
        [--quality-gates QUALITY.json] [--require-root-p0]
        [--design-system DESIGN.yaml] [--require-p1]
@@ -326,6 +327,7 @@ def main() -> int:
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
+    parser.add_argument("--require-engine-route", action="store_true", help="require the editable-first engine/fallback contract before downstream gates")
     parser.add_argument("--outline-contract", help="approved outline-contract/v1; defaults to project/outline-contract.json when --require-root-p0 is used")
     parser.add_argument("--content-authority", help="content-authority/v1 provenance contract")
     parser.add_argument("--quality-gates", help="quality-gates/v1 four-dimensional quality contract")
@@ -391,6 +393,7 @@ def main() -> int:
     deck = Path(args.deck).resolve()
     if args.require_root_p0:
         args.require_route = True
+        args.require_engine_route = True
         args.require_workflow_state = True
         args.require_formal_content = True
         args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
@@ -414,6 +417,7 @@ def main() -> int:
         # the required evidence explicit instead of allowing a green run to
         # be mistaken for a delivered deck.
         args.require_route = True
+        args.require_engine_route = True
         args.require_editability = True
         args.require_embedded_fonts = True
         args.require_cjk = True
@@ -467,8 +471,13 @@ def main() -> int:
     if args.release and affected_pages:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "release_requires_full_deck", "message": "--release requires a full-deck render; omit --affected-pages"}, ensure_ascii=False))
         return 2
-    if args.require_route and not args.route_decision:
-        result = {"schema": "ai-ppt-plus/pipeline-run/v1", "valid": False, "code": "route_decision_missing", "message": "--require-route needs --route-decision"}
+    if (args.require_route or args.require_engine_route) and not args.route_decision:
+        result = {
+            "schema": "ai-ppt-plus/pipeline-run/v1",
+            "valid": False,
+            "code": "route_decision_missing",
+            "message": "--require-route/--require-engine-route needs --route-decision",
+        }
         print(json.dumps(result, ensure_ascii=False))
         return 2
     route_data = None
@@ -670,10 +679,27 @@ def main() -> int:
             route_inputs.extend(Path(args.reference_dir).resolve() / f"slide-{index}.png" for index in range(1, args.expected_pages + 1))
         add_step("route", route_args, deps=["routing-contract"], outputs=[run_dir / "route-validation.json"], inputs=list(dict.fromkeys(route_inputs)))
 
+    engine_route_enabled = bool(args.route_decision and (args.require_engine_route or args.require_route or args.release))
+    if engine_route_enabled:
+        engine_route_args = [
+            str(SCRIPT_DIR / "validate_engine_route.py"),
+            str(Path(args.route_decision).resolve()),
+            "--strict",
+            "--report", str(run_dir / "engine-route-validation.json"),
+        ]
+        add_step(
+            "engine-route",
+            engine_route_args,
+            deps=["route"],
+            outputs=[run_dir / "engine-route-validation.json"],
+            inputs=[Path(args.route_decision).resolve()],
+            metadata={"required": True},
+        )
+
     manifest_icon_required, manifest_imagegen_required = project_asset_requirements(project)
     icon_required = args.require_icon_assets or manifest_icon_required or (project / "icon-asset-manifest.json").is_file()
     imagegen_required = args.require_imagegen_assets or manifest_imagegen_required or (project / "imagegen-assets-manifest.json").is_file()
-    route_deps = ["route"] if args.route_decision else []
+    route_deps = ["engine-route"] if engine_route_enabled else (["route"] if args.route_decision else [])
     workflow_state_enabled = bool(args.workflow_state or args.require_workflow_state)
     workflow_state_path = None
     if workflow_state_enabled:
@@ -713,6 +739,8 @@ def main() -> int:
     p0_deps = ["routing-contract"]
     if args.route_decision:
         p0_deps.append("route")
+    if engine_route_enabled:
+        p0_deps.append("engine-route")
     if workflow_state_enabled:
         p0_deps.append("workflow-state")
     if outline_contract_path:
@@ -1618,7 +1646,7 @@ def main() -> int:
     # The route and package contracts are true prerequisites, not just
     # informational reports.  A failed decision must block every downstream
     # gate so a parallel DAG cannot continue with an unapproved authority.
-    prerequisite = "route" if args.route_decision else "routing-contract"
+    prerequisite = "engine-route" if engine_route_enabled else ("route" if args.route_decision else "routing-contract")
     prerequisites = [prerequisite]
     if workflow_state_enabled:
         prerequisites.append("workflow-state")
@@ -1689,6 +1717,8 @@ def main() -> int:
         report_entries.append({"report_type": "font-delivery-validation", "path": "font-delivery-validation.json", "required": True, "stage": "validated"})
     if args.route_decision:
         report_entries.append({"report_type": "route-validation", "path": "route-validation.json", "required": args.require_route, "stage": "design-system-ready"})
+    if engine_route_enabled:
+        report_entries.append({"report_type": "engine-route-validation", "path": "engine-route-validation.json", "required": True, "stage": "design-system-ready"})
     if workflow_state_enabled:
         report_entries.append({"report_type": "workflow-state-validation", "path": "workflow-state-validation.json", "required": True, "stage": "intake"})
     if visual_generation_enabled:
@@ -1714,7 +1744,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "engine-route-validation": "engine-route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"

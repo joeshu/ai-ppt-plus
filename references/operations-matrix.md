@@ -19,7 +19,7 @@ flowchart TD
 | route | visual authority | formal-text authority | worker path | whole-page image allowed |
 |---|---|---|---|---|
 | `visual-creation` | generated visual intermediate | approved outline | A1-A5, then optional B0-B9 | yes, as an image-slide artifact only |
-| `reference-reconstruction` | approved reference image | user transcription or approved copy | B0-B9 | only as an explicitly labeled fallback |
+| `reference-reconstruction` | approved reference image | user transcription or approved copy | B0-B9 via `ai-ppt-editable` | no whole-page image; only a recorded region-only visual fallback for allowed complex assets |
 | `native-authoring` | approved design system | approved structured content | B0-B1, B6-B9 | no |
 
 The route is persisted in `route-decision/v2`. A visual reference can teach
@@ -85,7 +85,7 @@ inside that worker.
 | B0 | create unique run root, preserve input, view the current source page and validate handoff | `validate_handoff.py`, `inspect_sources.py`, `view_image` runtime adapter | never edit a fixed history directory or use chat memory as source |
 | B1 | sample palette and typography context | `probe_palette.py`, font probe, design system | palette is evidence, not a license to redesign |
 | B2 | reproduce clean background | background/image-generation asset event, source hash | keep background separate from text, frame and icons |
-| B3 | generate or recover the framework/skeleton layer | native image-generation event, `imagegen-assets-manifest.json`, `extract_panels.py` where applicable | frame definition must be exact; default frame remains one movable image |
+| B3 | generate or recover the framework/skeleton layer | native shapes/groups/tables first; imagegen/assets manifests for complex visuals | simple cards, panels, titles, dividers, process nodes and table grids are native semantic objects by default; only text-free complex visual substrate may remain an independent image |
 | B4 | generate/recover icons, decorations and artistic words | native image-generation event, `chroma_key.py`, `frame_parts_to_icons.py`, `audit_icon_layers.py` | independent semantic assets stay independently movable; no duplicate or green fringe |
 | B5 | remove background and slice only approved assets | `chroma_key.py`, `slice_grid.py`, `extract_panels.py` | every crop has source bbox, source hash and asset provenance |
 | B6 | map source coordinates to the target slide | `image_viewport.py`, `layout_guard.py`, `placement_qa.py` | preserve ratio, margins, anchors and reading path |
@@ -93,7 +93,7 @@ inside that worker.
 | B7a | guard layout and text placement | `layout_guard.py`, `validate_text_style_map.py`, `validate_typography_calibration.py` | no overflow, clipping, line-break drift or missing emphasis |
 | B7b | verify placement | `placement_qa.py`, render comparison | fix the owning bbox/object, not a downstream symptom |
 | B7c | correct frame anchor if needed | frame/object placement evidence | correct anchor without changing the approved composition |
-| B8 | compose native PPTX objects | `compose_pptx.py`, `authoring_backend.py`, `pptx_primitives.py`, `component_expander.py` | text is native text; verified charts/tables are native; complex art remains a movable asset |
+| B8 | compose native PPTX objects | `compose_pptx.py`, `authoring_backend.py`, `pptx_primitives.py`, `component_expander.py` | text, simple panels/cards and verified tables/charts are native; icons, gradients and complex art remain independent movable assets; fallback is never silent |
 | B9 | render, inspect, compare and hand off | `render_pptx.py`, `inspect_pptx.py`, `semantic_object_audit.py`, `visual_compare_qa.py`, font and report gates | technical pass, human visual review and release eligibility are separate |
 
 The B2-B8 image-to-PPTX algorithm is a protected boundary. This architecture
