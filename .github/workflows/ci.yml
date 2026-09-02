@@ -75,6 +75,7 @@ jobs:
             --deck ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \\
             --source-pptx ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \\
             --process-image ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png \\
+          --reference-image ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg \\
             --output-dir .distillation/case-baseline \\
             --output .distillation/case-baseline/baseline-evaluation.json
           baseline_rc=$?
@@ -86,6 +87,7 @@ jobs:
             --deck ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx \\
             --source-pptx ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \\
             --process-image ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png \\
+          --reference-image ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg \\
             --baseline-evaluation .distillation/case-baseline/baseline-evaluation.json \\
             --output-dir .distillation/case-candidate \\
             --output .distillation/case-candidate/candidate-evaluation.json

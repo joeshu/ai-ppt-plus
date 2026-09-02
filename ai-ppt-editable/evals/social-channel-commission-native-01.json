@@ -77,6 +77,7 @@
     "candidate_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx",
     "baseline_artifact": "case-baseline-evaluation.json",
     "candidate_artifact": "case-candidate-evaluation.json",
-    "improvement_artifact": "case-improvement.json"
+    "improvement_artifact": "case-improvement.json",
+    "reference_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg"
   }
 }

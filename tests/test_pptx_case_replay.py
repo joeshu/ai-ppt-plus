@@ -47,13 +47,15 @@ def main() -> int:
     source = ROOT / "ai-ppt-editable" / "evals" / "fixtures" / "social-channel-commission-editable-1.pptx"
     process = ROOT / "ai-ppt-editable" / "evals" / "fixtures" / "social-channel-commission-green-screen-process.png"
     candidate = ROOT / "ai-ppt-editable" / "evals" / "fixtures" / "social-channel-commission-native-01-candidate.pptx"
-    if not source.is_file() or not process.is_file() or not candidate.is_file():
+    reference = ROOT / "ai-ppt-editable" / "evals" / "fixtures" / "social-channel-commission-reference.jpg"
+    if not source.is_file() or not process.is_file() or not candidate.is_file() or not reference.is_file():
         raise AssertionError("social-channel-commission-native-01 fixtures are incomplete")
     with tempfile.TemporaryDirectory(prefix="pptx-case-replay-") as temporary:
         work = Path(temporary)
         source = materialize_fixture(source, work / "source.pptx", binary_zip=True)
         process = materialize_fixture(process, work / "process.png")
         candidate = materialize_fixture(candidate, work / "candidate.pptx", binary_zip=True)
+        reference = materialize_fixture(reference, work / "reference.jpg")
         baseline_dir = work / "baseline"
         candidate_dir = work / "candidate"
         baseline_path = baseline_dir / "baseline-evaluation.json"
@@ -61,6 +63,7 @@ def main() -> int:
         base_command = [
             sys.executable, str(REPLAY), "--case-spec", str(CASE),
             "--source-pptx", str(source), "--process-image", str(process),
+            "--reference-image", str(reference),
         ]
         baseline = subprocess.run(
             base_command + ["--phase", "baseline", "--deck", str(source), "--output-dir", str(baseline_dir), "--output", str(baseline_path)],
