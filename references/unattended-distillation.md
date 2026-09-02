@@ -89,3 +89,12 @@ A unit test proves that a validator executes; it does not prove that an editable
 The social-channel anchor case must verify five native `a:tbl` tables, the three commission-card bodies, the policy table's four vertical merges, the monthly incentive table dimensions, native panels, native body text, the allowed text-free background, visual comparison, object comparison, and a mutation smoke test that edits a cell and moves a panel. The candidate is not promotion evidence unless its deck hash, source hashes and optional repair fingerprint are tied to the current repair. A prebuilt fixture is a CI sentinel; a real distillation candidate must be regenerated after the skill change.
 
 Use a case matrix as the coverage unit rather than treating one case as universal coverage. The anchor case covers dense reference reconstruction with panels and tables; add separate cases for routing ownership, rich-text/font fidelity, icons/gradients, charts/data provenance, multi-slide consistency and package/runtime portability before claiming deck-wide improvement.
+
+
+## Distillation case matrix
+
+A single integrated replay case is a golden anchor, not full skill coverage. The checked-in matrix at `evals/distillation-case-matrix.json` separates atomic contract cases from actual PPTX replay cases across P0 routing/package safety, P1 native structure and visual fidelity, and P2 full-deck/cache consistency.
+
+Targeted failure runs select the direct responsibility, adjacent responsibilities, and all P0 safety cases. Pre-merge, nightly, and manual full evaluations select the complete matrix. Every replay candidate must emit baseline, candidate, improvement, object, visual, and mutation evidence; unit-test success alone is insufficient.
+
+The current social case is marked `static_sentinel`: it verifies that the replay/audit machinery can run, but it cannot promote a distilled repair. A real candidate must be regenerated after the repair and bound to that repair's fingerprint. The validator reports replay coverage debt, and the unattended controller blocks promotion when the affected category has no actual replay evidence.

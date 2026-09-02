@@ -437,3 +437,12 @@ The editable worker must not claim that a semantic panel or table became editabl
 
 For every native table/panel or text-visual repair, rerun the actual reconstruction case after the change. A candidate must carry source and deck hashes, rendered comparison, OOXML `a:tbl` evidence, merge topology, native text/run audit and mutation smoke-test evidence; a unit-test pass alone cannot establish editability.
 <!-- /unattended-distillation:case-replay -->
+
+
+## Distillation case matrix
+
+A single integrated replay case is a golden anchor, not full skill coverage. The checked-in matrix at `evals/distillation-case-matrix.json` separates atomic contract cases from actual PPTX replay cases across P0 routing/package safety, P1 native structure and visual fidelity, and P2 full-deck/cache consistency.
+
+Targeted failure runs select the direct responsibility, adjacent responsibilities, and all P0 safety cases. Pre-merge, nightly, and manual full evaluations select the complete matrix. Every replay candidate must emit baseline, candidate, improvement, object, visual, and mutation evidence; unit-test success alone is insufficient.
+
+The current social case is marked `static_sentinel`: it verifies that the replay/audit machinery can run, but it cannot promote a distilled repair. A real candidate must be regenerated after the repair and bound to that repair's fingerprint. The validator reports replay coverage debt, and the unattended controller blocks promotion when the affected category has no actual replay evidence.
