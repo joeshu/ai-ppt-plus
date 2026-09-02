@@ -3,16 +3,40 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from zipfile import is_zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
 REPLAY = ROOT / "scripts" / "replay_pptx_case.py"
 PROOF = ROOT / "scripts" / "validate_distillation_improvement.py"
 CASE = ROOT / "ai-ppt-editable" / "evals" / "social-channel-commission-native-01.json"
+
+
+def materialize_fixture(source: Path, destination: Path, *, binary_zip: bool = False) -> Path:
+    """Freeze a fixture before replay and recover a damaged checkout from Git."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, destination)
+    valid = is_zipfile(destination) if binary_zip else destination.stat().st_size > 0
+    if not valid:
+        relative = source.relative_to(ROOT).as_posix()
+        recovered = subprocess.run(
+            ["git", "show", f"HEAD:{relative}"],
+            cwd=ROOT,
+            capture_output=True,
+            check=False,
+        )
+        if recovered.returncode == 0 and recovered.stdout:
+            destination.write_bytes(recovered.stdout)
+    if binary_zip and not is_zipfile(destination):
+        raise AssertionError(f"fixture is not a valid PPTX ZIP: {source}")
+    if not destination.is_file() or destination.stat().st_size == 0:
+        raise AssertionError(f"fixture is empty: {source}")
+    return destination
 
 
 def main() -> int:
@@ -23,6 +47,9 @@ def main() -> int:
         raise AssertionError("social-channel-commission-native-01 fixtures are incomplete")
     with tempfile.TemporaryDirectory(prefix="pptx-case-replay-") as temporary:
         work = Path(temporary)
+        source = materialize_fixture(source, work / "source.pptx", binary_zip=True)
+        process = materialize_fixture(process, work / "process.png")
+        candidate = materialize_fixture(candidate, work / "candidate.pptx", binary_zip=True)
         baseline_dir = work / "baseline"
         candidate_dir = work / "candidate"
         baseline_path = baseline_dir / "baseline-evaluation.json"
