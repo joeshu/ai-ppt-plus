@@ -123,13 +123,17 @@ layer, z-order, anchor, editability level, replaceability, and provenance.
 
 Choose the highest practical editability level without mislabeling:
 
-- native text, shapes, tables, and charts where semantics/data are known;
+- native text, shapes, groups, tables, and charts where semantics/data are known;
+- native shapes/groups for simple cards, panels, dividers, process nodes and
+  table grids; each semantic container has its own object ID;
 - movable raster/vector assets for icons, illustrations, and complex artwork;
 - a whole-page bitmap only as an explicitly image-only fallback, never as an
   editable reconstruction.
 
-Repeated semantic panels remain independently movable. Do not merge the entire
-framework into one image unless the user explicitly accepts that level.
+Repeated semantic panels remain independently movable. Simple semantic panels,
+cards, frames and tables are native by default. A text-free complex visual
+substrate may remain an independent image only when its manifest records the
+exception; it never replaces native text or a table object.
 
 ## E2 — Reference decomposition
 
@@ -137,10 +141,12 @@ For fixed-reference reconstruction, preserve page ratio, layout, hierarchy,
 spatial relationships, palette, and visible styling. Separate:
 
 1. background texture/photography;
-2. frame/skeleton that excludes text and independent assets;
+2. native frame/skeleton shapes/groups for simple geometry, or a text-free
+   traceable complex visual substrate when native recreation would reduce
+   fidelity;
 3. icons, decoration, logos, illustrations, and artistic words;
 4. editable formal text;
-5. charts/tables with their own data/representation authority.
+5. native charts/tables with their own data/representation authority;
 
 When the corresponding evidence exists, the perfect-first extension boundary
 is mandatory: verified chart records may be promoted to native charts; simple
@@ -293,6 +299,10 @@ split-leakage evaluation, not as semantic vision-model training or weight
    declared hybrid/static representation and preserve labels as native text.
 5. Keep PPTX and preview drawing order equivalent so technical previews are
    meaningful.
+6. For reference reconstruction, compose simple semantic panels/cards as
+   native shapes or groups and verified tables as native PowerPoint tables.
+   Preserve complex gradients, illustrations, icons and textures as independent
+   visual assets; do not trade their fidelity for a generic editable substitute.
 6. Treat an adapter preview with missing CJK glyphs as a renderer diagnostic,
    not as permission to rasterize text. Embed the task-local font, render the
    exact embedded PPTX with the release renderer, and require preview/final
@@ -361,6 +371,8 @@ deck-wide evidence and determine release eligibility.
 
 - missing formal-text or visual authority;
 - whole-page bitmap presented as editable output;
+- rasterized simple card/panel/frame/table where a native semantic object is
+  required;
 - complex正文/card/panel raster containing formal text, or missing
   `raster_text_audit` and native `text_layer_ids` evidence;
 - icon/panel/chart/text objects missing provenance or required independence;

@@ -41,6 +41,24 @@ def _normalized_theme(deck: dict) -> dict:
     return normalized
 
 
+def _validate_native_structure_input(deck: dict, slide_spec: dict, slide_no: int) -> None:
+    """Reject semantic raster layers when the route asks for native objects."""
+    if not deck.get("require_native_structure"):
+        return
+    frame = slide_spec.get("frame")
+    if frame and str(slide_spec.get("frame_role", "")).casefold() not in {"decorative-only", "complex-visual"}:
+        _die(
+            f"slide {slide_no}: semantic frame images are disabled by native-semantic-objects; "
+            "use shapes/groups/tables or mark a text-free complex visual as frame_role=complex-visual"
+        )
+    for panel in slide_spec.get("panels", []) or []:
+        if isinstance(panel, dict) and panel.get("native_required") is True and panel.get("file"):
+            _die(f"slide {slide_no}: native-required panel cannot be authored from a raster file")
+    for table in slide_spec.get("tables", []) or []:
+        if isinstance(table, dict) and table.get("native_required") is True and table.get("file"):
+            _die(f"slide {slide_no}: native-required table cannot be authored from a raster file")
+
+
 def build_pptx(deck: dict, out_path: Path) -> None:
     """Create a PPTX using the stable backend contract."""
     from pptx import Presentation
@@ -62,6 +80,7 @@ def build_pptx(deck: dict, out_path: Path) -> None:
 
     try:
         for slide_no, slide_spec in enumerate(deck["slides"], 1):
+            _validate_native_structure_input(deck, slide_spec, slide_no)
             slide = presentation.slides.add_slide(_choose_slide_layout(presentation, slide_spec, theme, deck))
             add_background(slide, slide_spec, assets_dir, slide_width_emu, slide_height_emu)
             add_frame(slide, slide_spec, assets_dir, slide_width_emu, slide_height_emu)

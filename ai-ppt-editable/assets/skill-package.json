@@ -6,7 +6,15 @@
   "entrypoint": "SKILL.md",
   "self_contained": {
     "policy": "self-contained",
-    "required_dirs": ["agents", "scripts", "references", "assets", "evals", "examples", "tests"]
+    "required_dirs": [
+      "agents",
+      "scripts",
+      "references",
+      "assets",
+      "evals",
+      "examples",
+      "tests"
+    ]
   },
   "managed_globs": [
     "SKILL.md",
@@ -23,6 +31,7 @@
     "tests/**/*.json"
   ],
   "required_files": [
+    "scripts/validate_native_editability.py",
     "SKILL.md",
     "agents/openai.yaml",
     "assets/skill-package.json",

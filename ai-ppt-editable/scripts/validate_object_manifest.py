@@ -16,6 +16,8 @@ def main() -> int:
     ap.add_argument("manifest")
     ap.add_argument("--expected-pages", type=int, help="require contiguous slide coverage for this many pages")
     ap.add_argument("--require-panels", action="store_true")
+    ap.add_argument("--require-native-panels", action="store_true")
+    ap.add_argument("--require-native-tables", action="store_true")
     ap.add_argument("--expected-panel-count", type=int)
     ap.add_argument("--strict", action="store_true")
     ap.add_argument("--report")
@@ -71,10 +73,14 @@ def main() -> int:
             if oid in seen_global:
                 errors.append({"code": "duplicate_object_id_global", "object_id": oid})
             seen_global.add(oid)
-            if obj.get("role") in {"semantic-panel", "panel", "frame-panel"}:
+            if obj.get("role") in {"semantic-panel", "panel", "frame-panel", "card", "card-frame"}:
                 panel_ids.append(oid)
                 if obj.get("independent") is not True:
                     errors.append({"code": "panel_not_independent", "slide": si, "object_id": oid})
+                if args.require_native_panels and obj.get("object_type") not in {"native_shape", "native_group"}:
+                    errors.append({"code": "panel_not_native_in_manifest", "slide": si, "object_id": oid, "object_type": obj.get("object_type")})
+            if args.require_native_tables and (obj.get("role") in {"table", "data-table", "editable-table", "data-grid"} or obj.get("object_type") == "editable_table") and obj.get("object_type") != "editable_table":
+                errors.append({"code": "table_not_native_in_manifest", "slide": si, "object_id": oid, "object_type": obj.get("object_type")})
             if obj.get("role") == "formal-text" and obj.get("object_type") != "editable_text":
                 errors.append({"code": "formal_text_not_editable", "slide": si, "object_id": oid})
         slide_summaries.append({"slide": si, **summarize_objects(objects), "issues": issues})
