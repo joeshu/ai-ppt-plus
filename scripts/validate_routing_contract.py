@@ -75,7 +75,7 @@ def main() -> int:
         "requires_explicit_reason": True,
         "requires_asset_record": True,
         "requires_user_decision_on_generation_failure": True,
-        "forbidden_roles": {"formal-text", "semantic-panel", "panel-frame", "table", "chart", "card-frame", "whole-slide", "whole-page"},
+        "forbidden_roles": {"formal-text", "semantic-panel", "panel-frame", "table", "chart", "card-frame", "whole-slide", "whole-page", "framework"},
     }
     if not isinstance(fallback_policy, dict):
         issues.append({"severity": "blocker", "code": "fallback_policy_missing"})

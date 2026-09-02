@@ -84,6 +84,12 @@ def main() -> int:
         scoped = run("scripts/validate_engine_route.py", str(route_path), "--strict")
         assert scoped.returncode == 0, scoped.stdout + scoped.stderr
 
+        missing_declaration = copy.deepcopy(with_fallback)
+        missing_declaration["fallback_events"][0].pop("contains_formal_content")
+        write(route_path, missing_declaration)
+        blocked_declaration = run("scripts/validate_engine_route.py", str(route_path), "--strict")
+        assert_blocked(blocked_declaration, "fallback_formal_content_declaration_missing")
+
         forbidden_role = copy.deepcopy(with_fallback)
         forbidden_role["fallback_events"][0]["role"] = "table"
         write(route_path, forbidden_role)

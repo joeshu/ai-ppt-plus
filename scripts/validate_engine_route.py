@@ -83,7 +83,10 @@ def _valid_region(value) -> bool:
         numbers = [float(item) for item in values]
     except (TypeError, ValueError):
         return False
-    return all(math.isfinite(item) for item in numbers) and numbers[2] > 0 and numbers[3] > 0
+    if not all(math.isfinite(item) for item in numbers):
+        return False
+    x, y, width, height = numbers
+    return x >= 0 and y >= 0 and width > 0 and height > 0 and x + width <= 1 and y + height <= 1
 
 
 def validate_engine_route_data(data: dict, *, strict: bool = True) -> tuple[list[dict], dict]:
@@ -150,9 +153,11 @@ def validate_engine_route_data(data: dict, *, strict: bool = True) -> tuple[list
             issues.append(_issue("fallback_role_forbidden", index=index, role=role))
         if event.get("object_type") in FORBIDDEN_FALLBACK_TYPES:
             issues.append(_issue("fallback_object_type_forbidden", index=index, object_type=event.get("object_type")))
-        if event.get("contains_formal_content") is True:
-            issues.append(_issue("fallback_contains_formal_content", index=index))
-        if event.get("whole_page") is True or event.get("full_page") is True or event.get("allow_full_page") is True:
+        if event.get("contains_formal_content") is not False:
+            issues.append(_issue("fallback_formal_content_declaration_missing", index=index))
+        if event.get("whole_page") is not False:
+            issues.append(_issue("fallback_full_page_declaration_missing", index=index))
+        if event.get("full_page") is True or event.get("allow_full_page") is True:
             issues.append(_issue("fallback_full_page_forbidden", index=index))
         if not _valid_region(event.get("region") or event.get("source_bbox")):
             issues.append(_issue("fallback_region_missing", index=index))
