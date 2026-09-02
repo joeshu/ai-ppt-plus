@@ -100,15 +100,8 @@ jobs:
 
       - name: Validate and select distillation case matrix
         run: |
-          python scripts/validate_distillation_case_matrix.py \\
-            --matrix evals/distillation-case-matrix.json \\
-            --strict \\
-            --output distillation-case-matrix-validation.json
-          python scripts/select_distillation_cases.py \\
-            --matrix evals/distillation-case-matrix.json \\
-            --full \\
-            --output distillation-case-matrix-selection.json
-
+          python scripts/validate_distillation_case_matrix.py --matrix evals/distillation-case-matrix.json --strict --output distillation-case-matrix-validation.json
+          python scripts/select_distillation_cases.py --matrix evals/distillation-case-matrix.json --full --output distillation-case-matrix-selection.json
       - name: Run strict P2 guard smoke tests
         run: python tests/test_p2_guards.py
       - name: Check whitespace
