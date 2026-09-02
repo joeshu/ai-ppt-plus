@@ -467,7 +467,7 @@ def replay(args: argparse.Namespace) -> dict[str, Any]:
     rendered = render_dir / "slide-1.png"
     visual_reference = reference
     visual_reference_kind = "source-reference"
-    if args.phase == "candidate" and args.baseline_evaluation:
+    if args.phase == "candidate" and args.baseline_evaluation and not args.reference_image:
         try:
             baseline_data = load_json(Path(args.baseline_evaluation).resolve())
             baseline_files = ((baseline_data.get("rendered") or {}).get("files") or []) if isinstance(baseline_data, dict) else []
