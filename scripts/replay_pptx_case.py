@@ -169,8 +169,14 @@ def render_deck(deck: Path, render_dir: Path) -> tuple[bool, str | None]:
         return False, "LibreOffice/Poppler renderer is unavailable"
     with tempfile.TemporaryDirectory(prefix="pptx-replay-", dir=render_dir) as temporary:
         temporary_dir = Path(temporary)
+        user_profile = temporary_dir / "libreoffice-profile"
+        user_profile.mkdir()
         completed = subprocess.run(
-            [soffice, "--headless", "--convert-to", "pdf", "--outdir", str(temporary_dir), str(deck)],
+            [
+                soffice,
+                f"-env:UserInstallation={user_profile.as_uri()}",
+                "--headless", "--convert-to", "pdf", "--outdir", str(temporary_dir), str(deck),
+            ],
             capture_output=True, text=True, check=False,
         )
         if completed.returncode != 0:

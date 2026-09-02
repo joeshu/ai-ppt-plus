@@ -36,6 +36,7 @@ def main() -> int:
             capture_output=True, text=True, check=False,
         )
         assert baseline.returncode != 0, baseline.stdout + baseline.stderr
+        assert baseline_path.is_file(), baseline.stdout + baseline.stderr
         baseline_data = json.loads(baseline_path.read_text(encoding="utf-8"))
         assert "native-table-xml" in baseline_data["failure_codes"], baseline_data
         candidate_run = subprocess.run(
