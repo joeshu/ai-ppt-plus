@@ -248,3 +248,10 @@ diagnostic unless the corresponding strict gate is requested.
 - No three-skill package change is valid unless all three entrypoints share the
   same `package_revision`, each directory passes its own package validation,
   and the root bundle validation passes.
+
+
+<!-- unattended-distillation:entrypoint -->
+## Unattended distillation
+
+When an unattended maintenance cycle is enabled, use `scripts/unattended_distillation_agent.py` and `assets/unattended-distillation-policy.json`. The controller may analyze structured gate evidence, apply only an allowlisted repair rule, rerun the package/route/governance gates, and report a candidate as promotable. GitHub Actions owns branch, PR and merge operations. Unknown failures, implementation changes, visual ambiguity, human sign-off, image-generation decisions and protected-file edits remain blocked. Read `references/unattended-distillation.md` for trigger, scope, three-round and stopping rules.
+<!-- /unattended-distillation:entrypoint -->

@@ -1,0 +1,173 @@
+name: unattended distillation
+
+on:
+  workflow_run:
+    workflows: ["ai-ppt-plus CI"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Optional failed ai-ppt-plus CI run ID to inspect"
+        required: false
+        type: string
+      max_rounds:
+        description: "Maximum local repair rounds (policy caps this at 3)"
+        required: false
+        default: "3"
+        type: string
+  schedule:
+    - cron: "17 2 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+concurrency:
+  group: unattended-distillation-main
+  cancel-in-progress: false
+
+jobs:
+  distill:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'failure' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout main control plane
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Resolve source run and chain guard
+        id: source
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          EVENT_SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+          EVENT_SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          source_run_id=""
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_run" ]]; then
+            source_run_id="$EVENT_SOURCE_RUN_ID"
+          elif [[ -n "$INPUT_SOURCE_RUN_ID" ]]; then
+            source_run_id="$INPUT_SOURCE_RUN_ID"
+          else
+            source_run_id="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml --branch main --status failure --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+          fi
+          echo "run_id=$source_run_id" >> "$GITHUB_OUTPUT"
+
+          chain_round=0
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_run" && -n "$EVENT_SOURCE_SHA" ]]; then
+            commit_message="$(gh api "repos/$GITHUB_REPOSITORY/commits/$EVENT_SOURCE_SHA" --jq '.commit.message')"
+            if [[ "$commit_message" =~ \[distillation-agent[[:space:]]round[[:space:]]([0-9]+)\] ]]; then
+              chain_round="${BASH_REMATCH[1]}"
+            fi
+          fi
+          if (( chain_round >= 3 )); then
+            echo "blocked=true" >> "$GITHUB_OUTPUT"
+            echo "next_round=$chain_round" >> "$GITHUB_OUTPUT"
+          else
+            echo "blocked=false" >> "$GITHUB_OUTPUT"
+            echo "next_round=$((chain_round + 1))" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare evidence directory
+        if: steps.source.outputs.blocked != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE_RUN_ID: ${{ steps.source.outputs.run_id }}
+        run: |
+          set -euo pipefail
+          mkdir -p .distillation/input .distillation/reports
+          if [[ -n "$SOURCE_RUN_ID" ]]; then
+            gh run download "$SOURCE_RUN_ID" --repo "$GITHUB_REPOSITORY" --name ai-ppt-plus-test-report --dir .distillation/input || true
+          fi
+
+      - name: Run bounded unattended distillation loop
+        id: agent
+        if: steps.source.outputs.blocked != 'true'
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python scripts/unattended_distillation_agent.py run \
+            --repo-root . \
+            --input-dir .distillation/input \
+            --report-dir .distillation/reports \
+            --policy assets/unattended-distillation-policy.json \
+            --max-rounds "${{ inputs.max_rounds || '3' }}" \
+            --output .distillation/distillation-result.json \
+            --github-output "$GITHUB_OUTPUT" | tee .distillation/agent.log
+
+      - name: Upload distillation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unattended-distillation-${{ github.run_id }}
+          path: .distillation
+          if-no-files-found: warn
+
+      - name: Promote vetted repair through PR and rerun main CI
+        if: steps.agent.outputs.status == 'passed' && steps.agent.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPAIR_ROUND: ${{ steps.source.outputs.next_round }}
+        run: |
+          set -euo pipefail
+          branch="bot/distillation/${GITHUB_RUN_ID}"
+          git switch --create "$branch"
+
+          while IFS= read -r changed_path; do
+            [[ -z "$changed_path" ]] && continue
+            case "$changed_path" in
+              SKILL.md|references/*.md|ai-ppt-editable/SKILL.md|ai-ppt-editable/references/*.md)
+                git add -- "$changed_path"
+                ;;
+              *)
+                echo "unexpected unattended change: $changed_path" >&2
+                exit 1
+                ;;
+            esac
+          done < <(git diff --name-only)
+
+          if git diff --cached --quiet; then
+            echo "No promotable tracked changes"
+            exit 0
+          fi
+
+          git config user.name "ai-ppt-plus distillation bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(distillation): apply vetted repair [distillation-agent round $REPAIR_ROUND]"
+          git push --set-upstream origin "$branch"
+
+          gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$branch"
+          branch_run_id=""
+          for attempt in $(seq 1 30); do
+            branch_run_id="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml --branch "$branch" --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+            if [[ -n "$branch_run_id" ]]; then
+              break
+            fi
+            sleep 2
+          done
+          [[ -n "$branch_run_id" ]]
+          gh run watch "$branch_run_id" --repo "$GITHUB_REPOSITORY" --exit-status
+
+          pr_url="$(gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$branch" --title "chore(distillation): apply vetted repair" --body-file .distillation/distillation-result.json)"
+          pr_number="$(gh pr view "$pr_url" --json number --jq '.number')"
+          gh pr merge "$pr_number" --repo "$GITHUB_REPOSITORY" --squash --delete-branch
+
+          gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref main
+
+      - name: Report chain stop
+        if: steps.source.outputs.blocked == 'true'
+        run: |
+          echo "Automatic distillation chain reached the three-round limit; evidence was not mutated."

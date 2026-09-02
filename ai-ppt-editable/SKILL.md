@@ -419,3 +419,10 @@ text boxes as formal-content evidence and map them into the object manifest by
 stable IDs; do not OCR the same text again unless the source text is absent.
 The acceptance test must include a mutation smoke test: edit a table cell and
 move a panel/group, then render and confirm the expected regions change.
+
+
+<!-- unattended-distillation:entrypoint -->
+## Unattended distillation integration
+
+This worker can be checked by the root unattended distillation controller, but it does not self-promote visual or semantic changes. The controller may restore only the checked-in native-structure and text/visual policy blocks. Native table/object evidence, source hashes, rendered comparison, formal-text fidelity and human-review requirements remain hard gates; a passing technical repair is not a human sign-off.
+<!-- /unattended-distillation:entrypoint -->
