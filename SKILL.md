@@ -255,3 +255,8 @@ diagnostic unless the corresponding strict gate is requested.
 
 When an unattended maintenance cycle is enabled, use `scripts/unattended_distillation_agent.py` and `assets/unattended-distillation-policy.json`. The controller may analyze structured gate evidence, apply only an allowlisted repair rule, rerun the package/route/governance gates, and report a candidate as promotable. GitHub Actions owns branch, PR and merge operations. Unknown failures, implementation changes, visual ambiguity, human sign-off, image-generation decisions and protected-file edits remain blocked. Read `references/unattended-distillation.md` for trigger, scope, three-round and stopping rules.
 <!-- /unattended-distillation:entrypoint -->
+<!-- unattended-distillation:improvement-proof -->
+## Improvement proof requirement
+
+Unattended distillation may be promoted only when the checked-out baseline is reproducibly red, the candidate is green, the candidate declares a real behavioural change, regression metrics do not degrade, and the improvement validator returns `promotion=improved`. A passing gate without this red-green proof is not a promotion signal.
+<!-- /unattended-distillation:improvement-proof -->

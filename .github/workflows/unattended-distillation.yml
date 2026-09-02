@@ -105,6 +105,7 @@ jobs:
             --report-dir .distillation/reports \
             --policy assets/unattended-distillation-policy.json \
             --max-rounds "${{ inputs.max_rounds || '3' }}" \
+            --require-improvement \
             --output .distillation/distillation-result.json \
             --github-output "$GITHUB_OUTPUT" | tee .distillation/agent.log
 
@@ -117,7 +118,9 @@ jobs:
           if-no-files-found: warn
 
       - name: Promote vetted repair through PR and rerun main CI
-        if: steps.agent.outputs.status == 'passed' && steps.agent.outputs.changed == 'true'
+        if: steps.agent.outputs.status == 'passed' &&
+            steps.agent.outputs.promotion == 'improved' &&
+            steps.agent.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPAIR_ROUND: ${{ steps.source.outputs.next_round }}

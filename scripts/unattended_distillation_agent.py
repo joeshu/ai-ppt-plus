@@ -35,6 +35,10 @@ SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 DEFAULT_POLICY: dict[str, Any] = {
     "schema": "ai-ppt-plus/unattended-distillation-policy/v1",
     "enabled": True,
+    "require_improvement": True,
+    "improvement_mode": "gates",
+    "improvement_validator": "scripts/validate_distillation_improvement.py",
+    "replay_required_categories": ["native-structure", "text-visual"],
     "max_rounds": 3,
     "max_changed_files": 4,
     "max_changed_lines": 240,
@@ -445,6 +449,106 @@ def write_github_output(path_text: str | None, values: dict[str, Any]) -> None:
             stream.write(f"{key}={str(value).lower() if isinstance(value, bool) else value}\n")
 
 
+def gate_evaluation(
+    gate_result: dict[str, Any], *, case_id: str, behavioral_change: bool,
+    changed_files: list[str], changed_lines: int,
+) -> dict[str, Any]:
+    """Convert a gate run into the stable evidence format used by the proof gate."""
+    gates = gate_result.get("gates") if isinstance(gate_result.get("gates"), list) else []
+    failures = [
+        str(item.get("id") or "unnamed-gate")
+        for item in gates
+        if isinstance(item, dict) and str(item.get("status") or "").lower() != "passed"
+    ]
+    passed_count = sum(
+        1 for item in gates
+        if isinstance(item, dict) and str(item.get("status") or "").lower() == "passed"
+    )
+    valid = gate_result.get("valid") is True
+    return {
+        "schema": "ai-ppt-plus/distillation-evaluation/v1",
+        "kind": "gates",
+        "case_id": case_id,
+        "status": "passed" if valid else "failed",
+        "valid": valid,
+        "behavioral_change": behavioral_change,
+        "changed_files": list(changed_files),
+        "changed_lines": changed_lines,
+        "failure_codes": failures,
+        "metrics": {
+            "failed_gate_count": len(failures),
+            "passed_gate_count": passed_count,
+        },
+        "gates": gates,
+        "regressions": [
+            {"id": item.get("id"), "status": item.get("status"), "valid": item.get("status") == "passed"}
+            for item in gates if isinstance(item, dict)
+        ],
+    }
+
+
+def run_improvement_gate(
+    root: Path, policy: dict[str, Any], baseline_path: Path, candidate_path: Path,
+    report_path: Path, *, case_spec: Path | None = None,
+) -> dict[str, Any]:
+    """Run the separate improvement validator and return its report."""
+    validator_text = str(policy.get("improvement_validator") or "scripts/validate_distillation_improvement.py")
+    validator = safe_relative(root, validator_text)
+    if not validator.is_file():
+        result = {
+            "schema": "ai-ppt-plus/distillation-improvement/v1",
+            "valid": False,
+            "promotion": "blocked",
+            "reasons": [f"improvement validator does not exist: {validator_text}"],
+        }
+        write_json(report_path, result)
+        return result
+    mode = "replay" if case_spec is not None else str(policy.get("improvement_mode") or "gates")
+    command = [
+        sys.executable,
+        str(validator),
+        "--baseline", str(baseline_path),
+        "--candidate", str(candidate_path),
+        "--mode", mode,
+        "--report", str(report_path),
+    ]
+    if case_spec is not None:
+        command.extend(["--case-spec", str(case_spec)])
+    try:
+        completed = subprocess.run(command, cwd=root, capture_output=True, text=True, check=False)
+    except OSError as exc:
+        result = {
+            "schema": "ai-ppt-plus/distillation-improvement/v1",
+            "valid": False,
+            "promotion": "blocked",
+            "reasons": [f"{type(exc).__name__}: {exc}"],
+        }
+        write_json(report_path, result)
+        return result
+    if report_path.is_file():
+        try:
+            result = load_json(report_path)
+            if isinstance(result, dict):
+                result["validator_returncode"] = completed.returncode
+                result["validator_stdout"] = completed.stdout[-4000:]
+                result["validator_stderr"] = completed.stderr[-4000:]
+                write_json(report_path, result)
+                return result
+        except (OSError, ValueError, json.JSONDecodeError):
+            pass
+    result = {
+        "schema": "ai-ppt-plus/distillation-improvement/v1",
+        "valid": False,
+        "promotion": "blocked",
+        "validator_returncode": completed.returncode,
+        "reasons": ["improvement validator did not produce a readable report"],
+        "validator_stdout": completed.stdout[-4000:],
+        "validator_stderr": completed.stderr[-4000:],
+    }
+    write_json(report_path, result)
+    return result
+
+
 def command_analyze(args: argparse.Namespace) -> int:
     root = Path(args.repo_root).resolve()
     input_dir = Path(args.input_dir).resolve()
@@ -476,16 +580,31 @@ def command_apply(args: argparse.Namespace) -> int:
 def command_run(args: argparse.Namespace) -> int:
     root = Path(args.repo_root).resolve()
     policy = load_policy(Path(args.policy).resolve() if args.policy else None)
+    require_improvement = bool(args.require_improvement or policy.get("require_improvement", True))
+    case_id = str(args.case_id or policy.get("evaluation_case_id") or "distillation-gate-suite")
     if policy.get("enabled") is not True:
-        result = {"schema": RESULT_SCHEMA, "status": "disabled", "changed": False, "requires_manual": True}
+        result = {
+            "schema": RESULT_SCHEMA,
+            "status": "disabled",
+            "promotion": "disabled",
+            "changed": False,
+            "requires_manual": True,
+        }
         write_json(Path(args.output).resolve(), result)
-        write_github_output(args.github_output, {"status": "disabled", "changed": False})
+        write_github_output(args.github_output, {"status": "disabled", "promotion": "disabled", "changed": False})
         print(json.dumps(result, ensure_ascii=False))
         return 2
     if not tracked_worktree_clean(root):
-        result = {"schema": RESULT_SCHEMA, "status": "blocked", "changed": False, "requires_manual": True, "reason": "tracked_worktree_not_clean"}
+        result = {
+            "schema": RESULT_SCHEMA,
+            "status": "blocked",
+            "promotion": "blocked",
+            "changed": False,
+            "requires_manual": True,
+            "reason": "tracked_worktree_not_clean",
+        }
         write_json(Path(args.output).resolve(), result)
-        write_github_output(args.github_output, {"status": "blocked", "changed": False})
+        write_github_output(args.github_output, {"status": "blocked", "promotion": "blocked", "changed": False})
         print(json.dumps(result, ensure_ascii=False))
         return 2
 
@@ -493,48 +612,95 @@ def command_run(args: argparse.Namespace) -> int:
     report_dir = Path(args.report_dir).resolve()
     report_dir.mkdir(parents=True, exist_ok=True)
     reports = discover_reports(input_dir)
+    historical_analysis = analyze_reports(reports, root, round_no=0)
     changed = False
     repairs: list[dict[str, Any]] = []
     gate_runs: list[dict[str, Any]] = []
-    analysis = analyze_reports(reports, root, round_no=0)
+    stop_reason: str | None = None
     max_rounds = min(int(args.max_rounds or policy.get("max_rounds", 3)), int(policy.get("max_rounds", 3)))
     if max_rounds < 1:
         max_rounds = 1
 
-    for round_no in range(1, max_rounds + 1):
-        if analysis["status"] in {"clean", "no-evidence"}:
+    # Always reproduce the failure on the checked-out main revision before
+    # touching a skill.  This prevents stale or unrelated CI artifacts from
+    # becoming an automatic edit proposal.
+    baseline_gate = run_gates(policy, root, report_dir, 0)
+    gate_runs.append(baseline_gate["result"])
+    baseline_evaluation = gate_evaluation(
+        baseline_gate["result"], case_id=case_id, behavioral_change=False,
+        changed_files=[], changed_lines=0,
+    )
+    baseline_path = report_dir / "baseline-evaluation.json"
+    write_json(baseline_path, baseline_evaluation)
+    baseline_valid = baseline_gate["result"].get("valid") is True
+
+    # Prefer fresh, classified gate evidence.  If a gate only reports a
+    # generic test failure, retain the triggering CI classification so the
+    # allowlisted rule can still be selected—but only after the fresh red
+    # baseline above has been established.
+    fresh_analysis = analyze_reports([baseline_gate["path"]], root, round_no=0)
+    if baseline_valid:
+        analysis = historical_analysis
+        if historical_analysis["status"] == "no-evidence":
+            analysis = fresh_analysis
+        stop_reason = "stale-evidence-not-reproduced" if historical_analysis["status"] == "issues-found" else None
+    elif fresh_analysis["status"] == "issues-found" and not fresh_analysis.get("requires_manual"):
+        analysis = fresh_analysis
+    elif historical_analysis["status"] == "issues-found" and not historical_analysis.get("requires_manual"):
+        analysis = historical_analysis
+    else:
+        analysis = fresh_analysis
+
+    candidate_evaluation: dict[str, Any] | None = None
+    candidate_path = report_dir / "candidate-evaluation.json"
+
+    if not baseline_valid and not stop_reason:
+        for round_no in range(1, max_rounds + 1):
+            if analysis["status"] != "issues-found":
+                break
+            if analysis.get("requires_manual"):
+                stop_reason = "unknown-or-manual-failure"
+                break
+            candidates = rule_candidates(analysis, policy)
+            if not candidates:
+                stop_reason = "no-approved-repair-for-analysis"
+                break
+            selected = candidates[0]
+            category = str(selected.get("category") or "unknown")
+            replay_required = set(policy.get("replay_required_categories") or [])
+            if category in replay_required and not args.case_spec:
+                repairs.append({
+                    "rule_id": selected.get("id"),
+                    "status": "blocked",
+                    "error": "case replay evidence is required for this category",
+                })
+                stop_reason = "replay-evidence-required"
+                break
+            try:
+                repair = apply_repair(selected, root, policy)
+            except (OSError, ValueError) as exc:
+                repairs.append({"rule_id": selected.get("id"), "status": "blocked", "error": str(exc)})
+                stop_reason = "repair-application-failed"
+                break
+            repairs.append(repair)
+            if not repair.get("changed"):
+                stop_reason = "repair-marker-already-present"
+                break
+            changed = True
             gate_run = run_gates(policy, root, report_dir, round_no)
             gate_runs.append(gate_run["result"])
-            # The downloaded CI report is historical evidence that caused the
-            # repair. Once a candidate has been tested, judge the candidate by
-            # its fresh gate report rather than replaying the stale failure.
-            reports = [gate_run["path"]]
-            analysis = analyze_reports(reports, root, round_no=round_no)
-            if gate_run["result"]["valid"]:
+            diff_files_now, diff_lines_now = tracked_diff(root)
+            candidate_evaluation = gate_evaluation(
+                gate_run["result"], case_id=case_id, behavioral_change=True,
+                changed_files=diff_files_now, changed_lines=diff_lines_now,
+            )
+            write_json(candidate_path, candidate_evaluation)
+            # The downloaded CI report is historical evidence.  After a
+            # repair, only the fresh candidate gate report decides whether the
+            # loop can stop.
+            analysis = analyze_reports([gate_run["path"]], root, round_no=round_no)
+            if gate_run["result"].get("valid") is True:
                 break
-        if analysis["status"] != "issues-found":
-            break
-        if analysis.get("requires_manual"):
-            break
-        candidates = rule_candidates(analysis, policy)
-        if not candidates:
-            break
-        try:
-            repair = apply_repair(candidates[0], root, policy)
-        except (OSError, ValueError) as exc:
-            repairs.append({"rule_id": candidates[0].get("id"), "status": "blocked", "error": str(exc)})
-            break
-        repairs.append(repair)
-        if not repair.get("changed"):
-            break
-        changed = True
-        gate_run = run_gates(policy, root, report_dir, round_no)
-        gate_runs.append(gate_run["result"])
-        # Do not let the pre-repair failure keep a passing candidate blocked.
-        reports = [gate_run["path"]]
-        analysis = analyze_reports(reports, root, round_no=round_no)
-        if gate_run["result"]["valid"]:
-            break
 
     diff_files, diff_lines = tracked_diff(root)
     allowed = policy.get("allowed_paths") or []
@@ -556,19 +722,62 @@ def command_run(args: argparse.Namespace) -> int:
             "source": "agent",
         })
 
-    gate_valid = bool(gate_runs) and gate_runs[-1].get("valid") is True
-    final_status = "passed" if gate_valid and not diff_issues and analysis.get("status") in {"clean", "no-evidence"} else "blocked"
+    last_gate = gate_runs[-1] if gate_runs else {}
+    gate_valid = last_gate.get("valid") is True
+    improvement: dict[str, Any] | None = None
+    promotion = "not-needed" if baseline_valid and not changed else "blocked"
+    final_status = "clean" if baseline_valid and not changed and not diff_issues else "blocked"
+    if changed and not diff_issues and gate_valid:
+        if require_improvement:
+            # Rebuild the candidate evidence after all rounds so its diff and
+            # metric snapshot bind to the exact worktree being considered.
+            candidate_evaluation = gate_evaluation(
+                last_gate, case_id=case_id, behavioral_change=True,
+                changed_files=diff_files, changed_lines=diff_lines,
+            )
+            write_json(candidate_path, candidate_evaluation)
+            improvement = run_improvement_gate(
+                root, policy, baseline_path, candidate_path,
+                report_dir / "improvement-report.json",
+                case_spec=Path(args.case_spec).resolve() if args.case_spec else None,
+            )
+            if improvement.get("valid") is True and improvement.get("promotion") == "improved":
+                promotion = "improved"
+                final_status = "passed"
+            else:
+                promotion = str(improvement.get("promotion") or "no-improvement")
+                final_status = "blocked"
+                stop_reason = stop_reason or "improvement-proof-failed"
+        else:
+            # This escape hatch is kept for local diagnostics only.  The
+            # checked-in policy and production workflow both require proof.
+            promotion = "improved"
+            final_status = "passed"
+    elif changed and not gate_valid:
+        stop_reason = stop_reason or "candidate-gates-failed"
+    elif baseline_valid and historical_analysis["status"] == "issues-found":
+        stop_reason = stop_reason or "stale-evidence-not-reproduced"
+
+    promotable = bool(changed and final_status == "passed" and promotion == "improved")
     result = {
         "schema": RESULT_SCHEMA,
         "generated_at": utc_now(),
         "status": final_status,
-        "changed": bool(changed and final_status == "passed"),
-        "requires_manual": final_status != "passed",
+        "promotion": promotion,
+        "changed": promotable,
+        "working_tree_changed": bool(diff_files),
+        "requires_manual": final_status == "blocked",
+        "reason": stop_reason,
+        "require_improvement": require_improvement,
+        "case_id": case_id,
         "max_rounds": max_rounds,
-        "rounds_used": len(gate_runs),
+        "rounds_used": max(0, len(gate_runs) - 1),
         "analysis": analysis,
         "repairs": repairs,
         "gate_runs": gate_runs,
+        "baseline_evaluation": str(baseline_path),
+        "candidate_evaluation": str(candidate_path) if candidate_evaluation else None,
+        "improvement_report": str(report_dir / "improvement-report.json") if improvement else None,
         "changed_files": diff_files,
         "changed_lines": diff_lines,
         "scope_issues": diff_issues,
@@ -576,12 +785,13 @@ def command_run(args: argparse.Namespace) -> int:
     write_json(Path(args.output).resolve(), result)
     write_github_output(args.github_output, {
         "status": final_status,
+        "promotion": promotion,
         "changed": result["changed"],
         "requires_manual": result["requires_manual"],
         "rounds_used": result["rounds_used"],
     })
     print(json.dumps(result, ensure_ascii=False))
-    return 0 if final_status == "passed" else 2
+    return 0 if final_status in {"passed", "clean"} else 2
 
 
 def main() -> int:
@@ -611,6 +821,9 @@ def main() -> int:
     run.add_argument("--output", required=True)
     run.add_argument("--max-rounds", type=int)
     run.add_argument("--github-output")
+    run.add_argument("--require-improvement", action="store_true")
+    run.add_argument("--case-id")
+    run.add_argument("--case-spec")
     run.set_defaults(handler=command_run)
 
     args = parser.parse_args()

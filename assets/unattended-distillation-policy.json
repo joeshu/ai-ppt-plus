@@ -1,6 +1,14 @@
 {
   "schema": "ai-ppt-plus/unattended-distillation-policy/v1",
   "enabled": true,
+  "require_improvement": true,
+  "improvement_mode": "gates",
+  "improvement_validator": "scripts/validate_distillation_improvement.py",
+  "evaluation_case_id": "distillation-gate-suite",
+  "replay_required_categories": [
+    "native-structure",
+    "text-visual"
+  ],
   "max_rounds": 3,
   "max_changed_files": 4,
   "max_changed_lines": 240,
@@ -53,6 +61,11 @@
       "id": "p2-governance",
       "argv": ["python", "tests/test_p2_guards.py"],
       "timeout_seconds": 300
+    },
+    {
+      "id": "improvement-proof-tests",
+      "argv": ["python", "tests/test_distillation_improvement.py"],
+      "timeout_seconds": 120
     },
     {
       "id": "repository-regressions",

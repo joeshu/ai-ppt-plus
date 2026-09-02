@@ -34,12 +34,35 @@ implementation defects and ambiguous visual decisions reviewable. In
 particular, the agent never fabricates text, chart data, image-generation
 approval, human sign-off or a fallback decision.
 
+## Improvement proof gate
+
+Passing the repository gates is necessary but not sufficient. Before promotion
+the agent writes `baseline-evaluation.json` and `candidate-evaluation.json`,
+then runs `scripts/validate_distillation_improvement.py`. Promotion requires
+all of the following:
+
+1. the checked-out baseline is reproducibly red;
+2. the candidate is green on the same gate suite and source case;
+3. the candidate declares a real behavioural change and a non-empty diff;
+4. numeric quality metrics do not regress (lower-is-better error metrics are
+   checked in the opposite direction);
+5. the candidate's regression evidence passes; and
+6. when a reconstruction category is involved, the corresponding case replay
+   proves the expected native objects and editable structure.
+
+The only promotable result is `promotion=improved`. A green candidate without
+proof is `promotion=no-improvement` and remains an uploaded report. Native
+structure and visual repairs require case replay evidence; without it the
+unattended controller stops before editing the skill. This prevents a generic
+governance test from masquerading as proof that a PPTX table or panel became
+editable.
+
 ## Promotion and stopping rules
 
-A candidate is promotable only when all configured gates pass after the repair,
-the final diff is within policy, and the result is `status=passed`. The workflow
-then creates a bot branch, opens a pull request, merges it with squash, and
-dispatches the normal CI again on `main`.
+A candidate is promotable only when the improvement proof gate passes, all
+configured gates pass after the repair, and the final diff is within policy.
+The workflow then creates a bot branch, opens a pull request, merges it with
+squash, and dispatches the normal CI again on `main`.
 
 The local loop stops after three rounds. A main-branch chain also carries its
 round number in the bot commit message; a repeated failure at the configured
@@ -49,10 +72,10 @@ report for human repair.
 
 ## Result states
 
-- `passed`: fresh gates passed; a diff may be promoted automatically.
+- `passed`: fresh gates and the improvement proof passed; a diff may be promoted automatically.
 - `clean`: no failure evidence and no repair is needed.
-- `blocked`: evidence is unknown, a repair is not approved, or a gate remains
-  failed.
+- `blocked`: evidence is unknown, a repair is not approved, proof is missing,
+  or a gate remains failed.
 - `disabled`: the checked-in policy explicitly disables the controller.
 
 Technical acceptance is not a claim of human visual sign-off. For PPTX

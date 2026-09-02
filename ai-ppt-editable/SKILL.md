@@ -426,3 +426,8 @@ move a panel/group, then render and confirm the expected regions change.
 
 This worker can be checked by the root unattended distillation controller, but it does not self-promote visual or semantic changes. The controller may restore only the checked-in native-structure and text/visual policy blocks. Native table/object evidence, source hashes, rendered comparison, formal-text fidelity and human-review requirements remain hard gates; a passing technical repair is not a human sign-off.
 <!-- /unattended-distillation:entrypoint -->
+<!-- unattended-distillation:improvement-proof -->
+## Improvement proof requirement
+
+The editable worker must not claim that a semantic panel or table became editable from a generic test pass. Any unattended native-structure or text/visual repair requires the corresponding case replay, native-object evidence, mutation smoke test and rendered comparison; missing replay evidence stops promotion.
+<!-- /unattended-distillation:improvement-proof -->
