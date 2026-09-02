@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": ["schema", "project_id", "route", "status", "visual_authority", "formal_content_authority", "requires_image_generation"],
+  "required": ["schema", "project_id", "route", "status", "visual_authority", "formal_content_authority", "requires_image_generation", "primary_engine", "fallback_policy", "fallback_used", "fallback_events", "editable_object_policy"],
   "properties": {
     "schema": {"type": "string", "enum": ["ai-ppt-plus/route-decision/v1", "ai-ppt-plus/route-decision/v2"]},
     "project_id": {"type": "string", "minLength": 1},
@@ -10,6 +10,11 @@
     "visual_authority": {"type": "string", "enum": ["generated_visual_intermediate", "approved_reference_image", "approved_design_system"]},
     "formal_content_authority": {"type": "string", "enum": ["approved_outline", "user_transcription", "transcription_pending_confirmation"]},
     "requires_image_generation": {"type": "boolean"},
+    "primary_engine": {"type": "string", "enum": ["ai-ppt-editable", "ai-ppt-visual-gen"]},
+    "fallback_policy": {"type": "string", "enum": ["none", "scoped-visual-only"]},
+    "fallback_used": {"type": "boolean"},
+    "fallback_events": {"type": "array", "items": {"type": "object"}},
+    "editable_object_policy": {"type": "string", "enum": ["native-semantic-objects", "image-slide"]},
     "outline_contract": {
       "type": "object",
       "required": ["path", "sha256"],
@@ -34,7 +39,10 @@
         "properties": {
           "schema": {"const": "ai-ppt-plus/route-decision/v2"},
           "visual_authority": {"const": "approved_design_system"},
-          "requires_image_generation": {"const": false}
+          "requires_image_generation": {"const": false},
+          "primary_engine": {"const": "ai-ppt-editable"},
+          "fallback_policy": {"const": "none"},
+          "editable_object_policy": {"const": "native-semantic-objects"}
         }
       }
     },
@@ -43,7 +51,10 @@
       "then": {
         "properties": {
           "visual_authority": {"const": "generated_visual_intermediate"},
-          "requires_image_generation": {"const": true}
+          "requires_image_generation": {"const": true},
+          "primary_engine": {"const": "ai-ppt-visual-gen"},
+          "fallback_policy": {"const": "none"},
+          "editable_object_policy": {"const": "image-slide"}
         }
       }
     },
@@ -52,7 +63,10 @@
       "then": {
         "properties": {
           "visual_authority": {"const": "approved_reference_image"},
-          "requires_image_generation": {"const": false}
+          "requires_image_generation": {"const": false},
+          "primary_engine": {"const": "ai-ppt-editable"},
+          "fallback_policy": {"const": "scoped-visual-only"},
+          "editable_object_policy": {"const": "native-semantic-objects"}
         }
       }
     }

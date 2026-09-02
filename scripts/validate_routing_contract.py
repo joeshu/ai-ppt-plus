@@ -65,6 +65,29 @@ def main() -> int:
     if set(by_name) != EXPECTED_NAMES:
         issues.append({"severity": "blocker", "code": "routing_skill_set_invalid", "expected": sorted(EXPECTED_NAMES), "observed": sorted(by_name)})
 
+    fallback_policy = data.get("fallback_policy")
+    expected_fallback_policy = {
+        "schema": "ai-ppt-plus/fallback-policy/v1",
+        "primary_engine": "ai-ppt-editable",
+        "fallback_engine": "GordenImage2PPTX",
+        "fallback_scope": "region-only",
+        "allow_full_page": False,
+        "requires_explicit_reason": True,
+        "requires_asset_record": True,
+        "requires_user_decision_on_generation_failure": True,
+        "forbidden_roles": {"formal-text", "semantic-panel", "panel-frame", "table", "chart", "card-frame", "whole-slide", "whole-page"},
+    }
+    if not isinstance(fallback_policy, dict):
+        issues.append({"severity": "blocker", "code": "fallback_policy_missing"})
+        fallback_policy = {}
+    for key, expected in expected_fallback_policy.items():
+        observed = fallback_policy.get(key)
+        if key == "forbidden_roles":
+            if set(observed or []) != expected:
+                issues.append({"severity": "blocker", "code": "fallback_policy_mismatch", "field": key, "expected": sorted(expected), "observed": observed})
+        elif observed != expected:
+            issues.append({"severity": "blocker", "code": "fallback_policy_mismatch", "field": key, "expected": expected, "observed": observed})
+
     bindings = data.get("bindings")
     if not isinstance(bindings, dict):
         issues.append({"severity": "blocker", "code": "routing_bindings_missing"})
@@ -128,6 +151,7 @@ def main() -> int:
         "contract": str(path),
         "issues": issues,
         "bindings": bindings,
+        "fallback_policy": fallback_policy,
     }
     if args.report:
         atomic_write_json(Path(args.report).resolve(), result)
