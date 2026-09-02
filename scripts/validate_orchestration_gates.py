@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from atomic_output import atomic_write_json
+from validate_engine_route import validate_engine_route_data
 
 ROUTES = {"visual-creation", "reference-reconstruction", "native-authoring"}
 PHASES = ("intake", "source-analyzed", "outline-draft", "outline-review", "narrative-approved", "design-system-ready", "visual-draft", "visual-approved", "reconstruction", "rendered", "validated", "revision-required", "human-closeout", "delivered")
@@ -58,6 +59,9 @@ def main() -> int:
     if route_name in {"reference-reconstruction", "native-authoring"} and route.get("requires_image_generation") is not False: issues.append({"severity":"blocker","code":"unexpected_image_generation_requirement"})
     formal = route.get("formal_content_authority")
     if formal not in {"approved_outline", "user_transcription"}: issues.append({"severity":"blocker","code":"formal_content_not_ready","observed":formal})
+    engine_issues, engine_evidence = validate_engine_route_data(route, strict=args.strict)
+    issues.extend(engine_issues)
+
     binding = route.get("outline_contract")
     if args.strict:
         if not isinstance(binding, dict): issues.append({"severity":"blocker","code":"route_outline_contract_binding_missing"})
@@ -80,7 +84,10 @@ def main() -> int:
                 artifact_path = Path(raw) if isinstance(raw, str) and Path(raw).is_absolute() else project / str(raw or "")
                 if not artifact_path.is_file(): issues.append({"severity":"blocker","code":"required_artifact_missing","artifact":name})
                 elif record.get("sha256") and record.get("sha256") != sha256(artifact_path): issues.append({"severity":"blocker","code":"required_artifact_hash_mismatch","artifact":name})
-    result = {"schema":"ai-ppt-plus/orchestration-gates/v1","valid":not issues,"project_id":contract.get("project_id"),"stage":stage,"route":route_name,"outline_contract_sha256":sha256(contract_path) if contract_path.is_file() else None,"issues":issues,"gates":{"outline_contract":not any(i["code"].startswith("outline_contract") or i["code"] in {"outline_approval_missing","required_artifact_missing","required_artifact_hash_mismatch"} for i in issues),"route":not any(i["code"].startswith("route_") or i["code"] in {"route_invalid","route_not_decided","visual_authority_mismatch","formal_content_not_ready","image_generation_requirement_missing","unexpected_image_generation_requirement"} for i in issues),"workflow":not any(i["code"].startswith("workflow_") for i in issues)}}
+    result = {"schema":"ai-ppt-plus/orchestration-gates/v1","valid":not issues,"project_id":contract.get("project_id"),"stage":stage,"route":route_name,"outline_contract_sha256":sha256(contract_path) if contract_path.is_file() else None,"issues":issues,"gates":{"outline_contract":not any(i["code"].startswith("outline_contract") or i["code"] in {"outline_approval_missing","required_artifact_missing","required_artifact_hash_mismatch"} for i in issues),"route":not any(i["code"].startswith("route_") or i["code"] in {"route_invalid","route_not_decided","visual_authority_mismatch","formal_content_not_ready","image_generation_requirement_missing","unexpected_image_generation_requirement"} for i in issues),"workflow":not any(i["code"].startswith("workflow_") for i in issues),
+        "engine_route": not any(i["code"].startswith("primary_engine") or i["code"].startswith("fallback_") or i["code"].startswith("editable_object_policy") or i["code"].startswith("engine_route") for i in issues)
+    },
+    "engine_route": engine_evidence}
     if args.report: atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False)); return 0 if result["valid"] else 2
 

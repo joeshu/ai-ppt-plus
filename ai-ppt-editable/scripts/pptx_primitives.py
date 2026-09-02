@@ -10,6 +10,8 @@ from __future__ import annotations
 import sys
 import math
 
+from pptx.util import Pt
+
 
 def _die(message: str, code: int = 2):
     print(f"Error: {message}", file=sys.stderr)
@@ -387,6 +389,94 @@ def add_groups(slide, specs: list[dict], deck: dict, ref_w: float, ref_h: float,
         set_alt_text(group, group_spec.get("alt_text"))
 
 
+def _set_cell_border(cell, border: dict | None) -> None:
+    """Write optional native table cell borders in DrawingML."""
+    if not isinstance(border, dict):
+        return
+    from pptx.oxml.ns import qn
+    from pptx.oxml.xmlchemy import OxmlElement
+    from pptx.util import Pt
+
+    tc_pr = cell._tc.get_or_add_tcPr()
+    for side, key in (("L", "left"), ("R", "right"), ("T", "top"), ("B", "bottom")):
+        value = border.get(key, border.get("all"))
+        if not isinstance(value, dict):
+            continue
+        line = tc_pr.find(qn(f"a:ln{side}"))
+        if line is None:
+            line = OxmlElement(f"a:ln{side}")
+            tc_pr.append(line)
+        for child in list(line):
+            line.remove(child)
+        width = value.get("width", border.get("width", 0.75))
+        width_emu = max(1, int(Pt(float(width))))
+        line.set("w", str(width_emu))
+        if str(value.get("style", "solid")).casefold() == "none":
+            line.append(OxmlElement("a:noFill"))
+            continue
+        solid = OxmlElement("a:solidFill")
+        color = OxmlElement("a:srgbClr")
+        color.set("val", _normalized_hex(value.get("color", border.get("color", "#D9D9D9"))))
+        solid.append(color)
+        line.append(solid)
+        dash = OxmlElement("a:prstDash")
+        dash.set("val", "solid")
+        line.append(dash)
+
+
+def _set_cell_margins(cell, margins) -> None:
+    if not isinstance(margins, dict):
+        return
+    from pptx.oxml.ns import qn
+    from pptx.oxml.xmlchemy import OxmlElement
+
+    tc_pr = cell._tc.get_or_add_tcPr()
+    tc_mar = tc_pr.find(qn("a:tcMar"))
+    if tc_mar is None:
+        tc_mar = OxmlElement("a:tcMar")
+        tc_pr.append(tc_mar)
+    for side in ("left", "right", "top", "bottom"):
+        if side not in margins:
+            continue
+        element = tc_mar.find(qn(f"a:mar{side[0].upper()}"))
+        if element is None:
+            element = OxmlElement(f"a:mar{side[0].upper()}")
+            tc_mar.append(element)
+        element.set("w", str(max(0, int(float(margins[side]) * 12700))))
+        element.set("type", "dxa")
+
+
+def _write_cell_runs(cell, value, font: str, size: float, color: str | None, bold: bool, style: dict) -> None:
+    cell.text = ""
+    text_frame = cell.text_frame
+    runs = value.get("runs") if isinstance(value, dict) else None
+    if isinstance(runs, list) and runs:
+        paragraph = text_frame.paragraphs[0]
+        for raw_run in runs:
+            if not isinstance(raw_run, dict):
+                continue
+            run = paragraph.add_run()
+            run.text = str(raw_run.get("text", ""))
+            _set_run_fonts(run, str(raw_run.get("font") or style.get("font") or font))
+            run.font.size = Pt(float(raw_run.get("size", style.get("size", size))))
+            run.font.bold = bool(raw_run.get("bold", style.get("bold", bold)))
+            run_color = raw_run.get("color", style.get("color", color))
+            if run_color:
+                run.font.color.rgb = _hex_to_rgb(run_color)
+    else:
+        paragraph = text_frame.paragraphs[0]
+        run = paragraph.add_run()
+        run.text = str(value.get("text", "") if isinstance(value, dict) else ("" if value is None else value))
+        _set_run_fonts(run, str(style.get("font") or font))
+        run.font.size = Pt(float(style.get("size", size)))
+        run.font.bold = bool(style.get("bold", bold))
+        run_color = style.get("color", color)
+        if run_color:
+            run.font.color.rgb = _hex_to_rgb(run_color)
+    if style.get("align"):
+        paragraph.alignment = style["align"]
+
+
 def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, ref_h: float, sw_emu: int, sh_emu: int):
     from pptx.util import Emu, Pt
 
@@ -419,22 +509,39 @@ def add_tables(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
         body_fill = spec.get("fill") or theme.get("table_fill")
         for column_index, width in enumerate((spec.get("column_widths") or [])[:columns]):
             table.columns[column_index].width = Emu(int(float(width) * sw_emu)) if deck["units"] == "fraction" else int(width)
+        row_heights = spec.get("row_heights") or []
+        cell_styles = spec.get("cell_styles") or {}
+        border = spec.get("border")
+        margins = spec.get("cell_margins") or spec.get("padding")
+        default_size = float(spec.get("size", theme.get("size", 12)))
+        default_color = spec.get("color") or theme.get("text_color")
         for row_index, row in enumerate(rows):
+            if row_index < len(row_heights):
+                raw_height = float(row_heights[row_index])
+                table.rows[row_index].height = Emu(int(raw_height * sh_emu)) if deck["units"] == "fraction" else Emu(int(raw_height))
             for column_index in range(columns):
                 cell = table.cell(row_index, column_index)
                 value = row[column_index] if column_index < len(row) else ""
-                cell.text = "" if value is None else str(value)
-                fill = header_fill if row_index == 0 else body_fill
+                style = {}
+                if isinstance(cell_styles, dict):
+                    style = cell_styles.get(f"{row_index},{column_index}", cell_styles.get(str(row_index), {}))
+                if not isinstance(style, dict):
+                    style = {}
+                fill = style.get("fill", header_fill if row_index == 0 else body_fill)
                 if fill:
                     cell.fill.solid()
                     cell.fill.fore_color.rgb = _hex_to_rgb(fill)
-                for paragraph in cell.text_frame.paragraphs:
-                    for run in paragraph.runs:
-                        _set_run_fonts(run, font)
-                        run.font.size = Pt(float(spec.get("size", theme.get("size", 12))))
-                        if spec.get("color") or theme.get("text_color"):
-                            run.font.color.rgb = _hex_to_rgb(spec.get("color") or theme.get("text_color"))
-                        run.font.bold = bool(row_index == 0 and spec.get("header_bold", True))
+                _write_cell_runs(
+                    cell,
+                    value,
+                    str(style.get("font") or font),
+                    float(style.get("size", default_size)),
+                    style.get("color", default_color),
+                    bool(style.get("bold", row_index == 0 and spec.get("header_bold", True))),
+                    style,
+                )
+                _set_cell_border(cell, style.get("border", border))
+                _set_cell_margins(cell, style.get("margins", margins))
         for merge in spec.get("merges", []):
             if isinstance(merge, list) and len(merge) == 4:
                 r1, c1, r2, c2 = [int(value) for value in merge]

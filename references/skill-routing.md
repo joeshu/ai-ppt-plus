@@ -1,7 +1,9 @@
 # Skill routing and ownership
 
 The package has exactly three business skill entrypoints. Adapters and tools
-sit below this layer and are not counted as skills.
+sit below this layer and are not counted as skills. `GordenImage2PPTX` is a
+named compatibility fallback in the engine policy, not a fourth business skill,
+not a default route, and not a release authority.
 
 | Skill | Owns | Does not own |
 |---|---|---|
@@ -36,7 +38,13 @@ ownership or create a fourth release authority.
    `visual_authority=approved_design_system`, `requires_image_generation=false`,
    and a `native_content_manifest`; it must not silently fall back to image
    generation or reference reconstruction.
-6. PPTX operations use the declared authoring adapter. No skill may silently
+6. Editable and reference routes use `ai-ppt-editable` as the primary engine.
+   `GordenImage2PPTX` may run only as a recorded, region-only visual-asset
+   fallback after the editable/imagegen failure decision. It is forbidden for
+   formal text, semantic panels, card frames, tables, charts and whole pages.
+   The fallback event must carry a reason, region, asset record and explicit
+   user decision.
+7. PPTX operations use the declared authoring adapter. No skill may silently
    replace the adapter, lower L0–L5 editability, or turn automated technical
    success into delivery/human approval.
 7. Orchestrated results return to `ai-ppt-plus` for canonical manifest
@@ -59,7 +67,9 @@ Shared contracts include:
 - `ai-ppt-plus/visual-generation-tool/v1` for raster tool resolution,
   source retention, and no-code-overlay policy;
 - font embedding/portability contracts;
-- machine-readable ownership in `assets/skill-routing.template.json`.
+- machine-readable ownership in `assets/skill-routing.template.json`;
+- machine-readable engine/fallback policy in the same routing contract and
+  `ai-ppt-plus/engine-route-validation/v1`.
 - `ai-ppt-plus/route-decision/v2` for native-authoring route authority;
 - `ai-ppt-plus/handoff/v2` for hash-backed A-to-B recovery and page coverage.
 - `ai-ppt-plus/workflow-state/v1` for phase readiness, approvals and blockers.

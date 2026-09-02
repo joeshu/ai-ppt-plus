@@ -11,7 +11,8 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--region name=x,y,w,h ...] [--reference IMAGE | --reference-dir DIR]
        [--visual-threshold N]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
-       [--route-decision ROUTE.json] [--require-route] [--require-editability]
+       [--route-decision ROUTE.json] [--require-route] [--require-engine-route]
+       [--require-editability]
        [--outline-contract CONTRACT.json] [--content-authority AUTHORITY.json]
        [--quality-gates QUALITY.json] [--require-root-p0]
        [--design-system DESIGN.yaml] [--require-p1]
@@ -326,6 +327,7 @@ def main() -> int:
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
+    parser.add_argument("--require-engine-route", action="store_true", help="require the editable-first engine/fallback contract before downstream gates")
     parser.add_argument("--outline-contract", help="approved outline-contract/v1; defaults to project/outline-contract.json when --require-root-p0 is used")
     parser.add_argument("--content-authority", help="content-authority/v1 provenance contract")
     parser.add_argument("--quality-gates", help="quality-gates/v1 four-dimensional quality contract")
@@ -352,6 +354,9 @@ def main() -> int:
     parser.add_argument("--object-manifest", help="canonical slide-object-manifest.json")
     parser.add_argument("--require-object-manifest", action="store_true", help="require and validate the canonical object inventory")
     parser.add_argument("--require-independent-panels", action="store_true", help="reverse-audit independently movable semantic panels")
+    parser.add_argument("--require-native-structure", action="store_true", help="require native semantic panels/tables on editable routes")
+    parser.add_argument("--require-native-panels", action="store_true", help="require semantic panels/cards to be native shapes or groups")
+    parser.add_argument("--require-native-tables", action="store_true", help="require declared tables to be native PowerPoint tables")
     parser.add_argument("--expected-panel-count", type=int, help="expected semantic panel count")
     parser.add_argument("--require-panel-approval", action="store_true", help="require explicit human approval metadata for panel assets")
     parser.add_argument("--require-text-style-map", action="store_true", help="validate rich text/style records when present")
@@ -391,6 +396,7 @@ def main() -> int:
     deck = Path(args.deck).resolve()
     if args.require_root_p0:
         args.require_route = True
+        args.require_engine_route = True
         args.require_workflow_state = True
         args.require_formal_content = True
         args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
@@ -399,6 +405,11 @@ def main() -> int:
         args.handoff = args.handoff or str(project / "handoff.json")
     if args.require_p1:
         args.require_root_p0 = True
+        args.require_route = True
+        args.require_engine_route = True
+        args.require_workflow_state = True
+        args.require_formal_content = True
+        args.require_native_structure = True
         args.outline_contract = args.outline_contract or str(project / "outline-contract.json")
         args.content_authority = args.content_authority or str(project / "content-authority.json")
         args.quality_gates = args.quality_gates or str(project / "quality-gates.json")
@@ -406,6 +417,10 @@ def main() -> int:
         args.design_system = args.design_system or str(project / "design-system.yaml")
         args.issue_log = args.issue_log or str(project / "issue-log.json")
         args.review_package_dir = args.review_package_dir or str(project / "review-package")
+    if args.require_engine_route:
+        # The engine contract is a prerequisite of the route decision, not a
+        # parallel advisory report. Keep the standalone flag non-bypassable.
+        args.require_route = True
     if args.expected_pages < 1:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "expected_pages_invalid", "message": "--expected-pages must be positive"}, ensure_ascii=False))
         return 2
@@ -414,6 +429,7 @@ def main() -> int:
         # the required evidence explicit instead of allowing a green run to
         # be mistaken for a delivered deck.
         args.require_route = True
+        args.require_engine_route = True
         args.require_editability = True
         args.require_embedded_fonts = True
         args.require_cjk = True
@@ -467,8 +483,13 @@ def main() -> int:
     if args.release and affected_pages:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "release_requires_full_deck", "message": "--release requires a full-deck render; omit --affected-pages"}, ensure_ascii=False))
         return 2
-    if args.require_route and not args.route_decision:
-        result = {"schema": "ai-ppt-plus/pipeline-run/v1", "valid": False, "code": "route_decision_missing", "message": "--require-route needs --route-decision"}
+    if (args.require_route or args.require_engine_route) and not args.route_decision:
+        result = {
+            "schema": "ai-ppt-plus/pipeline-run/v1",
+            "valid": False,
+            "code": "route_decision_missing",
+            "message": "--require-route/--require-engine-route needs --route-decision",
+        }
         print(json.dumps(result, ensure_ascii=False))
         return 2
     route_data = None
@@ -515,6 +536,10 @@ def main() -> int:
             return 2
     reference_route = isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction"
     visual_creation_route = isinstance(route_data, dict) and route_data.get("route") == "visual-creation"
+    editable_route = isinstance(route_data, dict) and route_data.get("route") in {"reference-reconstruction", "editable-pptx", "native-authoring"}
+    native_panels_required = bool(args.require_native_panels or args.require_native_structure or (args.release and editable_route))
+    native_tables_required = bool(args.require_native_tables or args.require_native_structure or (args.release and editable_route))
+    native_structure_enabled = native_panels_required or native_tables_required
     visual_generation_mode = route_data.get("visual_generation_mode", "layout-reference") if visual_creation_route else None
     if visual_creation_route and visual_generation_mode == "image-slide":
         args.require_visual_generation = True
@@ -670,10 +695,29 @@ def main() -> int:
             route_inputs.extend(Path(args.reference_dir).resolve() / f"slide-{index}.png" for index in range(1, args.expected_pages + 1))
         add_step("route", route_args, deps=["routing-contract"], outputs=[run_dir / "route-validation.json"], inputs=list(dict.fromkeys(route_inputs)))
 
+    # The legacy route flag remains a compatibility gate. P0/release and
+    # the explicit engine flag opt into the stricter engine contract.
+    engine_route_enabled = bool(args.route_decision and (args.require_engine_route or args.release))
+    if engine_route_enabled:
+        engine_route_args = [
+            str(SCRIPT_DIR / "validate_engine_route.py"),
+            str(Path(args.route_decision).resolve()),
+            "--strict",
+            "--report", str(run_dir / "engine-route-validation.json"),
+        ]
+        add_step(
+            "engine-route",
+            engine_route_args,
+            deps=["route"],
+            outputs=[run_dir / "engine-route-validation.json"],
+            inputs=[Path(args.route_decision).resolve()],
+            metadata={"required": True},
+        )
+
     manifest_icon_required, manifest_imagegen_required = project_asset_requirements(project)
     icon_required = args.require_icon_assets or manifest_icon_required or (project / "icon-asset-manifest.json").is_file()
     imagegen_required = args.require_imagegen_assets or manifest_imagegen_required or (project / "imagegen-assets-manifest.json").is_file()
-    route_deps = ["route"] if args.route_decision else []
+    route_deps = ["engine-route"] if engine_route_enabled else (["route"] if args.route_decision else [])
     workflow_state_enabled = bool(args.workflow_state or args.require_workflow_state)
     workflow_state_path = None
     if workflow_state_enabled:
@@ -713,6 +757,8 @@ def main() -> int:
     p0_deps = ["routing-contract"]
     if args.route_decision:
         p0_deps.append("route")
+    if engine_route_enabled:
+        p0_deps.append("engine-route")
     if workflow_state_enabled:
         p0_deps.append("workflow-state")
     if outline_contract_path:
@@ -1029,6 +1075,10 @@ def main() -> int:
         object_args = [str(SCRIPT_DIR / "validate_object_manifest.py"), str(object_manifest), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "object-manifest-validation.json")]
         if args.require_independent_panels:
             object_args.append("--require-panels")
+        if native_panels_required:
+            object_args.append("--require-native-panels")
+        if native_tables_required:
+            object_args.append("--require-native-tables")
         add_step("object-manifest", object_args, outputs=[run_dir / "object-manifest-validation.json"], inputs=[object_manifest, deck])
     hash_manifests: list[Path] = []
     for candidate in [*(Path(path).resolve() for path in args.asset_manifest), *(project / name for name in ("asset-manifest.json", "panel-asset-manifest.json", "icon-asset-manifest.json", "imagegen-assets-manifest.json"))]:
@@ -1146,6 +1196,54 @@ def main() -> int:
         if args.release:
             semantic_args.append("--require-independent-text-manifest")
         add_step("semantic-object-audit", semantic_args, deps=["editable-object-audit"], outputs=[run_dir / "semantic-object-audit.json"], inputs=semantic_inputs)
+
+    if native_structure_enabled:
+        native_validator = SCRIPT_DIR.parent / "ai-ppt-editable" / "scripts" / "validate_native_editability.py"
+        native_deps = ["inspection"]
+        if any(task.name == "editable-object-audit" for task in executor.tasks):
+            native_deps.append("editable-object-audit")
+        if not object_manifest.is_file():
+            add_step(
+                "native-editability",
+                static_result={
+                    "name": "native-editability",
+                    "command": [],
+                    "exit_code": 2,
+                    "ok": False,
+                    "failure": "object_manifest_missing",
+                    "stdout": "",
+                    "stderr": "",
+                },
+                cacheable=False,
+                deps=native_deps,
+                outputs=[run_dir / "native-editability-validation.json"],
+                metadata={"required": True},
+            )
+        else:
+            native_args = [
+                str(native_validator),
+                str(deck),
+                "--object-manifest", str(object_manifest),
+                "--report", str(run_dir / "native-editability-validation.json"),
+                "--forbid-whole-slide-pictures",
+            ]
+            if native_panels_required:
+                native_args.append("--require-native-panels")
+            if native_tables_required:
+                native_args.append("--require-native-tables")
+            add_step(
+                "native-editability",
+                native_args,
+                deps=native_deps,
+                outputs=[run_dir / "native-editability-validation.json"],
+                inputs=[deck, object_manifest],
+                metadata={
+                    "require_native_panels": native_panels_required,
+                    "require_native_tables": native_tables_required,
+                    "required": True,
+                },
+            )
+
     render_args = [str(SCRIPT_DIR / "render_pptx.py"), str(deck), "--output-dir", str(render_dir), "--dpi", str(args.dpi), "--report", str(render_report_path)]
     if args.font_dir:
         render_args.extend(["--font-dir", str(Path(args.font_dir).resolve())])
@@ -1374,7 +1472,7 @@ def main() -> int:
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "visual-generation", "visual-comparison", "dual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest"):
+    for candidate in ("route", "engine-route", "visual-generation", "visual-comparison", "dual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest", "native-editability"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     if content_inventory_enabled:
@@ -1493,6 +1591,7 @@ def main() -> int:
             ("dual_comparison", run_dir / "dual-comparison.json"),
             ("ocr_text_check", run_dir / "ocr-text-check.json"),
             ("route_validation", run_dir / "route-validation.json"),
+            ("engine_route_validation", run_dir / "engine-route-validation.json"),
             ("workflow_state_validation", run_dir / "workflow-state-validation.json"),
             ("visual_generation_validation", run_dir / "visual-generation-validation.json"),
             ("manifest_validation", run_dir / "manifest-validation.json"),
@@ -1504,6 +1603,7 @@ def main() -> int:
             ("object_manifest_validation", run_dir / "object-manifest-validation.json"),
             ("editable_object_audit", run_dir / "editable-object-audit.json"),
             ("semantic_object_audit", run_dir / "semantic-object-audit.json"),
+            ("native_editability_validation", run_dir / "native-editability-validation.json"),
             ("panel_assets_validation", run_dir / "panel-assets-validation.json"),
             ("text_style_map_validation", run_dir / "text-style-map-validation.json"),
             ("source_image_validation", run_dir / "source-image-validation.json"),
@@ -1618,7 +1718,7 @@ def main() -> int:
     # The route and package contracts are true prerequisites, not just
     # informational reports.  A failed decision must block every downstream
     # gate so a parallel DAG cannot continue with an unapproved authority.
-    prerequisite = "route" if args.route_decision else "routing-contract"
+    prerequisite = "engine-route" if engine_route_enabled else ("route" if args.route_decision else "routing-contract")
     prerequisites = [prerequisite]
     if workflow_state_enabled:
         prerequisites.append("workflow-state")
@@ -1646,6 +1746,8 @@ def main() -> int:
             {"report_type": "editable-object-audit", "path": "editable-object-audit.json", "required": True, "stage": "validated"},
             {"report_type": "semantic-object-audit", "path": "semantic-object-audit.json", "required": True, "stage": "validated"},
         ])
+    if native_structure_enabled:
+        report_entries.append({"report_type": "native-object-validation", "path": "native-editability-validation.json", "required": True, "stage": "validated"})
     if panel_gate_required:
         report_entries.append({"report_type": "panel-assets-validation", "path": "panel-assets-validation.json", "required": True, "stage": "validated"})
     if args.require_text_style_map and layout_path.is_file():
@@ -1689,6 +1791,8 @@ def main() -> int:
         report_entries.append({"report_type": "font-delivery-validation", "path": "font-delivery-validation.json", "required": True, "stage": "validated"})
     if args.route_decision:
         report_entries.append({"report_type": "route-validation", "path": "route-validation.json", "required": args.require_route, "stage": "design-system-ready"})
+    if engine_route_enabled:
+        report_entries.append({"report_type": "engine-route-validation", "path": "engine-route-validation.json", "required": True, "stage": "design-system-ready"})
     if workflow_state_enabled:
         report_entries.append({"report_type": "workflow-state-validation", "path": "workflow-state-validation.json", "required": True, "stage": "intake"})
     if visual_generation_enabled:
@@ -1714,7 +1818,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "engine-route-validation": "engine-route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "native-object-validation": "native-editability", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"

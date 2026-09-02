@@ -21,6 +21,17 @@
       "forbids": ["narrative-redesign", "release-eligibility", "human-signoff"]
     }
   ],
+  "fallback_policy": {
+    "schema": "ai-ppt-plus/fallback-policy/v1",
+    "primary_engine": "ai-ppt-editable",
+    "fallback_engine": "GordenImage2PPTX",
+    "fallback_scope": "region-only",
+    "allow_full_page": false,
+    "requires_explicit_reason": true,
+    "requires_asset_record": true,
+    "requires_user_decision_on_generation_failure": true,
+    "forbidden_roles": ["formal-text", "semantic-panel", "panel-frame", "table", "chart", "card-frame", "whole-slide", "whole-page", "framework"]
+  },
   "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1", "ai-ppt-plus/chart-reconstruction/v1", "ai-ppt-plus/visual-generation-plan/v1", "ai-ppt-plus/visual-generation-tool/v1", "ai-ppt-plus/route-decision/v2", "ai-ppt-plus/handoff/v2", "ai-ppt-plus/workflow-state/v1"],
   "bindings": {
     "orchestrator": {

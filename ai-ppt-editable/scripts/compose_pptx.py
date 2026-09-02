@@ -20,7 +20,7 @@ from pathlib import Path
 from asset_placement import replace_svg_media as _replace_svg_media
 from asset_placement import svg_to_png as _svg_to_png
 from authoring_backend import build_pptx, build_with_embedded_fonts
-from component_expander import _choose_slide_layout, _expand_components, _frac, _load_deck, _resolve
+from component_expander import _choose_slide_layout, _expand_components, _frac, _load_deck, _promote_native_structures, _resolve
 from preview_renderer import find_cjk_font as _find_cjk_font
 from preview_renderer import render_previews
 from pptx_primitives import (
@@ -52,13 +52,16 @@ def main() -> None:
     parser.add_argument("--embed-fonts", action="store_true", help="Post-process the generated PPTX with OOXML font parts.")
     parser.add_argument("--embedding-report", help="JSON report for the OOXML font embedding step.")
     parser.add_argument("--strict-input", action="store_true", help="reject implicit primitive types, unsupported alignments and out-of-slide geometry")
+    parser.add_argument("--require-native-structure", action="store_true", help="require native panels/tables and forbid semantic full-slide frame pictures")
     args = parser.parse_args()
 
     layout_path = Path(args.layout)
     if not layout_path.exists():
         _die(f"layout file not found: {layout_path}")
-    deck = _expand_components(_load_deck(layout_path))
+    deck = _promote_native_structures(_load_deck(layout_path))
+    deck = _expand_components(deck)
     deck["strict_input"] = bool(args.strict_input)
+    deck["require_native_structure"] = bool(args.require_native_structure or (args.strict_input and deck.get("editable_object_policy") == "native-semantic-objects"))
     output_path = Path(args.out).resolve()
     if args.font_dir:
         deck["font_dir"] = str(Path(args.font_dir).resolve())

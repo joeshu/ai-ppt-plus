@@ -13,6 +13,12 @@ The root skill controls five cross-cutting invariants:
    an interrupted run can resume from hashes and artifact paths.
 5. `quality-gates/v1` separates content, visual, structure and delivery status
    from human closeout and release eligibility.
+6. `skill-routing/v1` and `engine-route-validation/v1` bind editable
+   reconstruction/native authoring to `ai-ppt-editable`. Any
+   `GordenImage2PPTX` use is region-only visual fallback evidence and cannot
+   cover formal text, a semantic panel/table/card/framework frame or a whole page.
+   Each fallback event must explicitly declare `contains_formal_content=false`,
+   `whole_page=false`, a bounded region, a reason, an asset record and approval.
 
 The old route, workflow and handoff schemas remain readable for compatibility.
 Strict root release mode requires the new bindings and protocols. This allows

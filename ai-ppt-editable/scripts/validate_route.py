@@ -13,6 +13,7 @@ import re
 from pathlib import Path
 
 from atomic_output import atomic_write_json
+from validate_engine_route import validate_engine_route_data
 
 
 ROUTES = {"visual-creation", "reference-reconstruction", "native-authoring"}
@@ -41,6 +42,7 @@ def main() -> int:
     reference_group.add_argument("--reference-dir", help="compare the route roster with slide-N files in a reference directory")
     parser.add_argument("--require-confirmation", action="store_true", help="require confirmer identity/time for a decided route")
     parser.add_argument("--require-formal-content", action="store_true", help="block transcription-pending formal content")
+    parser.add_argument("--require-engine-route", action="store_true", help="require the editable-first engine/fallback contract")
     parser.add_argument("--report")
     args = parser.parse_args()
     route_path = Path(args.route_json).resolve()
@@ -54,6 +56,10 @@ def main() -> int:
     if not isinstance(data, dict):
         issues.append({"severity": "blocker", "code": "route_not_object"})
         data = {}
+    engine_evidence = {}
+    if args.require_engine_route:
+        engine_issues, engine_evidence = validate_engine_route_data(data, strict=True)
+        issues.extend(engine_issues)
     schema = data.get("schema")
     if schema not in ROUTE_SCHEMAS:
         issues.append({"severity": "blocker", "code": "route_schema_invalid", "value": data.get("schema")})
@@ -259,7 +265,7 @@ def main() -> int:
                 if external_hash not in accepted_hashes:
                     issues.append({"severity": "blocker", "code": "external_reference_hash_mismatch", "slide_no": external_slide, "roster_path": str(roster_path), "external_path": str(external_path), "accepted_hashes": sorted(accepted_hashes)})
     valid = not any(issue.get("severity") == "blocker" for issue in issues)
-    result = {"schema": "ai-ppt-plus/route-validation/v2" if schema == "ai-ppt-plus/route-decision/v2" else "ai-ppt-plus/route-validation/v1", "valid": valid, "ready_for_delivery": valid and formal_content_ready and status == "decided", "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "visual_generation_mode": visual_generation_mode, "formal_content_ready": formal_content_ready, "requires_image_generation": data.get("requires_image_generation"), "issues": issues, "evidence": evidence}
+    result = {"schema": "ai-ppt-plus/route-validation/v2" if schema == "ai-ppt-plus/route-decision/v2" else "ai-ppt-plus/route-validation/v1", "valid": valid, "ready_for_delivery": valid and formal_content_ready and status == "decided", "route_file": str(route_path), "route_sha256": sha256(route_path), "route": route, "status": status, "visual_authority": authority, "formal_content_authority": formal_authority, "visual_generation_mode": visual_generation_mode, "formal_content_ready": formal_content_ready, "requires_image_generation": data.get("requires_image_generation"), "engine_route": engine_evidence, "issues": issues, "evidence": evidence}
     if args.report:
         atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))

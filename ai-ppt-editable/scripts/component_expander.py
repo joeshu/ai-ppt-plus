@@ -14,7 +14,7 @@ def _die(message: str, code: int = 2):
 
 SLIDE_KEYS = {
     "background", "frame", "panels", "shapes", "groups", "tables", "charts",
-    "components", "speaker_notes", "notes", "icons", "texts",
+    "components", "native_panels", "native_tables", "speaker_notes", "notes", "icons", "texts",
 }
 
 
@@ -46,6 +46,75 @@ def _frac(deck: dict, item: dict, key_xy: str, axis: str, reference: float) -> f
     if deck["units"] == "px":
         return value / reference
     return value
+
+
+def _promote_native_structures(deck: dict) -> dict:
+    """Promote explicitly native panel/table declarations into native arrays.
+
+    Legacy panel images remain available when their treatment is explicitly
+    raster/traceable. A native-required panel is never silently emitted as a
+    picture; it becomes a shape or group before authoring.
+    """
+    for slide_no, slide in enumerate(deck.get("slides", []), 1):
+        if not isinstance(slide, dict):
+            continue
+        native_panels = list(slide.pop("native_panels", []) or [])
+        retained_panels = []
+        for panel in slide.get("panels", []) or []:
+            if not isinstance(panel, dict):
+                _die(f"slide {slide_no}: panel must be an object")
+            treatment = str(panel.get("treatment", "")).casefold()
+            if panel.get("native") is True or panel.get("native_required") is True or treatment in {"native", "native-shape", "native_shape", "native-group", "native_group"}:
+                native_panels.append(panel)
+            else:
+                retained_panels.append(panel)
+        if retained_panels:
+            slide["panels"] = retained_panels
+        else:
+            slide.pop("panels", None)
+        for raw_panel in native_panels:
+            panel = dict(raw_panel)
+            treatment = str(panel.get("treatment", "")).casefold()
+            if panel.get("file"):
+                _die(
+                    f"slide {slide_no}: native-required panel {panel.get('object_id') or panel.get('panel_id') or panel.get('name') or 'unnamed'} "
+                    "cannot be promoted from a raster file; provide native geometry or mark it raster-only"
+                )
+            object_id = str(panel.get("object_id") or panel.get("panel_id") or panel.get("name") or f"native-panel-{slide_no:02d}")
+            children = panel.get("children")
+            is_group = treatment in {"native-group", "native_group"} or isinstance(children, list) and bool(children)
+            if is_group:
+                group = {
+                    key: panel[key]
+                    for key in ("object_id", "name", "x", "y", "w", "h", "children_coordinate_space", "alt_text")
+                    if key in panel
+                }
+                group["object_id"] = object_id
+                group["children"] = list(children or [])
+                slide.setdefault("groups", []).append(group)
+            else:
+                shape = {
+                    key: panel[key]
+                    for key in ("object_id", "name", "x", "y", "w", "h", "type", "fill", "gradient", "fill_gradient", "line", "line_width", "opacity", "shadow", "rotation", "alt_text", "allow_bleed")
+                    if key in panel
+                }
+                shape["object_id"] = object_id
+                shape.setdefault("type", panel.get("shape_type", "rounded_rect"))
+                slide.setdefault("shapes", []).append(shape)
+        native_tables = slide.pop("native_tables", []) or []
+        if native_tables:
+            promoted_tables = []
+            for table in native_tables:
+                if not isinstance(table, dict):
+                    _die(f"slide {slide_no}: native table must be an object")
+                if table.get("file"):
+                    _die(
+                        f"slide {slide_no}: native-required table {table.get('object_id') or table.get('name') or 'unnamed'} "
+                        "cannot be promoted from a raster file; provide rows/columns data"
+                    )
+                promoted_tables.append(dict(table, representation="native"))
+            slide.setdefault("tables", []).extend(promoted_tables)
+    return deck
 
 
 def _expand_components(deck: dict) -> dict:

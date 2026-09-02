@@ -66,6 +66,23 @@ def main() -> int:
     if not isinstance(entries, list) or not entries:
         entries = []
         issues.append({"severity": "blocker", "code": "synced_files_missing"})
+    excluded_entries = manifest.get("excluded_paths", [])
+    excluded_paths: set[str] = set()
+    if not isinstance(excluded_entries, list):
+        issues.append({"severity": "blocker", "code": "excluded_paths_invalid"})
+        excluded_entries = []
+    for index, entry in enumerate(excluded_entries):
+        if not isinstance(entry, dict):
+            issues.append({"severity": "blocker", "code": "excluded_path_invalid", "index": index})
+            continue
+        relative = safe_relative(entry.get("path"))
+        reason = entry.get("reason")
+        if relative is None or not isinstance(reason, str) or not reason.strip():
+            issues.append({"severity": "blocker", "code": "excluded_path_invalid", "index": index})
+            continue
+        if relative in excluded_paths:
+            issues.append({"severity": "blocker", "code": "excluded_path_duplicate", "path": relative})
+        excluded_paths.add(relative)
     seen_source: set[str] = set()
     seen_target: set[str] = set()
     observed_files: list[dict] = []
@@ -92,6 +109,16 @@ def main() -> int:
             continue
         target_path = root / target_relative
         record = {"source_path": source_relative, "target_path": target_relative, "expected_sha256": expected}
+        if source_relative in excluded_paths or target_relative in excluded_paths:
+            record["excluded"] = True
+            if not target_path.is_file():
+                issues.append({"severity": "blocker", "code": "excluded_target_file_missing", "path": target_relative})
+            elif source_root is not None:
+                source_path = source_root / source_relative
+                if not source_path.is_file():
+                    issues.append({"severity": "blocker", "code": "excluded_source_file_missing", "path": source_relative})
+            observed_files.append(record)
+            continue
         if not target_path.is_file():
             issues.append({"severity": "blocker", "code": "target_file_missing", "path": target_relative})
             observed_files.append(record)

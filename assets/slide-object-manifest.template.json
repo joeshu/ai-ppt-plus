@@ -22,16 +22,34 @@
         {
           "object_id": "panel-01",
           "role": "semantic-panel",
-          "object_type": "traceable_static_graphic",
-          "editability_level": "L3",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "native_required": true,
           "required_for_delivery": true,
           "human_review_required": true,
-          "reduced_editability_accepted": true,
+          "reduced_editability_accepted": false,
           "independent": true,
           "contains_formal_content": false,
           "provenance": "reference.png#panel-01",
           "source_path": "panels/panel-01.png",
           "source_sha256": "<sha256-of-panels/panel-01.png>"
+        },
+        {
+          "object_id": "data-table-01",
+          "role": "table",
+          "object_type": "editable_table",
+          "editability_level": "L1",
+          "native_required": true,
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "independent": true,
+          "contains_formal_content": false,
+          "data_source": "approved-outline#table-01",
+          "provenance": "approved-outline#table-01",
+          "data_snapshot": {
+            "columns": ["<column A>", "<column B>"],
+            "rows": [["<value A1>", "<value B1>"]]
+          }
         },
         {
           "object_id": "title",

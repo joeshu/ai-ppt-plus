@@ -6,6 +6,11 @@
   "visual_authority": "approved_reference_image",
   "formal_content_authority": "approved_outline",
   "requires_image_generation": false,
+  "primary_engine": "ai-ppt-editable",
+  "fallback_policy": "scoped-visual-only",
+  "fallback_used": false,
+  "fallback_events": [],
+  "editable_object_policy": "native-semantic-objects",
   "outline_contract": {"path": "outline-contract.json", "sha256": ""},
   "reference_roster": [
     {

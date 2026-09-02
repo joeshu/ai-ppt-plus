@@ -1,16 +1,27 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.08.31.04",
+  "package_revision": "2026.09.02.02",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
     "policy": "self-contained",
-    "required_dirs": ["agents", "scripts", "references", "assets"]
+    "required_dirs": [
+      "agents",
+      "scripts",
+      "references",
+      "assets"
+    ]
   },
   "bundled_skills": [
-    {"name": "ai-ppt-visual-gen", "root": "ai-ppt-visual-gen"},
-    {"name": "ai-ppt-editable", "root": "ai-ppt-editable"}
+    {
+      "name": "ai-ppt-visual-gen",
+      "root": "ai-ppt-visual-gen"
+    },
+    {
+      "name": "ai-ppt-editable",
+      "root": "ai-ppt-editable"
+    }
   ],
   "managed_globs": [
     "SKILL.md",
@@ -31,6 +42,7 @@
     "assets/schemas/skill-routing.schema.json",
     "scripts/validate_skill_package.py",
     "scripts/validate_routing_contract.py",
+    "scripts/validate_engine_route.py",
     "scripts/run_super_pipeline.py",
     "scripts/run_pipeline.py",
     "scripts/pipeline_engine.py",

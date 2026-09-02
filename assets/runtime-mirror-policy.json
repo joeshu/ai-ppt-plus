@@ -85,6 +85,80 @@
         "scripts/validate_skill_package.py",
         "scripts/validate_visual_generation_plan.py",
         "scripts/validate_workflow_state.py"
+      ],
+      "adapter_exclusions": [
+        {
+          "path": "references/imagegen-final-asset-policy.md",
+          "reason": "worker-only final imagegen asset boundary protocol"
+        },
+        {
+          "path": "references/imagegen-sheet-slicing.md",
+          "reason": "worker-only generated-sheet slicing protocol"
+        },
+        {
+          "path": "references/last-mile-visual-lock.md",
+          "reason": "worker-only last-mile visual lock protocol"
+        },
+        {
+          "path": "references/ooxml-compatibility.md",
+          "reason": "worker-only OOXML preservation adapter protocol"
+        },
+        {
+          "path": "references/source-crop-integrity.md",
+          "reason": "worker-only source-reuse crop integrity protocol"
+        },
+        {
+          "path": "scripts/authoring_backend.py",
+          "reason": "P1 native semantic structure input gate adapter"
+        },
+        {
+          "path": "scripts/component_expander.py",
+          "reason": "P1 native panel/table promotion adapter"
+        },
+        {
+          "path": "scripts/compose_pptx.py",
+          "reason": "P1 native structure composition adapter"
+        },
+        {
+          "path": "scripts/embed_fonts.py",
+          "reason": "worker-specific font alias and package compatibility adapter"
+        },
+        {
+          "path": "scripts/normalize_ooxml_relationships.py",
+          "reason": "worker-only ZIP-level viewer compatibility adapter"
+        },
+        {
+          "path": "scripts/pptx_primitives.py",
+          "reason": "P1 native table styling and rich-text authoring adapter"
+        },
+        {
+          "path": "scripts/run_pipeline.py",
+          "reason": "worker-specific standalone orchestration adapter; root owns route orchestration"
+        },
+        {
+          "path": "scripts/validate_imagegen_final_assets.py",
+          "reason": "worker-only final imagegen asset validator"
+        },
+        {
+          "path": "scripts/validate_native_editability.py",
+          "reason": "P1 worker-only native object audit"
+        },
+        {
+          "path": "scripts/validate_object_manifest.py",
+          "reason": "P1 native panel/table manifest gate adapter"
+        },
+        {
+          "path": "scripts/validate_repackaging_invariants.py",
+          "reason": "worker-only post-composition preservation gate"
+        },
+        {
+          "path": "scripts/validate_source_crop_integrity.py",
+          "reason": "worker-only source-reuse crop integrity adapter"
+        },
+        {
+          "path": "scripts/validate_visual_lock.py",
+          "reason": "worker-only last-mile visual lock validator"
+        }
       ]
     }
   ]

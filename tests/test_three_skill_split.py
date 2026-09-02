@@ -62,7 +62,9 @@ def main() -> int:
     assert routing["bindings"]["visual_generation"]["runtime_entrypoint"].startswith("ai-ppt-visual-gen/")
     assert routing["bindings"]["reconstruction"]["runtime_entrypoint"].startswith("ai-ppt-editable/")
     assert routing["bindings"]["authoring"]["entrypoint"].startswith("ai-ppt-editable/")
-    assert "GordenImage" not in json.dumps(routing, ensure_ascii=False)
+    # The fallback engine is a policy adapter, not a fourth skill.
+    assert "GordenImage" not in json.dumps(routing["skills"], ensure_ascii=False)
+    assert routing["fallback_policy"]["fallback_engine"] == "GordenImage2PPTX"
 
     # The editable worker is pinned to the reconstruction core from the
     # perfect source branch. Its manifest is the source-of-truth parity gate;
@@ -80,14 +82,17 @@ def main() -> int:
     parity_manifest = json.loads((editable_scripts.parent / "assets" / "upstream-perfect-sync.json").read_text(encoding="utf-8"))
     assert parity_manifest["source"]["ref"] == "完美第一版"
     excluded = {item["path"] for item in parity_manifest["excluded_paths"]}
-    assert len(parity_manifest["synced_files"]) >= 170
+    assert len(parity_manifest["synced_files"]) == 163
     assert len(parity_manifest["synced_files"]) + len(excluded) >= 202
     assert {"scripts/compare_visual.py", "scripts/compare_visual_deck.py", "scripts/delivery_check.py", "scripts/validate_signoff.py"} <= excluded
 
-    # These three files are intentionally kept current with the root
-    # orchestrator so the split worker remains callable by the v2 pipeline.
-    for name in ("run_pipeline.py", "validate_handoff.py", "validate_route.py"):
+    # Shared route/handoff validators stay source-identical. The worker
+    # runner is a deliberate standalone adapter, but it must expose and
+    # enforce the strict engine-route flag.
+    for name in ("validate_handoff.py", "validate_route.py"):
         assert digest(ROOT / "scripts" / name) == digest(editable_scripts / name), name
+    worker_runner = (editable_scripts / "run_pipeline.py").read_text(encoding="utf-8")
+    assert "--require-engine-route" in worker_runner
     # The visual worker owns richer A1-A5 planning/materialization validators;
     # they intentionally do not have to be byte-identical to root-side
     # compatibility helpers.  The runtime mirror policy covers only files

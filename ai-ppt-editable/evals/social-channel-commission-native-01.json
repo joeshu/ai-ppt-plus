@@ -1,0 +1,64 @@
+{
+  "schema": "ai-ppt-plus/reconstruction-regression-case/v1",
+  "case_id": "social-channel-commission-native-01",
+  "source": "social-channel-commission-editable(1).pptx + green-screen frame",
+  "route": "reference-reconstruction",
+  "primary_engine": "ai-ppt-editable",
+  "forbidden_engine": "GordenImage2PPTX",
+  "expected": {
+    "slides": 1,
+    "permitted_full_slide_pictures": 1,
+    "native_tables": 5,
+    "native_table_shapes": [
+      "commission-card-1-body",
+      "commission-card-2-body",
+      "commission-card-3-body",
+      "policy-fee-table",
+      "monthly-incentive-table"
+    ],
+    "policy_fee_table": {
+      "rows": 9,
+      "columns": 4,
+      "merged_cells": [
+        [
+          1,
+          0,
+          2,
+          0
+        ],
+        [
+          3,
+          0,
+          4,
+          0
+        ],
+        [
+          5,
+          0,
+          6,
+          0
+        ],
+        [
+          7,
+          0,
+          8,
+          0
+        ]
+      ]
+    },
+    "monthly_incentive_table": {
+      "rows": 6,
+      "columns": 4
+    },
+    "native_panel_groups": true,
+    "formal_text_in_raster": false
+  },
+  "gates": [
+    "no-semantic-frame-picture",
+    "native-table-xml",
+    "native-panel-object",
+    "text-content-and-run-style",
+    "mutation-smoke-test",
+    "visual-best-and-editable-best"
+  ]
+}

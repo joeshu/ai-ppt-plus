@@ -110,6 +110,21 @@ proceed. Persist the deck design system and its revision before delegating.
 The orchestrator's outline/design revisions are immutable inputs to workers;
 workers return evidence and issues, not replacement authority.
 
+### Engine routing contract
+
+For `reference-reconstruction`, `editable-pptx`, and `native-authoring`,
+`ai-ppt-editable` is the primary execution engine. The route decision must
+persist `primary_engine`, `fallback_policy`, `fallback_used`,
+`fallback_events`, and `editable_object_policy` before delegation.
+
+`GordenImage2PPTX` is not a fourth business skill and is never selected as the
+primary engine. It is an explicitly approved, region-only fallback for visual
+assets such as icons, decorative art, artistic typography, complex gradients,
+illustrations or background texture. It is forbidden for formal text, simple
+semantic panels/cards/frames, tables, charts and whole-page composition. Every
+fallback event must record the affected region, reason, generated/recovered
+asset record and explicit user decision; otherwise the route is blocked.
+
 ### O3 — Delegate visual generation
 
 For image slides or high-end visual intermediates, invoke
@@ -216,6 +231,10 @@ diagnostic unless the corresponding strict gate is requested.
 ## Non-negotiable gates
 
 - No silent route or backend substitution.
+- No `GordenImage2PPTX` primary selection or unrecorded/full-page fallback.
+- Editable routes default to `ai-ppt-editable`; semantic panels, cards and
+  tables must remain native objects unless an explicit contract records a
+  text-free complex-visual exception.
 - No generated fact, number, logo, or formal text becomes authority.
 - No whole-page bitmap is described as editable PPTX.
 - No child skill lowers the requested L0–L5 editability target.

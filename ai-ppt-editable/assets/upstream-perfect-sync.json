@@ -1339,6 +1339,34 @@
     {
       "path": "tests/test_ooxml_compatibility.py",
       "reason": "post-baseline ZIP-level compatibility regression"
+    },
+    {
+      "path": "assets/slide-object-manifest.template.json",
+      "reason": "post-baseline native panel/table object contract extension"
+    },
+    {
+      "path": "references/authoring-backend.md",
+      "reason": "post-baseline native object authoring extension"
+    },
+    {
+      "path": "references/icon-asset-protocol.md",
+      "reason": "post-baseline scoped visual fallback and asset-boundary extension"
+    },
+    {
+      "path": "scripts/authoring_backend.py",
+      "reason": "post-baseline native semantic structure hard gate adapter"
+    },
+    {
+      "path": "scripts/pptx_primitives.py",
+      "reason": "post-baseline native table styling and rich-text adapter"
+    },
+    {
+      "path": "scripts/validate_object_manifest.py",
+      "reason": "post-baseline native panel/table manifest gate"
+    },
+    {
+      "path": "references/skill-routing.md",
+      "reason": "post-baseline centralized route ownership and fallback contract"
     }
   ],
   "generated_by": "scripts/build_perfect_sync_manifest.py"
