@@ -325,6 +325,23 @@ gradient, font, chart provenance, or source-hash failure.
 Automated checks are technical evidence. Record `human_visual_review_required`
 when applicable and never synthesize approval metadata.
 
+For every fixed-reference page, run the last-mile visual lock after composition
+and after the final render:
+
+```bash
+python3 scripts/validate_visual_lock.py PROJECT/visual-lock.json \\
+  --report PROJECT/qa/visual-lock.json --strict
+```
+
+The lock is a hard technical gate for critical text visibility and exact-once
+copy, semantic container assignment, non-empty title/callout/footer regions,
+icon style-anchor evidence, typography deltas, critical-region scores and
+unapproved additions. A technically present text object does not pass when it
+renders in the wrong band, in a duplicate box, behind an empty source
+container, or outside the declared reading structure. A generated icon does
+not pass merely because its meaning is similar; its source-locked silhouette,
+container shape, palette and shadow policy must be reviewed in the final render.
+
 ## E5 — Repair and handoff
 
 Repair the owning object or asset, not the symptom. Re-render and rerun affected
@@ -350,7 +367,11 @@ deck-wide evidence and determine release eligibility.
 - source/reference hashes drifted after planning;
 - font, render, overflow, overlap, or package blockers remain;
 - technical pass represented as human approval;
-- reconstruction redesigns the approved reference without explicit user scope.
+- reconstruction redesigns the approved reference without explicit user scope;
+- last-mile visual lock reports missing/duplicated formal text, empty semantic
+  containers, wrong text-to-container assignment, undeclared banners/shadows,
+  icon style mismatch, typography deviation over 12%, or critical-region score
+  below the declared threshold.
 
 After human confirmation, `scripts/ingest_approved_case.py` or the scheduled
 `scripts/run_training_cycle.py` may export the fresh case to the hash-bound
