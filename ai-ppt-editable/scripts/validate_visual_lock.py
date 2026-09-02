@@ -77,7 +77,7 @@ def main() -> int:
         for key in ("source_bbox", "render_bbox", "container_id", "z_order"):
             if key not in region or region[key] in (None, "", []):
                 fail(f"{rid}:{key}_missing", errors)
-        if region.get("critical") and visible_ids and rid not in visible_ids:
+        if region.get("critical") and rid not in visible_ids:
             fail(f"{rid}:critical_region_not_visible", errors)
 
         role = str(region.get("role", ""))
