@@ -417,6 +417,10 @@ def main() -> int:
         args.design_system = args.design_system or str(project / "design-system.yaml")
         args.issue_log = args.issue_log or str(project / "issue-log.json")
         args.review_package_dir = args.review_package_dir or str(project / "review-package")
+    if args.require_engine_route:
+        # The engine contract is a prerequisite of the route decision, not a
+        # parallel advisory report. Keep the standalone flag non-bypassable.
+        args.require_route = True
     if args.expected_pages < 1:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "expected_pages_invalid", "message": "--expected-pages must be positive"}, ensure_ascii=False))
         return 2
