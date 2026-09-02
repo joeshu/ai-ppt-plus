@@ -389,3 +389,33 @@ After human confirmation, `scripts/ingest_approved_case.py` or the scheduled
 `scripts/run_training_cycle.py` may export the fresh case to the hash-bound
 dataset and CPU retrieval index. Model training and weight promotion remain
 separate external stages and require independent evaluation.
+
+
+## Native structure enforcement for image reconstruction
+
+For every reference-reconstruction or editable-PPTX run, the frame/skeleton
+image is geometry evidence only. It must never be emitted as a semantic
+full-slide or panel layer. Before composition, create explicit native
+semantics for every recoverable simple card, panel, divider, connector and
+table:
+
+- simple boxes, bands, lines, arrows and repeated panels use native shapes or
+  native groups;
+- recoverable grid data uses native PowerPoint tables, with explicit
+  `rows`, `columns`, `merges`, `data_source`, and `data_snapshot`;
+- formal text remains native text or table-cell rich text;
+- icons, logos, complex gradients and complex illustrations remain separate
+  assets and must not carry formal text or table data.
+
+The input manifest must declare `native_panels` and `native_tables` whenever
+those structures are present. A native-required object cannot provide a raster
+`file` as its implementation. Invoke composition with the native-structure
+requirement for reference reconstruction, and block delivery when the final
+PPTX has a semantic full-slide frame picture, a raster native-required panel,
+missing native tables, or formal text inside a raster asset.
+
+For a source containing a green-screen frame plus separate text boxes, use the
+text boxes as formal-content evidence and map them into the object manifest by
+stable IDs; do not OCR the same text again unless the source text is absent.
+The acceptance test must include a mutation smoke test: edit a table cell and
+move a panel/group, then render and confirm the expected regions change.
