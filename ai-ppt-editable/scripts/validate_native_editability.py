@@ -198,7 +198,9 @@ def validate_native_editability(
                     errors.append({"severity": "blocker", "code": "table_not_native", "slide": slide_no, "object_id": object_id, "actual_kind": actual["kind"]})
                 elif require_native_tables:
                     native_table_count += 0
-            is_panel = role in PANEL_ROLES or bool(obj.get("native_required"))
+            # A table may also declare native_required, but it is validated by
+            # the table branch above rather than being misclassified as a panel.
+            is_panel = not is_table and (role in PANEL_ROLES or bool(obj.get("native_required")))
             if is_panel and (require_native_panels or obj.get("native_required") is True):
                 if actual["kind"] not in NATIVE_PANEL_KINDS:
                     errors.append({"severity": "blocker", "code": "panel_not_native", "slide": slide_no, "object_id": object_id, "actual_kind": actual["kind"]})
