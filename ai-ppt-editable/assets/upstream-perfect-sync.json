@@ -1363,6 +1363,10 @@
     {
       "path": "scripts/validate_object_manifest.py",
       "reason": "post-baseline native panel/table manifest gate"
+    },
+    {
+      "path": "references/skill-routing.md",
+      "reason": "post-baseline centralized route ownership and fallback contract"
     }
   ],
   "generated_by": "scripts/build_perfect_sync_manifest.py"

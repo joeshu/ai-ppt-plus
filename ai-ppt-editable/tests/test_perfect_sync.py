@@ -24,6 +24,7 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "scripts/authoring_backend.py",
     "scripts/pptx_primitives.py",
     "scripts/validate_object_manifest.py",
+    "references/skill-routing.md",
 })
 
 
