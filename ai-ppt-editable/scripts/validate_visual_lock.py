@@ -46,9 +46,19 @@ def main() -> int:
     if not regions:
         fail("regions_missing", errors)
 
-    ocr_text = "\n".join(str(x) for x in as_list(data.get("render_evidence", {}).get("ocr_text")))
-    visible_ids = set(str(x) for x in as_list(data.get("render_evidence", {}).get("visible_regions")))
-    empty_containers = set(str(x) for x in as_list(data.get("render_evidence", {}).get("empty_containers")))
+    evidence = data.get("render_evidence", {})
+    if not isinstance(evidence, dict):
+        fail("render_evidence_missing", errors)
+        evidence = {}
+    if args.strict and "ocr_text" not in evidence:
+        fail("render_evidence.ocr_text_missing", errors)
+    if args.strict and "visible_regions" not in evidence:
+        fail("render_evidence.visible_regions_missing", errors)
+    ocr_text = "\n".join(str(x) for x in as_list(evidence.get("ocr_text")))
+    visible_ids = set(str(x) for x in as_list(evidence.get("visible_regions")))
+    empty_containers = set(str(x) for x in as_list(evidence.get("empty_containers")))
+    if args.strict and "added_regions" not in data:
+        fail("added_regions_missing", errors)
     additions = as_list(data.get("added_regions"))
     approved_additions = {
         str(x.get("region_id"))
@@ -96,8 +106,11 @@ def main() -> int:
                         "container_shape", "shadow_policy"):
                 if not style.get(key):
                     fail(f"{rid}:icon_style_{key}_missing", errors)
-            if provenance.get("provenance_mode") not in ("imagegen", "source_reuse"):
+            mode = provenance.get("provenance_mode")
+            if mode not in ("imagegen", "source_reuse"):
                 fail(f"{rid}:icon_provenance_mode_missing", errors)
+            if mode == "source_reuse" and provenance.get("fallback_decision") != "user_approved":
+                fail(f"{rid}:source_reuse_without_user_approval", errors)
 
         typography = region.get("typography_evidence", {})
         for key in ("width_delta_ratio", "height_delta_ratio", "line_count_match"):
@@ -116,8 +129,8 @@ def main() -> int:
     for addition in additions:
         if isinstance(addition, dict) and addition.get("approved") is not True:
             fail(f"unapproved_added_region:{addition.get('region_id', 'unknown')}", errors)
-    if not additions:
-        warnings.append("added_regions_not_declared")
+    if not additions and "added_regions" in data:
+        warnings.append("no_approved_added_regions")
 
     scores = data.get("render_evidence", {}).get("region_scores", {})
     for rid, score in scores.items() if isinstance(scores, dict) else []:
