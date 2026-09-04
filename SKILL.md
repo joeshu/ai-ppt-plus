@@ -265,6 +265,15 @@ Unattended distillation may be promoted only when the checked-out baseline is re
 ## Case-level replay requirement
 
 A generic repository test is never sufficient evidence that a PPTX reconstruction improved. For native-structure or text/visual distillation, require a fresh baseline/candidate case replay with the actual deck, source/process hashes, rendered output, OOXML `a:tbl` count, table merge topology, native panel audit, native text audit, visual comparison, object comparison and mutation smoke test. Promote only when the candidate is bound to the current repair fingerprint and returns `promotion=improved`.
+
+For the 12-case visual replay, the candidate must be an actual
+`reference-reconstruction`, not the suite's synthetic native control. Enforce
+the declared raw-slide thresholds, reference hash binding, independent
+imagegen asset manifest, source-bound typography with resolved font sizes and
+formal-text exactness
+before any native-object pass can be considered green. Read
+`references/case-replay-fidelity.md` for the evidence contract and the
+non-promotable-control rule.
 <!-- /unattended-distillation:case-replay -->
 
 

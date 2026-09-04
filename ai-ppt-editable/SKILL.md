@@ -84,6 +84,9 @@ For last-mile viewer compatibility and preservation, also read
 `references/ooxml-compatibility.md`.
 For the mandatory final visual-asset route, also read
 `references/imagegen-final-asset-policy.md`.
+
+For the 12-case reference replay and its strict visual gate, also read
+`references/case-replay-fidelity.md`.
 For the five post-baseline contracts and their shared adapter, also read
 `references/perfect-first-extensions.md` and use
 `scripts/perfect_first_adapter.py`; do not replace the synchronized core with
@@ -446,6 +449,20 @@ rich-text runs, native formal text, and full-slide-picture absence. Count the
 actual `<a:tbl>` element, not the prefix shared by `<a:tblPr>` and
 `<a:tblGrid>`. Keep its report beside the baseline/candidate evidence and
 rerun the mutation smoke after every repair.
+
+The 12-case suite adds a hard visual-fidelity gate. Its generic native layouts
+are contract controls only and must never be reported as reconstructed
+candidates. A real candidate must declare `candidate_origin:
+reference-reconstruction`, bind the exact reference hash, provide independent
+final imagegen assets for icons/illustrations/complex gradients, provide a
+source bounding box (`[x, y, width, height]`), positive font size and resolved
+font manifest for every formal text item, and
+pass the suite's `global_ssim`, `blurred_layout_ssim` and
+`pixel_fidelity_score` minima. A native-object pass with a low-similarity
+render, generic icon, wrong font/size or missing asset evidence is blocked.
+Use `references/case-replay-fidelity.md` and
+`scripts/validate_case_visual_fidelity.py` to produce the machine-readable
+decision before human visual review.
 <!-- /unattended-distillation:case-replay -->
 
 

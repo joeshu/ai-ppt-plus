@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Run baseline and native case replays for the 12 distillation scenes.
+"""Run baseline and reference-bound native replays for 12 distillation scenes.
 
-The reference PNGs are the visual authority.  The approved case-suite JSON is
-the formal-copy/data authority.  Baseline is an explicit legacy image-only
-control; candidate-before is a native reconstruction before the merge-topology
-gate; candidate is the optimized native reconstruction after that gate.
+The reference PNGs are the visual authority. The approved case-suite JSON is
+the formal-copy/data authority. Baseline and the optional pre-fix run are
+diagnostic controls. Without ``--candidate-root`` the optimized run is also a
+synthetic native contract control and is deliberately blocked from promotion;
+an actual candidate must be supplied by the editable reconstruction workflow.
 """
 from __future__ import annotations
 
@@ -22,6 +23,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parents[1]
 EDITABLE = REPO / "ai-ppt-editable"
+sys.path.insert(0, str(EDITABLE / "scripts"))
+from validate_case_visual_fidelity import validate_case_visual_fidelity
+
 COMPOSE = EDITABLE / "scripts" / "compose_pptx.py"
 RENDER = EDITABLE / "scripts" / "render_pptx.py"
 INSPECT = EDITABLE / "scripts" / "inspect_pptx.py"
@@ -68,6 +72,23 @@ def case_relative(path: Path) -> str:
     # Keep that path visible in the evidence instead of crashing the replay
     # after the PPTX and render have already been produced.
     return str(resolved)
+
+
+def assets_root(run_dir: Path) -> str:
+    """Return the backend's asset root, relative only inside this checkout."""
+    try:
+        return repo_relative(run_dir)
+    except ValueError:
+        return str(run_dir.resolve())
+
+
+def reference_file(run_dir: Path, reference: Path) -> str:
+    """Keep a baseline frame resolvable when replay output is external."""
+    try:
+        run_dir.resolve().relative_to(REPO)
+    except ValueError:
+        return str(reference.resolve())
+    return os.path.relpath(reference, run_dir)
 
 
 def write_json(path: Path, value):
@@ -173,7 +194,7 @@ def make_base(case, run_dir):
         "ref_width": 1920,
         "ref_height": 1080,
         "units": "fraction",
-        "assets_dir": repo_relative(run_dir),
+        "assets_dir": assets_root(run_dir),
         "font_family": "Noto Sans CJK SC",
         "editable_object_policy": "native-semantic-objects",
         "theme": {"font": "Noto Sans CJK SC", "text_color": SILVER, "size": 10, "table_header_fill": RED_DARK, "table_fill": "#F5F8FC", "chart_colors": [RED, BLUE], "chart_text_color": SILVER, "chart_muted_color": MUTED, "chart_grid_color": GRID, "chart_tick_size": 8, "chart_legend_size": 8, "chart_label_size": 7},
@@ -507,19 +528,147 @@ def add_expected_merges(manifest, case):
 
 def make_text_manifest(layout, out):
     slides = []
+    theme = layout.get("theme", {}) if isinstance(layout.get("theme", {}), dict) else {}
+    default_font = str(layout.get("font_family") or theme.get("font") or "")
     for slide_no, slide in enumerate(layout.get("slides", []), 1):
         specs = []
         for item in slide.get("texts", []):
             content = item.get("text")
             if content is None and item.get("runs"):
                 content = "".join(str(run.get("text", "")) for run in item["runs"])
-            specs.append({"object_id": item["object_id"], "text_id": item["object_id"], "content": str(content or ""), "source_ref": "case-suite.json"})
+            record = {
+                "object_id": item["object_id"],
+                "text_id": item["object_id"],
+                "content": str(content or ""),
+                "source_ref": item.get("source_ref") or "case-suite.json",
+                "render_bbox": [item.get("x"), item.get("y"), item.get("x", 0) + item.get("w", 0), item.get("y", 0) + item.get("h", 0)],
+                "source_bbox": copy.deepcopy(item.get("source_bbox")),
+                "font": item.get("font") or default_font,
+                "font_size_pt": item.get("size"),
+                "bold": bool(item.get("bold", False)),
+                "italic": bool(item.get("italic", False)),
+                "line_count": str(content or "").count("\n") + 1 if content else 0,
+                "runs": copy.deepcopy(item.get("runs", [])),
+            }
+            specs.append(record)
         slides.append({"slide_no": slide_no, "text_specs": specs})
-    write_json(out, {"schema": "ai-ppt-plus/text-layout-manifest/v1", "slides": slides})
+    write_json(out, {
+        "schema": "ai-ppt-plus/text-layout-manifest/v1",
+        "coordinate_space": "normalized-reference",
+        "font_manifest": layout.get("font_manifest"),
+        "slides": slides,
+    })
+
+
+def read_json(path):
+    if not path or not Path(path).is_file():
+        return {}
+    try:
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def find_candidate_deck(candidate_root, case_id):
+    if not candidate_root:
+        return None
+    root = Path(candidate_root).resolve()
+    if not root.is_dir():
+        raise RuntimeError(f"candidate root is not a directory: {root}")
+    candidates = [
+        root / f"{case_id}.pptx",
+        root / case_id / "editable.pptx",
+        root / case_id / f"{case_id}.pptx",
+    ]
+    for path in candidates:
+        if path.is_file():
+            return path
+    return None
+
+
+def find_reconstruction_evidence(candidate_deck, run_dir):
+    candidates = []
+    if candidate_deck:
+        candidates.extend([
+            candidate_deck.parent / "reference-reconstruction-evidence.json",
+            candidate_deck.parent / "reconstruction-evidence.json",
+        ])
+    candidates.extend([
+        run_dir / "reference-reconstruction-evidence.json",
+        run_dir / "reconstruction-evidence.json",
+    ])
+    for path in candidates:
+        if path.is_file():
+            return read_json(path), path
+    return {}, None
+
+
+def find_candidate_layout(candidate_deck, run_dir):
+    candidates = []
+    if candidate_deck:
+        candidates.extend([
+            candidate_deck.parent / "layout.json",
+            candidate_deck.with_suffix(".layout.json"),
+        ])
+    candidates.append(run_dir / "layout.json")
+    for path in candidates:
+        if path.is_file():
+            return path
+    return None
+
+
+def find_candidate_manifest(candidate_deck, run_dir, name):
+    candidates = []
+    if candidate_deck:
+        candidates.append(candidate_deck.parent / name)
+    candidates.append(run_dir / name)
+    for path in candidates:
+        if path.is_file():
+            return path
+    return None
+
+
+def asset_evidence(layout, metadata):
+    evidence = {}
+    if isinstance(layout.get("asset_evidence"), dict):
+        evidence.update(layout["asset_evidence"])
+    if isinstance(metadata.get("asset_evidence"), dict):
+        evidence.update(metadata["asset_evidence"])
+    icons = [
+        icon
+        for slide in layout.get("slides", [])
+        if isinstance(slide, dict)
+        for icon in slide.get("icons", [])
+        if isinstance(icon, dict)
+    ]
+    evidence.setdefault("independent_asset_count", len(icons))
+    evidence.setdefault("asset_ids", [str(icon.get("object_id") or icon.get("name")) for icon in icons if icon.get("object_id") or icon.get("name")])
+    evidence.setdefault("all_assets_text_free", bool(icons) and all(icon.get("contains_formal_content") is not True for icon in icons))
+    evidence.setdefault("imagegen_assets_manifest", layout.get("imagegen_assets_manifest"))
+    return evidence
+
+
+def typography_evidence(layout, text_manifest, metadata):
+    evidence = {}
+    if isinstance(layout.get("typography_evidence"), dict):
+        evidence.update(layout["typography_evidence"])
+    if isinstance(metadata.get("typography_evidence"), dict):
+        evidence.update(metadata["typography_evidence"])
+    specs = []
+    for slide in (text_manifest or {}).get("slides", []):
+        if isinstance(slide, dict):
+            specs.extend(item for item in slide.get("text_specs", []) if isinstance(item, dict))
+    source_bbox_count = sum(1 for item in specs if item.get("source_bbox") and len(item.get("source_bbox")) == 4)
+    evidence["source_bbox_count"] = source_bbox_count
+    evidence.setdefault("text_spec_count", len(specs))
+    evidence.setdefault("font_manifest", (text_manifest or {}).get("font_manifest") or layout.get("font_manifest"))
+    evidence.setdefault("font_family", layout.get("font_family") or (layout.get("theme") or {}).get("font"))
+    return evidence
 
 
 def make_baseline_layout(case, run_dir, reference):
-    return {"project_id": "distillation-case-replay-12", "slide_width_in": 13.333, "slide_height_in": 7.5, "ref_width": 1920, "ref_height": 1080, "units": "fraction", "assets_dir": repo_relative(run_dir), "slides": [{"layout_name": "Blank", "frame": os.path.relpath(reference, run_dir), "frame_object_id": "legacy-full-slide-frame", "frame_role": "legacy-flattened-control"}]}
+    return {"project_id": "distillation-case-replay-12", "slide_width_in": 13.333, "slide_height_in": 7.5, "ref_width": 1920, "ref_height": 1080, "units": "fraction", "assets_dir": assets_root(run_dir), "slides": [{"layout_name": "Blank", "frame": reference_file(run_dir, reference), "frame_object_id": "legacy-full-slide-frame", "frame_role": "legacy-flattened-control"}]}
 
 
 def mutate_deck(source, target, case):
@@ -558,7 +707,20 @@ def image_change(before, after):
         return {"changed": bool(bbox), "bbox": list(bbox) if bbox else None, "changed_channels": changed}
 
 
-def evaluate_visual(case, run_dir, deck, reference, label):
+def evaluate_visual(
+    case,
+    run_dir,
+    deck,
+    reference,
+    label,
+    *,
+    layout=None,
+    candidate_origin=None,
+    reference_binding=None,
+    reconstruction_metadata=None,
+    replay_policy=None,
+    enforce_fidelity=False,
+):
     render_dir = run_dir / "render"
     render_report = run_dir / "render-report.json"
     run([sys.executable, RENDER, str(deck), "--output-dir", str(render_dir), "--dpi", "126", "--font-dir", str(FONT_DIR), "--report", str(render_report)], allow_failure=True)
@@ -568,7 +730,15 @@ def evaluate_visual(case, run_dir, deck, reference, label):
     inspect_report = run_dir / "inspect.json"
     run([sys.executable, INSPECT, str(deck), "--report", str(inspect_report)], allow_failure=True)
     visual_report = run_dir / "visual-compare.json"
-    visual_result = run([sys.executable, EDITABLE / "scripts" / "compare_visual.py", str(rendered), str(reference), "--expected-ratio", "1.7777777778", "--raw-slide", "--report", str(visual_report)], allow_failure=True)
+    visual_command = [sys.executable, EDITABLE / "scripts" / "compare_visual.py", str(rendered), str(reference), "--expected-ratio", "1.7777777778", "--raw-slide", "--report", str(visual_report)]
+    if enforce_fidelity:
+        thresholds = (replay_policy or {}).get("visual", {}) if isinstance(replay_policy, dict) else {}
+        minimum = thresholds.get("min_blurred_layout_ssim", 0.60)
+        visual_command.extend(["--threshold", str(minimum)])
+    if rendered and rendered.exists() and reference.exists():
+        run(visual_command, allow_failure=True)
+    else:
+        write_json(visual_report, {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": False, "metrics": {}, "issues": [{"severity": "blocker", "code": "rendered_or_reference_missing"}]})
     object_manifest = run_dir / "object-manifest.json"
     native_report = run_dir / "native-editability.json"
     semantic_report = run_dir / "semantic-audit.json"
@@ -594,6 +764,39 @@ def evaluate_visual(case, run_dir, deck, reference, label):
     native = json.loads(native_report.read_text(encoding="utf-8")) if native_report.exists() else {}
     semantic = json.loads(semantic_report.read_text(encoding="utf-8")) if semantic_report.exists() else {}
     case_audit = json.loads(case_report.read_text(encoding="utf-8")) if case_report.exists() else {}
+    layout = layout if isinstance(layout, dict) else {}
+    reconstruction_metadata = reconstruction_metadata if isinstance(reconstruction_metadata, dict) else {}
+    candidate_origin = candidate_origin or "synthetic-contract-control"
+    reference_binding = reference_binding if isinstance(reference_binding, dict) else {
+        "bound": False,
+        "reference_path": case_relative(reference),
+        "reference_sha256": None,
+    }
+    text_manifest = read_json(run_dir / "text-manifest.json")
+    asset_manifest_evidence = asset_evidence(layout, reconstruction_metadata)
+    typography_manifest_evidence = typography_evidence(layout, text_manifest, reconstruction_metadata)
+    if enforce_fidelity:
+        fidelity = validate_case_visual_fidelity(
+            case,
+            visual=visual,
+            reference_sha256=digest(reference),
+            candidate_origin=candidate_origin,
+            reference_binding=reference_binding,
+            asset_evidence=asset_manifest_evidence,
+            typography_evidence=typography_manifest_evidence,
+            text_manifest=text_manifest,
+            policy=replay_policy,
+        )
+    else:
+        fidelity = {
+            "schema": "ai-ppt-plus/case-visual-fidelity/v1",
+            "valid": None,
+            "enforced": False,
+            "acceptance": "diagnostic-only",
+        }
+    write_json(run_dir / "case-visual-fidelity.json", fidelity)
+    native_technical = bool(native.get("valid") and semantic.get("valid") and case_audit.get("valid") and mutation_evidence.get("pixel_change", {}).get("changed"))
+    technical_status = "passed" if native_technical and (not enforce_fidelity or fidelity.get("valid") is True) else "blocked"
     return {
         "label": label,
         "deck": case_relative(deck),
@@ -605,8 +808,14 @@ def evaluate_visual(case, run_dir, deck, reference, label):
         "inspect": {"slide": (inspect.get("slides") or [{}])[0], "issues": inspect.get("issues", [])},
         "objects": {"native_table_count": native.get("native_table_count", 0), "native_panel_count": native.get("native_panel_count", 0), "formal_text_count": case_audit.get("formal_text_count", 0), "formal_text_native_count": case_audit.get("formal_text_native_count", 0), "a_tbl_count": case_audit.get("a_tbl_count", 0), "whole_slide_pictures": case_audit.get("whole_slide_pictures", []), "native_editability_valid": native.get("valid", False), "semantic_audit_valid": semantic.get("valid", False), "case_replay_audit_valid": case_audit.get("valid", False), "semantic_errors": semantic.get("errors", []), "case_replay_errors": case_audit.get("errors", [])},
         "visual": {"valid": visual.get("valid", False), "metrics": visual.get("metrics", {}), "issues": visual.get("issues", [])},
+        "visual_quality_gate": fidelity,
+        "candidate_origin": candidate_origin,
+        "reference_binding": reference_binding,
+        "asset_evidence": asset_manifest_evidence,
+        "typography_evidence": typography_manifest_evidence,
         "mutation_smoke": mutation_evidence,
-        "technical_status": "passed" if native.get("valid") and semantic.get("valid") and case_audit.get("valid") and mutation_evidence.get("pixel_change", {}).get("changed") else "blocked",
+        "native_technical_status": "passed" if native_technical else "blocked",
+        "technical_status": technical_status,
     }
 
 
@@ -631,27 +840,84 @@ def legacy_evaluate(case, run_dir, reference):
     return {"label": "legacy-image-only-control", "deck": case_relative(deck), "deck_sha256": digest(deck), "rendered": case_relative(rendered) if rendered else None, "rendered_sha256": digest(rendered) if rendered and rendered.exists() else None, "reference": case_relative(reference), "reference_sha256": digest(reference), "inspect": {"slide": (inspect.get("slides") or [{}])[0], "issues": inspect.get("issues", [])}, "objects": {"native_table_count": 0, "native_panel_count": 0, "formal_text_count": 0, "formal_text_native_count": 0, "a_tbl_count": 0, "whole_slide_pictures": [{"name": "legacy-full-slide-frame"}], "native_editability_valid": False, "semantic_audit_valid": False, "case_replay_audit_valid": False, "semantic_errors": [{"code": "legacy_full_slide_picture"}], "case_replay_errors": [{"code": "native_structure_missing"}, {"code": "formal_text_rasterized"}]}, "visual": {"valid": visual.get("valid", False), "metrics": visual.get("metrics", {}), "issues": visual.get("issues", [])}, "mutation_smoke": {"status": "blocked", "reason": "legacy image-only control has no native table/panel to mutate"}, "technical_status": "blocked"}
 
 
-def native_evaluate(case, run_dir, reference, optimized):
-    layout = build_layout(case, run_dir, optimized)
+def native_evaluate(case, run_dir, reference, optimized, *, candidate_deck=None, replay_policy=None):
+    reconstruction_metadata = {}
+    layout = {}
     layout_path = run_dir / "layout.json"
-    write_json(layout_path, layout)
-    deck = run_dir / "editable.pptx"
-    run([sys.executable, COMPOSE, str(layout_path), str(deck), "--strict-input", "--require-native-structure"], allow_failure=False)
-    manifest_result = run([sys.executable, MANIFEST_BUILDER, str(layout_path), "--output", str(run_dir / "object-manifest.json")], allow_failure=False)
     manifest_path = run_dir / "object-manifest.json"
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if not optimized:
-        manifest = add_expected_merges(manifest, case)
-        write_json(manifest_path, manifest)
-    make_text_manifest(layout, run_dir / "text-manifest.json")
-    result = evaluate_visual(case, run_dir, deck, reference, "optimized-native-reconstruction" if optimized else "pre-fix-native-reconstruction")
-    result["layout_sha256"] = digest(layout_path)
-    result["object_manifest_sha256"] = digest(manifest_path)
-    result["text_manifest_sha256"] = digest(run_dir / "text-manifest.json")
+    text_manifest_path = run_dir / "text-manifest.json"
+    if candidate_deck is not None:
+        reconstruction_metadata, _ = find_reconstruction_evidence(candidate_deck, run_dir)
+        source_layout = find_candidate_layout(candidate_deck, run_dir)
+        if source_layout:
+            shutil.copy2(source_layout, layout_path)
+            layout = read_json(layout_path)
+        source_manifest = find_candidate_manifest(candidate_deck, run_dir, "object-manifest.json")
+        if source_manifest:
+            shutil.copy2(source_manifest, manifest_path)
+        elif source_layout:
+            run([sys.executable, MANIFEST_BUILDER, str(layout_path), "--output", str(manifest_path)], allow_failure=False)
+        else:
+            write_json(manifest_path, {"schema": "ai-ppt-plus/slide-object-manifest/v1", "project_id": case.get("case_id", ""), "slides": []})
+        source_text_manifest = find_candidate_manifest(candidate_deck, run_dir, "text-manifest.json")
+        if source_text_manifest:
+            shutil.copy2(source_text_manifest, text_manifest_path)
+        elif source_layout:
+            make_text_manifest(layout, text_manifest_path)
+        else:
+            write_json(text_manifest_path, {"schema": "ai-ppt-plus/text-layout-manifest/v1", "slides": []})
+        deck = candidate_deck
+        candidate_origin = reconstruction_metadata.get("candidate_origin") or layout.get("candidate_origin") or "external-candidate-unclassified"
+        reference_binding = reconstruction_metadata.get("reference_binding") or layout.get("reference_binding") or {
+            "bound": False,
+            "reference_path": case_relative(reference),
+            "reference_sha256": None,
+        }
+    else:
+        layout = build_layout(case, run_dir, optimized)
+        write_json(layout_path, layout)
+        deck = run_dir / "editable.pptx"
+        run([sys.executable, COMPOSE, str(layout_path), str(deck), "--strict-input", "--require-native-structure"], allow_failure=False)
+        run([sys.executable, MANIFEST_BUILDER, str(layout_path), "--output", str(manifest_path)], allow_failure=False)
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if not optimized:
+            manifest = add_expected_merges(manifest, case)
+            write_json(manifest_path, manifest)
+        make_text_manifest(layout, text_manifest_path)
+        candidate_origin = "synthetic-contract-control"
+        reference_binding = {
+            "bound": False,
+            "mode": "synthetic-control",
+            "reference_path": case_relative(reference),
+            "reference_sha256": digest(reference),
+        }
+    result = evaluate_visual(
+        case,
+        run_dir,
+        deck,
+        reference,
+        "optimized-reference-reconstruction" if optimized and candidate_deck else ("optimized-native-contract-control" if optimized else "pre-fix-native-contract-control"),
+        layout=layout,
+        candidate_origin=candidate_origin,
+        reference_binding=reference_binding,
+        reconstruction_metadata=reconstruction_metadata,
+        replay_policy=replay_policy,
+        enforce_fidelity=optimized,
+    )
+    result["layout_sha256"] = digest(layout_path) if layout_path.is_file() else None
+    result["object_manifest_sha256"] = digest(manifest_path) if manifest_path.is_file() else None
+    result["text_manifest_sha256"] = digest(text_manifest_path) if text_manifest_path.is_file() else None
+    result["candidate_source"] = "external" if candidate_deck is not None else "synthetic-control"
     return result
 
 
 def aggregate(cases, runs):
+    candidate_fidelity = [item["candidate"].get("visual_quality_gate", {}) for item in runs]
+    candidate_metrics = [item["candidate"].get("visual", {}).get("metrics", {}) for item in runs]
+    fidelity_issue_sets = [
+        {str(issue.get("code")) for issue in gate.get("issues", []) if isinstance(issue, dict)}
+        for gate in candidate_fidelity
+    ]
     return {
         "schema": "ai-ppt-plus/case-replay-evaluation/v1",
         "suite_id": "distillation-case-replay-12",
@@ -659,13 +925,22 @@ def aggregate(cases, runs):
         "cases": runs,
         "rollup": {
             "legacy_visual_pass": sum(bool(item["baseline"]["visual"].get("valid")) for item in runs),
-            "pre_fix_native_technical_pass": sum(item["pre_fix"]["technical_status"] == "passed" for item in runs),
-            "optimized_native_technical_pass": sum(item["candidate"]["technical_status"] == "passed" for item in runs),
+            "pre_fix_native_technical_pass": sum(item["pre_fix"].get("native_technical_status", item["pre_fix"].get("technical_status")) == "passed" for item in runs),
+            "optimized_native_technical_pass": sum(item["candidate"].get("native_technical_status", item["candidate"].get("technical_status")) == "passed" for item in runs),
             "legacy_native_table_total": sum(item["baseline"]["objects"].get("native_table_count", 0) for item in runs),
             "optimized_native_table_total": sum(item["candidate"]["objects"].get("native_table_count", 0) for item in runs),
             "optimized_a_tbl_total": sum(item["candidate"]["objects"].get("a_tbl_count", 0) for item in runs),
             "optimized_formal_text_native_ratio": round(sum(item["candidate"]["objects"].get("formal_text_native_count", 0) for item in runs) / max(1, sum(item["candidate"]["objects"].get("formal_text_count", 0) for item in runs)), 6),
             "mutation_smoke_pass": sum(bool(item["candidate"]["mutation_smoke"].get("pixel_change", {}).get("changed")) for item in runs),
+            "optimized_visual_compare_pass": sum(bool(item["candidate"].get("visual", {}).get("valid")) for item in runs),
+            "optimized_visual_fidelity_pass": sum(gate.get("valid") is True for gate in candidate_fidelity),
+            "optimized_reference_bound_pass": sum(bool(gate) and not {"reference_binding_missing", "reference_hash_mismatch"}.intersection(codes) for gate, codes in zip(candidate_fidelity, fidelity_issue_sets)),
+            "optimized_asset_evidence_pass": sum(bool(gate) and not {"imagegen_assets_manifest_missing", "independent_visual_assets_missing", "independent_asset_ids_missing", "asset_text_boundary_missing"}.intersection(codes) for gate, codes in zip(candidate_fidelity, fidelity_issue_sets)),
+            "optimized_typography_evidence_pass": sum(bool(gate) and not {"text_source_bbox_incomplete", "text_source_bbox_missing", "font_manifest_missing", "text_font_missing", "text_font_size_missing"}.intersection(codes) for gate, codes in zip(candidate_fidelity, fidelity_issue_sets)),
+            "optimized_formal_text_fidelity_pass": sum(bool(gate) and not {"text_manifest_missing", "formal_text_missing", "formal_text_not_exact_once", "unapproved_formal_text"}.intersection(codes) for gate, codes in zip(candidate_fidelity, fidelity_issue_sets)),
+            "optimized_min_global_ssim": min((metrics.get("global_ssim") for metrics in candidate_metrics if isinstance(metrics.get("global_ssim"), (int, float))), default=None),
+            "optimized_min_blurred_layout_ssim": min((metrics.get("blurred_layout_ssim") for metrics in candidate_metrics if isinstance(metrics.get("blurred_layout_ssim"), (int, float))), default=None),
+            "optimized_min_pixel_fidelity_score": min((metrics.get("pixel_fidelity_score") for metrics in candidate_metrics if isinstance(metrics.get("pixel_fidelity_score"), (int, float))), default=None),
         },
         "human_visual_review_required": True,
         "release_eligible": False,
@@ -676,9 +951,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--suite", default=str(ROOT / "case-suite.json"))
     parser.add_argument("--output-dir", default=str(ROOT / "runs"))
-    parser.add_argument("--strict", action="store_true", help="fail unless every optimized case passes the technical replay gates")
+    parser.add_argument("--candidate-root", help="directory containing real per-case editable PPTX candidates and reconstruction evidence")
+    parser.add_argument("--strict", action="store_true", help="fail unless every optimized case passes native, visual-fidelity, asset, typography and mutation gates")
     args = parser.parse_args()
     suite = json.loads(Path(args.suite).read_text(encoding="utf-8"))
+    replay_policy = suite.get("replay_policy", {}) if isinstance(suite.get("replay_policy", {}), dict) else {}
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     all_runs = []
@@ -692,23 +969,61 @@ def main():
         pre_dir.mkdir(parents=True, exist_ok=True)
         candidate_dir.mkdir(parents=True, exist_ok=True)
         baseline = legacy_evaluate(case, baseline_dir, reference)
-        pre_fix = native_evaluate(case, pre_dir, reference, optimized=False)
-        candidate = native_evaluate(case, candidate_dir, reference, optimized=True)
+        pre_fix = native_evaluate(case, pre_dir, reference, optimized=False, replay_policy=replay_policy)
+        candidate_source = find_candidate_deck(args.candidate_root, case_id) if args.candidate_root else None
+        if args.candidate_root and candidate_source is None:
+            raise RuntimeError(f"candidate root has no deck for {case_id}: {args.candidate_root}")
+        candidate = native_evaluate(case, candidate_dir, reference, optimized=True, candidate_deck=candidate_source, replay_policy=replay_policy)
         all_runs.append({"case_id": case_id, "title": case["title"], "priority": case["priority"], "responsibility": case["responsibility"], "baseline": baseline, "pre_fix": pre_fix, "candidate": candidate, "improved": {"native_table_count_delta": candidate["objects"].get("native_table_count", 0) - baseline["objects"].get("native_table_count", 0), "a_tbl_count_delta": candidate["objects"].get("a_tbl_count", 0) - baseline["objects"].get("a_tbl_count", 0), "formal_text_native_delta": candidate["objects"].get("formal_text_native_count", 0) - baseline["objects"].get("formal_text_native_count", 0), "technical_status_changed": pre_fix["technical_status"] != candidate["technical_status"], "merge_gate_fixed": any(error.get("code") in {"case_replay_merge_topology_mismatch", "case_replay_table_not_native"} for error in pre_fix["objects"].get("case_replay_errors", [])) and candidate["technical_status"] == "passed"}})
     baseline_eval = {"schema": "ai-ppt-plus/baseline-evaluation/v1", "evaluation_kind": "pre-distillation legacy image-only control replay", "suite_id": suite["suite_id"], "source_case_suite_sha256": digest(Path(args.suite)), "cases": [{"case_id": item["case_id"], "reference_sha256": item["baseline"]["reference_sha256"], "deck": item["baseline"]["deck"], "deck_sha256": item["baseline"]["deck_sha256"], "rendered": item["baseline"]["rendered"], "rendered_sha256": item["baseline"]["rendered_sha256"], "failure_codes": item["baseline"]["objects"].get("case_replay_errors", []), "original_pptx_object_counts": item["baseline"]["objects"], "rendered_visual_metrics": item["baseline"]["visual"], "table_panel_text_audit": {"tables": 0, "panels": 0, "formal_text_native": False}, "mutation_smoke": item["baseline"]["mutation_smoke"]} for item in all_runs], "rollup": {"case_count": len(all_runs), "native_table_total": 0, "full_slide_picture_cases": len(all_runs), "formal_text_native_cases": 0, "visual_pass_cases": sum(bool(item["baseline"]["visual"].get("valid")) for item in all_runs)}, "human_visual_review_required": True, "release_eligible": False}
     rollup = aggregate(suite["cases"], all_runs)["rollup"]
     strict_failures = []
     if args.strict:
+        if not args.candidate_root:
+            strict_failures.append("actual candidate root not supplied; synthetic controls are non-promotable")
         if rollup["legacy_visual_pass"] != len(all_runs):
             strict_failures.append("legacy visual replay")
         if rollup["optimized_native_technical_pass"] != len(all_runs):
             strict_failures.append("optimized native technical replay")
+        if rollup["optimized_visual_fidelity_pass"] != len(all_runs):
+            strict_failures.append("optimized visual-fidelity gate")
+        if rollup["optimized_reference_bound_pass"] != len(all_runs):
+            strict_failures.append("reference binding evidence")
+        if rollup["optimized_asset_evidence_pass"] != len(all_runs):
+            strict_failures.append("independent imagegen asset evidence")
+        if rollup["optimized_typography_evidence_pass"] != len(all_runs):
+            strict_failures.append("source-bound typography evidence")
+        if rollup["optimized_formal_text_fidelity_pass"] != len(all_runs):
+            strict_failures.append("formal-text fidelity")
         if rollup["mutation_smoke_pass"] != len(all_runs):
             strict_failures.append("mutation smoke")
-    candidate_eval = {"schema": "ai-ppt-plus/candidate-evaluation/v1", "evaluation_kind": "post-distillation actual 12-case replay", "suite_id": suite["suite_id"], "source_case_suite_sha256": digest(Path(args.suite)), "skill_revision": "ai-ppt-editable-native-structure-plus-merge-topology-gate", "cases": [{"case_id": item["case_id"], "title": item["title"], "priority": item["priority"], "responsibility": item["responsibility"], "pre_fix": item["pre_fix"], "candidate": item["candidate"], "improvement": item["improved"]} for item in all_runs], "rollup": rollup, "strict_gate": {"requested": bool(args.strict), "passed": not strict_failures, "failures": strict_failures}, "human_visual_review_required": True, "release_eligible": False}
+    candidate_eval = {"schema": "ai-ppt-plus/candidate-evaluation/v1", "evaluation_kind": "post-distillation 12-case replay", "suite_id": suite["suite_id"], "source_case_suite_sha256": digest(Path(args.suite)), "skill_revision": "ai-ppt-editable-visual-fidelity-gate-v1", "candidate_root": str(Path(args.candidate_root).resolve()) if args.candidate_root else None, "replay_policy": replay_policy, "cases": [{"case_id": item["case_id"], "title": item["title"], "priority": item["priority"], "responsibility": item["responsibility"], "pre_fix": item["pre_fix"], "candidate": item["candidate"], "improvement": item["improved"]} for item in all_runs], "rollup": rollup, "strict_gate": {"requested": bool(args.strict), "passed": not strict_failures, "failures": strict_failures}, "human_visual_review_required": True, "release_eligible": False}
+    fidelity_status = {
+        "schema": "ai-ppt-plus/case-replay-visual-fidelity-status/v1",
+        "suite_id": suite["suite_id"],
+        "source_case_suite_sha256": digest(Path(args.suite)),
+        "candidate_root": str(Path(args.candidate_root).resolve()) if args.candidate_root else None,
+        "cases": [
+            {
+                "case_id": item["case_id"],
+                "candidate_origin": item["candidate"].get("candidate_origin"),
+                "native_technical_status": item["candidate"].get("native_technical_status"),
+                "technical_status": item["candidate"].get("technical_status"),
+                "visual_metrics": item["candidate"].get("visual", {}).get("metrics", {}),
+                "fidelity_valid": item["candidate"].get("visual_quality_gate", {}).get("valid"),
+                "blocker_codes": sorted({str(issue.get("code")) for issue in item["candidate"].get("visual_quality_gate", {}).get("issues", []) if isinstance(issue, dict) and issue.get("code")}),
+            }
+            for item in all_runs
+        ],
+        "rollup": rollup,
+        "strict_gate": {"requested": bool(args.strict), "passed": not strict_failures, "failures": strict_failures},
+        "human_visual_review_required": True,
+        "release_eligible": False,
+    }
     write_json(ROOT / "baseline-evaluation.json", baseline_eval)
     write_json(ROOT / "candidate-evaluation.json", candidate_eval)
     write_json(ROOT / "case-improvement.json", {"schema": "ai-ppt-plus/case-improvement/v1", "suite_id": suite["suite_id"], "cases": all_runs, "rollup": aggregate(suite["cases"], all_runs)["rollup"], "human_visual_review_required": True, "release_eligible": False})
+    write_json(ROOT / "visual-fidelity-status.json", fidelity_status)
     result = {"cases": len(all_runs), "baseline": str(ROOT / "baseline-evaluation.json"), "candidate": str(ROOT / "candidate-evaluation.json"), "rollup": rollup, "strict_gate": candidate_eval["strict_gate"]}
     print(json.dumps(result, ensure_ascii=False))
     if strict_failures:

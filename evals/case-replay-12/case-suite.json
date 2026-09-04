@@ -1,6 +1,6 @@
 {
   "schema": "ai-ppt-plus/case-replay-suite/v1",
-  "version": "2026.09.02",
+  "version": "2026.09.03",
   "suite_id": "distillation-case-replay-12",
   "canvas": {"width": 1920, "height": 1080, "ratio": "16:9"},
   "design_lock": {
@@ -15,6 +15,26 @@
       "表格、面板、卡片、流程节点、正文和数字必须可被后续原生重建",
       "复杂光效、插画和图标仅作为独立视觉资产，不承载正式文字"
     ]
+  },
+  "replay_policy": {
+    "candidate_kind": "reference-reconstruction",
+    "synthetic_control": {
+      "promotable": false,
+      "reason": "通用原生占位布局只能验证对象契约，不能证明原图保真"
+    },
+    "visual": {
+      "min_global_ssim": 0.4,
+      "min_blurred_layout_ssim": 0.6,
+      "min_pixel_fidelity_score": 0.82
+    },
+    "reconstruction": {
+      "required_candidate_origin": "reference-reconstruction",
+      "require_reference_binding": true,
+      "require_independent_visual_assets": true,
+      "require_source_bbox": true,
+      "require_font_manifest": true,
+      "formal_text_exact_once": true
+    }
   },
   "cases": [
     {

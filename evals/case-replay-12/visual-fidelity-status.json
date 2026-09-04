@@ -1,0 +1,49 @@
+{
+  "schema": "ai-ppt-plus/case-replay-visual-fidelity-status/v1",
+  "suite_id": "distillation-case-replay-12",
+  "source_case_suite": "case-suite.json",
+  "source_case_suite_sha256": "6e1b995f2e140be655bfbd2a5e55e7c4fa4490ceb62fbe69d223e41384058899",
+  "candidate_root": null,
+  "candidate_origin": "synthetic-contract-control",
+  "case_count": 12,
+  "cases": [
+    {"case_id": "route-editable-default-01", "status": "blocked"},
+    {"case_id": "native-shape-card-01", "status": "blocked"},
+    {"case_id": "native-table-basic-01", "status": "blocked"},
+    {"case_id": "native-table-merge-richtext-01", "status": "blocked"},
+    {"case_id": "native-text-cjk-font-01", "status": "blocked"},
+    {"case_id": "chart-data-provenance-01", "status": "blocked"},
+    {"case_id": "visual-assets-gradient-icon-01", "status": "blocked"},
+    {"case_id": "framework-irregular-layer-01", "status": "blocked"},
+    {"case_id": "multi-slide-consistency-01", "status": "blocked"},
+    {"case_id": "failure-fallback-stop-01", "status": "blocked"},
+    {"case_id": "package-render-portability-01", "status": "blocked"},
+    {"case_id": "cache-idempotency-01", "status": "blocked"}
+  ],
+  "rollup": {
+    "native_technical_pass": 12,
+    "visual_compare_pass": 0,
+    "visual_fidelity_pass": 0,
+    "reference_bound_pass": 0,
+    "asset_evidence_pass": 0,
+    "typography_evidence_pass": 0,
+    "mutation_smoke_pass": 12,
+    "min_global_ssim": -0.033965,
+    "min_blurred_layout_ssim": -0.038212,
+    "min_pixel_fidelity_score": 0.409197
+  },
+  "strict_gate": {
+    "requested": true,
+    "passed": false,
+    "failures": [
+      "actual candidate root not supplied; synthetic controls are non-promotable",
+      "optimized visual-fidelity gate",
+      "reference binding evidence",
+      "independent imagegen asset evidence",
+      "source-bound typography evidence",
+      "formal-text fidelity"
+    ]
+  },
+  "human_visual_review_required": true,
+  "release_eligible": false
+}
