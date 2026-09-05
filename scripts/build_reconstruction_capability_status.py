@@ -28,6 +28,7 @@ def host_passed(report: dict, profile: str) -> bool:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--engineering-report")
+    parser.add_argument("--visual-fidelity-report")
     parser.add_argument("--four-evidence-report")
     parser.add_argument("--desktop-host-validation-report")
     parser.add_argument("--mobile-host-validation-report")
@@ -36,12 +37,15 @@ def main() -> int:
     args = parser.parse_args()
 
     engineering = load(args.engineering_report)
+    visual_fidelity = load(args.visual_fidelity_report)
     evidence = load(args.four_evidence_report)
     desktop_host = load(args.desktop_host_validation_report)
     mobile_host = load(args.mobile_host_validation_report)
     legacy_host = load(args.host_validation_report)
 
-    engineering_passed = bool(engineering.get("valid") or engineering.get("strict_gate", {}).get("passed"))
+    technical_passed = bool(engineering.get("valid") or engineering.get("strict_gate", {}).get("passed"))
+    visual_fidelity_passed = bool(visual_fidelity.get("valid"))
+    engineering_passed = technical_passed and visual_fidelity_passed
     visual_evidence_complete = bool(evidence.get("valid"))
     visual_human_confirmed = evidence.get("human_visual_review_status") == "passed"
     desktop_passed = host_passed(desktop_host, "desktop")
@@ -59,7 +63,10 @@ def main() -> int:
         "schema": SCHEMA,
         "engineering_gate": {
             "status": "passed" if engineering_passed else "blocked",
-            "meaning": "deterministic structure/editability/automated QA only",
+            "technical_status": "passed" if technical_passed else "blocked",
+            "automated_visual_fidelity_status": "passed" if visual_fidelity_passed else "blocked",
+            "visual_fidelity_policy_version": visual_fidelity.get("policy_version"),
+            "meaning": "deterministic structure/editability plus versioned automated visual fidelity QA",
         },
         "visual_evidence": {
             "status": "confirmed" if visual_human_confirmed else "evidence-ready" if visual_evidence_complete else "incomplete",
@@ -81,7 +88,7 @@ def main() -> int:
         "capability_statement": (
             "validated editable high-fidelity reconstruction delivery"
             if release_eligible else
-            "engineering validation complete; visual/desktop/iOS host evidence remains separate until explicitly confirmed"
+            "engineering validation complete; human visual/desktop/iOS host evidence remains separate until explicitly confirmed"
             if engineering_passed else
             "engineering reconstruction validation incomplete"
         ),
