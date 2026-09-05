@@ -33,6 +33,18 @@ def write_json(path: Path, value) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def _semantic_accuracy(record: dict) -> float | None:
+    value = record.get("semantic_accuracy")
+    if value is None:
+        value = (record.get("semantic_audit") or {}).get("accuracy")
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0, drift_report: dict | None = None) -> dict:
     previous_score = previous.get("pixel_fidelity_score")
     if previous_score is None:
@@ -44,6 +56,9 @@ def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0
     previous_blocking = int(previous.get("blocking_count", 0) or 0)
     current_blocking = int(current.get("blocking_count", 0) or 0)
     native_regressed = previous.get("native_editability_valid", True) is True and current.get("native_editability_valid") is not True
+    previous_semantic = _semantic_accuracy(previous)
+    current_semantic = _semantic_accuracy(current)
+    semantic_regressed = previous_semantic == 1.0 and current_semantic != 1.0
     visual_regressed = visual_delta is not None and visual_delta < -abs(float(tolerance))
     blocking_regressed = current_blocking > previous_blocking
     object_drift_regressed = drift_report is not None and drift_report.get("valid") is not True
@@ -54,6 +69,8 @@ def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0
         reasons.append("blocking_count_increased")
     if native_regressed:
         reasons.append("native_editability_regressed")
+    if semantic_regressed:
+        reasons.append("semantic_accuracy_regressed")
     if object_drift_regressed:
         reasons.append("unauthorized_object_drift")
     return {
@@ -62,6 +79,9 @@ def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0
         "pixel_fidelity_delta": visual_delta,
         "blocking_delta": current_blocking - previous_blocking,
         "native_editability_regressed": native_regressed,
+        "semantic_accuracy_previous": previous_semantic,
+        "semantic_accuracy_current": current_semantic,
+        "semantic_accuracy_regressed": semantic_regressed,
         "unauthorized_object_drift": object_drift_regressed,
     }
 
@@ -69,8 +89,10 @@ def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0
 def deterministic_report(iteration_dir: Path, reference: Path) -> dict:
     visual = read_json(iteration_dir / "visual-comparison.json")
     native = read_json(iteration_dir / "native-editability.json")
+    semantic = read_json(iteration_dir / "semantic-audit.json")
     inspect = read_json(iteration_dir / "inspect.json")
     errors = list(native.get("errors") or [])
+    errors.extend(semantic.get("errors") or [])
     for issue in inspect.get("issues") or []:
         if isinstance(issue, dict) and issue.get("severity") in {"blocker", "critical"}:
             errors.append(issue)
@@ -85,7 +107,7 @@ def deterministic_report(iteration_dir: Path, reference: Path) -> dict:
         "object_comparison": {
             "status": "passed" if not errors else "failed",
             "errors": errors,
-            "warnings": [],
+            "warnings": list(semantic.get("warnings") or []),
         },
         "issues": [],
     }
@@ -278,13 +300,14 @@ def main() -> int:
             errors.append(result)
 
     summary = {
-        "schema": "ai-ppt-plus/astra-iteration-batch/v2",
+        "schema": "ai-ppt-plus/astra-iteration-batch/v3",
         "iteration": args.iteration,
         "executed_count": len(results),
         "asset_resumed_count": sum(1 for item in results if item.get("resume_after_assets") is True),
         "accepted_count": sum(1 for item in results if item.get("accepted") is True),
         "rollback_count": sum(1 for item in results if item.get("status") == "rolled-back-regression"),
         "object_drift_rollback_count": sum(1 for item in results if "unauthorized_object_drift" in ((item.get("regression") or {}).get("reasons") or [])),
+        "semantic_rollback_count": sum(1 for item in results if "semantic_accuracy_regressed" in ((item.get("regression") or {}).get("reasons") or [])),
         "skipped_count": len(skipped), "error_count": len(errors), "cases": results, "skipped": skipped, "errors": errors,
     }
     write_json(args.output_root / f"iteration-{args.iteration}-batch-summary.json", summary)
