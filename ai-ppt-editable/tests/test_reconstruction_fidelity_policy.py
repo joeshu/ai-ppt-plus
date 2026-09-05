@@ -11,6 +11,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from reconstruction.astra_contract import build_text_target_request, parse_text_target_response
 from reconstruction.difference_graph import DifferenceGraph
 from reconstruction.quality_gate import QualityGate
 from reconstruction.quality_policy import POLICY_VERSION
@@ -24,29 +25,19 @@ def empty_graph() -> DifferenceGraph:
 def main() -> int:
     gate = QualityGate()
     blocked = gate.evaluate(
-        differences=empty_graph(),
-        global_visual_similarity=.99,
-        critical_region_scores={"title": .99},
-        required_critical_regions=["title"],
-        axis_scores={"layout": .99, "typography": .99},
-        strict_reference_profile=True,
-        editable_ratio=1.0,
-        semantic_accuracy=1.0,
-        full_slide_raster_detected=False,
+        differences=empty_graph(), global_visual_similarity=.99,
+        critical_region_scores={"title": .99}, required_critical_regions=["title"],
+        axis_scores={"layout": .99, "typography": .99}, strict_reference_profile=True,
+        editable_ratio=1.0, semantic_accuracy=1.0, full_slide_raster_detected=False,
     )
     assert not blocked.passed
     assert any("missing fidelity axis scores: asset" in item for item in blocked.failures)
 
     passed = gate.evaluate(
-        differences=empty_graph(),
-        global_visual_similarity=.99,
-        critical_region_scores={"title": .99},
-        required_critical_regions=["title"],
-        axis_scores={"layout": .99, "typography": .99, "asset": .99},
-        strict_reference_profile=True,
-        editable_ratio=1.0,
-        semantic_accuracy=1.0,
-        full_slide_raster_detected=False,
+        differences=empty_graph(), global_visual_similarity=.99,
+        critical_region_scores={"title": .99}, required_critical_regions=["title"],
+        axis_scores={"layout": .99, "typography": .99, "asset": .99}, strict_reference_profile=True,
+        editable_ratio=1.0, semantic_accuracy=1.0, full_slide_raster_detected=False,
     )
     assert passed.passed, passed.failures
     assert passed.metrics["policy_version"] == POLICY_VERSION
@@ -54,13 +45,13 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="text-target-spec-") as folder:
         image = Path(folder) / "source.png"
         Image.new("RGB", (1600, 900), "white").save(image)
-        spec = build_text_target_spec(image, [{
+        observation = {
             "object_id": "headline",
             "text": "存量用户价值提升 2026",
             "bbox_px": [160, 90, 960, 120],
             "baselines_px": [165],
             "line_count": 1,
-            "font_candidates": ["Noto Sans SC", "Microsoft YaHei"],
+            "font_candidates": ["Noto Sans CJK SC", "Microsoft YaHei"],
             "estimated_font_size_pt": 30,
             "estimated_line_spacing": 1.0,
             "runs": [
@@ -68,15 +59,37 @@ def main() -> int:
                 {"text": "价值提升 2026", "color": "D71920"},
             ],
             "confidence": .97,
-        }])
+        }
+        request = build_text_target_request(
+            source_id="source.png", object_ids=["headline"], source_size_px=(1600, 900)
+        )
+        assert request.task == "typography-target-observation"
+        assert request.payload["output_contract"] == "text-target-observation.schema.json"
+
+        spec = parse_text_target_response(image, {
+            "requested_object_ids": ["headline"],
+            "observations": [observation],
+        })
         target = spec["targets"][0]
         assert target["measurement_kind"] == "pdf-text-bounds"
         assert target["line_count"] == 1
         assert target["text"] == "存量用户价值提升 2026"
-        assert target["font_candidates"][0] == "Noto Sans SC"
+        assert target["font_candidates"][0] == "Noto Sans CJK SC"
+        assert target["runs"][0]["bold"] is True
+        assert target["runs"][1]["color"] == "D71920"
         assert abs(target["ink_bbox"][0] - .1) < 1e-9
         assert abs(target["ink_bbox"][1] - .1) < 1e-9
         assert spec["source_sha256"]
+
+        direct = build_text_target_spec(image, [observation])
+        assert direct["source_sha256"] == spec["source_sha256"]
+
+        try:
+            parse_text_target_response(image, {"requested_object_ids": ["headline", "missing"], "observations": [observation]})
+        except ValueError as exc:
+            assert "missing objects" in str(exc)
+        else:
+            raise AssertionError("missing requested text object must fail closed")
 
     print(json.dumps({"policy": POLICY_VERSION, "status": "ok"}, ensure_ascii=False))
     return 0
