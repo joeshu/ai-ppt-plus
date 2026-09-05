@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 38314)
-Total output lines: 2256
-
 #!/usr/bin/env python3
 """Run the deterministic AI PPT Plus verification pipeline.
 
@@ -742,7 +739,807 @@ def main() -> int:
             )
         if isinstance(route_data, dict) and route_data.get("route") == "visual-creation" and route_data.get("visual_generation_mode", "layout-reference") == "image-slide":
             route_base = Path(args.route_decision).resolve().parent
-            for fi…13314 tokens truncated…puts=[project / "slide-manifest.json"] + ([asset_manifest] if asset_manifest.is_file() else []))
+            for field in ("visual_generation_plan", "visual_generation_manifest"):
+                value = route_data.get(field)
+                if isinstance(value, str) and value.strip():
+                    candidate = Path(value)
+                    route_inputs.append((candidate if candidate.is_absolute() else route_base / candidate).resolve())
+        if args.reference:
+            route_inputs.append(Path(args.reference).resolve())
+        elif args.reference_dir:
+            route_inputs.extend(Path(args.reference_dir).resolve() / f"slide-{index}.png" for index in range(1, args.expected_pages + 1))
+        add_step("route", route_args, deps=["routing-contract"], outputs=[run_dir / "route-validation.json"], inputs=list(dict.fromkeys(route_inputs)))
+
+    # The legacy route flag remains a compatibility gate. P0/release and
+    # the explicit engine flag opt into the stricter engine contract.
+    engine_route_enabled = bool(args.route_decision and (args.require_engine_route or args.release))
+    if engine_route_enabled:
+        engine_route_args = [
+            str(SCRIPT_DIR / "validate_engine_route.py"),
+            str(Path(args.route_decision).resolve()),
+            "--strict",
+            "--report", str(run_dir / "engine-route-validation.json"),
+        ]
+        add_step(
+            "engine-route",
+            engine_route_args,
+            deps=["route"],
+            outputs=[run_dir / "engine-route-validation.json"],
+            inputs=[Path(args.route_decision).resolve()],
+            metadata={"required": True},
+        )
+
+    manifest_icon_required, manifest_imagegen_required = project_asset_requirements(project)
+    icon_required = args.require_icon_assets or manifest_icon_required or (project / "icon-asset-manifest.json").is_file()
+    imagegen_required = args.require_imagegen_assets or manifest_imagegen_required or (project / "imagegen-assets-manifest.json").is_file()
+    route_deps = ["engine-route"] if engine_route_enabled else (["route"] if args.route_decision else [])
+    workflow_state_enabled = bool(args.workflow_state or args.require_workflow_state)
+    workflow_state_path = None
+    if workflow_state_enabled:
+        workflow_state_path = Path(args.workflow_state).resolve() if args.workflow_state else project / "workflow-state.json"
+        workflow_args = [
+            str(SCRIPT_DIR / "validate_workflow_state.py"),
+            str(workflow_state_path),
+            "--project-root", str(project),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(run_dir / "workflow-state-validation.json"),
+        ]
+        if isinstance(package_data, dict) and isinstance(package_data.get("package_revision"), str):
+            workflow_args.extend(["--expected-package-revision", package_data["package_revision"]])
+        if args.require_workflow_state:
+            workflow_args.append("--strict")
+        workflow_inputs = [workflow_state_path]
+        try:
+            workflow_data = json.loads(workflow_state_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            workflow_data = {}
+        if isinstance(workflow_data, dict) and isinstance(workflow_data.get("artifacts"), dict):
+            for record in workflow_data["artifacts"].values():
+                raw_path = record.get("path") if isinstance(record, dict) else record
+                if not isinstance(raw_path, str) or not raw_path.strip():
+                    continue
+                candidate = Path(raw_path)
+                workflow_inputs.append((candidate if candidate.is_absolute() else project / candidate).resolve())
+        add_step(
+            "workflow-state",
+            workflow_args,
+            deps=route_deps,
+            outputs=[run_dir / "workflow-state-validation.json"],
+            inputs=list(dict.fromkeys(workflow_inputs)),
+            metadata={"strict": args.require_workflow_state},
+            cacheable=False,
+        )
+    p0_deps = ["routing-contract"]
+    if args.route_decision:
+        p0_deps.append("route")
+    if engine_route_enabled:
+        p0_deps.append("engine-route")
+    if workflow_state_enabled:
+        p0_deps.append("workflow-state")
+    if outline_contract_path:
+        outline_contract_args = [
+            str(SCRIPT_DIR / "validate_outline_contract.py"),
+            str(outline_contract_path),
+            "--report", str(run_dir / "outline-contract-validation.json"),
+        ]
+        if args.require_root_p0:
+            outline_contract_args.append("--require-approved")
+        add_step("outline-contract", outline_contract_args, deps=["routing-contract"], outputs=[run_dir / "outline-contract-validation.json"], inputs=[outline_contract_path], metadata={"required": args.require_root_p0})
+        p0_deps.append("outline-contract")
+    if content_authority_path:
+        authority_args = [
+            str(SCRIPT_DIR / "validate_content_authority.py"),
+            str(content_authority_path),
+            "--report", str(run_dir / "content-authority-validation.json"),
+        ]
+        if args.require_root_p0:
+            authority_args.extend(["--require-pptx-refs", "--require-render-refs"])
+        add_step("content-authority", authority_args, deps=["outline-contract"] if outline_contract_path else ["routing-contract"], outputs=[run_dir / "content-authority-validation.json"], inputs=[content_authority_path] + ([outline_contract_path] if outline_contract_path else []), metadata={"required": args.require_root_p0})
+        p0_deps.append("content-authority")
+    if args.route_decision and outline_contract_path:
+        orchestration_args = [
+            str(SCRIPT_DIR / "validate_orchestration_gates.py"),
+            str(project),
+            "--outline-contract", str(outline_contract_path),
+            "--route-decision", str(Path(args.route_decision).resolve()),
+            "--report", str(run_dir / "orchestration-gates-validation.json"),
+        ]
+        if workflow_state_enabled:
+            orchestration_args.extend(["--workflow-state", str(workflow_state_path)])
+        if args.require_root_p0:
+            orchestration_args.append("--strict")
+        orchestration_deps = p0_deps[:] + (["design-system"] if design_system_path else []) + (["issue-log"] if issue_log_path else [])
+        add_step("orchestration-gates", orchestration_args, deps=orchestration_deps, outputs=[run_dir / "orchestration-gates-validation.json"], inputs=[outline_contract_path, Path(args.route_decision).resolve()] + ([workflow_state_path] if workflow_state_enabled else []), metadata={"required": args.require_root_p0})
+        p0_deps.append("orchestration-gates")
+    if quality_gates_path:
+        quality_args = [
+            str(SCRIPT_DIR / "validate_quality_gates.py"),
+            str(quality_gates_path),
+            "--report", str(run_dir / "quality-gates-validation.json"),
+        ]
+        add_step("quality-gates", quality_args, deps=["routing-contract"], outputs=[run_dir / "quality-gates-validation.json"], inputs=[quality_gates_path], metadata={"required": args.require_root_p0})
+        p0_deps.append("quality-gates")
+    if design_system_path:
+        design_args = [str(SCRIPT_DIR / "validate_design_system.py"), str(design_system_path), "--report", str(run_dir / "design-system-validation.json")]
+        design_inputs = [design_system_path]
+        if args.visual_generation_plan:
+            visual_plan_path = Path(args.visual_generation_plan).resolve()
+            design_args.extend(["--visual-plan", str(visual_plan_path)])
+            design_inputs.append(visual_plan_path)
+        if (project / "slide-manifest.json").is_file():
+            slide_manifest_path = project / "slide-manifest.json"
+            design_args.extend(["--slide-manifest", str(slide_manifest_path)])
+            design_inputs.append(slide_manifest_path)
+        if args.require_p1:
+            design_args.append("--strict")
+        add_step("design-system", design_args, deps=["routing-contract"], outputs=[run_dir / "design-system-validation.json"], inputs=design_inputs, metadata={"required": args.require_p1})
+        p0_deps.append("design-system")
+    if issue_log_path:
+        issue_args = [str(SCRIPT_DIR / "validate_issue_log.py"), str(issue_log_path), "--report", str(run_dir / "issue-log-validation.json")]
+        add_step("issue-log", issue_args, deps=["routing-contract"], outputs=[run_dir / "issue-log-validation.json"], inputs=[issue_log_path], metadata={"required": args.require_p1})
+        p0_deps.append("issue-log")
+    visual_generation_plan = None
+    visual_generation_manifest = None
+    visual_generation_enabled = False
+    if visual_creation_route:
+        visual_generation_base = Path(args.route_decision).resolve().parent if args.route_decision else project
+
+        def declared_visual_path(cli_value, route_key, default_name):
+            if cli_value:
+                return Path(cli_value).resolve()
+            value = None
+            if not value and isinstance(route_data, dict):
+                value = route_data.get(route_key)
+            if not value:
+                value = default_name
+            path = Path(value)
+            return path.resolve() if path.is_absolute() else (visual_generation_base / path).resolve()
+
+        visual_generation_plan = declared_visual_path(
+            args.visual_generation_plan,
+            "visual_generation_plan",
+            "visual-generation-plan.json",
+        )
+        visual_generation_manifest = declared_visual_path(
+            args.visual_generation_manifest,
+            "visual_generation_manifest",
+            "visual-generation-manifest.json",
+        )
+        visual_generation_enabled = bool(
+            args.require_visual_generation
+            or args.visual_generation_plan
+            or args.visual_generation_manifest
+            or visual_generation_mode == "image-slide"
+            or visual_generation_plan.is_file()
+            or visual_generation_manifest.is_file()
+        )
+        if visual_generation_enabled:
+            visual_generation_inputs = []
+            visual_generation_args = [
+                str(SCRIPT_DIR / "validate_visual_generation_plan.py"),
+                str(visual_generation_plan),
+                "--expected-pages", str(args.expected_pages),
+                "--report", str(run_dir / "visual-generation-validation.json"),
+            ]
+            manifest_declared = bool(
+                args.visual_generation_manifest
+                or (isinstance(route_data, dict) and route_data.get("visual_generation_manifest"))
+                or visual_generation_manifest.is_file()
+                or visual_generation_mode == "image-slide"
+            )
+            if manifest_declared:
+                visual_generation_args.extend(["--manifest", str(visual_generation_manifest)])
+            if args.require_visual_generation:
+                visual_generation_args.append("--require-evidence")
+
+            if not visual_generation_plan.is_file():
+                add_step(
+                    "visual-generation",
+                    static_result={
+                        "name": "visual-generation",
+                        "command": [],
+                        "exit_code": 2,
+                        "ok": False,
+                        "failure": "visual_generation_plan_missing",
+                        "stdout": "",
+                        "stderr": "",
+                    },
+                    cacheable=False,
+                    deps=route_deps,
+                    outputs=[run_dir / "visual-generation-validation.json"],
+                )
+            elif args.require_visual_generation and not visual_generation_manifest.is_file():
+                add_step(
+                    "visual-generation",
+                    static_result={
+                        "name": "visual-generation",
+                        "command": [],
+                        "exit_code": 2,
+                        "ok": False,
+                        "failure": "visual_generation_manifest_missing",
+                        "stdout": "",
+                        "stderr": "",
+                    },
+                    cacheable=False,
+                    deps=route_deps,
+                    outputs=[run_dir / "visual-generation-validation.json"],
+                )
+            else:
+                visual_generation_inputs.append(visual_generation_plan)
+                if visual_generation_manifest.is_file():
+                    visual_generation_inputs.append(visual_generation_manifest)
+                # Include referenced prompt/source/copy files in the task
+                # fingerprint so changing a prompt or selected raster cannot
+                # silently reuse a stale validation result.
+                for manifest_path in (visual_generation_plan, visual_generation_manifest):
+                    if not manifest_path.is_file():
+                        continue
+                    try:
+                        manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+                    except (OSError, json.JSONDecodeError):
+                        manifest_data = {}
+                    records = manifest_data.get("slides", []) if isinstance(manifest_data, dict) else []
+                    if isinstance(records, list):
+                        for record in records:
+                            if not isinstance(record, dict):
+                                continue
+                            for field in ("prompt_file", "generated_source", "copied_to"):
+                                value = record.get(field)
+                                if not isinstance(value, str) or not value.strip():
+                                    continue
+                                candidate = Path(value)
+                                candidate = candidate.resolve() if candidate.is_absolute() else (manifest_path.parent / candidate).resolve()
+                                if candidate.is_file():
+                                    visual_generation_inputs.append(candidate)
+                add_step(
+                    "visual-generation",
+                    visual_generation_args,
+                    deps=route_deps,
+                    outputs=[run_dir / "visual-generation-validation.json"],
+                    inputs=list(dict.fromkeys(visual_generation_inputs)),
+                    metadata={
+                        "mode": visual_generation_mode,
+                        "required": args.require_visual_generation,
+                        "plan": str(visual_generation_plan),
+                        "manifest": str(visual_generation_manifest) if manifest_declared else None,
+                    },
+                )
+    reference_sources: list[Path] = []
+    if isinstance(route_data, dict) and route_data.get("route") == "reference-reconstruction":
+        route_base = Path(args.route_decision).resolve().parent if args.route_decision else project
+        for item in (route_data.get("reference_roster") or []):
+            if isinstance(item, dict) and isinstance(item.get("path"), str) and item.get("path"):
+                reference_sources.append((route_base / item["path"]).resolve())
+    if args.reference:
+        reference_sources.append(Path(args.reference).resolve())
+    elif args.reference_dir:
+        reference_sources.extend((Path(args.reference_dir).resolve() / f"slide-{index}.png") for index in range(1, args.expected_pages + 1))
+    unique_reference_sources = list(dict.fromkeys(reference_sources))
+    if unique_reference_sources:
+        source_args = [str(SCRIPT_DIR / "validate_source_images.py"), *[str(path) for path in unique_reference_sources], "--report", str(run_dir / "source-image-validation.json")]
+        add_step("source-images", source_args, deps=route_deps, outputs=[run_dir / "source-image-validation.json"], inputs=unique_reference_sources)
+    source_coverage_enabled = args.require_source_coverage or (source_inventory_path.is_file() and page_graph_path.is_file())
+    if source_coverage_enabled and unique_reference_sources:
+        coverage_inputs = [source_inventory_path, page_graph_path, deck, *unique_reference_sources]
+        if len(unique_reference_sources) == 1:
+            reference_arg = str(unique_reference_sources[0])
+        elif args.reference_dir:
+            reference_arg = str(Path(args.reference_dir).resolve())
+        else:
+            source_pages_manifest = run_dir / "source-pages.json"
+            atomic_write_json(source_pages_manifest, {"pages": [str(path) for path in unique_reference_sources]})
+            reference_arg = str(source_pages_manifest)
+            coverage_inputs.append(source_pages_manifest)
+        coverage_args = [
+            str(SCRIPT_DIR.parent / "ai-ppt-editable" / "scripts" / "validate_source_coverage.py"),
+            "--reference", reference_arg,
+            "--inventory", str(source_inventory_path),
+            "--page-graph", str(page_graph_path),
+            "--deck", str(deck),
+            "--report", str(run_dir / "source-coverage-validation.json"),
+        ]
+        if args.require_source_coverage:
+            coverage_args.append("--require-spatial-evidence")
+        add_step("source-coverage", coverage_args, deps=["source-images"] if unique_reference_sources else route_deps,
+                 outputs=[run_dir / "source-coverage-validation.json"], inputs=coverage_inputs,
+                 metadata={"required": args.require_source_coverage})
+    elif source_coverage_enabled and args.require_source_coverage:
+        add_step(
+            "source-coverage",
+            static_result={"name": "source-coverage", "command": [], "exit_code": 2, "ok": False,
+                           "failure": "source_reference_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            deps=route_deps,
+            outputs=[run_dir / "source-coverage-validation.json"],
+            metadata={"required": True},
+        )
+    gradient_manifest = project / "gradient-visual-manifest.json"
+    gradient_required = args.require_gradient_visual or gradient_manifest.is_file()
+    if args.require_gradient_visual and not gradient_manifest.is_file():
+        add_step("gradient-visual", static_result={"name": "gradient-visual", "command": [], "exit_code": 2, "ok": False, "failure": "gradient_manifest_missing", "stdout": "", "stderr": ""}, cacheable=False, deps=route_deps, outputs=[run_dir / "gradient-visual-validation.json"])
+    elif gradient_required:
+        gradient_args = [str(SCRIPT_DIR / "validate_gradient_visual.py"), str(gradient_manifest), "--report", str(run_dir / "gradient-visual-validation.json")]
+        if args.release:
+            gradient_args.append("--require-verified")
+        add_step("gradient-visual", gradient_args, deps=route_deps, outputs=[run_dir / "gradient-visual-validation.json"], inputs=[gradient_manifest])
+    if args.handoff:
+        handoff_args = [str(SCRIPT_DIR / "validate_handoff.py"), str(Path(args.handoff).resolve()), "--report", str(run_dir / "handoff-validation.json")]
+        if args.require_root_p0:
+            handoff_args.extend(["--require-worker-protocol", "--expected-package-revision", str(package_data["package_revision"])])
+        add_step("handoff", handoff_args, deps=["routing-contract"] if args.require_root_p0 else [], outputs=[run_dir / "handoff-validation.json"], inputs=[Path(args.handoff).resolve(), deck], metadata={"required": args.require_root_p0})
+    if args.revision_label:
+        add_step("revision-prepare", [str(SCRIPT_DIR / "revision_guard.py"), "prepare", str(project), "--deck", str(deck), "--label", args.revision_label], inputs=[project, deck], metadata={"revision_label": args.revision_label}, cacheable=False)
+    add_step("environment", [str(SCRIPT_DIR / "probe_environment.py"), "--output", str(run_dir / "environment-report.json")], outputs=[run_dir / "environment-report.json"])
+    add_step(
+        "backend-binding",
+        [
+            str(SCRIPT_DIR / "validate_backend_binding.py"),
+            str(run_dir / "environment-report.json"),
+            str(routing_contract),
+            "--skill-dir", str(SCRIPT_DIR.parent),
+            "--report", str(run_dir / "backend-binding-validation.json"),
+        ],
+        deps=["environment", "routing-contract"],
+        outputs=[run_dir / "backend-binding-validation.json"],
+        inputs=[run_dir / "environment-report.json", routing_contract, SCRIPT_DIR / "authoring_backend.py", SCRIPT_DIR / "embed_fonts.py"],
+    )
+    if args.font_dir or args.require_cjk:
+        font_args = [str(SCRIPT_DIR / "probe_fonts.py"), "--output", str(run_dir / "font-report.json")]
+        if args.font_dir:
+            font_args.extend(["--font-dir", str(Path(args.font_dir).resolve())])
+        if args.require_cjk:
+            font_args.append("--require-cjk")
+        add_step("fonts", font_args, outputs=[run_dir / "font-report.json"], inputs=[Path(args.font_dir).resolve()] if args.font_dir else [], metadata={"require_cjk": args.require_cjk})
+        font_manifest = Path(args.font_dir).resolve() / "font-manifest.json" if args.font_dir else None
+        if args.font_dir and (font_manifest.is_file() or args.require_cjk):
+            font_asset_args = [str(SCRIPT_DIR / "validate_font_asset.py"), "--font-dir", str(Path(args.font_dir).resolve()), "--report", str(run_dir / "font-asset-validation.json")]
+            if args.require_cjk:
+                font_asset_args.append("--require-cjk")
+            add_step("font-asset", font_asset_args, deps=["fonts"], outputs=[run_dir / "font-asset-validation.json"], inputs=[Path(args.font_dir).resolve()])
+    layout_path = project / "layout.json"
+    typography_enabled = args.require_typography_calibration or typography_calibration.is_file()
+    object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
+    content_inventory = Path(args.content_inventory).resolve() if args.content_inventory else project / "content-inventory.json"
+    content_inventory_required = bool(args.require_content_inventory)
+    content_inventory_enabled = content_inventory_required or content_inventory.is_file()
+    if content_inventory_required and not content_inventory.is_file():
+        add_step(
+            "content-inventory",
+            static_result={"name": "content-inventory", "command": [], "exit_code": 2, "ok": False, "failure": "content_inventory_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            deps=route_deps,
+            outputs=[run_dir / "content-inventory-validation.json"],
+        )
+    elif content_inventory_enabled:
+        content_args = [
+            str(SCRIPT_DIR / "validate_content_inventory.py"),
+            str(content_inventory),
+            "--expected-pages", str(args.expected_pages),
+            "--deck", str(deck),
+            "--report", str(run_dir / "content-inventory-validation.json"),
+        ]
+        if object_manifest.is_file() or args.require_object_manifest:
+            content_args.extend(["--object-manifest", str(object_manifest)])
+        text_manifest_for_content = Path(args.text_manifest).resolve() if args.text_manifest else project / "text-layout-manifest.json"
+        if text_manifest_for_content.is_file() or args.require_text_model:
+            content_args.extend(["--text-manifest", str(text_manifest_for_content)])
+        content_inputs = [content_inventory, deck]
+        if object_manifest.is_file() or args.require_object_manifest:
+            content_inputs.append(object_manifest)
+        if text_manifest_for_content.is_file() or args.require_text_model:
+            content_inputs.append(text_manifest_for_content)
+        add_step("content-inventory", content_args, deps=route_deps, outputs=[run_dir / "content-inventory-validation.json"], inputs=content_inputs)
+    chart_manifest = Path(args.chart_manifest).resolve() if args.chart_manifest else project / "chart-reconstruction.json"
+    chart_manifest_required = bool(args.require_chart_manifest)
+    chart_manifest_enabled = chart_manifest_required or chart_manifest.is_file()
+    if chart_manifest_required and not chart_manifest.is_file():
+        add_step(
+            "chart-manifest",
+            static_result={"name": "chart-manifest", "command": [], "exit_code": 2, "ok": False, "failure": "chart_manifest_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            deps=route_deps,
+            outputs=[run_dir / "chart-manifest-validation.json"],
+        )
+    elif chart_manifest_enabled:
+        chart_args = [str(SCRIPT_DIR / "validate_chart_manifest.py"), str(chart_manifest), "--report", str(run_dir / "chart-manifest-validation.json")]
+        if args.release:
+            chart_args.append("--require-source")
+        chart_inputs = [chart_manifest]
+        chart_deps = list(route_deps)
+        if content_inventory_enabled:
+            chart_deps.append("content-inventory")
+            if content_inventory.is_file():
+                chart_args.extend(["--content-inventory", str(content_inventory)])
+                chart_inputs.append(content_inventory)
+        try:
+            chart_data = json.loads(chart_manifest.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            chart_data = {}
+        source_reference = chart_data.get("source_reference") if isinstance(chart_data, dict) else None
+        if isinstance(source_reference, str) and source_reference:
+            source_path = (chart_manifest.parent / source_reference).resolve()
+            if source_path.is_file():
+                chart_inputs.append(source_path)
+        add_step("chart-manifest", chart_args, deps=chart_deps, outputs=[run_dir / "chart-manifest-validation.json"], inputs=list(dict.fromkeys(chart_inputs)))
+    if args.require_object_manifest or object_manifest.is_file():
+        object_args = [str(SCRIPT_DIR / "validate_object_manifest.py"), str(object_manifest), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "object-manifest-validation.json")]
+        if args.require_independent_panels:
+            object_args.append("--require-panels")
+        if native_panels_required:
+            object_args.append("--require-native-panels")
+        if native_tables_required:
+            object_args.append("--require-native-tables")
+        add_step("object-manifest", object_args, outputs=[run_dir / "object-manifest-validation.json"], inputs=[object_manifest, deck])
+    hash_manifests: list[Path] = []
+    for candidate in [*(Path(path).resolve() for path in args.asset_manifest), *(project / name for name in ("asset-manifest.json", "panel-asset-manifest.json", "icon-asset-manifest.json", "imagegen-assets-manifest.json"))]:
+        candidate = candidate.resolve()
+        if candidate.is_file() and candidate not in hash_manifests:
+            hash_manifests.append(candidate)
+    asset_hashes_enabled = bool(hash_manifests) or args.require_asset_hashes
+    if args.require_asset_hashes and not hash_manifests:
+        add_step(
+            "asset-hashes",
+            static_result={"name": "asset-hashes", "command": [], "exit_code": 2, "ok": False, "failure": "asset_manifests_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            deps=route_deps,
+            outputs=[run_dir / "asset-hash-validation.json"],
+        )
+    elif hash_manifests:
+        hash_args = [str(SCRIPT_DIR / "validate_asset_hashes.py"), *[str(path) for path in hash_manifests], "--base", str(project), "--report", str(run_dir / "asset-hash-validation.json")]
+        if args.require_asset_hashes:
+            hash_args.append("--require")
+        add_step("asset-hashes", hash_args, deps=route_deps, outputs=[run_dir / "asset-hash-validation.json"], inputs=hash_manifests)
+    registry_path = Path(args.manifest_registry).resolve() if args.manifest_registry else project / "manifest-registry.json"
+    registry_enabled = bool(args.manifest_registry or registry_path.is_file())
+    if args.require_manifest_registry and not registry_path.is_file():
+        add_step("manifest-registry", static_result={"name": "manifest-registry", "command": [], "exit_code": 2, "ok": False, "failure": "manifest_registry_missing", "stdout": "", "stderr": ""}, cacheable=False, outputs=[run_dir / "manifest-registry-validation.json"])
+    elif registry_enabled:
+        registry_args = [str(SCRIPT_DIR / "manifest_registry.py"), "validate", str(registry_path), "--deck", str(deck), "--report", str(run_dir / "manifest-registry-validation.json")]
+        if args.require_manifest_registry:
+            registry_args.append("--require-gates")
+        if args.require_asset_hashes:
+            registry_args.append("--require-asset-hashes")
+        add_step("manifest-registry", registry_args, outputs=[run_dir / "manifest-registry-validation.json"], inputs=[registry_path, deck, project / "slide-manifest.json"] + ([object_manifest] if object_manifest.is_file() else []))
+    if args.reference:
+        if layout_path.is_file():
+            layout_args = [str(SCRIPT_DIR / "layout_guard.py"), str(Path(args.reference).resolve()), str(layout_path)]
+            if args.strict_layout:
+                layout_args.append("--strict")
+            layout_args.extend(["--report", str(run_dir / "layout-guard.json")])
+            add_step("layout-guard", layout_args, outputs=[run_dir / "layout-guard.json"], inputs=[Path(args.reference).resolve(), layout_path])
+        else:
+            add_step("layout-guard", static_result={"name": "layout-guard", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""}, outputs=[run_dir / "layout-guard.json"], cacheable=False)
+    if args.reference_dir:
+        reference_dir = Path(args.reference_dir).resolve()
+        if layout_path.is_file():
+            multi_layout_args = [
+                str(SCRIPT_DIR / "validate_multipage_layout.py"),
+                str(reference_dir),
+                str(layout_path),
+                "--expected-pages", str(args.expected_pages),
+                "--expected-ratio", str(args.expected_ratio or (16 / 9)),
+                "--report", str(run_dir / "multipage-layout-guard.json"),
+            ]
+            if args.strict_layout or args.require_multipage_layout or args.release:
+                multi_layout_args.append("--strict")
+            if affected_pages:
+                multi_layout_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+            add_step(
+                "multipage-layout-guard",
+                multi_layout_args,
+                deps=route_deps,
+                outputs=[run_dir / "multipage-layout-guard.json"],
+                inputs=[reference_dir, layout_path],
+                metadata={"affected_pages": affected_pages or "all", "strict": bool(args.strict_layout or args.require_multipage_layout or args.release)},
+            )
+        elif args.require_multipage_layout:
+            add_step(
+                "multipage-layout-guard",
+                static_result={"name": "multipage-layout-guard", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""},
+                cacheable=False,
+                deps=route_deps,
+                outputs=[run_dir / "multipage-layout-guard.json"],
+            )
+    if imagegen_required:
+        imagegen_args = [str(SCRIPT_DIR / "validate_imagegen_assets_manifest.py"), str(project / "imagegen-assets-manifest.json"), "--report", str(run_dir / "imagegen-assets-validation.json")]
+        if args.require_asset_hashes:
+            imagegen_args.append("--require-hashes")
+        add_step("imagegen-assets", imagegen_args, outputs=[run_dir / "imagegen-assets-validation.json"], inputs=[project / "imagegen-assets-manifest.json"])
+    if icon_required:
+        icon_args = [str(SCRIPT_DIR / "validate_icon_assets.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-assets-validation.json")]
+        if args.require_asset_hashes:
+            icon_args.append("--require-hashes")
+        add_step("icon-assets", icon_args, outputs=[run_dir / "icon-assets-validation.json"], inputs=[project / "icon-asset-manifest.json"])
+        add_step("icon-layers", [str(SCRIPT_DIR / "audit_icon_layers.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-layer-audit.json")], outputs=[run_dir / "icon-layer-audit.json"], inputs=[project / "icon-asset-manifest.json"])
+    inspection_path = run_dir / "inspection.json"
+    render_report_path = run_dir / "render-report.json"
+    add_step("inspection", [str(SCRIPT_DIR / "inspect_pptx.py"), str(deck), "--report", str(inspection_path)], outputs=[inspection_path], inputs=[deck])
+    if args.require_object_manifest or object_manifest.is_file():
+        audit_args = [str(SCRIPT_DIR / "inspect_editable_objects.py"), str(deck), "--object-manifest", str(object_manifest), "--report", str(run_dir / "editable-object-audit.json")]
+        if args.require_independent_panels:
+            audit_args.append("--require-independent-panels")
+        add_step("editable-object-audit", audit_args, outputs=[run_dir / "editable-object-audit.json"], inputs=[deck, object_manifest])
+        semantic_text_manifest = Path(args.text_manifest).resolve() if args.text_manifest else project / "text-layout-manifest.json"
+        semantic_asset_manifests = [Path(path).resolve() for path in args.asset_manifest]
+        for candidate in (
+            project / "asset-manifest.json",
+            project / "panel-asset-manifest.json",
+            project / "icon-asset-manifest.json",
+            project / "imagegen-assets-manifest.json",
+        ):
+            if candidate.is_file() and candidate not in semantic_asset_manifests:
+                semantic_asset_manifests.append(candidate)
+        semantic_args = [
+            str(SCRIPT_DIR / "semantic_object_audit.py"), str(deck),
+            "--object-manifest", str(object_manifest),
+            "--report", str(run_dir / "semantic-object-audit.json"),
+        ]
+        semantic_inputs = [deck, object_manifest]
+        if semantic_text_manifest.is_file() or args.text_manifest:
+            semantic_args.extend(["--text-manifest", str(semantic_text_manifest)])
+            semantic_inputs.append(semantic_text_manifest)
+        for asset_manifest in semantic_asset_manifests:
+            semantic_args.extend(["--asset-manifest", str(asset_manifest)])
+            semantic_inputs.append(asset_manifest)
+        if args.require_source_hashes:
+            semantic_args.append("--require-source-hashes")
+        if args.release:
+            semantic_args.append("--require-independent-text-manifest")
+        add_step("semantic-object-audit", semantic_args, deps=["editable-object-audit"], outputs=[run_dir / "semantic-object-audit.json"], inputs=semantic_inputs)
+
+    if native_structure_enabled:
+        native_validator = SCRIPT_DIR.parent / "ai-ppt-editable" / "scripts" / "validate_native_editability.py"
+        native_deps = ["inspection"]
+        if any(task.name == "editable-object-audit" for task in executor.tasks):
+            native_deps.append("editable-object-audit")
+        if not object_manifest.is_file():
+            add_step(
+                "native-editability",
+                static_result={
+                    "name": "native-editability",
+                    "command": [],
+                    "exit_code": 2,
+                    "ok": False,
+                    "failure": "object_manifest_missing",
+                    "stdout": "",
+                    "stderr": "",
+                },
+                cacheable=False,
+                deps=native_deps,
+                outputs=[run_dir / "native-editability-validation.json"],
+                metadata={"required": True},
+            )
+        else:
+            native_args = [
+                str(native_validator),
+                str(deck),
+                "--object-manifest", str(object_manifest),
+                "--report", str(run_dir / "native-editability-validation.json"),
+                "--forbid-whole-slide-pictures",
+            ]
+            if native_panels_required:
+                native_args.append("--require-native-panels")
+            if native_tables_required:
+                native_args.append("--require-native-tables")
+            add_step(
+                "native-editability",
+                native_args,
+                deps=native_deps,
+                outputs=[run_dir / "native-editability-validation.json"],
+                inputs=[deck, object_manifest],
+                metadata={
+                    "require_native_panels": native_panels_required,
+                    "require_native_tables": native_tables_required,
+                    "required": True,
+                },
+            )
+
+    render_args = [str(SCRIPT_DIR / "render_pptx.py"), str(deck), "--output-dir", str(render_dir), "--dpi", str(args.dpi), "--report", str(render_report_path)]
+    if args.font_dir:
+        render_args.extend(["--font-dir", str(Path(args.font_dir).resolve())])
+    if page_cache_dir:
+        render_args.extend(["--page-cache-dir", str(page_cache_dir)])
+    if affected_pages:
+        render_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+    add_step("render", render_args, deps=["environment"], outputs=[render_dir, render_report_path], inputs=[deck] + ([Path(args.font_dir).resolve()] if args.font_dir else []), metadata={"affected_pages": affected_pages or "all", "dpi": args.dpi, "page_cache_enabled": bool(page_cache_dir), "page_cache_dir": str(page_cache_dir) if page_cache_dir else None})
+    if args.require_typography_calibration and not typography_calibration.is_file():
+        add_step(
+            "typography-calibration",
+            static_result={"name": "typography-calibration", "command": [], "exit_code": 2, "ok": False, "failure": "typography_calibration_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            outputs=[run_dir / "typography-calibration-validation.json"],
+        )
+    elif typography_calibration.is_file():
+        add_step(
+            "typography-calibration",
+            [str(SCRIPT_DIR / "validate_typography_calibration.py"), str(typography_calibration), "--report", str(run_dir / "typography-calibration-validation.json")],
+            deps=["render"],
+            outputs=[run_dir / "typography-calibration-validation.json"],
+            inputs=[typography_calibration, render_dir],
+        )
+    selected_count = len(affected_pages) if affected_pages else args.expected_pages
+    visual_args = [str(SCRIPT_DIR / "validate_render.py"), str(render_dir), "--expected-pages", str(selected_count), "--report", str(run_dir / "render-visual-gate.json")]
+    if affected_pages:
+        visual_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+    for region in list(args.region) + list(args.affected_region):
+        visual_args.extend(["--region", region])
+    add_step("render-visual-gate", visual_args, deps=["render"], outputs=[run_dir / "render-visual-gate.json"], inputs=[render_dir], metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
+    if canvas_evidence_enabled:
+        canvas_args = [
+            str(SCRIPT_DIR / "validate_canvas_evidence.py"),
+            "--render-dir", str(render_dir),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(run_dir / "canvas-evidence.json"),
+        ]
+        if args.reference:
+            canvas_args.extend(["--reference", str(Path(args.reference).resolve())])
+        elif args.reference_dir:
+            canvas_args.extend(["--reference", str(Path(args.reference_dir).resolve())])
+        if args.exact_canvas:
+            canvas_args.append("--strict")
+        if args.allow_canvas_degradation:
+            canvas_args.extend(["--allow-degradation", "--degradation-evidence", str(canvas_degradation_path)])
+        canvas_inputs = [render_dir]
+        if args.reference:
+            canvas_inputs.append(Path(args.reference).resolve())
+        elif args.reference_dir:
+            canvas_inputs.append(Path(args.reference_dir).resolve())
+        if args.allow_canvas_degradation or args.canvas_degradation_evidence:
+            canvas_inputs.append(canvas_degradation_path)
+        add_step("canvas-evidence", canvas_args, deps=["render"], outputs=[run_dir / "canvas-evidence.json"], inputs=canvas_inputs, metadata={"strict": args.exact_canvas, "allow_degradation": args.allow_canvas_degradation})
+    host_validation_enabled = bool(args.host_validation or args.require_host_validation)
+    if host_validation_enabled:
+        host_args = [
+            str(SCRIPT_DIR / "validate_host_validation.py"),
+            str(host_validation_path),
+            "--deck", str(deck),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(run_dir / "host-validation.json"),
+        ]
+        if args.require_host_validation or args.release:
+            host_args.append("--strict")
+        if not host_validation_path.is_file():
+            add_step("host-validation", static_result={"name": "host-validation", "command": [], "exit_code": 2, "ok": False, "failure": "host_validation_missing", "stdout": "", "stderr": ""}, cacheable=False, deps=["render"], outputs=[run_dir / "host-validation.json"], metadata={"required": args.require_host_validation})
+        else:
+            add_step("host-validation", host_args, deps=["render"], outputs=[run_dir / "host-validation.json"], inputs=[deck, host_validation_path], metadata={"required": args.require_host_validation, "strict": bool(args.require_host_validation or args.release)})
+    if args.font_dir or args.require_cjk:
+        font_delivery_args = [str(SCRIPT_DIR / "validate_font_delivery.py"), "--font-report", str(run_dir / "font-report.json"), "--inspection", str(inspection_path), "--render-report", str(render_report_path), "--render-visual-gate", str(run_dir / "render-visual-gate.json"), "--profile", "portable", "--report", str(run_dir / "font-delivery-validation.json")]
+        if args.font_dir and (font_manifest.is_file() or args.require_cjk):
+            font_delivery_args.extend(["--font-asset-report", str(run_dir / "font-asset-validation.json")])
+        if args.release:
+            font_delivery_args.append("--require-embedded")
+        font_deps = ["fonts", "inspection", "render", "render-visual-gate"]
+        if args.font_dir and (font_manifest.is_file() or args.require_cjk):
+            font_deps.append("font-asset")
+        add_step("font-delivery", font_delivery_args, deps=font_deps, outputs=[run_dir / "font-delivery-validation.json"], inputs=[run_dir / "font-report.json", inspection_path, render_report_path, run_dir / "render-visual-gate.json"] + ([run_dir / "font-asset-validation.json"] if args.font_dir and (font_manifest.is_file() or args.require_cjk) else []), metadata={"require_embedded": args.release})
+    if args.reference:
+        comparison_args = [str(SCRIPT_DIR / "compare_visual.py"), str(render_dir / "slide-1.png"), str(Path(args.reference).resolve()), "--report", str(run_dir / "visual-comparison.json")]
+        if args.expected_ratio is not None:
+            comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
+        if args.visual_threshold is not None:
+            comparison_args.extend(["--threshold", str(args.visual_threshold)])
+        if visual_threshold_policy:
+            comparison_args.extend(["--threshold-policy", visual_threshold_policy])
+        add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
+    elif args.reference_dir:
+        comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "visual-comparison.json")]
+        if args.expected_ratio is not None:
+            comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
+        if args.visual_threshold is not None:
+            comparison_args.extend(["--threshold", str(args.visual_threshold)])
+        if visual_threshold_policy:
+            comparison_args.extend(["--threshold-policy", visual_threshold_policy])
+        if affected_pages:
+            comparison_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+        add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir, Path(args.reference_dir).resolve()], metadata={"affected_pages": affected_pages or "all"})
+    if args.reference or args.reference_dir:
+        dual_args = [
+            str(SCRIPT_DIR / "compare_dual.py"),
+            "--visual-report", str(run_dir / "visual-comparison.json"),
+            "--deck", str(deck),
+            "--report", str(run_dir / "dual-comparison.json"),
+        ]
+        dual_inputs = [run_dir / "visual-comparison.json", deck]
+        dual_deps = ["visual-comparison"]
+        object_required = bool(args.require_dual_comparison or args.require_object_manifest or object_manifest.is_file())
+        if object_manifest.is_file() or args.require_object_manifest:
+            dual_args.extend(["--object-manifest", str(object_manifest)])
+            dual_inputs.append(object_manifest)
+        if any(task.name == "semantic-object-audit" for task in executor.tasks):
+            dual_args.extend(["--object-report", str(run_dir / "semantic-object-audit.json")])
+            dual_inputs.append(run_dir / "semantic-object-audit.json")
+            dual_deps.append("semantic-object-audit")
+        if object_required:
+            dual_args.append("--require-object")
+        add_step("dual-comparison", dual_args, deps=dual_deps, outputs=[run_dir / "dual-comparison.json"], inputs=dual_inputs, metadata={"require_object": object_required, "affected_pages": affected_pages or "all"})
+    if args.preview_dir:
+        preview_dir = Path(args.preview_dir).resolve()
+        preview_args = [
+            str(SCRIPT_DIR / "validate_preview_consistency.py"),
+            str(render_dir),
+            str(preview_dir),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(run_dir / "preview-consistency-validation.json"),
+        ]
+        if args.preview_threshold is not None:
+            preview_args.extend(["--threshold", str(args.preview_threshold)])
+        if args.require_preview_consistency or args.release:
+            preview_args.append("--require")
+        add_step(
+            "preview-consistency",
+            preview_args,
+            deps=["render"],
+            outputs=[run_dir / "preview-consistency-validation.json"],
+            inputs=[render_dir, preview_dir],
+            metadata={"expected_pages": args.expected_pages, "threshold": args.preview_threshold, "required": bool(args.require_preview_consistency or args.release)},
+        )
+    if args.reference:
+        reference_audit_args = [str(SCRIPT_DIR / "reference_audit.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--report", str(run_dir / "reference-audit.json")]
+        if args.expected_ratio is not None:
+            reference_audit_args.extend(["--expected-ratio", str(args.expected_ratio)])
+        add_step("reference-audit", reference_audit_args, deps=["render"] + (["source-images"] if "source-images" in {task.name for task in executor.tasks} else []), outputs=[run_dir / "reference-audit.json"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
+    elif args.reference_dir:
+        reference_audit_args = [str(SCRIPT_DIR / "reference_audit_deck.py"), str(Path(args.reference_dir).resolve()), str(render_dir), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "reference-audit.json")]
+        if args.expected_ratio is not None:
+            reference_audit_args.extend(["--expected-ratio", str(args.expected_ratio)])
+        if affected_pages:
+            reference_audit_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
+        add_step("reference-audit", reference_audit_args, deps=["render"] + (["source-images"] if "source-images" in {task.name for task in executor.tasks} else []), outputs=[run_dir / "reference-audit.json"], inputs=[Path(args.reference_dir).resolve(), render_dir])
+    if args.reference and layout_path.is_file():
+        visual_qa_args = [str(SCRIPT_DIR / "visual_compare_qa.py"), str(Path(args.reference).resolve()), str(render_dir / "slide-1.png"), "--out-dir", str(run_dir / "visual-qa")]
+        if args.expected_ratio is not None:
+            visual_qa_args.extend(["--expected-ratio", str(args.expected_ratio)])
+        add_step("visual-compare-qa", visual_qa_args, deps=["render"], outputs=[run_dir / "visual-qa"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
+    if ocr_enabled:
+        ocr_args = [str(SCRIPT_DIR / "ocr_text_check.py"), str(deck), str(render_dir), "--lang", ocr_language, "--report", str(run_dir / "ocr-text-check.json")]
+        if ocr_required:
+            ocr_args.append("--require-ocr")
+        add_step("ocr-text-check", ocr_args, deps=["render"], outputs=[run_dir / "ocr-text-check.json"], inputs=[deck, render_dir], metadata={"language": ocr_language, "required": ocr_required, "affected_pages": affected_pages or "all"})
+    panel_manifest = project / "panel-asset-manifest.json"
+    panel_gate_required = panel_manifest.is_file() or args.require_independent_panels or args.require_panel_approval
+    if panel_gate_required:
+        panel_args = [str(SCRIPT_DIR / "validate_panel_assets.py"), str(panel_manifest), "--assets-dir", str(project), "--report", str(run_dir / "panel-assets-validation.json"), "--strict"]
+        # Draft/technical runs need independent-panel evidence but do not
+        # possess a human approval record yet. Approval is a release/closeout
+        # gate and is added only when explicitly requested (or promoted by
+        # the strict release profile).
+        if args.require_panel_approval:
+            panel_args.append("--require-approved")
+        if args.require_asset_hashes:
+            panel_args.append("--require-hashes")
+        if args.require_independent_panels:
+            panel_args.append("--require-independent")
+        if args.expected_panel_count is not None:
+            panel_args.extend(["--expected-count", str(args.expected_panel_count)])
+        add_step("panel-assets", panel_args, outputs=[run_dir / "panel-assets-validation.json"], inputs=[panel_manifest])
+    if args.require_text_style_map and not layout_path.is_file():
+        add_step("text-style-map", static_result={"name": "text-style-map", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""}, cacheable=False, deps=route_deps, outputs=[run_dir / "text-style-map-validation.json"])
+    elif args.require_text_style_map and layout_path.is_file():
+        text_style_args = [str(SCRIPT_DIR / "validate_text_style_map.py"), str(layout_path), "--report", str(run_dir / "text-style-map-validation.json")]
+        if args.strict_layout or args.release:
+            text_style_args.extend(["--strict", "--require-source-bbox"])
+        add_step("text-style-map", text_style_args, deps=route_deps, outputs=[run_dir / "text-style-map-validation.json"], inputs=[layout_path])
+    text_manifest = Path(args.text_manifest).resolve() if args.text_manifest else project / "text-layout-manifest.json"
+    text_model_enabled = bool(args.text_manifest or text_manifest.is_file())
+    if args.require_text_model and not text_manifest.is_file():
+        add_step("text-model", static_result={"name": "text-model", "command": [], "exit_code": 2, "ok": False, "failure": "text_manifest_missing", "stdout": "", "stderr": ""}, cacheable=False, outputs=[run_dir / "text-layout-validation.json"])
+    elif text_model_enabled:
+        text_model_args = [str(SCRIPT_DIR / "text_model.py"), "validate", str(text_manifest), "--report", str(run_dir / "text-layout-validation.json")]
+        if args.require_text_model:
+            text_model_args.append("--strict")
+            # source_bbox is reference-image evidence. Visual-creation
+            # layouts have no source viewport, so requiring it creates false
+            # blockers; reference reconstruction still enforces it.
+            if reference_route:
+                text_model_args.append("--require-source-bbox")
+        add_step("text-model", text_model_args, outputs=[run_dir / "text-layout-validation.json"], inputs=[text_manifest])
+    manifest_args = [str(SCRIPT_DIR / "validate_manifest.py"), str(project / "slide-manifest.json"), "--kind", "slide", "--report", str(run_dir / "manifest-validation.json")]
+    if args.require_editability:
+        manifest_args.append("--require-editability")
+    asset_manifest = project / "asset-manifest.json"
+    if asset_manifest.is_file():
+        manifest_args.extend(["--asset-manifest", str(asset_manifest)])
+    add_step("manifest", manifest_args, outputs=[run_dir / "manifest-validation.json"], inputs=[project / "slide-manifest.json"] + ([asset_manifest] if asset_manifest.is_file() else []))
     project_args = [str(SCRIPT_DIR / "validate_project.py"), str(project), "--deck", str(deck), "--inspection", str(inspection_path), "--render-report", str(render_report_path), "--render-visual-gate", str(run_dir / "render-visual-gate.json"), "--manifest-validation", str(run_dir / "manifest-validation.json"), "--report", str(run_dir / "project-validation.json")]
     if args.require_editability:
         project_args.append("--require-editability")
