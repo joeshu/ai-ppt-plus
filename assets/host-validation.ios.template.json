@@ -1,0 +1,34 @@
+{
+  "schema": "ai-ppt-plus/host-validation/v1",
+  "status": "passed",
+  "project_id": "project-slug",
+  "deck_sha256": "<sha256 of delivered deck>",
+  "host": {
+    "kind": "wps",
+    "profile": "ios",
+    "name": "WPS Office",
+    "version": "<version>",
+    "platform": "iOS"
+  },
+  "reviewer": "<reviewer>",
+  "confirmed_at": "<ISO-8601 timestamp>",
+  "checked_slides": [1],
+  "checks": {
+    "opened": true,
+    "layout": true,
+    "typography": true,
+    "overflow": true,
+    "editability": true,
+    "visual_fidelity": true
+  },
+  "mobile_differences": {
+    "font_substitution_reviewed": true,
+    "line_wrap_reviewed": true,
+    "font_substitutions": [],
+    "line_wrap_differences": []
+  },
+  "screenshots": [
+    {"slide_no": 1, "path": "qa/host/ios/slide-1.png", "sha256": "<sha256>"}
+  ],
+  "notes": "Record every iPhone WPS font substitution and line-wrap difference before marking passed."
+}
