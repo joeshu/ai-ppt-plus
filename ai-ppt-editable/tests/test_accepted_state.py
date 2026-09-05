@@ -16,7 +16,11 @@ def test_iteration_one_uses_candidate(tmp_path: Path):
     _write_json(candidate, {"slides": []})
     resolved, meta = resolve_source_layout(case_id="case", iteration=1, candidate_layout=candidate, output_root=tmp_path / "out")
     assert resolved == candidate.resolve()
-    assert meta["source"] == "candidate"
+    assert meta == {
+        "source": "candidate",
+        "accepted_iteration": 0,
+        "layout": str(candidate.resolve()),
+    }
 
 
 def test_iteration_two_uses_persisted_accepted_state(tmp_path: Path):
@@ -37,7 +41,11 @@ def test_iteration_two_uses_persisted_accepted_state(tmp_path: Path):
     write_accepted_state(tmp_path / "out" / "case" / "accepted-state.json", state)
     resolved, meta = resolve_source_layout(case_id="case", iteration=2, candidate_layout=candidate, output_root=tmp_path / "out")
     assert resolved == accepted.resolve()
-    assert meta == {"source": "accepted-state", "accepted_iteration": 1}
+    assert meta == {
+        "source": "accepted-state",
+        "accepted_iteration": 1,
+        "layout": str(accepted.resolve()),
+    }
 
 
 def test_rollback_iteration_is_skipped_for_next_source(tmp_path: Path):
@@ -51,7 +59,11 @@ def test_rollback_iteration_is_skipped_for_next_source(tmp_path: Path):
     _write_json(rejected2.parent / "iteration-record.json", {"accepted": False, "status": "rolled-back-regression"})
     resolved, meta = resolve_source_layout(case_id="case", iteration=3, candidate_layout=candidate, output_root=tmp_path / "out")
     assert resolved == accepted1.resolve()
-    assert meta == {"source": "accepted-history", "accepted_iteration": 1}
+    assert meta == {
+        "source": "accepted-history",
+        "accepted_iteration": 1,
+        "layout": str(accepted1.resolve()),
+    }
 
 
 def test_stale_future_state_is_not_used(tmp_path: Path):
@@ -72,7 +84,11 @@ def test_stale_future_state_is_not_used(tmp_path: Path):
     })
     resolved, meta = resolve_source_layout(case_id="case", iteration=3, candidate_layout=candidate, output_root=tmp_path / "out")
     assert resolved == candidate.resolve()
-    assert meta["source"] == "candidate"
+    assert meta == {
+        "source": "candidate",
+        "accepted_iteration": 0,
+        "layout": str(candidate.resolve()),
+    }
 
 
 if __name__ == "__main__":
