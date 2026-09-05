@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute repair-ready Astra cases, resume generated assets, rollback regressions, and prepare next QA requests."""
+"""Execute repair-ready Astra cases with accepted-state continuity and rollback safety."""
 from __future__ import annotations
 
 import argparse
@@ -16,6 +16,7 @@ EDITABLE = REPO / "ai-ppt-editable"
 if str(EDITABLE) not in sys.path:
     sys.path.insert(0, str(EDITABLE))
 
+from reconstruction.accepted_state import build_accepted_state, resolve_source_layout, write_accepted_state
 from reconstruction.astra_contract import build_visual_qa_request
 from reconstruction.evidence_bridge import from_dual_comparison
 from reconstruction.manifest_bridge import build_page_graph
@@ -37,10 +38,8 @@ def _semantic_accuracy(record: dict) -> float | None:
     value = record.get("semantic_accuracy")
     if value is None:
         value = (record.get("semantic_audit") or {}).get("accuracy")
-    if value is None:
-        return None
     try:
-        return float(value)
+        return float(value) if value is not None else None
     except (TypeError, ValueError):
         return None
 
@@ -91,8 +90,7 @@ def deterministic_report(iteration_dir: Path, reference: Path) -> dict:
     native = read_json(iteration_dir / "native-editability.json")
     semantic = read_json(iteration_dir / "semantic-audit.json")
     inspect = read_json(iteration_dir / "inspect.json")
-    errors = list(native.get("errors") or [])
-    errors.extend(semantic.get("errors") or [])
+    errors = list(native.get("errors") or []) + list(semantic.get("errors") or [])
     for issue in inspect.get("issues") or []:
         if isinstance(issue, dict) and issue.get("severity") in {"blocker", "critical"}:
             errors.append(issue)
@@ -136,11 +134,10 @@ def next_qa_bundle(iteration_dir: Path, reference: Path) -> dict:
 def resolve_resume_layout(asset_resolved_root: Path | None, case_id: str, iteration: int) -> tuple[Path | None, dict | None]:
     if asset_resolved_root is None:
         return None, None
-    candidates = [
+    for resume_path in (
         asset_resolved_root / case_id / f"iteration-{iteration}" / "resume-ready.json",
         asset_resolved_root / case_id / "resume-ready.json",
-    ]
-    for resume_path in candidates:
+    ):
         if not resume_path.is_file():
             continue
         resume = read_json(resume_path)
@@ -181,9 +178,22 @@ def generated_asset_ids(layout: dict) -> set[str]:
     return result
 
 
+def previous_accepted_record(case_id: str, iteration: int, output_root: Path, fallback: dict) -> dict:
+    """Use the newest prior accepted record as the regression baseline when available."""
+    for previous_iteration in range(iteration - 1, 0, -1):
+        path = output_root / case_id / f"iteration-{previous_iteration}" / "iteration-record.json"
+        if not path.is_file():
+            continue
+        record = read_json(path)
+        if record.get("accepted") is True and not str(record.get("status") or "").startswith("rolled-back"):
+            return record
+    return fallback
+
+
 def run_case(*, case_id: str, iteration: int, source_layout: Path, baseline_layout: Path, merged_graph: Path | None,
              reference: Path, output_dir: Path, previous_record: dict, tolerance: float,
-             resume_after_assets: bool = False, allowed_object_ids: set[str] | None = None) -> dict:
+             resume_after_assets: bool = False, allowed_object_ids: set[str] | None = None,
+             source_resolution: dict | None = None) -> dict:
     case_out = output_dir / case_id / f"iteration-{iteration}"
     command = [
         sys.executable, str(ITERATION_RUNNER), "--case-id", case_id, "--layout", str(source_layout),
@@ -202,11 +212,13 @@ def run_case(*, case_id: str, iteration: int, source_layout: Path, baseline_layo
     record_path = case_out / "iteration-record.json"
     if not record_path.is_file():
         return {"case_id": case_id, "status": "execution-error", "returncode": cp.returncode, "stderr": "missing iteration-record.json"}
+
     current = read_json(record_path)
     bundle = next_qa_bundle(case_out, reference)
     current["blocking_count"] = bundle["blocking_count"]
     current["difference_count"] = bundle["difference_count"]
     current["resume_after_assets"] = resume_after_assets
+    current["source_resolution"] = source_resolution or {}
 
     before = read_json(baseline_layout)
     after = read_json(case_out / "layout.json")
@@ -229,7 +241,10 @@ def run_case(*, case_id: str, iteration: int, source_layout: Path, baseline_layo
         write_json(case_out / "page-graph.json", bundle["page_graph"])
         write_json(case_out / "deterministic-difference-graph.json", bundle["deterministic_difference_graph"])
         write_json(case_out / "astra-visual-qa-request.json", bundle["astra_request"])
-        current["next_action"] = "run next Astra visual QA iteration"
+        state = build_accepted_state(case_id, current, iteration_dir=case_out)
+        write_accepted_state(output_dir / case_id / "accepted-state.json", state)
+        current["accepted_state"] = state.to_dict()
+        current["next_action"] = "run next Astra visual QA iteration from the persisted accepted state"
     write_json(record_path, current)
     return current
 
@@ -257,9 +272,17 @@ def main() -> int:
         if not ingested_record.is_file():
             skipped.append({"case_id": case_id, "reason": "missing-ingested-iteration"})
             continue
-        previous = read_json(ingested_record)
-        status = previous.get("status")
-        baseline_layout = args.candidate_runs / case_id / "layout.json"
+        ingested_previous = read_json(ingested_record)
+        status = ingested_previous.get("status")
+        candidate_layout = args.candidate_runs / case_id / "layout.json"
+        try:
+            accepted_layout, source_meta = resolve_source_layout(
+                case_id=case_id, iteration=args.iteration, candidate_layout=candidate_layout, output_root=args.output_root,
+            )
+        except FileNotFoundError:
+            errors.append({"case_id": case_id, "reason": "missing-candidate-layout"})
+            continue
+        regression_baseline = previous_accepted_record(case_id, args.iteration, args.output_root, ingested_previous)
 
         resume_layout, resume_meta = resolve_resume_layout(args.asset_resolved_root, case_id, args.iteration)
         resume_after_assets = status == "external-asset" and resume_layout is not None
@@ -273,7 +296,10 @@ def main() -> int:
             skipped.append({"case_id": case_id, "reason": status or "not-repair-ready"})
             continue
 
-        source_layout = resume_layout if resume_after_assets else baseline_layout
+        # A resolved asset layout is the repair input, but drift and rollback are always measured
+        # against the last accepted baseline, never against the original candidate after iteration 1.
+        source_layout = resume_layout if resume_after_assets else accepted_layout
+        baseline_layout = accepted_layout
         if not resume_after_assets and not merged_graph.is_file():
             skipped.append({"case_id": case_id, "reason": "missing-merged-difference-graph"})
             continue
@@ -285,26 +311,24 @@ def main() -> int:
             errors.append({"case_id": case_id, "reason": "missing-source-layout-or-reference"})
             continue
 
-        if resume_after_assets:
-            allowed_ids = generated_asset_ids(read_json(source_layout))
-        else:
-            allowed_ids = allowed_ids_from_graph(merged_graph)
+        allowed_ids = generated_asset_ids(read_json(source_layout)) if resume_after_assets else allowed_ids_from_graph(merged_graph)
         result = run_case(
             case_id=case_id, iteration=args.iteration, source_layout=source_layout, baseline_layout=baseline_layout,
             merged_graph=None if resume_after_assets else merged_graph, reference=reference, output_dir=args.output_root,
-            previous_record=previous, tolerance=args.visual_regression_tolerance, resume_after_assets=resume_after_assets,
-            allowed_object_ids=allowed_ids,
+            previous_record=regression_baseline, tolerance=args.visual_regression_tolerance,
+            resume_after_assets=resume_after_assets, allowed_object_ids=allowed_ids, source_resolution=source_meta,
         )
         results.append(result)
         if result.get("status") == "execution-error":
             errors.append(result)
 
     summary = {
-        "schema": "ai-ppt-plus/astra-iteration-batch/v3",
+        "schema": "ai-ppt-plus/astra-iteration-batch/v4",
         "iteration": args.iteration,
         "executed_count": len(results),
         "asset_resumed_count": sum(1 for item in results if item.get("resume_after_assets") is True),
         "accepted_count": sum(1 for item in results if item.get("accepted") is True),
+        "accepted_state_update_count": sum(1 for item in results if item.get("accepted_state")),
         "rollback_count": sum(1 for item in results if item.get("status") == "rolled-back-regression"),
         "object_drift_rollback_count": sum(1 for item in results if "unauthorized_object_drift" in ((item.get("regression") or {}).get("reasons") or [])),
         "semantic_rollback_count": sum(1 for item in results if "semantic_accuracy_regressed" in ((item.get("regression") or {}).get("reasons") or [])),
@@ -312,9 +336,7 @@ def main() -> int:
     }
     write_json(args.output_root / f"iteration-{args.iteration}-batch-summary.json", summary)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
-    if args.strict and errors:
-        return 2
-    return 0
+    return 2 if args.strict and errors else 0
 
 
 if __name__ == "__main__":
