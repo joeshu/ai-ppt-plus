@@ -13,6 +13,25 @@ ROOT = Path(__file__).resolve().parent
 _ORIGINAL = legacy.build_layout
 
 
+def _apply_reference_rich_text(table):
+    object_id = table.get("object_id")
+    rows = table.get("rows") or []
+    if object_id == "policy-merged-table" and len(rows) > 1 and rows[1]:
+        rows[1][0] = {
+            "runs": [
+                {"text": "新增装机\n", "bold": True, "size": 8.2, "color": "#0A2B5E"},
+                {"text": "（新装竣工）", "bold": True, "size": 7.3, "color": "#0A2B5E"},
+            ]
+        }
+    if object_id == "monthly-subsidy-table" and rows:
+        rows[-1][0] = {
+            "runs": [
+                {"text": "本月预计补贴", "bold": True, "size": 8.2, "color": "#E60012"},
+                {"text": "（元）", "bold": True, "size": 7.2, "color": "#E60012"},
+            ]
+        }
+
+
 def normalize_writer_contract(deck):
     """Normalize reference-fixture shorthand into the current strict writer contract."""
     for slide in deck.get("slides", []) or []:
@@ -28,6 +47,7 @@ def normalize_writer_contract(deck):
                     style["align"] = 2  # PP_ALIGN.CENTER, JSON-safe
                 if style.get("valign") == "mid":
                     style["valign"] = "middle"
+            _apply_reference_rich_text(table)
     return deck
 
 
