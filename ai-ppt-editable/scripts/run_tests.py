@@ -10,6 +10,7 @@ Usage: run_tests.py [--report test-report.json] [--timeout-seconds N]
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -33,18 +34,35 @@ def yaml_check(root: Path) -> dict:
     return {"status": "passed" if not issues else "failed", "valid": not issues, "files": [str(path) for path in files], "issues": issues}
 
 
+def _test_environment(root: Path) -> dict[str, str]:
+    """Expose the skill root so direct test scripts can import reconstruction.
+
+    The worker deliberately executes tests as plain Python files rather than
+    through pytest. In that mode sys.path[0] is ``tests/`` rather than the skill
+    root, so sibling packages such as ``reconstruction`` are otherwise hidden.
+    Preserve any caller-provided PYTHONPATH while prepending the authoritative
+    editable-skill root.
+    """
+    env = os.environ.copy()
+    existing = env.get("PYTHONPATH")
+    env["PYTHONPATH"] = str(root) + (os.pathsep + existing if existing else "")
+    return env
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report")
     parser.add_argument("--timeout-seconds", type=int, default=300)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
+    test_env = _test_environment(root)
     results = []
     for test in sorted((root / "tests").glob("test_*.py")):
         try:
             completed = subprocess.run(
                 [sys.executable, str(test)],
                 cwd=root,
+                env=test_env,
                 capture_output=True,
                 text=True,
                 timeout=args.timeout_seconds,
