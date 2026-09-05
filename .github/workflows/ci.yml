@@ -43,7 +43,9 @@ jobs:
           python ai-ppt-visual-gen/scripts/run_tests.py --parallel-workers 4 --report visual-skill-test-report.json
           python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
       - name: Run Astra reconstruction contract tests
-        run: python ai-ppt-editable/tests/test_reconstruction_engine.py
+        run: |
+          python ai-ppt-editable/tests/test_reconstruction_engine.py
+          python ai-ppt-editable/tests/test_reconstruction_integration.py
       - name: Run schema, DAG, package and golden regressions
         run: python scripts/run_tests.py --parallel-workers 4 --report test-report.json
       - name: Replay social-channel editable PPTX case
