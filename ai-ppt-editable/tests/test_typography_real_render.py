@@ -30,16 +30,22 @@ def main():
     assert deck["slides"][0]["texts"][0]["size"] == 24
     assert result["deck"]["slides"][0]["texts"][0]["runs"] == deck["slides"][0]["texts"][0]["runs"]
 
+    # Match the family declared by assets/fonts/font-manifest.json.  Give the
+    # fixture an explicit top inset so the target render itself is a valid,
+    # non-overflow typography specimen; the gate remains fail-closed.
+    cjk_family = "Noto Sans CJK SC"
     zh = {"assets_dir": ".", "units": "fraction", "slide_width_in": 13.333333,
-          "slide_height_in": 7.5, "theme": {"font": "Noto Sans SC"}, "slides": [{"texts": [
-              {"object_id": "zh-title", "x": .08, "y": .16, "w": .84, "h": .28,
-               "size": 22, "font": "Noto Sans SC", "text": "存量用户价值提升 2026",
+          "slide_height_in": 7.5, "theme": {"font": cjk_family}, "slides": [{"texts": [
+              {"object_id": "zh-title", "x": .08, "y": .10, "w": .84, "h": .42,
+               "margin_top": 24, "size": 22, "font": cjk_family, "text": "存量用户价值提升 2026",
                "runs": [{"text": "存量用户", "bold": True},
                         {"text": "价值提升 ", "color": "D71920"},
                         {"text": "2026", "bold": True}]}]}]}
     zh_result, zh_target = calibrate_case(zh, "zh-title", 28, tolerance=.0002)
     assert zh_target["line_count"] >= 1
+    assert zh_target["font_verified"] is True
     assert zh_target["copy_valid"] is True
+    assert zh_target["overflow"] is False
     assert zh_result["deck"]["slides"][0]["texts"][0]["runs"] == zh["slides"][0]["texts"][0]["runs"]
     assert "存量用户" in zh_result["deck"]["slides"][0]["texts"][0]["text"]
     print("PASS actual LibreOffice typography correction for Latin and Chinese mixed rich text")
