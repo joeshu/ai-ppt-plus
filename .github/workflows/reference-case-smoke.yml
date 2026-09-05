@@ -1,0 +1,39 @@
+name: reference-derived case smoke
+
+on:
+  push:
+    branches:
+      - feat/reconstruction-p0-p1-20260905
+  workflow_dispatch:
+
+jobs:
+  fttr-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install rendering dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libreoffice poppler-utils fontconfig
+          mkdir -p "$HOME/.local/share/fonts"
+          cp ai-ppt-editable/assets/fonts/NotoSansSC-Regular.ttf "$HOME/.local/share/fonts/"
+          fc-cache -f
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+      - name: Run reference-derived FTTR policy replay
+        run: |
+          python evals/case-replay-12/run_reference_case.py \
+            --case-id native-table-merge-richtext-01 \
+            --output-dir .distillation/reference-cases/native-table-merge-richtext-01 \
+            --report .distillation/reference-cases/native-table-merge-richtext-01/report.json \
+            --strict-technical
+      - name: Upload reference-case evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reference-case-native-table-merge-richtext-01
+          include-hidden-files: true
+          path: .distillation/reference-cases/native-table-merge-richtext-01
