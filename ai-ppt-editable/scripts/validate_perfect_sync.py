@@ -22,6 +22,7 @@ SCHEMA = "ai-ppt-editable/upstream-perfect-sync/v1"
 # governed by the manifest hashes unless explicitly listed here or in the
 # checked-in manifest's excluded_paths.
 POST_BASELINE_INFRASTRUCTURE_EXCLUSIONS = {
+    "assets/imagegen-assets-manifest.template.json": "post-baseline current-run ImageGen ownership and final-asset SHA contract",
     "scripts/run_tests.py": "post-baseline standalone test-harness compatibility",
     "scripts/validate_imagegen_assets_manifest.py": "post-baseline native-imagegen final-asset enforcement",
     "tests/test_asset_hashes.py": "post-baseline imagegen fallback regression coverage",

@@ -1,0 +1,18 @@
+{
+  "schema": "ai-ppt-plus/page-graph-provenance/v1",
+  "request_id": "<current-reference-rerun-request-id>",
+  "producer": {
+    "task": "visual-reconstruction",
+    "provider": "<provider-neutral-host>",
+    "model": "<reasoning-model>",
+    "generation_id": "<host-generation-id>"
+  },
+  "source": {
+    "path": "reference.png",
+    "sha256": "<sha256-of-reference.png>"
+  },
+  "page_graph": {
+    "path": "page-graph.json",
+    "sha256": "<sha256-of-page-graph.json>"
+  }
+}

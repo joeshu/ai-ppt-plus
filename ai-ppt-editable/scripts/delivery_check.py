@@ -9,6 +9,7 @@ from pathlib import Path
 
 from atomic_output import atomic_write_json
 from editability import summarize_objects, validate_objects
+from validate_authoring_provenance import validate as validate_authoring_provenance
 
 
 def load(path):
@@ -86,6 +87,8 @@ def main() -> int:
     parser.add_argument("--preview-consistency-validation")
     parser.add_argument("--require-preview-consistency", action="store_true")
     parser.add_argument("--font-delivery-report")
+    parser.add_argument("--current-rerun", help="override project current-rerun.json pointer")
+    parser.add_argument("--require-authoring-provenance", action="store_true")
     parser.add_argument("--require-font-delivery", action="store_true")
     parser.add_argument("--expected-slides", type=int)
     parser.add_argument("--expected-ratio", type=float)
@@ -141,6 +144,28 @@ def main() -> int:
     current_hash = sha256(args.pptx) if pptx_path.is_file() else None
     check(bool(inspection and inspection.get("deck_sha256") == current_hash), "stale_inspection_report", "inspection report must be hash-bound to the current PPTX")
     check(bool(render and render.get("deck_sha256") == current_hash), "stale_render_report", "render report must be hash-bound to the current PPTX")
+
+    reference_release = bool(route_report and route_report.get("route") == "reference-reconstruction")
+    authoring_provenance_required = bool(args.require_authoring_provenance or reference_release)
+    if authoring_provenance_required:
+        pointer_path = Path(args.current_rerun).resolve() if args.current_rerun else Path(args.manifest).resolve().parent / "current-rerun.json"
+        pointer = load(pointer_path)
+        if not pointer:
+            check(False, "current_rerun_missing", "reference reconstruction release requires a valid current-rerun.json pointer")
+        else:
+            check(pointer.get("deck_sha256") == current_hash, "current_rerun_deck_mismatch", "current rerun pointer must be hash-bound to the delivered PPTX")
+            request_path = Path(str(pointer.get("run_request", "")))
+            provenance_path = Path(str(pointer.get("authoring_provenance", "")))
+            if not request_path.is_file() or not provenance_path.is_file():
+                check(False, "authoring_provenance_evidence_missing", "current rerun request/provenance files must exist")
+            else:
+                try:
+                    provenance_validation = validate_authoring_provenance(request_path, provenance_path, pptx_path)
+                except Exception as exc:
+                    provenance_validation = {"valid": False, "issues": [{"code": "authoring_provenance_unreadable", "message": f"{type(exc).__name__}: {exc}"}]}
+                check(bool(provenance_validation.get("valid")), "authoring_provenance_failed", "delivered reference reconstruction must be authored by the current strict rerun transaction")
+                check(pointer.get("request_id") == provenance_validation.get("request_id"), "current_rerun_request_id_mismatch", "current rerun pointer and provenance validation must identify the same request")
+                quality_evidence["authoring_provenance"] = provenance_validation
     if args.require_embedded_fonts:
         check(bool((inspection or {}).get("embedded_fonts", {}).get("present")), "embedded_fonts_missing", "Chinese delivery requires verified OOXML embedded font parts")
     if args.require_font_delivery:
