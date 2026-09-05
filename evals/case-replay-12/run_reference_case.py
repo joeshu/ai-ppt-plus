@@ -9,6 +9,7 @@ from pathlib import Path
 import run_replay_suite as legacy
 from reference_layouts import build_reference_layout
 from reference_layouts_v2 import build_reference_layout_v2
+from reference_layouts_v3 import build_reference_layout_v3
 
 ROOT = Path(__file__).resolve().parent
 _ORIGINAL = legacy.build_layout
@@ -45,7 +46,7 @@ def normalize_writer_contract(deck):
                 if not isinstance(style, dict):
                     continue
                 if style.get("align") == "center":
-                    style["align"] = 2  # PP_ALIGN.CENTER, JSON-safe
+                    style["align"] = 2
                 if style.get("valign") == "mid":
                     style["valign"] = "middle"
             _apply_reference_rich_text(table)
@@ -53,7 +54,9 @@ def normalize_writer_contract(deck):
 
 
 def build_reference(case, run_dir, optimized):
-    resolved = build_reference_layout_v2(case, run_dir, optimized, legacy)
+    resolved = build_reference_layout_v3(case, run_dir, optimized, legacy)
+    if resolved is None:
+        resolved = build_reference_layout_v2(case, run_dir, optimized, legacy)
     if resolved is None:
         resolved = build_reference_layout(case, run_dir, optimized, legacy)
     return resolved
@@ -87,11 +90,14 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     reference = ROOT / "visual" / f"{args.case_id}-reference.png"
     result = legacy.native_evaluate(case, output_dir, reference, optimized=True)
+    version = "v3" if build_reference_layout_v3(case, output_dir, True, legacy) is not None else (
+        "v2" if build_reference_layout_v2(case, output_dir, True, legacy) is not None else "v1"
+    )
     report = {
         "schema": "ai-ppt-plus/reference-case-replay/v1",
         "case_id": args.case_id,
         "reference_builder": True,
-        "reference_builder_version": "v2" if build_reference_layout_v2(case, output_dir, True, legacy) is not None else "v1",
+        "reference_builder_version": version,
         "result": result,
         "visual_metrics": (result.get("visual") or {}).get("metrics") or {},
         "technical_status": result.get("technical_status"),
