@@ -212,7 +212,7 @@ def test_provider_neutral_control_plane_completes_one_asset_resume_round_and_pro
         broken["source_layout"] = None
         rejected = evaluate_case([distilled1, broken])
         assert rejected["promotable"] is False
-        assert "source_layout_missing" in rejected["evaluations"][-1]["reasons"]
+        assert "source_lineage_missing" in rejected["evaluations"][-1]["reasons"]
 
 
 if __name__ == "__main__":
