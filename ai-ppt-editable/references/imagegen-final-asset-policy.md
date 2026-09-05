@@ -16,17 +16,35 @@ final PPT object:
 
 `source_reuse` crops are allowed only as reference evidence, crop geometry, or
 source-vs-render comparison material. They must never be inserted as the final
-asset for those classes by default. If generation fails, pause at a user-
-decision gate and present exactly two choices: (1) retry/continue native
-`imagegen`, or (2) use deterministic original-image crop/cutout
-(`source_reuse`). Never choose either route silently. The selected route,
-approver, timestamp and reason must be recorded in the run manifest. If the
-user has not selected a route, the asset remains blocked; an unlabelled
-fallback, flat fill, generic icon, or full-slide screenshot is forbidden.
+asset for those classes by default.
+
+The bounded retry policy is authoritative. Native image generation is retried
+up to three attempts by default. After the third failed attempt the state must
+be `user-choice-required`, with exactly the two existing choices:
+`continue-native-generation` and `crop-matting-fallback`. The system must not
+automatically select either choice.
+
+A crop/matting fallback is valid only when all of the following are recorded:
+
+- `fallback_decision: user_approved`;
+- `selected_choice: crop-matting-fallback`;
+- non-empty `decision_id`, `decision_reason`, and `decision_timestamp`;
+- `native_retry_evidence.status: user-choice-required`;
+- `attempts_exhausted >= max_native_attempts >= 3`;
+- both legal choices in `native_retry_evidence.choices`;
+- one failure record for every exhausted native attempt. Each record must carry
+  its attempt number, native-imagegen backend, prompt reference, failed status,
+  and structured failure evidence (`issue_codes` or `error_code`).
+
+A user approval without exhausted native retry evidence is not sufficient and
+must fail closed. Likewise, retry evidence without the user's explicit
+`crop-matting-fallback` selection is insufficient. This prevents a direct
+`chroma-cutout`, contact-sheet split, source crop, generic icon, flat fill, or
+full-slide screenshot from silently becoming the final asset.
 
 Each generated final asset is independent and movable, and its manifest record
 must include `asset_id`, `asset_class`, `provenance_mode: imagegen` (or
-`source_reuse` only after the explicit fallback decision),
+`source_reuse` only after the complete explicit fallback contract),
 `generated_source`, `copied_to`, `prompt_file`, `backend`, and a delivered-file
 hash. Generated assets must not contain formal text, numbers, chart data, or
 logos that are authoritative for the page. Formal text remains native rich
@@ -50,7 +68,6 @@ python3 scripts/validate_imagegen_final_assets.py \
 
 Run the validator before composition and after rendering. The post-render
 record must identify the delivered PPT object and preserve the generated asset
-hash. For an approved fallback, the record must additionally include
-`fallback_decision: user_approved`, `decision_id`, `decision_reason`, and
-source bbox/hash evidence. A passing visual score cannot waive a route or
-provenance failure.
+hash. For an approved fallback, the record must additionally include the full
+retry-boundary evidence above plus source bbox/hash evidence. A passing visual
+score cannot waive a route or provenance failure.
