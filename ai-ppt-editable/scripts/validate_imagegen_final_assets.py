@@ -12,6 +12,8 @@ REQUIRED = {"icon", "icons", "badge", "gradient", "gradient_visual", "complex_ar
 BRAND = {"logo", "brand", "brand_lockup", "wordmark"}
 IMAGEGEN_WORD = re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])", re.I)
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK = 3
+FALLBACK_FAILURE_STATUSES = {"failed_qa", "generation_failed"}
 
 
 def _class(item: dict) -> str:
@@ -32,6 +34,63 @@ def _resolve(manifest: Path, value: object) -> Path | None:
         return None
     candidate = Path(value)
     return (candidate if candidate.is_absolute() else manifest.parent / candidate).resolve()
+
+
+def _fallback_errors(item: dict, *, asset_id: str) -> list[dict]:
+    errors: list[dict] = []
+    if item.get("fallback_decision") != "user_approved":
+        errors.append({"code": "fallback_user_approval_missing", "asset_id": asset_id})
+    for field in ("decision_id", "decision_reason", "decision_timestamp"):
+        if not isinstance(item.get(field), str) or not item[field].strip():
+            errors.append({"code": f"fallback_{field}_missing", "asset_id": asset_id})
+    if item.get("selected_choice") != "crop-matting-fallback":
+        errors.append({"code": "fallback_selected_choice_invalid", "asset_id": asset_id})
+
+    evidence = item.get("native_retry_evidence")
+    if not isinstance(evidence, dict):
+        errors.append({"code": "native_retry_evidence_missing", "asset_id": asset_id})
+        return errors
+    if evidence.get("status") != "user-choice-required":
+        errors.append({"code": "native_retry_boundary_not_reached", "asset_id": asset_id})
+    attempts_exhausted = evidence.get("attempts_exhausted")
+    max_attempts = evidence.get("max_native_attempts")
+    if not isinstance(attempts_exhausted, int) or attempts_exhausted < MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK:
+        errors.append({"code": "native_retry_attempts_not_exhausted", "asset_id": asset_id})
+    if not isinstance(max_attempts, int) or max_attempts < MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK:
+        errors.append({"code": "native_retry_budget_invalid", "asset_id": asset_id})
+    elif isinstance(attempts_exhausted, int) and attempts_exhausted < max_attempts:
+        errors.append({"code": "native_retry_budget_not_exhausted", "asset_id": asset_id})
+    choices = evidence.get("choices")
+    if not isinstance(choices, list) or "continue-native-generation" not in choices or "crop-matting-fallback" not in choices:
+        errors.append({"code": "native_retry_choices_invalid", "asset_id": asset_id})
+
+    attempts = evidence.get("attempts")
+    if not isinstance(attempts, list) or not isinstance(attempts_exhausted, int) or len(attempts) < attempts_exhausted:
+        errors.append({"code": "native_retry_attempt_records_incomplete", "asset_id": asset_id})
+        return errors
+    seen_attempts = set()
+    for attempt in attempts[:attempts_exhausted]:
+        if not isinstance(attempt, dict):
+            errors.append({"code": "native_retry_attempt_record_invalid", "asset_id": asset_id})
+            continue
+        number = attempt.get("attempt")
+        if not isinstance(number, int) or number < 1 or number in seen_attempts:
+            errors.append({"code": "native_retry_attempt_number_invalid", "asset_id": asset_id})
+        else:
+            seen_attempts.add(number)
+        if attempt.get("status") not in FALLBACK_FAILURE_STATUSES:
+            errors.append({"code": "native_retry_attempt_not_failed", "asset_id": asset_id, "attempt": number})
+        backend = attempt.get("backend")
+        if not isinstance(backend, str) or not IMAGEGEN_WORD.search(backend):
+            errors.append({"code": "native_retry_attempt_backend_invalid", "asset_id": asset_id, "attempt": number})
+        prompt_ref = attempt.get("prompt_ref")
+        if not isinstance(prompt_ref, str) or not prompt_ref.strip():
+            errors.append({"code": "native_retry_attempt_prompt_missing", "asset_id": asset_id, "attempt": number})
+        issue_codes = attempt.get("issue_codes")
+        error_code = attempt.get("error_code")
+        if not (isinstance(issue_codes, list) and issue_codes) and not (isinstance(error_code, str) and error_code.strip()):
+            errors.append({"code": "native_retry_attempt_failure_evidence_missing", "asset_id": asset_id, "attempt": number})
+    return errors
 
 
 def validate(path: Path, *, strict: bool = False) -> dict:
@@ -60,12 +119,14 @@ def validate(path: Path, *, strict: bool = False) -> dict:
         route = str(item.get("provenance_mode", "")).lower()
         required = ("generated_source", "copied_to", "prompt_file", "backend")
         missing = [key for key in required if not item.get(key)]
-        approved_fallback = route == "source_reuse" and item.get("fallback_decision") == "user_approved" and item.get("decision_id") and item.get("decision_reason") and item.get("decision_timestamp")
+        fallback_errors = _fallback_errors(item, asset_id=asset_id) if route == "source_reuse" else []
+        approved_fallback = route == "source_reuse" and not fallback_errors
         if route != "imagegen" and not approved_fallback:
             errors.append({"code": "final_asset_not_imagegen", "asset_id": asset_id, "asset_class": cls, "observed": route})
+            errors.extend(fallback_errors)
         if missing and not approved_fallback:
             errors.append({"code": "imagegen_evidence_missing", "asset_id": asset_id, "missing": missing})
-        if (item.get("source_reuse") is True or item.get("extraction_method") in {"source_reuse", "exact_crop", "crop"}) and not approved_fallback:
+        if (item.get("source_reuse") is True or item.get("extraction_method") in {"source_reuse", "exact_crop", "crop", "chroma-cutout", "contact-sheet-split"}) and not approved_fallback:
             errors.append({"code": "source_reuse_final_asset_forbidden", "asset_id": asset_id})
         if approved_fallback and not (item.get("source_ref") and item.get("source_bbox") and item.get("source_sha256")):
             errors.append({"code": "approved_fallback_missing_source_evidence", "asset_id": asset_id})
@@ -98,7 +159,17 @@ def validate(path: Path, *, strict: bool = False) -> dict:
                 errors.append({"code": "approved_fallback_source_hash_mismatch", "asset_id": asset_id})
 
         records.append({"asset_id": asset_id, "asset_class": cls, "route": route, "generated_source": item.get("generated_source"), "copied_to": item.get("copied_to")})
-    return {"schema": "ai-ppt-plus/imagegen-final-assets/v2", "valid": not errors, "strict": strict, "required_classes": sorted(REQUIRED), "asset_count": len(assets), "records": records, "errors": errors, "human_visual_review_required": True}
+    return {
+        "schema": "ai-ppt-plus/imagegen-final-assets/v3",
+        "valid": not errors,
+        "strict": strict,
+        "required_classes": sorted(REQUIRED),
+        "minimum_native_attempts_before_fallback": MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK,
+        "asset_count": len(assets),
+        "records": records,
+        "errors": errors,
+        "human_visual_review_required": True,
+    }
 
 
 def main() -> int:
