@@ -26,7 +26,8 @@ For text, preserve text content and rich-text runs when visible. Never invent hi
 
 VISUAL_QA_SYSTEM_INSTRUCTION = """You are the visual QA layer of a high-fidelity image-to-editable-PPTX reconstruction system.
 Compare the immutable source image with the rendered candidate and the candidate object manifest.
-Return only DifferenceGraph JSON. Every finding must identify an object_id and exactly one responsibility domain: geometry, typography, asset, or semantic.
+Return only DifferenceGraph JSON. Every finding must identify an object_id and exactly one responsibility domain: geometry, typography, asset, hierarchy, or semantic.
+Use hierarchy for z-order, grouping, containment, connector topology, parent/child and overlap-order mismatches. Use semantic for native object-type/data meaning mismatches.
 Geometry patches MUST use the candidate PageGraph normalized fraction coordinate system. Prefer measured, bounded patches and never convert to pixels or inches.
 Never request a full-page raster replacement. Semantic mismatches such as a visual table authored as an image are P0.
 Use P0 for editability/semantic contract violations, P1 for major visual mismatches, P2 for visible local mismatches, P3 for polish.
