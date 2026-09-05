@@ -131,6 +131,16 @@ def next_qa_bundle(iteration_dir: Path, reference: Path) -> dict:
     }
 
 
+def _resolved_asset_ids(report_path: Path) -> list[str]:
+    if not report_path.is_file():
+        return []
+    report = read_json(report_path)
+    return sorted({
+        str(item.get("object_id")) for item in report.get("resolved", []) or []
+        if isinstance(item, dict) and item.get("object_id")
+    })
+
+
 def resolve_resume_layout(asset_resolved_root: Path | None, case_id: str, iteration: int) -> tuple[Path | None, dict | None]:
     if asset_resolved_root is None:
         return None, None
@@ -148,34 +158,30 @@ def resolve_resume_layout(asset_resolved_root: Path | None, case_id: str, iterat
         if not layout.is_absolute():
             layout = resume_path.parent / layout
         if layout.is_file():
-            return layout.resolve(), resume
+            report_path = resume_path.parent / "asset-resolution-report.json"
+            return layout.resolve(), {
+                **resume,
+                "resolution_report": str(report_path.resolve()) if report_path.is_file() else None,
+                "resolved_object_ids": _resolved_asset_ids(report_path),
+            }
         return None, {**resume, "error": "resolved-layout-missing"}
     return None, None
 
 
-def allowed_ids_from_graph(merged_graph: Path | None) -> set[str]:
-    if merged_graph is None or not merged_graph.is_file():
+def allowed_ids_from_execution_report(path: Path) -> set[str]:
+    """Return only object IDs that the deterministic executor actually mutated.
+
+    Model-proposed patches, deferred actions, skipped actions and regeneration requests
+    are deliberately excluded. This keeps Object Drift Guard fail-closed around the
+    concrete mutation set rather than trusting the model's broader proposal set.
+    """
+    if not path.is_file():
         return set()
-    graph = read_json(merged_graph)
+    report = read_json(path)
     return {
-        str(item.get("object_id")) for item in graph.get("findings", []) or []
-        if isinstance(item, dict) and item.get("object_id") and item.get("proposed_patch")
+        str(item.get("object_id")) for item in report.get("applied", []) or []
+        if isinstance(item, dict) and item.get("object_id")
     }
-
-
-def generated_asset_ids(layout: dict) -> set[str]:
-    result = set()
-    for slide in layout.get("slides", []) or []:
-        if not isinstance(slide, dict):
-            continue
-        for collection in ("icons", "panels"):
-            for item in slide.get(collection, []) or []:
-                if not isinstance(item, dict) or not item.get("generation_provenance"):
-                    continue
-                object_id = item.get("object_id") or item.get("id") or item.get("name") or item.get("panel_id")
-                if object_id:
-                    result.add(str(object_id))
-    return result
 
 
 def previous_accepted_record(case_id: str, iteration: int, output_root: Path, fallback: dict) -> dict:
@@ -220,9 +226,15 @@ def run_case(*, case_id: str, iteration: int, source_layout: Path, baseline_layo
     current["resume_after_assets"] = resume_after_assets
     current["source_resolution"] = source_resolution or {}
 
+    if resume_after_assets:
+        effective_allowed_ids = set(allowed_object_ids or set())
+    else:
+        effective_allowed_ids = allowed_ids_from_execution_report(case_out / "repair-execution-report.json")
+    current["drift_allowed_object_ids"] = sorted(effective_allowed_ids)
+
     before = read_json(baseline_layout)
     after = read_json(case_out / "layout.json")
-    drift_report = compare_object_drift(before, after, allowed_object_ids=set(allowed_object_ids or set()))
+    drift_report = compare_object_drift(before, after, allowed_object_ids=effective_allowed_ids)
     write_json(case_out / "object-drift-report.json", drift_report)
     current["object_drift"] = drift_report
 
@@ -311,7 +323,7 @@ def main() -> int:
             errors.append({"case_id": case_id, "reason": "missing-source-layout-or-reference"})
             continue
 
-        allowed_ids = generated_asset_ids(read_json(source_layout)) if resume_after_assets else allowed_ids_from_graph(merged_graph)
+        allowed_ids = set(resume_meta.get("resolved_object_ids") or []) if resume_after_assets and resume_meta else None
         result = run_case(
             case_id=case_id, iteration=args.iteration, source_layout=source_layout, baseline_layout=baseline_layout,
             merged_graph=None if resume_after_assets else merged_graph, reference=reference, output_dir=args.output_root,
@@ -323,7 +335,7 @@ def main() -> int:
             errors.append(result)
 
     summary = {
-        "schema": "ai-ppt-plus/astra-iteration-batch/v4",
+        "schema": "ai-ppt-plus/astra-iteration-batch/v5",
         "iteration": args.iteration,
         "executed_count": len(results),
         "asset_resumed_count": sum(1 for item in results if item.get("resume_after_assets") is True),
