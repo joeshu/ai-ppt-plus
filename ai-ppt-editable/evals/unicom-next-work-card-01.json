@@ -1,0 +1,42 @@
+{
+  "schema": "ai-ppt-plus/reference-reconstruction-regression/v1",
+  "case_id": "unicom-next-work-card-01",
+  "title": "China Unicom next-work three-column card reconstruction",
+  "route": "reference-reconstruction",
+  "page_ratio": "16:9",
+  "features": [
+    "cjk-text",
+    "brand-logo",
+    "three-column-card-grid",
+    "dense-independent-icons",
+    "richtext-emphasis-runs",
+    "bullet-list",
+    "single-line-section-headings"
+  ],
+  "required_gates": {
+    "native_imagegen_for_non_brand_icons": true,
+    "generic_icon_substitution_forbidden": true,
+    "source_crop_icon_requires_explicit_user_fallback": true,
+    "brand_logo_source_exception": true,
+    "cjk_embedded_font_required": true,
+    "typography_calibration_required": true,
+    "title_single_line_guard": true,
+    "richtext_emphasis_same_text_object": true,
+    "three_column_template_geometry_lock": true,
+    "bullet_indent_reconstruction": true
+  },
+  "blocking_codes": [
+    "final_asset_route_requires_native_imagegen",
+    "imagegen_final_asset_manifest_missing",
+    "imagegen_final_asset_gate_failed",
+    "reference_cjk_requires_embedded_fonts",
+    "reference_cjk_font_evidence_missing"
+  ],
+  "human_review": [
+    "icon silhouette/style consistency",
+    "font family/weight and line-break fidelity",
+    "header and goal-strip alignment",
+    "brand logo fidelity",
+    "top strategy banner wrapping"
+  ]
+}
