@@ -16,12 +16,15 @@ COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 HASH_RE = re.compile(r"^[0-9a-f]{64}$")
 SCHEMA = "ai-ppt-editable/upstream-perfect-sync/v1"
 
-# These files are worker-local CI/test infrastructure added after the pinned
-# perfect baseline. They are intentionally allowed to evolve without claiming
-# byte parity with the upstream perfect branch. Core authoring/rendering files
-# remain governed by the manifest hashes.
+# These files are worker-local post-baseline infrastructure or hardening
+# adapters. They are intentionally allowed to evolve without claiming byte
+# parity with the upstream perfect branch. Core authoring/rendering files remain
+# governed by the manifest hashes unless explicitly listed here or in the
+# checked-in manifest's excluded_paths.
 POST_BASELINE_INFRASTRUCTURE_EXCLUSIONS = {
     "scripts/run_tests.py": "post-baseline standalone test-harness compatibility",
+    "scripts/validate_imagegen_assets_manifest.py": "post-baseline native-imagegen final-asset enforcement",
+    "tests/test_asset_hashes.py": "post-baseline imagegen fallback regression coverage",
 }
 
 
