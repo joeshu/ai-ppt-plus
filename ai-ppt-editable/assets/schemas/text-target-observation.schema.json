@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://joeshu.github.io/ai-ppt-plus/schemas/text-target-observation.schema.json",
+  "title": "Astra Screenshot Typography Target Observation",
+  "type": "object",
+  "required": ["requested_object_ids", "observations"],
+  "properties": {
+    "requested_object_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["object_id", "text", "bbox_px", "baselines_px", "line_count", "font_candidates", "runs", "confidence"],
+        "properties": {
+          "object_id": {"type": "string", "minLength": 1},
+          "text": {"type": "string", "minLength": 1},
+          "bbox_px": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}},
+          "baselines_px": {"type": "array", "minItems": 1, "items": {"type": "number"}},
+          "line_count": {"type": "integer", "minimum": 1},
+          "font_candidates": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "estimated_font_size_pt": {"type": ["number", "null"]},
+          "estimated_line_spacing": {"type": ["number", "null"]},
+          "runs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["text"],
+              "properties": {
+                "text": {"type": "string"},
+                "font": {"type": "string"},
+                "size": {"type": "number"},
+                "bold": {"type": "boolean"},
+                "italic": {"type": "boolean"},
+                "color": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
