@@ -70,6 +70,43 @@ Re-render -> QualityGate
 
 ## PageGraph
 
+### P0 fidelity extensions (host integration required)
+
+Reference reconstruction through `ReconstructionPipeline.run` requires an
+independent `source_inventory` and an `extract_objects` callback. Bind inventory
+and graph `source_sha256`, distinct observation/planning IDs, and each graph
+node's `source.source_object_id`. Source inventory must be observed separately
+from the image, not exported from the plan. `source_coverage.extract_pptx_objects`
+reads actual PPTX names recursively; authoring names must equal stable object
+IDs. This is an additional completeness check, not a replacement for semantic
+type, text, geometry or source-file hash validation. IDs/evidence alone cannot
+prove that an observer actually inspected an image.
+
+Use `repair_executors.execute_typography_search` for explicit bounded candidates
+measured by the actual renderer. The callback receives a candidate authoring
+deck and object ID and must return normalized ink bbox, line count, baselines,
+font verification, overflow state, renderer ID and render hash. Preserve copy
+and runs. A missing match leaves the old deck unchanged and requires review.
+The module does not supply a renderer or infer correct font metrics itself.
+
+Use `execute_peer_layout` for approved ordered peer constraints. It preserves
+unrelated objects, refuses locked-object changes and cannot shrink peers to
+make an infeasible constraint fit. This initial solver supports x/y equal gaps
+and optional equal size; containment, connector rerouting, and arbitrary
+PageGraph constraint solving remain unsupported and must not be inferred.
+
+`asset_subject.subject_placement` returns full-image placement from an alpha
+subject bbox without changing image bytes. Supply an isotropic target unit
+(pixels or inches, not unequal-axis slide fractions). Convert its result to
+the authoring unit explicitly. Asset visual QA and native imagegen policy
+remain required; transparent-boundary alignment is not a fidelity pass.
+
+These extensions have unit/fixture coverage. They are not evidence that the
+12 visual cases or PowerPoint/WPS end-to-end acceptance has improved. Host
+adapter wiring and actual render measurements must be verified before claiming
+production coverage. Do not describe the pending P1 delivery/benchmark work as
+complete on the strength of these tests.
+
 `reconstruction/graph_ir.py` is the normalized intermediate representation.
 
 It records:

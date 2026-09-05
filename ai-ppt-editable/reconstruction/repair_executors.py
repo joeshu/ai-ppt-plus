@@ -18,6 +18,43 @@ class RepairExecutionError(ValueError):
     pass
 
 
+def execute_peer_layout(deck, member_ids, **constraints):
+    """Apply a complete peer constraint atomically to the authoring contract."""
+    from .relation_geometry import solve_peer_layout
+    if str(deck.get("units") or "fraction") != "fraction":
+        raise RepairExecutionError("peer solver requires fraction coordinates")
+    candidate = deepcopy(deck)
+    objects = {identifier: _locate(candidate, identifier)[1] for identifier in member_ids}
+    solved = solve_peer_layout(objects, member_ids, **constraints)
+    for identifier in solved["applied"]:
+        item = _locate(candidate, identifier)[1]
+        item.update(solved["objects"][identifier])
+        _geometry_bounds(candidate, item)
+    return {"deck": candidate, "report": {"valid": True,
+            "applied": [{"object_id": i, "domain": "geometry"} for i in solved["applied"]],
+            "gap": solved["gap"]}}
+
+
+def execute_typography_search(deck, object_id, target, patches, render_measure, **options):
+    """Measure isolated deck candidates; only accepted typography is applied."""
+    from .typography_search import calibrate_typography
+    collection, original = _locate(deck, object_id)
+    if collection != "texts":
+        raise RepairExecutionError("typography search requires native text")
+    def measure(trial):
+        candidate = deepcopy(deck)
+        _locate(candidate, object_id)[1].update(trial)
+        return render_measure(candidate, object_id)
+    result = calibrate_typography(original, target, patches, measure, **options)
+    candidate = deepcopy(deck)
+    accepted = result["status"] == "accepted"
+    if accepted:
+        _locate(candidate, object_id)[1].update(result["best"]["object"])
+    changed = accepted and candidate != deck
+    return {"deck": candidate, "report": {"valid": accepted, "search": result,
+            "applied": [{"object_id": object_id, "domain": "typography"}] if changed else []}}
+
+
 def _slides(deck: dict[str, Any]) -> list[dict[str, Any]]:
     slides = deck.get("slides")
     if not isinstance(slides, list):

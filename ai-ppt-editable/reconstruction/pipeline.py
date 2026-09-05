@@ -10,6 +10,7 @@ from .difference_graph import DifferenceGraph
 from .graph_ir import PageGraph
 from .quality_gate import GateResult, QualityGate
 from .repair_router import RepairPlan, RepairRouter
+from .source_coverage import audit_source_coverage
 
 
 class Stage(str, Enum):
@@ -72,9 +73,18 @@ class ReconstructionPipeline:
         inspect: Callable[[PageGraph, Any, Any], DifferenceGraph],
         apply_repairs: Callable[[Any, RepairPlan], Any],
         measure: Callable[[PageGraph, Any, Any, DifferenceGraph], dict[str, Any]],
+        source_inventory: dict[str, Any] | None = None,
+        extract_objects: Callable[[Any], dict[str, Any]] | None = None,
     ) -> PipelineState:
         state = PipelineState()
         state.page_graph = understand()
+        if source_inventory is not None or state.page_graph.metadata.get("route") == "reference-reconstruction":
+            coverage = audit_source_coverage(source_inventory or {}, state.page_graph)
+            state.artifacts["source_coverage"] = coverage
+            if not coverage["valid"] or extract_objects is None:
+                state.stage = Stage.BLOCKED
+                state.artifacts["coverage_blocker"] = "source coverage or PPTX extractor missing"
+                return state
         state.stage = Stage.AUTHOR
         deck = author(state.page_graph)
         state.artifacts["candidate"] = deck
@@ -84,6 +94,13 @@ class ReconstructionPipeline:
             state.stage = Stage.RENDER
             rendered = render(deck)
             state.artifacts[f"render_{index}"] = rendered
+            if source_inventory is not None:
+                coverage = audit_source_coverage(source_inventory, state.page_graph, extract_objects(deck))
+                state.artifacts[f"source_coverage_{index}"] = coverage
+                if not coverage["valid"]:
+                    state.stage = Stage.BLOCKED
+                    state.artifacts["blocked_candidate"] = deck
+                    return state
 
             state.stage = Stage.QA
             differences = inspect(state.page_graph, deck, rendered)
