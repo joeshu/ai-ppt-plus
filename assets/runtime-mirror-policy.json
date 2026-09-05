@@ -4,173 +4,44 @@
   "pairs": [
     {
       "worker": "ai-ppt-visual-gen",
-      "compare_globs": [
-        "scripts/*.py",
-        "references/*.md",
-        "assets/*.template.json",
-        "assets/schemas/*.json"
-      ],
+      "compare_globs": ["scripts/*.py", "references/*.md", "assets/*.template.json", "assets/schemas/*.json"],
       "exclude": [
-        "assets/skill-package.json",
-        "scripts/compose_image_pptx.py",
-        "scripts/run_visual_pipeline.py",
-        "scripts/register_generated_slide.py",
-        "scripts/validate_outline_table.py",
-        "scripts/materialize_visual_generation_prompts.py",
-        "scripts/validate_visual_assertions.py",
-        "scripts/validate_visual_generation_plan.py",
-        "assets/visual-generation-manifest.template.json",
-        "assets/visual-generation-plan.template.json",
-        "assets/schemas/visual-generation-manifest.schema.json",
-        "assets/schemas/visual-generation-plan.schema.json",
-        "references/skill-routing.md",
-        "references/three-skill-architecture.md",
-        "references/visual-generation-tool.md",
-        "references/visual-intermediate.md",
-        "references/outline-thought-table.md",
-        "references/rendered-slide-qa.md",
-        "references/operations-matrix.md"
+        "assets/skill-package.json", "scripts/compose_image_pptx.py", "scripts/run_visual_pipeline.py", "scripts/register_generated_slide.py", "scripts/validate_outline_table.py", "scripts/materialize_visual_generation_prompts.py", "scripts/validate_visual_assertions.py", "scripts/validate_visual_generation_plan.py", "assets/visual-generation-manifest.template.json", "assets/visual-generation-plan.template.json", "assets/schemas/visual-generation-manifest.schema.json", "assets/schemas/visual-generation-plan.schema.json", "references/skill-routing.md", "references/three-skill-architecture.md", "references/visual-generation-tool.md", "references/visual-intermediate.md", "references/outline-thought-table.md", "references/rendered-slide-qa.md", "references/operations-matrix.md"
       ],
-      "required_paths": [
-        "scripts/atomic_output.py",
-        "scripts/build_visual_generation_strip.py",
-        "scripts/materialize_visual_generation_prompts.py",
-        "scripts/run_tests.py",
-        "scripts/validate_skill_package.py",
-        "scripts/validate_visual_generation_plan.py",
-        "scripts/validate_visual_assertions.py",
-        "scripts/validate_workflow_state.py"
-      ]
+      "required_paths": ["scripts/atomic_output.py", "scripts/build_visual_generation_strip.py", "scripts/materialize_visual_generation_prompts.py", "scripts/run_tests.py", "scripts/validate_skill_package.py", "scripts/validate_visual_generation_plan.py", "scripts/validate_visual_assertions.py", "scripts/validate_workflow_state.py"]
     },
     {
       "worker": "ai-ppt-editable",
-      "compare_globs": [
-        "scripts/*.py",
-        "references/*.md",
-        "assets/*.template.json",
-        "assets/schemas/*.json",
-        "assets/fonts/*"
-      ],
+      "compare_globs": ["scripts/*.py", "references/*.md", "assets/*.template.json", "assets/schemas/*.json", "assets/fonts/*"],
       "exclude": [
-        "scripts/asset_placement.py",
-        "scripts/audit_icon_layers.py",
-        "scripts/build_perfect_sync_manifest.py",
-        "scripts/build_slide_manifest.py",
-        "scripts/pipeline_engine.py",
-        "scripts/probe_environment.py",
-        "scripts/run_tests.py",
-        "scripts/validate_routing_contract.py",
-        "scripts/validate_perfect_sync.py",
-        "assets/skill-package.json",
-        "assets/route-decision-visual-creation.template.json",
-        "assets/skill-routing.template.json",
-        "assets/schemas/pipeline-run.schema.json",
-        "assets/schemas/skill-routing.schema.json",
-        "references/authoring-backend.md",
-        "references/icon-asset-protocol.md",
-        "references/panel-asset-protocol.md",
-        "references/perfect-source-sync.md",
-        "references/pipeline-performance.md",
-        "references/skill-routing.md",
-        "references/text-layout-model.md",
-        "references/visual-intermediate.md",
-        "references/operations-matrix.md"
+        "scripts/asset_placement.py", "scripts/audit_icon_layers.py", "scripts/build_perfect_sync_manifest.py", "scripts/build_slide_manifest.py", "scripts/pipeline_engine.py", "scripts/probe_environment.py", "scripts/run_tests.py", "scripts/validate_routing_contract.py", "scripts/validate_perfect_sync.py", "assets/skill-package.json", "assets/route-decision-visual-creation.template.json", "assets/skill-routing.template.json", "assets/schemas/pipeline-run.schema.json", "assets/schemas/skill-routing.schema.json", "references/authoring-backend.md", "references/icon-asset-protocol.md", "references/panel-asset-protocol.md", "references/perfect-source-sync.md", "references/pipeline-performance.md", "references/skill-routing.md", "references/text-layout-model.md", "references/visual-intermediate.md", "references/operations-matrix.md"
       ],
-      "required_paths": [
-        "scripts/atomic_output.py",
-        "scripts/run_pipeline.py",
-        "scripts/run_tests.py",
-        "scripts/validate_handoff.py",
-        "scripts/validate_route.py",
-        "scripts/validate_skill_package.py",
-        "scripts/validate_visual_generation_plan.py",
-        "scripts/validate_workflow_state.py"
-      ],
+      "required_paths": ["scripts/atomic_output.py", "scripts/run_pipeline.py", "scripts/run_tests.py", "scripts/validate_handoff.py", "scripts/validate_route.py", "scripts/validate_skill_package.py", "scripts/validate_visual_generation_plan.py", "scripts/validate_workflow_state.py"],
       "adapter_exclusions": [
-        {
-          "path": "references/imagegen-final-asset-policy.md",
-          "reason": "worker-only final imagegen asset boundary protocol"
-        },
-        {
-          "path": "references/imagegen-sheet-slicing.md",
-          "reason": "worker-only generated-sheet slicing protocol"
-        },
-        {
-          "path": "references/last-mile-visual-lock.md",
-          "reason": "worker-only last-mile visual lock protocol"
-        },
-        {
-          "path": "references/ooxml-compatibility.md",
-          "reason": "worker-only OOXML preservation adapter protocol"
-        },
-        {
-          "path": "references/source-crop-integrity.md",
-          "reason": "worker-only source-reuse crop integrity protocol"
-        },
-        {
-          "path": "scripts/authoring_backend.py",
-          "reason": "P1 native semantic structure input gate adapter"
-        },
-        {
-          "path": "scripts/build_object_manifest.py",
-          "reason": "worker-only native semantic object and merge manifest adapter"
-        },
-        {
-          "path": "scripts/component_expander.py",
-          "reason": "P1 native panel/table promotion adapter"
-        },
-        {
-          "path": "scripts/compose_pptx.py",
-          "reason": "P1 native structure composition adapter"
-        },
-        {
-          "path": "scripts/embed_fonts.py",
-          "reason": "worker-specific font alias and package compatibility adapter"
-        },
-        {
-          "path": "scripts/normalize_ooxml_relationships.py",
-          "reason": "worker-only ZIP-level viewer compatibility adapter"
-        },
-        {
-          "path": "scripts/case_replay_audit.py",
-          "reason": "worker-only case-level OOXML merge and native-text replay gate"
-        },
-        {
-          "path": "scripts/compare_visual.py",
-          "reason": "worker-only authored-canvas raw-slide comparison adapter"
-        },
-        {
-          "path": "scripts/pptx_primitives.py",
-          "reason": "P1 native table styling and rich-text authoring adapter"
-        },
-        {
-          "path": "scripts/run_pipeline.py",
-          "reason": "worker-specific standalone orchestration adapter; root owns route orchestration"
-        },
-        {
-          "path": "scripts/validate_imagegen_final_assets.py",
-          "reason": "worker-only final imagegen asset validator"
-        },
-        {
-          "path": "scripts/validate_native_editability.py",
-          "reason": "P1 worker-only native object audit"
-        },
-        {
-          "path": "scripts/validate_object_manifest.py",
-          "reason": "P1 native panel/table manifest gate adapter"
-        },
-        {
-          "path": "scripts/validate_repackaging_invariants.py",
-          "reason": "worker-only post-composition preservation gate"
-        },
-        {
-          "path": "scripts/validate_source_crop_integrity.py",
-          "reason": "worker-only source-reuse crop integrity adapter"
-        },
-        {
-          "path": "scripts/validate_visual_lock.py",
-          "reason": "worker-only last-mile visual lock validator"
-        }
+        {"path": "assets/schemas/difference-graph.schema.json", "reason": "worker-only Astra visual QA DifferenceGraph contract"},
+        {"path": "assets/schemas/reconstruction-graph.schema.json", "reason": "worker-only Astra reconstruction Graph IR contract"},
+        {"path": "references/astra-visual-reconstruction-engine.md", "reason": "worker-only Astra reconstruction architecture protocol"},
+        {"path": "references/imagegen-final-asset-policy.md", "reason": "worker-only final imagegen asset boundary protocol"},
+        {"path": "references/imagegen-sheet-slicing.md", "reason": "worker-only generated-sheet slicing protocol"},
+        {"path": "references/last-mile-visual-lock.md", "reason": "worker-only last-mile visual lock protocol"},
+        {"path": "references/ooxml-compatibility.md", "reason": "worker-only OOXML preservation adapter protocol"},
+        {"path": "references/source-crop-integrity.md", "reason": "worker-only source-reuse crop integrity protocol"},
+        {"path": "scripts/authoring_backend.py", "reason": "P1 native semantic structure input gate adapter"},
+        {"path": "scripts/build_object_manifest.py", "reason": "worker-only native semantic object and merge manifest adapter"},
+        {"path": "scripts/component_expander.py", "reason": "P1 native panel/table promotion adapter"},
+        {"path": "scripts/compose_pptx.py", "reason": "P1 native structure composition adapter"},
+        {"path": "scripts/embed_fonts.py", "reason": "worker-specific font alias and package compatibility adapter"},
+        {"path": "scripts/normalize_ooxml_relationships.py", "reason": "worker-only ZIP-level viewer compatibility adapter"},
+        {"path": "scripts/case_replay_audit.py", "reason": "worker-only case-level OOXML merge and native-text replay gate"},
+        {"path": "scripts/compare_visual.py", "reason": "worker-only authored-canvas raw-slide comparison adapter"},
+        {"path": "scripts/pptx_primitives.py", "reason": "P1 native table styling and rich-text authoring adapter"},
+        {"path": "scripts/run_pipeline.py", "reason": "worker-specific standalone orchestration adapter; root owns route orchestration"},
+        {"path": "scripts/validate_imagegen_final_assets.py", "reason": "worker-only final imagegen asset validator"},
+        {"path": "scripts/validate_native_editability.py", "reason": "P1 worker-only native object audit"},
+        {"path": "scripts/validate_object_manifest.py", "reason": "P1 native panel/table manifest gate adapter"},
+        {"path": "scripts/validate_repackaging_invariants.py", "reason": "worker-only post-composition preservation gate"},
+        {"path": "scripts/validate_source_crop_integrity.py", "reason": "worker-only source-reuse crop integrity adapter"},
+        {"path": "scripts/validate_visual_lock.py", "reason": "worker-only last-mile visual lock validator"}
       ]
     }
   ]
