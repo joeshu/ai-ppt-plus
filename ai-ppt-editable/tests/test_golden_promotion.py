@@ -28,6 +28,8 @@ def _record(iteration: int, **overrides):
         "pixel_fidelity_score": 0.96,
         "semantic_accuracy": 1.0,
         "semantic_audit": _semantic_audit(),
+        "source_accepted_iteration": max(0, iteration - 1),
+        "source_layout": f"iteration-{max(0, iteration - 1)}/layout.json",
         "human_approved": True,
         "artifacts": {"pptx": f"iteration-{iteration}/editable.pptx"},
     }
@@ -41,6 +43,8 @@ def test_two_consecutive_clean_iterations_are_promotable():
     assert result["stable_streak"] == 2
     assert result["candidate_iteration"] == 2
     assert result["candidate_semantic_evidence"]["semantic_object_coverage_complete"] is True
+    assert result["candidate_source_lineage"]["complete"] is True
+    assert result["candidate_source_lineage"]["source_accepted_iteration"] == 1
 
 
 def test_missing_semantic_accuracy_fails_closed():
@@ -94,6 +98,15 @@ def test_missing_semantic_object_counts_fail_closed():
     assert "semantic_audit_object_counts_missing" in result["evaluations"][-1]["reasons"]
 
 
+def test_missing_source_lineage_fails_closed():
+    result = evaluate_case([
+        _record(1),
+        _record(2, source_accepted_iteration=None, source_layout=None),
+    ])
+    assert result["promotable"] is False
+    assert "source_lineage_missing" in result["evaluations"][-1]["reasons"]
+
+
 def test_incomplete_semantic_iteration_resets_streak():
     records = [
         _record(1),
@@ -131,17 +144,21 @@ def test_policy_can_require_three_stable_iterations():
     assert evaluate_case([_record(1), _record(2), _record(3)], policy=policy)["promotable"] is True
 
 
-def test_manifest_is_versioned_and_keeps_rollback_pointer_and_semantic_evidence():
+def test_manifest_is_versioned_and_keeps_rollback_pointer_semantic_evidence_and_lineage():
     evaluation = evaluate_case([_record(1), _record(2)])
     previous = {"version": "perfect-first-v1", "case_id": "case-1"}
-    manifest = build_promotion_manifest(evaluation=evaluation, previous_golden=previous, version="astra-golden-v2")
+    manifest = build_promotion_manifest(evaluation=evaluation, previous_golden=previous, version="astra-golden-v3")
+    assert manifest["schema"] == "ai-ppt-plus/golden-baseline-manifest/v3"
     assert manifest["immutable"] is True
-    assert manifest["version"] == "astra-golden-v2"
+    assert manifest["version"] == "astra-golden-v3"
     assert manifest["previous_golden"]["version"] == "perfect-first-v1"
     assert manifest["rollback_to_version"] == "perfect-first-v1"
     assert manifest["semantic_evidence"]["semantic_audit_valid"] is True
     assert manifest["semantic_evidence"]["semantic_expected_object_count"] == 8
     assert manifest["semantic_evidence"]["semantic_audited_object_count"] == 8
+    assert manifest["source_lineage"]["complete"] is True
+    assert manifest["source_lineage"]["source_accepted_iteration"] == 1
+    assert manifest["source_lineage"]["source_layout"] == "iteration-1/layout.json"
 
 
 def test_existing_version_cannot_be_overwritten():
@@ -149,8 +166,8 @@ def test_existing_version_cannot_be_overwritten():
     try:
         build_promotion_manifest(
             evaluation=evaluation,
-            previous_golden={"version": "astra-golden-v2"},
-            version="astra-golden-v2",
+            previous_golden={"version": "astra-golden-v3"},
+            version="astra-golden-v3",
         )
     except ValueError as exc:
         assert "immutable" in str(exc)
