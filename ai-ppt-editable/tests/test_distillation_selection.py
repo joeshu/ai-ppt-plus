@@ -11,12 +11,13 @@ def _base():
         "rollback": False,
         "status": "repaired-needs-qa",
         "native_editability_valid": True,
+        "semantic_accuracy": 1.0,
         "unauthorized_object_drift_count": 0,
         "pixel_fidelity_score": 0.94,
         "pixel_fidelity_delta": 0.03,
         "blocking_count": 0,
         "human_approved": True,
-        "asset_user_choice_required": False,
+        "asset_user_choice_required_count": 0,
     }
 
 
@@ -53,6 +54,34 @@ def test_native_failure_is_hard_negative():
     assert "native_editability_failure" in result["negative_reasons"]
 
 
+def test_missing_native_evidence_fails_closed_without_inventing_hard_negative():
+    record = _base()
+    record.pop("native_editability_valid")
+    result = classify_record(record)
+    assert result["positive"] is False
+    assert result["hard_negative"] is False
+    assert "native_editability_evidence_missing" in result["selection_reasons"]
+
+
+def test_semantic_failure_is_hard_negative():
+    record = _base()
+    record["semantic_accuracy"] = 0.75
+    result = classify_record(record)
+    assert result["positive"] is False
+    assert result["hard_negative"] is True
+    assert "semantic_accuracy_failure" in result["negative_reasons"]
+    assert "semantic_accuracy_not_perfect" in result["selection_reasons"]
+
+
+def test_missing_semantic_evidence_is_rejected_fail_closed():
+    record = _base()
+    record.pop("semantic_accuracy")
+    result = classify_record(record)
+    assert result["positive"] is False
+    assert result["hard_negative"] is False
+    assert "semantic_accuracy_missing" in result["selection_reasons"]
+
+
 def test_missing_human_approval_is_rejected_not_hard_negative():
     record = _base()
     record["human_approved"] = False
@@ -69,7 +98,16 @@ def test_policy_can_allow_unapproved_for_experimental_selection():
     assert result["positive"] is True
 
 
-def test_asset_retry_exhaustion_is_hard_negative():
+def test_asset_retry_exhaustion_count_is_hard_negative():
+    record = _base()
+    record["asset_user_choice_required_count"] = 1
+    result = classify_record(record)
+    assert result["hard_negative"] is True
+    assert "asset_retry_exhausted" in result["negative_reasons"]
+    assert "asset_user_choice_required" in result["selection_reasons"]
+
+
+def test_legacy_asset_retry_exhaustion_bool_remains_supported():
     record = _base()
     record["asset_user_choice_required"] = True
     result = classify_record(record)
