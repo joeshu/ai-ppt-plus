@@ -21,6 +21,20 @@ def write(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def retry_evidence() -> dict:
+    return {
+        "status": "user-choice-required",
+        "attempts_exhausted": 3,
+        "max_native_attempts": 3,
+        "choices": ["continue-native-generation", "crop-matting-fallback"],
+        "attempts": [
+            {"attempt": 1, "status": "failed_qa", "backend": "native-imagegen", "prompt_ref": "prompts/a1.txt", "issue_codes": ["silhouette_mismatch"]},
+            {"attempt": 2, "status": "failed_qa", "backend": "native-imagegen", "prompt_ref": "prompts/a2.txt", "issue_codes": ["style_mismatch"]},
+            {"attempt": 3, "status": "generation_failed", "backend": "native-imagegen", "prompt_ref": "prompts/a3.txt", "error_code": "provider_generation_failed"},
+        ],
+    }
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="asset-hashes-") as temp:
         root = Path(temp)
@@ -85,13 +99,21 @@ def main() -> int:
         approved = json.loads(icon_reuse.read_text(encoding="utf-8"))
         approved["assets"][0].update({
             "fallback_decision": "user_approved",
+            "selected_choice": "crop-matting-fallback",
             "decision_id": "decision-1",
-            "decision_reason": "native imagegen failed and user selected crop fallback",
+            "decision_reason": "native imagegen retry budget exhausted and user selected crop fallback",
             "decision_timestamp": "2026-09-05T00:00:00Z",
         })
         write(icon_reuse, approved)
+        still_blocked = run("scripts/validate_imagegen_assets_manifest.py", str(icon_reuse), "--require-hashes")
+        assert still_blocked.returncode == 2, still_blocked.stdout + still_blocked.stderr
+        assert "native_retry_evidence_missing" in still_blocked.stdout
+
+        approved["assets"][0]["native_retry_evidence"] = retry_evidence()
+        write(icon_reuse, approved)
         approved_icon = run("scripts/validate_imagegen_assets_manifest.py", str(icon_reuse), "--require-hashes")
         assert approved_icon.returncode == 0, approved_icon.stdout + approved_icon.stderr
+        assert json.loads(approved_icon.stdout)["minimum_native_attempts_before_fallback"] == 3
 
     print("asset hash gates: ok")
     return 0
