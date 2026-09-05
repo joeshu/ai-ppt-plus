@@ -21,8 +21,10 @@ from .batch_ingestion import AstraIngestionError, validate_astra_object_ids, ing
 from .astra_contract import (
     AstraRequest,
     build_reconstruction_request,
+    build_text_target_request,
     build_visual_qa_request,
     parse_reconstruction_response,
+    parse_text_target_response,
     parse_visual_qa_response,
 )
 
@@ -36,5 +38,6 @@ __all__ = [
     "fingerprint_deck", "audit_multi_page_consistency", "EvidenceThresholds", "from_dual_comparison",
     "merge_difference_graphs", "AstraIngestionError", "validate_astra_object_ids", "ingest_astra_qa",
     "summarize_iteration", "convergence_delta", "AstraRequest", "build_reconstruction_request",
-    "build_visual_qa_request", "parse_reconstruction_response", "parse_visual_qa_response",
+    "build_text_target_request", "build_visual_qa_request", "parse_reconstruction_response",
+    "parse_text_target_response", "parse_visual_qa_response",
 ]
