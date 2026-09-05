@@ -13,7 +13,11 @@ def _valid_unit_interval(value: Any) -> bool:
     """Return whether a metric is a real finite number in [0, 1]."""
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         return False
-    return isfinite(float(value)) and 0 <= float(value) <= 1
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError, OverflowError):
+        return False
+    return isfinite(numeric) and 0 <= numeric <= 1
 
 
 @dataclass(frozen=True)

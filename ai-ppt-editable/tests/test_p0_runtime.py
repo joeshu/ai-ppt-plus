@@ -33,7 +33,7 @@ def test_nonfinite_gate():
     from reconstruction.quality_gate import QualityGate
     from reconstruction.difference_graph import DifferenceGraph
     differences = DifferenceGraph.from_dict({"findings": []})
-    for value in (float("nan"), float("inf"), -1):
+    for value in (float("nan"), float("inf"), -1, 10 ** 1000):
         result = QualityGate().evaluate(differences=differences, global_visual_similarity=value,
                                         editable_ratio=1, semantic_accuracy=1, full_slide_raster_detected=False)
         assert not result.passed
