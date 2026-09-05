@@ -2,7 +2,7 @@
 """Bridge existing ai-ppt-editable manifests/layouts into the reconstruction Graph IR.
 
 The bridge deliberately consumes the existing deterministic authoring truth instead
-of inventing a parallel object model.  Layout owns geometry; object-manifest owns
+of inventing a parallel object model. Layout owns geometry; object-manifest owns
 semantic type/editability/provenance; Graph IR becomes the normalized reasoning view.
 """
 from __future__ import annotations
@@ -25,13 +25,8 @@ OBJECT_TYPE_TO_NODE = {
 }
 
 _LAYOUT_COLLECTIONS = {
-    "texts": "text",
-    "shapes": "shape",
-    "tables": "table",
-    "charts": "chart",
-    "icons": "icon",
-    "groups": "group",
-    "panels": "illustration",
+    "texts": "text", "shapes": "shape", "tables": "table", "charts": "chart",
+    "icons": "icon", "groups": "group", "panels": "illustration",
 }
 
 
@@ -56,9 +51,8 @@ def _layout_index(layout_slide: dict[str, Any]) -> dict[str, tuple[str, dict[str
     result: dict[str, tuple[str, dict[str, Any]]] = {}
     for collection, kind in _LAYOUT_COLLECTIONS.items():
         for index, item in enumerate(layout_slide.get(collection, []) or [], 1):
-            if not isinstance(item, dict):
-                continue
-            result[_object_id(item, kind, index)] = (kind, item)
+            if isinstance(item, dict):
+                result[_object_id(item, kind, index)] = (kind, item)
     return result
 
 
@@ -110,6 +104,10 @@ def _source(manifest_obj: dict[str, Any], layout_obj: dict[str, Any]) -> dict[st
     for key in ("source_sha256", "source_bbox", "asset_policy", "brand_asset_contract"):
         if manifest_obj.get(key) is not None:
             source[key] = manifest_obj[key]
+    # Layout-level asset policy is also authoritative for directly authored assets.
+    for key in ("asset_policy", "brand_asset_contract", "background_mode", "rotation", "opacity"):
+        if layout_obj.get(key) is not None and key not in source:
+            source[key] = layout_obj[key]
     return source
 
 
@@ -141,9 +139,7 @@ def build_page_graph(layout: dict[str, Any], object_manifest: dict[str, Any], *,
         else:
             layout_obj = {}
         if node_type is None:
-            # Unknown release-gate metadata is intentionally not guessed into IR.
             continue
-        parent = manifest_obj.get("parent_group")
         node = {
             "id": object_id,
             "type": node_type,
@@ -154,6 +150,7 @@ def build_page_graph(layout: dict[str, Any], object_manifest: dict[str, Any], *,
             "source": _source(manifest_obj, layout_obj),
             "confidence": 1.0,
         }
+        parent = manifest_obj.get("parent_group")
         if parent:
             node["parent_id"] = str(parent)
         nodes.append(node)
@@ -171,5 +168,6 @@ def build_page_graph(layout: dict[str, Any], object_manifest: dict[str, Any], *,
             "project_id": object_manifest.get("project_id") or layout.get("project_id"),
             "slide_no": slide_no,
             "source_contract": "layout+slide-object-manifest",
+            "units": layout.get("units", "inches"),
         },
     })
