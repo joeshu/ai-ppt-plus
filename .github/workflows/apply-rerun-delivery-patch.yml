@@ -1,19 +1,22 @@
 name: apply-rerun-delivery-patch
+
 on:
   push:
     branches:
       - fix/strict-rerun-provenance-gate
+
 permissions:
   contents: write
+
 jobs:
   patch:
-    if: github.event.head_commit.message == 'chore: apply rerun delivery patch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: fix/strict-rerun-provenance-gate
-      - name: Wire strict rerun provenance into release delivery
+      - name: Apply delivery provenance hardening
+        shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -22,74 +25,62 @@ jobs:
           root = Path('.')
           worker = root / 'ai-ppt-editable'
 
-          # 1) Make the provenance validator available to both root and worker delivery gates.
           source_validator = worker / 'scripts' / 'validate_authoring_provenance.py'
-          (root / 'scripts' / 'validate_authoring_provenance.py').write_text(
-              source_validator.read_text(encoding='utf-8'), encoding='utf-8'
-          )
+          (root / 'scripts' / 'validate_authoring_provenance.py').write_text(source_validator.read_text(encoding='utf-8'), encoding='utf-8')
 
-          # 2) Strict rerun invalidates the previous current-run pointer before authoring,
-          #    and only publishes a new pointer after provenance validation succeeds.
           rerun = worker / 'scripts' / 'strict_reference_rerun.py'
           text = rerun.read_text(encoding='utf-8')
-          old = '''    run_dir = project / "strict-reruns" / run_id\n    run_dir.mkdir(parents=True, exist_ok=False)\n\n    inputs = {\n'''
-          new = '''    run_dir = project / "strict-reruns" / run_id\n    run_dir.mkdir(parents=True, exist_ok=False)\n    current_rerun_path = project / "current-rerun.json"\n    if current_rerun_path.exists():\n        current_rerun_path.unlink()\n\n    inputs = {\n'''
-          if old not in text:
-              raise SystemExit('strict rerun insertion point 1 not found')
-          text = text.replace(old, new, 1)
-          old = '''    if verify.returncode != 0:\n        raise SystemExit(verify.returncode)\n\n    print(json.dumps({\n'''
-          new = '''    if verify.returncode != 0:\n        raise SystemExit(verify.returncode)\n\n    current_rerun = {\n        "schema": "ai-ppt-plus/current-rerun/v1",\n        "request_id": run_id,\n        "run_request": str(request_path),\n        "authoring_provenance": str(provenance_path),\n        "deck": str(out),\n        "deck_sha256": sha256(out),\n        "status": "authored",\n    }\n    current_rerun_path.write_text(\n        json.dumps(current_rerun, ensure_ascii=False, indent=2) + "\\n",\n        encoding="utf-8",\n    )\n\n    print(json.dumps({\n'''
-          if old not in text:
-              raise SystemExit('strict rerun insertion point 2 not found')
-          rerun.write_text(text.replace(old, new, 1), encoding='utf-8')
+          old = '    run_dir = project / "strict-reruns" / run_id\n    run_dir.mkdir(parents=True, exist_ok=False)\n\n    inputs = {\n'
+          new = '    run_dir = project / "strict-reruns" / run_id\n    run_dir.mkdir(parents=True, exist_ok=False)\n    current_rerun_path = project / "current-rerun.json"\n    if current_rerun_path.exists():\n        current_rerun_path.unlink()\n\n    inputs = {\n'
+          if 'current_rerun_path = project / "current-rerun.json"' not in text:
+              if old not in text:
+                  raise SystemExit('strict rerun insertion point 1 not found')
+              text = text.replace(old, new, 1)
+          old = '    if verify.returncode != 0:\n        raise SystemExit(verify.returncode)\n\n    print(json.dumps({\n'
+          new = '    if verify.returncode != 0:\n        raise SystemExit(verify.returncode)\n\n    current_rerun = {\n        "schema": "ai-ppt-plus/current-rerun/v1",\n        "request_id": run_id,\n        "run_request": str(request_path),\n        "authoring_provenance": str(provenance_path),\n        "deck": str(out),\n        "deck_sha256": sha256(out),\n        "status": "authored",\n    }\n    current_rerun_path.write_text(\n        json.dumps(current_rerun, ensure_ascii=False, indent=2) + "\\n",\n        encoding="utf-8",\n    )\n\n    print(json.dumps({\n'
+          if '"schema": "ai-ppt-plus/current-rerun/v1"' not in text:
+              if old not in text:
+                  raise SystemExit('strict rerun insertion point 2 not found')
+              text = text.replace(old, new, 1)
+          rerun.write_text(text, encoding='utf-8')
 
-          # 3) Every release delivery check automatically requires current-run provenance
-          #    whenever the validated route is reference-reconstruction.
           for path in [root / 'scripts' / 'delivery_check.py', worker / 'scripts' / 'delivery_check.py']:
               text = path.read_text(encoding='utf-8')
-              old = 'from editability import summarize_objects, validate_objects\n'
-              new = old + 'from validate_authoring_provenance import validate as validate_authoring_provenance\n'
-              if new not in text:
-                  if old not in text:
+              import_old = 'from editability import summarize_objects, validate_objects\n'
+              import_new = import_old + 'from validate_authoring_provenance import validate as validate_authoring_provenance\n'
+              if 'from validate_authoring_provenance import validate as validate_authoring_provenance' not in text:
+                  if import_old not in text:
                       raise SystemExit(f'import insertion point not found: {path}')
-                  text = text.replace(old, new, 1)
+                  text = text.replace(import_old, import_new, 1)
 
-              old = '    parser.add_argument("--font-delivery-report")\n'
-              new = old + '    parser.add_argument("--current-rerun", help="override project current-rerun.json pointer")\n    parser.add_argument("--require-authoring-provenance", action="store_true")\n'
+              parser_old = '    parser.add_argument("--font-delivery-report")\n'
+              parser_new = parser_old + '    parser.add_argument("--current-rerun", help="override project current-rerun.json pointer")\n    parser.add_argument("--require-authoring-provenance", action="store_true")\n'
               if '--require-authoring-provenance' not in text:
-                  if old not in text:
+                  if parser_old not in text:
                       raise SystemExit(f'parser insertion point not found: {path}')
-                  text = text.replace(old, new, 1)
+                  text = text.replace(parser_old, parser_new, 1)
 
-              marker = '''    check(bool(render and render.get("deck_sha256") == current_hash), "stale_render_report", "render report must be hash-bound to the current PPTX")\n'''
-              block = '''    check(bool(render and render.get("deck_sha256") == current_hash), "stale_render_report", "render report must be hash-bound to the current PPTX")\n\n    reference_release = bool(route_report and route_report.get("route") == "reference-reconstruction")\n    authoring_provenance_required = bool(args.require_authoring_provenance or reference_release)\n    if authoring_provenance_required:\n        pointer_path = Path(args.current_rerun).resolve() if args.current_rerun else Path(args.manifest).resolve().parent / "current-rerun.json"\n        pointer = load(pointer_path)\n        if not pointer:\n            check(False, "current_rerun_missing", "reference reconstruction release requires a valid current-rerun.json pointer")\n        else:\n            check(pointer.get("deck_sha256") == current_hash, "current_rerun_deck_mismatch", "current rerun pointer must be hash-bound to the delivered PPTX")\n            request_path = Path(str(pointer.get("run_request", "")))\n            provenance_path = Path(str(pointer.get("authoring_provenance", "")))\n            if not request_path.is_file() or not provenance_path.is_file():\n                check(False, "authoring_provenance_evidence_missing", "current rerun request/provenance files must exist")\n            else:\n                try:\n                    provenance_validation = validate_authoring_provenance(request_path, provenance_path, pptx_path)\n                except Exception as exc:\n                    provenance_validation = {"valid": False, "issues": [{"code": "authoring_provenance_unreadable", "message": f"{type(exc).__name__}: {exc}"}]}\n                check(bool(provenance_validation.get("valid")), "authoring_provenance_failed", "delivered reference reconstruction must be authored by the current strict rerun transaction")\n                check(pointer.get("request_id") == provenance_validation.get("request_id"), "current_rerun_request_id_mismatch", "current rerun pointer and provenance validation must identify the same request")\n                quality_evidence["authoring_provenance"] = provenance_validation\n'''
+              marker = '    check(bool(render and render.get("deck_sha256") == current_hash), "stale_render_report", "render report must be hash-bound to the current PPTX")\n'
+              block = marker + '''\n    reference_release = bool(route_report and route_report.get("route") == "reference-reconstruction")\n    authoring_provenance_required = bool(args.require_authoring_provenance or reference_release)\n    if authoring_provenance_required:\n        pointer_path = Path(args.current_rerun).resolve() if args.current_rerun else Path(args.manifest).resolve().parent / "current-rerun.json"\n        pointer = load(pointer_path)\n        if not pointer:\n            check(False, "current_rerun_missing", "reference reconstruction release requires a valid current-rerun.json pointer")\n        else:\n            check(pointer.get("deck_sha256") == current_hash, "current_rerun_deck_mismatch", "current rerun pointer must be hash-bound to the delivered PPTX")\n            request_path = Path(str(pointer.get("run_request", "")))\n            provenance_path = Path(str(pointer.get("authoring_provenance", "")))\n            if not request_path.is_file() or not provenance_path.is_file():\n                check(False, "authoring_provenance_evidence_missing", "current rerun request/provenance files must exist")\n            else:\n                try:\n                    provenance_validation = validate_authoring_provenance(request_path, provenance_path, pptx_path)\n                except Exception as exc:\n                    provenance_validation = {"valid": False, "issues": [{"code": "authoring_provenance_unreadable", "message": f"{type(exc).__name__}: {exc}"}]}\n                check(bool(provenance_validation.get("valid")), "authoring_provenance_failed", "delivered reference reconstruction must be authored by the current strict rerun transaction")\n                check(pointer.get("request_id") == provenance_validation.get("request_id"), "current_rerun_request_id_mismatch", "current rerun pointer and provenance validation must identify the same request")\n                quality_evidence["authoring_provenance"] = provenance_validation\n'''
               if 'current_rerun_missing' not in text:
                   if marker not in text:
-                      raise SystemExit(f'provenance gate insertion point not found: {path}')
+                      raise SystemExit(f'provenance insertion point not found: {path}')
                   text = text.replace(marker, block, 1)
               path.write_text(text, encoding='utf-8')
 
-          # 4) Validator is now a shared mirrored script; only strict rerun remains worker-only.
           policy_path = root / 'assets' / 'runtime-mirror-policy.json'
           policy = json.loads(policy_path.read_text(encoding='utf-8'))
           for pair in policy['pairs']:
               if pair.get('worker') == 'ai-ppt-editable':
-                  pair['adapter_exclusions'] = [
-                      item for item in pair.get('adapter_exclusions', [])
-                      if item.get('path') != 'scripts/validate_authoring_provenance.py'
-                  ]
+                  pair['adapter_exclusions'] = [item for item in pair.get('adapter_exclusions', []) if item.get('path') != 'scripts/validate_authoring_provenance.py']
           policy_path.write_text(json.dumps(policy, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
-          # 5) Contract test: reference delivery must contain the automatic provenance gate.
           test_path = worker / 'tests' / 'test_delivery_authoring_provenance_contract.py'
           test_path.write_text('''#!/usr/bin/env python3\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[1]\n\ndef main() -> int:\n    delivery = (ROOT / "scripts" / "delivery_check.py").read_text(encoding="utf-8")\n    rerun = (ROOT / "scripts" / "strict_reference_rerun.py").read_text(encoding="utf-8")\n    assert 'route_report.get("route") == "reference-reconstruction"' in delivery\n    assert 'current-rerun.json' in delivery\n    assert 'authoring_provenance_failed' in delivery\n    assert 'validate_authoring_provenance' in delivery\n    assert 'current_rerun_path.unlink()' in rerun\n    assert '"status": "authored"' in rerun\n    print("delivery authoring provenance contract: ok")\n    return 0\n\nif __name__ == "__main__":\n    raise SystemExit(main())\n''', encoding='utf-8')
           PY
           git config user.name joeshu
           git config user.email 350027830@qq.com
-          git add ai-ppt-editable/scripts/strict_reference_rerun.py \
-                  ai-ppt-editable/scripts/delivery_check.py \
-                  scripts/delivery_check.py scripts/validate_authoring_provenance.py \
-                  assets/runtime-mirror-policy.json \
-                  ai-ppt-editable/tests/test_delivery_authoring_provenance_contract.py
+          git add ai-ppt-editable/scripts/strict_reference_rerun.py ai-ppt-editable/scripts/delivery_check.py scripts/delivery_check.py scripts/validate_authoring_provenance.py assets/runtime-mirror-policy.json ai-ppt-editable/tests/test_delivery_authoring_provenance_contract.py
+          git rm .github/workflows/apply-rerun-delivery-patch.yml
           git commit -m "fix: wire authoring provenance into delivery gate"
           git push origin HEAD:fix/strict-rerun-provenance-gate
