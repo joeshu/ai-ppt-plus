@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
-ALLOWED_DOMAINS = {"geometry", "typography", "asset", "semantic"}
+ALLOWED_DOMAINS = {"geometry", "typography", "asset", "hierarchy", "semantic"}
 ALLOWED_SEVERITIES = {"P0", "P1", "P2", "P3"}
 
 
