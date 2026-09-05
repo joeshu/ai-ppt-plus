@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://joeshu.github.io/ai-ppt-plus/schemas/reconstruction-graph.schema.json",
+  "title": "Astra Visual Reconstruction Page Graph",
+  "type": "object",
+  "required": ["version", "page", "nodes"],
+  "properties": {
+    "version": {"type": "string"},
+    "page": {
+      "type": "object",
+      "required": ["slide_width_in", "slide_height_in", "reference_width", "reference_height"],
+      "properties": {
+        "slide_width_in": {"type": "number", "exclusiveMinimum": 0},
+        "slide_height_in": {"type": "number", "exclusiveMinimum": 0},
+        "reference_width": {"type": "number", "minimum": 0},
+        "reference_height": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "bbox"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "type": {
+            "enum": ["text", "shape", "table", "chart", "icon", "illustration", "image", "connector", "group", "background", "decoration"]
+          },
+          "bbox": {
+            "type": "array",
+            "prefixItems": [
+              {"type": "number"}, {"type": "number"}, {"type": "number", "minimum": 0}, {"type": "number", "minimum": 0}
+            ],
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "role": {"type": ["string", "null"]},
+          "parent_id": {"type": ["string", "null"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "semantic": {"type": "object"},
+          "style": {"type": "object"},
+          "source": {"type": "object"},
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "target"],
+              "properties": {
+                "kind": {
+                  "enum": ["contains", "belongs_to", "aligned_left", "aligned_right", "aligned_top", "aligned_bottom", "aligned_center_x", "aligned_center_y", "equal_width", "equal_height", "equal_gap", "connects_to", "overlaps", "anchors_to"]
+                },
+                "target": {"type": "string", "minLength": 1},
+                "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+                "metadata": {"type": "object"}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}
