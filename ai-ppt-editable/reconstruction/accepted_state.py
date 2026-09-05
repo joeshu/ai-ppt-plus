@@ -64,6 +64,14 @@ def read_accepted_state(path: Path) -> dict[str, Any] | None:
     return value
 
 
+def _source_meta(source: str, accepted_iteration: int, layout: Path) -> dict[str, Any]:
+    return {
+        "source": source,
+        "accepted_iteration": int(accepted_iteration),
+        "layout": str(layout.resolve()),
+    }
+
+
 def resolve_source_layout(*, case_id: str, iteration: int, candidate_layout: Path, output_root: Path) -> tuple[Path, dict[str, Any]]:
     """Resolve the latest accepted layout strictly before the requested iteration.
 
@@ -71,6 +79,9 @@ def resolve_source_layout(*, case_id: str, iteration: int, candidate_layout: Pat
     1. accepted-state.json when it points to an earlier accepted iteration and an existing layout;
     2. backward scan of prior iteration records for the newest accepted iteration;
     3. original candidate layout.
+
+    The returned metadata includes the exact resolved layout path so downstream
+    distillation and promotion records can reproduce source lineage deterministically.
     """
     state_path = output_root / case_id / "accepted-state.json"
     state = read_accepted_state(state_path)
@@ -78,7 +89,8 @@ def resolve_source_layout(*, case_id: str, iteration: int, candidate_layout: Pat
         accepted_iteration = int(state.get("accepted_iteration", 0) or 0)
         layout = Path(str(state.get("layout") or ""))
         if accepted_iteration < iteration and layout.is_file():
-            return layout.resolve(), {"source": "accepted-state", "accepted_iteration": accepted_iteration}
+            resolved = layout.resolve()
+            return resolved, _source_meta("accepted-state", accepted_iteration, resolved)
 
     for previous_iteration in range(iteration - 1, 0, -1):
         iteration_dir = output_root / case_id / f"iteration-{previous_iteration}"
@@ -88,8 +100,10 @@ def resolve_source_layout(*, case_id: str, iteration: int, candidate_layout: Pat
             continue
         record = json.loads(record_path.read_text(encoding="utf-8"))
         if record.get("accepted") is True and not str(record.get("status") or "").startswith("rolled-back"):
-            return layout_path.resolve(), {"source": "accepted-history", "accepted_iteration": previous_iteration}
+            resolved = layout_path.resolve()
+            return resolved, _source_meta("accepted-history", previous_iteration, resolved)
 
     if not candidate_layout.is_file():
         raise FileNotFoundError(f"candidate layout missing: {candidate_layout}")
-    return candidate_layout.resolve(), {"source": "candidate", "accepted_iteration": 0}
+    resolved = candidate_layout.resolve()
+    return resolved, _source_meta("candidate", 0, resolved)

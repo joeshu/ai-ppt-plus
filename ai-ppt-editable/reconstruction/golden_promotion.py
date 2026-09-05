@@ -16,12 +16,105 @@ class GoldenPromotionPolicy:
     require_human_approval: bool = True
     require_no_rollback: bool = True
     require_zero_blockers: bool = True
+    require_semantic_audit: bool = True
+    require_complete_semantic_object_coverage: bool = True
+    require_source_lineage: bool = True
 
 
-def _eligible(record: dict[str, Any], policy: GoldenPromotionPolicy) -> tuple[bool, list[str]]:
+def _number(value: Any) -> float | None:
+    try:
+        return float(value) if value is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _nonnegative_int(value: Any) -> int | None:
+    if isinstance(value, bool):
+        return None
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed >= 0 else None
+
+
+def _semantic_evidence(record: dict[str, Any], policy: GoldenPromotionPolicy) -> tuple[dict[str, Any], list[str]]:
+    reasons: list[str] = []
+    semantic_value = _number(record.get("semantic_accuracy"))
+    audit = record.get("semantic_audit")
+    evidence: dict[str, Any] = {
+        "semantic_accuracy": semantic_value,
+        "semantic_audit_present": isinstance(audit, dict),
+        "semantic_audit_valid": None,
+        "semantic_audit_accuracy": None,
+        "semantic_error_count": None,
+        "semantic_warning_count": None,
+        "semantic_expected_object_count": None,
+        "semantic_audited_object_count": None,
+        "semantic_object_coverage_complete": False,
+    }
+    if semantic_value is None:
+        reasons.append("missing_semantic_accuracy")
+    elif semantic_value != policy.required_semantic_accuracy:
+        reasons.append("semantic_accuracy_not_perfect")
+    if not policy.require_semantic_audit:
+        return evidence, reasons
+    if not isinstance(audit, dict):
+        reasons.append("semantic_audit_missing")
+        return evidence, reasons
+    audit_valid = audit.get("valid") is True
+    audit_accuracy = _number(audit.get("accuracy"))
+    error_count = _nonnegative_int(audit.get("error_count"))
+    warning_count = _nonnegative_int(audit.get("warning_count"))
+    expected_count = _nonnegative_int(audit.get("expected_object_count"))
+    audited_count = _nonnegative_int(audit.get("audited_object_count"))
+    evidence.update({
+        "semantic_audit_valid": audit_valid,
+        "semantic_audit_accuracy": audit_accuracy,
+        "semantic_error_count": error_count,
+        "semantic_warning_count": warning_count,
+        "semantic_expected_object_count": expected_count,
+        "semantic_audited_object_count": audited_count,
+        "semantic_object_coverage_complete": expected_count is not None and audited_count is not None and audited_count == expected_count,
+    })
+    if not audit_valid:
+        reasons.append("semantic_audit_invalid")
+    if audit_accuracy is None:
+        reasons.append("semantic_audit_accuracy_missing")
+    elif audit_accuracy != policy.required_semantic_accuracy:
+        reasons.append("semantic_audit_accuracy_not_perfect")
+    if semantic_value is not None and audit_accuracy is not None and semantic_value != audit_accuracy:
+        reasons.append("semantic_accuracy_mismatch")
+    if error_count is None:
+        reasons.append("semantic_audit_error_count_missing")
+    elif error_count != 0:
+        reasons.append("semantic_audit_errors_present")
+    if policy.require_complete_semantic_object_coverage:
+        if expected_count is None or audited_count is None:
+            reasons.append("semantic_audit_object_counts_missing")
+        elif audited_count != expected_count:
+            reasons.append("semantic_audit_incomplete")
+    return evidence, reasons
+
+
+def _source_lineage_evidence(record: dict[str, Any], policy: GoldenPromotionPolicy) -> tuple[dict[str, Any], list[str]]:
+    accepted_iteration = _nonnegative_int(record.get("source_accepted_iteration"))
+    raw_layout = record.get("source_layout")
+    source_layout = str(raw_layout).strip() if raw_layout is not None else ""
+    evidence = {
+        "source_accepted_iteration": accepted_iteration,
+        "source_layout": source_layout or None,
+        "complete": accepted_iteration is not None and bool(source_layout),
+    }
+    reasons: list[str] = []
+    if policy.require_source_lineage and not evidence["complete"]:
+        reasons.append("source_lineage_missing")
+    return evidence, reasons
+
+
+def _eligible(record: dict[str, Any], policy: GoldenPromotionPolicy) -> tuple[bool, list[str], dict[str, Any], dict[str, Any]]:
     reasons: list[str] = []
     score = record.get("pixel_fidelity_score")
-    semantic = record.get("semantic_accuracy")
     if record.get("accepted") is not True:
         reasons.append("not_accepted")
     if policy.require_no_rollback and record.get("rollback") is True:
@@ -32,25 +125,18 @@ def _eligible(record: dict[str, Any], policy: GoldenPromotionPolicy) -> tuple[bo
         reasons.append("native_editability_invalid")
     if policy.require_zero_blockers and int(record.get("blocking_count") or 0) != 0:
         reasons.append("blocking_findings_present")
-    try:
-        score_value = float(score)
-    except (TypeError, ValueError):
-        score_value = None
+    score_value = _number(score)
     if score_value is None:
         reasons.append("missing_pixel_fidelity_score")
     elif score_value < policy.min_pixel_fidelity_score:
         reasons.append("pixel_fidelity_below_threshold")
-    try:
-        semantic_value = float(semantic)
-    except (TypeError, ValueError):
-        semantic_value = None
-    if semantic_value is None:
-        reasons.append("missing_semantic_accuracy")
-    elif semantic_value != policy.required_semantic_accuracy:
-        reasons.append("semantic_accuracy_not_perfect")
+    semantic_evidence, semantic_reasons = _semantic_evidence(record, policy)
+    reasons.extend(semantic_reasons)
+    lineage_evidence, lineage_reasons = _source_lineage_evidence(record, policy)
+    reasons.extend(lineage_reasons)
     if policy.require_human_approval and record.get("human_approved") is not True:
         reasons.append("human_approval_missing")
-    return not reasons, reasons
+    return not reasons, reasons, semantic_evidence, lineage_evidence
 
 
 def evaluate_case(records: list[dict[str, Any]], *, policy: GoldenPromotionPolicy | None = None) -> dict[str, Any]:
@@ -59,11 +145,13 @@ def evaluate_case(records: list[dict[str, Any]], *, policy: GoldenPromotionPolic
     streak: list[dict[str, Any]] = []
     evaluations: list[dict[str, Any]] = []
     for record in ordered:
-        ok, reasons = _eligible(record, policy)
+        ok, reasons, semantic_evidence, source_lineage = _eligible(record, policy)
         evaluations.append({
             "iteration": int(record.get("iteration") or 0),
             "eligible": ok,
             "reasons": reasons,
+            "semantic_evidence": semantic_evidence,
+            "source_lineage": source_lineage,
         })
         if ok:
             streak.append(record)
@@ -71,14 +159,17 @@ def evaluate_case(records: list[dict[str, Any]], *, policy: GoldenPromotionPolic
             streak = []
     promotable = len(streak) >= policy.min_consecutive_stable_iterations
     latest = ordered[-1] if ordered else {}
+    latest_evaluation = evaluations[-1] if evaluations else {}
     return {
-        "schema": "ai-ppt-plus/golden-promotion-evaluation/v1",
+        "schema": "ai-ppt-plus/golden-promotion-evaluation/v3",
         "case_id": latest.get("case_id"),
         "promotable": promotable,
         "stable_streak": len(streak),
         "required_streak": policy.min_consecutive_stable_iterations,
         "candidate_iteration": int(latest.get("iteration") or 0) if promotable else None,
         "candidate_artifacts": dict(latest.get("artifacts") or {}) if promotable else {},
+        "candidate_semantic_evidence": dict(latest_evaluation.get("semantic_evidence") or {}) if promotable else {},
+        "candidate_source_lineage": dict(latest_evaluation.get("source_lineage") or {}) if promotable else {},
         "evaluations": evaluations,
         "policy": {
             "min_pixel_fidelity_score": policy.min_pixel_fidelity_score,
@@ -89,6 +180,9 @@ def evaluate_case(records: list[dict[str, Any]], *, policy: GoldenPromotionPolic
             "require_human_approval": policy.require_human_approval,
             "require_no_rollback": policy.require_no_rollback,
             "require_zero_blockers": policy.require_zero_blockers,
+            "require_semantic_audit": policy.require_semantic_audit,
+            "require_complete_semantic_object_coverage": policy.require_complete_semantic_object_coverage,
+            "require_source_lineage": policy.require_source_lineage,
         },
     }
 
@@ -104,11 +198,13 @@ def build_promotion_manifest(*, evaluation: dict[str, Any], previous_golden: dic
     if previous_version == version:
         raise ValueError("golden version must be immutable; choose a new version")
     return {
-        "schema": "ai-ppt-plus/golden-baseline-manifest/v1",
+        "schema": "ai-ppt-plus/golden-baseline-manifest/v3",
         "version": str(version),
         "case_id": evaluation.get("case_id"),
         "source_iteration": evaluation.get("candidate_iteration"),
+        "source_lineage": dict(evaluation.get("candidate_source_lineage") or {}),
         "artifacts": dict(evaluation.get("candidate_artifacts") or {}),
+        "semantic_evidence": dict(evaluation.get("candidate_semantic_evidence") or {}),
         "previous_golden": previous_golden or None,
         "rollback_to_version": previous_version,
         "promotion_evidence": evaluation,
