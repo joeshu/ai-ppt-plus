@@ -35,7 +35,14 @@ def validate(manifest_path: Path, request_id: str) -> dict:
             issues.append({"code": "asset_request_id_missing", "asset_id": asset_id})
         elif asset_request_id != request_id:
             issues.append({"code": "asset_request_id_mismatch", "asset_id": asset_id, "expected": request_id, "actual": asset_request_id})
-    return {"schema": SCHEMA, "valid": not issues, "request_id": request_id, "manifest_request_id": manifest_request_id, "asset_count": len(assets), "issues": issues}
+    return {
+        "schema": SCHEMA,
+        "valid": not issues,
+        "request_id": request_id,
+        "manifest_request_id": manifest_request_id,
+        "asset_count": len(assets),
+        "issues": issues,
+    }
 
 
 def main() -> int:
