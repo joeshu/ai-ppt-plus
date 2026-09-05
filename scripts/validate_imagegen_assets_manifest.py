@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Validate per-page visual-asset provenance.
 
-The historical filename is retained for compatibility. Background/frame source
-reuse remains supported where authoritative source pixels are appropriate, but
-final icons, badges, gradient visuals, illustrations and other complex art are
-native-imagegen assets by default. A source-reuse fallback for those classes is
-valid only after an explicit user decision is recorded.
+Background/frame source reuse remains supported where authoritative source
+pixels are appropriate. Final icons, badges, gradient visuals, illustrations
+and other complex art are native-imagegen assets by default. A source-reuse
+fallback for those classes is valid only after the bounded native-imagegen retry
+budget is exhausted and the user explicitly selects crop/matting fallback.
 """
 
 from __future__ import annotations
@@ -26,6 +26,8 @@ HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 PROVENANCE_MODES = {"imagegen", "source_reuse"}
 MANDATORY_IMAGEGEN_CLASSES = {"icon", "icons", "badge", "gradient", "gradient_visual", "complex_art", "illustration", "artistic_typography", "decorative_art"}
+MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK = 3
+FALLBACK_FAILURE_STATUSES = {"failed_qa", "generation_failed"}
 
 
 def normalized_asset_class(asset: dict) -> str:
@@ -37,13 +39,65 @@ def normalized_asset_class(asset: dict) -> str:
     return cls
 
 
+def fallback_evidence_issues(asset: dict) -> list[str]:
+    issues: list[str] = []
+    if asset.get("fallback_decision") != "user_approved":
+        issues.append("fallback_user_approval_missing")
+    for field in ("decision_id", "decision_reason", "decision_timestamp"):
+        if not isinstance(asset.get(field), str) or not asset[field].strip():
+            issues.append(f"fallback_{field}_missing")
+    if asset.get("selected_choice") != "crop-matting-fallback":
+        issues.append("fallback_selected_choice_invalid")
+
+    evidence = asset.get("native_retry_evidence")
+    if not isinstance(evidence, dict):
+        issues.append("native_retry_evidence_missing")
+        return issues
+    if evidence.get("status") != "user-choice-required":
+        issues.append("native_retry_boundary_not_reached")
+    attempts_exhausted = evidence.get("attempts_exhausted")
+    max_attempts = evidence.get("max_native_attempts")
+    if not isinstance(attempts_exhausted, int) or attempts_exhausted < MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK:
+        issues.append("native_retry_attempts_not_exhausted")
+    if not isinstance(max_attempts, int) or max_attempts < MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK:
+        issues.append("native_retry_budget_invalid")
+    elif isinstance(attempts_exhausted, int) and attempts_exhausted < max_attempts:
+        issues.append("native_retry_budget_not_exhausted")
+    choices = evidence.get("choices")
+    if not isinstance(choices, list) or "continue-native-generation" not in choices or "crop-matting-fallback" not in choices:
+        issues.append("native_retry_choices_invalid")
+
+    attempts = evidence.get("attempts")
+    if not isinstance(attempts, list) or not isinstance(attempts_exhausted, int) or len(attempts) < attempts_exhausted:
+        issues.append("native_retry_attempt_records_incomplete")
+        return issues
+    seen_attempts = set()
+    for attempt in attempts[:attempts_exhausted]:
+        if not isinstance(attempt, dict):
+            issues.append("native_retry_attempt_record_invalid")
+            continue
+        number = attempt.get("attempt")
+        if not isinstance(number, int) or number < 1 or number in seen_attempts:
+            issues.append("native_retry_attempt_number_invalid")
+        else:
+            seen_attempts.add(number)
+        if attempt.get("status") not in FALLBACK_FAILURE_STATUSES:
+            issues.append("native_retry_attempt_not_failed")
+        backend = attempt.get("backend")
+        if not isinstance(backend, str) or not IMAGEGEN_WORD.search(backend):
+            issues.append("native_retry_attempt_backend_invalid")
+        prompt_ref = attempt.get("prompt_ref")
+        if not isinstance(prompt_ref, str) or not prompt_ref.strip():
+            issues.append("native_retry_attempt_prompt_missing")
+        issue_codes = attempt.get("issue_codes")
+        error_code = attempt.get("error_code")
+        if not (isinstance(issue_codes, list) and issue_codes) and not (isinstance(error_code, str) and error_code.strip()):
+            issues.append("native_retry_attempt_failure_evidence_missing")
+    return issues
+
+
 def approved_source_reuse_fallback(asset: dict) -> bool:
-    return bool(
-        asset.get("fallback_decision") == "user_approved"
-        and asset.get("decision_id")
-        and asset.get("decision_reason")
-        and asset.get("decision_timestamp")
-    )
+    return not fallback_evidence_issues(asset)
 
 
 def sha256(path: Path) -> str:
@@ -115,17 +169,21 @@ def main() -> int:
             add(issues, "invalid_provenance_mode", asset_index=index, provenance_mode=mode)
             mode = "imagegen"
         asset_class = normalized_asset_class(asset)
-        approved_fallback = approved_source_reuse_fallback(asset)
-        if asset_class in MANDATORY_IMAGEGEN_CLASSES and mode != "imagegen" and not approved_fallback:
-            add(
-                issues,
-                "final_asset_route_requires_native_imagegen",
-                asset_index=index,
-                asset_id=asset.get("asset_id") or asset.get("id"),
-                asset_class=asset_class,
-                provenance_mode=mode,
-            )
-        if approved_fallback and mode != "source_reuse":
+        fallback_issues = fallback_evidence_issues(asset) if mode == "source_reuse" and asset_class in MANDATORY_IMAGEGEN_CLASSES else []
+        approved_fallback = not fallback_issues if mode == "source_reuse" and asset_class in MANDATORY_IMAGEGEN_CLASSES else False
+        if asset_class in MANDATORY_IMAGEGEN_CLASSES and mode != "imagegen":
+            if not approved_fallback:
+                add(
+                    issues,
+                    "final_asset_route_requires_native_imagegen",
+                    asset_index=index,
+                    asset_id=asset.get("asset_id") or asset.get("id"),
+                    asset_class=asset_class,
+                    provenance_mode=mode,
+                )
+                for code in fallback_issues:
+                    add(issues, code, asset_index=index, asset_id=asset.get("asset_id") or asset.get("id"))
+        if asset.get("fallback_decision") == "user_approved" and mode != "source_reuse":
             add(issues, "fallback_decision_requires_source_reuse", asset_index=index, provenance_mode=mode)
         provenance_modes[mode] = provenance_modes.get(mode, 0) + 1
         for field in (SOURCE_REUSE_REQUIRED if mode == "source_reuse" else REQUIRED):
@@ -201,6 +259,7 @@ def main() -> int:
         "hashed_asset_count": hashed_asset_count,
         "provenance_modes": provenance_modes,
         "mandatory_imagegen_classes": sorted(MANDATORY_IMAGEGEN_CLASSES),
+        "minimum_native_attempts_before_fallback": MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK,
         "hashes_required": args.require_hashes,
         "issues": issues,
         "human_visual_review_required": True,
