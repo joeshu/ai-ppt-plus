@@ -35,6 +35,7 @@
         {"path": "scripts/case_replay_audit.py", "reason": "worker-only case-level OOXML merge and native-text replay gate"},
         {"path": "scripts/compare_visual.py", "reason": "worker-only authored-canvas raw-slide comparison adapter"},
         {"path": "scripts/pptx_primitives.py", "reason": "P1 native table styling and rich-text authoring adapter"},
+        {"path": "scripts/reference_preflight.py", "reason": "worker-only fail-closed reference compose preflight for native imagegen and CJK font delivery"},
         {"path": "scripts/run_pipeline.py", "reason": "worker-specific standalone orchestration adapter; root owns route orchestration"},
         {"path": "scripts/validate_imagegen_final_assets.py", "reason": "worker-only final imagegen asset validator"},
         {"path": "scripts/validate_native_editability.py", "reason": "P1 worker-only native object audit"},
