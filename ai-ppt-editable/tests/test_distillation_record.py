@@ -15,6 +15,15 @@ def _iteration_record():
         "pixel_fidelity_score": 0.91,
         "blocking_count": 2,
         "native_editability_valid": True,
+        "semantic_accuracy": 1.0,
+        "semantic_audit": {
+            "valid": True,
+            "accuracy": 1.0,
+            "error_count": 0,
+            "warning_count": 1,
+            "expected_object_count": 7,
+            "audited_object_count": 7,
+        },
         "allowed_object_ids": ["title", "icon"],
         "object_drift": {
             "allowed_object_ids": ["title", "icon"],
@@ -31,7 +40,7 @@ def _iteration_record():
     }
 
 
-def test_build_record_captures_repair_drift_asset_and_human_evidence():
+def test_build_record_captures_repair_drift_asset_human_and_semantic_evidence():
     record = build_distillation_record(
         iteration_record=_iteration_record(),
         asset_resolution={
@@ -41,6 +50,7 @@ def test_build_record_captures_repair_drift_asset_and_human_evidence():
         },
         human_approved=False,
     ).to_dict()
+    assert record["schema"] == "ai-ppt-plus/astra-distillation-record/v3"
     assert record["case_id"] == "case-1"
     assert record["rollback"] is True
     assert record["unauthorized_object_drift_count"] == 1
@@ -48,34 +58,54 @@ def test_build_record_captures_repair_drift_asset_and_human_evidence():
     assert record["asset_retry_count"] == 1
     assert record["asset_user_choice_required_count"] == 1
     assert record["human_approved"] is False
+    assert record["semantic_accuracy"] == 1.0
+    assert record["semantic_audit"]["valid"] is True
+    assert record["semantic_audit"]["expected_object_count"] == 7
+    assert record["semantic_audit"]["audited_object_count"] == 7
+
+
+def test_missing_semantic_audit_is_not_invented():
+    source = _iteration_record()
+    source.pop("semantic_audit")
+    source.pop("semantic_accuracy")
+    record = build_distillation_record(iteration_record=source).to_dict()
+    assert record["semantic_accuracy"] is None
+    assert record["semantic_audit"] is None
 
 
 def test_summary_aggregates_without_inventing_missing_scores():
     a = build_distillation_record(iteration_record=_iteration_record()).to_dict()
     second = _iteration_record()
     second.update({"case_id": "case-2", "status": "repaired-needs-qa", "accepted": True, "pixel_fidelity_score": None})
+    second["semantic_audit"] = None
+    second["semantic_accuracy"] = None
     second["object_drift"] = {"unauthorized_drift_count": 0, "unauthorized_objects": []}
     second["regression"] = {"rollback": False, "reasons": [], "blocking_delta": -1}
     b = build_distillation_record(iteration_record=second, human_approved=True).to_dict()
     summary = summarize_distillation([a, b])
+    assert summary["schema"] == "ai-ppt-plus/astra-distillation-summary/v3"
     assert summary["record_count"] == 2
     assert summary["accepted_count"] == 1
     assert summary["rollback_count"] == 1
     assert summary["human_approved_count"] == 1
     assert summary["mean_pixel_fidelity_score"] == 0.91
+    assert summary["semantic_evidence_complete_count"] == 1
 
 
-def test_performance_merge_preserves_existing_fields():
+def test_performance_merge_preserves_existing_fields_and_semantic_evidence_count():
     existing = {"schema": "custom/v1", "timing": {"total_seconds": 12.3}, "cache": {"hits": 4}}
     summary = {"record_count": 3, "accepted_count": 2, "rollback_count": 1, "object_drift_rollback_count": 1,
                "asset_retry_count": 2, "asset_user_choice_required_count": 0, "repair_action_count": 5,
-               "native_editability_failure_count": 0, "mean_pixel_fidelity_score": 0.93}
+               "native_editability_failure_count": 0, "semantic_perfect_count": 2,
+               "semantic_evidence_complete_count": 2, "mean_pixel_fidelity_score": 0.93,
+               "mean_semantic_accuracy": 1.0}
     merged = merge_performance_report(existing, summary)
     assert merged["schema"] == "custom/v1"
     assert merged["timing"]["total_seconds"] == 12.3
     assert merged["cache"]["hits"] == 4
     assert merged["astra_reconstruction"]["record_count"] == 3
     assert merged["astra_reconstruction"]["rollback_count"] == 1
+    assert merged["astra_reconstruction"]["semantic_evidence_complete_count"] == 2
 
 
 if __name__ == "__main__":
