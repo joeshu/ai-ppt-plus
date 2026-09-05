@@ -52,6 +52,7 @@ jobs:
           python ai-ppt-editable/tests/test_astra_iteration_batch.py
           python ai-ppt-editable/tests/test_asset_orchestrator.py
           python ai-ppt-editable/tests/test_asset_quality_qa.py
+          python ai-ppt-editable/tests/test_asset_quality_resolution.py
       - name: Build 12-case Astra closed-loop batch
         run: |
           python evals/case-replay-12/build_astra_closed_loop_batch.py \
