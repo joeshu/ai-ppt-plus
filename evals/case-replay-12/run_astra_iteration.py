@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+"""Execute one validated Astra repair iteration through the deterministic PPTX engine.
+
+This runner never edits PPTX XML directly. It applies a validated merged
+DifferenceGraph to layout.json, then reuses compose/render/manifest/native-audit/
+visual-compare entrypoints to produce the next iteration evidence.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+REPO = ROOT.parents[1]
+EDITABLE = REPO / "ai-ppt-editable"
+SCRIPTS = EDITABLE / "scripts"
+if str(EDITABLE) not in sys.path:
+    sys.path.insert(0, str(EDITABLE))
+
+from reconstruction.difference_graph import DifferenceGraph
+from reconstruction.repair_executors import execute_plan
+from reconstruction.repair_router import RepairRouter
+
+
+def read_json(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_json(path: Path, value) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def run(command: list[str], *, allow: set[int] = {0}) -> subprocess.CompletedProcess:
+    cp = subprocess.run(command, cwd=REPO, capture_output=True, text=True, check=False)
+    if cp.returncode not in allow:
+        raise RuntimeError(
+            f"command failed ({cp.returncode}): {' '.join(command)}\nSTDOUT:\n{cp.stdout}\nSTDERR:\n{cp.stderr}"
+        )
+    return cp
+
+
+def prepare_repaired_layout(layout: dict, merged_graph: dict) -> dict:
+    graph = DifferenceGraph.from_dict(merged_graph)
+    plan = RepairRouter().build_plan(graph)
+    if plan.has_blocking_deferred:
+        raise RuntimeError("repair plan has blocking deferred findings")
+    executed = execute_plan(layout, plan)
+    if executed["report"]["requires_external_asset_generation"]:
+        raise RuntimeError("repair plan requires external asset generation before deterministic iteration")
+    if not executed["report"]["applied"]:
+        raise RuntimeError("repair plan has no executable deterministic actions")
+    return executed
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--case-id", required=True)
+    ap.add_argument("--layout", type=Path, required=True)
+    ap.add_argument("--merged-difference-graph", type=Path, required=True)
+    ap.add_argument("--reference", type=Path, required=True)
+    ap.add_argument("--output-dir", type=Path, required=True)
+    ap.add_argument("--iteration", type=int, required=True)
+    ap.add_argument("--font-dir", type=Path, default=EDITABLE / "assets" / "fonts")
+    args = ap.parse_args()
+
+    out = args.output_dir.resolve()
+    out.mkdir(parents=True, exist_ok=True)
+    layout = read_json(args.layout.resolve())
+    merged = read_json(args.merged_difference_graph.resolve())
+    executed = prepare_repaired_layout(layout, merged)
+
+    repaired_layout = out / "layout.json"
+    write_json(repaired_layout, executed["deck"])
+    write_json(out / "repair-execution-report.json", executed["report"])
+
+    pptx = out / "editable.pptx"
+    render_dir = out / "render"
+    render_report = out / "render-report.json"
+    object_manifest = out / "object-manifest.json"
+    native_report = out / "native-editability.json"
+    inspect_report = out / "inspect.json"
+    visual_report = out / "visual-comparison.json"
+
+    run([
+        sys.executable, str(SCRIPTS / "compose_pptx.py"), str(repaired_layout), str(pptx),
+        "--strict-input", "--require-native-structure",
+    ])
+    run([
+        sys.executable, str(SCRIPTS / "render_pptx.py"), str(pptx),
+        "--output-dir", str(render_dir), "--font-dir", str(args.font_dir), "--report", str(render_report),
+    ])
+    run([sys.executable, str(SCRIPTS / "inspect_pptx.py"), str(pptx), "--report", str(inspect_report)], allow={0, 2})
+    run([
+        sys.executable, str(SCRIPTS / "build_object_manifest.py"), str(repaired_layout),
+        "--output", str(object_manifest),
+    ])
+    run([
+        sys.executable, str(SCRIPTS / "validate_native_editability.py"), str(pptx),
+        "--object-manifest", str(object_manifest), "--require-native-structure",
+        "--require-complete-manifest", "--report", str(native_report),
+    ], allow={0, 2})
+
+    rendered = render_dir / "slide-1.png"
+    if not rendered.is_file():
+        raise RuntimeError("iteration render did not produce slide-1.png")
+    run([
+        sys.executable, str(SCRIPTS / "compare_visual.py"), str(rendered), str(args.reference.resolve()),
+        "--raw-slide", "--report", str(visual_report),
+    ], allow={0, 2})
+
+    visual = read_json(visual_report)
+    native = read_json(native_report)
+    inspect = read_json(inspect_report)
+    metrics = dict(visual.get("metrics") or {})
+    record = {
+        "schema": "ai-ppt-plus/astra-case-iteration/v1",
+        "case_id": args.case_id,
+        "iteration": args.iteration,
+        "pixel_fidelity_score": metrics.get("pixel_fidelity_score"),
+        "visual_metrics": metrics,
+        "native_editability_valid": native.get("valid") is True,
+        "native_error_count": len(native.get("errors") or []),
+        "inspection_valid": inspect.get("ok") is True,
+        "inspection_issue_count": len(inspect.get("issues") or []),
+        "repair_action_count": len(executed["report"].get("applied") or []),
+        "repair_engine_counts": {
+            engine: sum(1 for item in executed["report"].get("applied", []) if item.get("engine") == engine)
+            for engine in ("geometry_repair", "typography_repair", "asset_repair", "semantic_repair")
+        },
+        "status": "repaired-needs-qa" if native.get("valid") is True else "blocked-native-regression",
+        "artifacts": {
+            "layout": str(repaired_layout),
+            "pptx": str(pptx),
+            "render": str(rendered),
+            "visual_comparison": str(visual_report),
+            "object_manifest": str(object_manifest),
+            "native_editability": str(native_report),
+            "inspect": str(inspect_report),
+        },
+    }
+    write_json(out / "iteration-record.json", record)
+    print(json.dumps(record, ensure_ascii=False, indent=2))
+    return 0 if native.get("valid") is True else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
