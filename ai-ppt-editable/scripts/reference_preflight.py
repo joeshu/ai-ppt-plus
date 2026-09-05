@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Fail-closed preflight for direct reference-reconstruction authoring.
 
-The normal ai-ppt-editable route runs through run_pipeline.py. This module
-protects the lower-level composer as well, so a caller cannot bypass the
-mandatory native-imagegen asset route or portable CJK font route merely by
-calling compose_pptx.py directly.
+Image-generation requirements are derived from the visual decomposition
+(PageGraph), not from whether the user supplied separate icon files and not from
+a downstream manifest self-declaration. The slide-object manifest is only a
+cross-check of the already-understood visual inventory.
 """
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from pathlib import Path
 from validate_imagegen_final_assets import validate as validate_final_imagegen_assets
 
 CJK_RE = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
-MANDATORY_OBJECT_TYPES = {"extracted_icon", "editable_vector", "traceable_static_graphic"}
+MANDATORY_GRAPH_TYPES = {"icon", "illustration", "decoration"}
 MANDATORY_ROLES = {
     "icon", "badge", "illustration", "decorative_art", "decorative-art",
     "decoration", "complex_art", "complex-art", "artistic_typography",
@@ -42,25 +42,43 @@ def _contains_cjk(value: object) -> bool:
     return False
 
 
-def _objects_from_manifest(data: dict) -> list[dict]:
+def _norm_role(value: object) -> str:
+    return str(value or "").strip().lower().replace(" ", "_")
+
+
+def _page_graph_assets(data: dict) -> list[dict]:
+    nodes = data.get("nodes")
+    if not isinstance(nodes, list):
+        raise ValueError("page-graph.json must contain nodes[]")
+    assets: list[dict] = []
+    for item in nodes:
+        if not isinstance(item, dict):
+            continue
+        node_id = str(item.get("id", "")).strip()
+        node_type = str(item.get("type", "")).strip().lower()
+        role = _norm_role(item.get("role"))
+        if role in BRAND_ROLES:
+            continue
+        if node_type in MANDATORY_GRAPH_TYPES or role in MANDATORY_ROLES:
+            if not node_id:
+                raise ValueError("visual asset node is missing id")
+            assets.append({"id": node_id, "type": node_type, "role": role})
+    return assets
+
+
+def _object_ids(data: dict) -> set[str]:
+    result: set[str] = set()
     objects: list[dict] = []
     for slide in data.get("slides") or []:
         if isinstance(slide, dict) and isinstance(slide.get("objects"), list):
             objects.extend(item for item in slide["objects"] if isinstance(item, dict))
     if isinstance(data.get("objects"), list):
         objects.extend(item for item in data["objects"] if isinstance(item, dict))
-    return objects
-
-
-def _requires_native_imagegen(objects: list[dict]) -> bool:
     for item in objects:
-        role = str(item.get("role", "")).strip().lower().replace(" ", "_")
-        object_type = str(item.get("object_type", item.get("type", ""))).strip().lower()
-        if role in BRAND_ROLES:
-            continue
-        if object_type in MANDATORY_OBJECT_TYPES or role in MANDATORY_ROLES:
-            return True
-    return False
+        value = item.get("object_id") or item.get("id") or item.get("name")
+        if value:
+            result.add(str(value))
+    return result
 
 
 def _resolve(root: Path, value: object) -> Path | None:
@@ -88,8 +106,7 @@ def _font_evidence(root: Path, font_dir: object, font_manifest: object) -> tuple
             return True, details
     if resolved_dir is not None and resolved_dir.is_dir():
         font_files = sorted(
-            str(path)
-            for path in resolved_dir.iterdir()
+            str(path) for path in resolved_dir.iterdir()
             if path.is_file() and path.suffix.lower() in FONT_SUFFIXES
         )
         details["font_files"] = font_files
@@ -110,10 +127,12 @@ def validate_reference_preflight(
     route_path = root / "route-decision.json"
     issues: list[dict] = []
     result = {
-        "schema": "ai-ppt-plus/reference-compose-preflight/v2",
+        "schema": "ai-ppt-plus/reference-compose-preflight/v3",
         "valid": True,
         "required": False,
         "route": None,
+        "visual_inventory_source": None,
+        "visual_asset_ids": [],
         "imagegen_required": False,
         "cjk_required": False,
         "font_evidence": None,
@@ -132,18 +151,35 @@ def validate_reference_preflight(
         return result
     result["required"] = True
 
-    object_manifest_path = root / "slide-object-manifest.json"
-    if not object_manifest_path.is_file():
-        issues.append({"code": "reference_object_manifest_missing", "path": str(object_manifest_path)})
-        objects: list[dict] = []
+    # Primary authority: Astra/PageGraph visual decomposition of the full reference page.
+    graph_path = root / "page-graph.json"
+    graph_assets: list[dict] = []
+    if not graph_path.is_file():
+        issues.append({"code": "reference_page_graph_missing", "path": str(graph_path)})
     else:
         try:
-            objects = _objects_from_manifest(_load_json(object_manifest_path))
+            graph = _load_json(graph_path)
+            graph_assets = _page_graph_assets(graph)
+            result["visual_inventory_source"] = str(graph_path)
+            result["visual_asset_ids"] = [item["id"] for item in graph_assets]
+        except Exception as exc:
+            issues.append({"code": "reference_page_graph_unreadable", "message": f"{type(exc).__name__}: {exc}"})
+
+    # Secondary evidence only: downstream manifest must not omit visual assets understood upstream.
+    object_manifest_path = root / "slide-object-manifest.json"
+    manifest_ids: set[str] = set()
+    if not object_manifest_path.is_file():
+        issues.append({"code": "reference_object_manifest_missing", "path": str(object_manifest_path)})
+    else:
+        try:
+            manifest_ids = _object_ids(_load_json(object_manifest_path))
         except Exception as exc:
             issues.append({"code": "reference_object_manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"})
-            objects = []
+    missing_from_manifest = sorted({item["id"] for item in graph_assets} - manifest_ids)
+    if missing_from_manifest:
+        issues.append({"code": "visual_asset_inventory_mismatch", "missing_object_ids": missing_from_manifest})
 
-    imagegen_required = _requires_native_imagegen(objects)
+    imagegen_required = bool(graph_assets)
     result["imagegen_required"] = imagegen_required
     if imagegen_required:
         manifest_path = root / "imagegen-assets-manifest.json"
@@ -156,10 +192,11 @@ def validate_reference_preflight(
                 issues.append({"code": "imagegen_final_asset_manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"})
             else:
                 if not imagegen_report.get("valid"):
-                    issues.append({
-                        "code": "imagegen_final_asset_gate_failed",
-                        "errors": imagegen_report.get("errors", []),
-                    })
+                    issues.append({"code": "imagegen_final_asset_gate_failed", "errors": imagegen_report.get("errors", [])})
+                generated_ids = {str(item.get("asset_id")) for item in imagegen_report.get("records", []) if item.get("asset_id")}
+                missing_generated = sorted({item["id"] for item in graph_assets} - generated_ids)
+                if missing_generated:
+                    issues.append({"code": "imagegen_asset_coverage_missing", "missing_asset_ids": missing_generated})
 
     cjk_required = _contains_cjk(deck)
     result["cjk_required"] = cjk_required
