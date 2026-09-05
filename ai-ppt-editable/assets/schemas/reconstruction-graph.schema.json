@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://joeshu.github.io/ai-ppt-plus/schemas/reconstruction-graph.schema.json",
   "title": "Astra Visual Reconstruction Page Graph",
+  "description": "All node bbox coordinates are normalized slide fractions [x,y,w,h] in the inclusive range 0..1.",
   "type": "object",
   "required": ["version", "page", "nodes"],
   "properties": {
@@ -13,7 +14,8 @@
         "slide_width_in": {"type": "number", "exclusiveMinimum": 0},
         "slide_height_in": {"type": "number", "exclusiveMinimum": 0},
         "reference_width": {"type": "number", "minimum": 0},
-        "reference_height": {"type": "number", "minimum": 0}
+        "reference_height": {"type": "number", "minimum": 0},
+        "coordinate_units": {"const": "fraction"}
       },
       "additionalProperties": true
     },
@@ -24,13 +26,15 @@
         "required": ["id", "type", "bbox"],
         "properties": {
           "id": {"type": "string", "minLength": 1},
-          "type": {
-            "enum": ["text", "shape", "table", "chart", "icon", "illustration", "image", "connector", "group", "background", "decoration"]
-          },
+          "type": {"enum": ["text", "shape", "table", "chart", "icon", "illustration", "image", "connector", "group", "background", "decoration"]},
           "bbox": {
+            "description": "Normalized [x,y,w,h] slide fractions.",
             "type": "array",
             "prefixItems": [
-              {"type": "number"}, {"type": "number"}, {"type": "number", "minimum": 0}, {"type": "number", "minimum": 0}
+              {"type": "number", "minimum": 0, "maximum": 1},
+              {"type": "number", "minimum": 0, "maximum": 1},
+              {"type": "number", "minimum": 0, "maximum": 1},
+              {"type": "number", "minimum": 0, "maximum": 1}
             ],
             "minItems": 4,
             "maxItems": 4
@@ -47,9 +51,7 @@
               "type": "object",
               "required": ["kind", "target"],
               "properties": {
-                "kind": {
-                  "enum": ["contains", "belongs_to", "aligned_left", "aligned_right", "aligned_top", "aligned_bottom", "aligned_center_x", "aligned_center_y", "equal_width", "equal_height", "equal_gap", "connects_to", "overlaps", "anchors_to"]
-                },
+                "kind": {"enum": ["contains", "belongs_to", "aligned_left", "aligned_right", "aligned_top", "aligned_bottom", "aligned_center_x", "aligned_center_y", "equal_width", "equal_height", "equal_gap", "connects_to", "overlaps", "anchors_to"]},
                 "target": {"type": "string", "minLength": 1},
                 "confidence": {"type": "number", "minimum": 0, "maximum": 1},
                 "metadata": {"type": "object"}
