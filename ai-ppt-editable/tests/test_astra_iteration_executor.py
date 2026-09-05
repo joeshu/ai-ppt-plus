@@ -65,6 +65,17 @@ def test_prepare_repaired_layout_stops_for_external_asset_generation():
         raise AssertionError("expected external asset boundary to stop deterministic iteration")
 
 
+def test_asset_resolved_resume_does_not_redispatch_regenerate():
+    layout = _layout()
+    layout["slides"][0]["icons"][0]["file"] = "generated-icon.png"
+    result = module.prepare_asset_resolved_layout(layout)
+    assert result["deck"]["slides"][0]["icons"][0]["file"] == "generated-icon.png"
+    assert result["report"]["asset_resolution_resume"] is True
+    assert result["report"]["requires_external_asset_generation"] is False
+    assert result["report"]["regeneration_requests"] == []
+    assert result["report"]["applied"] == []
+
+
 if __name__ == "__main__":
     for name, value in sorted(globals().items()):
         if name.startswith("test_") and callable(value):
