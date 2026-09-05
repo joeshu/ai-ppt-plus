@@ -13,10 +13,28 @@ ROOT = Path(__file__).resolve().parent
 _ORIGINAL = legacy.build_layout
 
 
+def normalize_writer_contract(deck):
+    """Normalize reference-fixture shorthand into the current strict writer contract."""
+    for slide in deck.get("slides", []) or []:
+        for item in slide.get("texts", []) or []:
+            if item.get("valign") == "mid":
+                item["valign"] = "middle"
+        for table in slide.get("tables", []) or []:
+            styles = table.get("cell_styles") if isinstance(table.get("cell_styles"), dict) else {}
+            for style in styles.values():
+                if not isinstance(style, dict):
+                    continue
+                if style.get("align") == "center":
+                    style["align"] = 2  # PP_ALIGN.CENTER, JSON-safe
+                if style.get("valign") == "mid":
+                    style["valign"] = "middle"
+    return deck
+
+
 def reference_first(case, run_dir, optimized):
     resolved = build_reference_layout(case, run_dir, optimized, legacy)
     if resolved is not None:
-        return resolved
+        return normalize_writer_contract(resolved)
     return _ORIGINAL(case, run_dir, optimized)
 
 
