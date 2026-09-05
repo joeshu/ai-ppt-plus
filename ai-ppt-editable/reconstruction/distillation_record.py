@@ -24,6 +24,7 @@ class DistillationRecord:
     blocking_delta: int | None
     native_editability_valid: bool
     semantic_accuracy: float | None
+    semantic_audit: dict[str, Any] | None
     unauthorized_object_drift_count: int
     drift_objects: tuple[str, ...]
     rollback: bool
@@ -54,6 +55,20 @@ def _float_or_none(value: Any) -> float | None:
         return None
 
 
+def _semantic_audit_snapshot(value: Any) -> dict[str, Any] | None:
+    """Keep the bounded semantic evidence needed by promotion and audit tooling."""
+    if not isinstance(value, dict):
+        return None
+    return {
+        "valid": value.get("valid") is True,
+        "accuracy": _float_or_none(value.get("accuracy")),
+        "error_count": _int(value.get("error_count")) if value.get("error_count") is not None else None,
+        "warning_count": _int(value.get("warning_count")) if value.get("warning_count") is not None else None,
+        "expected_object_count": _int(value.get("expected_object_count")) if value.get("expected_object_count") is not None else None,
+        "audited_object_count": _int(value.get("audited_object_count")) if value.get("audited_object_count") is not None else None,
+    }
+
+
 def build_distillation_record(*, iteration_record: dict[str, Any], asset_resolution: dict[str, Any] | None = None,
                               human_approved: bool | None = None) -> DistillationRecord:
     regression = iteration_record.get("regression") or {}
@@ -62,12 +77,12 @@ def build_distillation_record(*, iteration_record: dict[str, Any], asset_resolut
     allowed = tuple(sorted(str(x) for x in (drift.get("allowed_object_ids") or iteration_record.get("allowed_object_ids") or []) if x))
     drift_objects = tuple(sorted(str(x) for x in (drift.get("unauthorized_objects") or []) if x))
     rollback_reasons = tuple(str(x) for x in (regression.get("reasons") or []) if x)
+    semantic_audit = _semantic_audit_snapshot(iteration_record.get("semantic_audit"))
     semantic_accuracy = _float_or_none(iteration_record.get("semantic_accuracy"))
-    if semantic_accuracy is None:
-        semantic = iteration_record.get("semantic_audit") or {}
-        semantic_accuracy = _float_or_none(semantic.get("accuracy"))
+    if semantic_accuracy is None and semantic_audit is not None:
+        semantic_accuracy = _float_or_none(semantic_audit.get("accuracy"))
     return DistillationRecord(
-        schema="ai-ppt-plus/astra-distillation-record/v2",
+        schema="ai-ppt-plus/astra-distillation-record/v3",
         case_id=str(iteration_record.get("case_id") or ""),
         iteration=_int(iteration_record.get("iteration")),
         status=str(iteration_record.get("status") or "unknown"),
@@ -82,6 +97,7 @@ def build_distillation_record(*, iteration_record: dict[str, Any], asset_resolut
         blocking_delta=_int(regression.get("blocking_delta")) if regression.get("blocking_delta") is not None else None,
         native_editability_valid=iteration_record.get("native_editability_valid") is True,
         semantic_accuracy=semantic_accuracy,
+        semantic_audit=semantic_audit,
         unauthorized_object_drift_count=_int(drift.get("unauthorized_drift_count")),
         drift_objects=drift_objects,
         rollback=regression.get("rollback") is True or iteration_record.get("status") == "rolled-back-regression",
@@ -97,8 +113,17 @@ def build_distillation_record(*, iteration_record: dict[str, Any], asset_resolut
 def summarize_distillation(records: list[dict[str, Any]]) -> dict[str, Any]:
     scores = [float(item["pixel_fidelity_score"]) for item in records if item.get("pixel_fidelity_score") is not None]
     semantic_scores = [float(item["semantic_accuracy"]) for item in records if item.get("semantic_accuracy") is not None]
+    complete_semantic = 0
+    for item in records:
+        audit = item.get("semantic_audit")
+        if not isinstance(audit, dict):
+            continue
+        expected = audit.get("expected_object_count")
+        audited = audit.get("audited_object_count")
+        if audit.get("valid") is True and audit.get("error_count") == 0 and expected is not None and audited == expected:
+            complete_semantic += 1
     return {
-        "schema": "ai-ppt-plus/astra-distillation-summary/v2",
+        "schema": "ai-ppt-plus/astra-distillation-summary/v3",
         "record_count": len(records),
         "accepted_count": sum(1 for item in records if item.get("accepted") is True),
         "rollback_count": sum(1 for item in records if item.get("rollback") is True),
@@ -108,6 +133,7 @@ def summarize_distillation(records: list[dict[str, Any]]) -> dict[str, Any]:
         "repair_action_count": sum(int(item.get("repair_action_count") or 0) for item in records),
         "native_editability_failure_count": sum(1 for item in records if item.get("native_editability_valid") is not True),
         "semantic_perfect_count": sum(1 for item in records if item.get("semantic_accuracy") == 1.0),
+        "semantic_evidence_complete_count": complete_semantic,
         "human_approved_count": sum(1 for item in records if item.get("human_approved") is True),
         "mean_pixel_fidelity_score": round(sum(scores) / len(scores), 6) if scores else None,
         "mean_semantic_accuracy": round(sum(semantic_scores) / len(semantic_scores), 6) if semantic_scores else None,
@@ -127,6 +153,7 @@ def merge_performance_report(existing: dict[str, Any] | None, summary: dict[str,
         "repair_action_count": summary.get("repair_action_count", 0),
         "native_editability_failure_count": summary.get("native_editability_failure_count", 0),
         "semantic_perfect_count": summary.get("semantic_perfect_count", 0),
+        "semantic_evidence_complete_count": summary.get("semantic_evidence_complete_count", 0),
         "mean_pixel_fidelity_score": summary.get("mean_pixel_fidelity_score"),
         "mean_semantic_accuracy": summary.get("mean_semantic_accuracy"),
     }
