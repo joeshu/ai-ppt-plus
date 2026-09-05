@@ -96,6 +96,10 @@
           "reason": "worker-only Astra reconstruction Graph IR contract"
         },
         {
+          "path": "assets/schemas/text-target-observation.schema.json",
+          "reason": "worker-only Astra screenshot-to-text target observation contract"
+        },
+        {
           "path": "references/astra-visual-reconstruction-engine.md",
           "reason": "worker-only Astra reconstruction architecture protocol"
         },
