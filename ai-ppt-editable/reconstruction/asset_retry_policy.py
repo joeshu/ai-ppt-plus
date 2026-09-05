@@ -11,12 +11,27 @@ from typing import Any
 
 
 FAILURE_HINTS = {
+    "semantic": "Preserve the exact semantic subject and do not substitute a different symbol, object or concept.",
     "silhouette": "Match the source silhouette, proportions, negative space and outer contour more precisely.",
     "structure": "Preserve the source structure, part arrangement, orientation and relative geometry.",
     "color": "Match the source dominant colors, gradients, contrast and color-flow direction more closely.",
     "style": "Match the source visual style, stroke/fill language, depth, texture and rendering treatment.",
     "composition": "Match the source composition, subject placement, balance and internal spacing.",
     "detail": "Restore the source's distinctive local details while avoiding invented decoration.",
+    "background": "Comply exactly with the requested transparent/key-color/opaque background mode.",
+}
+
+ISSUE_CODE_CATEGORIES = {
+    "semantic_mismatch": ("semantic",),
+    "silhouette_mismatch": ("silhouette", "structure"),
+    "orientation_mismatch": ("structure",),
+    "color_mismatch": ("color",),
+    "gradient_flow_mismatch": ("color", "composition"),
+    "style_mismatch": ("style",),
+    "missing_detail": ("detail",),
+    "extra_detail": ("detail",),
+    "composition_mismatch": ("composition",),
+    "background_noncompliance": ("background",),
 }
 
 
@@ -30,6 +45,7 @@ class AssetRetryPolicy:
 
 
 def classify_reasons(reasons: list[str]) -> list[str]:
+    """Legacy diagnostic helper; retry control no longer depends on free-form prose."""
     text = " ".join(reasons).casefold()
     categories: list[str] = []
     keyword_map = {
@@ -46,19 +62,28 @@ def classify_reasons(reasons: list[str]) -> list[str]:
     return categories or ["structure", "style"]
 
 
+def categories_from_issue_codes(issue_codes: list[str]) -> list[str]:
+    categories: list[str] = []
+    for code in issue_codes:
+        for category in ISSUE_CODE_CATEGORIES.get(code, ()):
+            if category not in categories:
+                categories.append(category)
+    return categories or ["structure", "style"]
+
+
 def strengthen_prompt(base_prompt: str | None, quality: dict[str, Any], *, attempt: int) -> str:
     prompt = (base_prompt or "Recreate the source asset faithfully.").strip()
-    reasons = [str(item) for item in (quality.get("reasons") or []) if str(item).strip()]
-    categories = classify_reasons(reasons)
+    issue_codes = [str(item) for item in (quality.get("issue_codes") or []) if str(item).strip()]
+    categories = categories_from_issue_codes(issue_codes)
     directives = [FAILURE_HINTS[item] for item in categories]
     scores = []
-    for key in ("score", "structure_score", "style_score"):
+    for key in ("score", "structure_score", "style_score", "confidence"):
         if quality.get(key) is not None:
             scores.append(f"{key}={float(quality[key]):.3f}")
-    reason_text = "; ".join(reasons) if reasons else "visual fidelity below threshold"
+    controlled_failure = ", ".join(issue_codes) if issue_codes else "visual_fidelity_below_threshold"
     return (
         f"{prompt}\n\n"
-        f"Native regeneration attempt {attempt}. Previous asset was rejected: {reason_text}. "
+        f"Native regeneration attempt {attempt}. Previous asset failed controlled QA checks: {controlled_failure}. "
         f"Observed QA: {', '.join(scores) if scores else 'no numeric scores'}.\n"
         + " ".join(directives)
         + " Keep the same semantic subject and do not add unrelated elements."
@@ -90,6 +115,8 @@ def next_retry_request(request: dict[str, Any], quality: dict[str, Any], *, prev
             "score": quality.get("score"),
             "structure_score": quality.get("structure_score"),
             "style_score": quality.get("style_score"),
+            "confidence": quality.get("confidence"),
+            "issue_codes": list(quality.get("issue_codes") or []),
             "reasons": list(quality.get("reasons") or []),
         },
     }
