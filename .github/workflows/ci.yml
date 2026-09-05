@@ -19,7 +19,8 @@ jobs:
           mkdir -p "$HOME/.local/share/fonts"
           cp ai-ppt-editable/assets/fonts/NotoSansSC-Regular.ttf "$HOME/.local/share/fonts/"
           fc-cache -f
-          fc-match "Noto Sans SC"
+          fc-match "Noto Sans CJK SC"
+          fc-match -f '%{family}\n' "Noto Sans CJK SC" | grep -F "Noto Sans CJK SC"
           python -m pip install --upgrade pip
           python -m pip install -r requirements-ci.txt
       - name: Verify SVG rendering dependency
