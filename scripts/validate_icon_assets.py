@@ -19,6 +19,11 @@ ROLES = {"icon", "decoration", "badge", "logo", "illustration", "decorative_word
 METHODS = {"approved-source-asset", "image-generation", "native-vector", "chroma-cutout", "contact-sheet-split", "placeholder"}
 LEVELS = {"L1", "L2", "L4", "L5"}
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+IMAGEGEN_WORD = re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])", re.I)
+MANDATORY_IMAGEGEN_ROLES = {"icon", "decoration", "badge", "illustration", "decorative_word_art"}
+FALLBACK_METHODS = {"chroma-cutout", "contact-sheet-split"}
+MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK = 3
+FALLBACK_FAILURE_STATUSES = {"failed_qa", "generation_failed"}
 
 
 def sha256(path: Path) -> str:
@@ -35,6 +40,60 @@ def add(issues, severity, code, index=None, **extra):
         item["asset_index"] = index
     item.update(extra)
     issues.append(item)
+
+
+def fallback_evidence_issues(asset: dict) -> list[str]:
+    issues: list[str] = []
+    if asset.get("fallback_decision") != "user_approved":
+        issues.append("fallback_user_approval_missing")
+    for field in ("decision_id", "decision_reason", "decision_timestamp"):
+        if not isinstance(asset.get(field), str) or not asset[field].strip():
+            issues.append(f"fallback_{field}_missing")
+    if asset.get("selected_choice") != "crop-matting-fallback":
+        issues.append("fallback_selected_choice_invalid")
+    evidence = asset.get("native_retry_evidence")
+    if not isinstance(evidence, dict):
+        issues.append("native_retry_evidence_missing")
+        return issues
+    if evidence.get("status") != "user-choice-required":
+        issues.append("native_retry_boundary_not_reached")
+    attempts_exhausted = evidence.get("attempts_exhausted")
+    max_attempts = evidence.get("max_native_attempts")
+    if not isinstance(attempts_exhausted, int) or attempts_exhausted < MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK:
+        issues.append("native_retry_attempts_not_exhausted")
+    if not isinstance(max_attempts, int) or max_attempts < MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK:
+        issues.append("native_retry_budget_invalid")
+    elif isinstance(attempts_exhausted, int) and attempts_exhausted < max_attempts:
+        issues.append("native_retry_budget_not_exhausted")
+    choices = evidence.get("choices")
+    if not isinstance(choices, list) or "continue-native-generation" not in choices or "crop-matting-fallback" not in choices:
+        issues.append("native_retry_choices_invalid")
+    attempts = evidence.get("attempts")
+    if not isinstance(attempts, list) or not isinstance(attempts_exhausted, int) or len(attempts) < attempts_exhausted:
+        issues.append("native_retry_attempt_records_incomplete")
+        return issues
+    seen = set()
+    for attempt in attempts[:attempts_exhausted]:
+        if not isinstance(attempt, dict):
+            issues.append("native_retry_attempt_record_invalid")
+            continue
+        number = attempt.get("attempt")
+        if not isinstance(number, int) or number < 1 or number in seen:
+            issues.append("native_retry_attempt_number_invalid")
+        else:
+            seen.add(number)
+        if attempt.get("status") not in FALLBACK_FAILURE_STATUSES:
+            issues.append("native_retry_attempt_not_failed")
+        backend = attempt.get("backend")
+        if not isinstance(backend, str) or not IMAGEGEN_WORD.search(backend):
+            issues.append("native_retry_attempt_backend_invalid")
+        if not isinstance(attempt.get("prompt_ref"), str) or not attempt["prompt_ref"].strip():
+            issues.append("native_retry_attempt_prompt_missing")
+        issue_codes = attempt.get("issue_codes")
+        error_code = attempt.get("error_code")
+        if not (isinstance(issue_codes, list) and issue_codes) and not (isinstance(error_code, str) and error_code.strip()):
+            issues.append("native_retry_attempt_failure_evidence_missing")
+    return issues
 
 
 def main() -> int:
@@ -59,7 +118,6 @@ def main() -> int:
         assets = data.get("assets", [])
     if not isinstance(assets, list):
         add(issues, "blocker", "assets_not_array"); assets = []
-    # B4/B5 evidence is project-level, not optional metadata.
     top_required = ("source_vs_frame_review", "frame_asset_ids", "icon_asset_ids", "frame_preview", "contact_sheet")
     for field in top_required:
         if field not in data or data[field] in (None, ""):
@@ -89,8 +147,10 @@ def main() -> int:
         else: seen.add(asset_id)
         for field in required:
             if field not in asset or asset[field] in (None, ""): add(issues, "blocker", "required_field_missing", index, field=field)
-        if asset.get("role") not in ROLES: add(issues, "blocker", "invalid_role", index, value=asset.get("role"))
-        if asset.get("extraction_method") not in METHODS: add(issues, "blocker", "invalid_extraction_method", index, value=asset.get("extraction_method"))
+        role = asset.get("role")
+        method = asset.get("extraction_method")
+        if role not in ROLES: add(issues, "blocker", "invalid_role", index, value=role)
+        if method not in METHODS: add(issues, "blocker", "invalid_extraction_method", index, value=method)
         if asset.get("editability_level") not in LEVELS: add(issues, "blocker", "invalid_editability_level", index, value=asset.get("editability_level"))
         bbox = asset.get("source_bbox")
         valid_bbox = isinstance(bbox, dict) and all(isinstance(bbox.get(k), (int, float)) and bbox.get(k) >= 0 for k in ("x", "y", "w", "h")) and bbox.get("w", 0) > 0 and bbox.get("h", 0) > 0
@@ -100,11 +160,22 @@ def main() -> int:
         if asset.get("duplicate_guard") != "pass": add(issues, "blocker", "duplicate_guard_failed", index)
         if asset.get("editability_level") == "L2" and asset.get("replaceable") is not True: add(issues, "blocker", "l2_not_replaceable", index)
         if asset.get("editability_level") == "L5": add(issues, "blocker", "unresolved_asset", index)
-        if asset.get("extraction_method") == "image-generation" and not isinstance(asset.get("prompt_ref"), str): add(issues, "blocker", "generation_evidence_missing", index)
-        if asset.get("extraction_method") in {"chroma-cutout", "contact-sheet-split"} and not isinstance(asset.get("cutout_method"), str): add(issues, "blocker", "cutout_evidence_missing", index)
+
+        if role in MANDATORY_IMAGEGEN_ROLES and method != "image-generation":
+            fallback_codes = fallback_evidence_issues(asset) if method in FALLBACK_METHODS else ["mandatory_visual_asset_requires_image_generation"]
+            if fallback_codes:
+                add(issues, "blocker", "mandatory_visual_asset_requires_image_generation", index, role=role, extraction_method=method)
+                for code in fallback_codes:
+                    if code != "mandatory_visual_asset_requires_image_generation":
+                        add(issues, "blocker", code, index, asset_id=asset_id)
+        if role == "logo" and method not in {"approved-source-asset", "placeholder"}:
+            add(issues, "blocker", "logo_requires_authorized_source_asset", index, extraction_method=method)
+        if method == "image-generation" and not isinstance(asset.get("prompt_ref"), str): add(issues, "blocker", "generation_evidence_missing", index)
+        if method in FALLBACK_METHODS and not isinstance(asset.get("cutout_method"), str): add(issues, "blocker", "cutout_evidence_missing", index)
+
         asset_path = asset.get("asset_path")
         native_ref = isinstance(asset_path, str) and asset_path.startswith("native:")
-        if isinstance(asset_path, str) and asset_path and not native_ref and asset.get("extraction_method") != "placeholder":
+        if isinstance(asset_path, str) and asset_path and not native_ref and method != "placeholder":
             path = (manifest_path.parent / asset_path).resolve()
             if not path.is_file(): add(issues, "blocker", "asset_file_missing", index, path=str(path))
             else:
@@ -126,7 +197,19 @@ def main() -> int:
                             if "A" in image.getbands() and image.getchannel("A").getbbox() is None: add(issues, "blocker", "asset_alpha_empty", index, path=str(path))
                     except Exception as exc: add(issues, "blocker", "asset_unreadable", index, message=f"{type(exc).__name__}: {exc}")
                 else: warnings.append({"severity": "major", "code": "pillow_unavailable_for_alpha_check", "asset_index": index})
-    result = {"schema": "ai-ppt-plus/icon-assets-validation/v1", "valid": not any(x.get("severity") == "blocker" for x in issues), "status": "passed" if not issues else "blocked", "manifest": str(manifest_path), "asset_count": len(assets), "hashed_asset_count": hashed_asset_count, "hashes_required": args.require_hashes, "issues": issues, "warnings": warnings, "human_visual_review_required": True}
+    result = {
+        "schema": "ai-ppt-plus/icon-assets-validation/v1",
+        "valid": not any(x.get("severity") == "blocker" for x in issues),
+        "status": "passed" if not issues else "blocked",
+        "manifest": str(manifest_path),
+        "asset_count": len(assets),
+        "hashed_asset_count": hashed_asset_count,
+        "hashes_required": args.require_hashes,
+        "minimum_native_attempts_before_fallback": MIN_NATIVE_ATTEMPTS_BEFORE_FALLBACK,
+        "issues": issues,
+        "warnings": warnings,
+        "human_visual_review_required": True,
+    }
     if args.report:
         report = Path(args.report).resolve(); atomic_write_json(report, result)
     print(json.dumps(result, ensure_ascii=False)); return 0 if result["valid"] else 2
