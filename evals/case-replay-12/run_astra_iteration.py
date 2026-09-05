@@ -3,7 +3,7 @@
 
 This runner never edits PPTX XML directly. It applies a validated merged
 DifferenceGraph to layout.json, then reuses compose/render/manifest/native-audit/
-visual-compare entrypoints to produce the next iteration evidence.
+semantic-audit/visual-compare entrypoints to produce the next iteration evidence.
 
 When --resume-after-assets is used, the supplied layout is already asset-resolved
 and validated. In that mode the runner intentionally skips the original repair
@@ -110,6 +110,7 @@ def main() -> int:
     render_report = out / "render-report.json"
     object_manifest = out / "object-manifest.json"
     native_report = out / "native-editability.json"
+    semantic_report = out / "semantic-audit.json"
     inspect_report = out / "inspect.json"
     visual_report = out / "visual-comparison.json"
 
@@ -131,6 +132,10 @@ def main() -> int:
         "--object-manifest", str(object_manifest), "--require-native-structure",
         "--require-complete-manifest", "--report", str(native_report),
     ], allow={0, 2})
+    run([
+        sys.executable, str(SCRIPTS / "semantic_object_audit.py"), str(pptx),
+        "--object-manifest", str(object_manifest), "--report", str(semantic_report),
+    ], allow={0, 2})
 
     rendered = render_dir / "slide-1.png"
     if not rendered.is_file():
@@ -142,16 +147,34 @@ def main() -> int:
 
     visual = read_json(visual_report)
     native = read_json(native_report)
+    semantic = read_json(semantic_report)
     inspect = read_json(inspect_report)
     metrics = dict(visual.get("metrics") or {})
+    semantic_valid = semantic.get("valid") is True
+    semantic_accuracy = 1.0 if semantic_valid else 0.0
+    native_valid = native.get("valid") is True
+    status = "repaired-needs-qa"
+    if not native_valid:
+        status = "blocked-native-regression"
+    elif not semantic_valid:
+        status = "blocked-semantic-regression"
     record = {
-        "schema": "ai-ppt-plus/astra-case-iteration/v1",
+        "schema": "ai-ppt-plus/astra-case-iteration/v2",
         "case_id": args.case_id,
         "iteration": args.iteration,
         "pixel_fidelity_score": metrics.get("pixel_fidelity_score"),
         "visual_metrics": metrics,
-        "native_editability_valid": native.get("valid") is True,
+        "native_editability_valid": native_valid,
         "native_error_count": len(native.get("errors") or []),
+        "semantic_accuracy": semantic_accuracy,
+        "semantic_audit": {
+            "valid": semantic_valid,
+            "accuracy": semantic_accuracy,
+            "error_count": len(semantic.get("errors") or []),
+            "warning_count": len(semantic.get("warnings") or []),
+            "expected_object_count": semantic.get("expected_object_count"),
+            "audited_object_count": semantic.get("audited_object_count"),
+        },
         "inspection_valid": inspect.get("ok") is True,
         "inspection_issue_count": len(inspect.get("issues") or []),
         "repair_action_count": len(executed["report"].get("applied") or []),
@@ -160,7 +183,7 @@ def main() -> int:
             for engine in ("geometry_repair", "typography_repair", "asset_repair", "semantic_repair")
         },
         "asset_resolution_resume": args.resume_after_assets,
-        "status": "repaired-needs-qa" if native.get("valid") is True else "blocked-native-regression",
+        "status": status,
         "artifacts": {
             "layout": str(repaired_layout),
             "pptx": str(pptx),
@@ -168,12 +191,13 @@ def main() -> int:
             "visual_comparison": str(visual_report),
             "object_manifest": str(object_manifest),
             "native_editability": str(native_report),
+            "semantic_audit": str(semantic_report),
             "inspect": str(inspect_report),
         },
     }
     write_json(out / "iteration-record.json", record)
     print(json.dumps(record, ensure_ascii=False, indent=2))
-    return 0 if native.get("valid") is True else 2
+    return 0 if native_valid and semantic_valid else 2
 
 
 if __name__ == "__main__":
