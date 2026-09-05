@@ -70,6 +70,30 @@ def test_deterministic_blocker_survives_astra_merge():
     assert result["summary"]["blocking_count"] >= 1
 
 
+def test_page_visual_diagnostic_does_not_block_object_repair():
+    deterministic = DifferenceGraph.from_dict({
+        "version": "1.0", "source_id": "reference.png", "rendered_id": "render.png",
+        "findings": [{
+            "id": "det-page", "object_id": "slide:1:visual", "domain": "geometry", "severity": "P1",
+            "message": "page visual below threshold", "confidence": 1.0, "proposed_patch": {},
+            "evidence": {"source": "dual-comparison", "kind": "pixel", "slide": 1},
+        }],
+    })
+    astra = DifferenceGraph.from_dict({
+        "version": "1.0", "source_id": "reference.png", "rendered_id": "render.png",
+        "findings": [{
+            "id": "a-page-fix", "object_id": "title", "domain": "geometry", "severity": "P1",
+            "message": "title shifted right", "confidence": 0.97, "proposed_patch": {"x": 0.08},
+        }],
+    })
+    result = ingest_astra_qa(page_graph=_page(), deterministic_graph=deterministic, astra_graph=astra)
+    assert result["summary"]["blocking_count"] == 2
+    assert result["summary"]["repair_action_count"] == 1
+    assert result["summary"]["blocking_deferred"] is False
+    deferred = result["repair_plan"]["deferred"]
+    assert any(item.get("diagnostic_only") is True for item in deferred)
+
+
 def test_low_confidence_astra_patch_is_deferred():
     astra = DifferenceGraph.from_dict({
         "version": "1.0", "source_id": "reference.png", "rendered_id": "render.png",
