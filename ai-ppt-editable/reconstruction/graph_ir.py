@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Normalized intermediate representation for high-fidelity visual reconstruction.
 
-The model layer is allowed to infer WHAT an object is and HOW objects relate.
-The deterministic authoring layer consumes this module's normalized contract and
-must not reinterpret model prose at render time.
+Graph IR geometry is canonical normalized slide fraction. Legacy pixel layouts
+are normalized by manifest_bridge before entering this model. The deterministic
+authoring layer therefore receives one coordinate contract and never has to
+reinterpret model prose or mixed unit systems at render time.
 """
 from __future__ import annotations
 
@@ -80,7 +81,6 @@ class GraphNode:
         confidence = float(data.get("confidence", 1.0))
         if not 0.0 <= confidence <= 1.0:
             raise GraphValidationError(f"node {node_id}: confidence must be within [0, 1]")
-        relations = tuple(Relation.from_dict(item) for item in (data.get("relations") or []))
         return cls(
             id=node_id,
             type=node_type,
@@ -90,7 +90,7 @@ class GraphNode:
             semantic=dict(data.get("semantic") or {}),
             style=dict(data.get("style") or {}),
             source=dict(data.get("source") or {}),
-            relations=relations,
+            relations=tuple(Relation.from_dict(item) for item in (data.get("relations") or [])),
             confidence=confidence,
         )
 
@@ -134,9 +134,9 @@ class PageGraph:
                     raise GraphValidationError(f"node {node.id}: unknown relation target {relation.target}")
         if self.slide_width <= 0 or self.slide_height <= 0:
             raise GraphValidationError("slide dimensions must be positive")
-        units = str(self.metadata.get("units") or "inches").casefold()
-        if units not in {"inch", "inches", "in", "fraction", "normalized", "relative", "pixel", "pixels", "px"}:
-            raise GraphValidationError(f"unsupported coordinate units: {units}")
+        units = str(self.metadata.get("units") or "fraction").casefold()
+        if units != "fraction":
+            raise GraphValidationError("Graph IR coordinates must be normalized fraction units")
 
     def by_id(self, node_id: str) -> GraphNode:
         for node in self.nodes:
@@ -155,7 +155,7 @@ class PageGraph:
         return self.nodes_of_type("text", "shape", "table", "chart", "connector", "group")
 
     def to_authoring_deck(self, *, assets_dir: str) -> dict[str, Any]:
-        """Project the graph into the stable deterministic authoring backend contract."""
+        """Project normalized Graph IR into the deterministic authoring contract."""
         slide: dict[str, list[dict[str, Any]]] = {
             "texts": [], "shapes": [], "tables": [], "charts": [], "icons": [], "groups": [], "panels": []
         }
@@ -201,7 +201,7 @@ class PageGraph:
                 slide["groups"].append(item)
         return {
             "assets_dir": assets_dir,
-            "units": self.metadata.get("units", "inches"),
+            "units": "fraction",
             "slide_width_in": self.slide_width,
             "slide_height_in": self.slide_height,
             "ref_width": self.reference_width,
