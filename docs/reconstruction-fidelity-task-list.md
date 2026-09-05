@@ -27,9 +27,17 @@
 
 | ID | 任务 | 验收标准 | 状态 |
 |---|---|---|---|
-| RF-201 | 12 案例四证据回放 | 每例保存原图、PPTX 渲染、局部差异和实际对象树 | 代码已落实、最新 CI 验收中：four-evidence bundle 接入严格 12-case replay，并强制 Actions 上传隐藏 `.distillation` 证据目录 |
+| RF-201 | 12 案例四证据回放 | 每例保存原图、PPTX 渲染、局部差异和实际对象树；candidate 同时满足版本化视觉门禁 | **进行中 / 视觉阻断**：四证据、隐藏 artifact 持久化和 strict visual validator 已落实；现有 12 个 native candidate 虽结构/语义/可编辑性通过，但视觉指标明显低于 `2026.09-rf006`（layout/pixel 0.94），进入逐案例参考图驱动重建修复，不得标记高保真通过 |
 | RF-202 | WPS 桌面端验收 | 文件打开、排版、字体、溢出、编辑和截图证据绑定 PPTX Hash | 工程合同已落实、待真实桌面环境实测：独立 `desktop` host profile，必须绑定同一 PPTX Hash 与逐页截图 |
 | RF-203 | iPhone WPS 验收 | 同一文件逐页截图并记录字体替换和换行差异 | 工程合同已落实、待真实 iPhone WPS 实测：独立 `ios` profile，并强制字体替换、换行差异复核 |
-| RF-204 | 统一能力口径 | 工程门禁通过与视觉实证通过分别记录，文档不再混用 | 代码已落实、最新 CI 验收中：capability-status 独立记录 engineering / visual / desktop host / iOS host；旧单 host 证据明确不能触发 release |
+| RF-204 | 统一能力口径 | 工程门禁通过与视觉实证通过分别记录，文档不再混用 | 已落实到代码：capability-status 把 technical、automated visual fidelity、four-evidence、human review、desktop host、iOS host 分开记录；只有全部满足才 `release_eligible=true`。当前由于 RF-201 视觉门禁未通过，能力状态必须保持 blocked |
+
+## RF-201 逐案例修复原则
+
+1. 不降低 `2026.09-rf006` 阈值换取绿灯。
+2. 不用整页截图、切片拼图或隐性背景图冒充可编辑高保真。
+3. 先用 `case-visual-diagnostics.json` 定位颜色、亮度、密度和最差网格区域，再归因到 geometry / typography / asset / hierarchy。
+4. 每个案例修复后必须重新：PPTX 合成 → LibreOffice 渲染 → visual fidelity gate → native editability → semantic audit → mutation smoke → four-evidence。
+5. 12/12 均满足自动视觉门禁后，才进入人工视觉确认和 WPS 双端验收。
 
 推进顺序：RF-001～RF-006 → RF-101～RF-105 → RF-201～RF-204。只有 engineering、visual human review 和真实 desktop/iOS host validation 均通过时，才允许标记最终高保真交付通过。
