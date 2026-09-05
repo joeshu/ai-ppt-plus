@@ -126,7 +126,14 @@ def validate(request_path: Path, provenance_path: Path, deck_path: Path) -> dict
                 if current_deck_hash and embedded.get("deck_sha256") != current_deck_hash:
                     issues.append({"code": "embedded_asset_report_deck_mismatch"})
 
-    return {"schema": "ai-ppt-plus/authoring-provenance-validation/v2", "valid": not issues, "request_id": request_id, "deck": str(deck_path), "nested_validations": nested_reports, "issues": issues}
+    return {
+        "schema": "ai-ppt-plus/authoring-provenance-validation/v2",
+        "valid": not issues,
+        "request_id": request_id,
+        "deck": str(deck_path),
+        "nested_validations": nested_reports,
+        "issues": issues,
+    }
 
 
 def main() -> int:
