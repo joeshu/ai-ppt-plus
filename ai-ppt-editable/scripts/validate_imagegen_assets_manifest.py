@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Validate per-page visual-asset provenance.
 
-The historical filename is retained for compatibility. Assets may use the
-imagegen B4 route, or a deterministic ``source_reuse`` route when authoritative
-source pixels are already available and no reconstruction is needed. Both
-routes still require an independent delivered asset, hashes and human visual
-review.
+The historical filename is retained for compatibility. Background/frame source
+reuse remains supported where authoritative source pixels are appropriate, but
+final icons, badges, gradient visuals, illustrations and other complex art are
+native-imagegen assets by default. A source-reuse fallback for those classes is
+valid only after an explicit user decision is recorded.
 """
 
 from __future__ import annotations
@@ -25,6 +25,25 @@ IMAGEGEN_WORD = re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])", re.I)
 HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 PROVENANCE_MODES = {"imagegen", "source_reuse"}
+MANDATORY_IMAGEGEN_CLASSES = {"icon", "icons", "badge", "gradient", "gradient_visual", "complex_art", "illustration", "artistic_typography", "decorative_art"}
+
+
+def normalized_asset_class(asset: dict) -> str:
+    value = asset.get("asset_class", asset.get("category", asset.get("role", "")))
+    cls = str(value).strip().lower().replace("-", "_")
+    layer = str(asset.get("layer", "")).strip().lower().replace("-", "_")
+    if not cls and layer.startswith("icons"):
+        cls = "icon"
+    return cls
+
+
+def approved_source_reuse_fallback(asset: dict) -> bool:
+    return bool(
+        asset.get("fallback_decision") == "user_approved"
+        and asset.get("decision_id")
+        and asset.get("decision_reason")
+        and asset.get("decision_timestamp")
+    )
 
 
 def sha256(path: Path) -> str:
@@ -95,6 +114,19 @@ def main() -> int:
         if mode not in PROVENANCE_MODES:
             add(issues, "invalid_provenance_mode", asset_index=index, provenance_mode=mode)
             mode = "imagegen"
+        asset_class = normalized_asset_class(asset)
+        approved_fallback = approved_source_reuse_fallback(asset)
+        if asset_class in MANDATORY_IMAGEGEN_CLASSES and mode != "imagegen" and not approved_fallback:
+            add(
+                issues,
+                "final_asset_route_requires_native_imagegen",
+                asset_index=index,
+                asset_id=asset.get("asset_id") or asset.get("id"),
+                asset_class=asset_class,
+                provenance_mode=mode,
+            )
+        if approved_fallback and mode != "source_reuse":
+            add(issues, "fallback_decision_requires_source_reuse", asset_index=index, provenance_mode=mode)
         provenance_modes[mode] = provenance_modes.get(mode, 0) + 1
         for field in (SOURCE_REUSE_REQUIRED if mode == "source_reuse" else REQUIRED):
             if field == "source_bbox":
@@ -168,6 +200,7 @@ def main() -> int:
         "asset_count": len(assets),
         "hashed_asset_count": hashed_asset_count,
         "provenance_modes": provenance_modes,
+        "mandatory_imagegen_classes": sorted(MANDATORY_IMAGEGEN_CLASSES),
         "hashes_required": args.require_hashes,
         "issues": issues,
         "human_visual_review_required": True,

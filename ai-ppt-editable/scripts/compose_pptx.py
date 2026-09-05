@@ -23,6 +23,7 @@ from authoring_backend import build_pptx, build_with_embedded_fonts
 from component_expander import _choose_slide_layout, _expand_components, _frac, _load_deck, _promote_native_structures, _resolve
 from preview_renderer import find_cjk_font as _find_cjk_font
 from preview_renderer import render_previews
+from reference_preflight import validate_reference_preflight
 from pptx_primitives import (
     _add_outer_shadow,
     _apply_shape_fill,
@@ -65,6 +66,17 @@ def main() -> None:
     output_path = Path(args.out).resolve()
     if args.font_dir:
         deck["font_dir"] = str(Path(args.font_dir).resolve())
+
+    preflight = validate_reference_preflight(
+        layout_path,
+        deck,
+        embed_fonts=bool(args.embed_fonts),
+        font_dir=args.font_dir,
+        font_manifest=args.font_manifest,
+    )
+    if not preflight.get("valid", False):
+        issue_codes = ", ".join(str(item.get("code")) for item in preflight.get("issues", []))
+        _die(f"reference reconstruction preflight failed: {issue_codes}")
 
     if args.embed_fonts:
         font_dir = args.font_dir or deck.get("font_dir")

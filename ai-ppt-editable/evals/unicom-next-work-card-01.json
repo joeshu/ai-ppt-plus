@@ -1,0 +1,52 @@
+{
+  "schema": "ai-ppt-plus/reference-reconstruction-regression/v2",
+  "case_id": "unicom-next-work-card-01",
+  "title": "China Unicom next-work three-column card reconstruction",
+  "route": "reference-reconstruction",
+  "page_ratio": "16:9",
+  "features": [
+    "cjk-text",
+    "brand-logo",
+    "three-column-card-grid",
+    "dense-independent-icons",
+    "richtext-emphasis-runs",
+    "bullet-list",
+    "single-line-section-headings"
+  ],
+  "visual_inventory_authority": "page-graph.json",
+  "required_gates": {
+    "page_graph_required": true,
+    "page_graph_drives_imagegen_requirement": true,
+    "object_manifest_crosscheck_required": true,
+    "imagegen_asset_coverage_required": true,
+    "native_imagegen_for_non_brand_icons": true,
+    "generic_icon_substitution_forbidden": true,
+    "source_crop_icon_requires_explicit_user_fallback": true,
+    "brand_logo_source_exception": true,
+    "no_visual_asset_nodes_means_no_imagegen_requirement": true,
+    "cjk_embedded_font_required": true,
+    "typography_calibration_required": true,
+    "title_single_line_guard": true,
+    "richtext_emphasis_same_text_object": true,
+    "three_column_template_geometry_lock": true,
+    "bullet_indent_reconstruction": true
+  },
+  "blocking_codes": [
+    "reference_page_graph_missing",
+    "reference_page_graph_unreadable",
+    "visual_asset_inventory_mismatch",
+    "imagegen_final_asset_manifest_missing",
+    "imagegen_final_asset_gate_failed",
+    "imagegen_asset_coverage_missing",
+    "final_asset_route_requires_native_imagegen",
+    "reference_cjk_requires_embedded_fonts",
+    "reference_cjk_font_evidence_missing"
+  ],
+  "human_review": [
+    "icon silhouette/style consistency",
+    "font family/weight and line-break fidelity",
+    "header and goal-strip alignment",
+    "brand logo fidelity",
+    "top strategy banner wrapping"
+  ]
+}
