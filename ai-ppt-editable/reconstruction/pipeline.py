@@ -112,6 +112,7 @@ class ReconstructionPipeline:
                 differences=differences,
                 global_visual_similarity=float(metrics.get("global_visual_similarity", 0.0)),
                 critical_region_scores=dict(metrics.get("critical_region_scores") or {}),
+                required_critical_regions=list(metrics.get("required_critical_regions") or []),
                 editable_ratio=float(metrics.get("editable_ratio", 0.0)),
                 semantic_accuracy=float(metrics.get("semantic_accuracy", 0.0)),
                 full_slide_raster_detected=bool(metrics.get("full_slide_raster_detected", False)),

@@ -45,6 +45,13 @@ def test_nonfinite_gate():
         full_slide_raster_detected=False,
     )
     assert not string_result.passed
+    missing_region = QualityGate().evaluate(
+        differences=differences, global_visual_similarity=1,
+        critical_region_scores={"title": 1}, required_critical_regions=["title", "small-number"],
+        editable_ratio=1, semantic_accuracy=1, full_slide_raster_detected=False,
+    )
+    assert not missing_region.passed
+    assert "missing critical region scores: small-number" in missing_region.failures
 
 
 def test_asset(root):
@@ -55,8 +62,14 @@ def test_asset(root):
     b = Image.new("RGBA", (100, 100))
     ImageDraw.Draw(b).ellipse((20, 20, 79, 79), fill="red")
     b.save(root / "circle.png")
+    c = Image.new("RGBA", (100, 100))
+    ImageDraw.Draw(c).rectangle((20, 20, 79, 79), fill="blue")
+    c.save(root / "blue-square.png")
     assert compare_asset_subjects(root / "square.png", root / "square.png")["silhouette_iou"] == 1
     assert compare_asset_subjects(root / "square.png", root / "circle.png")["silhouette_iou"] < .9
+    changed = compare_asset_subjects(root / "square.png", root / "blue-square.png")
+    assert changed["silhouette_iou"] == 1
+    assert changed["colour_similarity"] < .5
 
 
 def test_entrypoint(root):
@@ -68,7 +81,9 @@ def test_entrypoint(root):
         (root / name).write_text(json.dumps(data), encoding="utf-8")
     save("inventory.json", {"source_sha256": digest, "observation_id": "fixture-observation",
         "method": "source-image-observation", "evidence": "synthetic integration fixture only",
-        "objects": [{"id": "source-title"}]})
+        "objects": [{"id": "source-title", "bbox": [.1, .1, .8, .2]}],
+        "spatial_verification": {"observation_id": "fixture-spatial-review",
+            "canvas": [1600, 900], "unexplained_regions": []}})
     save("page-graph.json", {"metadata": {"source_sha256": digest, "planning_observation_id": "fixture-plan"},
         "nodes": [{"id": "title", "type": "text", "bbox": [.1, .1, .8, .2],
                    "source": {"source_object_id": "source-title"}}]})

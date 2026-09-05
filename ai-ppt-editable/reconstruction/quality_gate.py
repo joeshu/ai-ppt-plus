@@ -48,6 +48,7 @@ class QualityGate:
         differences: DifferenceGraph,
         global_visual_similarity: float,
         critical_region_scores: dict[str, float] | None = None,
+        required_critical_regions: list[str] | tuple[str, ...] | None = None,
         editable_ratio: float,
         semantic_accuracy: float,
         full_slide_raster_detected: bool,
@@ -56,6 +57,7 @@ class QualityGate:
         failures: list[str] = []
         t = self.thresholds
         regions = critical_region_scores or {}
+        required_regions = tuple(required_critical_regions or ())
         renderer_regressions = renderer_regressions or []
 
         metric_values = {"global_visual_similarity": global_visual_similarity,
@@ -67,6 +69,10 @@ class QualityGate:
             if not _valid_unit_interval(value):
                 failures.append(f"invalid quality metric: {name}")
                 invalid_metrics.add(name)
+
+        missing_regions = sorted(set(required_regions) - set(regions))
+        if missing_regions:
+            failures.append("missing critical region scores: " + ", ".join(missing_regions))
 
         if "global_visual_similarity" not in invalid_metrics and global_visual_similarity < t.global_visual_similarity:
             failures.append(
@@ -101,6 +107,7 @@ class QualityGate:
             metrics={
                 "global_visual_similarity": global_visual_similarity,
                 "critical_region_scores": regions,
+                "required_critical_regions": list(required_regions),
                 "editable_ratio": editable_ratio,
                 "semantic_accuracy": semantic_accuracy,
                 "full_slide_raster_detected": full_slide_raster_detected,

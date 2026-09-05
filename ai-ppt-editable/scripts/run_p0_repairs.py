@@ -39,7 +39,7 @@ def run(plan_path, output_dir):
     graph = PageGraph.from_dict(load(resolve("graph")))
     if sha256(reference.read_bytes()).hexdigest() != inventory.get("source_sha256"):
         raise ValueError("inventory does not match actual reference bytes")
-    coverage = audit_source_coverage(inventory, graph)
+    coverage = audit_source_coverage(inventory, graph, require_spatial_evidence=True)
     if not coverage["valid"]:
         raise ValueError(coverage["errors"])
     deck = load(resolve("layout"))
@@ -88,10 +88,18 @@ def run(plan_path, output_dir):
             raise ValueError("asset QA reference hash mismatch")
         if metrics["silhouette_iou"] < threshold:
             raise ValueError("asset silhouette below threshold")
+        colour_floor = float(job.get("min_colour_similarity", .88))
+        structure_floor = float(job.get("min_internal_structure_similarity", .88))
+        if not .8 <= colour_floor <= 1 or not .8 <= structure_floor <= 1:
+            raise ValueError("asset colour/structure threshold cannot lower the P0 floor")
+        if metrics["colour_similarity"] < colour_floor:
+            raise ValueError("asset colour below threshold")
+        if metrics["internal_structure_similarity"] < structure_floor:
+            raise ValueError("asset internal structure below threshold")
         placement = subject_placement(path, job["target_bbox_inches"])
         collection, item = _locate(deck, job["object_id"])
-        if collection != "icons":
-            raise ValueError("asset subject repair only supports independent icons")
+        if collection not in {"icons", "panels"}:
+            raise ValueError("asset subject repair supports independent icons, illustrations and decorations")
         x, y, w, h = placement["image_bbox"]
         sw, sh = deck["slide_width_in"], deck["slide_height_in"]
         item.update({"file": str(path), "x": x / sw, "y": y / sh, "w": w / sw, "h": h / sh})
@@ -110,7 +118,8 @@ def run(plan_path, output_dir):
                                   embedding_report=output_dir / "fonts.json")
     else:
         build_pptx(deck, pptx)
-    final = audit_source_coverage(inventory, graph, extract_pptx_objects(str(pptx)))
+    final = audit_source_coverage(inventory, graph, extract_pptx_objects(str(pptx)),
+                                  require_spatial_evidence=True)
     if not final["valid"]:
         raise ValueError(final["errors"])
     subprocess.run([sys.executable, str(ROOT / "scripts/render_pptx.py"), str(pptx),

@@ -33,7 +33,7 @@ def _page_values(value, count: int, label: str) -> list:
     return [value]
 
 
-def validate(reference, inventory, page_graph, deck):
+def validate(reference, inventory, page_graph, deck, *, require_spatial_evidence=False):
     import zipfile
     from pptx import Presentation
     with zipfile.ZipFile(deck) as package:
@@ -63,7 +63,8 @@ def validate(reference, inventory, page_graph, deck):
             result = {"valid": False, "errors": [f"page {index + 1}: inventory/reference hash mismatch"]}
         else:
             result = audit_source_coverage(inv, graph,
-                                           extract_pptx_objects(str(deck), slide_index=index))
+                                           extract_pptx_objects(str(deck), slide_index=index),
+                                           require_spatial_evidence=require_spatial_evidence)
         result["page"] = index + 1
         result["reference_sha256"] = actual_hash
         pages.append(result)
@@ -80,10 +81,12 @@ def main() -> int:
     parser.add_argument("--page-graph", required=True)
     parser.add_argument("--deck", required=True)
     parser.add_argument("--report", required=True)
+    parser.add_argument("--require-spatial-evidence", action="store_true")
     args = parser.parse_args()
     try:
         reference = _read(Path(args.reference)) if args.reference.endswith(".json") else args.reference
-        report = validate(reference, _read(Path(args.inventory)), _read(Path(args.page_graph)), Path(args.deck).resolve())
+        report = validate(reference, _read(Path(args.inventory)), _read(Path(args.page_graph)),
+                          Path(args.deck).resolve(), require_spatial_evidence=args.require_spatial_evidence)
     except Exception as exc:
         report = {"schema": "ai-ppt-plus/source-coverage-validation/v1", "valid": False,
                   "status": "failed", "errors": [f"{type(exc).__name__}: {exc}"],

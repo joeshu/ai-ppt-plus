@@ -64,8 +64,20 @@ def test_pipeline_blocks_before_author_without_inventory():
     assert result.stage == Stage.BLOCKED
 
 
+def test_spatial_verification_blocks_unexplained_regions():
+    inventory, graph = fixtures()
+    inventory["objects"][0]["bbox"] = [0, 0, .4, .1]
+    inventory["objects"][1]["bbox"] = [.5, .2, .1, .1]
+    inventory["spatial_verification"] = {"observation_id": "observation-3",
+        "canvas": [1600, 900], "unexplained_regions": [[.8, .8, .05, .05]]}
+    result = audit_source_coverage(inventory, graph, require_spatial_evidence=True)
+    assert not result["valid"]
+    assert "unexplained source regions remain" in result["errors"]
+
+
 def test_actual_pptx_extraction(tmp_path):
     from pptx import Presentation
+    from pptx.enum.shapes import MSO_SHAPE
     from pptx.util import Inches
     prs = Presentation()
     slide = prs.slides.add_slide(prs.slide_layouts[6])
@@ -73,10 +85,18 @@ def test_actual_pptx_extraction(tmp_path):
     group = slide.shapes.add_group_shape()
     group.name = "group"
     group.shapes.add_textbox(0, 0, Inches(1), Inches(1)).name = "nested"
+    card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, 0, 0, Inches(1), Inches(1))
+    card.name = "card"
+    card.text = "Card copy"
+    connector = slide.shapes.add_connector(1, 0, 0, Inches(1), Inches(1))
+    connector.name = "connector"
     path = tmp_path / "actual.pptx"
     prs.save(path)
     observed = extract_pptx_objects(str(path))
-    assert observed["object_ids"] == ["title", "group", "nested"]
+    assert observed["object_ids"] == ["title", "group", "nested", "card", "connector"]
+    kinds = {item["id"]: item["type"] for item in observed["objects"]}
+    assert kinds["card"] == "shape"
+    assert kinds["connector"] == "connector"
     assert len(observed["deck_sha256"]) == 64
 
 
@@ -87,6 +107,7 @@ if __name__ == "__main__":
     test_stale_and_self_derived_inventory()
     test_uncertainty_duplicates_and_final_extras()
     test_pipeline_blocks_before_author_without_inventory()
+    test_spatial_verification_blocks_unexplained_regions()
     with TemporaryDirectory() as folder:
         test_actual_pptx_extraction(Path(folder))
-    print("6 source coverage tests passed")
+    print("7 source coverage tests passed")
