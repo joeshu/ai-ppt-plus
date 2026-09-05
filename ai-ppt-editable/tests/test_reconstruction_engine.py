@@ -23,11 +23,7 @@ def _page_graph() -> PageGraph:
             "reference_height": 900,
         },
         "nodes": [
-            {
-                "id": "card_01",
-                "type": "group",
-                "bbox": [1.0, 1.0, 3.0, 2.0],
-            },
+            {"id": "card_01", "type": "group", "bbox": [1.0, 1.0, 3.0, 2.0]},
             {
                 "id": "title_01",
                 "type": "text",
@@ -40,9 +36,7 @@ def _page_graph() -> PageGraph:
                         {"text": "发展", "bold": True, "color": "FFFFFF"},
                     ],
                 },
-                "relations": [
-                    {"kind": "belongs_to", "target": "card_01", "confidence": 0.99}
-                ],
+                "relations": [{"kind": "belongs_to", "target": "card_01", "confidence": 0.99}],
             },
             {
                 "id": "table_01",
@@ -148,3 +142,22 @@ def test_quality_gate_fails_closed_on_raster_or_p1():
     assert result.passed is False
     assert any("full-slide raster" in item for item in result.failures)
     assert any("P1 asset" in item for item in result.failures)
+
+
+def main() -> int:
+    tests = [
+        test_page_graph_projects_native_semantics,
+        test_page_graph_rejects_unknown_relation_target,
+        test_repair_router_allows_bounded_geometry_patch,
+        test_repair_router_defers_semantic_p0,
+        test_quality_gate_fails_closed_on_raster_or_p1,
+    ]
+    for test in tests:
+        test()
+        print(f"PASS {test.__name__}")
+    print(f"PASS reconstruction contract suite ({len(tests)} tests)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
