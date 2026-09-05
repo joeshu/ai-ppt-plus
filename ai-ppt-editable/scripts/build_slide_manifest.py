@@ -78,6 +78,7 @@ def _gate_requirements(layout: dict, slides: list[dict], args) -> dict[str, bool
         "panel_approval": bool(panel_objects) or bool(args.requires_panel_approval),
         "gradient_visual": has_gradient(layout) or bool(args.requires_gradient_visual),
         "source_image_validation": reference_driven,
+        "source_coverage": reference_driven,
         "reference_audit": reference_driven,
         "content_inventory": reference_driven and has_text,
         "asset_hashes": bool(visual_objects) or reference_driven,

@@ -1217,6 +1217,18 @@
       "reason": "post-baseline source-reuse pixel-to-bbox integrity adapter"
     },
     {
+      "path": "assets/slide-manifest.template.json",
+      "reason": "post-baseline P0 three-way source coverage contract"
+    },
+    {
+      "path": "scripts/build_slide_manifest.py",
+      "reason": "post-baseline P0 source coverage manifest binding"
+    },
+    {
+      "path": "scripts/validate_manifest.py",
+      "reason": "post-baseline P0 source coverage validation gate"
+    },
+    {
       "path": "scripts/validate_skill_package.py",
       "reason": "standalone package validator"
     },

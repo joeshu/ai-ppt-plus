@@ -49,6 +49,7 @@
     "scripts/inspect_pptx.py",
     "scripts/validate_backend_binding.py",
     "scripts/build_perfect_sync_manifest.py",
+    "scripts/validate_source_coverage.py",
     "scripts/validate_perfect_sync.py",
     "scripts/validate_visual_generation_plan.py",
     "scripts/validate_workflow_state.py",

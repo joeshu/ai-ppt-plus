@@ -65,7 +65,7 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "editability_protocol_missing_or_invalid", "expected": "L0-L5/v1", "observed": data.get("editability_protocol")})
     if kind in {"slide", "visual"} and "gate_requirements" in data:
         gate_requirements = data.get("gate_requirements")
-        gate_names = ("object_manifest", "semantic_object_audit", "manifest_registry", "text_model", "text_style_map", "icon_assets", "imagegen_assets", "panel_assets", "panel_approval", "gradient_visual", "source_image_validation", "reference_audit", "content_inventory")
+        gate_names = ("object_manifest", "semantic_object_audit", "manifest_registry", "text_model", "text_style_map", "icon_assets", "imagegen_assets", "panel_assets", "panel_approval", "gradient_visual", "source_image_validation", "source_coverage", "reference_audit", "content_inventory")
         optional_gate_names = ("asset_hashes",)
         if not isinstance(gate_requirements, dict):
             issues.append({"severity": "blocker", "code": "gate_requirements_not_object"})

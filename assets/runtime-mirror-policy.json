@@ -188,6 +188,14 @@
           "reason": "worker-only source-reuse crop integrity adapter"
         },
         {
+          "path": "scripts/run_p0_repairs.py",
+          "reason": "worker-only P0 reconstruction repair entrypoint"
+        },
+        {
+          "path": "scripts/validate_source_coverage.py",
+          "reason": "worker-only three-way source coverage gate"
+        },
+        {
           "path": "scripts/validate_visual_lock.py",
           "reason": "worker-only last-mile visual lock validator"
         }

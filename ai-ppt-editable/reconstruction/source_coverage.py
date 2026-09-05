@@ -17,18 +17,24 @@ def extract_pptx_objects(path: str, *, slide_index: int = 0) -> dict:
     deck = Path(path)
     before = sha256(deck.read_bytes()).hexdigest()
     slide = Presentation(deck).slides[slide_index]
-    ids = []
+    ids, records = [], []
 
     def visit(shapes):
         for shape in shapes:
             ids.append(shape.name)
+            kind = ("group" if shape.shape_type == MSO_SHAPE_TYPE.GROUP else
+                    "table" if shape.has_table else "chart" if shape.has_chart else
+                    "image" if shape.shape_type == MSO_SHAPE_TYPE.PICTURE else
+                    "text" if shape.has_text_frame else "shape")
+            records.append({"id": shape.name, "type": kind,
+                            "text": shape.text if shape.has_text_frame else None})
             if shape.shape_type == MSO_SHAPE_TYPE.GROUP:
                 visit(shape.shapes)
 
     visit(slide.shapes)
     if sha256(deck.read_bytes()).hexdigest() != before:
         raise ValueError("PPTX changed during extraction")
-    return {"method": "pptx-extraction", "deck_sha256": before, "object_ids": ids}
+    return {"method": "pptx-extraction", "deck_sha256": before, "object_ids": ids, "objects": records}
 
 
 def audit_source_coverage(inventory: dict, graph: PageGraph,
@@ -57,6 +63,9 @@ def audit_source_coverage(inventory: dict, graph: PageGraph,
     bindings = {}
     for node in graph.nodes:
         sid = node.source.get("source_object_id")
+        if not isinstance(sid, str):
+            errors.append(f"invalid source binding: {node.id}")
+            continue
         if sid not in source_ids:
             errors.append(f"unbound planned object: {node.id}")
         bindings.setdefault(sid, []).append(node.id)
@@ -69,6 +78,8 @@ def audit_source_coverage(inventory: dict, graph: PageGraph,
         if observed.get("method") != "pptx-extraction" or not observed.get("deck_sha256"):
             errors.append("independent PPTX extraction required")
         actual = observed.get("object_ids", [])
+        if not isinstance(actual, list) or any(not isinstance(i, str) or not i for i in actual):
+            return {"valid": False, "errors": errors + ["invalid extracted IDs"]}
         planned = {node.id for node in graph.nodes}
         if len(actual) != len(set(actual)):
             errors.append("duplicate extracted object IDs")
@@ -76,6 +87,19 @@ def audit_source_coverage(inventory: dict, graph: PageGraph,
             errors.append(f"missing final object: {missing}")
         for extra in sorted(set(actual) - planned):
             errors.append(f"undeclared final object: {extra}")
+        if "objects" in observed:
+            records = {item["id"]: item for item in observed["objects"]}
+            for node in graph.nodes:
+                record = records.get(node.id)
+                if record is None:
+                    continue
+                expected = "image" if node.type in {"icon", "illustration", "image", "decoration", "background"} else node.type
+                if expected == "connector":
+                    expected = "shape"
+                if record["type"] != expected:
+                    errors.append(f"wrong final type: {node.id}")
+                if node.type == "text" and "text" in node.semantic and record.get("text") != node.semantic["text"]:
+                    errors.append(f"wrong final text: {node.id}")
     return {"valid": not errors, "errors": errors,
             "source_count": len(objects), "planned_count": len(graph.nodes),
             "scope": "three-way" if observed is not None else "source-to-plan"}

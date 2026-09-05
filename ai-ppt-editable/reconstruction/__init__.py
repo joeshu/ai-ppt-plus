@@ -7,6 +7,11 @@ from .quality_gate import QualityGate, QualityThresholds, GateResult
 from .pipeline import ReconstructionPipeline, PipelineState, Stage
 from .manifest_bridge import build_page_graph
 from .repair_executors import RepairExecutionError, execute_action, execute_plan
+from .source_coverage import audit_source_coverage, extract_pptx_objects
+from .typography_search import calibrate_typography, measurement_loss
+from .relation_geometry import solve_peer_layout, solve_graph_relations
+from .asset_subject import subject_placement
+from .asset_metrics import compare_asset_subjects
 from .evidence_bridge import EvidenceThresholds, from_dual_comparison, merge_difference_graphs
 from .batch_ingestion import AstraIngestionError, validate_astra_object_ids, ingest_astra_qa, summarize_iteration, convergence_delta
 from .astra_contract import (
@@ -33,6 +38,14 @@ __all__ = [
     "RepairExecutionError",
     "execute_action",
     "execute_plan",
+    "audit_source_coverage",
+    "extract_pptx_objects",
+    "calibrate_typography",
+    "measurement_loss",
+    "solve_peer_layout",
+    "solve_graph_relations",
+    "subject_placement",
+    "compare_asset_subjects",
     "EvidenceThresholds",
     "from_dual_comparison",
     "merge_difference_graphs",

@@ -70,7 +70,30 @@ Re-render -> QualityGate
 
 ## PageGraph
 
-### P0 fidelity extensions (host integration required)
+### P0 fidelity extensions
+
+`scripts/run_p0_repairs.py PLAN.json --output-dir NEW_RUN` is the single-page
+reference repair entrypoint. It verifies actual reference bytes against the
+independent inventory, uses the canonical `page-graph.json` and reference
+preflight, applies bounded repairs, composes, extracts final objects and renders.
+The output is always pending visual review, never automatic release. It refuses
+an existing output directory and does not overwrite a baseline.
+
+The plan uses paths relative to itself: `reference`, `inventory`, `graph`,
+`layout`; optional `solve_relations`, `locked_ids`, `typography` jobs, and
+`assets` jobs. Typography jobs carry `object_id`, measured `target`, explicit
+`patches`, budget and tolerance. Use the same metric for target and candidate:
+the included LibreOffice adapter returns PDF text bounds (not pixel ink masks).
+It isolates the object for measurement, so full-page QA remains necessary for
+occlusion and overlapping art. CJK runs require `embed_fonts` plus `font_dir`
+and/or `font_manifest`; installed-font/substitution evidence must be verified.
+
+Asset jobs carry `object_id`, native-imagegen `source`, generated `path`,
+`alpha_reference`, hash-bound QA v2 `qa`, and `target_bbox_inches`. Source and
+candidate hashes in QA must match those files. Alpha silhouette IoU supplements
+the existing semantic/style/confidence gate. It cannot judge internal colors,
+shadows or gradient direction by itself. The minimum IoU cannot be lowered
+below 0.9 in this entrypoint.
 
 Reference reconstruction through `ReconstructionPipeline.run` requires an
 independent `source_inventory` and an `extract_objects` callback. Bind inventory
@@ -87,13 +110,18 @@ measured by the actual renderer. The callback receives a candidate authoring
 deck and object ID and must return normalized ink bbox, line count, baselines,
 font verification, overflow state, renderer ID and render hash. Preserve copy
 and runs. A missing match leaves the old deck unchanged and requires review.
-The module does not supply a renderer or infer correct font metrics itself.
+`reconstruction.render_measure.measure_text` supplies real LibreOffice/PDF
+measurements; it does not infer the original reference font automatically.
 
 Use `execute_peer_layout` for approved ordered peer constraints. It preserves
 unrelated objects, refuses locked-object changes and cannot shrink peers to
 make an infeasible constraint fit. This initial solver supports x/y equal gaps
 and optional equal size; containment, connector rerouting, and arbitrary
-PageGraph constraint solving remain unsupported and must not be inferred.
+arbitrary constraints remain unsupported and must not be inferred.
+`solve_graph_relations` additionally solves simultaneous edge/center alignment,
+equal dimensions, explicit equal gaps and anchor offsets with lock constraints.
+Containment is checked after solving. Unknown/uncertain relations and connector
+rerouting remain blocked; never silently delete such relations to obtain a pass.
 
 `asset_subject.subject_placement` returns full-image placement from an alpha
 subject bbox without changing image bytes. Supply an isotropic target unit
@@ -101,9 +129,11 @@ subject bbox without changing image bytes. Supply an isotropic target unit
 the authoring unit explicitly. Asset visual QA and native imagegen policy
 remain required; transparent-boundary alignment is not a fidelity pass.
 
-These extensions have unit/fixture coverage. They are not evidence that the
+These extensions have unit/fixture coverage and actual LibreOffice authoring /
+render tests, including a 24pt-to-30pt correction retaining rich-text runs.
+They are not evidence that the
 12 visual cases or PowerPoint/WPS end-to-end acceptance has improved. Host
-adapter wiring and actual render measurements must be verified before claiming
+adapter coverage across all legacy routes must be verified before claiming
 production coverage. Do not describe the pending P1 delivery/benchmark work as
 complete on the strength of these tests.
 

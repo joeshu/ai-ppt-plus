@@ -4,8 +4,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Any
+from math import isfinite
 
 from .difference_graph import DifferenceGraph
+
+
+def _valid_unit_interval(value: Any) -> bool:
+    """Return whether a metric is a real finite number in [0, 1]."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return False
+    return isfinite(float(value)) and 0 <= float(value) <= 1
 
 
 @dataclass(frozen=True)
@@ -46,18 +54,28 @@ class QualityGate:
         regions = critical_region_scores or {}
         renderer_regressions = renderer_regressions or []
 
-        if global_visual_similarity < t.global_visual_similarity:
+        metric_values = {"global_visual_similarity": global_visual_similarity,
+                         "editable_ratio": editable_ratio,
+                         "semantic_accuracy": semantic_accuracy,
+                         **{f"region:{name}": score for name, score in regions.items()}}
+        invalid_metrics = set()
+        for name, value in metric_values.items():
+            if not _valid_unit_interval(value):
+                failures.append(f"invalid quality metric: {name}")
+                invalid_metrics.add(name)
+
+        if "global_visual_similarity" not in invalid_metrics and global_visual_similarity < t.global_visual_similarity:
             failures.append(
                 f"global visual similarity {global_visual_similarity:.4f} < {t.global_visual_similarity:.4f}"
             )
         for region, score in regions.items():
-            if score < t.critical_region_similarity:
+            if f"region:{region}" not in invalid_metrics and score < t.critical_region_similarity:
                 failures.append(
                     f"critical region {region} similarity {score:.4f} < {t.critical_region_similarity:.4f}"
                 )
-        if editable_ratio < t.editable_ratio:
+        if "editable_ratio" not in invalid_metrics and editable_ratio < t.editable_ratio:
             failures.append(f"editable ratio {editable_ratio:.4f} < {t.editable_ratio:.4f}")
-        if semantic_accuracy < t.semantic_accuracy:
+        if "semantic_accuracy" not in invalid_metrics and semantic_accuracy < t.semantic_accuracy:
             failures.append(f"semantic accuracy {semantic_accuracy:.4f} < {t.semantic_accuracy:.4f}")
         if full_slide_raster_detected:
             failures.append("full-slide raster detected on editable route")

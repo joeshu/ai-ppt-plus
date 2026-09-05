@@ -7,7 +7,8 @@ from copy import deepcopy
 from math import isfinite
 
 
-ALLOWED = {"font", "font_size", "spacing", "margin", "bold", "italic"}
+ALLOWED = {"font", "font_size", "size", "line_spacing", "margin_left", "margin_right",
+           "margin_top", "margin_bottom", "bold", "italic"}
 
 
 def _vector(value, length):
@@ -20,6 +21,8 @@ def _vector(value, length):
 
 
 def measurement_loss(target, observed):
+    if target.get("measurement_kind") and target["measurement_kind"] != observed.get("measurement_kind"):
+        raise ValueError("target and render must use the same measurement kind")
     if observed.get("font_verified") is not True or observed.get("overflow") is not False:
         return None
     if observed.get("line_count") != target["line_count"]:
@@ -47,6 +50,16 @@ def calibrate_typography(text_object, target, patches, render_measure, *, budget
             raise ValueError("typography patch may not change copy, runs or geometry")
         candidate = deepcopy(text_object)
         candidate.update(deepcopy(patch))
+        if "font_size" in patch:
+            if "size" in patch and patch["size"] != patch["font_size"]:
+                raise ValueError("conflicting size aliases")
+            candidate["size"] = patch["font_size"]
+        for key in ("size", "font_size", "line_spacing"):
+            if key in patch and (isinstance(patch[key], bool) or not isfinite(float(patch[key])) or float(patch[key]) <= 0):
+                raise ValueError(f"invalid {key}")
+        for key in ("margin_left", "margin_right", "margin_top", "margin_bottom"):
+            if key in patch and (isinstance(patch[key], bool) or not isfinite(float(patch[key])) or float(patch[key]) < 0):
+                raise ValueError(f"invalid {key}")
         evidence = render_measure(deepcopy(candidate))
         if not evidence.get("render_sha256") or not evidence.get("renderer"):
             raise ValueError("actual renderer/hash evidence required")

@@ -8,6 +8,7 @@ page counts, ratio, and open blockers in one deterministic report.
 Usage: validate_project.py PROJECT_DIR --deck DECK.pptx
        [--inspection inspection.json] [--render-report render.json]
        [--render-visual-gate gate.json] [--visual-comparison comparison.json]
+       [--source-coverage-validation coverage.json]
        [--ocr-report ocr.json]
        [--expected-ratio 1.7777778] [--report REPORT.json]
 Exit 0 when valid, 2 when a gate fails, 3 on runtime/input failure.
@@ -54,6 +55,8 @@ def main() -> int:
     parser.add_argument("--visual-comparison")
     parser.add_argument("--dual-comparison")
     parser.add_argument("--require-dual-comparison", action="store_true")
+    parser.add_argument("--source-coverage-validation")
+    parser.add_argument("--require-source-coverage", action="store_true")
     parser.add_argument("--ocr-report")
     parser.add_argument("--content-inventory-validation")
     parser.add_argument("--require-content-inventory", action="store_true")
@@ -129,6 +132,7 @@ def main() -> int:
     render_gate = read_quality_report(args.render_visual_gate, "render-visual-gate")
     visual_comparison = read_quality_report(args.visual_comparison, "visual-comparison")
     dual_comparison = read_quality_report(args.dual_comparison, "dual-comparison")
+    source_coverage_report = read_quality_report(args.source_coverage_validation, "source-coverage-validation")
     ocr_report = read_quality_report(args.ocr_report, "ocr-text-check")
     content_inventory_report = read_quality_report(args.content_inventory_validation, "content-inventory-validation")
     chart_manifest_report = read_quality_report(args.chart_manifest_validation, "chart-manifest-validation")
@@ -176,6 +180,8 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "issue_log_validation_missing", "artifact": "issue-log"})
     if args.require_dual_comparison and dual_comparison is None:
         issues.append({"severity": "blocker", "code": "dual_comparison_missing", "artifact": "dual-comparison"})
+    if args.require_source_coverage and source_coverage_report is None:
+        issues.append({"severity": "blocker", "code": "source_coverage_missing", "artifact": "source-coverage-validation"})
     if render_gate is not None:
         quality_evidence["render_visual_gate"] = {
             "valid": render_gate.get("valid"),
@@ -199,6 +205,15 @@ def main() -> int:
             "object_comparison": dual_comparison.get("object_comparison", {}),
             "issues": dual_comparison.get("issues", []),
             "human_visual_review_required": dual_comparison.get("human_visual_review_required", True),
+        }
+    if source_coverage_report is not None:
+        quality_evidence["source_coverage_validation"] = {
+            "valid": source_coverage_report.get("valid"),
+            "status": source_coverage_report.get("status"),
+            "page_count": source_coverage_report.get("page_count"),
+            "pages": source_coverage_report.get("pages", []),
+            "errors": source_coverage_report.get("errors", []),
+            "human_visual_review_required": source_coverage_report.get("human_visual_review_required", True),
         }
     if ocr_report is not None:
         quality_evidence["ocr_text_check"] = {

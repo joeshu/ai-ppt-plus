@@ -367,6 +367,40 @@ In standalone mode, label delivery as worker-level technical completion. In
 orchestrated mode, return to `$ai-ppt-plus`; only the orchestrator can aggregate
 deck-wide evidence and determine release eligibility.
 
+## P0 — Executable fidelity gates
+
+For a fixed-reference page, keep `source-inventory.json`, the canonical
+`page-graph.json`, the reference bytes and the final PPTX in one evidence
+chain. The source inventory must come from an independent observation
+(`method: source-image-observation`) and use an observation ID different from
+the graph's planning observation ID. Run the three-way check after composition
+and after the actual PPTX has been rendered:
+
+```bash
+python3 scripts/validate_source_coverage.py \
+  --reference reference.png \
+  --inventory source-inventory.json \
+  --page-graph page-graph.json \
+  --deck candidate.pptx \
+  --report source-coverage-validation.json
+```
+
+The gate checks reference SHA-256, source-to-graph bindings, final object IDs,
+native object types and exact formal text. For multi-page route rosters, the
+pipeline persists an ordered run-local page manifest instead of guessing page
+order. Under the root-P0 or release profile, missing coverage evidence or
+missing reference pages blocks the run and is forwarded into the project gate
+and report index.
+
+Use `scripts/run_p0_repairs.py` for a one-page bounded repair batch. It solves
+only explicit graph relations, preserves locked geometry, calibrates typography
+through the real LibreOffice/PDF renderer, and accepts generated assets only
+when native-imagegen provenance, alpha QA and silhouette IoU evidence agree.
+Its output remains `pending-visual-review`; technical evidence never silently
+becomes human visual approval. The quality gate also rejects strings, booleans,
+NaN, infinity and out-of-range similarity metrics without throwing a runtime
+exception.
+
 ## Blocking conditions
 
 - missing formal-text or visual authority;

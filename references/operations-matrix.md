@@ -100,6 +100,24 @@ The B2-B8 image-to-PPTX algorithm is a protected boundary. This architecture
 work adds contracts, observability and routing around it; it does not rewrite
 the decomposition, chroma-key, composition, rendering or font algorithms.
 
+### P0 enforcement contract
+
+For `reference-reconstruction`, B0-B9 is not technically complete until the
+source image, independently observed source inventory, canonical PageGraph and
+final PPTX form a three-way evidence chain. The executable gate is
+`ai-ppt-editable/scripts/validate_source_coverage.py`; it verifies hashes,
+source bindings, final object IDs/types and formal text, and is surfaced in the
+worker `project-validation.json`, `report-index.json` and aggregate evidence.
+Root-P0 and strict-release reference routes require this gate; missing
+inventory, graph or page references block before downstream release evidence.
+
+The bounded repair entrypoint is
+`ai-ppt-editable/scripts/run_p0_repairs.py`. Its invariants are: accepted graph
+locks cannot move, typography trials use the real host renderer, icon/complex
+assets retain native-imagegen provenance plus alpha/silhouette evidence, and
+the result remains `pending-visual-review` until a person accepts the rendered
+page. Technical pass and human visual approval remain separate states.
+
 ## 5. Toolchain by layer
 
 | layer | tools | role | expensive failure mode | control |

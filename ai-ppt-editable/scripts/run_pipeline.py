@@ -156,7 +156,7 @@ def project_gate_requirements(project: Path) -> dict:
     names = (
         "object_manifest", "semantic_object_audit", "manifest_registry", "text_model",
         "text_style_map", "icon_assets", "imagegen_assets", "panel_assets",
-        "panel_approval", "gradient_visual", "source_image_validation", "reference_audit",
+        "panel_approval", "gradient_visual", "source_image_validation", "source_coverage", "reference_audit",
         "content_inventory",
     )
     optional_names = ("asset_hashes",)
@@ -243,6 +243,7 @@ def inferred_gate_requirements(project: Path, object_manifest: Path, route_data:
         "panel_approval": bool(panel_objects),
         "gradient_visual": has_gradient,
         "source_image_validation": reference_route,
+        "source_coverage": reference_route,
         "reference_audit": reference_route,
         "content_inventory": reference_route and has_text,
         "asset_hashes": bool(visual_objects) or any(
@@ -283,6 +284,8 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"expected_pages": report.get("expected_pages"), "observed_pages": len(report.get("pages", []))})
     elif name == "visual_comparison":
         summary.update({"reference": report.get("reference"), "reference_dir": report.get("reference_dir"), "metrics": report.get("metrics", {}), "aggregate": report.get("aggregate", {}), "compared_pages": len(report.get("pages", [])), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "source_coverage":
+        summary.update({"status": report.get("status"), "page_count": report.get("page_count"), "pages": report.get("pages", []), "errors": report.get("errors", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "ocr_text_check":
         summary.update({"language": report.get("language"), "slide_count": len(report.get("slides", [])), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "route_validation":
@@ -345,6 +348,9 @@ def main() -> int:
     parser.add_argument("--require-formal-content", action="store_true", help="require approved formal text authority in the route decision")
     parser.add_argument("--content-inventory", help="independent visible-content inventory for text and chart annotations")
     parser.add_argument("--require-content-inventory", action="store_true", help="require and validate the independent visible-content inventory")
+    parser.add_argument("--source-inventory", help="independent source-object inventory for reference reconstruction")
+    parser.add_argument("--page-graph", help="canonical PageGraph JSON bound to the source inventory")
+    parser.add_argument("--require-source-coverage", action="store_true", help="require independent source inventory -> PageGraph -> final PPTX coverage")
     parser.add_argument("--chart-manifest", help="traceable chart data and representation manifest; defaults to project/chart-reconstruction.json")
     parser.add_argument("--require-chart-manifest", action="store_true", help="require and validate the chart data/representation manifest")
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
@@ -534,6 +540,17 @@ def main() -> int:
     # prevents a green pixel score from silently accepting a shrunk title.
     if reference_route or (args.release and (args.reference or args.reference_dir)):
         args.require_typography_calibration = True
+    if reference_route and (args.release or args.require_root_p0):
+        args.require_source_coverage = True
+    source_inventory_path = Path(args.source_inventory).resolve() if args.source_inventory else project / "source-inventory.json"
+    page_graph_path = Path(args.page_graph).resolve() if args.page_graph else project / "page-graph.json"
+    if args.require_source_coverage and (not source_inventory_path.is_file() or not page_graph_path.is_file()):
+        missing = [str(path) for path in (source_inventory_path, page_graph_path) if not path.is_file()]
+        result = {"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False,
+                  "technical_valid": False, "release_eligible": False,
+                  "code": "source_coverage_evidence_missing", "missing": missing}
+        print(json.dumps(result, ensure_ascii=False))
+        return 2
     typography_calibration = Path(args.typography_calibration).resolve() if args.typography_calibration else project / "typography-calibration.json"
     if args.require_typography_calibration and not typography_calibration.is_file():
         result = {
@@ -928,6 +945,39 @@ def main() -> int:
     if unique_reference_sources:
         source_args = [str(SCRIPT_DIR / "validate_source_images.py"), *[str(path) for path in unique_reference_sources], "--report", str(run_dir / "source-image-validation.json")]
         add_step("source-images", source_args, deps=route_deps, outputs=[run_dir / "source-image-validation.json"], inputs=unique_reference_sources)
+    source_coverage_enabled = args.require_source_coverage or (source_inventory_path.is_file() and page_graph_path.is_file())
+    if source_coverage_enabled and unique_reference_sources:
+        coverage_inputs = [source_inventory_path, page_graph_path, deck, *unique_reference_sources]
+        if len(unique_reference_sources) == 1:
+            reference_arg = str(unique_reference_sources[0])
+        elif args.reference_dir:
+            reference_arg = str(Path(args.reference_dir).resolve())
+        else:
+            # Route rosters can carry explicit page files without a reference
+            # directory. Persist their exact order as a run-local manifest so
+            # the coverage gate cannot infer a different page mapping.
+            source_pages_manifest = run_dir / "source-pages.json"
+            atomic_write_json(source_pages_manifest, {"pages": [str(path) for path in unique_reference_sources]})
+            reference_arg = str(source_pages_manifest)
+            coverage_inputs.append(source_pages_manifest)
+        coverage_args = [str(SCRIPT_DIR / "validate_source_coverage.py"),
+                         "--reference", reference_arg,
+                         "--inventory", str(source_inventory_path),
+                         "--page-graph", str(page_graph_path), "--deck", str(deck),
+                         "--report", str(run_dir / "source-coverage-validation.json")]
+        add_step("source-coverage", coverage_args, deps=["source-images"] if unique_reference_sources else route_deps,
+                  outputs=[run_dir / "source-coverage-validation.json"], inputs=coverage_inputs,
+                  metadata={"required": args.require_source_coverage})
+    elif source_coverage_enabled and args.require_source_coverage:
+        add_step(
+            "source-coverage",
+            static_result={"name": "source-coverage", "command": [], "exit_code": 2, "ok": False,
+                           "failure": "source_reference_missing", "stdout": "", "stderr": ""},
+            cacheable=False,
+            deps=route_deps,
+            outputs=[run_dir / "source-coverage-validation.json"],
+            metadata={"required": True},
+        )
     gradient_manifest = project / "gradient-visual-manifest.json"
     gradient_required = args.require_gradient_visual or gradient_manifest.is_file()
     if args.require_gradient_visual and not gradient_manifest.is_file():
@@ -1352,6 +1402,10 @@ def main() -> int:
         project_args.extend(["--dual-comparison", str(run_dir / "dual-comparison.json")])
         if args.require_dual_comparison:
             project_args.append("--require-dual-comparison")
+    if source_coverage_enabled and (unique_reference_sources or args.require_source_coverage):
+        project_args.extend(["--source-coverage-validation", str(run_dir / "source-coverage-validation.json")])
+        if args.require_source_coverage:
+            project_args.append("--require-source-coverage")
     if args.ocr_lang or args.require_ocr:
         project_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
     if content_inventory_enabled:
@@ -1398,7 +1452,7 @@ def main() -> int:
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "visual-generation", "visual-comparison", "dual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest"):
+    for candidate in ("route", "visual-generation", "visual-comparison", "dual-comparison", "source-coverage", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     if content_inventory_enabled:
@@ -1458,6 +1512,9 @@ def main() -> int:
         [run_dir / "dual-comparison.json"] if args.reference or args.reference_dir else []
     )
     project_inputs.extend(
+        [run_dir / "source-coverage-validation.json"] if source_coverage_enabled and (unique_reference_sources or args.require_source_coverage) else []
+    )
+    project_inputs.extend(
         [run_dir / "ocr-text-check.json"] if args.ocr_lang or args.require_ocr else []
     )
     project_inputs.extend(
@@ -1514,6 +1571,7 @@ def main() -> int:
             ("render", run_dir / "render-report.json"),
             ("render_visual_gate", run_dir / "render-visual-gate.json"),
             ("visual_comparison", run_dir / "visual-comparison.json"),
+            ("source_coverage", run_dir / "source-coverage-validation.json"),
             ("dual_comparison", run_dir / "dual-comparison.json"),
             ("ocr_text_check", run_dir / "ocr-text-check.json"),
             ("route_validation", run_dir / "route-validation.json"),
@@ -1737,11 +1795,13 @@ def main() -> int:
     if args.reference or args.reference_dir:
         report_entries.append({"report_type": "visual-comparison", "path": "visual-comparison.json", "required": True, "stage": "validated"})
         report_entries.append({"report_type": "dual-comparison", "path": "dual-comparison.json", "required": args.require_dual_comparison, "stage": "validated"})
+    if source_coverage_enabled and (unique_reference_sources or args.require_source_coverage):
+        report_entries.append({"report_type": "source-coverage-validation", "path": "source-coverage-validation.json", "required": args.require_source_coverage, "stage": "source-analyzed"})
     if args.ocr_lang or args.require_ocr:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "source-crop-integrity": "source-crop-integrity", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "source-coverage-validation": "source-coverage", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "source-crop-integrity": "source-crop-integrity", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"

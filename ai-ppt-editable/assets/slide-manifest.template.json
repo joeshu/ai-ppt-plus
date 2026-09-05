@@ -18,6 +18,7 @@
     "panel_approval": false,
     "gradient_visual": false,
     "source_image_validation": false,
+    "source_coverage": false,
     "reference_audit": false,
     "content_inventory": false,
     "asset_hashes": false

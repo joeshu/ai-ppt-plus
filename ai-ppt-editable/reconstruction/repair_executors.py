@@ -143,17 +143,43 @@ def _apply_typography(item: dict[str, Any], patch: dict[str, Any]) -> None:
     field_map = {
         "font": "font",
         "font_size": "font_size",
+        "size": "size",
         "bold": "bold",
         "italic": "italic",
         "color": "color",
         "line_spacing": "line_spacing",
         "paragraph_spacing": "paragraph_spacing",
         "margin": "margin",
+        "margin_left": "margin_left",
+        "margin_right": "margin_right",
+        "margin_top": "margin_top",
+        "margin_bottom": "margin_bottom",
         "autofit": "autofit",
     }
     for source, target in field_map.items():
         if source in patch:
             item[target] = deepcopy(patch[source])
+    if "font_size" in patch:
+        size = _number(patch["font_size"], "font_size")
+        if size <= 0:
+            raise RepairExecutionError("font_size must be positive")
+        item["size"] = size
+    if "margin" in patch:
+        margin = patch["margin"]
+        values = margin if isinstance(margin, dict) else dict.fromkeys(("left", "right", "top", "bottom"), margin)
+        if set(values) - {"left", "right", "top", "bottom"}:
+            raise RepairExecutionError("unsupported margin side")
+        for side, value in values.items():
+            amount = _number(value, "margin")
+            if amount < 0:
+                raise RepairExecutionError("margin must be non-negative")
+            item[f"margin_{side}"] = amount
+    for side in ("left", "right", "top", "bottom"):
+        key = f"margin_{side}"
+        if key in patch:
+            amount = _number(patch[key], key)
+            if amount < 0:
+                raise RepairExecutionError("margin must be non-negative")
     if "runs" in patch:
         runs = patch["runs"]
         if not isinstance(runs, list) or any(not isinstance(run, dict) for run in runs):
