@@ -21,6 +21,7 @@ class Stage(str, Enum):
     GATE = "gate"
     COMPLETE = "complete"
     BLOCKED = "blocked"
+    EXTERNAL_ASSET = "external_asset"
 
 
 @dataclass
@@ -49,18 +50,13 @@ class PipelineState:
 class ReconstructionPipeline:
     """Bounded orchestration shell.
 
-    Model calls, rendering and concrete patch application are injected. This keeps
-    execution deterministic and testable while allowing ChatGPT/Astra host runtimes
-    to provide visual reasoning without coupling the repository to one API client.
+    Model calls and rendering remain injected. Repair callbacks may return either
+    a repaired deck directly or ``{"deck": ..., "report": ...}`` from the
+    deterministic repair executors. A native image-generation request is an
+    explicit workflow boundary, not something the deterministic engine fakes.
     """
 
-    def __init__(
-        self,
-        *,
-        max_iterations: int = 4,
-        repair_router: RepairRouter | None = None,
-        quality_gate: QualityGate | None = None,
-    ) -> None:
+    def __init__(self, *, max_iterations: int = 4, repair_router: RepairRouter | None = None, quality_gate: QualityGate | None = None) -> None:
         if max_iterations < 1:
             raise ValueError("max_iterations must be >= 1")
         self.max_iterations = max_iterations
@@ -107,15 +103,7 @@ class ReconstructionPipeline:
             state.gate_result = gate
 
             if gate.passed:
-                state.history.append(IterationRecord(
-                    iteration=index,
-                    difference_count=len(differences.findings),
-                    blocking_count=len(differences.blocking()),
-                    applied_actions=0,
-                    deferred_actions=0,
-                    gate_passed=True,
-                    metrics=metrics,
-                ))
+                state.history.append(IterationRecord(index, len(differences.findings), len(differences.blocking()), 0, 0, True, metrics))
                 state.stage = Stage.COMPLETE
                 state.artifacts["final"] = deck
                 return state
@@ -124,13 +112,8 @@ class ReconstructionPipeline:
             plan = self.repair_router.build_plan(differences)
             state.repair_plan = plan
             state.history.append(IterationRecord(
-                iteration=index,
-                difference_count=len(differences.findings),
-                blocking_count=len(differences.blocking()),
-                applied_actions=len(plan.actions),
-                deferred_actions=len(plan.deferred),
-                gate_passed=False,
-                metrics=metrics,
+                index, len(differences.findings), len(differences.blocking()),
+                len(plan.actions), len(plan.deferred), False, metrics,
             ))
 
             if plan.has_blocking_deferred or not plan.actions:
@@ -138,7 +121,22 @@ class ReconstructionPipeline:
                 state.artifacts["blocked_candidate"] = deck
                 return state
 
-            deck = apply_repairs(deck, plan)
+            repair_result = apply_repairs(deck, plan)
+            if isinstance(repair_result, dict) and "deck" in repair_result and "report" in repair_result:
+                report = repair_result.get("report") if isinstance(repair_result.get("report"), dict) else {}
+                state.artifacts[f"repair_report_{index}"] = report
+                deck = repair_result["deck"]
+                if report.get("requires_external_asset_generation"):
+                    state.stage = Stage.EXTERNAL_ASSET
+                    state.artifacts["asset_regeneration_requests"] = list(report.get("regeneration_requests") or [])
+                    state.artifacts["blocked_candidate"] = deck
+                    return state
+                if report.get("valid") is False:
+                    state.stage = Stage.BLOCKED
+                    state.artifacts["blocked_candidate"] = deck
+                    return state
+            else:
+                deck = repair_result
             state.artifacts[f"candidate_{index + 1}"] = deck
 
         state.stage = Stage.BLOCKED
