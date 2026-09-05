@@ -7,6 +7,7 @@ from typing import Any
 from math import isfinite
 
 from .difference_graph import DifferenceGraph
+from .quality_policy import DEFAULT_POLICY, POLICY_VERSION
 
 
 def _valid_unit_interval(value: Any) -> bool:
@@ -29,11 +30,22 @@ class GateResult:
 
 @dataclass(frozen=True)
 class QualityThresholds:
-    global_visual_similarity: float = 0.94
-    critical_region_similarity: float = 0.92
-    editable_ratio: float = 0.98
-    semantic_accuracy: float = 1.0
+    policy_version: str = POLICY_VERSION
+    global_visual_similarity: float = DEFAULT_POLICY.global_visual_similarity
+    layout_similarity: float = DEFAULT_POLICY.layout_similarity
+    typography_similarity: float = DEFAULT_POLICY.typography_similarity
+    asset_similarity: float = DEFAULT_POLICY.asset_similarity
+    critical_region_similarity: float = DEFAULT_POLICY.critical_region_similarity
+    editable_ratio: float = DEFAULT_POLICY.editable_ratio
+    semantic_accuracy: float = DEFAULT_POLICY.semantic_accuracy
     allow_p1_findings: bool = False
+
+    def axis_thresholds(self) -> dict[str, float]:
+        return {
+            "layout": self.layout_similarity,
+            "typography": self.typography_similarity,
+            "asset": self.asset_similarity,
+        }
 
 
 class QualityGate:
@@ -49,6 +61,8 @@ class QualityGate:
         global_visual_similarity: float,
         critical_region_scores: dict[str, float] | None = None,
         required_critical_regions: list[str] | tuple[str, ...] | None = None,
+        axis_scores: dict[str, float] | None = None,
+        strict_reference_profile: bool = False,
         editable_ratio: float,
         semantic_accuracy: float,
         full_slide_raster_detected: bool,
@@ -58,12 +72,16 @@ class QualityGate:
         t = self.thresholds
         regions = critical_region_scores or {}
         required_regions = tuple(required_critical_regions or ())
+        axes = dict(axis_scores or {})
         renderer_regressions = renderer_regressions or []
 
-        metric_values = {"global_visual_similarity": global_visual_similarity,
-                         "editable_ratio": editable_ratio,
-                         "semantic_accuracy": semantic_accuracy,
-                         **{f"region:{name}": score for name, score in regions.items()}}
+        metric_values = {
+            "global_visual_similarity": global_visual_similarity,
+            "editable_ratio": editable_ratio,
+            "semantic_accuracy": semantic_accuracy,
+            **{f"axis:{name}": score for name, score in axes.items()},
+            **{f"region:{name}": score for name, score in regions.items()},
+        }
         invalid_metrics = set()
         for name, value in metric_values.items():
             if not _valid_unit_interval(value):
@@ -74,10 +92,18 @@ class QualityGate:
         if missing_regions:
             failures.append("missing critical region scores: " + ", ".join(missing_regions))
 
+        required_axes = tuple(t.axis_thresholds()) if strict_reference_profile else ()
+        missing_axes = sorted(set(required_axes) - set(axes))
+        if missing_axes:
+            failures.append("missing fidelity axis scores: " + ", ".join(missing_axes))
+
         if "global_visual_similarity" not in invalid_metrics and global_visual_similarity < t.global_visual_similarity:
             failures.append(
                 f"global visual similarity {global_visual_similarity:.4f} < {t.global_visual_similarity:.4f}"
             )
+        for axis, threshold in t.axis_thresholds().items():
+            if axis in axes and f"axis:{axis}" not in invalid_metrics and axes[axis] < threshold:
+                failures.append(f"{axis} similarity {axes[axis]:.4f} < {threshold:.4f}")
         for region, score in regions.items():
             if f"region:{region}" not in invalid_metrics and score < t.critical_region_similarity:
                 failures.append(
@@ -105,12 +131,16 @@ class QualityGate:
             passed=not failures,
             failures=tuple(failures),
             metrics={
+                "policy_version": t.policy_version,
                 "global_visual_similarity": global_visual_similarity,
+                "axis_scores": axes,
+                "axis_thresholds": t.axis_thresholds(),
                 "critical_region_scores": regions,
                 "required_critical_regions": list(required_regions),
                 "editable_ratio": editable_ratio,
                 "semantic_accuracy": semantic_accuracy,
                 "full_slide_raster_detected": full_slide_raster_detected,
                 "renderer_regressions": renderer_regressions,
+                "strict_reference_profile": strict_reference_profile,
             },
         )
