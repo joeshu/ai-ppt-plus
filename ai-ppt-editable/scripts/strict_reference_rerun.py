@@ -80,6 +80,9 @@ def main() -> int:
     started_at = datetime.now(timezone.utc).isoformat()
     run_dir = project / "strict-reruns" / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
+    current_rerun_path = project / "current-rerun.json"
+    if current_rerun_path.exists():
+        current_rerun_path.unlink()
 
     inputs = {
         "source": file_evidence(source),
@@ -145,6 +148,20 @@ def main() -> int:
     ], check=False)
     if verify.returncode != 0:
         raise SystemExit(verify.returncode)
+
+    current_rerun = {
+        "schema": "ai-ppt-plus/current-rerun/v1",
+        "request_id": run_id,
+        "run_request": str(request_path),
+        "authoring_provenance": str(provenance_path),
+        "deck": str(out),
+        "deck_sha256": sha256(out),
+        "status": "authored",
+    }
+    current_rerun_path.write_text(
+        json.dumps(current_rerun, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
     print(json.dumps({
         "status": "ok",
