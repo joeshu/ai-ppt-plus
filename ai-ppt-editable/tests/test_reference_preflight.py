@@ -49,7 +49,9 @@ def main() -> int:
             embed_fonts=True,
             font_manifest="font-manifest.json",
         )
-        assert any(item["code"] == "imagegen_final_asset_gate_failed" for item in bad_route["issues"])
+        bad_codes = {item["code"] for item in bad_route["issues"]}
+        assert "imagegen_final_asset_gate_failed" in bad_codes
+        assert "reference_cjk_font_evidence_missing" in bad_codes
 
         (root / "generated").mkdir(exist_ok=True)
         (root / "assets").mkdir(exist_ok=True)
@@ -74,6 +76,10 @@ def main() -> int:
                 "sha256": digest,
             }],
         })
+        write(root / "font-manifest.json", {
+            "schema": "ai-ppt-plus/font-manifest-test/v1",
+            "fonts": [{"family": "Test CJK Sans", "path": "fonts/test.ttf"}],
+        })
         good = validate_reference_preflight(
             layout,
             json.loads(layout.read_text()),
@@ -83,6 +89,7 @@ def main() -> int:
         assert good["valid"], good
         assert good["imagegen_required"] is True
         assert good["cjk_required"] is True
+        assert good["font_evidence"]["manifest_readable"] is True
 
         # Brand-only pages use the authorized-source exception and do not force imagegen.
         write(root / "slide-object-manifest.json", {
