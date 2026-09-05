@@ -36,6 +36,25 @@ def test_native_editability_regression_rolls_back():
     assert "native_editability_regressed" in result["reasons"]
 
 
+def test_semantic_accuracy_regression_rolls_back_even_when_visual_improves():
+    previous = {
+        "pixel_fidelity_score": 0.88,
+        "blocking_count": 1,
+        "native_editability_valid": True,
+        "semantic_accuracy": 1.0,
+    }
+    current = {
+        "pixel_fidelity_score": 0.92,
+        "blocking_count": 1,
+        "native_editability_valid": True,
+        "semantic_accuracy": 0.0,
+    }
+    result = module.regression_decision(previous, current)
+    assert result["rollback"] is True
+    assert result["semantic_accuracy_regressed"] is True
+    assert "semantic_accuracy_regressed" in result["reasons"]
+
+
 def test_improvement_is_accepted():
     previous = {"pixel_fidelity_score": 0.88, "blocking_count": 2, "native_editability_valid": True}
     current = {"pixel_fidelity_score": 0.91, "blocking_count": 1, "native_editability_valid": True}
