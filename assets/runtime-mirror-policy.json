@@ -37,6 +37,8 @@
         {"path": "scripts/pptx_primitives.py", "reason": "P1 native table styling and rich-text authoring adapter"},
         {"path": "scripts/reference_preflight.py", "reason": "worker-only fail-closed reference compose preflight for native imagegen and CJK font delivery"},
         {"path": "scripts/run_pipeline.py", "reason": "worker-specific standalone orchestration adapter; root owns route orchestration"},
+        {"path": "scripts/strict_reference_rerun.py", "reason": "worker-only strict fixed-reference rerun transaction entrypoint"},
+        {"path": "scripts/validate_authoring_provenance.py", "reason": "worker-only rerun provenance freshness validator"},
         {"path": "scripts/validate_imagegen_final_assets.py", "reason": "worker-only final imagegen asset validator"},
         {"path": "scripts/validate_native_editability.py", "reason": "P1 worker-only native object audit"},
         {"path": "scripts/validate_object_manifest.py", "reason": "P1 native panel/table manifest gate adapter"},
