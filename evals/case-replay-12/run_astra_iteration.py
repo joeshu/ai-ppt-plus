@@ -4,6 +4,11 @@
 This runner never edits PPTX XML directly. It applies a validated merged
 DifferenceGraph to layout.json, then reuses compose/render/manifest/native-audit/
 visual-compare entrypoints to produce the next iteration evidence.
+
+When --resume-after-assets is used, the supplied layout is already asset-resolved
+and validated. In that mode the runner intentionally skips the original repair
+plan so regenerate findings are not dispatched a second time; it only rebuilds,
+renders and re-audits the resolved deck.
 """
 from __future__ import annotations
 
@@ -11,6 +16,7 @@ import argparse
 import json
 import subprocess
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -56,22 +62,44 @@ def prepare_repaired_layout(layout: dict, merged_graph: dict) -> dict:
     return executed
 
 
+def prepare_asset_resolved_layout(layout: dict) -> dict:
+    return {
+        "deck": deepcopy(layout),
+        "report": {
+            "applied": [],
+            "skipped": [],
+            "regeneration_requests": [],
+            "deferred": [],
+            "valid": True,
+            "requires_external_asset_generation": False,
+            "asset_resolution_resume": True,
+        },
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--case-id", required=True)
     ap.add_argument("--layout", type=Path, required=True)
-    ap.add_argument("--merged-difference-graph", type=Path, required=True)
+    ap.add_argument("--merged-difference-graph", type=Path)
     ap.add_argument("--reference", type=Path, required=True)
     ap.add_argument("--output-dir", type=Path, required=True)
     ap.add_argument("--iteration", type=int, required=True)
+    ap.add_argument("--resume-after-assets", action="store_true")
     ap.add_argument("--font-dir", type=Path, default=EDITABLE / "assets" / "fonts")
     args = ap.parse_args()
+
+    if not args.resume_after_assets and args.merged_difference_graph is None:
+        ap.error("--merged-difference-graph is required unless --resume-after-assets is used")
 
     out = args.output_dir.resolve()
     out.mkdir(parents=True, exist_ok=True)
     layout = read_json(args.layout.resolve())
-    merged = read_json(args.merged_difference_graph.resolve())
-    executed = prepare_repaired_layout(layout, merged)
+    if args.resume_after_assets:
+        executed = prepare_asset_resolved_layout(layout)
+    else:
+        merged = read_json(args.merged_difference_graph.resolve())
+        executed = prepare_repaired_layout(layout, merged)
 
     repaired_layout = out / "layout.json"
     write_json(repaired_layout, executed["deck"])
@@ -131,6 +159,7 @@ def main() -> int:
             engine: sum(1 for item in executed["report"].get("applied", []) if item.get("engine") == engine)
             for engine in ("geometry_repair", "typography_repair", "asset_repair", "semantic_repair")
         },
+        "asset_resolution_resume": args.resume_after_assets,
         "status": "repaired-needs-qa" if native.get("valid") is True else "blocked-native-regression",
         "artifacts": {
             "layout": str(repaired_layout),
