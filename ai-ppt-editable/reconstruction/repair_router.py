@@ -36,7 +36,10 @@ class RepairPlan:
 
     @property
     def has_blocking_deferred(self) -> bool:
-        return any(item.get("severity") in {"P0", "P1"} for item in self.deferred)
+        return any(
+            item.get("severity") in {"P0", "P1"} and not item.get("diagnostic_only", False)
+            for item in self.deferred
+        )
 
     def by_engine(self, engine: str) -> tuple[RepairAction, ...]:
         return tuple(action for action in self.actions if action.engine == engine)
@@ -47,6 +50,9 @@ class RepairRouter:
 
     Astra may propose a patch, but only whitelisted keys are executable without
     review. Low-confidence or structurally ambiguous findings are deferred.
+    Page-level visual findings from deterministic pixel comparison are diagnostic:
+    they remain QualityGate blockers, but they do not prevent object-local repairs
+    from executing in the current iteration.
     """
 
     def __init__(self, *, min_auto_confidence: float = 0.82) -> None:
@@ -63,6 +69,16 @@ class RepairRouter:
                 rejected.append(key)
         return accepted, rejected
 
+    @staticmethod
+    def _diagnostic_only(finding: DifferenceFinding) -> bool:
+        evidence = finding.evidence if isinstance(finding.evidence, dict) else {}
+        return (
+            finding.object_id.startswith("slide:")
+            and evidence.get("kind") == "pixel"
+            and evidence.get("source") == "dual-comparison"
+            and not finding.proposed_patch
+        )
+
     def build_plan(self, graph: DifferenceGraph) -> RepairPlan:
         actions: list[RepairAction] = []
         deferred: list[dict[str, Any]] = []
@@ -72,6 +88,7 @@ class RepairRouter:
             low_confidence = finding.confidence < self.min_auto_confidence
             no_patch = not patch
             semantic_risk = finding.domain == "semantic" and finding.severity == "P0"
+            diagnostic_only = self._diagnostic_only(finding)
 
             if low_confidence or no_patch or rejected or semantic_risk:
                 deferred.append({
@@ -80,7 +97,14 @@ class RepairRouter:
                     "domain": finding.domain,
                     "severity": finding.severity,
                     "confidence": finding.confidence,
-                    "reason": "low-confidence" if low_confidence else "unsafe-or-incomplete-patch",
+                    "reason": (
+                        "diagnostic-only"
+                        if diagnostic_only
+                        else "low-confidence"
+                        if low_confidence
+                        else "unsafe-or-incomplete-patch"
+                    ),
+                    "diagnostic_only": diagnostic_only,
                     "rejected_patch_keys": rejected,
                     "proposed_patch": finding.proposed_patch,
                 })
