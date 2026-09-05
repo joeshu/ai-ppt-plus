@@ -1,0 +1,19 @@
+name: export-skill-package
+
+on:
+  push:
+    branches:
+      - tmp/export-skill-package-20260905
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload complete skill package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-ppt-plus-skill-package
+          path: .
+          include-hidden-files: true
+          retention-days: 1
