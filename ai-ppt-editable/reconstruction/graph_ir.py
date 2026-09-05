@@ -8,7 +8,7 @@ must not reinterpret model prose at render time.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Iterable
+from typing import Any
 
 
 ALLOWED_NODE_TYPES = {
@@ -134,6 +134,9 @@ class PageGraph:
                     raise GraphValidationError(f"node {node.id}: unknown relation target {relation.target}")
         if self.slide_width <= 0 or self.slide_height <= 0:
             raise GraphValidationError("slide dimensions must be positive")
+        units = str(self.metadata.get("units") or "inches").casefold()
+        if units not in {"inch", "inches", "in", "fraction", "normalized", "relative", "pixel", "pixels", "px"}:
+            raise GraphValidationError(f"unsupported coordinate units: {units}")
 
     def by_id(self, node_id: str) -> GraphNode:
         for node in self.nodes:
@@ -149,21 +152,16 @@ class PageGraph:
         return tuple(node for node in self.nodes if node.parent_id == parent_id)
 
     def editable_semantic_nodes(self) -> tuple[GraphNode, ...]:
-        """Nodes that must not silently collapse into a slide-wide raster layer."""
         return self.nodes_of_type("text", "shape", "table", "chart", "connector", "group")
 
     def to_authoring_deck(self, *, assets_dir: str) -> dict[str, Any]:
-        """Project the graph into the stable deterministic authoring backend contract.
-
-        This intentionally performs a conservative mapping. Unsupported rich semantics
-        stay in metadata for a later engine-specific expander instead of being guessed.
-        """
+        """Project the graph into the stable deterministic authoring backend contract."""
         slide: dict[str, list[dict[str, Any]]] = {
-            "texts": [], "shapes": [], "tables": [], "charts": [], "icons": [], "groups": []
+            "texts": [], "shapes": [], "tables": [], "charts": [], "icons": [], "groups": [], "panels": []
         }
         for node in self.nodes:
             x, y, w, h = node.bbox
-            base = {"id": node.id, "x": x, "y": y, "w": w, "h": h, "graph_metadata": node.semantic}
+            base = {"id": node.id, "object_id": node.id, "x": x, "y": y, "w": w, "h": h, "graph_metadata": node.semantic}
             if node.type == "text":
                 item = dict(base)
                 item.update(node.style)
@@ -188,13 +186,22 @@ class PageGraph:
             elif node.type == "icon":
                 item = dict(base)
                 item.update(node.source)
+                if node.role:
+                    item["role"] = node.role
                 slide["icons"].append(item)
+            elif node.type in {"illustration", "image"}:
+                item = dict(base)
+                item.update(node.source)
+                if node.role:
+                    item["role"] = node.role
+                slide["panels"].append(item)
             elif node.type == "group":
                 item = dict(base)
                 item["children"] = [child.id for child in self.children_of(node.id)]
                 slide["groups"].append(item)
         return {
             "assets_dir": assets_dir,
+            "units": self.metadata.get("units", "inches"),
             "slide_width_in": self.slide_width,
             "slide_height_in": self.slide_height,
             "ref_width": self.reference_width,
