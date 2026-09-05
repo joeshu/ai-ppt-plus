@@ -15,7 +15,11 @@ jobs:
       - name: Install deterministic rendering dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libreoffice poppler-utils inkscape tesseract-ocr tesseract-ocr-chi-sim
+          sudo apt-get install -y libreoffice poppler-utils inkscape tesseract-ocr tesseract-ocr-chi-sim fontconfig
+          mkdir -p "$HOME/.local/share/fonts"
+          cp ai-ppt-editable/assets/fonts/NotoSansSC-Regular.ttf "$HOME/.local/share/fonts/"
+          fc-cache -f
+          fc-match "Noto Sans SC"
           python -m pip install --upgrade pip
           python -m pip install -r requirements-ci.txt
       - name: Verify SVG rendering dependency
@@ -61,6 +65,7 @@ jobs:
           python ai-ppt-editable/tests/test_distillation_selection.py
           python ai-ppt-editable/tests/test_golden_promotion.py
           python ai-ppt-editable/tests/test_accepted_state.py
+          python ai-ppt-editable/tests/test_reconstruction_fidelity_policy.py
       - name: Build 12-case Astra closed-loop batch
         run: |
           python evals/case-replay-12/build_astra_closed_loop_batch.py \
