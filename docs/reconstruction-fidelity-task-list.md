@@ -17,19 +17,19 @@
 
 | ID | 任务 | 验收标准 | 状态 |
 |---|---|---|---|
-| RF-101 | 从截图生成文字目标规格 | 提取文字行、基线、字体候选、字号、行距、重点词及置信度 | 已落实：新增 `text_target_spec`，把截图观察证据规范化为与真实渲染一致的目标合同，并绑定源图 Hash |
-| RF-102 | 中文真实渲染校准 | 覆盖中文长句、中英数字混排、富文本重点词、换行和字体回退 | 已落实：CI 安装仓库内置 Noto Sans SC，并加入 LibreOffice/PDF 中文混排、数字、富文本真实渲染回归 |
-| RF-103 | 页面差异自动路由 | 几何、文字、素材、层级和语义差异进入对应修复器 | 已落实：DifferenceGraph 增加 hierarchy 域；RepairRouter 将 geometry/typography/asset/hierarchy/semantic 路由到受控执行器 |
+| RF-101 | 从截图生成文字目标规格 | 提取文字行、基线、字体候选、字号、行距、重点词及置信度 | 已落实：Astra `typography-target-observation` 专用截图观察合同输出文字目标证据，`text_target_spec` 负责绑定源图 Hash、校验完整性并确定性归一化 |
+| RF-102 | 中文真实渲染校准 | 覆盖中文长句、中英数字混排、富文本重点词、换行和字体回退 | 已落实：CI 安装仓库内置 `Noto Sans CJK SC`，并加入 LibreOffice/PDF 中文混排、数字、富文本真实渲染回归；保持 `font_verified=true` 与 `overflow=false` |
+| RF-103 | 页面差异自动路由 | 几何、文字、素材、层级和语义差异进入对应修复器 | 已落实：Astra QA Prompt/Schema → DifferenceGraph → RepairRouter 已贯通 geometry/typography/asset/hierarchy/semantic 五类差异 |
 | RF-104 | 修复后防回退 | 锁定已通过对象，每轮重渲染并检查已通过区域未退化 | 已落实：主循环对非目标对象执行 object drift guard，并阻断已通过关键区域的后续退化 |
-| RF-105 | 多页一致性 | 逐页修复后检查主题、字号层级、重复素材和跨页位置规则 | 已落实：新增 multi-page consistency gate，对锁定角色文字及重复 logo/资产检查字号、字体、来源和位置一致性 |
+| RF-105 | 多页一致性 | 逐页修复后检查主题、字号层级、重复素材和跨页位置规则 | 已落实：multi-page consistency 已接入最终 COMPLETE 前 gate，对锁定角色文字及重复 logo/资产检查字号、字体、来源和位置一致性 |
 
 ## P2：真实交付验收
 
 | ID | 任务 | 验收标准 | 状态 |
 |---|---|---|---|
-| RF-201 | 12 案例四证据回放 | 每例保存原图、PPTX 渲染、局部差异和实际对象树 | 代码已落实、CI 验收中：新增 four-evidence bundle，并接入严格 12-case replay |
-| RF-202 | WPS 桌面端验收 | 文件打开、排版、字体、溢出、编辑和截图证据绑定 PPTX Hash | 待用户环境实测 |
-| RF-203 | iPhone WPS 验收 | 同一文件逐页截图并记录字体替换和换行差异 | 待用户环境实测 |
-| RF-204 | 统一能力口径 | 工程门禁通过与视觉实证通过分别记录，文档不再混用 | 代码已落实、CI 验收中：新增 capability-status 报告，engineering / visual / host 三类证据独立记录 |
+| RF-201 | 12 案例四证据回放 | 每例保存原图、PPTX 渲染、局部差异和实际对象树 | 代码已落实、最新 CI 验收中：four-evidence bundle 接入严格 12-case replay，并强制 Actions 上传隐藏 `.distillation` 证据目录 |
+| RF-202 | WPS 桌面端验收 | 文件打开、排版、字体、溢出、编辑和截图证据绑定 PPTX Hash | 工程合同已落实、待真实桌面环境实测：独立 `desktop` host profile，必须绑定同一 PPTX Hash 与逐页截图 |
+| RF-203 | iPhone WPS 验收 | 同一文件逐页截图并记录字体替换和换行差异 | 工程合同已落实、待真实 iPhone WPS 实测：独立 `ios` profile，并强制字体替换、换行差异复核 |
+| RF-204 | 统一能力口径 | 工程门禁通过与视觉实证通过分别记录，文档不再混用 | 代码已落实、最新 CI 验收中：capability-status 独立记录 engineering / visual / desktop host / iOS host；旧单 host 证据明确不能触发 release |
 
-推进顺序：RF-001～RF-006 → RF-101～RF-105 → RF-201～RF-204。只有 engineering、visual human review 和真实 host validation 均通过时，才允许标记最终高保真交付通过。
+推进顺序：RF-001～RF-006 → RF-101～RF-105 → RF-201～RF-204。只有 engineering、visual human review 和真实 desktop/iOS host validation 均通过时，才允许标记最终高保真交付通过。
