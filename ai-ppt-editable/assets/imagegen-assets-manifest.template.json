@@ -1,43 +1,55 @@
 {
   "schema": "ai-ppt-plus/imagegen-assets/v1",
   "request_id": "<current-reference-rerun-request-id>",
-  "provenance_policy": "imagegen_or_source_reuse",
+  "provenance_policy": "imagegen_final_assets",
   "run_root": "/workspace/.../unique-run",
+  "fallback_contract": {
+    "automatic_source_reuse": false,
+    "minimum_native_attempts": 3,
+    "required_retry_boundary": "user-choice-required",
+    "allowed_user_choices": [
+      "continue-native-generation",
+      "crop-matting-fallback"
+    ]
+  },
   "assets": [
     {
       "id": "background",
+      "asset_class": "background",
       "request_id": "<current-reference-rerun-request-id>",
       "provenance_mode": "imagegen",
       "layer": "background",
       "generated_source": "/imagegen/generated/background.png",
       "copied_to": "editable/01/background.png",
-      "actual_sha256": "<sha256-of-final-background>",
+      "sha256": "<sha256-of-final-background>",
       "prompt_file": "editable/01/prompts/background.txt",
-      "backend": "codex-imagegen",
+      "backend": "native-imagegen",
       "key_color": "#00ff00"
     },
     {
       "id": "frame_raw",
+      "asset_class": "frame",
       "request_id": "<current-reference-rerun-request-id>",
       "provenance_mode": "imagegen",
       "layer": "frame_raw",
       "generated_source": "/imagegen/generated/frame.png",
       "copied_to": "editable/01/frame_raw.png",
-      "actual_sha256": "<sha256-of-final-frame>",
+      "sha256": "<sha256-of-final-frame>",
       "prompt_file": "editable/01/prompts/frame.txt",
-      "backend": "codex-imagegen",
+      "backend": "native-imagegen",
       "key_color": "#00ff00"
     },
     {
-      "id": "icons_raw_1",
+      "id": "icon-1",
+      "asset_class": "icon",
       "request_id": "<current-reference-rerun-request-id>",
       "provenance_mode": "imagegen",
       "layer": "icons_raw_1",
-      "generated_source": "/imagegen/generated/icons.png",
-      "copied_to": "editable/01/icons_raw_1.png",
-      "actual_sha256": "<sha256-of-final-icons>",
-      "prompt_file": "editable/01/prompts/icons.txt",
-      "backend": "codex-imagegen",
+      "generated_source": "/imagegen/generated/icon-1.png",
+      "copied_to": "editable/01/icon-1.png",
+      "sha256": "<sha256-of-final-icon>",
+      "prompt_file": "editable/01/prompts/icon-1.txt",
+      "backend": "native-imagegen",
       "key_color": "#00ff00"
     }
   ]
