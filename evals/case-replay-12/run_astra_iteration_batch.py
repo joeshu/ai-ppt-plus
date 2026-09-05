@@ -19,6 +19,7 @@ if str(EDITABLE) not in sys.path:
 from reconstruction.astra_contract import build_visual_qa_request
 from reconstruction.evidence_bridge import from_dual_comparison
 from reconstruction.manifest_bridge import build_page_graph
+from reconstruction.object_drift_guard import compare_object_drift
 
 ITERATION_RUNNER = ROOT / "run_astra_iteration.py"
 
@@ -32,7 +33,7 @@ def write_json(path: Path, value) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0) -> dict:
+def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0, drift_report: dict | None = None) -> dict:
     previous_score = previous.get("pixel_fidelity_score")
     if previous_score is None:
         previous_score = (previous.get("visual_metrics") or {}).get("pixel_fidelity_score")
@@ -45,6 +46,7 @@ def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0
     native_regressed = previous.get("native_editability_valid", True) is True and current.get("native_editability_valid") is not True
     visual_regressed = visual_delta is not None and visual_delta < -abs(float(tolerance))
     blocking_regressed = current_blocking > previous_blocking
+    object_drift_regressed = drift_report is not None and drift_report.get("valid") is not True
     reasons = []
     if visual_regressed:
         reasons.append("pixel_fidelity_decreased")
@@ -52,12 +54,15 @@ def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0
         reasons.append("blocking_count_increased")
     if native_regressed:
         reasons.append("native_editability_regressed")
+    if object_drift_regressed:
+        reasons.append("unauthorized_object_drift")
     return {
         "rollback": bool(reasons),
         "reasons": reasons,
         "pixel_fidelity_delta": visual_delta,
         "blocking_delta": current_blocking - previous_blocking,
         "native_editability_regressed": native_regressed,
+        "unauthorized_object_drift": object_drift_regressed,
     }
 
 
@@ -94,11 +99,8 @@ def next_qa_bundle(iteration_dir: Path, reference: Path) -> dict:
     visual = read_json(iteration_dir / "visual-comparison.json")
     rendered = iteration_dir / "render" / "slide-1.png"
     request = build_visual_qa_request(
-        source_id=str(reference),
-        rendered_id=str(rendered),
-        page_graph=asdict(page_graph),
-        object_manifest=manifest,
-        metric_summary=dict(visual.get("metrics") or {}),
+        source_id=str(reference), rendered_id=str(rendered), page_graph=asdict(page_graph),
+        object_manifest=manifest, metric_summary=dict(visual.get("metrics") or {}),
     )
     return {
         "page_graph": asdict(page_graph),
@@ -132,15 +134,38 @@ def resolve_resume_layout(asset_resolved_root: Path | None, case_id: str, iterat
     return None, None
 
 
-def run_case(*, case_id: str, iteration: int, source_layout: Path, merged_graph: Path | None, reference: Path, output_dir: Path, previous_record: dict, tolerance: float, resume_after_assets: bool = False) -> dict:
+def allowed_ids_from_graph(merged_graph: Path | None) -> set[str]:
+    if merged_graph is None or not merged_graph.is_file():
+        return set()
+    graph = read_json(merged_graph)
+    return {
+        str(item.get("object_id")) for item in graph.get("findings", []) or []
+        if isinstance(item, dict) and item.get("object_id") and item.get("proposed_patch")
+    }
+
+
+def generated_asset_ids(layout: dict) -> set[str]:
+    result = set()
+    for slide in layout.get("slides", []) or []:
+        if not isinstance(slide, dict):
+            continue
+        for collection in ("icons", "panels"):
+            for item in slide.get(collection, []) or []:
+                if not isinstance(item, dict) or not item.get("generation_provenance"):
+                    continue
+                object_id = item.get("object_id") or item.get("id") or item.get("name") or item.get("panel_id")
+                if object_id:
+                    result.add(str(object_id))
+    return result
+
+
+def run_case(*, case_id: str, iteration: int, source_layout: Path, baseline_layout: Path, merged_graph: Path | None,
+             reference: Path, output_dir: Path, previous_record: dict, tolerance: float,
+             resume_after_assets: bool = False, allowed_object_ids: set[str] | None = None) -> dict:
     case_out = output_dir / case_id / f"iteration-{iteration}"
     command = [
-        sys.executable, str(ITERATION_RUNNER),
-        "--case-id", case_id,
-        "--layout", str(source_layout),
-        "--reference", str(reference),
-        "--output-dir", str(case_out),
-        "--iteration", str(iteration),
+        sys.executable, str(ITERATION_RUNNER), "--case-id", case_id, "--layout", str(source_layout),
+        "--reference", str(reference), "--output-dir", str(case_out), "--iteration", str(iteration),
     ]
     if resume_after_assets:
         command.append("--resume-after-assets")
@@ -160,12 +185,19 @@ def run_case(*, case_id: str, iteration: int, source_layout: Path, merged_graph:
     current["blocking_count"] = bundle["blocking_count"]
     current["difference_count"] = bundle["difference_count"]
     current["resume_after_assets"] = resume_after_assets
-    decision = regression_decision(previous_record, current, tolerance=tolerance)
+
+    before = read_json(baseline_layout)
+    after = read_json(case_out / "layout.json")
+    drift_report = compare_object_drift(before, after, allowed_object_ids=set(allowed_object_ids or set()))
+    write_json(case_out / "object-drift-report.json", drift_report)
+    current["object_drift"] = drift_report
+
+    decision = regression_decision(previous_record, current, tolerance=tolerance, drift_report=drift_report)
     current["regression"] = decision
     if decision["rollback"]:
         rollback_dir = case_out / "rollback"
         rollback_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source_layout, rollback_dir / "layout.json")
+        shutil.copy2(baseline_layout, rollback_dir / "layout.json")
         current["status"] = "rolled-back-regression"
         current["accepted"] = False
         current["next_action"] = "retain previous accepted layout and request a different object-local repair or regenerated asset"
@@ -194,9 +226,7 @@ def main() -> int:
 
     evaluation = read_json(args.evaluation)
     cases_by_id = {item["case_id"]: item for item in evaluation.get("cases") or []}
-    results = []
-    skipped = []
-    errors = []
+    results, skipped, errors = [], [], []
 
     for case_id, case in sorted(cases_by_id.items()):
         ingested_dir = args.ingested_root / case_id / f"iteration-{args.iteration}"
@@ -207,6 +237,7 @@ def main() -> int:
             continue
         previous = read_json(ingested_record)
         status = previous.get("status")
+        baseline_layout = args.candidate_runs / case_id / "layout.json"
 
         resume_layout, resume_meta = resolve_resume_layout(args.asset_resolved_root, case_id, args.iteration)
         resume_after_assets = status == "external-asset" and resume_layout is not None
@@ -220,7 +251,7 @@ def main() -> int:
             skipped.append({"case_id": case_id, "reason": status or "not-repair-ready"})
             continue
 
-        source_layout = resume_layout if resume_after_assets else args.candidate_runs / case_id / "layout.json"
+        source_layout = resume_layout if resume_after_assets else baseline_layout
         if not resume_after_assets and not merged_graph.is_file():
             skipped.append({"case_id": case_id, "reason": "missing-merged-difference-graph"})
             continue
@@ -228,36 +259,33 @@ def main() -> int:
         reference = Path(reference_value)
         if not reference.is_absolute():
             reference = ROOT / reference
-        if source_layout is None or not source_layout.is_file() or not reference.is_file():
+        if source_layout is None or not source_layout.is_file() or not baseline_layout.is_file() or not reference.is_file():
             errors.append({"case_id": case_id, "reason": "missing-source-layout-or-reference"})
             continue
+
+        if resume_after_assets:
+            allowed_ids = generated_asset_ids(read_json(source_layout))
+        else:
+            allowed_ids = allowed_ids_from_graph(merged_graph)
         result = run_case(
-            case_id=case_id,
-            iteration=args.iteration,
-            source_layout=source_layout,
-            merged_graph=None if resume_after_assets else merged_graph,
-            reference=reference,
-            output_dir=args.output_root,
-            previous_record=previous,
-            tolerance=args.visual_regression_tolerance,
-            resume_after_assets=resume_after_assets,
+            case_id=case_id, iteration=args.iteration, source_layout=source_layout, baseline_layout=baseline_layout,
+            merged_graph=None if resume_after_assets else merged_graph, reference=reference, output_dir=args.output_root,
+            previous_record=previous, tolerance=args.visual_regression_tolerance, resume_after_assets=resume_after_assets,
+            allowed_object_ids=allowed_ids,
         )
         results.append(result)
         if result.get("status") == "execution-error":
             errors.append(result)
 
     summary = {
-        "schema": "ai-ppt-plus/astra-iteration-batch/v1",
+        "schema": "ai-ppt-plus/astra-iteration-batch/v2",
         "iteration": args.iteration,
         "executed_count": len(results),
         "asset_resumed_count": sum(1 for item in results if item.get("resume_after_assets") is True),
         "accepted_count": sum(1 for item in results if item.get("accepted") is True),
         "rollback_count": sum(1 for item in results if item.get("status") == "rolled-back-regression"),
-        "skipped_count": len(skipped),
-        "error_count": len(errors),
-        "cases": results,
-        "skipped": skipped,
-        "errors": errors,
+        "object_drift_rollback_count": sum(1 for item in results if "unauthorized_object_drift" in ((item.get("regression") or {}).get("reasons") or [])),
+        "skipped_count": len(skipped), "error_count": len(errors), "cases": results, "skipped": skipped, "errors": errors,
     }
     write_json(args.output_root / f"iteration-{args.iteration}-batch-summary.json", summary)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
