@@ -23,6 +23,7 @@ class DistillationRecord:
     blocking_count: int
     blocking_delta: int | None
     native_editability_valid: bool
+    semantic_accuracy: float | None
     unauthorized_object_drift_count: int
     drift_objects: tuple[str, ...]
     rollback: bool
@@ -61,8 +62,12 @@ def build_distillation_record(*, iteration_record: dict[str, Any], asset_resolut
     allowed = tuple(sorted(str(x) for x in (drift.get("allowed_object_ids") or iteration_record.get("allowed_object_ids") or []) if x))
     drift_objects = tuple(sorted(str(x) for x in (drift.get("unauthorized_objects") or []) if x))
     rollback_reasons = tuple(str(x) for x in (regression.get("reasons") or []) if x)
+    semantic_accuracy = _float_or_none(iteration_record.get("semantic_accuracy"))
+    if semantic_accuracy is None:
+        semantic = iteration_record.get("semantic_audit") or {}
+        semantic_accuracy = _float_or_none(semantic.get("accuracy"))
     return DistillationRecord(
-        schema="ai-ppt-plus/astra-distillation-record/v1",
+        schema="ai-ppt-plus/astra-distillation-record/v2",
         case_id=str(iteration_record.get("case_id") or ""),
         iteration=_int(iteration_record.get("iteration")),
         status=str(iteration_record.get("status") or "unknown"),
@@ -76,6 +81,7 @@ def build_distillation_record(*, iteration_record: dict[str, Any], asset_resolut
         blocking_count=_int(iteration_record.get("blocking_count")),
         blocking_delta=_int(regression.get("blocking_delta")) if regression.get("blocking_delta") is not None else None,
         native_editability_valid=iteration_record.get("native_editability_valid") is True,
+        semantic_accuracy=semantic_accuracy,
         unauthorized_object_drift_count=_int(drift.get("unauthorized_drift_count")),
         drift_objects=drift_objects,
         rollback=regression.get("rollback") is True or iteration_record.get("status") == "rolled-back-regression",
@@ -90,8 +96,9 @@ def build_distillation_record(*, iteration_record: dict[str, Any], asset_resolut
 
 def summarize_distillation(records: list[dict[str, Any]]) -> dict[str, Any]:
     scores = [float(item["pixel_fidelity_score"]) for item in records if item.get("pixel_fidelity_score") is not None]
+    semantic_scores = [float(item["semantic_accuracy"]) for item in records if item.get("semantic_accuracy") is not None]
     return {
-        "schema": "ai-ppt-plus/astra-distillation-summary/v1",
+        "schema": "ai-ppt-plus/astra-distillation-summary/v2",
         "record_count": len(records),
         "accepted_count": sum(1 for item in records if item.get("accepted") is True),
         "rollback_count": sum(1 for item in records if item.get("rollback") is True),
@@ -100,8 +107,10 @@ def summarize_distillation(records: list[dict[str, Any]]) -> dict[str, Any]:
         "asset_user_choice_required_count": sum(int(item.get("asset_user_choice_required_count") or 0) for item in records),
         "repair_action_count": sum(int(item.get("repair_action_count") or 0) for item in records),
         "native_editability_failure_count": sum(1 for item in records if item.get("native_editability_valid") is not True),
+        "semantic_perfect_count": sum(1 for item in records if item.get("semantic_accuracy") == 1.0),
         "human_approved_count": sum(1 for item in records if item.get("human_approved") is True),
         "mean_pixel_fidelity_score": round(sum(scores) / len(scores), 6) if scores else None,
+        "mean_semantic_accuracy": round(sum(semantic_scores) / len(semantic_scores), 6) if semantic_scores else None,
     }
 
 
@@ -117,6 +126,8 @@ def merge_performance_report(existing: dict[str, Any] | None, summary: dict[str,
         "asset_user_choice_required_count": summary.get("asset_user_choice_required_count", 0),
         "repair_action_count": summary.get("repair_action_count", 0),
         "native_editability_failure_count": summary.get("native_editability_failure_count", 0),
+        "semantic_perfect_count": summary.get("semantic_perfect_count", 0),
         "mean_pixel_fidelity_score": summary.get("mean_pixel_fidelity_score"),
+        "mean_semantic_accuracy": summary.get("mean_semantic_accuracy"),
     }
     return report
