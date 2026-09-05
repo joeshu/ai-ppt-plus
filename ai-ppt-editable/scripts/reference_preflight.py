@@ -22,6 +22,7 @@ MANDATORY_ROLES = {
     "artistic-typography", "gradient_visual", "gradient-visual",
 }
 BRAND_ROLES = {"logo", "brand", "brand_lockup", "brand-lockup", "wordmark", "brand-logo"}
+FONT_SUFFIXES = {".ttf", ".otf", ".ttc", ".woff", ".woff2"}
 
 
 def _load_json(path: Path) -> dict:
@@ -62,6 +63,41 @@ def _requires_native_imagegen(objects: list[dict]) -> bool:
     return False
 
 
+def _resolve(root: Path, value: object) -> Path | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    candidate = Path(value)
+    return (candidate if candidate.is_absolute() else root / candidate).resolve()
+
+
+def _font_evidence(root: Path, font_dir: object, font_manifest: object) -> tuple[bool, dict]:
+    resolved_dir = _resolve(root, font_dir)
+    resolved_manifest = _resolve(root, font_manifest)
+    details = {
+        "font_dir": str(resolved_dir) if resolved_dir else None,
+        "font_manifest": str(resolved_manifest) if resolved_manifest else None,
+        "font_files": [],
+    }
+    if resolved_manifest is not None and resolved_manifest.is_file():
+        try:
+            manifest = _load_json(resolved_manifest)
+        except Exception:
+            manifest = None
+        if isinstance(manifest, dict):
+            details["manifest_readable"] = True
+            return True, details
+    if resolved_dir is not None and resolved_dir.is_dir():
+        font_files = sorted(
+            str(path)
+            for path in resolved_dir.iterdir()
+            if path.is_file() and path.suffix.lower() in FONT_SUFFIXES
+        )
+        details["font_files"] = font_files
+        if font_files:
+            return True, details
+    return False, details
+
+
 def validate_reference_preflight(
     layout_path: Path,
     deck: dict,
@@ -74,12 +110,13 @@ def validate_reference_preflight(
     route_path = root / "route-decision.json"
     issues: list[dict] = []
     result = {
-        "schema": "ai-ppt-plus/reference-compose-preflight/v1",
+        "schema": "ai-ppt-plus/reference-compose-preflight/v2",
         "valid": True,
         "required": False,
         "route": None,
         "imagegen_required": False,
         "cjk_required": False,
+        "font_evidence": None,
         "issues": issues,
     }
     if not route_path.is_file():
@@ -131,8 +168,10 @@ def validate_reference_preflight(
             issues.append({"code": "reference_cjk_requires_embedded_fonts"})
         resolved_font_dir = font_dir or deck.get("font_dir")
         resolved_font_manifest = font_manifest or deck.get("font_manifest")
-        if not resolved_font_dir and not resolved_font_manifest:
-            issues.append({"code": "reference_cjk_font_evidence_missing"})
+        evidence_ok, evidence = _font_evidence(root, resolved_font_dir, resolved_font_manifest)
+        result["font_evidence"] = evidence
+        if not evidence_ok:
+            issues.append({"code": "reference_cjk_font_evidence_missing", **evidence})
 
     result["valid"] = not issues
     return result
