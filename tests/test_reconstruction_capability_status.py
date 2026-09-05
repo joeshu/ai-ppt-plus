@@ -27,18 +27,30 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="capability-status-") as folder:
         root = Path(folder)
         engineering = root / "engineering.json"
+        visual = root / "visual.json"
         evidence = root / "evidence.json"
         desktop = root / "desktop.json"
         mobile = root / "mobile.json"
         legacy = root / "legacy.json"
         output = root / "status.json"
         write(engineering, {"strict_gate": {"passed": True}})
+        write(visual, {"valid": True, "policy_version": "2026.09-rf006"})
         write(evidence, {"valid": True, "human_visual_review_required": True})
 
+        # Technical-only evidence is no longer enough for engineering pass.
         status = run(output,
             "--engineering-report", str(engineering),
             "--four-evidence-report", str(evidence))
+        assert status["engineering_gate"]["status"] == "blocked"
+        assert status["engineering_gate"]["technical_status"] == "passed"
+        assert status["engineering_gate"]["automated_visual_fidelity_status"] == "blocked"
+
+        status = run(output,
+            "--engineering-report", str(engineering),
+            "--visual-fidelity-report", str(visual),
+            "--four-evidence-report", str(evidence))
         assert status["engineering_gate"]["status"] == "passed"
+        assert status["engineering_gate"]["automated_visual_fidelity_status"] == "passed"
         assert status["visual_evidence"]["status"] == "evidence-ready"
         assert status["host_validation"]["desktop"]["status"] == "pending"
         assert status["host_validation"]["ios"]["status"] == "pending"
@@ -49,6 +61,7 @@ def main() -> int:
         write(legacy, {"valid": True, "status": "passed"})
         status = run(output,
             "--engineering-report", str(engineering),
+            "--visual-fidelity-report", str(visual),
             "--four-evidence-report", str(evidence),
             "--host-validation-report", str(legacy))
         assert status["host_validation"]["legacy_single_host_present"] is True
@@ -59,6 +72,7 @@ def main() -> int:
         write(mobile, {"valid": True, "status": "passed", "host": {"profile": "ios", "kind": "wps"}})
         status = run(output,
             "--engineering-report", str(engineering),
+            "--visual-fidelity-report", str(visual),
             "--four-evidence-report", str(evidence),
             "--desktop-host-validation-report", str(desktop),
             "--mobile-host-validation-report", str(mobile))
