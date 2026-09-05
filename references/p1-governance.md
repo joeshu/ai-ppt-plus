@@ -37,3 +37,35 @@ the final PPTX render. Its object axis compares the reference-derived
 `slide-object-manifest.json` to the actual PPTX object tree. The flattened
 image object's count is never used as evidence of editability. Pixel and
 object results remain separate, and either axis can block a strict run.
+
+## Strict reference-reconstruction gates
+
+When `--require-p1`, `--require-root-p0` or `--release` is used on the
+`reference-reconstruction` route, the visual gate records the named
+`reference-reconstruction-p1` policy and enforces the P1 floor of
+`blurred_layout_ssim >= 0.90`. A comparison report without the recorded
+threshold, policy or observed worst-page metric cannot satisfy the project or
+delivery gate. The metric is a blocker signal, not a replacement for human
+visual review.
+
+`validate_canvas_evidence.py` checks the reference and rendered page sets and
+their raw pixel dimensions before any diagnostic resize. `--exact-canvas` is
+release-safe only when the report is `passed` and `exact_canvas` is true. If an
+image service returns a different canvas, the only allowed continuation is an
+explicit `canvas-degradation/v1` record containing the service, reason,
+requested and observed canvases, fallback mode and timestamp. Such a run is
+marked `degraded`, carries a human-review degradation, and remains ineligible
+for strict release.
+
+OCR is a readback aid, never formal-copy authority. Reference runs request the
+configured OCR language (default `chi_sim+eng` for CJK-sensitive work); when
+the language package or OCR binary is unavailable the report records
+`unavailable` and the pipeline carries a human-review degradation. Use
+`--require-ocr` when the release policy requires machine OCR evidence.
+
+`validate_host_validation.py` is the final Office/WPS closeout contract. It
+binds the evidence to the delivered PPTX hash, requires full slide coverage,
+opening/layout/typography/overflow/editability/visual-fidelity checks and, in
+strict mode, a PowerPoint or WPS host plus hash-bound screenshots per slide.
+The validator records evidence; it does not pretend that Linux/LibreOffice
+can simulate an Office/WPS review.

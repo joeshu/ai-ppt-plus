@@ -10,6 +10,8 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--expected-ratio 1.7777778] [--font-dir DIR]
        [--region name=x,y,w,h ...] [--reference IMAGE | --reference-dir DIR]
        [--visual-threshold N]
+       [--exact-canvas | --allow-canvas-degradation --canvas-degradation-evidence FILE]
+       [--host-validation FILE] [--require-host-validation]
        [--ocr-lang LANG] [--require-ocr] [--revision-label R4] [--require-cjk]
        [--route-decision ROUTE.json] [--require-route] [--require-engine-route]
        [--require-editability]
@@ -309,6 +311,10 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"chart_count": report.get("chart_count"), "charts": report.get("charts", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "dual_comparison":
         summary.update({"pixel": report.get("pixel_comparison", {}), "object": report.get("object_comparison", {}), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "canvas_evidence":
+        summary.update({"status": report.get("status"), "exact_canvas": report.get("exact_canvas"), "expected_pages": report.get("expected_pages"), "mismatches": report.get("mismatches", []), "issues": report.get("issues", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "host_validation":
+        summary.update({"status": report.get("status"), "host": report.get("host"), "reviewer": report.get("reviewer"), "confirmed_at": report.get("confirmed_at"), "checked_slides": report.get("checked_slides", []), "checks": report.get("checks", {}), "issues": report.get("issues", [])})
     return summary
 
 
@@ -324,6 +330,9 @@ def main() -> int:
     reference_group.add_argument("--reference", help="single approved reference image; only valid for one-page decks")
     reference_group.add_argument("--reference-dir", help="directory containing slide-1.png, slide-2.png, ... for multi-page decks")
     parser.add_argument("--visual-threshold", type=float)
+    parser.add_argument("--exact-canvas", action="store_true", help="require reference and rendered PNGs to use the exact same pixel canvas")
+    parser.add_argument("--canvas-degradation-evidence", help="explicit image-service canvas degradation record")
+    parser.add_argument("--allow-canvas-degradation", action="store_true", help="allow a recorded canvas mismatch for human-review-only output")
     parser.add_argument("--ocr-lang")
     parser.add_argument("--require-ocr", action="store_true")
     parser.add_argument("--revision-label")
@@ -377,6 +386,8 @@ def main() -> int:
     parser.add_argument("--release", action="store_true", help="run the strict release gate after technical validation")
     parser.add_argument("--handoff", help="handoff.json; required by --release")
     parser.add_argument("--human-signoff", help="human-closeout.json; required by --release")
+    parser.add_argument("--host-validation", help="Office/WPS host-validation/v1 evidence")
+    parser.add_argument("--require-host-validation", action="store_true", help="require strict Office/WPS host validation evidence")
     parser.add_argument("--issue-log", help="issue-log.json passed to the release gate")
     parser.add_argument("--quality-score", type=float, help="human/automated quality score for --release")
     parser.add_argument("--quality-threshold", type=float, default=80, help="minimum quality score for --release")
@@ -556,8 +567,35 @@ def main() -> int:
     # prevents a green pixel score from silently accepting a shrunk title.
     if reference_route or (args.release and (args.reference or args.reference_dir)):
         args.require_typography_calibration = True
+    strict_reference_profile = bool(reference_route and (args.require_p1 or args.require_root_p0 or args.release))
+    visual_threshold_policy = None
+    if strict_reference_profile:
+        visual_threshold_policy = "reference-reconstruction-p1"
+        args.exact_canvas = True
+        if args.visual_threshold is None:
+            args.visual_threshold = 0.90
+        elif args.visual_threshold < 0.90:
+            result = {"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "visual_threshold_below_p1_policy", "minimum": 0.90, "observed": args.visual_threshold}
+            print(json.dumps(result, ensure_ascii=False))
+            return 2
+    if reference_route and args.release:
+        args.exact_canvas = True
+        args.require_host_validation = True
+        if not args.host_validation:
+            result = {"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "release_evidence_missing", "missing": ["--host-validation"], "message": "reference-reconstruction release requires Office/WPS host validation evidence"}
+            print(json.dumps(result, ensure_ascii=False))
+            return 2
+    ocr_enabled = bool(args.ocr_lang or args.require_ocr or reference_route or args.require_p1)
+    ocr_language = args.ocr_lang or ("chi_sim+eng" if reference_route or args.require_cjk else "eng")
+    ocr_required = bool(args.require_ocr or (args.release and reference_route and args.require_cjk))
+    if ocr_required:
+        ocr_enabled = True
     if reference_route and (args.release or args.require_root_p0):
         args.require_source_coverage = True
+    host_validation_path = Path(args.host_validation).resolve() if args.host_validation else project / "host-validation.json"
+    canvas_degradation_path = Path(args.canvas_degradation_evidence).resolve() if args.canvas_degradation_evidence else project / "canvas-degradation.json"
+    args.allow_canvas_degradation = bool(args.allow_canvas_degradation or args.canvas_degradation_evidence)
+    canvas_evidence_enabled = bool((args.reference or args.reference_dir) and (args.exact_canvas or args.allow_canvas_degradation or args.canvas_degradation_evidence))
     source_inventory_path = Path(args.source_inventory).resolve() if args.source_inventory else project / "source-inventory.json"
     page_graph_path = Path(args.page_graph).resolve() if args.page_graph else project / "page-graph.json"
     if args.require_source_coverage and (not source_inventory_path.is_file() or not page_graph_path.is_file()):
@@ -1324,6 +1362,44 @@ def main() -> int:
     for region in list(args.region) + list(args.affected_region):
         visual_args.extend(["--region", region])
     add_step("render-visual-gate", visual_args, deps=["render"], outputs=[run_dir / "render-visual-gate.json"], inputs=[render_dir], metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
+    if canvas_evidence_enabled:
+        canvas_args = [
+            str(SCRIPT_DIR / "validate_canvas_evidence.py"),
+            "--render-dir", str(render_dir),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(run_dir / "canvas-evidence.json"),
+        ]
+        if args.reference:
+            canvas_args.extend(["--reference", str(Path(args.reference).resolve())])
+        elif args.reference_dir:
+            canvas_args.extend(["--reference", str(Path(args.reference_dir).resolve())])
+        if args.exact_canvas:
+            canvas_args.append("--strict")
+        if args.allow_canvas_degradation:
+            canvas_args.extend(["--allow-degradation", "--degradation-evidence", str(canvas_degradation_path)])
+        canvas_inputs = [render_dir]
+        if args.reference:
+            canvas_inputs.append(Path(args.reference).resolve())
+        elif args.reference_dir:
+            canvas_inputs.append(Path(args.reference_dir).resolve())
+        if args.allow_canvas_degradation or args.canvas_degradation_evidence:
+            canvas_inputs.append(canvas_degradation_path)
+        add_step("canvas-evidence", canvas_args, deps=["render"], outputs=[run_dir / "canvas-evidence.json"], inputs=canvas_inputs, metadata={"strict": args.exact_canvas, "allow_degradation": args.allow_canvas_degradation})
+    host_validation_enabled = bool(args.host_validation or args.require_host_validation)
+    if host_validation_enabled:
+        host_args = [
+            str(SCRIPT_DIR / "validate_host_validation.py"),
+            str(host_validation_path),
+            "--deck", str(deck),
+            "--expected-pages", str(args.expected_pages),
+            "--report", str(run_dir / "host-validation.json"),
+        ]
+        if args.require_host_validation or args.release:
+            host_args.append("--strict")
+        if not host_validation_path.is_file():
+            add_step("host-validation", static_result={"name": "host-validation", "command": [], "exit_code": 2, "ok": False, "failure": "host_validation_missing", "stdout": "", "stderr": ""}, cacheable=False, deps=["render"], outputs=[run_dir / "host-validation.json"], metadata={"required": args.require_host_validation})
+        else:
+            add_step("host-validation", host_args, deps=["render"], outputs=[run_dir / "host-validation.json"], inputs=[deck, host_validation_path], metadata={"required": args.require_host_validation, "strict": bool(args.require_host_validation or args.release)})
     if args.font_dir or args.require_cjk:
         font_delivery_args = [str(SCRIPT_DIR / "validate_font_delivery.py"), "--font-report", str(run_dir / "font-report.json"), "--inspection", str(inspection_path), "--render-report", str(render_report_path), "--render-visual-gate", str(run_dir / "render-visual-gate.json"), "--profile", "portable", "--report", str(run_dir / "font-delivery-validation.json")]
         if args.font_dir and (font_manifest.is_file() or args.require_cjk):
@@ -1340,6 +1416,8 @@ def main() -> int:
             comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.visual_threshold is not None:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
+        if visual_threshold_policy:
+            comparison_args.extend(["--threshold-policy", visual_threshold_policy])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
     elif args.reference_dir:
         comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "visual-comparison.json")]
@@ -1347,6 +1425,8 @@ def main() -> int:
             comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.visual_threshold is not None:
             comparison_args.extend(["--threshold", str(args.visual_threshold)])
+        if visual_threshold_policy:
+            comparison_args.extend(["--threshold-policy", visual_threshold_policy])
         if affected_pages:
             comparison_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir, Path(args.reference_dir).resolve()], metadata={"affected_pages": affected_pages or "all"})
@@ -1408,11 +1488,11 @@ def main() -> int:
         if args.expected_ratio is not None:
             visual_qa_args.extend(["--expected-ratio", str(args.expected_ratio)])
         add_step("visual-compare-qa", visual_qa_args, deps=["render"], outputs=[run_dir / "visual-qa"], inputs=[Path(args.reference).resolve(), render_dir / "slide-1.png"])
-    if args.ocr_lang or args.require_ocr:
-        ocr_args = [str(SCRIPT_DIR / "ocr_text_check.py"), str(deck), str(render_dir), "--lang", args.ocr_lang or "eng", "--report", str(run_dir / "ocr-text-check.json")]
-        if args.require_ocr:
+    if ocr_enabled:
+        ocr_args = [str(SCRIPT_DIR / "ocr_text_check.py"), str(deck), str(render_dir), "--lang", ocr_language, "--report", str(run_dir / "ocr-text-check.json")]
+        if ocr_required:
             ocr_args.append("--require-ocr")
-        add_step("ocr-text-check", ocr_args, deps=["render"], outputs=[run_dir / "ocr-text-check.json"], inputs=[deck, render_dir], metadata={"language": args.ocr_lang or "eng", "affected_pages": affected_pages or "all"})
+        add_step("ocr-text-check", ocr_args, deps=["render"], outputs=[run_dir / "ocr-text-check.json"], inputs=[deck, render_dir], metadata={"language": ocr_language, "required": ocr_required, "affected_pages": affected_pages or "all"})
     panel_manifest = project / "panel-asset-manifest.json"
     panel_gate_required = panel_manifest.is_file() or args.require_independent_panels or args.require_panel_approval
     if panel_gate_required:
@@ -1476,11 +1556,21 @@ def main() -> int:
         project_args.extend(["--dual-comparison", str(run_dir / "dual-comparison.json")])
         if args.require_dual_comparison:
             project_args.append("--require-dual-comparison")
+        if strict_reference_profile:
+            project_args.extend(["--visual-threshold", str(args.visual_threshold), "--visual-threshold-policy", visual_threshold_policy, "--require-visual-threshold"])
+    if canvas_evidence_enabled:
+        project_args.extend(["--canvas-evidence", str(run_dir / "canvas-evidence.json")])
+        if args.exact_canvas and (not args.allow_canvas_degradation or args.release):
+            project_args.append("--require-exact-canvas")
+    if host_validation_enabled:
+        project_args.extend(["--host-validation", str(run_dir / "host-validation.json")])
+        if args.require_host_validation:
+            project_args.append("--require-host-validation")
     if source_coverage_enabled and (unique_reference_sources or args.require_source_coverage):
         project_args.extend(["--source-coverage-validation", str(run_dir / "source-coverage-validation.json")])
         if args.require_source_coverage:
             project_args.append("--require-source-coverage")
-    if args.ocr_lang or args.require_ocr:
+    if ocr_enabled:
         project_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
     if content_inventory_enabled:
         project_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json")])
@@ -1526,7 +1616,7 @@ def main() -> int:
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "engine-route", "visual-generation", "visual-comparison", "dual-comparison", "source-coverage", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest", "native-editability"):
+    for candidate in ("route", "engine-route", "visual-generation", "visual-comparison", "dual-comparison", "canvas-evidence", "host-validation", "source-coverage", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest", "native-editability"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     if content_inventory_enabled:
@@ -1586,10 +1676,16 @@ def main() -> int:
         [run_dir / "dual-comparison.json"] if args.reference or args.reference_dir else []
     )
     project_inputs.extend(
+        [run_dir / "canvas-evidence.json"] if canvas_evidence_enabled else []
+    )
+    project_inputs.extend(
+        [run_dir / "host-validation.json"] if host_validation_enabled else []
+    )
+    project_inputs.extend(
         [run_dir / "source-coverage-validation.json"] if source_coverage_enabled and (unique_reference_sources or args.require_source_coverage) else []
     )
     project_inputs.extend(
-        [run_dir / "ocr-text-check.json"] if args.ocr_lang or args.require_ocr else []
+        [run_dir / "ocr-text-check.json"] if ocr_enabled else []
     )
     project_inputs.extend(
         [run_dir / "content-inventory-validation.json"] if content_inventory_enabled else []
@@ -1647,6 +1743,8 @@ def main() -> int:
             ("visual_comparison", run_dir / "visual-comparison.json"),
             ("source_coverage", run_dir / "source-coverage-validation.json"),
             ("dual_comparison", run_dir / "dual-comparison.json"),
+            ("canvas_evidence", run_dir / "canvas-evidence.json"),
+            ("host_validation", run_dir / "host-validation.json"),
             ("ocr_text_check", run_dir / "ocr-text-check.json"),
             ("route_validation", run_dir / "route-validation.json"),
             ("engine_route_validation", run_dir / "engine-route-validation.json"),
@@ -1691,6 +1789,9 @@ def main() -> int:
         ocr_report = evidence.get("ocr_text_check")
         if ocr_report and (ocr_report.get("native_status") or ocr_report.get("status")) == "unavailable":
             degradations.append({"code": "ocr_unavailable", "language": ocr_report.get("language"), "requires_human_review": True})
+        canvas_report = evidence.get("canvas_evidence")
+        if canvas_report and canvas_report.get("status") == "degraded":
+            degradations.append({"code": "canvas_degraded", "message": "reference and rendered canvas dimensions differ; human visual review is required", "requires_human_review": True})
         return evidence, degradations
 
     def build_pipeline_result(current_steps, evidence, degradations, release_report=None, bundle_report=None, signoff_report=None):
@@ -1872,13 +1973,19 @@ def main() -> int:
     if args.reference or args.reference_dir:
         report_entries.append({"report_type": "visual-comparison", "path": "visual-comparison.json", "required": True, "stage": "validated"})
         report_entries.append({"report_type": "dual-comparison", "path": "dual-comparison.json", "required": args.require_dual_comparison, "stage": "validated"})
+    if canvas_evidence_enabled:
+        report_entries.append({"report_type": "canvas-evidence", "path": "canvas-evidence.json", "required": args.exact_canvas, "stage": "validated"})
+    if host_validation_enabled:
+        report_entries.append({"report_type": "host-validation", "path": "host-validation.json", "required": args.require_host_validation, "stage": "human-closeout"})
     if source_coverage_enabled and (unique_reference_sources or args.require_source_coverage):
         report_entries.append({"report_type": "source-coverage-validation", "path": "source-coverage-validation.json", "required": args.require_source_coverage, "stage": "source-analyzed"})
-    if args.ocr_lang or args.require_ocr:
-        report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
+    if ocr_enabled:
+        report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": ocr_required, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
         step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "source-coverage-validation": "source-coverage", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "engine-route-validation": "engine-route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "native-object-validation": "native-editability", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        if step_name is None:
+            step_name = {"canvas-evidence": "canvas-evidence", "host-validation": "host-validation"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
@@ -1969,7 +2076,17 @@ def main() -> int:
             release_args.extend(["--visual-comparison", str(run_dir / "visual-comparison.json")])
             release_args.extend(["--dual-comparison", str(run_dir / "dual-comparison.json"), "--require-dual-comparison"])
             release_args.extend(["--source-image-validation", str(run_dir / "source-image-validation.json"), "--require-source-image-validation", "--reference-audit", str(run_dir / "reference-audit.json"), "--require-reference-audit"])
-        if args.ocr_lang or args.require_ocr:
+            if strict_reference_profile:
+                release_args.extend(["--visual-threshold", str(args.visual_threshold), "--visual-threshold-policy", visual_threshold_policy, "--require-visual-threshold"])
+        if canvas_evidence_enabled:
+            release_args.extend(["--canvas-evidence", str(run_dir / "canvas-evidence.json")])
+            if args.exact_canvas:
+                release_args.append("--require-exact-canvas")
+        if host_validation_enabled:
+            release_args.extend(["--host-validation", str(run_dir / "host-validation.json")])
+            if args.require_host_validation:
+                release_args.append("--require-host-validation")
+        if ocr_enabled:
             release_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
         if args.require_text_style_map:
             release_args.extend(["--text-style-map-validation", str(run_dir / "text-style-map-validation.json"), "--require-text-style-map"])

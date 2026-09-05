@@ -73,8 +73,15 @@ def main() -> int:
     parser.add_argument("--require-report-bundle", action="store_true")
     parser.add_argument("--render-visual-gate")
     parser.add_argument("--visual-comparison")
+    parser.add_argument("--visual-threshold", type=float)
+    parser.add_argument("--visual-threshold-policy")
+    parser.add_argument("--require-visual-threshold", action="store_true")
     parser.add_argument("--dual-comparison")
     parser.add_argument("--require-dual-comparison", action="store_true")
+    parser.add_argument("--canvas-evidence")
+    parser.add_argument("--require-exact-canvas", action="store_true")
+    parser.add_argument("--host-validation")
+    parser.add_argument("--require-host-validation", action="store_true")
     parser.add_argument("--ocr-report")
     parser.add_argument("--content-inventory-validation")
     parser.add_argument("--require-content-inventory", action="store_true")
@@ -122,6 +129,8 @@ def main() -> int:
     multipage_layout_report = load(args.multipage_layout_validation) if args.multipage_layout_validation else None
     preview_consistency_report = load(args.preview_consistency_validation) if args.preview_consistency_validation else None
     dual_report = load(args.dual_comparison) if args.dual_comparison else None
+    canvas_report = load(args.canvas_evidence) if args.canvas_evidence else None
+    host_report = load(args.host_validation) if args.host_validation else None
     project_report = load(args.project_report) if args.project_report else None
     report_bundle = load(args.report_bundle_validation) if args.report_bundle_validation else None
     font_delivery = load(args.font_delivery_report) if args.font_delivery_report else None
@@ -210,6 +219,18 @@ def main() -> int:
     required_quality(multipage_layout_report, args.require_multipage_layout, "multipage_layout_validation_failed", "multi-page layout validation")
     required_quality(preview_consistency_report, args.require_preview_consistency, "preview_consistency_validation_failed", "preview/final-render consistency")
     required_quality(dual_report, args.require_dual_comparison, "dual_comparison_failed", "pixel/object dual baseline")
+    required_quality(canvas_report, args.require_exact_canvas, "canvas_evidence_failed", "exact canvas evidence")
+    required_quality(host_report, args.require_host_validation, "host_validation_failed", "Office/WPS host validation")
+    if canvas_report:
+        quality_evidence["canvas_evidence"] = {"valid": canvas_report.get("valid"), "status": canvas_report.get("status"), "exact_canvas": canvas_report.get("exact_canvas"), "expected_pages": canvas_report.get("expected_pages"), "mismatches": canvas_report.get("mismatches", []), "issues": canvas_report.get("issues", []), "warnings": canvas_report.get("warnings", [])}
+        if args.require_exact_canvas:
+            check(canvas_report.get("status") == "passed" and canvas_report.get("exact_canvas") is True, "exact_canvas_not_proven", "strict delivery requires an exact, non-degraded canvas")
+        elif canvas_report.get("status") == "degraded":
+            quality_degradations.append({"code": "canvas_degraded", "requires_human_review": True, "message": "canvas dimensions differ from the reference; release remains human-review dependent"})
+    if host_report:
+        quality_evidence["host_validation"] = {"valid": host_report.get("valid"), "status": host_report.get("status"), "host": host_report.get("host"), "reviewer": host_report.get("reviewer"), "confirmed_at": host_report.get("confirmed_at"), "checked_slides": host_report.get("checked_slides"), "checks": host_report.get("checks", {}), "issues": host_report.get("issues", [])}
+        if host_report.get("deck_sha256") != current_hash:
+            check(False, "stale_host_validation", "host validation must be hash-bound to the current PPTX")
     if dual_report:
         quality_evidence["dual_comparison"] = {
             "valid": dual_report.get("valid"),
@@ -321,6 +342,22 @@ def main() -> int:
                 quality_evidence[label.replace("-", "_")] = {"valid": report.get("valid"), "status": report.get("status"), "language": report.get("language"), "metrics": report.get("metrics", {}), "issues": report.get("issues", [])}
                 if label == "ocr-text-check" and report.get("status") == "unavailable":
                     quality_degradations.append({"code": "ocr_unavailable", "language": report.get("language"), "requires_human_review": True})
+
+    if args.require_visual_threshold:
+        visual = load(args.visual_comparison) if args.visual_comparison else None
+        threshold = visual.get("threshold") if visual else None
+        policy = visual.get("threshold_policy") if visual else None
+        aggregate = visual.get("aggregate") if isinstance(visual, dict) and isinstance(visual.get("aggregate"), dict) else {}
+        observed = visual.get("metrics", {}).get("blurred_layout_ssim") if visual and isinstance(visual.get("metrics"), dict) else None
+        if observed is None:
+            observed = aggregate.get("worst_blurred_layout_ssim")
+        threshold_ok = isinstance(threshold, (int, float)) and not isinstance(threshold, bool)
+        if args.visual_threshold is not None:
+            threshold_ok = threshold_ok and threshold >= args.visual_threshold
+        if args.visual_threshold_policy:
+            threshold_ok = threshold_ok and policy == args.visual_threshold_policy
+        observed_ok = isinstance(observed, (int, float)) and not isinstance(observed, bool) and threshold_ok and observed >= threshold
+        check(observed_ok, "visual_threshold_policy_not_proven", "strict delivery requires a recorded visual threshold policy and observed worst-page score at or above it", expected_threshold=args.visual_threshold, recorded_threshold=threshold, policy=policy, observed=observed)
 
     if args.signoff_report:
         if signoff_report and signoff_report.get("valid") is True:

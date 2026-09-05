@@ -1,0 +1,11 @@
+{
+  "schema": "ai-ppt-plus/canvas-degradation/v1",
+  "service": "provider-or-image-service-name",
+  "fallback": "native-service-resolution",
+  "reason": "provider returned a canvas different from the requested target",
+  "requested_canvas": [2048, 1152],
+  "observed_canvas": [1672, 941],
+  "recorded_at": "2026-09-05T00:00:00Z",
+  "affected_slides": [1],
+  "accepted_for": "draft-human-review-only"
+}

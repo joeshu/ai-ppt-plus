@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "service", "fallback", "reason", "requested_canvas", "observed_canvas", "recorded_at"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/canvas-degradation/v1"},
+    "service": {"type": "string", "minLength": 1},
+    "fallback": {"enum": ["native-service-resolution", "resampled-by-service", "provider-limit", "other"]},
+    "reason": {"type": "string", "minLength": 1},
+    "requested_canvas": {"$ref": "#/$defs/canvas"},
+    "observed_canvas": {"$ref": "#/$defs/canvas"},
+    "recorded_at": {"type": "string", "minLength": 1},
+    "affected_slides": {"type": "array", "items": {"type": "integer", "minimum": 1}},
+    "accepted_for": {"type": "string"}
+  },
+  "$defs": {
+    "canvas": {
+      "type": "array",
+      "prefixItems": [{"type": "integer", "minimum": 1}, {"type": "integer", "minimum": 1}],
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}

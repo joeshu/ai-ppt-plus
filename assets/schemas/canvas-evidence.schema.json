@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "valid", "status", "strict", "exact_canvas", "expected_pages", "canvas", "mismatches", "issues", "human_visual_review_required"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/canvas-evidence/v1"},
+    "valid": {"type": "boolean"},
+    "status": {"enum": ["passed", "degraded", "blocked"]},
+    "strict": {"type": "boolean"},
+    "exact_canvas": {"type": "boolean"},
+    "release_eligible": {"type": "boolean"},
+    "expected_pages": {"type": "integer", "minimum": 1},
+    "canvas": {"type": "object"},
+    "mismatches": {"type": "array"},
+    "degradation": {"type": "object"},
+    "issues": {"type": "array"},
+    "warnings": {"type": "array"},
+    "human_visual_review_required": {"const": true}
+  }
+}

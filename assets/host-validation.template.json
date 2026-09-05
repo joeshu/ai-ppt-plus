@@ -1,0 +1,13 @@
+{
+  "schema": "ai-ppt-plus/host-validation/v1",
+  "status": "passed",
+  "project_id": "project-slug",
+  "deck_sha256": "<sha256 of delivered deck>",
+  "host": {"kind": "powerpoint", "name": "Microsoft PowerPoint", "version": "<version>", "platform": "<platform>"},
+  "reviewer": "<reviewer>",
+  "confirmed_at": "2026-09-05T00:00:00Z",
+  "checked_slides": [1],
+  "checks": {"opened": true, "layout": true, "typography": true, "overflow": true, "editability": true, "visual_fidelity": true},
+  "screenshots": [{"slide_no": 1, "path": "qa/host/slide-1.png", "sha256": "<sha256>"}],
+  "notes": "Record the actual Office/WPS host and the observed defects."
+}

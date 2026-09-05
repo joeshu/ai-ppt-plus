@@ -9,6 +9,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from PIL import Image
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -82,6 +84,48 @@ def main() -> int:
         assert single_data["pixel_comparison"]["compared_pages"] == 1
         assert single_data["pixel_comparison"]["aggregate"]["mean_pixel_fidelity_score"] == 0.8
         assert single_data["pixel_comparison"]["metrics"]["blurred_layout_ssim"] == 0.9
+
+        canvas_reference = root / "canvas-reference.png"
+        Image.new("RGB", (160, 90), (32, 64, 96)).save(canvas_reference)
+        exact_render_dir = root / "exact-rendered"
+        exact_render_dir.mkdir()
+        Image.new("RGB", (160, 90), (32, 64, 96)).save(exact_render_dir / "slide-1.png")
+        exact_canvas_report = root / "canvas-exact.json"
+        exact_canvas = run("scripts/validate_canvas_evidence.py", "--reference", str(canvas_reference), "--render-dir", str(exact_render_dir), "--expected-pages", "1", "--strict", "--report", str(exact_canvas_report))
+        assert exact_canvas.returncode == 0, exact_canvas.stdout + exact_canvas.stderr
+        exact_canvas_data = json.loads(exact_canvas_report.read_text(encoding="utf-8"))
+        assert exact_canvas_data["status"] == "passed" and exact_canvas_data["exact_canvas"] is True
+
+        degraded_render_dir = root / "degraded-rendered"
+        degraded_render_dir.mkdir()
+        Image.new("RGB", (80, 45), (32, 64, 96)).save(degraded_render_dir / "slide-1.png")
+        strict_mismatch_report = root / "canvas-mismatch.json"
+        strict_mismatch = run("scripts/validate_canvas_evidence.py", "--reference", str(canvas_reference), "--render-dir", str(degraded_render_dir), "--expected-pages", "1", "--strict", "--report", str(strict_mismatch_report))
+        assert strict_mismatch.returncode == 2 and "canvas_exact_mismatch" in strict_mismatch.stdout, strict_mismatch.stdout
+        degradation = root / "canvas-degradation.json"
+        write_json(degradation, {"schema": "ai-ppt-plus/canvas-degradation/v1", "service": "test-image-service", "fallback": "provider-limit", "reason": "test provider returned a smaller canvas", "requested_canvas": [160, 90], "observed_canvas": [80, 45], "recorded_at": "2026-09-05T00:00:00Z", "affected_slides": [1]})
+        degraded_report = root / "canvas-degraded.json"
+        degraded = run("scripts/validate_canvas_evidence.py", "--reference", str(canvas_reference), "--render-dir", str(degraded_render_dir), "--expected-pages", "1", "--strict", "--allow-degradation", "--degradation-evidence", str(degradation), "--report", str(degraded_report))
+        assert degraded.returncode == 0, degraded.stdout + degraded.stderr
+        degraded_data = json.loads(degraded_report.read_text(encoding="utf-8"))
+        assert degraded_data["status"] == "degraded" and degraded_data["valid"] is True and degraded_data["exact_canvas"] is False
+
+        visual_threshold_report = root / "visual-threshold.json"
+        visual_threshold = run("scripts/compare_visual.py", str(canvas_reference), str(canvas_reference), "--threshold", "0.9", "--threshold-policy", "reference-reconstruction-p1", "--report", str(visual_threshold_report))
+        assert visual_threshold.returncode == 0, visual_threshold.stdout + visual_threshold.stderr
+        visual_threshold_data = json.loads(visual_threshold_report.read_text(encoding="utf-8"))
+        assert visual_threshold_data["threshold"] == 0.9 and visual_threshold_data["threshold_policy"] == "reference-reconstruction-p1"
+
+        host_screenshot = root / "host-slide-1.png"
+        Image.new("RGB", (160, 90), (32, 64, 96)).save(host_screenshot)
+        host_evidence = root / "host-validation.json"
+        write_json(host_evidence, {"schema": "ai-ppt-plus/host-validation/v1", "status": "passed", "deck_sha256": hashlib.sha256(deck.read_bytes()).hexdigest(), "host": {"kind": "wps", "name": "WPS Office", "version": "test", "platform": "test"}, "reviewer": "p1-test", "confirmed_at": "2026-09-05T00:00:00Z", "checked_slides": [1], "checks": {"opened": True, "layout": True, "typography": True, "overflow": True, "editability": True, "visual_fidelity": True}, "screenshots": [{"slide_no": 1, "path": str(host_screenshot), "sha256": hashlib.sha256(host_screenshot.read_bytes()).hexdigest()}]})
+        host_report = root / "host-validation-report.json"
+        host_check = run("scripts/validate_host_validation.py", str(host_evidence), "--deck", str(deck), "--expected-pages", "1", "--strict", "--report", str(host_report))
+        assert host_check.returncode == 0, host_check.stdout + host_check.stderr
+        host_data = json.loads(host_report.read_text(encoding="utf-8"))
+        assert host_data["valid"] is True and host_data["host"]["kind"] == "wps"
+
         stale_object = json.loads(object_report.read_text(encoding="utf-8")); stale_object["deck_sha256"] = "0" * 64; write_json(object_report, stale_object)
         blocked = run("scripts/compare_dual.py", "--visual-report", str(visual_report), "--object-report", str(object_report), "--object-manifest", str(object_manifest), "--deck", str(deck), "--report", str(dual_report), "--require-object")
         assert blocked.returncode == 2 and "object_comparison_stale_deck" in blocked.stdout, blocked.stdout

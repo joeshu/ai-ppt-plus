@@ -53,8 +53,15 @@ def main() -> int:
     parser.add_argument("--render-report")
     parser.add_argument("--render-visual-gate")
     parser.add_argument("--visual-comparison")
+    parser.add_argument("--visual-threshold", type=float)
+    parser.add_argument("--visual-threshold-policy")
+    parser.add_argument("--require-visual-threshold", action="store_true")
     parser.add_argument("--dual-comparison")
     parser.add_argument("--require-dual-comparison", action="store_true")
+    parser.add_argument("--canvas-evidence")
+    parser.add_argument("--require-exact-canvas", action="store_true")
+    parser.add_argument("--host-validation")
+    parser.add_argument("--require-host-validation", action="store_true")
     parser.add_argument("--source-coverage-validation")
     parser.add_argument("--require-source-coverage", action="store_true")
     parser.add_argument("--ocr-report")
@@ -131,6 +138,8 @@ def main() -> int:
 
     render_gate = read_quality_report(args.render_visual_gate, "render-visual-gate")
     visual_comparison = read_quality_report(args.visual_comparison, "visual-comparison")
+    canvas_report = read_quality_report(args.canvas_evidence, "canvas-evidence")
+    host_report = read_quality_report(args.host_validation, "host-validation")
     dual_comparison = read_quality_report(args.dual_comparison, "dual-comparison")
     source_coverage_report = read_quality_report(args.source_coverage_validation, "source-coverage-validation")
     ocr_report = read_quality_report(args.ocr_report, "ocr-text-check")
@@ -182,6 +191,26 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "dual_comparison_missing", "artifact": "dual-comparison"})
     if args.require_source_coverage and source_coverage_report is None:
         issues.append({"severity": "blocker", "code": "source_coverage_missing", "artifact": "source-coverage-validation"})
+    if args.require_exact_canvas and canvas_report is None:
+        issues.append({"severity": "blocker", "code": "canvas_evidence_missing", "artifact": "canvas-evidence"})
+    if args.require_host_validation and host_report is None:
+        issues.append({"severity": "blocker", "code": "host_validation_missing", "artifact": "host-validation"})
+    if args.require_exact_canvas and canvas_report is not None and (canvas_report.get("status") != "passed" or canvas_report.get("exact_canvas") is not True):
+        issues.append({"severity": "blocker", "code": "exact_canvas_not_proven", "artifact": "canvas-evidence"})
+    if args.require_visual_threshold:
+        aggregate = visual_comparison.get("aggregate", {}) if isinstance(visual_comparison, dict) else {}
+        observed = visual_comparison.get("metrics", {}).get("blurred_layout_ssim") if isinstance(visual_comparison, dict) and isinstance(visual_comparison.get("metrics"), dict) else None
+        if observed is None and isinstance(aggregate, dict):
+            observed = aggregate.get("worst_blurred_layout_ssim")
+        recorded = visual_comparison.get("threshold") if isinstance(visual_comparison, dict) else None
+        policy = visual_comparison.get("threshold_policy") if isinstance(visual_comparison, dict) else None
+        valid_threshold = isinstance(recorded, (int, float)) and not isinstance(recorded, bool) and isinstance(observed, (int, float)) and not isinstance(observed, bool) and observed >= recorded
+        if args.visual_threshold is not None:
+            valid_threshold = valid_threshold and recorded >= args.visual_threshold
+        if args.visual_threshold_policy:
+            valid_threshold = valid_threshold and policy == args.visual_threshold_policy
+        if not valid_threshold:
+            issues.append({"severity": "blocker", "code": "visual_threshold_policy_not_proven", "expected": args.visual_threshold, "recorded": recorded, "policy": policy, "observed": observed})
     if render_gate is not None:
         quality_evidence["render_visual_gate"] = {
             "valid": render_gate.get("valid"),
@@ -193,10 +222,18 @@ def main() -> int:
         quality_evidence["visual_comparison"] = {
             "valid": visual_comparison.get("valid"),
             "reference": visual_comparison.get("reference"),
+            "threshold": visual_comparison.get("threshold"),
+            "threshold_policy": visual_comparison.get("threshold_policy"),
             "metrics": visual_comparison.get("metrics", {}),
             "issues": visual_comparison.get("issues", []),
             "human_visual_review_required": visual_comparison.get("human_visual_review_required", True),
         }
+    if canvas_report is not None:
+        quality_evidence["canvas_evidence"] = {"valid": canvas_report.get("valid"), "status": canvas_report.get("status"), "exact_canvas": canvas_report.get("exact_canvas"), "mismatches": canvas_report.get("mismatches", []), "issues": canvas_report.get("issues", []), "warnings": canvas_report.get("warnings", [])}
+    if host_report is not None:
+        quality_evidence["host_validation"] = {"valid": host_report.get("valid"), "status": host_report.get("status"), "host": host_report.get("host"), "reviewer": host_report.get("reviewer"), "confirmed_at": host_report.get("confirmed_at"), "checked_slides": host_report.get("checked_slides"), "checks": host_report.get("checks", {}), "issues": host_report.get("issues", [])}
+        if current_hash and host_report.get("deck_sha256") != current_hash:
+            issues.append({"severity": "blocker", "code": "stale_host_validation", "expected": current_hash, "observed": host_report.get("deck_sha256")})
     if dual_comparison is not None:
         quality_evidence["dual_comparison"] = {
             "valid": dual_comparison.get("valid"),

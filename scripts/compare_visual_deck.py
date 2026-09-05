@@ -104,6 +104,7 @@ def main() -> int:
     parser.add_argument("reference_dir")
     parser.add_argument("--expected-pages", type=int, help="expected full-deck page count; missing pages are blockers")
     parser.add_argument("--threshold", type=float)
+    parser.add_argument("--threshold-policy", help="named threshold policy recorded in the report")
     parser.add_argument("--expected-ratio", type=float, help="optional slide ratio used to validate viewer-capture crops")
     parser.add_argument("--pages", help="only compare selected slide numbers, e.g. 1,3-4")
     parser.add_argument("--report")
@@ -161,6 +162,8 @@ def main() -> int:
         "reference_pages": len(reference_pages),
         "selected_pages": sorted(selected_pages) if selected_pages is not None else "all",
         "pages": page_results,
+        "threshold": args.threshold,
+        "threshold_policy": args.threshold_policy,
         "aggregate": {
             "compared_pages": len(valid_pages),
             "worst_blurred_layout_ssim": min((item["metrics"]["blurred_layout_ssim"] for item in valid_pages), default=None),

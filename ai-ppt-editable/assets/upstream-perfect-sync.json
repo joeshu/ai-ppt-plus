@@ -1217,6 +1217,10 @@
       "reason": "post-baseline source-reuse pixel-to-bbox integrity adapter"
     },
     {
+      "path": "references/pipeline-performance.md",
+      "reason": "post-baseline P1 strict reconstruction and host-evidence protocol"
+    },
+    {
       "path": "assets/slide-manifest.template.json",
       "reason": "post-baseline P0 three-way source coverage contract"
     },

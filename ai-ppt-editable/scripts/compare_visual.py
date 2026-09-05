@@ -71,6 +71,7 @@ def main() -> int:
     parser.add_argument("reference")
     parser.add_argument("--expected-ratio", type=float, help="optional slide ratio used to validate viewer-capture crops")
     parser.add_argument("--threshold", type=float)
+    parser.add_argument("--threshold-policy", help="named threshold policy recorded in the report")
     parser.add_argument("--raw-slide", action="store_true", help="compare the complete authored canvases; disable viewer letterbox-crop detection")
     parser.add_argument("--report")
     args = parser.parse_args()
@@ -126,7 +127,7 @@ def main() -> int:
             issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": args.threshold, "observed": result_metrics["blurred_layout_ssim"]})
     else:
         result_metrics = {}
-    result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "rendered_sha256": sha256(rendered_path), "reference": str(reference_path.resolve()), "reference_sha256": sha256(reference_path), "original_sizes": {"rendered": rendered_viewport["original_size"], "reference": reference_viewport["original_size"]}, "normalized_sizes": {"rendered": list(rendered_size), "reference": list(reference_size)}, "viewer_crops": {"rendered": rendered_viewport, "reference": reference_viewport}, "aspect_ratio_delta": round(aspect_ratio_delta, 6), "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE, "comparison_size": list(reference_size if resized_for_comparison else rendered_size), "resized_for_comparison": resized_for_comparison, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
+    result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "rendered_sha256": sha256(rendered_path), "reference": str(reference_path.resolve()), "reference_sha256": sha256(reference_path), "original_sizes": {"rendered": rendered_viewport["original_size"], "reference": reference_viewport["original_size"]}, "normalized_sizes": {"rendered": list(rendered_size), "reference": list(reference_size)}, "viewer_crops": {"rendered": rendered_viewport, "reference": reference_viewport}, "aspect_ratio_delta": round(aspect_ratio_delta, 6), "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE, "comparison_size": list(reference_size if resized_for_comparison else rendered_size), "resized_for_comparison": resized_for_comparison, "threshold": args.threshold, "threshold_policy": args.threshold_policy, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
     if args.report:
         report = Path(args.report)
         report.parent.mkdir(parents=True, exist_ok=True)

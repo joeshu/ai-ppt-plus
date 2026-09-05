@@ -52,6 +52,16 @@ calibration gate. This saves a full render on an incomplete repair and makes
 the WPS/PowerPoint typography regression explicit instead of hiding it in a
 global similarity score.
 
+The strict reference profile also records a named visual threshold policy and
+uses the P1 floor of `blurred_layout_ssim >= 0.90`. The raw reference/render
+canvas is validated before comparison; `--exact-canvas` blocks silent
+resampling. If a provider cannot honor the requested canvas, record the
+`canvas-degradation/v1` evidence and continue only as a degraded,
+human-review-required draft. A strict release additionally requires a
+hash-bound `host-validation/v1` report from PowerPoint or WPS with full-slide
+screenshots and checks for overflow, typography, editability and visual
+fidelity.
+
 ## Chart fast path
 
 Charts are a frequent source of long, low-value repair loops. First create one

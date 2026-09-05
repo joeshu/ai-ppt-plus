@@ -196,6 +196,10 @@
           "reason": "worker-only three-way source coverage gate"
         },
         {
+          "path": "scripts/delivery_check.py",
+          "reason": "root/worker release-evidence assembly adapter"
+        },
+        {
           "path": "scripts/validate_visual_lock.py",
           "reason": "worker-only last-mile visual lock validator"
         }
