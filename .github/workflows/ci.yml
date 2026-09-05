@@ -24,7 +24,8 @@ jobs:
         run: |
           python -m py_compile scripts/*.py tests/test_*.py
           python -m py_compile ai-ppt-visual-gen/scripts/*.py ai-ppt-visual-gen/tests/*.py
-          python -m py_compile ai-ppt-editable/scripts/*.py ai-ppt-editable/tests/*.py
+          python -m py_compile ai-ppt-editable/scripts/*.py ai-ppt-editable/tests/*.py ai-ppt-editable/reconstruction/*.py
+          python -m py_compile evals/case-replay-12/build_astra_closed_loop_batch.py evals/case-replay-12/ingest_astra_qa_batch.py evals/case-replay-12/run_astra_iteration.py evals/case-replay-12/run_astra_iteration_batch.py evals/case-replay-12/resolve_generated_assets.py evals/case-replay-12/export_astra_distillation.py evals/case-replay-12/select_astra_distillation.py evals/case-replay-12/promote_astra_golden.py evals/case-replay-12/summarize_astra_convergence.py
       - name: Validate all self-contained packages and routing contracts
         run: |
           python scripts/validate_skill_package.py --skill-dir .
@@ -42,6 +43,29 @@ jobs:
         run: |
           python ai-ppt-visual-gen/scripts/run_tests.py --parallel-workers 4 --report visual-skill-test-report.json
           python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
+      - name: Run Astra reconstruction contract tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/ai-ppt-editable
+        run: |
+          python ai-ppt-editable/tests/test_reconstruction_engine.py
+          python ai-ppt-editable/tests/test_reconstruction_integration.py
+          python ai-ppt-editable/tests/test_astra_batch_ingestion.py
+          python ai-ppt-editable/tests/test_astra_iteration_executor.py
+          python ai-ppt-editable/tests/test_astra_iteration_batch.py
+          python ai-ppt-editable/tests/test_asset_orchestrator.py
+          python ai-ppt-editable/tests/test_asset_quality_qa.py
+          python ai-ppt-editable/tests/test_asset_quality_resolution.py
+          python ai-ppt-editable/tests/test_asset_retry_policy.py
+          python ai-ppt-editable/tests/test_object_drift_guard.py
+          python ai-ppt-editable/tests/test_distillation_record.py
+          python ai-ppt-editable/tests/test_distillation_selection.py
+          python ai-ppt-editable/tests/test_golden_promotion.py
+          python ai-ppt-editable/tests/test_accepted_state.py
+      - name: Build 12-case Astra closed-loop batch
+        run: |
+          python evals/case-replay-12/build_astra_closed_loop_batch.py \
+            --output-dir .distillation/astra-closed-loop \
+            --strict
       - name: Run schema, DAG, package and golden regressions
         run: python scripts/run_tests.py --parallel-workers 4 --report test-report.json
       - name: Replay social-channel editable PPTX case

@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+"""Multi-axis quality gate for visual reconstruction delivery."""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any
+
+from .difference_graph import DifferenceGraph
+
+
+@dataclass(frozen=True)
+class GateResult:
+    passed: bool
+    failures: tuple[str, ...]
+    metrics: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class QualityThresholds:
+    global_visual_similarity: float = 0.94
+    critical_region_similarity: float = 0.92
+    editable_ratio: float = 0.98
+    semantic_accuracy: float = 1.0
+    allow_p1_findings: bool = False
+
+
+class QualityGate:
+    """Fail closed on visual, editability, semantic, and structural regressions."""
+
+    def __init__(self, thresholds: QualityThresholds | None = None) -> None:
+        self.thresholds = thresholds or QualityThresholds()
+
+    def evaluate(
+        self,
+        *,
+        differences: DifferenceGraph,
+        global_visual_similarity: float,
+        critical_region_scores: dict[str, float] | None = None,
+        editable_ratio: float,
+        semantic_accuracy: float,
+        full_slide_raster_detected: bool,
+        renderer_regressions: list[str] | None = None,
+    ) -> GateResult:
+        failures: list[str] = []
+        t = self.thresholds
+        regions = critical_region_scores or {}
+        renderer_regressions = renderer_regressions or []
+
+        if global_visual_similarity < t.global_visual_similarity:
+            failures.append(
+                f"global visual similarity {global_visual_similarity:.4f} < {t.global_visual_similarity:.4f}"
+            )
+        for region, score in regions.items():
+            if score < t.critical_region_similarity:
+                failures.append(
+                    f"critical region {region} similarity {score:.4f} < {t.critical_region_similarity:.4f}"
+                )
+        if editable_ratio < t.editable_ratio:
+            failures.append(f"editable ratio {editable_ratio:.4f} < {t.editable_ratio:.4f}")
+        if semantic_accuracy < t.semantic_accuracy:
+            failures.append(f"semantic accuracy {semantic_accuracy:.4f} < {t.semantic_accuracy:.4f}")
+        if full_slide_raster_detected:
+            failures.append("full-slide raster detected on editable route")
+        if renderer_regressions:
+            failures.extend(f"renderer regression: {item}" for item in renderer_regressions)
+
+        blocking_levels = {"P0"}
+        if not t.allow_p1_findings:
+            blocking_levels.add("P1")
+        for finding in differences.findings:
+            if finding.severity in blocking_levels:
+                failures.append(
+                    f"{finding.severity} {finding.domain} finding {finding.id} on {finding.object_id}: {finding.message}"
+                )
+
+        return GateResult(
+            passed=not failures,
+            failures=tuple(failures),
+            metrics={
+                "global_visual_similarity": global_visual_similarity,
+                "critical_region_scores": regions,
+                "editable_ratio": editable_ratio,
+                "semantic_accuracy": semantic_accuracy,
+                "full_slide_raster_detected": full_slide_raster_detected,
+                "renderer_regressions": renderer_regressions,
+            },
+        )
