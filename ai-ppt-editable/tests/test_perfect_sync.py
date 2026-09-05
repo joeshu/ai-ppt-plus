@@ -26,6 +26,14 @@ POST_BASELINE_EXCLUSIONS = frozenset({
     "scripts/validate_object_manifest.py",
     "references/skill-routing.md",
 })
+EFFECTIVE_INFRASTRUCTURE_EXCLUSIONS = frozenset({
+    "assets/icon-asset-manifest.template.json",
+    "assets/imagegen-assets-manifest.template.json",
+    "scripts/run_tests.py",
+    "scripts/validate_icon_assets.py",
+    "scripts/validate_imagegen_assets_manifest.py",
+    "tests/test_asset_hashes.py",
+})
 
 
 def main() -> int:
@@ -48,6 +56,8 @@ def main() -> int:
         assert len(manifest["synced_files"]) == EXPECTED_SYNCED_FILE_COUNT, manifest
         excluded = {item["path"] for item in manifest["excluded_paths"]}
         assert POST_BASELINE_EXCLUSIONS <= excluded, manifest
+        effective = {item["path"] for item in data["excluded_paths"]}
+        assert EFFECTIVE_INFRASTRUCTURE_EXCLUSIONS <= effective, data
         assert data["synced_file_count"] == EXPECTED_SYNCED_FILE_COUNT, data
     print("perfect-source parity gate: ok")
     return 0
