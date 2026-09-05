@@ -30,7 +30,7 @@ jobs:
           python -m py_compile scripts/*.py tests/test_*.py
           python -m py_compile ai-ppt-visual-gen/scripts/*.py ai-ppt-visual-gen/tests/*.py
           python -m py_compile ai-ppt-editable/scripts/*.py ai-ppt-editable/tests/*.py ai-ppt-editable/reconstruction/*.py
-          python -m py_compile evals/case-replay-12/build_astra_closed_loop_batch.py evals/case-replay-12/ingest_astra_qa_batch.py evals/case-replay-12/run_astra_iteration.py evals/case-replay-12/run_astra_iteration_batch.py evals/case-replay-12/resolve_generated_assets.py evals/case-replay-12/export_astra_distillation.py evals/case-replay-12/select_astra_distillation.py evals/case-replay-12/promote_astra_golden.py evals/case-replay-12/summarize_astra_convergence.py evals/case-replay-12/build_four_evidence_bundle.py
+          python -m py_compile evals/case-replay-12/build_astra_closed_loop_batch.py evals/case-replay-12/ingest_astra_qa_batch.py evals/case-replay-12/run_astra_iteration.py evals/case-replay-12/run_astra_iteration_batch.py evals/case-replay-12/resolve_generated_assets.py evals/case-replay-12/export_astra_distillation.py evals/case-replay-12/select_astra_distillation.py evals/case-replay-12/promote_astra_golden.py evals/case-replay-12/summarize_astra_convergence.py evals/case-replay-12/build_four_evidence_bundle.py evals/case-replay-12/validate_candidate_visual_fidelity.py
       - name: Validate all self-contained packages and routing contracts
         run: |
           python scripts/validate_skill_package.py --skill-dir .
@@ -140,10 +140,19 @@ jobs:
             --replay-root .distillation/case-replay-12-runs \
             --output .distillation/case-replay-12-runs/four-evidence-suite.json \
             --strict
+          set +e
+          python evals/case-replay-12/validate_candidate_visual_fidelity.py \
+            --candidate-evaluation evals/case-replay-12/candidate-evaluation.json \
+            --report .distillation/case-replay-12-runs/visual-fidelity-gate.json \
+            --strict
+          visual_rc=$?
+          set -e
           python scripts/build_reconstruction_capability_status.py \
             --engineering-report evals/case-replay-12/candidate-evaluation.json \
+            --visual-fidelity-report .distillation/case-replay-12-runs/visual-fidelity-gate.json \
             --four-evidence-report .distillation/case-replay-12-runs/four-evidence-suite.json \
             --output .distillation/case-replay-12-runs/capability-status.json
+          test "$visual_rc" -eq 0
 
       - name: Validate and select distillation case matrix
         run: |
