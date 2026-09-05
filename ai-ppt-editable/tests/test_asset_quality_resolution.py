@@ -57,7 +57,10 @@ def test_valid_file_but_failed_visual_qa_does_not_resume():
                 "score": 0.95,
                 "structure_score": 0.70,
                 "style_score": 0.95,
+                "confidence": 0.96,
+                "issue_codes": ["silhouette_mismatch"],
                 "reasons": ["silhouette differs"],
+                "retry_native_generation": True,
             }},
         )
         assert result["report"]["ready"] is False
@@ -65,6 +68,37 @@ def test_valid_file_but_failed_visual_qa_does_not_resume():
         assert result["report"]["resolved_count"] == 0
         assert result["report"]["quality_rejected"][0]["object_id"] == "icon"
         assert result["report"]["retry_native_generation"][0]["object_id"] == "icon"
+        assert result["deck"]["slides"][0]["icons"][0]["file"] == "old.png"
+
+
+def test_low_confidence_visual_qa_does_not_consume_retry_budget():
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "icon.png"
+        _asset(path)
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        result = module.resolve_case(
+            layout=_layout(),
+            requests=[_request()],
+            responses={"icon": {"object_id": "icon", "file": str(path), "background_mode": "transparent", "sha256": digest}},
+            quality_responses={"icon": {
+                "object_id": "icon",
+                "approved": False,
+                "score": 0.70,
+                "structure_score": 0.65,
+                "style_score": 0.70,
+                "confidence": 0.40,
+                "issue_codes": ["silhouette_mismatch"],
+                "reasons": ["silhouette differs"],
+                "retry_native_generation": True,
+            }},
+        )
+        assert result["report"]["ready"] is False
+        assert result["report"]["status"] == "external-asset"
+        assert result["report"]["resolved_count"] == 0
+        assert result["report"]["quality_rejected"][0]["quality"]["confidence"] == 0.40
+        assert result["report"]["quality_rejected"][0]["quality"]["retry_native_generation"] is False
+        assert result["report"]["retry_native_generation"] == []
+        assert result["report"]["user_choice_required"] == []
         assert result["deck"]["slides"][0]["icons"][0]["file"] == "old.png"
 
 
@@ -83,6 +117,8 @@ def test_visual_qa_approval_allows_binding_and_resume():
                 "score": 0.95,
                 "structure_score": 0.95,
                 "style_score": 0.90,
+                "confidence": 0.96,
+                "issue_codes": [],
                 "reasons": [],
                 "retry_native_generation": False,
             }},
