@@ -78,7 +78,8 @@ class ReconstructionPipeline:
     ) -> PipelineState:
         state = PipelineState()
         state.page_graph = understand()
-        if source_inventory is not None or state.page_graph.metadata.get("route") == "reference-reconstruction":
+        strict_reference_profile = state.page_graph.metadata.get("route") == "reference-reconstruction"
+        if source_inventory is not None or strict_reference_profile:
             coverage = audit_source_coverage(source_inventory or {}, state.page_graph)
             state.artifacts["source_coverage"] = coverage
             if not coverage["valid"] or extract_objects is None:
@@ -113,6 +114,8 @@ class ReconstructionPipeline:
                 global_visual_similarity=float(metrics.get("global_visual_similarity", 0.0)),
                 critical_region_scores=dict(metrics.get("critical_region_scores") or {}),
                 required_critical_regions=list(metrics.get("required_critical_regions") or []),
+                axis_scores=dict(metrics.get("axis_scores") or {}),
+                strict_reference_profile=strict_reference_profile,
                 editable_ratio=float(metrics.get("editable_ratio", 0.0)),
                 semantic_accuracy=float(metrics.get("semantic_accuracy", 0.0)),
                 full_slide_raster_detected=bool(metrics.get("full_slide_raster_detected", False)),
