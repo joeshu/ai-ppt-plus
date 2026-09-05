@@ -11,6 +11,7 @@ from reference_layouts import build_reference_layout
 from reference_layouts_v2 import build_reference_layout_v2
 from reference_layouts_v3 import build_reference_layout_v3
 from reference_layouts_v4 import build_reference_layout_v4
+from reference_layouts_v5 import build_reference_layout_v5
 
 ROOT = Path(__file__).resolve().parent
 _ORIGINAL = legacy.build_layout
@@ -55,7 +56,9 @@ def normalize_writer_contract(deck):
 
 
 def build_reference(case, run_dir, optimized):
-    resolved = build_reference_layout_v4(case, run_dir, optimized, legacy)
+    resolved = build_reference_layout_v5(case, run_dir, optimized, legacy)
+    if resolved is None:
+        resolved = build_reference_layout_v4(case, run_dir, optimized, legacy)
     if resolved is None:
         resolved = build_reference_layout_v3(case, run_dir, optimized, legacy)
     if resolved is None:
@@ -93,9 +96,11 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     reference = ROOT / "visual" / f"{args.case_id}-reference.png"
     result = legacy.native_evaluate(case, output_dir, reference, optimized=True)
-    version = "v4" if build_reference_layout_v4(case, output_dir, True, legacy) is not None else (
-        "v3" if build_reference_layout_v3(case, output_dir, True, legacy) is not None else (
-            "v2" if build_reference_layout_v2(case, output_dir, True, legacy) is not None else "v1"
+    version = "v5" if build_reference_layout_v5(case, output_dir, True, legacy) is not None else (
+        "v4" if build_reference_layout_v4(case, output_dir, True, legacy) is not None else (
+            "v3" if build_reference_layout_v3(case, output_dir, True, legacy) is not None else (
+                "v2" if build_reference_layout_v2(case, output_dir, True, legacy) is not None else "v1"
+            )
         )
     )
     report = {
