@@ -24,6 +24,7 @@ from pptx_primitives import add_charts, add_groups, add_shapes, add_tables, add_
 # silently substitute a thinner host face.
 DEFAULT_FONT_FAMILY = "Noto Sans CJK SC"
 BACKEND_ID = "python-pptx"
+_FOREGROUND_SHAPE_LAYERS = {"foreground", "front", "overlay"}
 
 
 def _die(message: str, code: int = 2):
@@ -39,6 +40,25 @@ def _normalized_theme(deck: dict) -> dict:
     # the chosen family is available and licensed for delivery.
     normalized.setdefault("font", deck.get("font_family", DEFAULT_FONT_FAMILY))
     return normalized
+
+
+def _partition_shapes(slide_spec: dict) -> tuple[list[dict], list[dict]]:
+    """Split normal shapes from explicit post-table foreground overlays.
+
+    PowerPoint z-order follows authoring order. Historically every shape was
+    emitted before tables, which made native progress bars, badges and cell
+    markers disappear underneath table graphic frames. Only the explicit
+    ``z_layer=foreground`` contract changes order; existing decks keep their
+    previous behavior at the logical layer level.
+    """
+    background: list[dict] = []
+    foreground: list[dict] = []
+    for item in slide_spec.get("shapes", []) or []:
+        if isinstance(item, dict) and str(item.get("z_layer", "")).strip().casefold() in _FOREGROUND_SHAPE_LAYERS:
+            foreground.append(item)
+        else:
+            background.append(item)
+    return background, foreground
 
 
 def build_pptx(deck: dict, out_path: Path) -> None:
@@ -71,10 +91,15 @@ def build_pptx(deck: dict, out_path: Path) -> None:
             # silently covered those overlays whenever a panel occupied the
             # same region.
             add_panels(slide, slide_spec.get("panels", []), assets_dir, deck, reference_width, reference_height, slide_width_emu, slide_height_emu, slide_no)
-            add_shapes(slide, slide_spec.get("shapes", []), deck, reference_width, reference_height, slide_width_emu, slide_height_emu)
+            background_shapes, foreground_shapes = _partition_shapes(slide_spec)
+            add_shapes(slide, background_shapes, deck, reference_width, reference_height, slide_width_emu, slide_height_emu)
             add_groups(slide, slide_spec.get("groups", []), deck, reference_width, reference_height, slide_width_emu, slide_height_emu)
             add_tables(slide, slide_spec.get("tables", []), deck, theme, reference_width, reference_height, slide_width_emu, slide_height_emu)
             add_charts(slide, slide_spec.get("charts", []), deck, theme, reference_width, reference_height, slide_width_emu, slide_height_emu)
+            # Explicit foreground primitives are authored after table/chart
+            # graphic frames so they stay visible while remaining native and
+            # independently editable.
+            add_shapes(slide, foreground_shapes, deck, reference_width, reference_height, slide_width_emu, slide_height_emu)
             notes = slide_spec.get("speaker_notes") or slide_spec.get("notes")
             if notes:
                 slide.notes_slide.notes_text_frame.text = str(notes)
