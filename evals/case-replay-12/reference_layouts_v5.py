@@ -52,8 +52,10 @@ def fttr_policy_layout_v5(case, run_dir, optimized, h):
             item["line"] = "#9EB0C8"
             item["line_width"] = 0.62
 
-    # The policy strip contains long edge ornaments. Keep these as native
-    # primitives rather than raster decoration.
+    # The policy strip contains long edge ornaments. Keep the original v4
+    # decorative text objects intact because they are part of the formal-text
+    # inventory; add native line/diamond geometry underneath them rather than
+    # blanking those objects and breaking the native-text gate.
     band_y = 0.4855
     shapes.extend([
         h.line("policy-divider-left-rule", 0.041, band_y + 0.0195, 0.257, band_y + 0.0195,
@@ -65,10 +67,6 @@ def fttr_policy_layout_v5(case, run_dir, optimized, h):
         h.shape("policy-divider-right-diamond", "diamond", 0.960, band_y + 0.010, 0.013, 0.019,
                 line="#FFFFFF", line_width=0.7),
     ])
-    for object_id in ("policy-divider-left", "policy-divider-right"):
-        item = _by_id(texts, object_id)
-        if item:
-            item["text"] = ""
 
     # Replace character-based progress indicators with actual native bar
     # primitives authored above the table graphic frame through z_layer.
