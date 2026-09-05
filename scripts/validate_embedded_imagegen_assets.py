@@ -47,12 +47,15 @@ def validate(pptx_path: Path, manifest_path: Path, request_id: str) -> dict:
     if not pptx_path.is_file():
         issues.append({"code": "deck_missing", "path": str(pptx_path)})
         return {"schema": SCHEMA, "valid": False, "request_id": request_id, "issues": issues}
+
     media: list[dict] = []
     with zipfile.ZipFile(pptx_path, "r") as archive:
         for name in sorted(archive.namelist()):
             if name.startswith("ppt/media/") and not name.endswith("/"):
                 data = archive.read(name)
                 media.append({"part": name, "sha256": sha256_bytes(data), "bytes": len(data)})
+    media_hashes = {row["sha256"] for row in media}
+
     approved: list[dict] = []
     assets = manifest.get("assets") if isinstance(manifest.get("assets"), list) else []
     for index, asset in enumerate(assets, 1):
@@ -64,6 +67,7 @@ def validate(pptx_path: Path, manifest_path: Path, request_id: str) -> dict:
             continue
         declared = _declared_hash(asset)
         path_value = asset.get("path") or asset.get("copied_to") or asset.get("asset_path")
+        observed = None
         if isinstance(path_value, str):
             candidate = Path(path_value)
             if not candidate.is_absolute():
@@ -81,7 +85,18 @@ def validate(pptx_path: Path, manifest_path: Path, request_id: str) -> dict:
         approved.append({"asset_id": asset_id, "sha256": declared, "embedded_parts": embedded_parts})
         if not embedded_parts:
             issues.append({"code": "approved_asset_missing_from_pptx", "asset_id": asset_id, "sha256": declared})
-    return {"schema": SCHEMA, "valid": not issues, "request_id": request_id, "deck": str(pptx_path), "deck_sha256": sha256_file(pptx_path), "media_count": len(media), "media": media, "approved_assets": approved, "issues": issues}
+
+    return {
+        "schema": SCHEMA,
+        "valid": not issues,
+        "request_id": request_id,
+        "deck": str(pptx_path),
+        "deck_sha256": sha256_file(pptx_path),
+        "media_count": len(media),
+        "media": media,
+        "approved_assets": approved,
+        "issues": issues,
+    }
 
 
 def main() -> int:
