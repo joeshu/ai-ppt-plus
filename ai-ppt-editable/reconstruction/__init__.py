@@ -1,4 +1,4 @@
-"""Astra visual reconstruction contracts and repair routing."""
+"""Astra visual reconstruction contracts, evidence fusion and repair routing."""
 
 from .graph_ir import PageGraph, GraphValidationError
 from .difference_graph import DifferenceGraph
@@ -7,6 +7,7 @@ from .quality_gate import QualityGate, QualityThresholds, GateResult
 from .pipeline import ReconstructionPipeline, PipelineState, Stage
 from .manifest_bridge import build_page_graph
 from .repair_executors import RepairExecutionError, execute_action, execute_plan
+from .evidence_bridge import EvidenceThresholds, from_dual_comparison, merge_difference_graphs
 from .astra_contract import (
     AstraRequest,
     build_reconstruction_request,
@@ -31,6 +32,9 @@ __all__ = [
     "RepairExecutionError",
     "execute_action",
     "execute_plan",
+    "EvidenceThresholds",
+    "from_dual_comparison",
+    "merge_difference_graphs",
     "AstraRequest",
     "build_reconstruction_request",
     "build_visual_qa_request",
