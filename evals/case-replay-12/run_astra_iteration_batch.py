@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute repair-ready Astra cases, rollback regressions, and prepare next QA requests."""
+"""Execute repair-ready Astra cases, resume generated assets, rollback regressions, and prepare next QA requests."""
 from __future__ import annotations
 
 import argparse
@@ -34,6 +34,8 @@ def write_json(path: Path, value) -> None:
 
 def regression_decision(previous: dict, current: dict, *, tolerance: float = 0.0) -> dict:
     previous_score = previous.get("pixel_fidelity_score")
+    if previous_score is None:
+        previous_score = (previous.get("visual_metrics") or {}).get("pixel_fidelity_score")
     current_score = current.get("pixel_fidelity_score")
     visual_delta = None
     if previous_score is not None and current_score is not None:
@@ -65,7 +67,7 @@ def deterministic_report(iteration_dir: Path, reference: Path) -> dict:
     inspect = read_json(iteration_dir / "inspect.json")
     errors = list(native.get("errors") or [])
     for issue in inspect.get("issues") or []:
-        if issue.get("severity") in {"blocker", "critical"}:
+        if isinstance(issue, dict) and issue.get("severity") in {"blocker", "critical"}:
             errors.append(issue)
     rendered = iteration_dir / "render" / "slide-1.png"
     return {
@@ -107,17 +109,46 @@ def next_qa_bundle(iteration_dir: Path, reference: Path) -> dict:
     }
 
 
-def run_case(*, case_id: str, iteration: int, source_layout: Path, merged_graph: Path, reference: Path, output_dir: Path, previous_record: dict, tolerance: float) -> dict:
+def resolve_resume_layout(asset_resolved_root: Path | None, case_id: str, iteration: int) -> tuple[Path | None, dict | None]:
+    if asset_resolved_root is None:
+        return None, None
+    candidates = [
+        asset_resolved_root / case_id / f"iteration-{iteration}" / "resume-ready.json",
+        asset_resolved_root / case_id / "resume-ready.json",
+    ]
+    for resume_path in candidates:
+        if not resume_path.is_file():
+            continue
+        resume = read_json(resume_path)
+        if resume.get("ready") is not True or resume.get("status") != "resume-ready":
+            return None, resume
+        layout_value = resume.get("layout")
+        layout = Path(str(layout_value)) if layout_value else resume_path.parent / "asset-resolved-layout.json"
+        if not layout.is_absolute():
+            layout = resume_path.parent / layout
+        if layout.is_file():
+            return layout.resolve(), resume
+        return None, {**resume, "error": "resolved-layout-missing"}
+    return None, None
+
+
+def run_case(*, case_id: str, iteration: int, source_layout: Path, merged_graph: Path | None, reference: Path, output_dir: Path, previous_record: dict, tolerance: float, resume_after_assets: bool = False) -> dict:
     case_out = output_dir / case_id / f"iteration-{iteration}"
     command = [
         sys.executable, str(ITERATION_RUNNER),
         "--case-id", case_id,
         "--layout", str(source_layout),
-        "--merged-difference-graph", str(merged_graph),
         "--reference", str(reference),
         "--output-dir", str(case_out),
         "--iteration", str(iteration),
     ]
+    if resume_after_assets:
+        command.append("--resume-after-assets")
+    elif merged_graph is not None:
+        command.extend(["--merged-difference-graph", str(merged_graph)])
+    else:
+        return {"case_id": case_id, "status": "execution-error", "stderr": "missing merged difference graph"}
+
     cp = subprocess.run(command, cwd=REPO, capture_output=True, text=True, check=False)
     if cp.returncode not in {0, 2}:
         return {"case_id": case_id, "status": "execution-error", "returncode": cp.returncode, "stderr": cp.stderr[-2000:]}
@@ -128,6 +159,7 @@ def run_case(*, case_id: str, iteration: int, source_layout: Path, merged_graph:
     bundle = next_qa_bundle(case_out, reference)
     current["blocking_count"] = bundle["blocking_count"]
     current["difference_count"] = bundle["difference_count"]
+    current["resume_after_assets"] = resume_after_assets
     decision = regression_decision(previous_record, current, tolerance=tolerance)
     current["regression"] = decision
     if decision["rollback"]:
@@ -136,7 +168,7 @@ def run_case(*, case_id: str, iteration: int, source_layout: Path, merged_graph:
         shutil.copy2(source_layout, rollback_dir / "layout.json")
         current["status"] = "rolled-back-regression"
         current["accepted"] = False
-        current["next_action"] = "retain previous accepted layout and request a different object-local repair"
+        current["next_action"] = "retain previous accepted layout and request a different object-local repair or regenerated asset"
     else:
         current["accepted"] = True
         current["status"] = "repaired-needs-qa"
@@ -152,6 +184,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--ingested-root", type=Path, required=True, help="output from ingest_astra_qa_batch.py")
     ap.add_argument("--candidate-runs", type=Path, default=ROOT / "runs" / "candidate")
+    ap.add_argument("--asset-resolved-root", type=Path, help="output root containing resume-ready.json from resolve_generated_assets.py")
     ap.add_argument("--evaluation", type=Path, default=ROOT / "candidate-evaluation.json")
     ap.add_argument("--output-root", type=Path, required=True)
     ap.add_argument("--iteration", type=int, default=1)
@@ -169,30 +202,45 @@ def main() -> int:
         ingested_dir = args.ingested_root / case_id / f"iteration-{args.iteration}"
         ingested_record = ingested_dir / "iteration-record.json"
         merged_graph = ingested_dir / "merged-difference-graph.json"
-        if not ingested_record.is_file() or not merged_graph.is_file():
+        if not ingested_record.is_file():
             skipped.append({"case_id": case_id, "reason": "missing-ingested-iteration"})
             continue
         previous = read_json(ingested_record)
-        if previous.get("status") != "repair-ready":
-            skipped.append({"case_id": case_id, "reason": previous.get("status") or "not-repair-ready"})
+        status = previous.get("status")
+
+        resume_layout, resume_meta = resolve_resume_layout(args.asset_resolved_root, case_id, args.iteration)
+        resume_after_assets = status == "external-asset" and resume_layout is not None
+        if status == "external-asset" and not resume_after_assets:
+            reason = "external-asset-not-resolved"
+            if resume_meta and resume_meta.get("error"):
+                reason = str(resume_meta["error"])
+            skipped.append({"case_id": case_id, "reason": reason})
             continue
-        source_layout = args.candidate_runs / case_id / "layout.json"
+        if status != "repair-ready" and not resume_after_assets:
+            skipped.append({"case_id": case_id, "reason": status or "not-repair-ready"})
+            continue
+
+        source_layout = resume_layout if resume_after_assets else args.candidate_runs / case_id / "layout.json"
+        if not resume_after_assets and not merged_graph.is_file():
+            skipped.append({"case_id": case_id, "reason": "missing-merged-difference-graph"})
+            continue
         reference_value = (case.get("candidate") or {}).get("reference")
         reference = Path(reference_value)
         if not reference.is_absolute():
             reference = ROOT / reference
-        if not source_layout.is_file() or not reference.is_file():
+        if source_layout is None or not source_layout.is_file() or not reference.is_file():
             errors.append({"case_id": case_id, "reason": "missing-source-layout-or-reference"})
             continue
         result = run_case(
             case_id=case_id,
             iteration=args.iteration,
             source_layout=source_layout,
-            merged_graph=merged_graph,
+            merged_graph=None if resume_after_assets else merged_graph,
             reference=reference,
             output_dir=args.output_root,
             previous_record=previous,
             tolerance=args.visual_regression_tolerance,
+            resume_after_assets=resume_after_assets,
         )
         results.append(result)
         if result.get("status") == "execution-error":
@@ -202,6 +250,7 @@ def main() -> int:
         "schema": "ai-ppt-plus/astra-iteration-batch/v1",
         "iteration": args.iteration,
         "executed_count": len(results),
+        "asset_resumed_count": sum(1 for item in results if item.get("resume_after_assets") is True),
         "accepted_count": sum(1 for item in results if item.get("accepted") is True),
         "rollback_count": sum(1 for item in results if item.get("status") == "rolled-back-regression"),
         "skipped_count": len(skipped),
