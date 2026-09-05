@@ -25,7 +25,7 @@ jobs:
           python -m py_compile scripts/*.py tests/test_*.py
           python -m py_compile ai-ppt-visual-gen/scripts/*.py ai-ppt-visual-gen/tests/*.py
           python -m py_compile ai-ppt-editable/scripts/*.py ai-ppt-editable/tests/*.py ai-ppt-editable/reconstruction/*.py
-          python -m py_compile evals/case-replay-12/build_astra_closed_loop_batch.py evals/case-replay-12/ingest_astra_qa_batch.py evals/case-replay-12/run_astra_iteration.py evals/case-replay-12/run_astra_iteration_batch.py evals/case-replay-12/summarize_astra_convergence.py
+          python -m py_compile evals/case-replay-12/build_astra_closed_loop_batch.py evals/case-replay-12/ingest_astra_qa_batch.py evals/case-replay-12/run_astra_iteration.py evals/case-replay-12/run_astra_iteration_batch.py evals/case-replay-12/resolve_generated_assets.py evals/case-replay-12/summarize_astra_convergence.py
       - name: Validate all self-contained packages and routing contracts
         run: |
           python scripts/validate_skill_package.py --skill-dir .
@@ -50,6 +50,7 @@ jobs:
           python ai-ppt-editable/tests/test_astra_batch_ingestion.py
           python ai-ppt-editable/tests/test_astra_iteration_executor.py
           python ai-ppt-editable/tests/test_astra_iteration_batch.py
+          python ai-ppt-editable/tests/test_asset_orchestrator.py
       - name: Build 12-case Astra closed-loop batch
         run: |
           python evals/case-replay-12/build_astra_closed_loop_batch.py \
