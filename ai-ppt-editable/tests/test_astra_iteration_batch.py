@@ -80,15 +80,22 @@ def test_previous_visual_metrics_are_used_for_asset_resume_regression():
     assert result["pixel_fidelity_delta"] == -0.03
 
 
-def test_resume_ready_resolves_asset_layout():
+def test_resume_ready_resolves_asset_layout_and_exact_resolved_ids():
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         case_dir = tmp_path / "icon-case" / "iteration-1"
         case_dir.mkdir(parents=True)
         layout = case_dir / "asset-resolved-layout.json"
         layout.write_text('{"slides": []}\n', encoding="utf-8")
+        (case_dir / "asset-resolution-report.json").write_text(json.dumps({
+            "resolved": [
+                {"object_id": "icon-new"},
+                {"object_id": "icon-new"},
+                {"object_id": "gradient-new"},
+            ]
+        }), encoding="utf-8")
         (case_dir / "resume-ready.json").write_text(json.dumps({
-            "schema": "ai-ppt-plus/astra-resume-ready/v1",
+            "schema": "ai-ppt-plus/astra-resume-ready/v3",
             "ready": True,
             "status": "resume-ready",
             "layout": str(layout),
@@ -96,6 +103,8 @@ def test_resume_ready_resolves_asset_layout():
         resolved, meta = module.resolve_resume_layout(tmp_path, "icon-case", 1)
         assert resolved == layout.resolve()
         assert meta["ready"] is True
+        assert meta["resolved_object_ids"] == ["gradient-new", "icon-new"]
+        assert meta["resolution_report"] == str((case_dir / "asset-resolution-report.json").resolve())
 
 
 def test_unresolved_asset_does_not_resume():
@@ -111,6 +120,27 @@ def test_unresolved_asset_does_not_resume():
         resolved, meta = module.resolve_resume_layout(tmp_path, "icon-case", 1)
         assert resolved is None
         assert meta["status"] == "external-asset"
+
+
+def test_drift_allowlist_uses_only_applied_execution_actions():
+    with tempfile.TemporaryDirectory() as tmp:
+        report = Path(tmp) / "repair-execution-report.json"
+        report.write_text(json.dumps({
+            "applied": [
+                {"object_id": "text-1", "engine": "typography_repair"},
+                {"object_id": "shape-2", "engine": "geometry_repair"},
+                {"object_id": "text-1", "engine": "typography_repair"},
+            ],
+            "skipped": [{"object_id": "shape-skipped"}],
+            "deferred": [{"object_id": "text-deferred"}],
+            "regeneration_requests": [{"object_id": "icon-generated"}],
+        }), encoding="utf-8")
+        assert module.allowed_ids_from_execution_report(report) == {"text-1", "shape-2"}
+
+
+def test_missing_execution_report_allows_no_normal_repair_drift():
+    with tempfile.TemporaryDirectory() as tmp:
+        assert module.allowed_ids_from_execution_report(Path(tmp) / "missing.json") == set()
 
 
 if __name__ == "__main__":
