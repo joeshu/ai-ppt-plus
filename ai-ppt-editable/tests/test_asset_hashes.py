@@ -58,13 +58,40 @@ def main() -> int:
             "source_bbox": [10, 20, 30, 40],
             "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
             "copied_to": "reused.png",
-            "layer": "icons_raw_1",
+            "layer": "background",
             "extraction_method": "deterministic_source_crop",
             "sha256": hashlib.sha256(reused.read_bytes()).hexdigest(),
         }]})
         source_reuse = run("scripts/validate_imagegen_assets_manifest.py", str(reuse_manifest), "--require-hashes")
         assert source_reuse.returncode == 0, source_reuse.stdout + source_reuse.stderr
         assert json.loads(source_reuse.stdout)["provenance_modes"] == {"source_reuse": 1}
+
+        icon_reuse = root / "icon-source-reuse-manifest.json"
+        write(icon_reuse, {"provenance_mode": "source_reuse", "assets": [{
+            "asset_id": "icon-1",
+            "asset_class": "icon",
+            "source_ref": "source.png",
+            "source_bbox": [10, 20, 30, 40],
+            "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+            "copied_to": "reused.png",
+            "layer": "icons_raw_1",
+            "extraction_method": "deterministic_source_crop",
+            "sha256": hashlib.sha256(reused.read_bytes()).hexdigest(),
+        }]})
+        blocked_icon = run("scripts/validate_imagegen_assets_manifest.py", str(icon_reuse), "--require-hashes")
+        assert blocked_icon.returncode == 2, blocked_icon.stdout + blocked_icon.stderr
+        assert "final_asset_route_requires_native_imagegen" in blocked_icon.stdout
+
+        approved = json.loads(icon_reuse.read_text(encoding="utf-8"))
+        approved["assets"][0].update({
+            "fallback_decision": "user_approved",
+            "decision_id": "decision-1",
+            "decision_reason": "native imagegen failed and user selected crop fallback",
+            "decision_timestamp": "2026-09-05T00:00:00Z",
+        })
+        write(icon_reuse, approved)
+        approved_icon = run("scripts/validate_imagegen_assets_manifest.py", str(icon_reuse), "--require-hashes")
+        assert approved_icon.returncode == 0, approved_icon.stdout + approved_icon.stderr
 
     print("asset hash gates: ok")
     return 0
