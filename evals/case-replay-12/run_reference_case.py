@@ -8,6 +8,7 @@ from pathlib import Path
 
 import run_replay_suite as legacy
 from reference_layouts import build_reference_layout
+from reference_layouts_v2 import build_reference_layout_v2
 
 ROOT = Path(__file__).resolve().parent
 _ORIGINAL = legacy.build_layout
@@ -16,14 +17,14 @@ _ORIGINAL = legacy.build_layout
 def _apply_reference_rich_text(table):
     object_id = table.get("object_id")
     rows = table.get("rows") or []
-    if object_id == "policy-merged-table" and len(rows) > 1 and rows[1]:
+    if object_id == "policy-merged-table" and len(rows) > 1 and rows[1] and not isinstance(rows[1][0], dict):
         rows[1][0] = {
             "runs": [
                 {"text": "新增装机\n", "bold": True, "size": 8.2, "color": "#0A2B5E"},
                 {"text": "（新装竣工）", "bold": True, "size": 7.3, "color": "#0A2B5E"},
             ]
         }
-    if object_id == "monthly-subsidy-table" and rows:
+    if object_id == "monthly-subsidy-table" and rows and not isinstance(rows[-1][0], dict):
         rows[-1][0] = {
             "runs": [
                 {"text": "本月预计补贴", "bold": True, "size": 8.2, "color": "#E60012"},
@@ -51,8 +52,15 @@ def normalize_writer_contract(deck):
     return deck
 
 
+def build_reference(case, run_dir, optimized):
+    resolved = build_reference_layout_v2(case, run_dir, optimized, legacy)
+    if resolved is None:
+        resolved = build_reference_layout(case, run_dir, optimized, legacy)
+    return resolved
+
+
 def reference_first(case, run_dir, optimized):
-    resolved = build_reference_layout(case, run_dir, optimized, legacy)
+    resolved = build_reference(case, run_dir, optimized)
     if resolved is not None:
         return normalize_writer_contract(resolved)
     return _ORIGINAL(case, run_dir, optimized)
@@ -71,7 +79,7 @@ def main() -> int:
     case = next((item for item in suite.get("cases", []) if item.get("case_id") == args.case_id), None)
     if case is None:
         raise SystemExit(f"unknown case: {args.case_id}")
-    if build_reference_layout(case, Path(args.output_dir), True, legacy) is None:
+    if build_reference(case, Path(args.output_dir), True) is None:
         raise SystemExit(f"no reference-derived builder registered for {args.case_id}")
 
     legacy.build_layout = reference_first
@@ -83,6 +91,7 @@ def main() -> int:
         "schema": "ai-ppt-plus/reference-case-replay/v1",
         "case_id": args.case_id,
         "reference_builder": True,
+        "reference_builder_version": "v2" if build_reference_layout_v2(case, output_dir, True, legacy) is not None else "v1",
         "result": result,
         "visual_metrics": (result.get("visual") or {}).get("metrics") or {},
         "technical_status": result.get("technical_status"),
