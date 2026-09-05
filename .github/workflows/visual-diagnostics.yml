@@ -1,0 +1,28 @@
+name: 12-case visual diagnostics
+
+on:
+  push:
+    branches:
+      - feat/reconstruction-p0-p1-20260905
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install image diagnostics dependencies
+        run: python -m pip install --disable-pip-version-check numpy Pillow
+      - name: Diagnose frozen 12-case visual gaps
+        run: |
+          python evals/case-replay-12/diagnose_visual_gap.py \
+            --candidate-evaluation evals/case-replay-12/candidate-evaluation.json \
+            --output case-visual-diagnostics.json
+      - name: Upload visual diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: case-visual-diagnostics
+          path: case-visual-diagnostics.json
