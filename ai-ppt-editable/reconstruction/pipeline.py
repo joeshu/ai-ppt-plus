@@ -8,6 +8,7 @@ from typing import Any, Callable
 
 from .difference_graph import DifferenceGraph
 from .graph_ir import PageGraph
+from .multi_page_consistency import audit_multi_page_consistency
 from .object_drift_guard import compare_object_drift
 from .quality_gate import GateResult, QualityGate
 from .repair_router import RepairPlan, RepairRouter
@@ -135,6 +136,14 @@ class ReconstructionPipeline:
             state.artifacts["passed_region_scores"] = dict(passed_region_scores)
 
             if gate.passed:
+                multi_page = audit_multi_page_consistency(deck)
+                state.artifacts["multi_page_consistency"] = multi_page
+                if not multi_page["valid"]:
+                    state.history.append(IterationRecord(index, len(differences.findings), len(differences.blocking()), 0, 0, False, metrics))
+                    state.stage = Stage.BLOCKED
+                    state.artifacts["blocked_candidate"] = deck
+                    state.artifacts["multi_page_consistency_blocker"] = multi_page
+                    return state
                 state.history.append(IterationRecord(index, len(differences.findings), len(differences.blocking()), 0, 0, True, metrics))
                 state.stage = Stage.COMPLETE
                 state.artifacts["final"] = deck
