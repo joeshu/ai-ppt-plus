@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 import tempfile
@@ -50,6 +51,16 @@ def main() -> int:
         )
         assert any(item["code"] == "imagegen_final_asset_gate_failed" for item in bad_route["issues"])
 
+        (root / "generated").mkdir(exist_ok=True)
+        (root / "assets").mkdir(exist_ok=True)
+        (root / "prompts").mkdir(exist_ok=True)
+        generated = root / "generated" / "icon-1.png"
+        copied = root / "assets" / "icon-1.png"
+        prompt = root / "prompts" / "icon-1.txt"
+        generated.write_bytes(b"generated-icon")
+        copied.write_bytes(generated.read_bytes())
+        prompt.write_text("generate icon", encoding="utf-8")
+        digest = hashlib.sha256(copied.read_bytes()).hexdigest()
         write(root / "imagegen-assets-manifest.json", {
             "provenance_policy": "imagegen_final_assets",
             "assets": [{
@@ -60,6 +71,7 @@ def main() -> int:
                 "copied_to": "assets/icon-1.png",
                 "prompt_file": "prompts/icon-1.txt",
                 "backend": "native-imagegen",
+                "sha256": digest,
             }],
         })
         good = validate_reference_preflight(
