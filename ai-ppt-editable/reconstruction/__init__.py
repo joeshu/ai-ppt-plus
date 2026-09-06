@@ -17,6 +17,7 @@ from .asset_metrics import compare_asset_subjects
 from .object_drift_guard import compare_object_drift, fingerprint_deck
 from .multi_page_consistency import audit_multi_page_consistency
 from .evidence_bridge import EvidenceThresholds, from_dual_comparison, merge_difference_graphs
+from .candidate_ab import CandidateABPolicy, evaluate_candidate_ab, verify_candidate_ab_replay
 from .batch_ingestion import AstraIngestionError, validate_astra_object_ids, ingest_astra_qa, summarize_iteration, convergence_delta
 from .astra_contract import (
     AstraRequest,
@@ -36,7 +37,8 @@ __all__ = [
     "calibrate_typography", "measurement_loss", "build_text_target_spec", "solve_peer_layout",
     "solve_graph_relations", "subject_placement", "compare_asset_subjects", "compare_object_drift",
     "fingerprint_deck", "audit_multi_page_consistency", "EvidenceThresholds", "from_dual_comparison",
-    "merge_difference_graphs", "AstraIngestionError", "validate_astra_object_ids", "ingest_astra_qa",
+    "merge_difference_graphs", "CandidateABPolicy", "evaluate_candidate_ab", "verify_candidate_ab_replay",
+    "AstraIngestionError", "validate_astra_object_ids", "ingest_astra_qa",
     "summarize_iteration", "convergence_delta", "AstraRequest", "build_reconstruction_request",
     "build_text_target_request", "build_visual_qa_request", "parse_reconstruction_response",
     "parse_text_target_response", "parse_visual_qa_response",
