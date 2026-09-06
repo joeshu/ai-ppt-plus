@@ -21,9 +21,13 @@ Missing / noncompliant gates include:
 - E5 technical repair / re-render / rerun gate loop was not performed.
 - The earlier editable-object count and pixel metrics are therefore diagnostic only and are not valid Fresh-12 evidence.
 
+## User review correction
+
+The user explicitly rejected the first attempt because it did not follow the skill-standard steps and did not achieve the required image → high-fidelity all-element editable PPTX behavior. Any earlier `ACCEPTED_WITH_MACHINE_GATE_FAIL` note is superseded and must not be treated as acceptance.
+
 ## Required restart
 
-Restart case 01 from the same fresh source image (or regenerate if source-generation provenance is not trustworthy), using the exact checked-in skill flow:
+Restart case 01 from the current-run fresh source image only if its generation provenance remains trustworthy; otherwise regenerate the fresh source. The reconstruction itself must be rerun from zero through the checked-in skill flow:
 
 `E0 intake/preflight → E1 inventory/object plan → E2 decomposition + independent imagegen assets → E3 checked-in composition → E4 full render/QA/visual-lock/semantic-object audit → E5 repair/handoff`.
 
