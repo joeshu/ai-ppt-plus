@@ -1,0 +1,49 @@
+{
+  "schema": "ai-ppt-plus/fresh12-run-lock/v1",
+  "run_id": "fresh12-r1-20260906",
+  "status": "LOCKED_AWAITING_FRESH_GENERATION",
+  "baseline_commit": "a5b8232de51fdbfcdcd866a336329951fc1dd084",
+  "baseline_branch": "main",
+  "execution_branch": "eval/fresh-12-r1-20260906",
+  "suite_path": "evals/case-replay-12/case-suite.json",
+  "suite_git_blob_sha": "c5510e42e50652cda285432a76e61f4d31dfb9a8",
+  "frozen_policy": {
+    "repair_between_cases": false,
+    "historical_reference_usage": "post-verification-comparison-only",
+    "editable_visual_authority": "current-run-fresh-image-only",
+    "case_suite_usage": "generation-and-posthoc-qa-only",
+    "layout_source_required": "image-analysis",
+    "full_slide_flattening_allowed": false
+  },
+  "fidelity_thresholds": {
+    "blurred_layout_ssim_min": 0.90,
+    "global_ssim_min": 0.82,
+    "pixel_fidelity_score_min": 0.80
+  },
+  "forbidden_authoring_inputs": [
+    "evals/case-replay-12/visual/",
+    "references/",
+    "image2pptx_runs/",
+    "run_replay_suite.py",
+    "build_layout("
+  ],
+  "cases": [
+    {"order": 1, "case_id": "route-editable-default-01", "priority": "P0"},
+    {"order": 2, "case_id": "native-shape-card-01", "priority": "P0"},
+    {"order": 3, "case_id": "native-text-cjk-font-01", "priority": "P0"},
+    {"order": 4, "case_id": "failure-fallback-stop-01", "priority": "P0"},
+    {"order": 5, "case_id": "package-render-portability-01", "priority": "P0"},
+    {"order": 6, "case_id": "native-table-basic-01", "priority": "P1"},
+    {"order": 7, "case_id": "native-table-merge-richtext-01", "priority": "P1"},
+    {"order": 8, "case_id": "chart-data-provenance-01", "priority": "P1"},
+    {"order": 9, "case_id": "visual-assets-gradient-icon-01", "priority": "P1"},
+    {"order": 10, "case_id": "framework-irregular-layer-01", "priority": "P1"},
+    {"order": 11, "case_id": "multi-slide-consistency-01", "priority": "P2"},
+    {"order": 12, "case_id": "cache-idempotency-01", "priority": "P2"}
+  ],
+  "verdict_semantics": {
+    "INCOMPLETE": "fewer than 12 complete evidence bundles; capability judgement forbidden",
+    "FAIL": "12 complete bundles with one or more mandatory gate failures",
+    "PASS": "12 complete bundles and all mandatory gates passed"
+  }
+}
