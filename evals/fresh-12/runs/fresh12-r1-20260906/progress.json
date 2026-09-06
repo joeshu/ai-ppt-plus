@@ -1,0 +1,18 @@
+{
+  "schema": "ai-ppt-plus/fresh12-progress/v1",
+  "run_id": "fresh12-r1-20260906",
+  "cases_total": 12,
+  "valid_complete_cases": 0,
+  "valid_pass_cases": 0,
+  "valid_fail_cases": 0,
+  "invalid_attempts": 1,
+  "current_case": "route-editable-default-01",
+  "current_case_status": "RESTART_REQUIRED_STANDARD_SKILL_FLOW",
+  "verdict": "INCOMPLETE",
+  "capability_judgement_allowed": false,
+  "notes": [
+    "The first case-01 PPTX was built by an ad-hoc python-pptx shortcut and is invalid evidence.",
+    "Any prior human-acceptance note is superseded by the user's explicit rejection.",
+    "Case 01 must restart from E0 through E5 using the checked-in ai-ppt-editable workflow."
+  ]
+}
