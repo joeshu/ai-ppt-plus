@@ -1,0 +1,23 @@
+name: Export repo for Fresh-12 local execution
+
+on:
+  push:
+    branches:
+      - fix/fresh12-official-pipeline-proof-20260906
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload repository snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: fresh12-repo-snapshot
+          path: .
+          include-hidden-files: true
+          retention-days: 1
