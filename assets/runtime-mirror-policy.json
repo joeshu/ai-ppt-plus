@@ -206,6 +206,10 @@
         {
           "path": "scripts/validate_visual_lock.py",
           "reason": "worker-only last-mile visual lock validator"
+        },
+        {
+          "path": "scripts/evaluate_candidate_ab.py",
+          "reason": "worker-only FTTR v6-vs-v5 deterministic candidate selection and rollback adapter"
         }
       ]
     }
