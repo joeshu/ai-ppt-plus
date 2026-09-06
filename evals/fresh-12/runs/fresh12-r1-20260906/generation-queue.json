@@ -1,0 +1,23 @@
+{
+  "schema": "ai-ppt-plus/fresh12-generation-queue/v1",
+  "run_id": "fresh12-r1-20260906",
+  "baseline_commit": "a5b8232de51fdbfcdcd866a336329951fc1dd084",
+  "suite_path": "evals/case-replay-12/case-suite.json",
+  "generator_skill": "ai-ppt-visual-gen",
+  "generation_policy": "new-raster-required",
+  "historical_reference_usage": "forbidden-as-input",
+  "queue": [
+    {"order": 1, "case_id": "route-editable-default-01", "prompt_source": "case-suite.json#cases[case_id=route-editable-default-01].prompt", "required_output": "cases/route-editable-default-01/generation/fresh-original.png", "required_provenance": "cases/route-editable-default-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 2, "case_id": "native-shape-card-01", "prompt_source": "case-suite.json#cases[case_id=native-shape-card-01].prompt", "required_output": "cases/native-shape-card-01/generation/fresh-original.png", "required_provenance": "cases/native-shape-card-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 3, "case_id": "native-text-cjk-font-01", "prompt_source": "case-suite.json#cases[case_id=native-text-cjk-font-01].prompt", "required_output": "cases/native-text-cjk-font-01/generation/fresh-original.png", "required_provenance": "cases/native-text-cjk-font-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 4, "case_id": "failure-fallback-stop-01", "prompt_source": "case-suite.json#cases[case_id=failure-fallback-stop-01].prompt", "required_output": "cases/failure-fallback-stop-01/generation/fresh-original.png", "required_provenance": "cases/failure-fallback-stop-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 5, "case_id": "package-render-portability-01", "prompt_source": "case-suite.json#cases[case_id=package-render-portability-01].prompt", "required_output": "cases/package-render-portability-01/generation/fresh-original.png", "required_provenance": "cases/package-render-portability-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 6, "case_id": "native-table-basic-01", "prompt_source": "case-suite.json#cases[case_id=native-table-basic-01].prompt", "required_output": "cases/native-table-basic-01/generation/fresh-original.png", "required_provenance": "cases/native-table-basic-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 7, "case_id": "native-table-merge-richtext-01", "prompt_source": "case-suite.json#cases[case_id=native-table-merge-richtext-01].prompt", "required_output": "cases/native-table-merge-richtext-01/generation/fresh-original.png", "required_provenance": "cases/native-table-merge-richtext-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 8, "case_id": "chart-data-provenance-01", "prompt_source": "case-suite.json#cases[case_id=chart-data-provenance-01].prompt", "required_output": "cases/chart-data-provenance-01/generation/fresh-original.png", "required_provenance": "cases/chart-data-provenance-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 9, "case_id": "visual-assets-gradient-icon-01", "prompt_source": "case-suite.json#cases[case_id=visual-assets-gradient-icon-01].prompt", "required_output": "cases/visual-assets-gradient-icon-01/generation/fresh-original.png", "required_provenance": "cases/visual-assets-gradient-icon-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 10, "case_id": "framework-irregular-layer-01", "prompt_source": "case-suite.json#cases[case_id=framework-irregular-layer-01].prompt", "required_output": "cases/framework-irregular-layer-01/generation/fresh-original.png", "required_provenance": "cases/framework-irregular-layer-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 11, "case_id": "multi-slide-consistency-01", "prompt_source": "case-suite.json#cases[case_id=multi-slide-consistency-01].prompt", "required_output": "cases/multi-slide-consistency-01/generation/fresh-original.png", "required_provenance": "cases/multi-slide-consistency-01/generation/provenance.json", "status": "QUEUED"},
+    {"order": 12, "case_id": "cache-idempotency-01", "prompt_source": "case-suite.json#cases[case_id=cache-idempotency-01].prompt", "required_output": "cases/cache-idempotency-01/generation/fresh-original.png", "required_provenance": "cases/cache-idempotency-01/generation/provenance.json", "status": "QUEUED"}
+  ]
+}
