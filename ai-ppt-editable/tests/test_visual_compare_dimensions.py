@@ -53,6 +53,18 @@ def main() -> int:
         assert data["valid"] is False
         assert data["issues"][0]["code"] == "aspect_ratio_mismatch"
 
+        strict_bad = root / "strict-bad.png"
+        Image.new("RGB", (80, 60), (20, 40, 180)).save(strict_bad)
+        result = run("scripts/compare_visual.py", str(strict_bad), str(reference), "--strict")
+        assert result.returncode == 2, result.stdout
+        data = json.loads(result.stdout)
+        failed_metrics = {item.get("metric") for item in data["issues"] if item["code"] == "visual_threshold_not_met"}
+        assert "blurred_layout_ssim" in failed_metrics
+        assert "blurred_pixel_fidelity_score" in failed_metrics
+
+        result = run("scripts/compare_visual.py", str(rendered), str(reference), "--strict")
+        assert result.returncode == 0, result.stdout
+
         qa_dir = root / "qa"
         result = run("scripts/visual_compare_qa.py", str(rendered), str(reference), "--out-dir", str(qa_dir))
         assert result.returncode == 0, result.stderr or result.stdout
