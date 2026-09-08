@@ -19,6 +19,10 @@ from image_viewport import load_viewport
 
 
 ASPECT_RATIO_TOLERANCE = 0.015
+STRICT_DEFAULTS = {
+    "blurred_layout_ssim": 0.90,
+    "blurred_pixel_fidelity_score": 0.90,
+}
 
 
 def sha256(path: Path) -> str:
@@ -71,6 +75,11 @@ def main() -> int:
     parser.add_argument("reference")
     parser.add_argument("--expected-ratio", type=float, help="optional slide ratio used to validate viewer-capture crops")
     parser.add_argument("--threshold", type=float)
+    parser.add_argument("--strict", action="store_true", help="fail closed on reference-fidelity metrics using documented strict defaults")
+    parser.add_argument("--min-global-ssim", type=float)
+    parser.add_argument("--min-layout-ssim", type=float)
+    parser.add_argument("--min-pixel-fidelity", type=float)
+    parser.add_argument("--min-blurred-pixel-fidelity", type=float)
     parser.add_argument("--raw-slide", action="store_true", help="compare the complete authored canvases; disable viewer letterbox-crop detection")
     parser.add_argument("--report")
     args = parser.parse_args()
@@ -112,18 +121,33 @@ def main() -> int:
     if not issues:
         diff = np.abs(rendered - reference)
         global_ssim = ssim(rendered, reference)
-        r_blur = np.asarray(rendered_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
-        s_blur = np.asarray(reference_image.convert("L").filter(ImageFilter.GaussianBlur(5)), dtype=np.float32) / 255.0
+        blur_radius = 6
+        rendered_blur_rgb = np.asarray(rendered_image.filter(ImageFilter.GaussianBlur(blur_radius)), dtype=np.float32) / 255.0
+        reference_blur_rgb = np.asarray(reference_image.filter(ImageFilter.GaussianBlur(blur_radius)), dtype=np.float32) / 255.0
+        r_blur = rendered_blur_rgb.mean(axis=2)
+        s_blur = reference_blur_rgb.mean(axis=2)
         blurred_ssim = ssim(r_blur[..., None], s_blur[..., None])
+        blurred_pixel_fidelity = max(0.0, 1.0 - float(np.abs(rendered_blur_rgb - reference_blur_rgb).mean()))
         result_metrics = {
             "global_ssim": round(global_ssim, 6),
             "blurred_layout_ssim": round(blurred_ssim, 6),
             "mean_absolute_error": round(float(diff.mean()), 6),
             "rmse": round(float(np.sqrt((diff * diff).mean())), 6),
             "pixel_fidelity_score": round(max(0.0, 1.0 - float(diff.mean())), 6),
+            "blurred_pixel_fidelity_score": round(blurred_pixel_fidelity, 6),
+            "layout_blur_radius": blur_radius,
         }
-        if args.threshold is not None and result_metrics["blurred_layout_ssim"] < args.threshold:
-            issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": args.threshold, "observed": result_metrics["blurred_layout_ssim"]})
+        thresholds = {
+            "global_ssim": args.min_global_ssim,
+            "blurred_layout_ssim": args.min_layout_ssim if args.min_layout_ssim is not None else args.threshold,
+            "pixel_fidelity_score": args.min_pixel_fidelity,
+            "blurred_pixel_fidelity_score": args.min_blurred_pixel_fidelity,
+        }
+        if args.strict:
+            thresholds = {key: value if value is not None else STRICT_DEFAULTS.get(key) for key, value in thresholds.items()}
+        for metric, threshold in thresholds.items():
+            if threshold is not None and result_metrics[metric] < threshold:
+                issues.append({"severity": "blocker", "code": "visual_threshold_not_met", "metric": metric, "threshold": threshold, "observed": result_metrics[metric]})
     else:
         result_metrics = {}
     result = {"schema": "ai-ppt-plus/visual-comparison/v1", "valid": not issues, "rendered": str(rendered_path.resolve()), "rendered_sha256": sha256(rendered_path), "reference": str(reference_path.resolve()), "reference_sha256": sha256(reference_path), "original_sizes": {"rendered": rendered_viewport["original_size"], "reference": reference_viewport["original_size"]}, "normalized_sizes": {"rendered": list(rendered_size), "reference": list(reference_size)}, "viewer_crops": {"rendered": rendered_viewport, "reference": reference_viewport}, "aspect_ratio_delta": round(aspect_ratio_delta, 6), "aspect_ratio_tolerance": ASPECT_RATIO_TOLERANCE, "comparison_size": list(reference_size if resized_for_comparison else rendered_size), "resized_for_comparison": resized_for_comparison, "metrics": result_metrics, "issues": issues, "human_visual_review_required": True, "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"}
