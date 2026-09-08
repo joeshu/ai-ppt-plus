@@ -324,6 +324,23 @@ text manifest, `--require-source-hashes`, and
 not a completeness gate because it can prove the declared objects while still
 missing undeclared shapes in the deck. Compare against the authoritative
 reference when one exists. Review both a deck strip and full-resolution pages.
+For fixed-reference reconstruction, `compare_visual.py` must run with
+`--strict` (or explicit, approved metric thresholds). A diagnostic invocation
+without thresholds cannot establish fidelity and must not satisfy a release
+gate. Strict comparison fails closed on layout-scale structure and blurred
+color fidelity; record every failed metric for E5 responsibility-layer repair
+instead of treating a valid aspect ratio as visual acceptance. Raw global SSIM,
+MAE and pixel fidelity remain diagnostic because font rasterization, JPEG noise
+and viewer antialiasing belong to typography/source-quality gates rather than
+the layout gate. Callers may still impose explicit raw thresholds when an
+approved same-renderer baseline exists.
+When more than one blocked candidate exists, rank candidates with
+`compare_visual_regions.py` and a hash-bound semantic region manifest. Give
+titles, formal text, icons, tables and semantic panels explicit foreground
+weights; keep ambient background regions at a lower weight. Use the sorted
+per-region scores for responsibility-layer repair. Region weighting may select
+the best blocked candidate, but it cannot override the strict whole-page gate
+or human review.
 
 For strict object acceptance, run
 `inspect_editable_objects.py --require-types --require-geometry
