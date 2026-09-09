@@ -39,7 +39,8 @@ def main() -> int:
     report = json.loads(validation.stdout)
     assert report["valid"] is True, report
     assert report["summary"]["replay_ready"] >= 1
-    assert report["summary"]["actual_replay_ready"] == 0
+    assert report["summary"]["actual_replay_ready"] >= 1
+    assert "task-mt0wdfjx4y91c-fixed-reference-01" in report["actual_replay_ready_cases"]
     assert report["summary"]["coverage_debt"] >= 1
     assert "native-table-merge-richtext-01" in report["replay_ready_cases"]
 
@@ -64,7 +65,8 @@ def main() -> int:
     selected = set(targeted_report["selected_case_ids"])
     assert "native-table-merge-richtext-01" in selected
     assert "route-editable-default-01" in selected  # P0 safety inclusion.
-    assert targeted_report["promotion_blocked_by_replay_debt"] is True
+    assert "task-mt0wdfjx4y91c-fixed-reference-01" in selected
+    assert targeted_report["promotion_blocked_by_replay_debt"] is False
 
     with tempfile.TemporaryDirectory(prefix="case-matrix-invalid-") as temp:
         invalid_path = Path(temp) / "matrix.json"

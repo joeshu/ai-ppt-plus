@@ -1,0 +1,31 @@
+{
+  "schema": "ai-ppt-plus/distillation-replay-case/v1",
+  "case_id": "task-mt0wdfjx4y91c-fixed-reference-01",
+  "source_mode": "fixed_reference_image",
+  "source_sha256": "fe7c67fe2736dbb0d5c6f48439b1e7cd5120a9f4c316f0698ae3f48ef961ea2c",
+  "human_approval": {
+    "status": "approved",
+    "decision": "pass_and_distill",
+    "recorded_from": "user_confirmation_in_case_thread",
+    "date": "2026-09-09"
+  },
+  "expected": {
+    "native_tables": 3,
+    "native_charts": 3,
+    "independent_icons": 11,
+    "formal_text_in_raster": false,
+    "whole_slide_picture_in_candidate": false,
+    "table_cell_asset_text_collision": 0,
+    "blurred_layout_ssim_min": 0.90
+  },
+  "observed": {
+    "native_tables": 3,
+    "native_charts": 3,
+    "independent_icons": 11,
+    "object_count": 66,
+    "formal_text_in_raster": false,
+    "whole_slide_picture_in_candidate": false,
+    "table_cell_asset_text_collision": 0,
+    "blurred_layout_ssim": 0.911721
+  }
+}

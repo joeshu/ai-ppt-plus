@@ -1,0 +1,9 @@
+{
+  "schema": "ai-ppt-plus/visual-generation-manifest/v1",
+  "project_id": "task-mt0wdfjx4y91c-source-reference",
+  "slides": [{
+    "slide_no": 1,
+    "copied_to": "reference.jpg",
+    "canvas": {"width_px": 1672, "height_px": 941, "ratio": "16:9"}
+  }]
+}
