@@ -427,23 +427,21 @@ def _set_cell_border(cell, border: dict | None) -> None:
 def _set_cell_margins(cell, margins) -> None:
     if not isinstance(margins, dict):
         return
-    from pptx.oxml.ns import qn
-    from pptx.oxml.xmlchemy import OxmlElement
-
     tc_pr = cell._tc.get_or_add_tcPr()
-    tc_mar = tc_pr.find(qn("a:tcMar"))
-    if tc_mar is None:
-        tc_mar = OxmlElement("a:tcMar")
-        tc_pr.append(tc_mar)
-    for side in ("left", "right", "top", "bottom"):
+    # DrawingML table-cell margins are attributes on ``a:tcPr``.  A former
+    # implementation emitted a WordprocessingML-like ``a:tcMar`` child; both
+    # Office and LibreOffice silently ignored it, allowing overlay icons to
+    # collide with otherwise valid native table text.
+    attributes = {
+        "left": "marL",
+        "right": "marR",
+        "top": "marT",
+        "bottom": "marB",
+    }
+    for side, attribute in attributes.items():
         if side not in margins:
             continue
-        element = tc_mar.find(qn(f"a:mar{side[0].upper()}"))
-        if element is None:
-            element = OxmlElement(f"a:mar{side[0].upper()}")
-            tc_mar.append(element)
-        element.set("w", str(max(0, int(float(margins[side]) * 12700))))
-        element.set("type", "dxa")
+        tc_pr.set(attribute, str(max(0, int(float(margins[side]) * 12700))))
 
 
 def _write_cell_runs(cell, value, font: str, size: float, color: str | None, bold: bool, style: dict) -> None:
@@ -553,7 +551,7 @@ def add_charts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
     import math
 
     from pptx.chart.data import CategoryChartData
-    from pptx.enum.chart import XL_LEGEND_POSITION
+    from pptx.enum.chart import XL_DATA_LABEL_POSITION, XL_LEGEND_POSITION
     from pptx.util import Emu
 
     charts = chart_map()
@@ -574,6 +572,9 @@ def add_charts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
                 _die("chart series length must match categories")
             values = []
             for value in raw_values:
+                if value is None or value == "":
+                    values.append(None)
+                    continue
                 try:
                     number = float(value)
                 except (TypeError, ValueError):
@@ -604,10 +605,33 @@ def add_charts(slide, specs: list[dict], deck: dict, theme: dict, ref_w: float, 
         if chart.has_legend:
             chart.legend.position = XL_LEGEND_POSITION.BOTTOM
             chart.legend.include_in_layout = False
+        label_positions = {
+            "above": XL_DATA_LABEL_POSITION.ABOVE,
+            "below": XL_DATA_LABEL_POSITION.BELOW,
+            "best_fit": XL_DATA_LABEL_POSITION.BEST_FIT,
+            "center": XL_DATA_LABEL_POSITION.CENTER,
+            "inside_base": XL_DATA_LABEL_POSITION.INSIDE_BASE,
+            "inside_end": XL_DATA_LABEL_POSITION.INSIDE_END,
+            "left": XL_DATA_LABEL_POSITION.LEFT,
+            "outside_end": XL_DATA_LABEL_POSITION.OUTSIDE_END,
+            "right": XL_DATA_LABEL_POSITION.RIGHT,
+        }
         if spec.get("data_labels"):
-            for series_item in chart.series:
+            for series_index, series_item in enumerate(chart.series):
                 series_item.has_data_labels = True
                 series_item.data_labels.show_value = True
+                raw_position = None
+                if series_index < len(series) and isinstance(series[series_index], dict):
+                    raw_position = series[series_index].get("data_label_position")
+                if raw_position is None:
+                    positions = spec.get("data_label_positions")
+                    if isinstance(positions, list) and series_index < len(positions):
+                        raw_position = positions[series_index]
+                if raw_position is not None:
+                    position = label_positions.get(str(raw_position).casefold())
+                    if position is None:
+                        _die(f"unsupported data label position: {raw_position}")
+                    series_item.data_labels.position = position
         for series_item, color in zip(chart.series, spec.get("colors") or theme.get("chart_colors") or []):
             series_item.format.fill.solid()
             series_item.format.fill.fore_color.rgb = _hex_to_rgb(color)

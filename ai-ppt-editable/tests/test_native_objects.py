@@ -34,8 +34,8 @@ def main() -> int:
                                 {"object_id": "component-bg", "type": "rect", "x": 0, "y": 0, "w": 1, "h": .5, "fill": "#FFFFFF"},
                                 {"object_id": "component-dot", "type": "oval", "x": .1, "y": .5, "w": .3, "h": .4, "fill": "#00FF00"}]}],
                 "icons": [{"object_id": "vector-icon", "file": "icon.svg", "x": .85, "y": .05, "w": .1, "h": .1, "alt_text": "矢量图标"}],
-                "tables": [{"object_id": "data-table", "x": .05, "y": .02, "w": .35, "h": .06, "rows": [["A", "B"], ["1", "2"]], "data_source": "fixture", "merges": [[0, 0, 0, 1]]}],
-                "charts": [{"object_id": "data-chart", "type": "column", "x": .55, "y": .82, "w": .35, "h": .15, "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, 2]}], "data_source": "fixture", "data_labels": True}],
+                "tables": [{"object_id": "data-table", "x": .05, "y": .02, "w": .35, "h": .06, "rows": [["A", "B"], ["1", "2"]], "data_source": "fixture", "merges": [[0, 0, 0, 1]], "cell_margins": {"left": 9, "right": 3, "top": 2, "bottom": 2}}],
+                "charts": [{"object_id": "data-chart", "type": "column", "x": .55, "y": .82, "w": .35, "h": .15, "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, None], "data_label_position": "above"}], "data_source": "fixture", "data_labels": True}],
                 "speaker_notes": "这是演讲者备注。",
                 "components": [{"component_id": "section-title", "object_id": "component-title", "object": {"text": "组件标题"}}],
                 "texts": [{"object_id": "label", "text": "可编辑", "x": .05, "y": .85, "w": .3, "h": .1, "size": 12}]
@@ -53,6 +53,10 @@ def main() -> int:
             assert b' descr="%E6' not in slide_xml  # XML stores UTF-8 text, not URL encoding.
             assert any(name.casefold().endswith(".svg") for name in names)
             assert b"data-table" in slide_xml and b"data-chart" in slide_xml
+            assert b'<a:tcPr marL="114300" marR="38100" marT="25400" marB="25400"' in slide_xml
+            assert b"<a:tcMar" not in slide_xml
+            chart_xml = b"".join(package.read(name) for name in names if name.startswith("ppt/charts/chart") and name.endswith(".xml"))
+            assert b'<c:dLblPos val="t"' in chart_xml
             assert b"component-title" in slide_xml
             assert "演讲者备注".encode() in b"".join(package.read(name) for name in names if "notesSlides/notesSlide" in name)
         report = root / "inspect.json"
@@ -71,7 +75,7 @@ def main() -> int:
         assert objects["data-table"]["object_type"] == "editable_table"
         assert objects["data-table"]["data_snapshot"]["values"] == [["A", ""], ["1", "2"]]
         assert objects["data-chart"]["object_type"] == "editable_chart"
-        assert objects["data-chart"]["data_snapshot"]["series"][0]["values"] == [1, 2]
+        assert objects["data-chart"]["data_snapshot"]["series"][0]["values"] == [1, None]
         assert objects["component-1"]["object_type"] == "native_group"
         assert objects["component-title"]["component_ref"] == "section-title"
     print("native objects contract: ok")

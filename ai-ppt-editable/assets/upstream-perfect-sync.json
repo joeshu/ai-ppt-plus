@@ -861,7 +861,7 @@
     {
       "source_path": "tests/test_native_objects.py",
       "target_path": "tests/test_native_objects.py",
-      "sha256": "52a46a8fc6da7233305687c4c84e46c707cda02e47dec2cc34d385ac13483f46",
+      "sha256": "fb72d2caf39f6aa2d8fe5cf134770b303a1834cf3be77192230e180b3c0f9e7f",
       "executable": false
     },
     {
@@ -987,7 +987,7 @@
     {
       "source_path": "tests/test_visual_compare_dimensions.py",
       "target_path": "tests/test_visual_compare_dimensions.py",
-      "sha256": "5507ae138131b89865f96280ab69e3d9adaf0f4aefffc2183740daaa54501581",
+      "sha256": "9b5144fd7e5569edd46e47a7874822d7b2f7500316fc48890f28785aad1f623f",
       "executable": false
     }
   ],
