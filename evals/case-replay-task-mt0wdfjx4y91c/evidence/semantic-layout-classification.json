@@ -1,0 +1,102 @@
+{
+  "schema": "ai-ppt-plus/semantic-layout-classification/v1",
+  "valid": false,
+  "regions": [
+    {
+      "region_id": "table-value",
+      "visual_structure": "repeated_rows_with_separators",
+      "semantic_structure": "icon_title_description_list",
+      "candidate_object_type": "repeated_component_group",
+      "table_evidence": [
+        "aligned_rows",
+        "separators_or_border",
+        "aligned_columns"
+      ],
+      "list_evidence": [
+        "no_header",
+        "no_uniform_fields",
+        "independent_icons",
+        "heterogeneous_descriptions"
+      ],
+      "associated_icon_ids": [
+        "icon-value-user",
+        "icon-value-layers",
+        "icon-value-team"
+      ],
+      "confidence": 0.96,
+      "decision_reason": "Lines and aligned columns divide repeated information items; they do not define a data matrix.",
+      "blocking_code": "TABLE-SEMANTIC-FALSE-POSITIVE-001",
+      "slide": 1
+    },
+    {
+      "region_id": "table-downgrade",
+      "visual_structure": "repeated_rows_with_separators",
+      "semantic_structure": "icon_title_description_list",
+      "candidate_object_type": "repeated_component_group",
+      "table_evidence": [
+        "aligned_rows",
+        "separators_or_border",
+        "aligned_columns"
+      ],
+      "list_evidence": [
+        "no_header",
+        "no_uniform_fields",
+        "independent_icons",
+        "heterogeneous_descriptions"
+      ],
+      "associated_icon_ids": [
+        "icon-down-target",
+        "icon-down-team"
+      ],
+      "confidence": 0.96,
+      "decision_reason": "Lines and aligned columns divide repeated information items; they do not define a data matrix.",
+      "blocking_code": "TABLE-SEMANTIC-FALSE-POSITIVE-001",
+      "slide": 1
+    },
+    {
+      "region_id": "table-churn",
+      "visual_structure": "repeated_rows_with_separators",
+      "semantic_structure": "icon_title_description_list",
+      "candidate_object_type": "repeated_component_group",
+      "table_evidence": [
+        "aligned_rows",
+        "separators_or_border",
+        "aligned_columns"
+      ],
+      "list_evidence": [
+        "no_header",
+        "no_uniform_fields",
+        "independent_icons"
+      ],
+      "associated_icon_ids": [
+        "icon-churn-growth",
+        "icon-churn-handshake",
+        "icon-churn-team"
+      ],
+      "confidence": 0.96,
+      "decision_reason": "Lines and aligned columns divide repeated information items; they do not define a data matrix.",
+      "blocking_code": "TABLE-SEMANTIC-FALSE-POSITIVE-001",
+      "slide": 1
+    }
+  ],
+  "issues": [
+    {
+      "severity": "blocker",
+      "code": "TABLE-SEMANTIC-FALSE-POSITIVE-001",
+      "slide": 1,
+      "object_id": "table-value"
+    },
+    {
+      "severity": "blocker",
+      "code": "TABLE-SEMANTIC-FALSE-POSITIVE-001",
+      "slide": 1,
+      "object_id": "table-downgrade"
+    },
+    {
+      "severity": "blocker",
+      "code": "TABLE-SEMANTIC-FALSE-POSITIVE-001",
+      "slide": 1,
+      "object_id": "table-churn"
+    }
+  ]
+}

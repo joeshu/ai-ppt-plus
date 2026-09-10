@@ -1,0 +1,95 @@
+{
+  "source": "evals/case-replay-task-mt0wdfjx4y91c/source/reference.jpg",
+  "preview": "evals/case-replay-task-mt0wdfjx4y91c/candidate/render.png",
+  "status": "diagnostic",
+  "ok": true,
+  "source_original_size": [
+    1672,
+    941
+  ],
+  "source_normalized_size": [
+    1672,
+    941
+  ],
+  "preview_original_size": [
+    1280,
+    721
+  ],
+  "preview_size": [
+    1280,
+    721
+  ],
+  "resized_for_comparison": true,
+  "aspect_ratio_delta": 0.001521,
+  "aspect_ratio_tolerance": 0.015,
+  "viewer_crops": {
+    "source": {
+      "detected": false,
+      "crop_box": [
+        0,
+        0,
+        1672,
+        941
+      ],
+      "original_size": [
+        1672,
+        941
+      ],
+      "content_size": [
+        1672,
+        941
+      ],
+      "original_ratio": 1.7768332,
+      "content_ratio": 1.7768332,
+      "bar_pixels": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "confidence": 0.0,
+      "reason": "no_contiguous_dark_edge_bar",
+      "artifact_classification": "none"
+    },
+    "preview": {
+      "detected": false,
+      "crop_box": [
+        0,
+        0,
+        1280,
+        721
+      ],
+      "original_size": [
+        1280,
+        721
+      ],
+      "content_size": [
+        1280,
+        721
+      ],
+      "original_ratio": 1.7753121,
+      "content_ratio": 1.7753121,
+      "bar_pixels": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "confidence": 0.0,
+      "reason": "no_contiguous_dark_edge_bar",
+      "artifact_classification": "none"
+    }
+  },
+  "mean_abs_diff_0_255": 26.3577,
+  "rms_diff_0_255": 57.4788,
+  "changed_pixel_fraction_threshold_32": 0.214768,
+  "changed_pixel_fraction_threshold_64": 0.147751,
+  "artifacts": {
+    "source_resized": "evals/case-replay-task-mt0wdfjx4y91c/evidence/qa/source_resized.png",
+    "preview": "evals/case-replay-task-mt0wdfjx4y91c/evidence/qa/preview.png",
+    "side_by_side": "evals/case-replay-task-mt0wdfjx4y91c/evidence/qa/side_by_side.png",
+    "blend": "evals/case-replay-task-mt0wdfjx4y91c/evidence/qa/blend.png",
+    "diff_heatmap": "evals/case-replay-task-mt0wdfjx4y91c/evidence/qa/diff_heatmap.png"
+  },
+  "note": "Metrics are diagnostic only. Final pass/fail requires visual review of source vs preview for text/icon position, size, and overlap."
+}

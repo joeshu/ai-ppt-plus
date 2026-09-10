@@ -1,0 +1,969 @@
+{
+  "schema": "ai-ppt-plus/editable-object-audit/v1",
+  "valid": true,
+  "deck": "/workspace/ac0-work/ai-ppt-plus/evals/case-replay-task-mt0wdfjx4y91c/candidate/editable.pptx",
+  "slides": [
+    {
+      "slide": 1,
+      "shape_count": 95,
+      "shapes": [
+        {
+          "name": "canvas",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 6862572
+        },
+        {
+          "name": "header-red",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 12191695,
+          "height": 905859
+        },
+        {
+          "name": "header-layer",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 5730096,
+          "top": 0,
+          "width": 2926006,
+          "height": 892134
+        },
+        {
+          "name": "tag",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 158492,
+          "top": 54900,
+          "width": 390134,
+          "height": 796058
+        },
+        {
+          "name": "summary-card",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 390134,
+          "top": 995072,
+          "width": 11411426,
+          "height": 651944
+        },
+        {
+          "name": "summary-bullet",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 1621495,
+          "top": 1159774,
+          "width": 121916,
+          "height": 116663
+        },
+        {
+          "name": "panel-1",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 353559,
+          "top": 1736230,
+          "width": 3791617,
+          "height": 4714586
+        },
+        {
+          "name": "panel-1-band",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 365750,
+          "top": 1743093,
+          "width": 3767233,
+          "height": 473517
+        },
+        {
+          "name": "panel-2",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 4254901,
+          "top": 1736230,
+          "width": 3669700,
+          "height": 4714586
+        },
+        {
+          "name": "panel-2-band",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 4267093,
+          "top": 1743093,
+          "width": 3645316,
+          "height": 473517
+        },
+        {
+          "name": "panel-3",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 8046518,
+          "top": 1736230,
+          "width": 3779425,
+          "height": 4714586
+        },
+        {
+          "name": "panel-3-band",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 8058710,
+          "top": 1743093,
+          "width": 3755042,
+          "height": 473517
+        },
+        {
+          "name": "n1",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 499859,
+          "top": 1784268,
+          "width": 402325,
+          "height": 398029
+        },
+        {
+          "name": "n2",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 4425585,
+          "top": 1784268,
+          "width": 402325,
+          "height": 398029
+        },
+        {
+          "name": "n3",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 8192819,
+          "top": 1784268,
+          "width": 402325,
+          "height": 398029
+        },
+        {
+          "name": "status1",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 451092,
+          "top": 3973429,
+          "width": 1511770,
+          "height": 411754
+        },
+        {
+          "name": "goal1",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 2389572,
+          "top": 3973429,
+          "width": 1670262,
+          "height": 411754
+        },
+        {
+          "name": "status2",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 4449968,
+          "top": 4213619,
+          "width": 1048485,
+          "height": 398029
+        },
+        {
+          "name": "goal2",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 6132422,
+          "top": 4213619,
+          "width": 1694645,
+          "height": 398029
+        },
+        {
+          "name": "status3",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 8241585,
+          "top": 4213619,
+          "width": 1243552,
+          "height": 398029
+        },
+        {
+          "name": "goal3",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 10009381,
+          "top": 4213619,
+          "width": 1658070,
+          "height": 398029
+        },
+        {
+          "name": "arrow1",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 2060396,
+          "top": 4090092,
+          "width": 207258,
+          "height": 171564
+        },
+        {
+          "name": "arrow2",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 5815438,
+          "top": 4344008,
+          "width": 207258,
+          "height": 171564
+        },
+        {
+          "name": "arrow3",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 9680205,
+          "top": 4344008,
+          "width": 207258,
+          "height": 171564
+        },
+        {
+          "name": "band1",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 390134,
+          "top": 4467534,
+          "width": 3706275,
+          "height": 233327
+        },
+        {
+          "name": "band2",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 4291476,
+          "top": 4714586,
+          "width": 3584358,
+          "height": 233327
+        },
+        {
+          "name": "band3",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 8083093,
+          "top": 4714586,
+          "width": 3694083,
+          "height": 233327
+        },
+        {
+          "name": "table-value-item-1-background",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 390134,
+          "top": 4700861,
+          "width": 3706275,
+          "height": 555868
+        },
+        {
+          "name": "table-value-item-1-separator",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 1438620,
+          "top": 4700861,
+          "width": 0,
+          "height": 555869
+        },
+        {
+          "name": "table-value-item-2-background",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 390134,
+          "top": 5256730,
+          "width": 3706275,
+          "height": 555868
+        },
+        {
+          "name": "table-value-item-2-separator",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 1438620,
+          "top": 5256730,
+          "width": 0,
+          "height": 555868
+        },
+        {
+          "name": "table-value-item-3-background",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 390134,
+          "top": 5812598,
+          "width": 3706275,
+          "height": 562730
+        },
+        {
+          "name": "table-value-item-3-separator",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 1438620,
+          "top": 5812598,
+          "width": 0,
+          "height": 562731
+        },
+        {
+          "name": "table-downgrade-item-1-background",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 4291476,
+          "top": 4947914,
+          "width": 3584358,
+          "height": 713707
+        },
+        {
+          "name": "table-downgrade-item-1-separator",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 5352154,
+          "top": 4947914,
+          "width": 0,
+          "height": 713707
+        },
+        {
+          "name": "table-downgrade-item-2-background",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 4291476,
+          "top": 5661621,
+          "width": 3584358,
+          "height": 713707
+        },
+        {
+          "name": "table-downgrade-item-2-separator",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 5352154,
+          "top": 5661621,
+          "width": 0,
+          "height": 713708
+        },
+        {
+          "name": "table-churn-item-1-background",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 8083093,
+          "top": 4947914,
+          "width": 3694083,
+          "height": 473517
+        },
+        {
+          "name": "table-churn-item-1-separator",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 9155962,
+          "top": 4947914,
+          "width": 0,
+          "height": 473517
+        },
+        {
+          "name": "table-churn-item-2-background",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 8083093,
+          "top": 5421431,
+          "width": 3694083,
+          "height": 473517
+        },
+        {
+          "name": "table-churn-item-2-separator",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 9155962,
+          "top": 5421431,
+          "width": 0,
+          "height": 473518
+        },
+        {
+          "name": "table-churn-item-3-background",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 8083093,
+          "top": 5894949,
+          "width": 3694083,
+          "height": 480380
+        },
+        {
+          "name": "table-churn-item-3-separator",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 9155962,
+          "top": 5894949,
+          "width": 0,
+          "height": 480380
+        },
+        {
+          "name": "chart-value",
+          "type": "CHART (3)",
+          "has_text": false,
+          "text": "",
+          "left": 475476,
+          "top": 2456800,
+          "width": 3596550,
+          "height": 1441140
+        },
+        {
+          "name": "chart-downgrade",
+          "type": "CHART (3)",
+          "has_text": false,
+          "text": "",
+          "left": 4389010,
+          "top": 2456800,
+          "width": 3450249,
+          "height": 1633292
+        },
+        {
+          "name": "chart-churn",
+          "type": "CHART (3)",
+          "has_text": false,
+          "text": "",
+          "left": 8205010,
+          "top": 2456800,
+          "width": 3523399,
+          "height": 1633292
+        },
+        {
+          "name": "brand-logo",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 10216640,
+          "top": 171564,
+          "width": 1731220,
+          "height": 542143
+        },
+        {
+          "name": "icon-header-bars",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 3486824,
+          "top": 1818581,
+          "width": 414517,
+          "height": 288228
+        },
+        {
+          "name": "icon-header-bulb",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 7351592,
+          "top": 1818581,
+          "width": 365750,
+          "height": 308815
+        },
+        {
+          "name": "icon-header-shield",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 11301701,
+          "top": 1811719,
+          "width": 341367,
+          "height": 322540
+        },
+        {
+          "name": "icon-value-user",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 499859,
+          "top": 4810662,
+          "width": 316984,
+          "height": 274502
+        },
+        {
+          "name": "icon-value-layers",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 499859,
+          "top": 5393981,
+          "width": 316984,
+          "height": 260777
+        },
+        {
+          "name": "icon-value-team",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 499859,
+          "top": 5956712,
+          "width": 341367,
+          "height": 233327
+        },
+        {
+          "name": "icon-down-target",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 4376818,
+          "top": 5092028,
+          "width": 365750,
+          "height": 295090
+        },
+        {
+          "name": "icon-down-team",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 4376818,
+          "top": 5812598,
+          "width": 365750,
+          "height": 240190
+        },
+        {
+          "name": "icon-churn-growth",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 8192819,
+          "top": 5092028,
+          "width": 341367,
+          "height": 274502
+        },
+        {
+          "name": "icon-churn-handshake",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 8192819,
+          "top": 5565545,
+          "width": 341367,
+          "height": 274502
+        },
+        {
+          "name": "icon-churn-team",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 8192819,
+          "top": 6039063,
+          "width": 341367,
+          "height": 274502
+        },
+        {
+          "name": "tag-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "推进\n措施",
+          "left": 182875,
+          "top": 137251,
+          "width": 341367,
+          "height": 651944
+        },
+        {
+          "name": "title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "3.5  策略精准化保价值",
+          "left": 694926,
+          "top": 144114,
+          "width": 6705432,
+          "height": 603906
+        },
+        {
+          "name": "summary",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "1号文谋划目标增收3500万元，截止7月份，整体达到序时进度，流失与降套符合预期，提值缺口80万元，\n下半年聚焦提值增速，保规模，户均提值增长3元，确保全年目标达成。",
+          "left": 1914096,
+          "top": 1077423,
+          "width": 8534186,
+          "height": 480380
+        },
+        {
+          "name": "num1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "01",
+          "left": 499859,
+          "top": 1839169,
+          "width": 402325,
+          "height": 274502
+        },
+        {
+          "name": "num2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "02",
+          "left": 4425585,
+          "top": 1839169,
+          "width": 402325,
+          "height": 274502
+        },
+        {
+          "name": "num3",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "03",
+          "left": 8192819,
+          "top": 1839169,
+          "width": 402325,
+          "height": 274502
+        },
+        {
+          "name": "panel-title1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "提价值",
+          "left": 1085060,
+          "top": 1852894,
+          "width": 1584920,
+          "height": 274502
+        },
+        {
+          "name": "panel-title2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "控降套",
+          "left": 5071745,
+          "top": 1852894,
+          "width": 1584920,
+          "height": 274502
+        },
+        {
+          "name": "panel-title3",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "控流失",
+          "left": 8863362,
+          "top": 1852894,
+          "width": 1584920,
+          "height": 274502
+        },
+        {
+          "name": "chart-title1",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "套餐适配提值增收情况（万元）",
+          "left": 804651,
+          "top": 2285236,
+          "width": 2194505,
+          "height": 171564
+        },
+        {
+          "name": "chart-title2",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "月度降套用户降收金额（万元）",
+          "left": 4779144,
+          "top": 2285236,
+          "width": 2438339,
+          "height": 171564
+        },
+        {
+          "name": "chart-title3",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "出账流失收入（单位：万元）",
+          "left": 8497611,
+          "top": 2285236,
+          "width": 2438339,
+          "height": 171564
+        },
+        {
+          "name": "status1-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "现状：提值增速放缓，\n累计有缺口",
+          "left": 524242,
+          "top": 4021467,
+          "width": 1365469,
+          "height": 329403
+        },
+        {
+          "name": "goal1-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "目标：保持规模，户均提值\n增3元，保底45万元/月",
+          "left": 2462722,
+          "top": 4021467,
+          "width": 1511770,
+          "height": 329403
+        },
+        {
+          "name": "status2-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "现状：趋势向好，\n略有波动",
+          "left": 4498735,
+          "top": 4261657,
+          "width": 950952,
+          "height": 308815
+        },
+        {
+          "name": "goal2-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "目标：平稳下降，防止反弹",
+          "left": 6217764,
+          "top": 4295970,
+          "width": 1523961,
+          "height": 219602
+        },
+        {
+          "name": "status3-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "现状：趋势向好，\n仍在高位",
+          "left": 8302544,
+          "top": 4261657,
+          "width": 1109444,
+          "height": 308815
+        },
+        {
+          "name": "goal3-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "目标：保持趋势，\n持续压降10%",
+          "left": 10094723,
+          "top": 4261657,
+          "width": 1487386,
+          "height": 308815
+        },
+        {
+          "name": "band1-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "提值增速保障举措",
+          "left": 1219169,
+          "top": 4501847,
+          "width": 2072588,
+          "height": 171564
+        },
+        {
+          "name": "band2-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "降套压降保障举措",
+          "left": 5120511,
+          "top": 4748899,
+          "width": 2072588,
+          "height": 171564
+        },
+        {
+          "name": "band3-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "流失改善保障举措",
+          "left": 8899937,
+          "top": 4748899,
+          "width": 2072588,
+          "height": 171564
+        },
+        {
+          "name": "table-value-item-1-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "户均提3元\n从哪来？",
+          "left": 853418,
+          "top": 4769487,
+          "width": 548626,
+          "height": 432342
+        },
+        {
+          "name": "table-value-item-1-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "▸ 存量+R：由2971提升至3500户。\n▸ 提值30元以上FTTR/金融同装率：由41%提升至48%。",
+          "left": 1511770,
+          "top": 4748899,
+          "width": 2535872,
+          "height": 459792
+        },
+        {
+          "name": "table-value-item-2-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "提值规模\n从哪来？",
+          "left": 853418,
+          "top": 5325355,
+          "width": 548626,
+          "height": 432342
+        },
+        {
+          "name": "table-value-item-2-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "四类客群策略优化：①超高端：重推系弱提值。②老旧套餐：深挖需求，适配专属权益。③不限量：提移宽选套感知。④21：细分消费促融合。",
+          "left": 1511770,
+          "top": 5304768,
+          "width": 2535872,
+          "height": 459792
+        },
+        {
+          "name": "table-value-item-3-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "营销组织",
+          "left": 853418,
+          "top": 5881224,
+          "width": 548626,
+          "height": 439204
+        },
+        {
+          "name": "table-value-item-3-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "转变策略：①盯规模向盯提值金额转变。②营销模式由传统外呼转向面客。③主推产品由轻合约转向重合约。④升规模转向控升降比。",
+          "left": 1511770,
+          "top": 5860636,
+          "width": 2535872,
+          "height": 466654
+        },
+        {
+          "name": "table-downgrade-item-1-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "持续优化\n策略",
+          "left": 4754761,
+          "top": 5016540,
+          "width": 560817,
+          "height": 590181
+        },
+        {
+          "name": "table-downgrade-item-1-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "▸ 针对通过降套策略挽回续签受理的，月度可返还降套受理积分，封顶为个人月度销售积分的30%。\n▸ 优化降套策略依策不扣积分。",
+          "left": 5425304,
+          "top": 4995952,
+          "width": 2401763,
+          "height": 617631
+        },
+        {
+          "name": "table-downgrade-item-2-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "营销组织",
+          "left": 4754761,
+          "top": 5730247,
+          "width": 560817,
+          "height": 590181
+        },
+        {
+          "name": "table-downgrade-item-2-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "▸ 压规模向控规模+降档金额调整。\n▸ 按用户属地+受理人同时管控。\n▸ 事后管控向前置维系转变（端网业适配+满卡满融）。",
+          "left": 5425304,
+          "top": 5709659,
+          "width": 2401763,
+          "height": 617631
+        },
+        {
+          "name": "table-churn-item-1-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "发展质量",
+          "left": 8546378,
+          "top": 5016540,
+          "width": 573009,
+          "height": 349991
+        },
+        {
+          "name": "table-churn-item-1-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "入网阶段，高质量发展，保障收入持续性增长。",
+          "left": 9229113,
+          "top": 4995952,
+          "width": 2499297,
+          "height": 377441
+        },
+        {
+          "name": "table-churn-item-2-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "前置维系",
+          "left": 8546378,
+          "top": 5490057,
+          "width": 573009,
+          "height": 349991
+        },
+        {
+          "name": "table-churn-item-2-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "满卡满融增粘性 + 合约到期维系 + 端网业适配维系。",
+          "left": 9229113,
+          "top": 5469469,
+          "width": 2499297,
+          "height": 377441
+        },
+        {
+          "name": "table-churn-item-3-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "事后回捞",
+          "left": 8546378,
+          "top": 5963575,
+          "width": 573009,
+          "height": 356853
+        },
+        {
+          "name": "table-churn-item-3-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "增流差牵引，聚焦高流失风险用户，分类分级开展维系。",
+          "left": 9229113,
+          "top": 5942987,
+          "width": 2499297,
+          "height": 384304
+        }
+      ]
+    }
+  ],
+  "expected_object_count": 0,
+  "observed_shape_count": 95,
+  "whole_slide_pictures": [],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

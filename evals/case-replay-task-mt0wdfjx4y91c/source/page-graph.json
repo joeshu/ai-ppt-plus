@@ -1,0 +1,16 @@
+{
+  "schema":"ai-ppt-plus/page-graph/v1",
+  "source_sha256":"fe7c67fe2736dbb0d5c6f48439b1e7cd5120a9f4c316f0698ae3f48ef961ea2c",
+  "page":{"width":1672,"height":941,"ratio":1.7768332},
+  "regions":[
+    {"id":"header","bbox":[0,0,1,0.132]},
+    {"id":"summary","bbox":[0.032,0.145,0.936,0.095]},
+    {"id":"panel-value","bbox":[0.029,0.253,0.311,0.687]},
+    {"id":"panel-downgrade","bbox":[0.349,0.253,0.301,0.687]},
+    {"id":"panel-churn","bbox":[0.660,0.253,0.310,0.687]},
+    {"id":"protection-actions-left","bbox":[0.032,0.685,0.304,0.244],"visual_structure":"repeated_rows_with_separators","semantic_structure":"icon_title_description_list","candidate_object_type":"repeated_component_group","table_evidence":["aligned_rows","separators_or_border"],"list_evidence":["no_header","no_uniform_fields","independent_icons","heterogeneous_descriptions"],"confidence":0.96,"decision_reason":"Lines divide repeated information items; they do not define a data matrix."},
+    {"id":"protection-actions-middle","bbox":[0.352,0.721,0.294,0.208],"visual_structure":"repeated_rows_with_separators","semantic_structure":"icon_title_description_list","candidate_object_type":"repeated_component_group","table_evidence":["aligned_rows","separators_or_border"],"list_evidence":["no_header","no_uniform_fields","independent_icons","heterogeneous_descriptions"],"confidence":0.96,"decision_reason":"Lines divide repeated information items; they do not define a data matrix."},
+    {"id":"protection-actions-right","bbox":[0.663,0.721,0.303,0.208],"visual_structure":"repeated_rows_with_separators","semantic_structure":"icon_title_description_list","candidate_object_type":"repeated_component_group","table_evidence":["aligned_rows","separators_or_border"],"list_evidence":["no_header","no_uniform_fields","independent_icons"],"confidence":0.96,"decision_reason":"Lines divide repeated information items; they do not define a data matrix."}
+  ],
+  "icon_locks":["header-bars","header-bulb","header-shield","user-clock","layers","team-blue","target","team-orange","growth","handshake","team-red"]
+}

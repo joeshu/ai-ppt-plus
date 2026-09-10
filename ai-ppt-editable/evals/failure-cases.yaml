@@ -47,3 +47,7 @@ cases:
   - {id: imagegen_provenance_incomplete, signal: imagegen_manifest_missing_generated_source_prompt_file_or_non_imagegen_backend, expected: blocker_and_regenerate_asset}
   - {id: icon_direct_asset_bypass, signal: icon_or_decoration_copied_directly_without_imagegen_asset_record, expected: blocker_and_run_imagegen_b4_b5}
   - {id: icon_partial_imagegen, signal: reference_reconstruction_imagegen_manifest_covers_only_problem_icons, expected: blocker_and_regenerate_all_icon_layers}
+  - {id: table_semantic_false_positive, signal: native_table_without_field_data_semantics, expected: block_and_reclassify_repeated_component}
+  - {id: repeated_component_flattened, signal: icon_title_body_list_flattened_to_picture_or_single_textbox, expected: block_and_rebuild_children}
+  - {id: component_editability_incomplete, signal: repeated_component_missing_independent_icon_title_body_or_divider, expected: block_and_split_components}
+  - {id: object_type_reference_mismatch, signal: candidate_object_type_differs_from_pagegraph_semantics, expected: block_and_recompose}

@@ -10,22 +10,30 @@
     "date": "2026-09-09"
   },
   "expected": {
-    "native_tables": 3,
+    "native_tables": 0,
+    "repeated_component_groups": 3,
+    "independent_item_groups": 8,
     "native_charts": 3,
     "independent_icons": 11,
     "formal_text_in_raster": false,
     "whole_slide_picture_in_candidate": false,
     "table_cell_asset_text_collision": 0,
-    "blurred_layout_ssim_min": 0.90
+    "blurred_layout_ssim_min": 0.90,
+    "assets_mutated": false
   },
   "observed": {
-    "native_tables": 3,
+    "native_tables": 0,
+    "repeated_component_groups": 3,
+    "independent_item_groups": 8,
     "native_charts": 3,
     "independent_icons": 11,
-    "object_count": 66,
+    "object_count": 95,
     "formal_text_in_raster": false,
     "whole_slide_picture_in_candidate": false,
     "table_cell_asset_text_collision": 0,
-    "blurred_layout_ssim": 0.911721
+    "blurred_layout_ssim": 0.909677,
+    "assets_mutated": false,
+    "candidate_deck_sha256": "de5f9a8decac8254c93abbd10ad84b53d10dd36f8d4d8b32f3f9148c731d9a8f",
+    "candidate_render_sha256": "0a6b8bd9832364c930b3088c90dc20c8811f2630d1c1f761863df30f0451654e"
   }
 }
