@@ -238,7 +238,7 @@
     },
     {
       "case_id": "task-mt0wdfjx4y91c-fixed-reference-01",
-      "title": "固定参考图三面板图表表格及图标文字安全区高保真回放",
+      "title": "固定参考图三面板图表及重复信息组件高保真回放",
       "priority": "P1",
       "responsibility": "text-visual",
       "mode": "replay",
@@ -254,13 +254,16 @@
         "human_approved": true
       },
       "contract_tests": [
+        "tests/test_semantic_layout.py",
         "tests/test_table_layout.py",
         "tests/test_native_objects.py"
       ],
       "required_checks": [
         "fixed_reference_route",
         "three_native_charts",
-        "three_native_tables",
+        "zero_false_native_tables",
+        "three_repeated_component_groups",
+        "eight_independent_item_groups",
         "independent_imagegen_icons",
         "table_cell_asset_text_collision=0",
         "blurred_layout_ssim>=0.90",

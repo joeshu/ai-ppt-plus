@@ -24,6 +24,7 @@ from component_expander import _choose_slide_layout, _expand_components, _frac, 
 from preview_renderer import find_cjk_font as _find_cjk_font
 from preview_renderer import render_previews
 from reference_preflight import validate_reference_preflight
+from validate_semantic_layout import validate as validate_semantic_layout
 from pptx_primitives import (
     _add_outer_shadow,
     _apply_shape_fill,
@@ -61,6 +62,10 @@ def main() -> None:
         _die(f"layout file not found: {layout_path}")
     deck = _promote_native_structures(_load_deck(layout_path))
     deck = _expand_components(deck)
+    semantic_report = validate_semantic_layout(deck)
+    if not semantic_report.get("valid", False):
+        issue_codes = ", ".join(str(item.get("code")) for item in semantic_report.get("issues", []))
+        _die(f"semantic layout preflight failed: {issue_codes}")
     deck["strict_input"] = bool(args.strict_input)
     deck["require_native_structure"] = bool(args.require_native_structure or (args.strict_input and deck.get("editable_object_policy") == "native-semantic-objects"))
     output_path = Path(args.out).resolve()

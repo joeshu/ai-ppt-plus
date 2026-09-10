@@ -35,6 +35,7 @@ from pptx_primitives import (
     _set_run_fonts,
     text_size_pt as _text_size_pt,
 )
+from validate_semantic_layout import validate as validate_semantic_layout
 
 
 def _die(message: str, code: int = 2):
@@ -58,6 +59,10 @@ def main() -> None:
     if not layout_path.exists():
         _die(f"layout file not found: {layout_path}")
     deck = _expand_components(_load_deck(layout_path))
+    semantic_report = validate_semantic_layout(deck)
+    if not semantic_report.get("valid", False):
+        issue_codes = ", ".join(str(item.get("code")) for item in semantic_report.get("issues", []))
+        _die(f"semantic layout preflight failed: {issue_codes}")
     deck["strict_input"] = bool(args.strict_input)
     output_path = Path(args.out).resolve()
     if args.font_dir:

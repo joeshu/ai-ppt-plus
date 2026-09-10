@@ -1,0 +1,15 @@
+{
+  "schema": "ai-ppt-plus/font-strip/v1",
+  "input_role": "candidate_deck_before_git_delivery",
+  "output_role": "candidate_deck_git_delivery",
+  "input_sha256": "19387acd3a08f357e2f380f7dc265ac962f3cc5c14ec93d0b1f5bc421405452a",
+  "output_sha256": "de5f9a8decac8254c93abbd10ad84b53d10dd36f8d4d8b32f3f9148c731d9a8f",
+  "input_size_bytes": 15137027,
+  "output_size_bytes": 1545375,
+  "removed_parts": ["ppt/fonts/font1.fntdata"],
+  "removed_relationship_ids": ["rId9"],
+  "removed_families": ["Noto Sans CJK SC"],
+  "embedded_font_list_removed": true,
+  "zip_valid": true,
+  "source_visual_baseline_retained_locally": true
+}

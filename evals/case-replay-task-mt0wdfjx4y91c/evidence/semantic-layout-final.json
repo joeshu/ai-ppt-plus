@@ -1,0 +1,78 @@
+{
+  "schema": "ai-ppt-plus/semantic-layout-classification/v1",
+  "valid": true,
+  "regions": [
+    {
+      "region_id": "table-value",
+      "slide": 1,
+      "visual_structure": "repeated_rows_with_separators",
+      "semantic_structure": "icon_title_description_list",
+      "candidate_object_type": "repeated_component_group",
+      "table_evidence": [
+        "aligned_rows",
+        "separators_or_border"
+      ],
+      "list_evidence": [
+        "no_header",
+        "no_uniform_fields",
+        "independent_icons"
+      ],
+      "associated_icon_ids": [
+        "icon-value-layers",
+        "icon-value-team",
+        "icon-value-user"
+      ],
+      "confidence": 0.96,
+      "decision_reason": "Lines divide repeated information items; they do not define a data matrix.",
+      "blocking_code": null
+    },
+    {
+      "region_id": "table-downgrade",
+      "slide": 1,
+      "visual_structure": "repeated_rows_with_separators",
+      "semantic_structure": "icon_title_description_list",
+      "candidate_object_type": "repeated_component_group",
+      "table_evidence": [
+        "aligned_rows",
+        "separators_or_border"
+      ],
+      "list_evidence": [
+        "no_header",
+        "no_uniform_fields",
+        "independent_icons"
+      ],
+      "associated_icon_ids": [
+        "icon-down-target",
+        "icon-down-team"
+      ],
+      "confidence": 0.96,
+      "decision_reason": "Lines divide repeated information items; they do not define a data matrix.",
+      "blocking_code": null
+    },
+    {
+      "region_id": "table-churn",
+      "slide": 1,
+      "visual_structure": "repeated_rows_with_separators",
+      "semantic_structure": "icon_title_description_list",
+      "candidate_object_type": "repeated_component_group",
+      "table_evidence": [
+        "aligned_rows",
+        "separators_or_border"
+      ],
+      "list_evidence": [
+        "no_header",
+        "no_uniform_fields",
+        "independent_icons"
+      ],
+      "associated_icon_ids": [
+        "icon-churn-growth",
+        "icon-churn-handshake",
+        "icon-churn-team"
+      ],
+      "confidence": 0.96,
+      "decision_reason": "Lines divide repeated information items; they do not define a data matrix.",
+      "blocking_code": null
+    }
+  ],
+  "issues": []
+}

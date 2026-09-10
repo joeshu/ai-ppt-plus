@@ -1,14 +1,14 @@
 {
   "schema": "ai-ppt-plus/visual-comparison/v1",
   "valid": true,
-  "rendered": "/workspace/ac0-work/cases/task-mt0wdfjx4y91c-fidelity-replay-20260909/e4/r4/slide-1-1672x941.png",
-  "rendered_sha256": "ed3a7bde72ac0d899c7b38c819fd7f80fc9a53530cfb7d76f71c58c7df220182",
-  "reference": "/workspace/ac0-work/cases/task-mt0wdfjx4y91c-fidelity-replay-20260909/e0/source-original.jpg",
+  "rendered": "/workspace/ac0-work/ai-ppt-plus/evals/case-replay-task-mt0wdfjx4y91c/candidate/render.png",
+  "rendered_sha256": "0a6b8bd9832364c930b3088c90dc20c8811f2630d1c1f761863df30f0451654e",
+  "reference": "/workspace/ac0-work/ai-ppt-plus/evals/case-replay-task-mt0wdfjx4y91c/source/reference.jpg",
   "reference_sha256": "fe7c67fe2736dbb0d5c6f48439b1e7cd5120a9f4c316f0698ae3f48ef961ea2c",
   "original_sizes": {
     "rendered": [
-      1672,
-      941
+      1280,
+      721
     ],
     "reference": [
       1672,
@@ -17,8 +17,8 @@
   },
   "normalized_sizes": {
     "rendered": [
-      1672,
-      941
+      1280,
+      721
     ],
     "reference": [
       1672,
@@ -31,19 +31,19 @@
       "crop_box": [
         0,
         0,
-        1672,
-        941
+        1280,
+        721
       ],
       "original_size": [
-        1672,
-        941
+        1280,
+        721
       ],
       "content_size": [
-        1672,
-        941
+        1280,
+        721
       ],
-      "original_ratio": 1.7768332,
-      "content_ratio": 1.7768332,
+      "original_ratio": 1.7753121,
+      "content_ratio": 1.7753121,
       "bar_pixels": {
         "left": 0,
         "top": 0,
@@ -83,19 +83,19 @@
       "artifact_classification": "none"
     }
   },
-  "aspect_ratio_delta": 0.0,
+  "aspect_ratio_delta": 0.001521,
   "aspect_ratio_tolerance": 0.015,
   "comparison_size": [
     1672,
     941
   ],
-  "resized_for_comparison": false,
+  "resized_for_comparison": true,
   "metrics": {
-    "global_ssim": 0.686168,
-    "blurred_layout_ssim": 0.911721,
-    "mean_absolute_error": 0.102945,
-    "rmse": 0.234806,
-    "pixel_fidelity_score": 0.897055
+    "global_ssim": 0.69706,
+    "blurred_layout_ssim": 0.909677,
+    "mean_absolute_error": 0.104141,
+    "rmse": 0.22807,
+    "pixel_fidelity_score": 0.895859
   },
   "issues": [],
   "human_visual_review_required": true,

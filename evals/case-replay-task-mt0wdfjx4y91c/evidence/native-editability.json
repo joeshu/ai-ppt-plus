@@ -2,23 +2,23 @@
   "schema": "ai-ppt-plus/native-object-validation/v1",
   "valid": true,
   "status": "passed",
-  "deck": "/workspace/ac0-work/cases/task-mt0wdfjx4y91c-fidelity-replay-20260909/e3/task-mt0wdfjx4y91c-r4.pptx",
-  "object_manifest": "/workspace/ac0-work/cases/task-mt0wdfjx4y91c-fidelity-replay-20260909/e5/object-manifest.json",
+  "deck": "/workspace/ac0-work/ai-ppt-plus/evals/case-replay-task-mt0wdfjx4y91c/candidate/editable.pptx",
+  "object_manifest": null,
   "requirements": {
-    "require_native_panels": true,
-    "require_native_tables": true,
+    "require_native_panels": false,
+    "require_native_tables": false,
     "forbid_whole_slide_pictures": true,
-    "require_complete_manifest": true
+    "require_complete_manifest": false
   },
-  "native_table_count": 3,
+  "native_table_count": 0,
   "native_panel_count": 0,
   "whole_slide_pictures": [],
   "slides": [
     {
       "slide": 1,
-      "top_level_shape_count": 66,
-      "object_count_recursive": 66,
-      "native_tables": 3,
+      "top_level_shape_count": 95,
+      "object_count_recursive": 95,
+      "native_tables": 0,
       "objects": [
         {
           "name": "canvas",
@@ -453,96 +453,260 @@
           "text": ""
         },
         {
-          "name": "table-value",
-          "kind": "editable_table",
+          "name": "table-value-item-1-background",
+          "kind": "native_shape",
           "parent": null,
           "left": 390134,
           "top": 4700861,
-          "width": 3706274,
-          "height": 1674466,
+          "width": 3706275,
+          "height": 555868,
           "normalized_box": [
             0.032,
             0.685,
             0.304,
-            0.244
+            0.081
           ],
-          "text": "",
-          "rows": 3,
-          "columns": 2,
-          "cell_text": [
-            [
-              "户均提3元\n从哪来？",
-              "▸ 存量+R：由2971提升至3500户。\n▸ 提值30元以上FTTR/金融同装率：由41%提升至48%。"
-            ],
-            [
-              "提值规模\n从哪来？",
-              "四类客群策略优化：①超高端：重推系弱提值。②老旧套餐：深挖需求，适配专属权益。③不限量：提移宽选套感知。④21：细分消费促融合。"
-            ],
-            [
-              "营销组织",
-              "转变策略：①盯规模向盯提值金额转变。②营销模式由传统外呼转向面客。③主推产品由轻合约转向重合约。④升规模转向控升降比。"
-            ]
-          ]
+          "text": ""
         },
         {
-          "name": "table-downgrade",
-          "kind": "editable_table",
+          "name": "table-value-item-1-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1438620,
+          "top": 4700861,
+          "width": 0,
+          "height": 555869,
+          "normalized_box": [
+            0.118,
+            0.685,
+            0.0,
+            0.081
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-value-item-2-background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 390134,
+          "top": 5256730,
+          "width": 3706275,
+          "height": 555868,
+          "normalized_box": [
+            0.032,
+            0.766,
+            0.304,
+            0.081
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-value-item-2-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1438620,
+          "top": 5256730,
+          "width": 0,
+          "height": 555868,
+          "normalized_box": [
+            0.118,
+            0.766,
+            0.0,
+            0.081
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-value-item-3-background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 390134,
+          "top": 5812598,
+          "width": 3706275,
+          "height": 562730,
+          "normalized_box": [
+            0.032,
+            0.847,
+            0.304,
+            0.082
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-value-item-3-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1438620,
+          "top": 5812598,
+          "width": 0,
+          "height": 562731,
+          "normalized_box": [
+            0.118,
+            0.847,
+            0.0,
+            0.082
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-downgrade-item-1-background",
+          "kind": "native_shape",
           "parent": null,
           "left": 4291476,
           "top": 4947914,
-          "width": 3584357,
-          "height": 1427414,
+          "width": 3584358,
+          "height": 713707,
           "normalized_box": [
             0.352,
             0.721,
             0.294,
-            0.208
+            0.104
           ],
-          "text": "",
-          "rows": 2,
-          "columns": 2,
-          "cell_text": [
-            [
-              "持续优化\n策略",
-              "▸ 针对通过降套策略挽回续签受理的，月度可返还降套受理积分，封顶为个人月度销售积分的30%。\n▸ 优化降套策略依策不扣积分。"
-            ],
-            [
-              "营销组织",
-              "▸ 压规模向控规模+降档金额调整。\n▸ 按用户属地+受理人同时管控。\n▸ 事后管控向前置维系转变（端网业适配+满卡满融）。"
-            ]
-          ]
+          "text": ""
         },
         {
-          "name": "table-churn",
-          "kind": "editable_table",
+          "name": "table-downgrade-item-1-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5352154,
+          "top": 4947914,
+          "width": 0,
+          "height": 713707,
+          "normalized_box": [
+            0.439,
+            0.721,
+            0.0,
+            0.104
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-downgrade-item-2-background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4291476,
+          "top": 5661621,
+          "width": 3584358,
+          "height": 713707,
+          "normalized_box": [
+            0.352,
+            0.825,
+            0.294,
+            0.104
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-downgrade-item-2-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5352154,
+          "top": 5661621,
+          "width": 0,
+          "height": 713708,
+          "normalized_box": [
+            0.439,
+            0.825,
+            0.0,
+            0.104
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-churn-item-1-background",
+          "kind": "native_shape",
           "parent": null,
           "left": 8083093,
           "top": 4947914,
           "width": 3694083,
-          "height": 1427414,
+          "height": 473517,
           "normalized_box": [
             0.663,
             0.721,
             0.303,
-            0.208
+            0.069
           ],
-          "text": "",
-          "rows": 3,
-          "columns": 2,
-          "cell_text": [
-            [
-              "发展质量",
-              "入网阶段，高质量发展，保障收入持续性增长。"
-            ],
-            [
-              "前置维系",
-              "满卡满融增粘性 + 合约到期维系 + 端网业适配维系。"
-            ],
-            [
-              "事后回捞",
-              "增流差牵引，聚焦高流失风险用户，分类分级开展维系。"
-            ]
-          ]
+          "text": ""
+        },
+        {
+          "name": "table-churn-item-1-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9155962,
+          "top": 4947914,
+          "width": 0,
+          "height": 473517,
+          "normalized_box": [
+            0.751,
+            0.721,
+            0.0,
+            0.069
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-churn-item-2-background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 8083093,
+          "top": 5421431,
+          "width": 3694083,
+          "height": 473517,
+          "normalized_box": [
+            0.663,
+            0.79,
+            0.303,
+            0.069
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-churn-item-2-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9155962,
+          "top": 5421431,
+          "width": 0,
+          "height": 473518,
+          "normalized_box": [
+            0.751,
+            0.79,
+            0.0,
+            0.069
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-churn-item-3-background",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 8083093,
+          "top": 5894949,
+          "width": 3694083,
+          "height": 480380,
+          "normalized_box": [
+            0.663,
+            0.859,
+            0.303,
+            0.07
+          ],
+          "text": ""
+        },
+        {
+          "name": "table-churn-item-3-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9155962,
+          "top": 5894949,
+          "width": 0,
+          "height": 480380,
+          "normalized_box": [
+            0.751,
+            0.859,
+            0.0,
+            0.07
+          ],
+          "text": ""
         },
         {
           "name": "chart-value",
@@ -1119,6 +1283,262 @@
             0.025
           ],
           "text": "流失改善保障举措"
+        },
+        {
+          "name": "table-value-item-1-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 853418,
+          "top": 4769487,
+          "width": 548626,
+          "height": 432342,
+          "normalized_box": [
+            0.07,
+            0.695,
+            0.045,
+            0.063
+          ],
+          "text": "户均提3元\n从哪来？"
+        },
+        {
+          "name": "table-value-item-1-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1511770,
+          "top": 4748899,
+          "width": 2535872,
+          "height": 459792,
+          "normalized_box": [
+            0.124,
+            0.692,
+            0.208,
+            0.067
+          ],
+          "text": "▸ 存量+R：由2971提升至3500户。\n▸ 提值30元以上FTTR/金融同装率：由41%提升至48%。"
+        },
+        {
+          "name": "table-value-item-2-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 853418,
+          "top": 5325355,
+          "width": 548626,
+          "height": 432342,
+          "normalized_box": [
+            0.07,
+            0.776,
+            0.045,
+            0.063
+          ],
+          "text": "提值规模\n从哪来？"
+        },
+        {
+          "name": "table-value-item-2-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1511770,
+          "top": 5304768,
+          "width": 2535872,
+          "height": 459792,
+          "normalized_box": [
+            0.124,
+            0.773,
+            0.208,
+            0.067
+          ],
+          "text": "四类客群策略优化：①超高端：重推系弱提值。②老旧套餐：深挖需求，适配专属权益。③不限量：提移宽选套感知。④21：细分消费促融合。"
+        },
+        {
+          "name": "table-value-item-3-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 853418,
+          "top": 5881224,
+          "width": 548626,
+          "height": 439204,
+          "normalized_box": [
+            0.07,
+            0.857,
+            0.045,
+            0.064
+          ],
+          "text": "营销组织"
+        },
+        {
+          "name": "table-value-item-3-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1511770,
+          "top": 5860636,
+          "width": 2535872,
+          "height": 466654,
+          "normalized_box": [
+            0.124,
+            0.854,
+            0.208,
+            0.068
+          ],
+          "text": "转变策略：①盯规模向盯提值金额转变。②营销模式由传统外呼转向面客。③主推产品由轻合约转向重合约。④升规模转向控升降比。"
+        },
+        {
+          "name": "table-downgrade-item-1-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4754761,
+          "top": 5016540,
+          "width": 560817,
+          "height": 590181,
+          "normalized_box": [
+            0.39,
+            0.731,
+            0.046,
+            0.086
+          ],
+          "text": "持续优化\n策略"
+        },
+        {
+          "name": "table-downgrade-item-1-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5425304,
+          "top": 4995952,
+          "width": 2401763,
+          "height": 617631,
+          "normalized_box": [
+            0.445,
+            0.728,
+            0.197,
+            0.09
+          ],
+          "text": "▸ 针对通过降套策略挽回续签受理的，月度可返还降套受理积分，封顶为个人月度销售积分的30%。\n▸ 优化降套策略依策不扣积分。"
+        },
+        {
+          "name": "table-downgrade-item-2-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4754761,
+          "top": 5730247,
+          "width": 560817,
+          "height": 590181,
+          "normalized_box": [
+            0.39,
+            0.835,
+            0.046,
+            0.086
+          ],
+          "text": "营销组织"
+        },
+        {
+          "name": "table-downgrade-item-2-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5425304,
+          "top": 5709659,
+          "width": 2401763,
+          "height": 617631,
+          "normalized_box": [
+            0.445,
+            0.832,
+            0.197,
+            0.09
+          ],
+          "text": "▸ 压规模向控规模+降档金额调整。\n▸ 按用户属地+受理人同时管控。\n▸ 事后管控向前置维系转变（端网业适配+满卡满融）。"
+        },
+        {
+          "name": "table-churn-item-1-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8546378,
+          "top": 5016540,
+          "width": 573009,
+          "height": 349991,
+          "normalized_box": [
+            0.701,
+            0.731,
+            0.047,
+            0.051
+          ],
+          "text": "发展质量"
+        },
+        {
+          "name": "table-churn-item-1-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9229113,
+          "top": 4995952,
+          "width": 2499297,
+          "height": 377441,
+          "normalized_box": [
+            0.757,
+            0.728,
+            0.205,
+            0.055
+          ],
+          "text": "入网阶段，高质量发展，保障收入持续性增长。"
+        },
+        {
+          "name": "table-churn-item-2-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8546378,
+          "top": 5490057,
+          "width": 573009,
+          "height": 349991,
+          "normalized_box": [
+            0.701,
+            0.8,
+            0.047,
+            0.051
+          ],
+          "text": "前置维系"
+        },
+        {
+          "name": "table-churn-item-2-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9229113,
+          "top": 5469469,
+          "width": 2499297,
+          "height": 377441,
+          "normalized_box": [
+            0.757,
+            0.797,
+            0.205,
+            0.055
+          ],
+          "text": "满卡满融增粘性 + 合约到期维系 + 端网业适配维系。"
+        },
+        {
+          "name": "table-churn-item-3-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8546378,
+          "top": 5963575,
+          "width": 573009,
+          "height": 356853,
+          "normalized_box": [
+            0.701,
+            0.869,
+            0.047,
+            0.052
+          ],
+          "text": "事后回捞"
+        },
+        {
+          "name": "table-churn-item-3-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9229113,
+          "top": 5942987,
+          "width": 2499297,
+          "height": 384304,
+          "normalized_box": [
+            0.757,
+            0.866,
+            0.205,
+            0.056
+          ],
+          "text": "增流差牵引，聚焦高流失风险用户，分类分级开展维系。"
         }
       ],
       "errors_added": 0

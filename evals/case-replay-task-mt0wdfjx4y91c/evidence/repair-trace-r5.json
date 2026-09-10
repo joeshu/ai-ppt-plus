@@ -1,0 +1,53 @@
+{
+  "schema": "ai-ppt-plus/repair-trace/v1",
+  "case_id": "task-mt0wdfjx4y91c-fixed-reference-01",
+  "revision": "R5-semantic-list-correction",
+  "asset_policy": {
+    "mutated": false,
+    "source_reference_sha256": "fe7c67fe2736dbb0d5c6f48439b1e7cd5120a9f4c316f0698ae3f48ef961ea2c",
+    "asset_manifest_revalidated": true,
+    "visual_thresholds_changed": false
+  },
+  "changes": [
+    {
+      "stage": "E1",
+      "failure_code": "TABLE-SEMANTIC-FALSE-POSITIVE-001",
+      "regions": ["protection-actions-left", "protection-actions-middle", "protection-actions-right"],
+      "before": {"object_type": "native_table", "native_tables": 3},
+      "after": {"object_type": "repeated_component_group", "native_tables": 0, "groups": 3, "independent_items": 8}
+    },
+    {
+      "stage": "E3",
+      "failure_code": "OBJECT-TYPE-REFERENCE-MISMATCH-001",
+      "before": "a:tbl with cell text and overlay icons",
+      "after": "native row backgrounds/dividers plus independent icon/title/body objects"
+    },
+    {
+      "stage": "E3",
+      "failure_code": "COMPONENT-EDITABILITY-INCOMPLETE-001",
+      "before": "list children were implicit table cells",
+      "after": "items[] contract binds icon, title, body, background and divider IDs"
+    }
+  ],
+  "verification": {
+    "candidate_deck_sha256": "de5f9a8decac8254c93abbd10ad84b53d10dd36f8d4d8b32f3f9148c731d9a8f",
+    "candidate_render_sha256": "0a6b8bd9832364c930b3088c90dc20c8811f2630d1c1f761863df30f0451654e",
+    "native_charts": 3,
+    "native_tables": 0,
+    "repeated_component_groups": 3,
+    "independent_item_groups": 8,
+    "independent_icons": 11,
+    "native_text": true,
+    "semantic_layout_valid": true,
+    "semantic_regions": [
+      "protection-actions-left",
+      "protection-actions-middle",
+      "protection-actions-right"
+    ],
+    "whole_slide_picture": false,
+    "table_cell_asset_text_collision": 0,
+    "blurred_layout_ssim": 0.909677,
+    "previous_blurred_layout_ssim": 0.911721,
+    "visual_gate_passed": true
+  }
+}

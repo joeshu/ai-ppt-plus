@@ -1,0 +1,1355 @@
+{
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.505,
+  "units": "fraction",
+  "strict_input": true,
+  "assets_dir": "/workspace/ac0-work/cases/task-mt0wdfjx4y91c-fidelity-replay-20260909/e2/assets",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#202020",
+    "size": 10,
+    "chart_colors": [
+      "#075BBB",
+      "#F05A13"
+    ],
+    "chart_text_color": "#202020",
+    "chart_muted_color": "#B6B6B6",
+    "chart_grid_color": "#D9D9D9",
+    "chart_tick_size": 7,
+    "chart_label_size": 6.4,
+    "chart_legend_size": 7,
+    "layout_id": "blank-canvas"
+  },
+  "layout_library": {
+    "schema": "ai-ppt-plus/layout-library/v1",
+    "layouts": [
+      {
+        "layout_id": "blank-canvas",
+        "pptx_layout_name": "Blank",
+        "page_family": "freeform",
+        "safe_margins": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "grid": {
+          "columns": 12,
+          "gutter": 0.01
+        }
+      }
+    ]
+  },
+  "component_library": {
+    "schema": "ai-ppt-plus/component-library/v1",
+    "components": []
+  },
+  "slides": [
+    {
+      "shapes": [
+        {
+          "object_id": "canvas",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "fill": "#FFFFFF"
+        },
+        {
+          "object_id": "header-red",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 0.132,
+          "fill": "#C60000"
+        },
+        {
+          "object_id": "header-layer",
+          "type": "parallelogram",
+          "x": 0.47,
+          "y": 0,
+          "w": 0.24,
+          "h": 0.13,
+          "fill": "#D90909",
+          "opacity": 0.58
+        },
+        {
+          "object_id": "tag",
+          "type": "rounded_rect",
+          "x": 0.013,
+          "y": 0.008,
+          "w": 0.032,
+          "h": 0.116,
+          "fill": "#DF1717"
+        },
+        {
+          "object_id": "summary-card",
+          "type": "rounded_rect",
+          "x": 0.032,
+          "y": 0.145,
+          "w": 0.936,
+          "h": 0.095,
+          "fill": "#FFFFFF",
+          "line": "#D5D5D5",
+          "line_width": 0.6
+        },
+        {
+          "object_id": "summary-bullet",
+          "type": "rect",
+          "x": 0.133,
+          "y": 0.169,
+          "w": 0.01,
+          "h": 0.017,
+          "fill": "#D50000"
+        },
+        {
+          "object_id": "panel-1",
+          "type": "rounded_rect",
+          "x": 0.029,
+          "y": 0.253,
+          "w": 0.311,
+          "h": 0.687,
+          "fill": "#FFFFFF",
+          "line": "#90B9E5",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "panel-1-band",
+          "type": "rect",
+          "x": 0.03,
+          "y": 0.254,
+          "w": 0.309,
+          "h": 0.069,
+          "fill": "#EAF4FF"
+        },
+        {
+          "object_id": "panel-2",
+          "type": "rounded_rect",
+          "x": 0.349,
+          "y": 0.253,
+          "w": 0.301,
+          "h": 0.687,
+          "fill": "#FFFFFF",
+          "line": "#E8C6A7",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "panel-2-band",
+          "type": "rect",
+          "x": 0.35,
+          "y": 0.254,
+          "w": 0.299,
+          "h": 0.069,
+          "fill": "#FFF4EA"
+        },
+        {
+          "object_id": "panel-3",
+          "type": "rounded_rect",
+          "x": 0.66,
+          "y": 0.253,
+          "w": 0.31,
+          "h": 0.687,
+          "fill": "#FFFFFF",
+          "line": "#E7B4B6",
+          "line_width": 0.7
+        },
+        {
+          "object_id": "panel-3-band",
+          "type": "rect",
+          "x": 0.661,
+          "y": 0.254,
+          "w": 0.308,
+          "h": 0.069,
+          "fill": "#FFF0F1"
+        },
+        {
+          "object_id": "n1",
+          "type": "oval",
+          "x": 0.041,
+          "y": 0.26,
+          "w": 0.033,
+          "h": 0.058,
+          "fill": "#075BBB"
+        },
+        {
+          "object_id": "n2",
+          "type": "oval",
+          "x": 0.363,
+          "y": 0.26,
+          "w": 0.033,
+          "h": 0.058,
+          "fill": "#F05A13"
+        },
+        {
+          "object_id": "n3",
+          "type": "oval",
+          "x": 0.672,
+          "y": 0.26,
+          "w": 0.033,
+          "h": 0.058,
+          "fill": "#D60000"
+        },
+        {
+          "object_id": "status1",
+          "type": "rounded_rect",
+          "x": 0.037,
+          "y": 0.579,
+          "w": 0.124,
+          "h": 0.06,
+          "fill": "#F1F1F1"
+        },
+        {
+          "object_id": "goal1",
+          "type": "rounded_rect",
+          "x": 0.196,
+          "y": 0.579,
+          "w": 0.137,
+          "h": 0.06,
+          "fill": "#D70000"
+        },
+        {
+          "object_id": "status2",
+          "type": "rounded_rect",
+          "x": 0.365,
+          "y": 0.614,
+          "w": 0.086,
+          "h": 0.058,
+          "fill": "#F1F1F1"
+        },
+        {
+          "object_id": "goal2",
+          "type": "rounded_rect",
+          "x": 0.503,
+          "y": 0.614,
+          "w": 0.139,
+          "h": 0.058,
+          "fill": "#D70000"
+        },
+        {
+          "object_id": "status3",
+          "type": "rounded_rect",
+          "x": 0.676,
+          "y": 0.614,
+          "w": 0.102,
+          "h": 0.058,
+          "fill": "#F1F1F1"
+        },
+        {
+          "object_id": "goal3",
+          "type": "rounded_rect",
+          "x": 0.821,
+          "y": 0.614,
+          "w": 0.136,
+          "h": 0.058,
+          "fill": "#D70000"
+        },
+        {
+          "object_id": "arrow1",
+          "type": "chevron",
+          "x": 0.169,
+          "y": 0.596,
+          "w": 0.017,
+          "h": 0.025,
+          "fill": "#999999"
+        },
+        {
+          "object_id": "arrow2",
+          "type": "chevron",
+          "x": 0.477,
+          "y": 0.633,
+          "w": 0.017,
+          "h": 0.025,
+          "fill": "#999999"
+        },
+        {
+          "object_id": "arrow3",
+          "type": "chevron",
+          "x": 0.794,
+          "y": 0.633,
+          "w": 0.017,
+          "h": 0.025,
+          "fill": "#999999"
+        },
+        {
+          "object_id": "band1",
+          "type": "rect",
+          "x": 0.032,
+          "y": 0.651,
+          "w": 0.304,
+          "h": 0.034,
+          "fill": "#E7F1FF"
+        },
+        {
+          "object_id": "band2",
+          "type": "rect",
+          "x": 0.352,
+          "y": 0.687,
+          "w": 0.294,
+          "h": 0.034,
+          "fill": "#FFF0E3"
+        },
+        {
+          "object_id": "band3",
+          "type": "rect",
+          "x": 0.663,
+          "y": 0.687,
+          "w": 0.303,
+          "h": 0.034,
+          "fill": "#FFE8EA"
+        },
+        {
+          "object_id": "table-value-item-1-background",
+          "type": "rect",
+          "x": 0.032,
+          "y": 0.685,
+          "w": 0.304,
+          "h": 0.081,
+          "fill": "#FFFFFF",
+          "line": "#D6E2F0",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-value-item-1-separator",
+          "type": "line",
+          "x": 0.118,
+          "y": 0.685,
+          "x2": 0.118,
+          "y2": 0.766,
+          "line": "#D6E2F0",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-value-item-2-background",
+          "type": "rect",
+          "x": 0.032,
+          "y": 0.766,
+          "w": 0.304,
+          "h": 0.081,
+          "fill": "#FFFFFF",
+          "line": "#D6E2F0",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-value-item-2-separator",
+          "type": "line",
+          "x": 0.118,
+          "y": 0.766,
+          "x2": 0.118,
+          "y2": 0.847,
+          "line": "#D6E2F0",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-value-item-3-background",
+          "type": "rect",
+          "x": 0.032,
+          "y": 0.847,
+          "w": 0.304,
+          "h": 0.082,
+          "fill": "#FFFFFF",
+          "line": "#D6E2F0",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-value-item-3-separator",
+          "type": "line",
+          "x": 0.118,
+          "y": 0.847,
+          "x2": 0.118,
+          "y2": 0.9289999999999999,
+          "line": "#D6E2F0",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-downgrade-item-1-background",
+          "type": "rect",
+          "x": 0.352,
+          "y": 0.721,
+          "w": 0.294,
+          "h": 0.104,
+          "fill": "#FFFFFF",
+          "line": "#F0DCCB",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-downgrade-item-1-separator",
+          "type": "line",
+          "x": 0.43899999999999995,
+          "y": 0.721,
+          "x2": 0.43899999999999995,
+          "y2": 0.825,
+          "line": "#F0DCCB",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-downgrade-item-2-background",
+          "type": "rect",
+          "x": 0.352,
+          "y": 0.825,
+          "w": 0.294,
+          "h": 0.104,
+          "fill": "#FFFFFF",
+          "line": "#F0DCCB",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-downgrade-item-2-separator",
+          "type": "line",
+          "x": 0.43899999999999995,
+          "y": 0.825,
+          "x2": 0.43899999999999995,
+          "y2": 0.9289999999999999,
+          "line": "#F0DCCB",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-churn-item-1-background",
+          "type": "rect",
+          "x": 0.663,
+          "y": 0.721,
+          "w": 0.303,
+          "h": 0.069,
+          "fill": "#FFFFFF",
+          "line": "#EFD5D7",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-churn-item-1-separator",
+          "type": "line",
+          "x": 0.751,
+          "y": 0.721,
+          "x2": 0.751,
+          "y2": 0.79,
+          "line": "#EFD5D7",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-churn-item-2-background",
+          "type": "rect",
+          "x": 0.663,
+          "y": 0.79,
+          "w": 0.303,
+          "h": 0.069,
+          "fill": "#FFFFFF",
+          "line": "#EFD5D7",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-churn-item-2-separator",
+          "type": "line",
+          "x": 0.751,
+          "y": 0.79,
+          "x2": 0.751,
+          "y2": 0.859,
+          "line": "#EFD5D7",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-churn-item-3-background",
+          "type": "rect",
+          "x": 0.663,
+          "y": 0.859,
+          "w": 0.303,
+          "h": 0.07,
+          "fill": "#FFFFFF",
+          "line": "#EFD5D7",
+          "line_width": 0.5
+        },
+        {
+          "object_id": "table-churn-item-3-separator",
+          "type": "line",
+          "x": 0.751,
+          "y": 0.859,
+          "x2": 0.751,
+          "y2": 0.929,
+          "line": "#EFD5D7",
+          "line_width": 0.5
+        }
+      ],
+      "texts": [
+        {
+          "object_id": "tag-text",
+          "text": "推进\n措施",
+          "x": 0.015,
+          "y": 0.02,
+          "w": 0.028,
+          "h": 0.095,
+          "size": 11,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "title",
+          "text": "3.5  策略精准化保价值",
+          "x": 0.057,
+          "y": 0.021,
+          "w": 0.55,
+          "h": 0.088,
+          "size": 34,
+          "bold": true,
+          "color": "#FFFFFF",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "summary",
+          "text": "1号文谋划目标增收3500万元，截止7月份，整体达到序时进度，流失与降套符合预期，提值缺口80万元，\n下半年聚焦提值增速，保规模，户均提值增长3元，确保全年目标达成。",
+          "x": 0.157,
+          "y": 0.157,
+          "w": 0.7,
+          "h": 0.07,
+          "size": 12.7,
+          "color": "#222222",
+          "align": "center",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "num1",
+          "text": "01",
+          "x": 0.041,
+          "y": 0.268,
+          "w": 0.033,
+          "h": 0.04,
+          "size": 16,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center"
+        },
+        {
+          "object_id": "num2",
+          "text": "02",
+          "x": 0.363,
+          "y": 0.268,
+          "w": 0.033,
+          "h": 0.04,
+          "size": 16,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center"
+        },
+        {
+          "object_id": "num3",
+          "text": "03",
+          "x": 0.672,
+          "y": 0.268,
+          "w": 0.033,
+          "h": 0.04,
+          "size": 16,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center"
+        },
+        {
+          "object_id": "panel-title1",
+          "text": "提价值",
+          "x": 0.089,
+          "y": 0.27,
+          "w": 0.13,
+          "h": 0.04,
+          "size": 18,
+          "bold": true,
+          "color": "#075BBB"
+        },
+        {
+          "object_id": "panel-title2",
+          "text": "控降套",
+          "x": 0.416,
+          "y": 0.27,
+          "w": 0.13,
+          "h": 0.04,
+          "size": 18,
+          "bold": true,
+          "color": "#F05A13"
+        },
+        {
+          "object_id": "panel-title3",
+          "text": "控流失",
+          "x": 0.727,
+          "y": 0.27,
+          "w": 0.13,
+          "h": 0.04,
+          "size": 18,
+          "bold": true,
+          "color": "#D60000"
+        },
+        {
+          "object_id": "chart-title1",
+          "text": "套餐适配提值增收情况（万元）",
+          "x": 0.066,
+          "y": 0.333,
+          "w": 0.18,
+          "h": 0.025,
+          "size": 8.5,
+          "bold": true
+        },
+        {
+          "object_id": "chart-title2",
+          "text": "月度降套用户降收金额（万元）",
+          "x": 0.392,
+          "y": 0.333,
+          "w": 0.2,
+          "h": 0.025,
+          "size": 8.5,
+          "bold": true
+        },
+        {
+          "object_id": "chart-title3",
+          "text": "出账流失收入（单位：万元）",
+          "x": 0.697,
+          "y": 0.333,
+          "w": 0.2,
+          "h": 0.025,
+          "size": 8.5,
+          "bold": true
+        },
+        {
+          "object_id": "status1-text",
+          "text": "现状：提值增速放缓，\n累计有缺口",
+          "x": 0.043,
+          "y": 0.586,
+          "w": 0.112,
+          "h": 0.048,
+          "size": 9.5,
+          "bold": true,
+          "align": "center"
+        },
+        {
+          "object_id": "goal1-text",
+          "text": "目标：保持规模，户均提值\n增3元，保底45万元/月",
+          "x": 0.202,
+          "y": 0.586,
+          "w": 0.124,
+          "h": 0.048,
+          "size": 9.5,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center"
+        },
+        {
+          "object_id": "status2-text",
+          "text": "现状：趋势向好，\n略有波动",
+          "x": 0.369,
+          "y": 0.621,
+          "w": 0.078,
+          "h": 0.045,
+          "size": 9.2,
+          "bold": true,
+          "align": "center"
+        },
+        {
+          "object_id": "goal2-text",
+          "text": "目标：平稳下降，防止反弹",
+          "x": 0.51,
+          "y": 0.626,
+          "w": 0.125,
+          "h": 0.032,
+          "size": 9.5,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center"
+        },
+        {
+          "object_id": "status3-text",
+          "text": "现状：趋势向好，\n仍在高位",
+          "x": 0.681,
+          "y": 0.621,
+          "w": 0.091,
+          "h": 0.045,
+          "size": 9.2,
+          "bold": true,
+          "align": "center"
+        },
+        {
+          "object_id": "goal3-text",
+          "text": "目标：保持趋势，\n持续压降10%",
+          "x": 0.828,
+          "y": 0.621,
+          "w": 0.122,
+          "h": 0.045,
+          "size": 9.5,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center"
+        },
+        {
+          "object_id": "band1-text",
+          "text": "提值增速保障举措",
+          "x": 0.1,
+          "y": 0.656,
+          "w": 0.17,
+          "h": 0.025,
+          "size": 10.5,
+          "bold": true,
+          "color": "#075BBB",
+          "align": "center"
+        },
+        {
+          "object_id": "band2-text",
+          "text": "降套压降保障举措",
+          "x": 0.42,
+          "y": 0.692,
+          "w": 0.17,
+          "h": 0.025,
+          "size": 10.5,
+          "bold": true,
+          "color": "#F05A13",
+          "align": "center"
+        },
+        {
+          "object_id": "band3-text",
+          "text": "流失改善保障举措",
+          "x": 0.73,
+          "y": 0.692,
+          "w": 0.17,
+          "h": 0.025,
+          "size": 10.5,
+          "bold": true,
+          "color": "#D60000",
+          "align": "center"
+        },
+        {
+          "object_id": "table-value-item-1-title",
+          "text": "户均提3元\n从哪来？",
+          "x": 0.07,
+          "y": 0.6950000000000001,
+          "w": 0.04499999999999999,
+          "h": 0.063,
+          "size": 8.8,
+          "bold": true,
+          "color": "#075BBB",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-value-item-1-body",
+          "text": "▸ 存量+R：由2971提升至3500户。\n▸ 提值30元以上FTTR/金融同装率：由41%提升至48%。",
+          "x": 0.124,
+          "y": 0.6920000000000001,
+          "w": 0.208,
+          "h": 0.067,
+          "size": 7.5,
+          "color": "#222222",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-value-item-2-title",
+          "text": "提值规模\n从哪来？",
+          "x": 0.07,
+          "y": 0.776,
+          "w": 0.04499999999999999,
+          "h": 0.063,
+          "size": 8.8,
+          "bold": true,
+          "color": "#075BBB",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-value-item-2-body",
+          "text": "四类客群策略优化：①超高端：重推系弱提值。②老旧套餐：深挖需求，适配专属权益。③不限量：提移宽选套感知。④21：细分消费促融合。",
+          "x": 0.124,
+          "y": 0.773,
+          "w": 0.208,
+          "h": 0.067,
+          "size": 7.5,
+          "color": "#222222",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-value-item-3-title",
+          "text": "营销组织",
+          "x": 0.07,
+          "y": 0.857,
+          "w": 0.04499999999999999,
+          "h": 0.064,
+          "size": 8.8,
+          "bold": true,
+          "color": "#075BBB",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-value-item-3-body",
+          "text": "转变策略：①盯规模向盯提值金额转变。②营销模式由传统外呼转向面客。③主推产品由轻合约转向重合约。④升规模转向控升降比。",
+          "x": 0.124,
+          "y": 0.854,
+          "w": 0.208,
+          "h": 0.068,
+          "size": 7.5,
+          "color": "#222222",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-downgrade-item-1-title",
+          "text": "持续优化\n策略",
+          "x": 0.38999999999999996,
+          "y": 0.731,
+          "w": 0.04599999999999999,
+          "h": 0.086,
+          "size": 8.6,
+          "bold": true,
+          "color": "#F05A13",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-downgrade-item-1-body",
+          "text": "▸ 针对通过降套策略挽回续签受理的，月度可返还降套受理积分，封顶为个人月度销售积分的30%。\n▸ 优化降套策略依策不扣积分。",
+          "x": 0.44499999999999995,
+          "y": 0.728,
+          "w": 0.19699999999999998,
+          "h": 0.09,
+          "size": 7.5,
+          "color": "#222222",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-downgrade-item-2-title",
+          "text": "营销组织",
+          "x": 0.38999999999999996,
+          "y": 0.835,
+          "w": 0.04599999999999999,
+          "h": 0.086,
+          "size": 8.6,
+          "bold": true,
+          "color": "#F05A13",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-downgrade-item-2-body",
+          "text": "▸ 压规模向控规模+降档金额调整。\n▸ 按用户属地+受理人同时管控。\n▸ 事后管控向前置维系转变（端网业适配+满卡满融）。",
+          "x": 0.44499999999999995,
+          "y": 0.832,
+          "w": 0.19699999999999998,
+          "h": 0.09,
+          "size": 7.5,
+          "color": "#222222",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-churn-item-1-title",
+          "text": "发展质量",
+          "x": 0.7010000000000001,
+          "y": 0.731,
+          "w": 0.04699999999999999,
+          "h": 0.051000000000000004,
+          "size": 8.6,
+          "bold": true,
+          "color": "#D60000",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-churn-item-1-body",
+          "text": "入网阶段，高质量发展，保障收入持续性增长。",
+          "x": 0.757,
+          "y": 0.728,
+          "w": 0.205,
+          "h": 0.05500000000000001,
+          "size": 7.8,
+          "color": "#222222",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-churn-item-2-title",
+          "text": "前置维系",
+          "x": 0.7010000000000001,
+          "y": 0.8,
+          "w": 0.04699999999999999,
+          "h": 0.051000000000000004,
+          "size": 8.6,
+          "bold": true,
+          "color": "#D60000",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-churn-item-2-body",
+          "text": "满卡满融增粘性 + 合约到期维系 + 端网业适配维系。",
+          "x": 0.757,
+          "y": 0.797,
+          "w": 0.205,
+          "h": 0.05500000000000001,
+          "size": 7.8,
+          "color": "#222222",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-churn-item-3-title",
+          "text": "事后回捞",
+          "x": 0.7010000000000001,
+          "y": 0.869,
+          "w": 0.04699999999999999,
+          "h": 0.052000000000000005,
+          "size": 8.6,
+          "bold": true,
+          "color": "#D60000",
+          "align": "left",
+          "anchor": "middle"
+        },
+        {
+          "object_id": "table-churn-item-3-body",
+          "text": "增流差牵引，聚焦高流失风险用户，分类分级开展维系。",
+          "x": 0.757,
+          "y": 0.866,
+          "w": 0.205,
+          "h": 0.05600000000000001,
+          "size": 7.8,
+          "color": "#222222",
+          "align": "left",
+          "anchor": "middle"
+        }
+      ],
+      "charts": [
+        {
+          "object_id": "chart-value",
+          "type": "line",
+          "x": 0.039,
+          "y": 0.358,
+          "w": 0.295,
+          "h": 0.21,
+          "categories": [
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "11月",
+            "12月"
+          ],
+          "series": [
+            {
+              "name": "2025",
+              "values": [
+                20.0,
+                20.8,
+                19.4,
+                21.6,
+                22.5,
+                20.8,
+                21.5,
+                20.9,
+                18.8,
+                16.7,
+                21.6,
+                31.2
+              ],
+              "data_label_position": "below"
+            },
+            {
+              "name": "2026",
+              "values": [
+                42.1,
+                51.9,
+                37.3,
+                48.9,
+                49.4,
+                44.1,
+                39.4,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              "data_label_position": "above"
+            }
+          ],
+          "data_source": "source-reference",
+          "data_labels": true,
+          "legend": true,
+          "colors": [
+            "#075BBB",
+            "#F05A13"
+          ]
+        },
+        {
+          "object_id": "chart-downgrade",
+          "type": "line",
+          "x": 0.36,
+          "y": 0.358,
+          "w": 0.283,
+          "h": 0.238,
+          "categories": [
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "11月",
+            "12月"
+          ],
+          "series": [
+            {
+              "name": "2025",
+              "values": [
+                19.65,
+                20.01,
+                19.47,
+                22.38,
+                19.19,
+                17.14,
+                16.94,
+                17.1,
+                17.95,
+                19.5,
+                19.9,
+                21.63
+              ],
+              "data_label_position": "above"
+            },
+            {
+              "name": "2026",
+              "values": [
+                18.53,
+                17.86,
+                18.4,
+                12.26,
+                12.82,
+                13.9,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              "data_label_position": "below"
+            }
+          ],
+          "data_source": "source-reference",
+          "data_labels": true,
+          "legend": true,
+          "colors": [
+            "#075BBB",
+            "#F05A13"
+          ]
+        },
+        {
+          "object_id": "chart-churn",
+          "type": "line",
+          "x": 0.673,
+          "y": 0.358,
+          "w": 0.289,
+          "h": 0.238,
+          "categories": [
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "11月",
+            "12月"
+          ],
+          "series": [
+            {
+              "name": "2025",
+              "values": [
+                208.9,
+                222.5,
+                220.8,
+                253.3,
+                290.3,
+                332.8,
+                224.0,
+                232.9,
+                236.0,
+                230.0,
+                221.7,
+                265.5
+              ],
+              "data_label_position": "above"
+            },
+            {
+              "name": "2026",
+              "values": [
+                208.9,
+                230.3,
+                220.8,
+                248.3,
+                232.7,
+                243.2,
+                224.0,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              "data_label_position": "below"
+            }
+          ],
+          "data_source": "source-reference",
+          "data_labels": true,
+          "legend": true,
+          "colors": [
+            "#075BBB",
+            "#F05A13"
+          ]
+        }
+      ],
+      "tables": [],
+      "icons": [
+        {
+          "object_id": "brand-logo",
+          "file": "china-unicom-logo.png",
+          "x": 0.838,
+          "y": 0.025,
+          "w": 0.142,
+          "h": 0.079,
+          "alt_text": "中国联通品牌标识"
+        },
+        {
+          "object_id": "icon-header-bars",
+          "file": "icon-bars-blue.png",
+          "x": 0.286,
+          "y": 0.265,
+          "w": 0.034,
+          "h": 0.042,
+          "alt_text": "提价值柱状图标"
+        },
+        {
+          "object_id": "icon-header-bulb",
+          "file": "icon-lightbulb-orange.png",
+          "x": 0.603,
+          "y": 0.265,
+          "w": 0.03,
+          "h": 0.045,
+          "alt_text": "控降套灯泡图标"
+        },
+        {
+          "object_id": "icon-header-shield",
+          "file": "icon-shield-red.png",
+          "x": 0.927,
+          "y": 0.264,
+          "w": 0.028,
+          "h": 0.047,
+          "alt_text": "控流失盾牌图标"
+        },
+        {
+          "object_id": "icon-value-user",
+          "file": "icon-user-clock-blue.png",
+          "x": 0.041,
+          "y": 0.701,
+          "w": 0.026,
+          "h": 0.04,
+          "alt_text": "用户提值图标"
+        },
+        {
+          "object_id": "icon-value-layers",
+          "file": "icon-layers-blue.png",
+          "x": 0.041,
+          "y": 0.786,
+          "w": 0.026,
+          "h": 0.038,
+          "alt_text": "提值规模图标"
+        },
+        {
+          "object_id": "icon-value-team",
+          "file": "icon-team-blue.png",
+          "x": 0.041,
+          "y": 0.868,
+          "w": 0.028,
+          "h": 0.034,
+          "alt_text": "营销组织图标"
+        },
+        {
+          "object_id": "icon-down-target",
+          "file": "icon-target-orange.png",
+          "x": 0.359,
+          "y": 0.742,
+          "w": 0.03,
+          "h": 0.043,
+          "alt_text": "持续优化策略图标"
+        },
+        {
+          "object_id": "icon-down-team",
+          "file": "icon-team-orange.png",
+          "x": 0.359,
+          "y": 0.847,
+          "w": 0.03,
+          "h": 0.035,
+          "alt_text": "营销组织图标"
+        },
+        {
+          "object_id": "icon-churn-growth",
+          "file": "icon-growth-red.png",
+          "x": 0.672,
+          "y": 0.742,
+          "w": 0.028,
+          "h": 0.04,
+          "alt_text": "发展质量图标"
+        },
+        {
+          "object_id": "icon-churn-handshake",
+          "file": "icon-handshake-red.png",
+          "x": 0.672,
+          "y": 0.811,
+          "w": 0.028,
+          "h": 0.04,
+          "alt_text": "前置维系图标"
+        },
+        {
+          "object_id": "icon-churn-team",
+          "file": "icon-team-red.png",
+          "x": 0.672,
+          "y": 0.88,
+          "w": 0.028,
+          "h": 0.04,
+          "alt_text": "事后回捞图标"
+        }
+      ],
+      "speaker_notes": "依据固定参考图 task-mt0wdfjx4y91c 重建；全部正式文字、图表、表格和主体对象可编辑。",
+      "semantic_regions": [
+        {
+          "object_id": "table-value",
+          "object_type": "repeated_component_group",
+          "children": [
+            "table-value-item-1",
+            "table-value-item-2",
+            "table-value-item-3"
+          ],
+          "items": [
+            {
+              "item_id": "table-value-item-1",
+              "icon_ids": [
+                "icon-value-user"
+              ],
+              "title_object_id": "table-value-item-1-title",
+              "body_object_id": "table-value-item-1-body",
+              "background_object_id": "table-value-item-1-background",
+              "divider_object_id": "table-value-item-1-separator"
+            },
+            {
+              "item_id": "table-value-item-2",
+              "icon_ids": [
+                "icon-value-layers"
+              ],
+              "title_object_id": "table-value-item-2-title",
+              "body_object_id": "table-value-item-2-body",
+              "background_object_id": "table-value-item-2-background",
+              "divider_object_id": "table-value-item-2-separator"
+            },
+            {
+              "item_id": "table-value-item-3",
+              "icon_ids": [
+                "icon-value-team"
+              ],
+              "title_object_id": "table-value-item-3-title",
+              "body_object_id": "table-value-item-3-body",
+              "background_object_id": "table-value-item-3-background",
+              "divider_object_id": "table-value-item-3-separator"
+            }
+          ],
+          "requires_independent_children": true,
+          "independent_item_count": 3,
+          "source_semantic_type": "icon_title_description_list"
+        },
+        {
+          "object_id": "table-downgrade",
+          "object_type": "repeated_component_group",
+          "children": [
+            "table-downgrade-item-1",
+            "table-downgrade-item-2"
+          ],
+          "items": [
+            {
+              "item_id": "table-downgrade-item-1",
+              "icon_ids": [
+                "icon-down-target"
+              ],
+              "title_object_id": "table-downgrade-item-1-title",
+              "body_object_id": "table-downgrade-item-1-body",
+              "background_object_id": "table-downgrade-item-1-background",
+              "divider_object_id": "table-downgrade-item-1-separator"
+            },
+            {
+              "item_id": "table-downgrade-item-2",
+              "icon_ids": [
+                "icon-down-team"
+              ],
+              "title_object_id": "table-downgrade-item-2-title",
+              "body_object_id": "table-downgrade-item-2-body",
+              "background_object_id": "table-downgrade-item-2-background",
+              "divider_object_id": "table-downgrade-item-2-separator"
+            }
+          ],
+          "requires_independent_children": true,
+          "independent_item_count": 2,
+          "source_semantic_type": "icon_title_description_list"
+        },
+        {
+          "object_id": "table-churn",
+          "object_type": "repeated_component_group",
+          "children": [
+            "table-churn-item-1",
+            "table-churn-item-2",
+            "table-churn-item-3"
+          ],
+          "items": [
+            {
+              "item_id": "table-churn-item-1",
+              "icon_ids": [
+                "icon-churn-growth"
+              ],
+              "title_object_id": "table-churn-item-1-title",
+              "body_object_id": "table-churn-item-1-body",
+              "background_object_id": "table-churn-item-1-background",
+              "divider_object_id": "table-churn-item-1-separator"
+            },
+            {
+              "item_id": "table-churn-item-2",
+              "icon_ids": [
+                "icon-churn-handshake"
+              ],
+              "title_object_id": "table-churn-item-2-title",
+              "body_object_id": "table-churn-item-2-body",
+              "background_object_id": "table-churn-item-2-background",
+              "divider_object_id": "table-churn-item-2-separator"
+            },
+            {
+              "item_id": "table-churn-item-3",
+              "icon_ids": [
+                "icon-churn-team"
+              ],
+              "title_object_id": "table-churn-item-3-title",
+              "body_object_id": "table-churn-item-3-body",
+              "background_object_id": "table-churn-item-3-background",
+              "divider_object_id": "table-churn-item-3-separator"
+            }
+          ],
+          "requires_independent_children": true,
+          "independent_item_count": 3,
+          "source_semantic_type": "icon_title_description_list"
+        }
+      ]
+    }
+  ],
+  "semantic_layout_policy": "table-vs-repeated-component-v1"
+}
