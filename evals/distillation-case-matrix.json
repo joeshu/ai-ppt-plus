@@ -1,6 +1,6 @@
 {
   "schema": "ai-ppt-plus/distillation-case-matrix/v1",
-  "version": "2026.09",
+  "version": "2026.09.11",
   "description": "蒸馏代理的分层案例矩阵。契约案例验证规则，回放案例验证实际 PPTX 产物。",
   "policy": {
     "targeted_selection": "direct-plus-adjacent-plus-p0",
@@ -27,16 +27,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_engine_route.py",
-        "tests/test_native_route.py",
-        "tests/test_route_contracts.py"
-      ],
-      "required_checks": [
-        "primary_engine=ai-ppt-editable",
-        "gorden_not_primary",
-        "fallback_is_explicit_and_scoped"
-      ]
+      "contract_tests": ["tests/test_engine_route.py", "tests/test_native_route.py", "tests/test_route_contracts.py"],
+      "required_checks": ["primary_engine=ai-ppt-editable", "gorden_not_primary", "fallback_is_explicit_and_scoped"]
     },
     {
       "case_id": "native-shape-card-01",
@@ -46,16 +38,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_native_objects.py",
-        "tests/test_semantic_object_types.py",
-        "tests/test_panel_layer_order.py"
-      ],
-      "required_checks": [
-        "native_shape_or_group",
-        "independent_panel_objects",
-        "no_semantic_frame_picture"
-      ]
+      "contract_tests": ["tests/test_native_objects.py", "tests/test_semantic_object_types.py", "tests/test_panel_layer_order.py"],
+      "required_checks": ["native_shape_or_group", "independent_panel_objects", "no_semantic_frame_picture"]
     },
     {
       "case_id": "native-table-basic-01",
@@ -65,15 +49,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_native_objects.py",
-        "tests/test_semantic_object_audit.py"
-      ],
-      "required_checks": [
-        "a:tbl",
-        "rows_and_columns",
-        "cell_fill_border_and_text"
-      ]
+      "contract_tests": ["tests/test_native_objects.py", "tests/test_semantic_object_audit.py"],
+      "required_checks": ["a:tbl", "rows_and_columns", "cell_fill_border_and_text"]
     },
     {
       "case_id": "native-table-merge-richtext-01",
@@ -83,24 +60,9 @@
       "mode": "replay",
       "status": "ready",
       "replay_required": true,
-      "replay": {
-        "spec": "ai-ppt-editable/evals/social-channel-commission-native-01.json",
-        "source_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx",
-        "process_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png",
-        "candidate_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx",
-        "reference_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg",
-        "static_sentinel": true
-      },
-      "contract_tests": [
-        "tests/test_pptx_case_replay.py"
-      ],
-      "required_checks": [
-        "five_native_tables",
-        "a:tbl",
-        "merged_cells",
-        "rich_text_runs",
-        "mutation_smoke"
-      ]
+      "replay": {"spec": "ai-ppt-editable/evals/social-channel-commission-native-01.json", "source_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx", "process_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png", "candidate_deck": "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx", "reference_image": "ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg", "static_sentinel": true},
+      "contract_tests": ["tests/test_pptx_case_replay.py"],
+      "required_checks": ["five_native_tables", "a:tbl", "merged_cells", "rich_text_runs", "mutation_smoke"]
     },
     {
       "case_id": "native-text-cjk-font-01",
@@ -110,18 +72,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_text_model.py",
-        "tests/test_font_delivery.py",
-        "tests/test_font_embedding.py",
-        "tests/test_typography_calibration.py"
-      ],
-      "required_checks": [
-        "native_text",
-        "cjk_glyphs",
-        "run_styles",
-        "font_evidence"
-      ]
+      "contract_tests": ["tests/test_text_model.py", "tests/test_font_delivery.py", "tests/test_font_embedding.py", "tests/test_typography_calibration.py"],
+      "required_checks": ["native_text", "cjk_glyphs", "run_styles", "font_evidence"]
     },
     {
       "case_id": "chart-data-provenance-01",
@@ -131,14 +83,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_chart_reconstruction.py"
-      ],
-      "required_checks": [
-        "traceable_data",
-        "native_or_source_exact",
-        "no_invented_values"
-      ]
+      "contract_tests": ["tests/test_chart_reconstruction.py"],
+      "required_checks": ["traceable_data", "native_or_source_exact", "no_invented_values"]
     },
     {
       "case_id": "visual-assets-gradient-icon-01",
@@ -148,16 +94,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_icon_layer_standalone.py",
-        "tests/test_asset_hashes.py",
-        "tests/test_panel_layer_order.py"
-      ],
-      "required_checks": [
-        "independent_visual_assets",
-        "declared_fallback_for_complex_visuals",
-        "gradient_effect_inventory"
-      ]
+      "contract_tests": ["tests/test_icon_layer_standalone.py", "tests/test_asset_hashes.py", "tests/test_panel_layer_order.py"],
+      "required_checks": ["independent_visual_assets", "declared_fallback_for_complex_visuals", "gradient_effect_inventory"]
     },
     {
       "case_id": "framework-irregular-layer-01",
@@ -167,15 +105,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_irregular_regions.py",
-        "tests/test_panel_layer_order.py"
-      ],
-      "required_checks": [
-        "layer_order",
-        "irregular_region_bounds",
-        "text_free_substrate_only"
-      ]
+      "contract_tests": ["tests/test_irregular_regions.py", "tests/test_panel_layer_order.py"],
+      "required_checks": ["layer_order", "irregular_region_bounds", "text_free_substrate_only"]
     },
     {
       "case_id": "multi-slide-consistency-01",
@@ -185,16 +116,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_p2_guards.py",
-        "tests/test_incremental_render.py",
-        "tests/test_pipeline_integration.py"
-      ],
-      "required_checks": [
-        "full_deck",
-        "page_consistency",
-        "cache_idempotent"
-      ]
+      "contract_tests": ["tests/test_p2_guards.py", "tests/test_incremental_render.py", "tests/test_pipeline_integration.py"],
+      "required_checks": ["full_deck", "page_consistency", "cache_idempotent"]
     },
     {
       "case_id": "failure-fallback-stop-01",
@@ -204,16 +127,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_validate_source_images.py",
-        "tests/test_route_contracts.py",
-        "tests/test_p0_integrity.py"
-      ],
-      "required_checks": [
-        "unknown_problem_stops",
-        "missing_ocr_requires_review",
-        "no_silent_fallback"
-      ]
+      "contract_tests": ["tests/test_validate_source_images.py", "tests/test_route_contracts.py", "tests/test_p0_integrity.py"],
+      "required_checks": ["unknown_problem_stops", "missing_ocr_requires_review", "no_silent_fallback"]
     },
     {
       "case_id": "package-render-portability-01",
@@ -223,18 +138,8 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_pptx_package.py",
-        "tests/test_environment_contract.py",
-        "tests/test_runtime_mirror.py",
-        "tests/test_visual_compare_dimensions.py"
-      ],
-      "required_checks": [
-        "valid_zip_package",
-        "renderer_available",
-        "artifact_hashes",
-        "runtime_portability"
-      ]
+      "contract_tests": ["tests/test_pptx_package.py", "tests/test_environment_contract.py", "tests/test_runtime_mirror.py", "tests/test_visual_compare_dimensions.py"],
+      "required_checks": ["valid_zip_package", "renderer_available", "artifact_hashes", "runtime_portability"]
     },
     {
       "case_id": "task-mt0wdfjx4y91c-fixed-reference-01",
@@ -244,31 +149,9 @@
       "mode": "replay",
       "status": "ready",
       "replay_required": true,
-      "replay": {
-        "spec": "evals/case-replay-task-mt0wdfjx4y91c/case.json",
-        "source_deck": "evals/case-replay-task-mt0wdfjx4y91c/source/source-reference.pptx",
-        "candidate_deck": "evals/case-replay-task-mt0wdfjx4y91c/candidate/editable.pptx",
-        "reference_image": "evals/case-replay-task-mt0wdfjx4y91c/source/reference.jpg",
-        "candidate_render": "evals/case-replay-task-mt0wdfjx4y91c/candidate/render.png",
-        "static_sentinel": false,
-        "human_approved": true
-      },
-      "contract_tests": [
-        "tests/test_semantic_layout.py",
-        "tests/test_table_layout.py",
-        "tests/test_native_objects.py"
-      ],
-      "required_checks": [
-        "fixed_reference_route",
-        "three_native_charts",
-        "zero_false_native_tables",
-        "three_repeated_component_groups",
-        "eight_independent_item_groups",
-        "independent_imagegen_icons",
-        "table_cell_asset_text_collision=0",
-        "blurred_layout_ssim>=0.90",
-        "human_approved"
-      ]
+      "replay": {"spec": "evals/case-replay-task-mt0wdfjx4y91c/case.json", "source_deck": "evals/case-replay-task-mt0wdfjx4y91c/source/source-reference.pptx", "candidate_deck": "evals/case-replay-task-mt0wdfjx4y91c/candidate/editable.pptx", "reference_image": "evals/case-replay-task-mt0wdfjx4y91c/source/reference.jpg", "candidate_render": "evals/case-replay-task-mt0wdfjx4y91c/candidate/render.png", "static_sentinel": false, "human_approved": true},
+      "contract_tests": ["tests/test_semantic_layout.py", "tests/test_table_layout.py", "tests/test_native_objects.py"],
+      "required_checks": ["fixed_reference_route", "three_native_charts", "zero_false_native_tables", "three_repeated_component_groups", "eight_independent_item_groups", "independent_imagegen_icons", "table_cell_asset_text_collision=0", "blurred_layout_ssim>=0.90", "human_approved"]
     },
     {
       "case_id": "cache-idempotency-01",
@@ -278,16 +161,20 @@
       "mode": "contract",
       "status": "ready",
       "replay_required": false,
-      "contract_tests": [
-        "tests/test_incremental_render.py",
-        "tests/test_pipeline_engine.py",
-        "tests/test_revision_guard.py"
-      ],
-      "required_checks": [
-        "cache_key",
-        "repeatable_output",
-        "baseline_immutable"
-      ]
+      "contract_tests": ["tests/test_incremental_render.py", "tests/test_pipeline_engine.py", "tests/test_revision_guard.py"],
+      "required_checks": ["cache_key", "repeatable_output", "baseline_immutable"]
+    },
+    {
+      "case_id": "unicom-goals-16x9-fixed-reference-01",
+      "title": "中国联通目标页 16:9 原生对象重建契约案例",
+      "priority": "P1",
+      "responsibility": "text-visual",
+      "mode": "contract",
+      "status": "ready",
+      "replay_required": false,
+      "contract_tests": ["tests/test_pptx_case_replay.py", "tests/test_semantic_layout.py", "tests/test_native_objects.py"],
+      "required_checks": ["fixed_reference_route", "native_tables=0", "whole_slide_picture=false", "formal_text_native", "five_independent_goal_components", "timeline_native_shapes_and_text", "repeated_component_group_not_table", "user_approved_external_evidence"],
+      "record": "evals/case-record-unicom-goals-20260911/case.json"
     }
   ]
 }
