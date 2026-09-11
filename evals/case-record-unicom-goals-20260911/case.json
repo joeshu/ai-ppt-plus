@@ -1,0 +1,31 @@
+{
+  "schema": "ai-ppt-plus/distillation-case-record/v1",
+  "case_id": "unicom-goals-16x9-fixed-reference-01",
+  "title": "中国联通‘目标（干多少）’固定参考图 16:9 全元素可编辑案例",
+  "source_mode": "fixed_reference_image",
+  "human_approval": {
+    "status": "approved",
+    "decision": "pass_and_distill",
+    "recorded_from": "user_request_in_project_thread",
+    "date": "2026-09-11"
+  },
+  "expected": {
+    "native_tables": 0,
+    "repeated_component_groups": 1,
+    "independent_item_groups": 5,
+    "formal_text_in_raster": false,
+    "whole_slide_picture_in_candidate": false,
+    "slide_ratio": "16:9"
+  },
+  "observed": {
+    "native_tables": 0,
+    "repeated_component_groups": 1,
+    "independent_item_groups": 5,
+    "formal_text_in_raster": false,
+    "whole_slide_picture_in_candidate": false,
+    "slides_test": "passed"
+  },
+  "record_mode": "contract_with_external_replay_evidence",
+  "repository_replay_status": "external-artifacts-not-checked-in",
+  "promotion_note": "User approved inclusion in the distillation case library. This commit records the reusable structural contract; binary replay artifacts remain external and are not required by the matrix entry."
+}
