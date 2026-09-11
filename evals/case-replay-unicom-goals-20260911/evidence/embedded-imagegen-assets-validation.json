@@ -1,0 +1,133 @@
+{
+  "schema": "ai-ppt-plus/embedded-imagegen-assets-validation/v1",
+  "valid": true,
+  "request_id": "reference-reconstruction-20260911-图片1",
+  "deck": "/workspace/scratch/d0e96217094b/work/run-01/strict-rerun-final.pptx",
+  "deck_sha256": "329c942e56788e55446a2976b79add45cb363fc670bdbe430008cac6619ec41f",
+  "media_count": 10,
+  "media": [
+    {
+      "part": "ppt/media/image1.png",
+      "sha256": "99b31eb40ca1832d381f39aaab91350b3002fc5795cd5a6e4d349a68a8b99608",
+      "bytes": 24637
+    },
+    {
+      "part": "ppt/media/image10.png",
+      "sha256": "11ed3b03fbf1ed79978a3b09e506e5ae7c36469811db423178e0dc71ca70b7ee",
+      "bytes": 69334
+    },
+    {
+      "part": "ppt/media/image2.png",
+      "sha256": "3c029fbf3c0ad1ac28fbfa5faf406e6ff29c17c76953f612b5b0579159e7bf09",
+      "bytes": 22653
+    },
+    {
+      "part": "ppt/media/image3.png",
+      "sha256": "da297b594a93aa6623b0b875c612c10c6db823cf400decfde1439dbd1652934a",
+      "bytes": 14887
+    },
+    {
+      "part": "ppt/media/image4.png",
+      "sha256": "51799519c433b46cdfecfbe64f74458c39e5d46ffa3ad24639d1327300ea8e87",
+      "bytes": 27222
+    },
+    {
+      "part": "ppt/media/image5.png",
+      "sha256": "3e1ef3ad4b7b1be657c52ee8d8eb4da1b4184996a09b6f643d5d30c4ed6ece55",
+      "bytes": 14888
+    },
+    {
+      "part": "ppt/media/image6.png",
+      "sha256": "820a5bf9c7ccf87f86823f538a2f604be633ece627e2dfd0847d2664b63abdda",
+      "bytes": 11858
+    },
+    {
+      "part": "ppt/media/image7.png",
+      "sha256": "53ea467adb49734e6e6a461d9a8196f2d739227ab4b69c6b86f6a54bb4fdf16c",
+      "bytes": 11735
+    },
+    {
+      "part": "ppt/media/image8.png",
+      "sha256": "b05125b62b46d73551732444eed938e558479cbfa446953b4200985e75464e45",
+      "bytes": 12013
+    },
+    {
+      "part": "ppt/media/image9.png",
+      "sha256": "457235c0e8053c9f62d3bdd3dea537cc2180815739dc3c08bd2b1aae5aeb816d",
+      "bytes": 12417
+    }
+  ],
+  "approved_assets": [
+    {
+      "asset_id": "icon-rural",
+      "sha256": "99b31eb40ca1832d381f39aaab91350b3002fc5795cd5a6e4d349a68a8b99608",
+      "embedded_parts": [
+        "ppt/media/image1.png"
+      ]
+    },
+    {
+      "asset_id": "icon-community",
+      "sha256": "3c029fbf3c0ad1ac28fbfa5faf406e6ff29c17c76953f612b5b0579159e7bf09",
+      "embedded_parts": [
+        "ppt/media/image2.png"
+      ]
+    },
+    {
+      "asset_id": "icon-target",
+      "sha256": "da297b594a93aa6623b0b875c612c10c6db823cf400decfde1439dbd1652934a",
+      "embedded_parts": [
+        "ppt/media/image3.png"
+      ]
+    },
+    {
+      "asset_id": "icon-logo",
+      "sha256": "51799519c433b46cdfecfbe64f74458c39e5d46ffa3ad24639d1327300ea8e87",
+      "embedded_parts": [
+        "ppt/media/image4.png"
+      ]
+    },
+    {
+      "asset_id": "icon-goal-1",
+      "sha256": "3e1ef3ad4b7b1be657c52ee8d8eb4da1b4184996a09b6f643d5d30c4ed6ece55",
+      "embedded_parts": [
+        "ppt/media/image5.png"
+      ]
+    },
+    {
+      "asset_id": "icon-goal-2",
+      "sha256": "820a5bf9c7ccf87f86823f538a2f604be633ece627e2dfd0847d2664b63abdda",
+      "embedded_parts": [
+        "ppt/media/image6.png"
+      ]
+    },
+    {
+      "asset_id": "icon-goal-3",
+      "sha256": "53ea467adb49734e6e6a461d9a8196f2d739227ab4b69c6b86f6a54bb4fdf16c",
+      "embedded_parts": [
+        "ppt/media/image7.png"
+      ]
+    },
+    {
+      "asset_id": "icon-goal-4",
+      "sha256": "b05125b62b46d73551732444eed938e558479cbfa446953b4200985e75464e45",
+      "embedded_parts": [
+        "ppt/media/image8.png"
+      ]
+    },
+    {
+      "asset_id": "icon-goal-5",
+      "sha256": "457235c0e8053c9f62d3bdd3dea537cc2180815739dc3c08bd2b1aae5aeb816d",
+      "embedded_parts": [
+        "ppt/media/image9.png"
+      ]
+    },
+    {
+      "asset_id": "bottom-wave",
+      "sha256": "11ed3b03fbf1ed79978a3b09e506e5ae7c36469811db423178e0dc71ca70b7ee",
+      "embedded_parts": [
+        "ppt/media/image10.png"
+      ]
+    }
+  ],
+  "issues": []
+}

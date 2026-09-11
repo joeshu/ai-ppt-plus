@@ -1,0 +1,39 @@
+{
+  "schema": "ai-ppt-plus/real-pptx-replay/v1",
+  "case_id": "unicom-goals-16x9-fixed-reference-01",
+  "title": "中国联通‘目标（干多少）’固定参考图真实 replay",
+  "route": "fixed-reference-reconstruction",
+  "delivery_variant": {
+    "candidate": "font-stripped",
+    "original_font_bearing_sha256": "329c942e56788e55446a2976b79add45cb363fc670bdbe430008cac6619ec41f",
+    "candidate_sha256": "4813bfa2d0571e1db690ed3545ed24209d1458586385d495361819c0a30635a1",
+    "font_parts": []
+  },
+  "replay": {
+    "source_deck": "evals/case-replay-unicom-goals-20260911/artifacts/baseline/source-reference.pptx",
+    "candidate_deck": "evals/case-replay-unicom-goals-20260911/artifacts/candidate/editable.pptx",
+    "reference_image": "evals/case-replay-unicom-goals-20260911/artifacts/reference/reference.png"
+  },
+  "approved_artifact_hashes": {
+    "source_deck": "a9fa06ec173f632f796357c9e5f29cc6888a2dc88e326cb387ce17695dc4b62f",
+    "candidate_deck": "4813bfa2d0571e1db690ed3545ed24209d1458586385d495361819c0a30635a1",
+    "reference_image": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+  },
+  "expected": {
+    "native_tables": 0,
+    "min_native_text_objects": 38,
+    "min_total_objects": 90,
+    "replay_blurred_similarity_min": 0.82,
+    "whole_slide_picture_forbidden_in_candidate": true,
+    "mutation_required": true
+  },
+  "evidence": {
+    "source_sha256": "evidence/source-sha256.txt",
+    "page_graph": "evidence/page-graph.json",
+    "object_manifest": "evidence/editable-object-manifest.json",
+    "visual_comparison": "evidence/visual-compare-final.json",
+    "font_delivery": "evidence/font-delivery-final.json",
+    "formal_text": "evidence/formal-copy.json",
+    "mutation": "evidence/mutation-smoke-report.json"
+  }
+}

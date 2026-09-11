@@ -1,0 +1,1800 @@
+{
+  "schema": "ai-ppt-plus/text-layout-manifest/v1",
+  "project_id": "unicom-goals-16x9-20260911",
+  "layout_ref": "layout.json",
+  "units": "px",
+  "reference_size": {
+    "width": 1536,
+    "height": 1024
+  },
+  "slides": [
+    {
+      "slide_no": 1,
+      "text_specs": [
+        {
+          "text_id": "top-kicker",
+          "slide_no": 1,
+          "content": "夺高点\n争上扬",
+          "source_bbox": [
+            32.0,
+            16.0,
+            98.0,
+            76.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 31.0,
+            "y": 13.0,
+            "w": 111.0,
+            "h": 72.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 28,
+            "color": "#FFF200",
+            "bold": true,
+            "line_spacing": 0.92,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 1,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "夺高点\n争上扬"
+        },
+        {
+          "text_id": "top-section",
+          "slide_no": 1,
+          "content": "第二部分",
+          "source_bbox": [
+            201.0,
+            45.0,
+            161.0,
+            38.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 201.0,
+            "y": 27.0,
+            "w": 174.0,
+            "h": 50.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 34,
+            "color": "#565656",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "left",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 2,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "第二部分"
+        },
+        {
+          "text_id": "top-title",
+          "slide_no": 1,
+          "content": "目标（干多少）",
+          "source_bbox": [
+            385.0,
+            31.0,
+            390.0,
+            57.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 385.0,
+            "y": 18.0,
+            "w": 450.0,
+            "h": 67.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 56,
+            "color": "#C9151E",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "left",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 3,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "目标（干多少）"
+        },
+        {
+          "text_id": "strategy-banner",
+          "slide_no": 1,
+          "content": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！",
+          "source_bbox": [
+            204.0,
+            145.0,
+            1129.0,
+            39.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 188.0,
+            "y": 119.0,
+            "w": 1160.0,
+            "h": 44.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 30,
+            "color": "#111111",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [
+            {
+              "run_id": "strategy-banner.r01",
+              "text": "紧盯标杆打造目标，以",
+              "style": {
+                "size_px": 30,
+                "color": "#111111",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "strategy-banner.r02",
+              "text": "移宽双新融合",
+              "style": {
+                "size_px": 30,
+                "color": "#D71920",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "strategy-banner.r03",
+              "text": "为主攻方向，全力完成三季度发展任务！",
+              "style": {
+                "size_px": 30,
+                "color": "#111111",
+                "bold": true
+              }
+            }
+          ],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 4,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "declared_text": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！"
+        },
+        {
+          "text_id": "sec1-num-text",
+          "slide_no": 1,
+          "content": "1",
+          "source_bbox": [
+            42.0,
+            216.0,
+            22.0,
+            34.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 32.0,
+            "y": 177.0,
+            "w": 37.0,
+            "h": 37.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 29,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 5,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "1"
+        },
+        {
+          "text_id": "sec1-title",
+          "slide_no": 1,
+          "content": "标杆打造目标",
+          "source_bbox": [
+            83.0,
+            216.0,
+            202.0,
+            33.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 82.0,
+            "y": 172.0,
+            "w": 220.0,
+            "h": 42.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 30,
+            "color": "#C9151E",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "left",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 6,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "标杆打造目标"
+        },
+        {
+          "text_id": "rural-label-text",
+          "slide_no": 1,
+          "content": "农村市场",
+          "source_bbox": [
+            175.0,
+            345.0,
+            101.0,
+            31.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 166.0,
+            "y": 291.0,
+            "w": 117.0,
+            "h": 38.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 24,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 7,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "农村市场"
+        },
+        {
+          "text_id": "rural-kpi",
+          "slide_no": 1,
+          "content": "50个重点网格30户\n其余网格20户",
+          "source_bbox": [
+            318.0,
+            322.0,
+            274.0,
+            88.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 318.0,
+            "y": 308.0,
+            "w": 270.0,
+            "h": 75.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 20,
+            "color": "#111111",
+            "bold": true,
+            "line_spacing": 1.18,
+            "align": "left",
+            "valign": "top",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [
+            {
+              "run_id": "rural-kpi.r01",
+              "text": "50个",
+              "style": {
+                "size_px": 29,
+                "color": "#D71920",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "rural-kpi.r02",
+              "text": "重点网格",
+              "style": {
+                "size_px": 21,
+                "color": "#111111",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "rural-kpi.r03",
+              "text": "30户",
+              "style": {
+                "size_px": 29,
+                "color": "#D71920",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "rural-kpi.r04",
+              "text": "\n其余网格",
+              "style": {
+                "size_px": 21,
+                "color": "#111111",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "rural-kpi.r05",
+              "text": "20户",
+              "style": {
+                "size_px": 29,
+                "color": "#D71920",
+                "bold": true
+              }
+            }
+          ],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 8,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "declared_text": "50个重点网格30户\n其余网格20户"
+        },
+        {
+          "text_id": "community-label-text",
+          "slide_no": 1,
+          "content": "社区市场",
+          "source_bbox": [
+            771.0,
+            345.0,
+            103.0,
+            31.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 767.0,
+            "y": 291.0,
+            "w": 117.0,
+            "h": 38.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 24,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 9,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "社区市场"
+        },
+        {
+          "text_id": "community-kpi",
+          "slide_no": 1,
+          "content": "每个标杆社区20户",
+          "source_bbox": [
+            913.0,
+            360.0,
+            235.0,
+            32.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 913.0,
+            "y": 326.0,
+            "w": 235.0,
+            "h": 42.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 20,
+            "color": "#111111",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "left",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [
+            {
+              "run_id": "community-kpi.r01",
+              "text": "每个标杆社区",
+              "style": {
+                "size_px": 22,
+                "color": "#111111",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "community-kpi.r02",
+              "text": "20户",
+              "style": {
+                "size_px": 29,
+                "color": "#D71920",
+                "bold": true
+              }
+            }
+          ],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 10,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "declared_text": "每个标杆社区20户"
+        },
+        {
+          "text_id": "target-title",
+          "slide_no": 1,
+          "content": "目标要求",
+          "source_bbox": [
+            1316.0,
+            311.0,
+            116.0,
+            32.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 1312.0,
+            "y": 266.0,
+            "w": 177.0,
+            "h": 40.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 28,
+            "color": "#C9151E",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "left",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 11,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "目标要求"
+        },
+        {
+          "text_id": "target-body",
+          "slide_no": 1,
+          "content": "全部以79元及以上\n移宽双新融合为目标",
+          "source_bbox": [
+            1315.0,
+            366.0,
+            173.0,
+            53.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 1312.0,
+            "y": 322.0,
+            "w": 180.0,
+            "h": 66.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 17,
+            "color": "#111111",
+            "bold": true,
+            "line_spacing": 1.26,
+            "align": "left",
+            "valign": "top",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [
+            {
+              "run_id": "target-body.r01",
+              "text": "全部以",
+              "style": {
+                "size_px": 18,
+                "color": "#111111",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "target-body.r02",
+              "text": "79元及以上",
+              "style": {
+                "size_px": 18,
+                "color": "#D71920",
+                "bold": true
+              }
+            },
+            {
+              "run_id": "target-body.r03",
+              "text": "\n移宽双新融合为目标",
+              "style": {
+                "size_px": 18,
+                "color": "#111111",
+                "bold": true
+              }
+            }
+          ],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 12,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "declared_text": "全部以79元及以上\n移宽双新融合为目标"
+        },
+        {
+          "text_id": "sec2-num-text",
+          "slide_no": 1,
+          "content": "2",
+          "source_bbox": [
+            42.0,
+            491.0,
+            22.0,
+            34.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 32.0,
+            "y": 414.0,
+            "w": 37.0,
+            "h": 37.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 29,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 13,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "2"
+        },
+        {
+          "text_id": "sec2-title",
+          "slide_no": 1,
+          "content": "推进节奏安排",
+          "source_bbox": [
+            83.0,
+            493.0,
+            202.0,
+            33.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 82.0,
+            "y": 410.0,
+            "w": 220.0,
+            "h": 42.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 30,
+            "color": "#C9151E",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "left",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 14,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "推进节奏安排"
+        },
+        {
+          "text_id": "date-628",
+          "slide_no": 1,
+          "content": "6.28",
+          "source_bbox": [
+            155.0,
+            549.0,
+            70.0,
+            26.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 155.0,
+            "y": 458.0,
+            "w": 71.0,
+            "h": 26.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 19,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 15,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "6.28"
+        },
+        {
+          "text_id": "date-628-sub",
+          "slide_no": 1,
+          "content": "上报目标",
+          "source_bbox": [
+            145.0,
+            581.0,
+            95.0,
+            25.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 143.0,
+            "y": 484.0,
+            "w": 99.0,
+            "h": 30.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 20,
+            "color": "#111111",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 16,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "上报目标"
+        },
+        {
+          "text_id": "start-pin-text",
+          "slide_no": 1,
+          "content": "启动",
+          "source_bbox": [
+            264.0,
+            590.0,
+            40.0,
+            24.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 256.0,
+            "y": 491.0,
+            "w": 55.0,
+            "h": 28.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 19,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 17,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "启动"
+        },
+        {
+          "text_id": "date-7120",
+          "slide_no": 1,
+          "content": "7.1 - 7.20",
+          "source_bbox": [
+            499.0,
+            538.0,
+            138.0,
+            28.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 497.0,
+            "y": 447.0,
+            "w": 142.0,
+            "h": 28.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 19,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 18,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "7.1 - 7.20"
+        },
+        {
+          "text_id": "phase1-title",
+          "slide_no": 1,
+          "content": "一阶段：标杆打造",
+          "source_bbox": [
+            484.0,
+            577.0,
+            181.0,
+            26.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 480.0,
+            "y": 477.0,
+            "w": 185.0,
+            "h": 28.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 21,
+            "color": "#C9151E",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 19,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "一阶段：标杆打造"
+        },
+        {
+          "text_id": "phase1-body",
+          "slide_no": 1,
+          "content": "高新完成4个社区，示范完成3个社区+1个行政村",
+          "source_bbox": [
+            390.0,
+            612.0,
+            379.0,
+            26.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 384.0,
+            "y": 510.0,
+            "w": 380.0,
+            "h": 30.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 17,
+            "color": "#111111",
+            "bold": false,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 20,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "高新完成4个社区，示范完成3个社区+1个行政村"
+        },
+        {
+          "text_id": "date-72131",
+          "slide_no": 1,
+          "content": "7.21 - 7.31",
+          "source_bbox": [
+            929.0,
+            538.0,
+            140.0,
+            28.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 928.0,
+            "y": 447.0,
+            "w": 142.0,
+            "h": 28.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 19,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 21,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "7.21 - 7.31"
+        },
+        {
+          "text_id": "phase2-title",
+          "slide_no": 1,
+          "content": "二阶段：培优补差",
+          "source_bbox": [
+            915.0,
+            577.0,
+            181.0,
+            26.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 913.0,
+            "y": 477.0,
+            "w": 183.0,
+            "h": 28.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 21,
+            "color": "#C9151E",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 22,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "二阶段：培优补差"
+        },
+        {
+          "text_id": "phase2-body",
+          "slide_no": 1,
+          "content": "一阶段已达标的行政村和社区\n二阶段再完成10户目标",
+          "source_bbox": [
+            880.0,
+            607.0,
+            280.0,
+            34.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 884.0,
+            "y": 507.0,
+            "w": 270.0,
+            "h": 40.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 17,
+            "color": "#111111",
+            "bold": false,
+            "line_spacing": 1.08,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 23,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "一阶段已达标的行政村和社区\n二阶段再完成10户目标"
+        },
+        {
+          "text_id": "date-83",
+          "slide_no": 1,
+          "content": "8.3",
+          "source_bbox": [
+            1272.0,
+            547.0,
+            89.0,
+            27.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 1270.0,
+            "y": 458.0,
+            "w": 90.0,
+            "h": 26.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 19,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 24,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "8.3"
+        },
+        {
+          "text_id": "date-83-sub",
+          "slide_no": 1,
+          "content": "月度复盘表彰大会",
+          "source_bbox": [
+            1235.0,
+            582.0,
+            162.0,
+            26.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 1233.0,
+            "y": 485.0,
+            "w": 165.0,
+            "h": 30.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 19,
+            "color": "#111111",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 25,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "月度复盘表彰大会"
+        },
+        {
+          "text_id": "end-node-text",
+          "slide_no": 1,
+          "content": "工作\n结束",
+          "source_bbox": [
+            1415.0,
+            615.0,
+            52.0,
+            51.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 1414.0,
+            "y": 509.0,
+            "w": 57.0,
+            "h": 53.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 20,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 0.95,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 26,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "工作\n结束"
+        },
+        {
+          "text_id": "sec3-num-text",
+          "slide_no": 1,
+          "content": "3",
+          "source_bbox": [
+            42.0,
+            682.0,
+            22.0,
+            34.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 32.0,
+            "y": 576.0,
+            "w": 37.0,
+            "h": 37.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 29,
+            "color": "#FFFFFF",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 27,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "3"
+        },
+        {
+          "text_id": "sec3-title",
+          "slide_no": 1,
+          "content": "目标要求",
+          "source_bbox": [
+            83.0,
+            684.0,
+            121.0,
+            33.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 82.0,
+            "y": 572.0,
+            "w": 180.0,
+            "h": 42.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 30,
+            "color": "#C9151E",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "left",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 28,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "目标要求"
+        },
+        {
+          "text_id": "goal1-title",
+          "slide_no": 1,
+          "content": "对标先进",
+          "source_bbox": [
+            122.0,
+            841.0,
+            120.0,
+            31.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 110.0,
+            "y": 708.0,
+            "w": 120.0,
+            "h": 32.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 26,
+            "color": "#D71920",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 29,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "对标先进"
+        },
+        {
+          "text_id": "goal1-body",
+          "slide_no": 1,
+          "content": "对标前期先进网格找差距\n明确提升方向和路径",
+          "source_bbox": [
+            78.0,
+            883.0,
+            200.0,
+            47.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 72.0,
+            "y": 746.0,
+            "w": 190.0,
+            "h": 50.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 16.5,
+            "color": "#111111",
+            "bold": false,
+            "line_spacing": 1.12,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 30,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "对标前期先进网格找差距\n明确提升方向和路径"
+        },
+        {
+          "text_id": "goal2-title",
+          "slide_no": 1,
+          "content": "聚焦双新",
+          "source_bbox": [
+            425.0,
+            841.0,
+            120.0,
+            31.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 415.0,
+            "y": 708.0,
+            "w": 120.0,
+            "h": 32.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 26,
+            "color": "#F15A24",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 31,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "聚焦双新"
+        },
+        {
+          "text_id": "goal2-body",
+          "slide_no": 1,
+          "content": "坚持以移宽双新融合为主线\n提升发展效率和质量",
+          "source_bbox": [
+            381.0,
+            883.0,
+            200.0,
+            47.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 377.0,
+            "y": 746.0,
+            "w": 190.0,
+            "h": 50.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 16.5,
+            "color": "#111111",
+            "bold": false,
+            "line_spacing": 1.12,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 32,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "坚持以移宽双新融合为主线\n提升发展效率和质量"
+        },
+        {
+          "text_id": "goal3-title",
+          "slide_no": 1,
+          "content": "全员参与",
+          "source_bbox": [
+            712.0,
+            841.0,
+            120.0,
+            31.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 702.0,
+            "y": 708.0,
+            "w": 120.0,
+            "h": 32.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 26,
+            "color": "#F2B01B",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 33,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "全员参与"
+        },
+        {
+          "text_id": "goal3-body",
+          "slide_no": 1,
+          "content": "网格CEO带头，全员上阵\n形成合力，全面推进",
+          "source_bbox": [
+            668.0,
+            883.0,
+            200.0,
+            47.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 664.0,
+            "y": 746.0,
+            "w": 190.0,
+            "h": 50.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 16.5,
+            "color": "#111111",
+            "bold": false,
+            "line_spacing": 1.12,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 34,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "网格CEO带头，全员上阵\n形成合力，全面推进"
+        },
+        {
+          "text_id": "goal4-title",
+          "slide_no": 1,
+          "content": "以质取胜",
+          "source_bbox": [
+            1001.0,
+            841.0,
+            120.0,
+            31.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 993.0,
+            "y": 708.0,
+            "w": 120.0,
+            "h": 32.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 26,
+            "color": "#1661B6",
+            "bold": true,
+            "line_spacing": 1.0,
+            "align": "center",
+            "valign": "middle",
+            "margin_left": 0,
+            "margin_right": 0,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "font_family": "Noto Sans CJK SC"
+          },
+          "runs": [],
+          "runs_input_valid": true,
+          "literal_redaction": false,
+          "emphasis_expected": false,
+          "wrap": {
+            "word_wrap": true,
+            "preserve_line_breaks": true
+          },
+          "source_index": 35,
+          "reference_size": {
+            "width": 1536,
+            "height": 1024
+          },
+          "raw_text_present": true,
+          "declared_text": "以质取胜"
+        },
+        {
+          "text_id": "goal4-body",
+          "slide_no": 1,
+          "content": "注重发展质量和客户体验\n打造可复制的标杆样板",
+          "source_bbox": [
+            957.0,
+            883.0,
+            200.0,
+            47.0
+          ],
+          "coordinate_space": "px",
+          "bbox": {
+            "x": 955.0,
+            "y": 746.0,
+            "w": 190.0,
+            "h": 50.0
+          },
+          "style": {
+            "font": "Noto Sans CJK SC",
+            "size_px": 16.5,
+            "color": "#111111",
+            "bold": false,
+            "line_spacing": 1.12,
+            "align": "center",
+  m��+�מ��+�$zzb�

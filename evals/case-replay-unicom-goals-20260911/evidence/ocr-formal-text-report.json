@@ -1,0 +1,220 @@
+{
+  "schema": "ai-ppt-plus/ocr-formal-text-report/v1",
+  "status": "passed_with_ocr_language_limit",
+  "formal_authority": "formal-copy.json",
+  "formal_authority_sha256": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+  "ocr": {
+    "requested_language": "chi_sim+eng",
+    "available_languages": [
+      "eng",
+      "osd"
+    ],
+    "status": "unavailable_for_chinese",
+    "diagnostic_report": "ocr-eng-check.json",
+    "reason": "Tesseract chi_sim language data is not installed; OCR is retained as diagnostic only and is not the formal text authority."
+  },
+  "manual_visual_verification": "pass",
+  "text_object_count": 38,
+  "matched_object_count": 38,
+  "rows": [
+    {
+      "object_id": "top-kicker",
+      "formal_text": "夺高点\n争上扬",
+      "layout_text": "夺高点\n争上扬",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "top-section",
+      "formal_text": "第二部分",
+      "layout_text": "第二部分",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "top-title",
+      "formal_text": "目标（干多少）",
+      "layout_text": "目标（干多少）",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "strategy-banner",
+      "formal_text": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！",
+      "layout_text": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "sec1-num-text",
+      "formal_text": "1",
+      "layout_text": "1",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "sec1-title",
+      "formal_text": "标杆打造目标",
+      "layout_text": "标杆打造目标",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "rural-label-text",
+      "formal_text": "农村市场",
+      "layout_text": "农村市场",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "rural-kpi",
+      "formal_text": "50个重点网格30户\n其余网格20户",
+      "layout_text": "50个重点网格30户\n其余网格20户",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "community-label-text",
+      "formal_text": "社区市场",
+      "layout_text": "社区市场",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "community-kpi",
+      "formal_text": "每个标杆社区20户",
+      "layout_text": "每个标杆社区20户",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "target-title",
+      "formal_text": "目标要求",
+      "layout_text": "目标要求",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "target-body",
+      "formal_text": "全部以79元及以上\n移宽双新融合为目标",
+      "layout_text": "全部以79元及以上\n移宽双新融合为目标",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "sec2-num-text",
+      "formal_text": "2",
+      "layout_text": "2",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "sec2-title",
+      "formal_text": "推进节奏安排",
+      "layout_text": "推进节奏安排",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "date-628",
+      "formal_text": "6.28",
+      "layout_text": "6.28",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "date-628-sub",
+      "formal_text": "上报目标",
+      "layout_text": "上报目标",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "start-pin-text",
+      "formal_text": "启动",
+      "layout_text": "启动",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "date-7120",
+      "formal_text": "7.1 - 7.20",
+      "layout_text": "7.1 - 7.20",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "phase1-title",
+      "formal_text": "一阶段：标杆打造",
+      "layout_text": "一阶段：标杆打造",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "phase1-body",
+      "formal_text": "高新完成4个社区，示范完成3个社区+1个行政村",
+      "layout_text": "高新完成4个社区，示范完成3个社区+1个行政村",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "date-72131",
+      "formal_text": "7.21 - 7.31",
+      "layout_text": "7.21 - 7.31",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "phase2-title",
+      "formal_text": "二阶段：培优补差",
+      "layout_text": "二阶段：培优补差",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "phase2-body",
+      "formal_text": "一阶段已达标的行政村和社区\n二阶段再完成10户目标",
+      "layout_text": "一阶段已达标的行政村和社区\n二阶段再完成10户目标",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "date-83",
+      "formal_text": "8.3",
+      "layout_text": "8.3",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "date-83-sub",
+      "formal_text": "月度复盘表彰大会",
+      "layout_text": "月度复盘表彰大会",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "end-node-text",
+      "formal_text": "工作\n结束",
+      "layout_text": "工作\n结束",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "sec3-num-text",
+      "formal_text": "3",
+      "layout_text": "3",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "sec3-title",
+      "formal_text": "目标要求",
+      "layout_text": "目标要求",
+      "match": true,
+      "status": "verified"
+    },
+    {
+      "object_id": "goal1-title",
+      "formal_text": "对标先进",
+      "layout_text": "对标先进",
+      "match": tr

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
 import shutil
 import subprocess
 import sys
@@ -35,6 +34,9 @@ def iter_shapes(shapes):
 
 
 def materialize(manifest: Path, output: Path) -> None:
+    if manifest.suffix.lower() in {".pptx", ".png", ".jpg", ".jpeg"}:
+        shutil.copy2(manifest, output)
+        return
     completed = subprocess.run(
         [sys.executable, str(MATERIALIZER), str(manifest), "--output", str(output)],
         cwd=ROOT, capture_output=True, text=True, check=False,
@@ -95,7 +97,7 @@ def main() -> int:
         work = Path(temporary)
         source = work / "source-reference.pptx"
         candidate = work / "editable.pptx"
-        reference = work / "reference.jpg"
+        reference = work / "reference.png"
         materialize(ROOT / replay["source_deck"], source)
         materialize(ROOT / replay["candidate_deck"], candidate)
         materialize(ROOT / replay["reference_image"], reference)

@@ -1,0 +1,14 @@
+{
+  "schema": "ai-ppt-plus/engine-route-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "route_file": "/workspace/scratch/d0e96217094b/work/run-01/route-decision.json",
+  "route": "reference-reconstruction",
+  "primary_engine": "ai-ppt-editable",
+  "fallback_policy": "scoped-visual-only",
+  "editable_object_policy": "native-semantic-objects",
+  "fallback_used": false,
+  "fallback_event_count": 0,
+  "fallback_events": [],
+  "issues": []
+}

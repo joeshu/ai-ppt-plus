@@ -1,0 +1,959 @@
+{
+  "schema": "ai-ppt-plus/editable-object-audit/v1",
+  "valid": true,
+  "deck": "/workspace/scratch/d0e96217094b/work/run-01/unicom-goals-16x9-editable-final.pptx",
+  "slides": [
+    {
+      "slide": 1,
+      "shape_count": 94,
+      "shapes": [
+        {
+          "name": "top-red-band",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 1301717,
+          "height": 730250
+        },
+        {
+          "name": "top-red-separator",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 1293780,
+          "top": 0,
+          "width": 23811,
+          "height": 730250
+        },
+        {
+          "name": "header-rule",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 714375,
+          "width": 12191695,
+          "height": 23812
+        },
+        {
+          "name": "sec1-pill",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 190495,
+          "top": 1341437,
+          "width": 2198632,
+          "height": 388937
+        },
+        {
+          "name": "sec1-num",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 253993,
+          "top": 1404937,
+          "width": 293680,
+          "height": 293687
+        },
+        {
+          "name": "sec1-panel",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 190495,
+          "top": 1754187,
+          "width": 11810704,
+          "height": 1317625
+        },
+        {
+          "name": "sec1-rural-card",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 2405002,
+          "top": 1976437,
+          "width": 2325629,
+          "height": 1023937
+        },
+        {
+          "name": "sec1-community-card",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 7103884,
+          "top": 1976437,
+          "width": 2063698,
+          "height": 1023937
+        },
+        {
+          "name": "sec1-target-card",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 9508887,
+          "top": 1754187,
+          "width": 2492312,
+          "height": 1317625
+        },
+        {
+          "name": "sec1-divider",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 4944938,
+          "top": 1968500,
+          "width": 0,
+          "height": 1071562
+        },
+        {
+          "name": "sec1-rural-label",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 1262030,
+          "top": 2238375,
+          "width": 1023911,
+          "height": 452437
+        },
+        {
+          "name": "sec1-community-label",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 6024411,
+          "top": 2238375,
+          "width": 1047723,
+          "height": 452437
+        },
+        {
+          "name": "sec2-pill",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 190495,
+          "top": 3230562,
+          "width": 2198632,
+          "height": 388937
+        },
+        {
+          "name": "sec2-num",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 253993,
+          "top": 3286125,
+          "width": 293680,
+          "height": 293687
+        },
+        {
+          "name": "timeline-track-soft",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 761980,
+          "top": 4318000,
+          "width": 10374052,
+          "height": 79375
+        },
+        {
+          "name": "timeline-track",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 2238319,
+          "top": 4318000,
+          "width": 8738968,
+          "height": 79375
+        },
+        {
+          "name": "timeline-arrow",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 10882040,
+          "top": 4222750,
+          "width": 277805,
+          "height": 269875
+        },
+        {
+          "name": "timeline-dot-1",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 1452526,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062
+        },
+        {
+          "name": "timeline-dot-2",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 2174820,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062
+        },
+        {
+          "name": "timeline-dot-3",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 6151408,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062
+        },
+        {
+          "name": "timeline-dot-4",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 9413639,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062
+        },
+        {
+          "name": "timeline-dot-5",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 10397864,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062
+        },
+        {
+          "name": "date-628-bg",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 1222344,
+          "top": 3587750,
+          "width": 579423,
+          "height": 222250
+        },
+        {
+          "name": "date-7120-bg",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 3936901,
+          "top": 3548062,
+          "width": 1142971,
+          "height": 222250
+        },
+        {
+          "name": "date-72131-bg",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 7357878,
+          "top": 3548062,
+          "width": 1142971,
+          "height": 222250
+        },
+        {
+          "name": "date-83-bg",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 10080372,
+          "top": 3587750,
+          "width": 714357,
+          "height": 222250
+        },
+        {
+          "name": "start-pin-circle",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 1992262,
+          "top": 3778250,
+          "width": 507987,
+          "height": 508000
+        },
+        {
+          "name": "start-pin-tip",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 2158945,
+          "top": 4183062,
+          "width": 174620,
+          "height": 190500
+        },
+        {
+          "name": "end-node",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 11136033,
+          "top": 3929062,
+          "width": 619109,
+          "height": 619125
+        },
+        {
+          "name": "sec3-pill",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 190495,
+          "top": 4516437,
+          "width": 1904952,
+          "height": 388937
+        },
+        {
+          "name": "sec3-num",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 253993,
+          "top": 4572000,
+          "width": 293680,
+          "height": 293687
+        },
+        {
+          "name": "sec3-panel",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 222244,
+          "top": 4794250,
+          "width": 11620209,
+          "height": 1539875
+        },
+        {
+          "name": "goal-divider-1",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 2619309,
+          "top": 4929187,
+          "width": 0,
+          "height": 1222375
+        },
+        {
+          "name": "goal-divider-2",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 5048123,
+          "top": 4929187,
+          "width": 0,
+          "height": 1222375
+        },
+        {
+          "name": "goal-divider-3",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 7230881,
+          "top": 4929187,
+          "width": 0,
+          "height": 1222375
+        },
+        {
+          "name": "goal-divider-4",
+          "type": "LINE (9)",
+          "has_text": false,
+          "text": "",
+          "left": 9540636,
+          "top": 4929187,
+          "width": 0,
+          "height": 1222375
+        },
+        {
+          "name": "goal-bg-1",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 357178,
+          "top": 4897437,
+          "width": 2024011,
+          "height": 1301750
+        },
+        {
+          "name": "goal-bg-2",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 2778055,
+          "top": 4897437,
+          "width": 2024011,
+          "height": 1301750
+        },
+        {
+          "name": "goal-bg-3",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 5214807,
+          "top": 4897437,
+          "width": 1825579,
+          "height": 1301750
+        },
+        {
+          "name": "goal-bg-4",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 7389627,
+          "top": 4897437,
+          "width": 2024011,
+          "height": 1301750
+        },
+        {
+          "name": "goal-bg-5",
+          "type": "AUTO_SHAPE (1)",
+          "has_text": false,
+          "text": "",
+          "left": 9699382,
+          "top": 4897437,
+          "width": 1889077,
+          "height": 1301750
+        },
+        {
+          "name": "goal-component-1",
+          "type": "GROUP (6)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "goal-component-2",
+          "type": "GROUP (6)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "goal-component-3",
+          "type": "GROUP (6)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "goal-component-4",
+          "type": "GROUP (6)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "goal-component-5",
+          "type": "GROUP (6)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "name": "icon-rural",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 373053,
+          "top": 1960562,
+          "width": 984225,
+          "height": 984250
+        },
+        {
+          "name": "icon-community",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 5095747,
+          "top": 1960562,
+          "width": 984225,
+          "height": 984250
+        },
+        {
+          "name": "icon-target",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 9651758,
+          "top": 2024062,
+          "width": 698482,
+          "height": 762000
+        },
+        {
+          "name": "icon-logo",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 10278805,
+          "top": 55562,
+          "width": 1698582,
+          "height": 698500
+        },
+        {
+          "name": "icon-goal-1",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 1047723,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125
+        },
+        {
+          "name": "icon-goal-2",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 3452726,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125
+        },
+        {
+          "name": "icon-goal-3",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 5730731,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125
+        },
+        {
+          "name": "icon-goal-4",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 8024611,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125
+        },
+        {
+          "name": "icon-goal-5",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 10231181,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125
+        },
+        {
+          "name": "bottom-wave",
+          "type": "PICTURE (13)",
+          "has_text": false,
+          "text": "",
+          "left": 0,
+          "top": 6302375,
+          "width": 12191695,
+          "height": 555625
+        },
+        {
+          "name": "top-kicker",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "夺高点\n争上扬",
+          "left": 246056,
+          "top": 103187,
+          "width": 881040,
+          "height": 571500
+        },
+        {
+          "name": "top-section",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "第二部分",
+          "left": 1595397,
+          "top": 214312,
+          "width": 1381090,
+          "height": 396875
+        },
+        {
+          "name": "top-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "目标（干多少）",
+          "left": 3055861,
+          "top": 142875,
+          "width": 3571785,
+          "height": 531812
+        },
+        {
+          "name": "strategy-banner",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！",
+          "left": 1492212,
+          "top": 944562,
+          "width": 9207269,
+          "height": 349250
+        },
+        {
+          "name": "sec1-num-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "1",
+          "left": 253993,
+          "top": 1404937,
+          "width": 293680,
+          "height": 293687
+        },
+        {
+          "name": "sec1-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "标杆打造目标",
+          "left": 650858,
+          "top": 1365250,
+          "width": 1746206,
+          "height": 333375
+        },
+        {
+          "name": "rural-label-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "农村市场",
+          "left": 1317592,
+          "top": 2309812,
+          "width": 928664,
+          "height": 301625
+        },
+        {
+          "name": "rural-kpi",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "50个重点网格30户\n其余网格20户",
+          "left": 2524061,
+          "top": 2444750,
+          "width": 2143071,
+          "height": 595312
+        },
+        {
+          "name": "community-label-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "社区市场",
+          "left": 6087910,
+          "top": 2309812,
+          "width": 928664,
+          "height": 301625
+        },
+        {
+          "name": "community-kpi",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "每个标杆社区20户",
+          "left": 7246756,
+          "top": 2587625,
+          "width": 1865265,
+          "height": 333375
+        },
+        {
+          "name": "target-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "目标要求",
+          "left": 10413739,
+          "top": 2111375,
+          "width": 1404902,
+          "height": 317500
+        },
+        {
+          "name": "target-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "全部以79元及以上\n移宽双新融合为目标",
+          "left": 10413739,
+          "top": 2555875,
+          "width": 1428714,
+          "height": 523875
+        },
+        {
+          "name": "sec2-num-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "2",
+          "left": 253993,
+          "top": 3286125,
+          "width": 293680,
+          "height": 293687
+        },
+        {
+          "name": "sec2-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "推进节奏安排",
+          "left": 650858,
+          "top": 3254375,
+          "width": 1746206,
+          "height": 333375
+        },
+        {
+          "name": "date-628",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "6.28",
+          "left": 1230281,
+          "top": 3635375,
+          "width": 563548,
+          "height": 206375
+        },
+        {
+          "name": "date-628-sub",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "上报目标",
+          "left": 1135034,
+          "top": 3841750,
+          "width": 785792,
+          "height": 238125
+        },
+        {
+          "name": "start-pin-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "启动",
+          "left": 2031949,
+          "top": 3897312,
+          "width": 436551,
+          "height": 222250
+        },
+        {
+          "name": "date-7120",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "7.1 - 7.20",
+          "left": 3944838,
+          "top": 3548062,
+          "width": 1127096,
+          "height": 222250
+        },
+        {
+          "name": "phase1-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "一阶段：标杆打造",
+          "left": 3809904,
+          "top": 3786187,
+          "width": 1468400,
+          "height": 222250
+        },
+        {
+          "name": "phase1-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "高新完成4个社区，示范完成3个社区+1个行政村",
+          "left": 3047923,
+          "top": 4048125,
+          "width": 3016174,
+          "height": 238125
+        },
+        {
+          "name": "date-72131",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "7.21 - 7.31",
+          "left": 7365815,
+          "top": 3548062,
+          "width": 1127096,
+          "height": 222250
+        },
+        {
+          "name": "phase2-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "二阶段：培优补差",
+          "left": 7246756,
+          "top": 3786187,
+          "width": 1452526,
+          "height": 222250
+        },
+        {
+          "name": "phase2-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "一阶段已达标的行政村和社区\n二阶段再完成10户目标",
+          "left": 7016574,
+          "top": 4024312,
+          "width": 2143071,
+          "height": 317500
+        },
+        {
+          "name": "date-83",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "8.3",
+          "left": 10080372,
+          "top": 3635375,
+          "width": 714357,
+          "height": 206375
+        },
+        {
+          "name": "date-83-sub",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "月度复盘表彰大会",
+          "left": 9786692,
+          "top": 3849687,
+          "width": 1309654,
+          "height": 238125
+        },
+        {
+          "name": "end-node-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "工作\n结束",
+          "left": 11223344,
+          "top": 4040187,
+          "width": 452426,
+          "height": 420687
+        },
+        {
+          "name": "sec3-num-text",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "3",
+          "left": 253993,
+          "top": 4572000,
+          "width": 293680,
+          "height": 293687
+        },
+        {
+          "name": "sec3-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "目标要求",
+          "left": 650858,
+          "top": 4540250,
+          "width": 1428714,
+          "height": 333375
+        },
+        {
+          "name": "goal1-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "对标先进",
+          "left": 873103,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000
+        },
+        {
+          "name": "goal1-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "对标前期先进网格找差距\n明确提升方向和路径",
+          "left": 571485,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875
+        },
+        {
+          "name": "goal2-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "聚焦双新",
+          "left": 3293980,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000
+        },
+        {
+          "name": "goal2-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "坚持以移宽双新融合为主线\n提升发展效率和质量",
+          "left": 2992362,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875
+        },
+        {
+          "name": "goal3-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "全员参与",
+          "left": 5571985,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000
+        },
+        {
+          "name": "goal3-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "网格CEO带头，全员上阵\n形成合力，全面推进",
+          "left": 5270368,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875
+        },
+        {
+          "name": "goal4-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "以质取胜",
+          "left": 7881740,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000
+        },
+        {
+          "name": "goal4-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "注重发展质量和客户体验\n打造可复制的标杆样板",
+          "left": 7580122,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875
+        },
+        {
+          "name": "goal5-title",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "持续增长",
+          "left": 10080372,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000
+        },
+        {
+          "name": "goal5-body",
+          "type": "TEXT_BOX (17)",
+          "has_text": true,
+          "text": "以标杆带动整体提升\n确保三季度目标达成",
+          "left": 9778755,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875
+        }
+      ]
+    }
+  ],
+  "expected_object_count": 94,
+  "observed_shape_count": 94,
+  "whole_slide_pictures": [],
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

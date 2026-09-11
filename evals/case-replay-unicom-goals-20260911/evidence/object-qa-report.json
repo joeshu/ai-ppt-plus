@@ -1,0 +1,1082 @@
+{
+  "schema": "ai-ppt-plus/semantic-object-audit/v2",
+  "valid": true,
+  "status": "passed",
+  "deck": "/workspace/scratch/d0e96217094b/work/run-01/unicom-goals-16x9-editable-final.pptx",
+  "deck_sha256": "329c942e56788e55446a2976b79add45cb363fc670bdbe430008cac6619ec41f",
+  "object_manifest": "/workspace/scratch/d0e96217094b/work/run-01/slide-object-manifest.json",
+  "object_manifest_sha256": "e730b608799075e636ccc50fce7194089828b84f06301e9289d09481ae1c9819",
+  "text_manifest": "/workspace/scratch/d0e96217094b/work/run-01/text-layout-manifest.json",
+  "text_manifest_sha256": "4bf99221001bde34a1b2536d27765a80fbc52f2b1d76f78b009635be7b69d5f4",
+  "expected_object_count": 94,
+  "audited_object_count": 94,
+  "observed_top_level_shape_count": 94,
+  "undeclared_shape_count": 0,
+  "text_manifest_coverage": {
+    "required": true,
+    "declared": 38,
+    "slide_numbers": [
+      1
+    ],
+    "orphan_count": 0,
+    "orphans": []
+  },
+  "coverage": [
+    {
+      "slide_no": 1,
+      "declared_object_count": 94,
+      "observed_top_level_shape_count": 94,
+      "audited_object_count": 94,
+      "undeclared_shape_count": 0,
+      "undeclared_shapes": [],
+      "complete": true
+    }
+  ],
+  "objects": [
+    {
+      "slide_no": 1,
+      "object_id": "top-red-band",
+      "role": "framework",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "top-red-separator",
+      "role": "divider",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "header-rule",
+      "role": "divider",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-pill",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-num",
+      "role": "section-number",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-panel",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-rural-card",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-community-card",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-target-card",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-divider",
+      "role": "divider",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-rural-label",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec1-community-label",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec2-pill",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec2-num",
+      "role": "section-number",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "timeline-track-soft",
+      "role": "timeline",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "timeline-track",
+      "role": "timeline",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "timeline-arrow",
+      "role": "timeline-arrow",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "timeline-dot-1",
+      "role": "timeline-node",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "timeline-dot-2",
+      "role": "timeline-node",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "timeline-dot-3",
+      "role": "timeline-node",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "timeline-dot-4",
+      "role": "timeline-node",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "timeline-dot-5",
+      "role": "timeline-node",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "date-628-bg",
+      "role": "timeline-date",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "date-7120-bg",
+      "role": "timeline-date",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "date-72131-bg",
+      "role": "timeline-date",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "date-83-bg",
+      "role": "timeline-date",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "start-pin-circle",
+      "role": "timeline-node",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "start-pin-tip",
+      "role": "timeline-node",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "end-node",
+      "role": "timeline-node",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec3-pill",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec3-num",
+      "role": "section-number",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "sec3-panel",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-divider-1",
+      "role": "divider",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-divider-2",
+      "role": "divider",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-divider-3",
+      "role": "divider",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-divider-4",
+      "role": "divider",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "LINE (9)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-bg-1",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-bg-2",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-bg-3",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-bg-4",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-bg-5",
+      "role": "semantic-panel",
+      "expected_type": "native_shape",
+      "actual_type": "native_shape",
+      "shape_type": "AUTO_SHAPE (1)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-component-1",
+      "role": "repeated_component_group",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [],
+        "observed_children": []
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-component-2",
+      "role": "repeated_component_group",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [],
+        "observed_children": []
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-component-3",
+      "role": "repeated_component_group",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [],
+        "observed_children": []
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-component-4",
+      "role": "repeated_component_group",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [],
+        "observed_children": []
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "goal-component-5",
+      "role": "repeated_component_group",
+      "expected_type": "native_group",
+      "actual_type": "native_group",
+      "shape_type": "GROUP (6)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "group_children_declared": true
+      },
+      "group": {
+        "expected_children": [],
+        "observed_children": []
+      }
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-rural",
+      "role": "icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image1.png",
+      "embedded_sha256": "99b31eb40ca1832d381f39aaab91350b3002fc5795cd5a6e4d349a68a8b99608",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/rural.png"
+      ],
+      "declared_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "99b31eb40ca1832d381f39aaab91350b3002fc5795cd5a6e4d349a68a8b99608"
+      ],
+      "source_file_sha256": [
+        "99b31eb40ca1832d381f39aaab91350b3002fc5795cd5a6e4d349a68a8b99608"
+      ],
+      "expected_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "99b31eb40ca1832d381f39aaab91350b3002fc5795cd5a6e4d349a68a8b99608"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-community",
+      "role": "icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image2.png",
+      "embedded_sha256": "3c029fbf3c0ad1ac28fbfa5faf406e6ff29c17c76953f612b5b0579159e7bf09",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/community.png"
+      ],
+      "declared_source_sha256": [
+        "3c029fbf3c0ad1ac28fbfa5faf406e6ff29c17c76953f612b5b0579159e7bf09",
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+      ],
+      "source_file_sha256": [
+        "3c029fbf3c0ad1ac28fbfa5faf406e6ff29c17c76953f612b5b0579159e7bf09"
+      ],
+      "expected_source_sha256": [
+        "3c029fbf3c0ad1ac28fbfa5faf406e6ff29c17c76953f612b5b0579159e7bf09",
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-target",
+      "role": "icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image3.png",
+      "embedded_sha256": "da297b594a93aa6623b0b875c612c10c6db823cf400decfde1439dbd1652934a",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/target.png"
+      ],
+      "declared_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "da297b594a93aa6623b0b875c612c10c6db823cf400decfde1439dbd1652934a"
+      ],
+      "source_file_sha256": [
+        "da297b594a93aa6623b0b875c612c10c6db823cf400decfde1439dbd1652934a"
+      ],
+      "expected_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "da297b594a93aa6623b0b875c612c10c6db823cf400decfde1439dbd1652934a"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-logo",
+      "role": "logo",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "brand_lockup_whole_asset": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "brand": {
+        "crop": {
+          "values": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+          },
+          "cropped": false
+        },
+        "duplicate_text_shapes": [],
+        "whole_asset_contract": {
+          "whole_asset": true,
+          "allow_crop": false
+        }
+      },
+      "media_part": "ppt/media/image4.png",
+      "embedded_sha256": "51799519c433b46cdfecfbe64f74458c39e5d46ffa3ad24639d1327300ea8e87",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/logo.png"
+      ],
+      "declared_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "51799519c433b46cdfecfbe64f74458c39e5d46ffa3ad24639d1327300ea8e87"
+      ],
+      "source_file_sha256": [
+        "51799519c433b46cdfecfbe64f74458c39e5d46ffa3ad24639d1327300ea8e87"
+      ],
+      "expected_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "51799519c433b46cdfecfbe64f74458c39e5d46ffa3ad24639d1327300ea8e87"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-goal-1",
+      "role": "icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image5.png",
+      "embedded_sha256": "3e1ef3ad4b7b1be657c52ee8d8eb4da1b4184996a09b6f643d5d30c4ed6ece55",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/goal1.png"
+      ],
+      "declared_source_sha256": [
+        "3e1ef3ad4b7b1be657c52ee8d8eb4da1b4184996a09b6f643d5d30c4ed6ece55",
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+      ],
+      "source_file_sha256": [
+        "3e1ef3ad4b7b1be657c52ee8d8eb4da1b4184996a09b6f643d5d30c4ed6ece55"
+      ],
+      "expected_source_sha256": [
+        "3e1ef3ad4b7b1be657c52ee8d8eb4da1b4184996a09b6f643d5d30c4ed6ece55",
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-goal-2",
+      "role": "icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image6.png",
+      "embedded_sha256": "820a5bf9c7ccf87f86823f538a2f604be633ece627e2dfd0847d2664b63abdda",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/goal2.png"
+      ],
+      "declared_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "820a5bf9c7ccf87f86823f538a2f604be633ece627e2dfd0847d2664b63abdda"
+      ],
+      "source_file_sha256": [
+        "820a5bf9c7ccf87f86823f538a2f604be633ece627e2dfd0847d2664b63abdda"
+      ],
+      "expected_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "820a5bf9c7ccf87f86823f538a2f604be633ece627e2dfd0847d2664b63abdda"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-goal-3",
+      "role": "icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image7.png",
+      "embedded_sha256": "53ea467adb49734e6e6a461d9a8196f2d739227ab4b69c6b86f6a54bb4fdf16c",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/goal3.png"
+      ],
+      "declared_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "53ea467adb49734e6e6a461d9a8196f2d739227ab4b69c6b86f6a54bb4fdf16c"
+      ],
+      "source_file_sha256": [
+        "53ea467adb49734e6e6a461d9a8196f2d739227ab4b69c6b86f6a54bb4fdf16c"
+      ],
+      "expected_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "53ea467adb49734e6e6a461d9a8196f2d739227ab4b69c6b86f6a54bb4fdf16c"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-goal-4",
+      "role": "icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image8.png",
+      "embedded_sha256": "b05125b62b46d73551732444eed938e558479cbfa446953b4200985e75464e45",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/goal4.png"
+      ],
+      "declared_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "b05125b62b46d73551732444eed938e558479cbfa446953b4200985e75464e45"
+      ],
+      "source_file_sha256": [
+        "b05125b62b46d73551732444eed938e558479cbfa446953b4200985e75464e45"
+      ],
+      "expected_source_sha256": [
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "b05125b62b46d73551732444eed938e558479cbfa446953b4200985e75464e45"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "icon-goal-5",
+      "role": "icon",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image9.png",
+      "embedded_sha256": "457235c0e8053c9f62d3bdd3dea537cc2180815739dc3c08bd2b1aae5aeb816d",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/goal5.png"
+      ],
+      "declared_source_sha256": [
+        "457235c0e8053c9f62d3bdd3dea537cc2180815739dc3c08bd2b1aae5aeb816d",
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+      ],
+      "source_file_sha256": [
+        "457235c0e8053c9f62d3bdd3dea537cc2180815739dc3c08bd2b1aae5aeb816d"
+      ],
+      "expected_source_sha256": [
+        "457235c0e8053c9f62d3bdd3dea537cc2180815739dc3c08bd2b1aae5aeb816d",
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "bottom-wave",
+      "role": "decorative_art",
+      "expected_type": "extracted_icon",
+      "actual_type": "picture",
+      "shape_type": "PICTURE (13)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "",
+      "semantic_checks": {
+        "type": true,
+        "source_hash_format": true,
+        "source_declaration_hash": true,
+        "source_files_available": true,
+        "source_hash": true
+      },
+      "media_part": "ppt/media/image10.png",
+      "embedded_sha256": "11ed3b03fbf1ed79978a3b09e506e5ae7c36469811db423178e0dc71ca70b7ee",
+      "source_paths": [
+        "/workspace/scratch/d0e96217094b/work/run-01/assets/bottom-wave.png"
+      ],
+      "declared_source_sha256": [
+        "11ed3b03fbf1ed79978a3b09e506e5ae7c36469811db423178e0dc71ca70b7ee",
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+      ],
+      "source_file_sha256": [
+        "11ed3b03fbf1ed79978a3b09e506e5ae7c36469811db423178e0dc71ca70b7ee"
+      ],
+      "expected_source_sha256": [
+        "11ed3b03fbf1ed79978a3b09e506e5ae7c36469811db423178e0dc71ca70b7ee",
+        "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+      ]
+    },
+    {
+      "slide_no": 1,
+      "object_id": "top-kicker",
+      "role": "formal-text",
+      "expected_type": "editable_text",
+      "actual_type": "native_text",
+      "shape_type": "TEXT_BOX (17)",
+      "parent_group": null,
+      "top_level": true,
+      "text": "å¤ºé«˜ç‚¹\näº‰ä¸Šæ‰¬",
+      "semantic_checks": {
+        "type": true,
+        "native_textbox": true,
+        "text_exact": true
+      },
+      "text_box": {
+        "native": true,
+        "placeholder": false
+      },
+      "expected_text": "å¤ºé«˜ç‚¹\näº‰ä¸Šæ‰¬",
+      "obserm«ëŒ+Š×ž®º+º$zzb¥
