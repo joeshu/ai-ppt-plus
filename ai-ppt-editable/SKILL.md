@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.10.01
+  package_revision: 2026.09.12.01
 ---
 
 # AI PPT Editable
@@ -17,7 +17,10 @@ redesign, deck-wide release, or human sign-off.
 This skill is independently installable and invokable. Run commands from this
 skill directory; its reconstruction scripts, references, templates, schemas,
 font assets, pinned `requirements-ci.txt`, route contract, and tests are all
-local. Validate this package and its standalone routing contract before work:
+local. The route contract contains a historical compatibility binding and a
+separate `strict_authoring` binding. New strict image-to-editable work may use
+only the latter: JavaScript ESM with `@oai/artifact-tool`. Validate this package
+and its standalone routing contract before work:
 
 ```bash
 python3 scripts/validate_skill_package.py --skill-dir .
@@ -67,16 +70,7 @@ In standalone mode:
 - missing brand assets, chart data, or illegible text are blockers or explicit
   placeholders, never invention.
 
-Read `references/perfect-replica-practice.md`,
-`references/case-intake-protocol.md`,
-`references/image-to-editable-ppt-contract.md`,
-`references/reference-fidelity-audit.md`,
-`references/three-round-distillation-methodology.md`,
-`references/automatic-distillation.md`,
-`references/automatic-training-driver.md`,
-`references/candidate-repair-protocol.md`,
-`references/source-crop-integrity.md`,
-`references/training-data-protocol.md`,
+Read `references/source-intake.md`, `references/source-crop-integrity.md`,
 `references/reconstruction-contract.md`,
 `references/editability-levels.md`, `references/native-object-protocol.md`, and
 the asset/text/chart protocols relevant to the page.
@@ -88,20 +82,16 @@ For last-mile viewer compatibility and preservation, also read
 `references/ooxml-compatibility.md`.
 For the mandatory final visual-asset route, also read
 `references/imagegen-final-asset-policy.md`.
-For the five post-baseline contracts and their shared adapter, also read
-`references/perfect-first-extensions.md` and use
-`scripts/perfect_first_adapter.py`; do not replace the synchronized core with
-a simplified reconstruction path.
+For the strict image-to-editable hardening contracts, also read
+`references/optimization-validation.md`; do not replace the synchronized core
+with a simplified reconstruction path.
 
-For every reference-led page, build and validate a
-`reference-fidelity/v1` manifest with `scripts/validate_reference_fidelity.py
---strict`. It is a hard pre-composition and post-render gate for one-to-one
-icon provenance, exact native text/style evidence, gradient treatment and
-aspect-ratio mapping. Generic symbols, missing source bboxes, sentinel `1×1`
-boxes, unresolved object IDs, stale source/candidate hashes, silent flat-fill
-fallbacks, and undeclared 3:2-to-16:9 stretching block the page. A technical
-pass remains `accept-for-human-review` until visual fidelity, formal text and
-editability are confirmed by a person.
+For every reference-led page, build and validate the current fidelity and
+authoring manifests. Generic symbols, missing source bboxes, unresolved object
+IDs, stale source/candidate hashes, silent flat-fill fallbacks, and undeclared
+stretching block the page. A technical pass remains
+`accept-for-human-review` until visual fidelity, formal text and editability
+are confirmed by a person.
 
 ## E0 — Intake, isolation, and preflight
 
@@ -218,27 +208,18 @@ silently fall back to the source crop, a generic symbol or a flat fill. Official
 brand marks remain authorized-source assets
 under the brand exception.
 
-For every reference-led page, run the final-imagegen-asset gate before
-composition and again after the final render. In addition, run the
-cross-manifest gate below:
+For every reference-led page, run the authoring contract gate before
+composition and again after the final render:
 
 ```bash
-python3 scripts/validate_reference_fidelity.py reference-fidelity.json \
-  --strict --require-imagegen \
-  --icon-generation-manifest icon-generation-manifest.json \
-  --icon-assets-manifest icon-asset-manifest.json \
-  --imagegen-assets-manifest imagegen-assets-manifest.json \
-  --render-report render-report.json
+python3 scripts/validate_authoring_contract.py --strict \
+  --report authoring-contract.json
 ```
 
-The generation manifest is not a status note: every family must enumerate
-`asset_ids`, `generated_asset_paths`, and `legacy_replaced_asset_ids`. The gate
-must resolve each ID to the same delivered file in all three manifests, inspect
-the actual PNG alpha channel, require per-icon split evidence, reject a sprite
-sheet or stale source-reuse record, and reject an unresolved reference object.
-Do not omit `--require-imagegen` for icon, gradient-visual or complex-art
-records. The ordinary source/hash and boundary checks remain required for the
-reference evidence and official brand exception.
+The authoring contract is not a status note: it must identify the JS ESM
+builder, `@oai/artifact-tool`, exactly one artifact-operation marker, the
+actual final output, and each independent image exception. Missing or stale
+evidence blocks delivery; it is never repaired by rasterizing semantic content.
 
 Never assume a generated asset sheet is a uniform grid. Before B5, inspect
 alpha row/column spans and classify the sheet as `uniform_grid`, `variable_row`,
@@ -249,35 +230,13 @@ Contact-sheet review must reject clipped glyphs, edge-touching circles, merged
 neighboring objects, or an art row split into character fragments. See
 `references/imagegen-sheet-slicing.md`.
 
-For image-led improvements, run the three-round protocol: visual diagnostic,
-semantic-panel decomposition, then native-text/object distillation. Preserve
-the visual-best and editable-best candidates as separate evidence, and use the
-actual panel manifest count rather than a hand-count when configuring gates.
-The image-to-editable contract is a hard gate: a complex正文 panel may retain
-only a text-free substrate as an independent asset; formal text must be native
-text objects with resolvable `text_layer_ids`. A raster panel that lacks
-`raster_text_audit` evidence, contains formal text, or uses a flattened full
-slide blocks delivery.
-
-For repeated improvement runs, use `scripts/distillation_loop.py`: score the
-existing reports, classify feedback by owning layer, gate the candidate against
-the previous baseline, and record hash-bound cases. A technical acceptance is
-only `accept-for-human-review`; never treat it as automatic release or model
-training approval. Only human-approved, fresh, non-flattened cases may enter a
-later retrieval or supervised-training export.
-Use `scripts/candidate_controller.py` to generate isolated, region-scoped repair
-proposals and rank only gated candidates. Candidate plans are opt-in and must
-not overwrite the previous baseline; stop automatic repair after three rounds
-or at the first new blocker.
-After a person confirms visual fidelity, formal content, and editability, use
-`scripts/training_export.py approve-case` followed by `export`. The exporter
-must reject stale hashes, duplicates, incomplete approvals, and unreviewed
-cases; it prepares retrieval data but does not claim that model weights were
-trained. Use `scripts/run_training_cycle.py` as the automation boundary from
-GitHub Actions or another trusted scheduler. It records skipped,
-waiting-for-approval, prepared, blocked, and trained-candidate states. A
-trained candidate remains pending human evaluation and promotion; the driver
-does not invent a trainer, GPU, checkpoint registry, or release approval.
+For image-led improvements, run the bounded protocol in
+`references/optimization-validation.md`: preserve the immutable baseline,
+create an isolated candidate, run native-object, font, text, layout and visual
+gates, and roll back the candidate on any real replay regression.
+The image-to-editable boundary remains hard: semantic text and simple shapes
+are native; only independently replaceable logo or texture assets may remain
+raster. A flattened full slide or rasterized formal text blocks delivery.
 
 For any post-composition compatibility repair, use only the ZIP-level
 `scripts/normalize_ooxml_relationships.py` adapter. Never reopen and resave the
@@ -287,11 +246,6 @@ gradients have been composed. Run
 part set, media bytes, picture count, text-run/style digest, or gradient count
 changes. This is a technical preservation gate; the repaired file still needs
 rendered visual comparison and human review.
-When no GPU is available, let the driver build the CPU-only retrieval index
-with `scripts/build_retrieval_index.py`. Treat it as retrieval enhancement and
-split-leakage evaluation, not as semantic vision-model training or weight
-更新.
-
 ## E3 — Author editable objects
 
 1. Build/update the canonical slide-object manifest before composition.
@@ -406,10 +360,9 @@ deck-wide evidence and determine release eligibility.
   icon style mismatch, typography deviation over 12%, or critical-region score
   below the declared threshold.
 
-After human confirmation, `scripts/ingest_approved_case.py` or the scheduled
-`scripts/run_training_cycle.py` may export the fresh case to the hash-bound
-dataset and CPU retrieval index. Model training and weight promotion remain
-separate external stages and require independent evaluation.
+After human confirmation, export only the final evidence requested by the
+active run. Model training and weight promotion remain separate external
+stages and require independent evaluation.
 
 
 ## Native structure enforcement for image reconstruction

@@ -1367,6 +1367,26 @@
     {
       "path": "references/skill-routing.md",
       "reason": "post-baseline centralized route ownership and fallback contract"
+    },
+    {
+      "path": "scripts/probe_fonts.py",
+      "reason": "post-baseline runtime font discovery and actual-render evidence extension"
+    },
+      {
+        "path": "scripts/validate_font_delivery.py",
+        "reason": "post-baseline font render report compatibility extension"
+      },
+      {
+      "path": "tests/test_font_delivery.py",
+      "reason": "post-baseline v2 font report and actual-render/page-count regression coverage"
+    },
+    {
+      "path": "references/font-portability.md",
+      "reason": "post-baseline static font-weight set and finalizer compatibility evidence contract"
+    },
+    {
+      "path": "scripts/validate_font_asset.py",
+      "reason": "post-baseline real 400/500/600/700 font-set validation"
     }
   ],
   "generated_by": "scripts/build_perfect_sync_manifest.py"

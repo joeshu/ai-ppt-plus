@@ -3,10 +3,12 @@
 ## Required behavior
 
 Formal text must remain real PPTX text, but the deck must carry a declared,
-legally redistributable CJK fallback for rendering and delivery checks. Copy
-`assets/fonts/NotoSansSC-Regular.ttf` and its manifest into the task's
-`project-fonts/` directory, then pass `--font-dir project-fonts/` to both
-`probe_fonts.py` and `render_pptx.py`.
+legally redistributable CJK fallback for rendering and delivery checks. For
+weight-sensitive decks, carry the complete static face set
+(`NotoSansSC-Regular.ttf`, `NotoSansSC-Medium.ttf`, `NotoSansSC-SemiBold.ttf`,
+and `NotoSansSC-Bold.ttf`) and its manifest in the task's `project-fonts/`
+directory. Register every face under the same renderer alias and pass the
+directory to the font probes.
 
 For a Chinese deck, also copy the bundled font into the task font directory
 before the first font probe; do not rely on the host's installed-font list.
@@ -19,9 +21,16 @@ Use this font priority:
    available on the authoring/rendering device; never select or package it
    implicitly.
 
-After copying a task-local font, run
+After copying a task-local font set, run
 `scripts/validate_font_asset.py --font-dir project-fonts/ --require-cjk
---report font-asset-validation.json`. This validates the manifest Hash, the
+--require-weights --report font-asset-validation.json`. This validates the
+manifest hash, the declared family, a representative CJK glyph set, the
+license declaration and the raw SFNT family/style/weight metadata. The weight
+gate requires real 400/500/600/700 faces; a simulated bold face is not a
+replacement for the set.
+
+For a legacy single-face project, omit `--require-weights` and preserve the
+missing-weight finding in the report. This validates the manifest hash, the
 declared family, a representative CJK glyph set, the license declaration and
 the raw SFNT family/style/weight metadata; font discovery alone is not
 asset-integrity evidence. A manifest that calls a file Regular while its
@@ -37,6 +46,10 @@ regular named instance for the same variable file.
 - The final render must be produced with the same task-local font directory
   used during authoring. Record the family, file, SHA-256 and license source
   in the delivery report.
+- When a finalizer does not expose native font-render proof, retain its raw
+  `native_font_rendering_verified` value and attach independently generated
+  artifact-tool registration/render evidence. The compatibility evidence may
+  close the actual-render gate, but it must never rewrite the upstream field.
 - If the authoring backend supports OOXML font embedding, embed the declared
   font and verify the embedded font parts in the final PPTX. With this
   repository's `python-pptx` composer, use `scripts/embed_fonts.py` as the

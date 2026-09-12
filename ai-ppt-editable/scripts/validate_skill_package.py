@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 
 from atomic_output import atomic_write_json
+from validate_skill_references import scan as scan_skill_references
 
 
 PACKAGE_SCHEMA = "ai-ppt-plus/skill-package/v2"
@@ -202,6 +203,9 @@ def main() -> int:
     inspect_self_contained(root, package, issues)
     file_hashes = collect_managed_files(root, package, issues)
     bundled_evidence = inspect_bundled_skills(root, package, revision, issues)
+    reference_records, reference_issues = scan_skill_references(root)
+    for issue in reference_issues:
+        issues.append(issue)
 
     runtime_evidence = None
     if args.runtime_skill_dir:
@@ -228,6 +232,7 @@ def main() -> int:
         "managed_file_count": len(file_hashes),
         "required_files": file_hashes,
         "bundled_skills": bundled_evidence,
+        "reference_integrity": {"valid": not reference_issues, "references": reference_records, "issues": reference_issues},
         "runtime": runtime_evidence,
         "issues": issues,
     }

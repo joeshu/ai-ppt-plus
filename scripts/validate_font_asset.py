@@ -7,7 +7,7 @@ portable asset is the file that will actually be used and whether it covers a
 small representative CJK smoke set.
 
 Usage: validate_font_asset.py --font-dir project-fonts/ --report report.json
-       [--manifest font-manifest.json] [--require-cjk]
+       [--manifest font-manifest.json] [--require-cjk] [--require-weights]
 """
 
 import argparse
@@ -136,6 +136,7 @@ def main() -> int:
     parser.add_argument("--manifest", help="manifest path; defaults to FONT_DIR/font-manifest.json")
     parser.add_argument("--report", required=True)
     parser.add_argument("--require-cjk", action="store_true")
+    parser.add_argument("--require-weights", action="store_true", help="require real 400/500/600/700 faces in FONT_DIR")
     args = parser.parse_args()
 
     root = Path(args.font_dir).resolve()
@@ -184,8 +185,10 @@ def main() -> int:
             (issues if severity == "blocker" else warnings).append({"severity": severity, "code": "font_metadata_unavailable", "message": error})
 
     declared_family = str(manifest.get("family", "")).strip() if isinstance(manifest, dict) else ""
-    if declared_family and family and declared_family.lower() not in family.lower():
-        issues.append({"severity": "blocker", "code": "font_family_mismatch", "expected": declared_family, "observed": family})
+    source_family = str(manifest.get("source_family", "")).strip() if isinstance(manifest, dict) else ""
+    accepted_families = [value.lower() for value in (declared_family, source_family) if value]
+    if accepted_families and family and not any(value in family.lower() for value in accepted_families):
+        issues.append({"severity": "blocker", "code": "font_family_mismatch", "expected": accepted_families, "observed": family})
 
     declared_style = str(manifest.get("style", "regular")).strip().casefold() if isinstance(manifest, dict) else "regular"
     declared_role = str(manifest.get("role", "")).strip().casefold() if isinstance(manifest, dict) else ""
@@ -209,6 +212,21 @@ def main() -> int:
     elif args.require_cjk and not charset_raw:
         issues.append({"severity": "blocker", "code": "cjk_coverage_unverified"})
 
+    font_set = []
+    for candidate in sorted(root.rglob("*")):
+        if not candidate.is_file() or candidate.suffix.lower() not in {".ttf", ".otf", ".ttc"}:
+            continue
+        metadata, metadata_error = inspect_font_metadata(candidate)
+        if metadata_error:
+            warnings.append({"severity": "warning", "code": "font_set_metadata_unavailable", "file": str(candidate), "message": metadata_error})
+            continue
+        font_set.append({"file": str(candidate), "sha256": sha256(candidate), "family": metadata.get("family"), "weight": metadata.get("weight_class"), "subfamily": metadata.get("subfamily")})
+    observed_weights = sorted({int(item["weight"]) for item in font_set if isinstance(item.get("weight"), int)})
+    required_weights = [400, 500, 600, 700]
+    missing_weights = [weight for weight in required_weights if weight not in observed_weights]
+    if args.require_weights and missing_weights:
+        issues.append({"severity": "blocker", "code": "required_font_weights_missing", "required": required_weights, "observed": observed_weights, "missing": missing_weights})
+
     if not manifest.get("license") or not manifest.get("license_url"):
         issues.append({"severity": "blocker", "code": "font_license_declaration_missing"})
 
@@ -223,11 +241,14 @@ def main() -> int:
         "family": family,
         "font_metadata": font_metadata,
         "declared_family": declared_family,
+        "source_family": source_family or None,
+        "registration_family": manifest.get("registration_family") if isinstance(manifest, dict) else None,
         "sha256": actual_hash,
         "expected_sha256": expected_hash,
         "cjk_smoke_text": SMOKE_TEXT,
         "cjk_coverage_verified": bool(charset_raw) and not missing_chars,
         "missing_cjk_characters": missing_chars,
+        "font_set": {"files": font_set, "required_weights": required_weights, "observed_weights": observed_weights, "missing_weights": missing_weights},
         "issues": issues,
         "warnings": warnings,
         "embedding": manifest.get("embedding") if isinstance(manifest, dict) else None,

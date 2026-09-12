@@ -114,6 +114,15 @@ def main() -> int:
             "prompt_contract": "ai-ppt-plus/visual-generation-plan/v1",
         },
         "authoring": {"kind": "adapter", "backend": "python-pptx", "entrypoint": "ai-ppt-editable/scripts/authoring_backend.py", "font_postprocessor": "ai-ppt-editable/scripts/embed_fonts.py"},
+        "strict_authoring": {
+            "kind": "adapter",
+            "backend": "@oai/artifact-tool",
+            "language": "javascript",
+            "module_format": "ESM",
+            "runtime_entrypoint": "ai-ppt-editable/scripts/artifact_tool_runtime.mjs",
+            "contract": "ai-ppt-plus/authoring-contract/v1",
+            "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"],
+        },
     }
     for section, expected in expected_bindings.items():
         observed = bindings.get(section)
@@ -132,6 +141,7 @@ def main() -> int:
         "visual_generation": ("skill_entrypoint", "runtime_entrypoint"),
         "reconstruction": ("skill_entrypoint", "runtime_entrypoint"),
         "authoring": ("entrypoint", "font_postprocessor"),
+        "strict_authoring": ("runtime_entrypoint",),
     }.items():
         binding = bindings.get(section) if isinstance(bindings, dict) else None
         if not isinstance(binding, dict):

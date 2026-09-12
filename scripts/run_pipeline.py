@@ -316,6 +316,7 @@ def main() -> int:
     parser.add_argument("--expected-pages", type=int, required=True)
     parser.add_argument("--expected-ratio", type=float)
     parser.add_argument("--font-dir")
+    parser.add_argument("--font-family-alias", help="renderer registration family for a multi-face CJK font set")
     parser.add_argument("--region", action="append", default=[])
     reference_group = parser.add_mutually_exclusive_group()
     reference_group.add_argument("--reference", help="single approved reference image; only valid for one-page decks")
@@ -325,6 +326,7 @@ def main() -> int:
     parser.add_argument("--require-ocr", action="store_true")
     parser.add_argument("--revision-label")
     parser.add_argument("--require-cjk", action="store_true", help="block when the font report cannot support CJK delivery")
+    parser.add_argument("--require-font-weights", action="store_true", help="require real 400/500/600/700 faces in the task font set")
     parser.add_argument("--route-decision", help="route-decision.json declaring visual authority")
     parser.add_argument("--require-route", action="store_true", help="require and validate a route decision before downstream gates")
     parser.add_argument("--require-engine-route", action="store_true", help="require the editable-first engine/fallback contract before downstream gates")
@@ -999,12 +1001,16 @@ def main() -> int:
             font_args.extend(["--font-dir", str(Path(args.font_dir).resolve())])
         if args.require_cjk:
             font_args.append("--require-cjk")
-        add_step("fonts", font_args, outputs=[run_dir / "font-report.json"], inputs=[Path(args.font_dir).resolve()] if args.font_dir else [], metadata={"require_cjk": args.require_cjk})
+        if args.font_family_alias:
+            font_args.extend(["--font-family-alias", args.font_family_alias])
+        add_step("fonts", font_args, outputs=[run_dir / "font-report.json"], inputs=[Path(args.font_dir).resolve()] if args.font_dir else [], metadata={"require_cjk": args.require_cjk, "require_font_weights": args.require_font_weights, "font_family_alias": args.font_family_alias})
         font_manifest = Path(args.font_dir).resolve() / "font-manifest.json" if args.font_dir else None
         if args.font_dir and (font_manifest.is_file() or args.require_cjk):
             font_asset_args = [str(SCRIPT_DIR / "validate_font_asset.py"), "--font-dir", str(Path(args.font_dir).resolve()), "--report", str(run_dir / "font-asset-validation.json")]
             if args.require_cjk:
                 font_asset_args.append("--require-cjk")
+            if args.require_font_weights:
+                font_asset_args.append("--require-weights")
             add_step("font-asset", font_asset_args, deps=["fonts"], outputs=[run_dir / "font-asset-validation.json"], inputs=[Path(args.font_dir).resolve()])
     layout_path = project / "layout.json"
     typography_enabled = args.require_typography_calibration or typography_calibration.is_file()
@@ -1280,10 +1286,12 @@ def main() -> int:
             font_delivery_args.extend(["--font-asset-report", str(run_dir / "font-asset-validation.json")])
         if args.release:
             font_delivery_args.append("--require-embedded")
+        if args.require_font_weights:
+            font_delivery_args.append("--require-weights")
         font_deps = ["fonts", "inspection", "render", "render-visual-gate"]
         if args.font_dir and (font_manifest.is_file() or args.require_cjk):
             font_deps.append("font-asset")
-        add_step("font-delivery", font_delivery_args, deps=font_deps, outputs=[run_dir / "font-delivery-validation.json"], inputs=[run_dir / "font-report.json", inspection_path, render_report_path, run_dir / "render-visual-gate.json"] + ([run_dir / "font-asset-validation.json"] if args.font_dir and (font_manifest.is_file() or args.require_cjk) else []), metadata={"require_embedded": args.release})
+        add_step("font-delivery", font_delivery_args, deps=font_deps, outputs=[run_dir / "font-delivery-validation.json"], inputs=[run_dir / "font-report.json", inspection_path, render_report_path, run_dir / "render-visual-gate.json"] + ([run_dir / "font-asset-validation.json"] if args.font_dir and (font_manifest.is_file() or args.require_cjk) else []), metadata={"require_embedded": args.release, "require_font_weights": args.require_font_weights})
     if args.reference:
         comparison_args = [str(SCRIPT_DIR / "compare_visual.py"), str(render_dir / "slide-1.png"), str(Path(args.reference).resolve()), "--report", str(run_dir / "visual-comparison.json")]
         if args.expected_ratio is not None:

@@ -190,6 +190,14 @@
         {
           "path": "scripts/validate_visual_lock.py",
           "reason": "worker-only last-mile visual lock validator"
+        },
+        {
+          "path": "references/reconstruction-contract.md",
+          "reason": "worker-specific strict image-to-editable contract wording and entrypoints"
+        },
+        {
+          "path": "references/optimization-validation.md",
+          "reason": "worker-specific optimization validation entrypoints and artifact-tool runtime notes"
         }
       ]
     }

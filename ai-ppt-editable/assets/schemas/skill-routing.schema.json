@@ -9,7 +9,7 @@
     "forbids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
     "bindings": {
       "type": "object",
-      "required": ["authoring"],
+      "required": ["authoring", "strict_authoring"],
       "properties": {
         "authoring": {
           "type": "object",
@@ -19,6 +19,19 @@
             "backend": {"const": "python-pptx"},
             "entrypoint": {"type": "string", "minLength": 1},
             "font_postprocessor": {"type": "string", "minLength": 1}
+          }
+        },
+        "strict_authoring": {
+          "type": "object",
+          "required": ["kind", "backend", "language", "module_format", "runtime_entrypoint", "contract", "required_for"],
+          "properties": {
+            "kind": {"const": "adapter"},
+            "backend": {"const": "@oai/artifact-tool"},
+            "language": {"const": "javascript"},
+            "module_format": {"const": "ESM"},
+            "runtime_entrypoint": {"type": "string", "minLength": 1},
+            "contract": {"const": "ai-ppt-plus/authoring-contract/v1"},
+            "required_for": {"type": "array", "minItems": 1, "items": {"type": "string"}}
           }
         }
       }
