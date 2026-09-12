@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.10.01",
+  "package_revision": "2026.09.12.01",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -25,6 +25,7 @@
     "requirements-ci.txt",
     "references/*.md",
     "scripts/*.py",
+    "scripts/*.mjs",
     "evals/*.yaml",
     "examples/**/*.json",
     "tests/**/*.py",

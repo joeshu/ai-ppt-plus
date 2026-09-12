@@ -51,16 +51,16 @@ Discover PPT Master only through `scripts/probe_environment.py` and an explicit 
 
 The selected authoring backend must be the backend actually used by the
 composer, and the environment report must record both. Merely discovering an
-`artifact-tool` package is not evidence that the project used it. In this
-repository the deterministic composer currently uses the installed
-`python-pptx` module as a declared fallback; this limits exact SVG mapping,
-animation, narration, native chart fidelity and OOXML font embedding. When an
-artifact-tool adapter is implemented, select it only through that adapter and
-add a backend-specific integration test. For `python-pptx`, use the repository
-`scripts/embed_fonts.py` post-processor when the licensed font asset is
-available, then inspect and render the post-processed output. If neither the
-authoring backend nor this adapter can embed fonts, record
-`embedding: unsupported` and block strict delivery.
+`artifact-tool` package is not evidence that the project used it. The historical
+`python-pptx` composer remains a compatibility/inspection path for frozen
+legacy contracts only; it is not a fallback for a new strict image-to-editable
+reconstruction. Strict reference reconstruction must bind to the
+`strict_authoring` route (`@oai/artifact-tool`, JavaScript ESM), use the shared
+runtime adapter, and pass its backend-specific authoring-contract test. The
+legacy `scripts/embed_fonts.py` post-processor may be used only by that
+historical path. If the strict runtime or selected font cannot satisfy the
+required render evidence, block delivery rather than substituting a backend or
+font silently.
 
 Input: approved outline or confirmed transcription, design system, approved visual/reference manifest, assets and provenance. Output: editable PPTX, object-level slide manifest, placeholder/material requests, render comparison and tradeoff log.
 

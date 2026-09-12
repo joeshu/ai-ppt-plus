@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-package_revision: 2026.09.10.01
+package_revision: 2026.09.12.01
 ---
 
 # AI PPT Plus Orchestrator
@@ -52,6 +52,13 @@ Formal copy must be traceable through `content-authority/v1`: source → approve
 outline row → PPTX object → rendered region. Generated pixels and OCR never
 become formal-copy authority. Validate the manifest strictly with
 `scripts/validate_content_authority.py --require-pptx-refs --require-render-refs`.
+
+For every new image-to-editable reference reconstruction, the `strict_authoring`
+binding is JavaScript ES modules with `@oai/artifact-tool`. Python is permitted
+for inspection and QA only; `python-pptx` is not a creation or repair fallback
+and must not reopen or resave the final deck. Bind the run with
+`scripts/validate_authoring_contract.py --strict` and record the builder and
+artifact-tool render evidence before finalization.
 
 The root package validator also validates both child packages. If any
 configured runtime copy differs by revision or managed-file SHA-256,

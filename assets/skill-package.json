@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.09.10.01",
+  "package_revision": "2026.09.12.01",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -31,6 +31,7 @@
     "assets/fonts/*",
     "references/*.md",
     "scripts/*.py",
+    "scripts/*.mjs",
     "evals/*.yaml"
   ],
   "required_files": [
