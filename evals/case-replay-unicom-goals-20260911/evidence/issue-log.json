@@ -1,0 +1,77 @@
+{
+  "schema": "ai-ppt-plus/issue-log/v1",
+  "project_id": "unicom-goals-16x9-20260911",
+  "issues": [
+    {
+      "issue_id": "SRC-MASK-001",
+      "phenomenon": "初次农村/社区图标派生时透明蒙版覆盖了图标像素，只剩白色圆形。",
+      "affected_objects": [
+        "icon-rural",
+        "icon-community"
+      ],
+      "region": {
+        "x": 46,
+        "y": 291,
+        "w": 726,
+        "h": 132
+      },
+      "root_cause": "本次运行的临时 alpha 蒙版命令参数错误，非仓库规则或验证器缺陷。",
+      "current_fix": "使用显式圆形 CopyOpacity 蒙版重提取，并以 contact sheet + alpha 检查回归。",
+      "reproducible": true,
+      "generic_skill_defect": false,
+      "minimal_skill_change": null,
+      "regression_test": "contact sheet visual check; non-empty alpha bbox; source crop hash check"
+    },
+    {
+      "issue_id": "LAYOUT-ID-001",
+      "phenomenon": "早期 PageGraph 版本同时把 repeated-component 背景写入顶层和 group 子项，造成重复 object_id。",
+      "affected_objects": [
+        "goal-bg-1",
+        "goal-bg-2",
+        "goal-bg-3",
+        "goal-bg-4",
+        "goal-bg-5"
+      ],
+      "region": {
+        "x": 45,
+        "y": 617,
+        "w": 1415,
+        "h": 164
+      },
+      "root_cause": "本页布局脚本的对象归属错误；技能验证器已正确阻止缺失子项，但不是技能通用缺陷。",
+      "current_fix": "保留顶层独立背景，group 内改为唯一 component-anchor，重新运行 semantic validator。",
+      "reproducible": true,
+      "generic_skill_defect": false,
+      "minimal_skill_change": null,
+      "regression_test": "validate_semantic_layout.py; validate_object_manifest.py duplicate-id gate"
+    },
+    {
+      "issue_id": "INPUT-PATH-001",
+      "phenomenon": "早期提示中出现一次附件路径不存在提示。",
+      "affected_objects": [],
+      "region": null,
+      "root_cause": "上传挂载时序/路径提示瞬时不一致；实际附件随后已可读。",
+      "current_fix": "以当前挂载文件为唯一输入并记录 SHA-256。",
+      "reproducible": false,
+      "generic_skill_defect": false,
+      "minimal_skill_change": null,
+      "regression_test": "inspect_sources.py + sha256 existence check"
+    },
+    {
+      "issue_id": "OCR-LANG-001",
+      "phenomenon": "Tesseract 环境未安装 chi_sim，中文 OCR 无法作为自动证据。",
+      "affected_objects": [
+        "all-formal-text"
+      ],
+      "region": null,
+      "root_cause": "运行时仅提供 eng/osd 语言包；不是技能规则缺陷。",
+      "current_fix": "使用 formal-copy.json 逐项人工核对并让 text_model 完整匹配；保留 OCR 失败诊断报告。",
+      "reproducible": true,
+      "generic_skill_defect": false,
+      "minimal_skill_change": null,
+      "regression_test": "ocr-formal-text-report.json + text_model.py validate --strict"
+    }
+  ],
+  "skill_change_decision": "none",
+  "skill_change_basis": "所有问题均为本次运行的临时素材处理或布局脚本个例，未满足通用技能缺陷的 red→green 条件。"
+}

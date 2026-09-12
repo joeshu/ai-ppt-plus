@@ -1,0 +1,25 @@
+{
+  "schema": "ai-ppt-plus/imagegen-assets-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "manifest": "/workspace/scratch/d0e96217094b/work/run-01/imagegen-assets-manifest.json",
+  "asset_count": 10,
+  "hashed_asset_count": 10,
+  "provenance_modes": {
+    "source_reuse": 10
+  },
+  "mandatory_imagegen_classes": [
+    "artistic_typography",
+    "badge",
+    "complex_art",
+    "decorative_art",
+    "gradient",
+    "gradient_visual",
+    "icon",
+    "icons",
+    "illustration"
+  ],
+  "hashes_required": true,
+  "issues": [],
+  "human_visual_review_required": true
+}

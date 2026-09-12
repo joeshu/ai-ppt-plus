@@ -1,0 +1,105 @@
+{
+  "schema": "ai-ppt-plus/visual-comparison/v1",
+  "valid": true,
+  "rendered": "/workspace/scratch/d0e96217094b/work/run-01/render-mutation/slide-1.png",
+  "rendered_sha256": "59df9d635815f2fe16b722f36b3c462ea64720c37f9aa887ca0956a3709d1ec3",
+  "reference": "/workspace/scratch/d0e96217094b/work/run-01/render-final/slide-1.png",
+  "reference_sha256": "62cfb1a8d0b640eff67f4fa76e22cacfc66da6d5ba7697d26828bcfa59bda4dc",
+  "original_sizes": {
+    "rendered": [
+      1920,
+      1080
+    ],
+    "reference": [
+      1920,
+      1080
+    ]
+  },
+  "normalized_sizes": {
+    "rendered": [
+      1920,
+      1080
+    ],
+    "reference": [
+      1920,
+      1080
+    ]
+  },
+  "viewer_crops": {
+    "rendered": {
+      "detected": false,
+      "crop_box": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "original_size": [
+        1920,
+        1080
+      ],
+      "content_size": [
+        1920,
+        1080
+      ],
+      "original_ratio": 1.7777778,
+      "content_ratio": 1.7777778,
+      "bar_pixels": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "confidence": 0.0,
+      "reason": "no_contiguous_dark_edge_bar",
+      "artifact_classification": "none"
+    },
+    "reference": {
+      "detected": false,
+      "crop_box": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "original_size": [
+        1920,
+        1080
+      ],
+      "content_size": [
+        1920,
+        1080
+      ],
+      "original_ratio": 1.7777778,
+      "content_ratio": 1.7777778,
+      "bar_pixels": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "confidence": 0.0,
+      "reason": "no_contiguous_dark_edge_bar",
+      "artifact_classification": "none"
+    }
+  },
+  "aspect_ratio_delta": 0.0,
+  "aspect_ratio_tolerance": 0.015,
+  "comparison_size": [
+    1920,
+    1080
+  ],
+  "resized_for_comparison": false,
+  "metrics": {
+    "global_ssim": 0.969132,
+    "blurred_layout_ssim": 0.98451,
+    "mean_absolute_error": 0.006675,
+    "rmse": 0.071454,
+    "pixel_fidelity_score": 0.993325,
+    "blurred_pixel_fidelity_score": 0.994864,
+    "layout_blur_radius": 6
+  },
+  "issues": [],
+  "human_visual_review_required": true,
+  "limitation": "metrics are sensitive to font rasterization and do not prove semantic or brand correctness"
+}

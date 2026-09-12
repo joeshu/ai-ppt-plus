@@ -1,0 +1,429 @@
+{
+  "schema": "ai-ppt-plus/formal-copy/v1",
+  "project_id": "unicom-goals-16x9-20260911",
+  "authority": "user_transcription_checked_against_reference",
+  "source_reference": "reference.png",
+  "source_sha256": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+  "slide_no": 1,
+  "text_objects": [
+    {
+      "object_id": "top-kicker",
+      "text": "夺高点\n争上扬",
+      "source_bbox": [
+        32,
+        16,
+        98,
+        76
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "top-section",
+      "text": "第二部分",
+      "source_bbox": [
+        201,
+        45,
+        161,
+        38
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "top-title",
+      "text": "目标（干多少）",
+      "source_bbox": [
+        385,
+        31,
+        390,
+        57
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "strategy-banner",
+      "text": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！",
+      "source_bbox": [
+        204,
+        145,
+        1129,
+        39
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "sec1-num-text",
+      "text": "1",
+      "source_bbox": [
+        42,
+        216,
+        22,
+        34
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "sec1-title",
+      "text": "标杆打造目标",
+      "source_bbox": [
+        83,
+        216,
+        202,
+        33
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "rural-label-text",
+      "text": "农村市场",
+      "source_bbox": [
+        175,
+        345,
+        101,
+        31
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "rural-kpi",
+      "text": "50个重点网格30户\n其余网格20户",
+      "source_bbox": [
+        318,
+        322,
+        274,
+        88
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "community-label-text",
+      "text": "社区市场",
+      "source_bbox": [
+        771,
+        345,
+        103,
+        31
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "community-kpi",
+      "text": "每个标杆社区20户",
+      "source_bbox": [
+        913,
+        360,
+        235,
+        32
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "target-title",
+      "text": "目标要求",
+      "source_bbox": [
+        1316,
+        311,
+        116,
+        32
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "target-body",
+      "text": "全部以79元及以上\n移宽双新融合为目标",
+      "source_bbox": [
+        1315,
+        366,
+        173,
+        53
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "sec2-num-text",
+      "text": "2",
+      "source_bbox": [
+        42,
+        491,
+        22,
+        34
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "sec2-title",
+      "text": "推进节奏安排",
+      "source_bbox": [
+        83,
+        493,
+        202,
+        33
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "date-628",
+      "text": "6.28",
+      "source_bbox": [
+        155,
+        549,
+        70,
+        26
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "date-628-sub",
+      "text": "上报目标",
+      "source_bbox": [
+        145,
+        581,
+        95,
+        25
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "start-pin-text",
+      "text": "启动",
+      "source_bbox": [
+        264,
+        590,
+        40,
+        24
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "date-7120",
+      "text": "7.1 - 7.20",
+      "source_bbox": [
+        499,
+        538,
+        138,
+        28
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "phase1-title",
+      "text": "一阶段：标杆打造",
+      "source_bbox": [
+        484,
+        577,
+        181,
+        26
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "phase1-body",
+      "text": "高新完成4个社区，示范完成3个社区+1个行政村",
+      "source_bbox": [
+        390,
+        612,
+        379,
+        26
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "date-72131",
+      "text": "7.21 - 7.31",
+      "source_bbox": [
+        929,
+        538,
+        140,
+        28
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "phase2-title",
+      "text": "二阶段：培优补差",
+      "source_bbox": [
+        915,
+        577,
+        181,
+        26
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "phase2-body",
+      "text": "一阶段已达标的行政村和社区\n二阶段再完成10户目标",
+      "source_bbox": [
+        880,
+        607,
+        280,
+        34
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "date-83",
+      "text": "8.3",
+      "source_bbox": [
+        1272,
+        547,
+        89,
+        27
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "date-83-sub",
+      "text": "月度复盘表彰大会",
+      "source_bbox": [
+        1235,
+        582,
+        162,
+        26
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "end-node-text",
+      "text": "工作\n结束",
+      "source_bbox": [
+        1415,
+        615,
+        52,
+        51
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "sec3-num-text",
+      "text": "3",
+      "source_bbox": [
+        42,
+        682,
+        22,
+        34
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "sec3-title",
+      "text": "目标要求",
+      "source_bbox": [
+        83,
+        684,
+        121,
+        33
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal1-title",
+      "text": "对标先进",
+      "source_bbox": [
+        122,
+        841,
+        120,
+        31
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal1-body",
+      "text": "对标前期先进网格找差距\n明确提升方向和路径",
+      "source_bbox": [
+        78,
+        883,
+        200,
+        47
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal2-title",
+      "text": "聚焦双新",
+      "source_bbox": [
+        425,
+        841,
+        120,
+        31
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal2-body",
+      "text": "坚持以移宽双新融合为主线\n提升发展效率和质量",
+      "source_bbox": [
+        381,
+        883,
+        200,
+        47
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal3-title",
+      "text": "全员参与",
+      "source_bbox": [
+        712,
+        841,
+        120,
+        31
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal3-body",
+      "text": "网格CEO带头，全员上阵\n形成合力，全面推进",
+      "source_bbox": [
+        668,
+        883,
+        200,
+        47
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal4-title",
+      "text": "以质取胜",
+      "source_bbox": [
+        1001,
+        841,
+        120,
+        31
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal4-body",
+      "text": "注重发展质量和客户体验\n打造可复制的标杆样板",
+      "source_bbox": [
+        957,
+        883,
+        200,
+        47
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal5-title",
+      "text": "持续增长",
+      "source_bbox": [
+        1279,
+        841,
+        120,
+        31
+      ],
+      "status": "verified"
+    },
+    {
+      "object_id": "goal5-body",
+      "text": "以标杆带动整体提升\n确保三季度目标达成",
+      "source_bbox": [
+        1235,
+        883,
+        200,
+        47
+      ],
+      "status": "verified"
+    }
+  ],
+  "notes": "正式文字逐项核对参考图；OCR 仅作候选，未作为正式权威。"
+}

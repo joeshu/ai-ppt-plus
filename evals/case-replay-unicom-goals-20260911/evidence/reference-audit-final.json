@@ -1,0 +1,111 @@
+{
+  "schema": "ai-ppt-plus/reference-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "reference": "/workspace/scratch/d0e96217094b/work/run-01/qa/reference-16x9.png",
+  "candidate": "/workspace/scratch/d0e96217094b/work/run-01/qa/final-1536.png",
+  "reference_stats": {
+    "size": [
+      1536,
+      864
+    ],
+    "ratio": 1.7777778,
+    "mean_rgb": [
+      238.93,
+      216.21,
+      214.84
+    ],
+    "edge_dark_fraction": 0.00088,
+    "normalized_size": [
+      1536,
+      864
+    ],
+    "normalized_ratio": 1.7777778,
+    "normalized_mean_rgb": [
+      238.93,
+      216.21,
+      214.84
+    ],
+    "viewer_crop": {
+      "detected": false,
+      "crop_box": [
+        0,
+        0,
+        1536,
+        864
+      ],
+      "original_size": [
+        1536,
+        864
+      ],
+      "content_size": [
+        1536,
+        864
+      ],
+      "original_ratio": 1.7777778,
+      "content_ratio": 1.7777778,
+      "bar_pixels": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "confidence": 0.0,
+      "reason": "no_contiguous_dark_edge_bar",
+      "artifact_classification": "none"
+    }
+  },
+  "candidate_stats": {
+    "size": [
+      1536,
+      864
+    ],
+    "ratio": 1.7777778,
+    "mean_rgb": [
+      238.26,
+      213.32,
+      212.06
+    ],
+    "edge_dark_fraction": 0.00072,
+    "normalized_size": [
+      1536,
+      864
+    ],
+    "normalized_ratio": 1.7777778,
+    "normalized_mean_rgb": [
+      238.26,
+      213.32,
+      212.06
+    ],
+    "viewer_crop": {
+      "detected": false,
+      "crop_box": [
+        0,
+        0,
+        1536,
+        864
+      ],
+      "original_size": [
+        1536,
+        864
+      ],
+      "content_size": [
+        1536,
+        864
+      ],
+      "original_ratio": 1.7777778,
+      "content_ratio": 1.7777778,
+      "bar_pixels": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "confidence": 0.0,
+      "reason": "no_contiguous_dark_edge_bar",
+      "artifact_classification": "none"
+    }
+  },
+  "issues": [],
+  "human_visual_review_required": true
+}

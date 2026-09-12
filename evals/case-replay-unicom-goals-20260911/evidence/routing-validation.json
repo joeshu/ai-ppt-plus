@@ -1,0 +1,15 @@
+{
+  "schema": "ai-ppt-editable/routing-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "contract": "/workspace/scratch/d0e96217094b/work/ai-ppt-plus/ai-ppt-editable/assets/skill-routing.template.json",
+  "issues": [],
+  "bindings": {
+    "authoring": {
+      "kind": "adapter",
+      "backend": "python-pptx",
+      "entrypoint": "scripts/authoring_backend.py",
+      "font_postprocessor": "scripts/embed_fonts.py"
+    }
+  }
+}

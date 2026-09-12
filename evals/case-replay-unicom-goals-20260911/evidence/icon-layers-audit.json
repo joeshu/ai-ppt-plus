@@ -1,0 +1,25 @@
+{
+  "schema": "ai-ppt-plus/icon-layer-audit/v1",
+  "valid": true,
+  "status": "passed",
+  "manifest": "/workspace/scratch/d0e96217094b/work/run-01/icon-asset-manifest.json",
+  "asset_count": 10,
+  "frame_asset_ids": [
+    "frame-layer"
+  ],
+  "icon_asset_ids": [
+    "bottom-wave",
+    "icon-community",
+    "icon-goal-1",
+    "icon-goal-2",
+    "icon-goal-3",
+    "icon-goal-4",
+    "icon-goal-5",
+    "icon-logo",
+    "icon-rural",
+    "icon-target"
+  ],
+  "issues": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}
