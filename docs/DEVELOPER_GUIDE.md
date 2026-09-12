@@ -153,7 +153,9 @@ PYTHONPATH=ai-ppt-editable \
 python ai-ppt-editable/tests/test_astra_provider_neutral_full_loop.py
 ```
 
-## 7. 12-case replay
+## 7. 12-case replay（历史归档，手动）
+
+12-case 的契约、脚本和机器可读报告保留在 `evals/case-replay-12/`，但它不再属于活动 CI/发布矩阵；PPTX、渲染图和视觉对照图已清理。只有在外部制品恢复后，才可按下列入口进行历史回溯。
 
 ### Build Astra requests
 
@@ -419,10 +421,9 @@ CI 的主 job `contract-and-regression` 包含：
 6. environment/runtime mirror；
 7. worker smoke tests；
 8. Astra contract tests；
-9. 12-case Astra closed-loop batch；
+9. 历史 12-case replay 归档（不作为活动门禁）；
 10. schema/DAG/package/golden regressions；
 11. social-channel real PPTX replay；
-12. 12-case visual/native-editability replay；
 13. distillation matrix；
 14. strict P2 guards；
 15. whitespace；

@@ -449,16 +449,16 @@ Astra Golden 不应通过简单覆盖它来取代，而应该：
 - 用 replay evidence 证明改进；
 - 保持核心 deterministic authoring contract。
 
-## 16. 12-case Regression 与 Distillation
+## 16. 12-case Regression 与 Distillation（历史归档）
 
-12-case suite 提供横向覆盖。
+12-case suite 的契约与机器可读 evidence 提供过横向覆盖，但现已从活动 CI/发布矩阵移除。PPTX、渲染图和视觉对照图已清理；历史目录和清理清单仍保留，恢复外部制品后才可人工回溯。
 
 Distillation 提供纵向 iteration 历史。
 
 两者结合：
 
 ```text
-12-case breadth
+active matrix breadth
      +
 iteration depth
      =
@@ -528,7 +528,7 @@ Golden gate 面向未来长期基线：
 4. visual comparison
 5. drift guard
 6. accepted / rollback decision
-7. 12-case replay
+7. active distillation matrix full selection（历史 12-case 仅在明确手动请求且恢复外部制品后运行）
 8. distillation classification
 9. human approval
 10. golden promotion (if eligible)

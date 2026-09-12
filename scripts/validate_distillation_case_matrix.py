@@ -89,6 +89,111 @@ def validate_matrix(matrix_path: Path, *, strict: bool = False, require_actual_r
         errors.append({"code": "cases_type", "message": "cases must be an array"})
         cases = []
 
+    active_scope = matrix.get("active_scope")
+    if not isinstance(active_scope, dict):
+        errors.append({"code": "active_scope_type", "message": "active_scope must be an object"})
+        active_scope = {}
+
+    excluded_case_ids_value = active_scope.get("excluded_case_ids")
+    if (
+        not isinstance(excluded_case_ids_value, list)
+        or not excluded_case_ids_value
+        or any(not isinstance(item, str) or not item.strip() for item in excluded_case_ids_value)
+        or len(set(excluded_case_ids_value)) != len(excluded_case_ids_value)
+    ):
+        errors.append({"code": "active_scope_excluded_ids_invalid", "message": "active_scope.excluded_case_ids must be a non-empty unique string array"})
+        excluded_case_ids: set[str] = set()
+    else:
+        excluded_case_ids = set(excluded_case_ids_value)
+
+    historical_suites = active_scope.get("excluded_historical_suites")
+    if not isinstance(historical_suites, list) or not historical_suites:
+        errors.append({"code": "historical_suite_missing", "message": "active_scope must name at least one excluded historical suite"})
+        historical_suites = []
+    for suite_index, suite_record in enumerate(historical_suites):
+        suite_prefix = f"active_scope.excluded_historical_suites[{suite_index}]"
+        if not isinstance(suite_record, dict):
+            errors.append({"code": "historical_suite_type", "path": suite_prefix, "message": "historical suite record must be an object"})
+            continue
+        for field in ("suite_id", "path", "suite_file", "reason"):
+            if not isinstance(suite_record.get(field), str) or not suite_record.get(field).strip():
+                errors.append({"code": "historical_suite_field", "path": suite_prefix, "message": f"missing non-empty {field}"})
+        suite_path_value = suite_record.get("path")
+        suite_file_value = suite_record.get("suite_file")
+        if isinstance(suite_path_value, str):
+            if not repo_path(suite_path_value).is_dir():
+                errors.append({"code": "historical_suite_path_missing", "path": suite_prefix, "message": suite_path_value})
+        if isinstance(suite_file_value, str):
+            suite_file_path = repo_path(suite_file_value)
+            if not suite_file_path.is_file():
+                errors.append({"code": "historical_suite_file_missing", "path": suite_prefix, "message": suite_file_value})
+            else:
+                try:
+                    suite_value = load_json(suite_file_path)
+                    suite_case_ids = {
+                        item.get("case_id")
+                        for item in suite_value.get("cases", [])
+                        if isinstance(item, dict) and isinstance(item.get("case_id"), str)
+                    }
+                    if suite_case_ids != excluded_case_ids:
+                        errors.append({
+                            "code": "historical_suite_case_mismatch",
+                            "path": suite_prefix,
+                            "message": f"suite IDs do not match active_scope.excluded_case_ids: {suite_file_value}",
+                        })
+                except Exception as exc:
+                    errors.append({"code": "historical_suite_read_error", "path": suite_prefix, "message": f"{type(exc).__name__}: {exc}"})
+        purge_manifest_value = suite_record.get("purge_manifest")
+        if not isinstance(purge_manifest_value, str) or not purge_manifest_value.strip():
+            errors.append({"code": "purge_manifest_invalid", "path": suite_prefix, "message": "purge_manifest must be a non-empty path"})
+        else:
+            purge_manifest_path = repo_path(purge_manifest_value)
+            if not purge_manifest_path.is_file():
+                errors.append({"code": "purge_manifest_missing", "path": suite_prefix, "message": purge_manifest_value})
+            else:
+                try:
+                    purge_manifest = load_json(purge_manifest_path)
+                    purge_scope = purge_manifest.get("scope") if isinstance(purge_manifest, dict) else None
+                    if not isinstance(purge_scope, dict) or purge_scope.get("directory") != suite_path_value:
+                        errors.append({"code": "purge_manifest_scope", "path": suite_prefix, "message": purge_manifest_value})
+                    remaining_binary_paths = []
+                    if isinstance(suite_path_value, str):
+                        historical_dir = repo_path(suite_path_value)
+                        remaining_binary_paths = [
+                            str(item.relative_to(ROOT))
+                            for pattern in ("*.pptx", "*.png")
+                            for item in historical_dir.rglob(pattern)
+                            if item.is_file()
+                        ]
+                    if remaining_binary_paths:
+                        errors.append({
+                            "code": "purged_binary_present",
+                            "path": suite_prefix,
+                            "message": f"historical presentation binaries remain: {remaining_binary_paths[:5]}",
+                        })
+                except Exception as exc:
+                    errors.append({"code": "purge_manifest_read_error", "path": suite_prefix, "message": f"{type(exc).__name__}: {exc}"})
+
+    limitations = active_scope.get("controlled_limitations")
+    if not isinstance(limitations, list) or not limitations:
+        errors.append({"code": "controlled_limitations_missing", "message": "active_scope.controlled_limitations must be non-empty"})
+        limitations = []
+    limitation_ids: set[str] = set()
+    for limitation_index, limitation in enumerate(limitations):
+        limitation_prefix = f"active_scope.controlled_limitations[{limitation_index}]"
+        if not isinstance(limitation, dict):
+            errors.append({"code": "controlled_limitation_invalid", "path": limitation_prefix, "message": "limitation must be an object"})
+            continue
+        limitation_id = limitation.get("id")
+        limitation_ids.add(str(limitation_id))
+        required_limitation_fields = ("id", "status", "gate", "description", "release_effect")
+        if any(not isinstance(limitation.get(field), str) or not limitation.get(field).strip() for field in required_limitation_fields):
+            errors.append({"code": "controlled_limitation_invalid", "path": limitation_prefix, "message": "id, status, gate, description and release_effect are required strings"})
+        if limitation.get("status") != "controlled":
+            errors.append({"code": "controlled_limitation_status", "path": limitation_prefix, "message": "controlled limitations must have status=controlled"})
+    if len(limitation_ids) != len(limitations):
+        errors.append({"code": "controlled_limitation_duplicate", "message": "controlled limitation IDs must be unique"})
+
     required_evidence = policy.get("required_evidence")
     if not isinstance(required_evidence, list) or not required_evidence:
         errors.append({"code": "required_evidence", "message": "policy.required_evidence must be non-empty"})
@@ -96,6 +201,17 @@ def validate_matrix(matrix_path: Path, *, strict: bool = False, require_actual_r
         errors.append({"code": "sentinel_policy", "message": "static sentinels must never promote"})
     if policy.get("coverage_debt_is_reported") is not True:
         errors.append({"code": "coverage_debt_policy", "message": "coverage debt must be reported"})
+    required_priorities_value = policy.get("required_priorities", sorted(PRIORITIES))
+    if (
+        not isinstance(required_priorities_value, list)
+        or not required_priorities_value
+        or any(item not in PRIORITIES for item in required_priorities_value)
+        or len(set(required_priorities_value)) != len(required_priorities_value)
+    ):
+        errors.append({"code": "required_priorities", "message": "policy.required_priorities must be a non-empty unique array of P0/P1/P2"})
+        required_priorities = set(PRIORITIES)
+    else:
+        required_priorities = set(required_priorities_value)
 
     seen: set[str] = set()
     counts = {priority: 0 for priority in sorted(PRIORITIES)}
@@ -105,8 +221,6 @@ def validate_matrix(matrix_path: Path, *, strict: bool = False, require_actual_r
     actual_replay_ready: list[str] = []
     contract_cases: list[str] = []
     coverage_debt: list[dict[str, Any]] = []
-    selected_filter = set()
-
     for index, case in enumerate(cases):
         prefix = f"cases[{index}]"
         if not isinstance(case, dict):
@@ -193,7 +307,13 @@ def validate_matrix(matrix_path: Path, *, strict: bool = False, require_actual_r
         if priority == "P0" and not isinstance(tests, list):
             errors.append({"code": "p0_contract", "path": prefix, "message": "P0 requires contract tests"})
 
-    for priority in sorted(PRIORITIES):
+    if excluded_case_ids & seen:
+        errors.append({
+            "code": "active_scope_overlap",
+            "message": f"active cases must not include excluded historical IDs: {sorted(excluded_case_ids & seen)}",
+        })
+
+    for priority in sorted(required_priorities):
         if counts[priority] == 0:
             errors.append({"code": "priority_coverage", "message": f"matrix has no {priority} cases"})
 
@@ -209,6 +329,7 @@ def validate_matrix(matrix_path: Path, *, strict: bool = False, require_actual_r
         "p0": counts["P0"],
         "p1": counts["P1"],
         "p2": counts["P2"],
+        "required_priorities": sorted(required_priorities),
         "ready": status_counts["ready"],
         "planned": status_counts["planned"],
         "sentinel": status_counts["sentinel"],
@@ -224,6 +345,15 @@ def validate_matrix(matrix_path: Path, *, strict: bool = False, require_actual_r
         "status": "passed" if valid else "failed",
         "matrix_file": str(matrix_path),
         "matrix_schema": matrix.get("schema"),
+        "active_scope": {
+            "name": active_scope.get("name"),
+            "selection": active_scope.get("selection"),
+            "excluded_historical_suites": [
+                item.get("suite_id") for item in historical_suites if isinstance(item, dict)
+            ],
+            "excluded_case_ids": sorted(excluded_case_ids),
+            "controlled_limitations": sorted(limitation_ids),
+        },
         "summary": summary,
         "replay_ready_cases": replay_ready,
         "actual_replay_ready_cases": actual_replay_ready,

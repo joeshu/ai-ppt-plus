@@ -1,0 +1,29 @@
+{
+  "schema": "ai-ppt-plus/historical-presentation-purge/v1",
+  "suite_id": "distillation-case-replay-12",
+  "baseline_commit": "4da814bd2732f74b86a85d5b66afdcd4d0bd35b5",
+  "recorded_on": "2026-09-12",
+  "purpose": "Record the intentionally purged PPTX and rendered visual binaries without retaining the binaries themselves.",
+  "scope": {
+    "directory": "evals/case-replay-12",
+    "globs": ["**/*.pptx", "**/*.png"],
+    "file_count": 183,
+    "total_bytes": 130854709,
+    "by_extension": {
+      ".pptx": {"file_count": 72, "total_bytes": 23719220},
+      ".png": {"file_count": 111, "total_bytes": 107135489}
+    }
+  },
+  "pre_deletion_inventory_sha256": "5709b7cb36579346122000569dd8a074e81767d48f7693709c57a0943efee21b",
+  "retained_evidence": [
+    "case-suite.json",
+    "baseline-evaluation.json",
+    "candidate-evaluation.json",
+    "case-improvement.json",
+    "visual-generation-plan.json",
+    "run_replay_suite.py",
+    "all remaining JSON, Python, Markdown, CSV and text files"
+  ],
+  "replay_status_after_purge": "historical-only-not-freshly-runnable",
+  "active_ci_or_release_gate": false
+}
