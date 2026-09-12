@@ -27,7 +27,7 @@ from atomic_output import atomic_write_json, atomic_write_text
 
 
 CACHE_SCHEMA = "ai-ppt-plus/pipeline-cache/v3"
-ENGINE_VERSION = "pipeline-engine-v2"
+ENGINE_VERSION = "pipeline-engine-v3"
 CACHE_EXCLUDED_DIRS = {".git", ".pipeline-cache", "pipeline-runs", "__pycache__"}
 RUNTIME_PACKAGES = ("numpy", "Pillow", "python-pptx", "PyYAML", "cairosvg")
 RUNTIME_BINARIES = ("soffice", "libreoffice", "pdftoppm", "pdftocairo", "inkscape", "fc-match")
@@ -79,6 +79,20 @@ def _artifact_digest(path: Path) -> str:
     if path.is_file():
         return sha256(path)
     return _json_hash(_tree_digest(path))
+
+
+def _tree_size(path: Path) -> int:
+    if path.is_file():
+        return path.stat().st_size
+    total = 0
+    if path.is_dir():
+        for child in path.rglob("*"):
+            if child.is_file():
+                try:
+                    total += child.stat().st_size
+                except OSError:
+                    pass
+    return total
 
 
 def _local_code_fingerprint() -> str:
@@ -141,6 +155,8 @@ class PipelineTask:
     timeout: int = 600
     cacheable: bool = True
     static_result: dict[str, Any] | None = None
+    max_retries: int = 0
+    retry_failures: tuple[str, ...] = ("timeout", "spawn-failed")
 
 
 class PipelineExecutor:
@@ -156,7 +172,8 @@ class PipelineExecutor:
         *,
         mode: str = "dag",
         cache_dir: Path | None = None,
-        max_workers: int = 4,
+        max_workers: int = 0,
+        resume: bool = False,
     ) -> None:
         if mode not in {"dag", "linear"}:
             raise ValueError(f"unsupported execution mode: {mode}")
@@ -164,7 +181,11 @@ class PipelineExecutor:
         self.run_dir.mkdir(parents=True, exist_ok=True)
         self.mode = mode
         self.cache_dir = Path(cache_dir).resolve() if cache_dir else None
-        self.max_workers = max(1, int(max_workers)) if mode == "dag" else 1
+        requested_workers = int(max_workers)
+        cpu_limit = max(1, os.cpu_count() or 1)
+        automatic_workers = min(8, max(1, cpu_limit - 1))
+        self.max_workers = (automatic_workers if requested_workers <= 0 else max(1, requested_workers)) if mode == "dag" else 1
+        self.resume = bool(resume)
         self.tasks: list[PipelineTask] = []
         self._task_names: set[str] = set()
         self.code_fingerprint = _local_code_fingerprint()
@@ -173,6 +194,11 @@ class PipelineExecutor:
         self.last_cache_hits = 0
         self.last_cache_misses = 0
         self.last_critical_path_ms = 0.0
+        self.last_resume_hits = 0
+        self.last_retry_count = 0
+        self.last_idle_wait_ms = 0.0
+        self.last_output_bytes = 0
+        self.last_temporary_bytes = 0
 
     def add(self, task: PipelineTask) -> PipelineTask:
         if task.name in self._task_names:
@@ -184,6 +210,9 @@ class PipelineExecutor:
         return task
 
     def _normalize_arg(self, value: str) -> str:
+        run_prefix = str(self.run_dir)
+        if run_prefix in value:
+            value = value.replace(run_prefix, "<run_dir>")
         try:
             path = Path(value).resolve()
             relative = path.relative_to(self.run_dir)
@@ -488,22 +517,27 @@ class PipelineExecutor:
                     atomic_write_text(output, str(result.get("failure") or ""))
         else:
             command = [sys.executable, *task.args]
-            try:
-                completed = subprocess.run(command, capture_output=True, text=True, timeout=task.timeout, check=False)
-                stdout = as_text(completed.stdout)
-                stderr = as_text(completed.stderr)
-                exit_code = completed.returncode
-                failure = None
-            except subprocess.TimeoutExpired as exc:
-                stdout = as_text(exc.stdout)
-                stderr = as_text(exc.stderr) + f"\nstep timed out after {task.timeout}s"
-                exit_code = 124
-                failure = "timeout"
-            except OSError as exc:
-                stdout = ""
-                stderr = f"{type(exc).__name__}: {exc}\n"
-                exit_code = 127
-                failure = "spawn-failed"
+            retry_count = 0
+            while True:
+                try:
+                    completed = subprocess.run(command, capture_output=True, text=True, timeout=task.timeout, check=False)
+                    stdout = as_text(completed.stdout)
+                    stderr = as_text(completed.stderr)
+                    exit_code = completed.returncode
+                    failure = None if exit_code == 0 else "command-failed"
+                except subprocess.TimeoutExpired as exc:
+                    stdout = as_text(exc.stdout)
+                    stderr = as_text(exc.stderr) + f"\nstep timed out after {task.timeout}s"
+                    exit_code = 124
+                    failure = "timeout"
+                except OSError as exc:
+                    stdout = ""
+                    stderr = f"{type(exc).__name__}: {exc}\n"
+                    exit_code = 127
+                    failure = "spawn-failed"
+                if failure not in task.retry_failures or retry_count >= max(0, int(task.max_retries)):
+                    break
+                retry_count += 1
             atomic_write_text(stdout_path, stdout)
             atomic_write_text(stderr_path, stderr)
             result = {
@@ -514,6 +548,8 @@ class PipelineExecutor:
                 "stdout": str(stdout_path.resolve()),
                 "stderr": str(stderr_path.resolve()),
                 "timeout_seconds": task.timeout,
+                "retry_count": retry_count,
+                "failure_class": failure,
             }
             if failure:
                 result["failure"] = failure
@@ -571,19 +607,44 @@ class PipelineExecutor:
     def _write_checkpoint(self, results: dict[str, dict[str, Any]], pending: set[str], *, status: str = "running") -> None:
         """Persist enough state to resume inspection after interruption."""
         checkpoint = {
-            "schema": "ai-ppt-plus/pipeline-checkpoint/v1",
+            "schema": "ai-ppt-plus/pipeline-checkpoint/v2",
             "status": status,
             "run_dir": str(self.run_dir),
             "engine_version": ENGINE_VERSION,
             "local_code_fingerprint": self.code_fingerprint,
             "runtime_fingerprint": self.runtime_fingerprint,
-            "completed": [
-                {"name": name, "ok": result.get("ok"), "cache_hit": result.get("cache_hit"), "duration_ms": result.get("duration_ms", 0)}
-                for name, result in results.items()
-            ],
+            "completed": [],
             "remaining": sorted(pending),
         }
+        by_name = {task.name: task for task in self.tasks}
+        for name, result in results.items():
+            task = by_name.get(name)
+            outputs = [record for output in (task.outputs if task else ()) if (record := self._output_record(output))]
+            checkpoint["completed"].append({"name": name, "ok": result.get("ok"), "cache_hit": result.get("cache_hit"), "duration_ms": result.get("duration_ms", 0), "cache_key": result.get("cache_key"), "outputs": outputs, "result": result})
         atomic_write_json(self.run_dir / "pipeline-checkpoint.json", checkpoint)
+
+    def _resume_results(self, by_name: dict[str, PipelineTask]) -> dict[str, dict[str, Any]]:
+        if not self.resume:
+            return {}
+        try:
+            checkpoint = json.loads((self.run_dir / "pipeline-checkpoint.json").read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return {}
+        if checkpoint.get("schema") != "ai-ppt-plus/pipeline-checkpoint/v2" or checkpoint.get("engine_version") != ENGINE_VERSION or checkpoint.get("local_code_fingerprint") != self.code_fingerprint or checkpoint.get("runtime_fingerprint") != self.runtime_fingerprint:
+            return {}
+        restored = {}
+        for record in checkpoint.get("completed", []):
+            task = by_name.get(record.get("name")) if isinstance(record, dict) and record.get("ok") is True else None
+            if task is None:
+                continue
+            key, _ = self._cache_key(task)
+            expected = {item.get("relative"): item for item in record.get("outputs", []) if isinstance(item, dict)}
+            current = [self._output_record(output) for output in task.outputs]
+            if record.get("cache_key") == key and len(expected) == len(task.outputs) and all(item and expected.get(item["relative"], {}).get("sha256") == item.get("sha256") for item in current):
+                result = dict(record.get("result") or {})
+                result.update({"name": task.name, "resumed": True, "cache_hit": False, "duration_ms": 0.0})
+                restored[task.name] = result
+        return restored
 
     def run(self) -> list[dict[str, Any]]:
         run_started = time.perf_counter()
@@ -593,8 +654,9 @@ class PipelineExecutor:
             task.name: [dep for dep in task.deps if dep not in by_name]
             for task in self.tasks
         }
-        results: dict[str, dict[str, Any]] = {}
-        pending = set(by_name)
+        results: dict[str, dict[str, Any]] = self._resume_results(by_name)
+        pending = set(by_name) - set(results)
+        self.last_resume_hits = len(results)
         pool = None
         self._write_checkpoint(results, pending)
         try:
@@ -652,12 +714,17 @@ class PipelineExecutor:
         self.last_wall_duration_ms = round((time.perf_counter() - run_started) * 1000, 3)
         self.last_cache_hits = sum(1 for result in results.values() if result.get("cache_hit") is True)
         self.last_cache_misses = sum(1 for result in results.values() if result.get("cache_hit") is False and result.get("failure") != "dependency_failed")
+        self.last_retry_count = sum(int(result.get("retry_count", 0) or 0) for result in results.values())
         critical_path: dict[str, float] = {}
         for task in self.tasks:
             own = float(results.get(task.name, {}).get("duration_ms", 0) or 0)
             dependency_path = max((critical_path.get(dep, 0.0) for dep in task.deps), default=0.0)
             critical_path[task.name] = dependency_path + own
         self.last_critical_path_ms = round(max(critical_path.values(), default=0.0), 3)
+        task_duration_sum = sum(float(result.get("duration_ms", 0) or 0) for result in results.values())
+        self.last_idle_wait_ms = round(max(0.0, self.last_wall_duration_ms * self.max_workers - task_duration_sum), 3)
+        self.last_output_bytes = sum(_tree_size(path) for task in self.tasks for path in task.outputs if path.exists())
+        self.last_temporary_bytes = sum(child.stat().st_size for child in self.run_dir.rglob("*") if child.is_file() and child.name.startswith(".") and ".tmp" in child.name)
         self._write_checkpoint(results, set(), status="completed")
         return [results[task.name] for task in self.tasks]
 

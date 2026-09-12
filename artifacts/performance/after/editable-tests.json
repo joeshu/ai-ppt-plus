@@ -1,0 +1,575 @@
+{
+  "schema": "ai-ppt-plus/test-run/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-09-12T10:44:33.813096+00:00",
+  "python": "3.12.14",
+  "tests": [
+    {
+      "test": "tests/test_accepted_state.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Accepted state tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_asset_hashes.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "asset hash gates: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_asset_orchestrator.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Asset orchestrator tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_asset_quality_qa.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Asset quality QA tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_asset_quality_resolution.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Asset quality resolution tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_asset_retry_policy.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Asset retry policy tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_astra_batch_ingestion.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Astra batch ingestion tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_astra_iteration_batch.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Astra iteration batch tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_astra_iteration_executor.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Astra iteration executor tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_astra_provider_neutral_full_loop.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Provider-neutral Astra full-loop integration test passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_authoring_contract.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "strict authoring contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_authoring_modules.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "authoring module split and atomic output: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_authoring_provenance.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "authoring provenance rerun gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_case_replay_audit.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "case replay audit: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_chart_line_primitives.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "diagonal line primitives: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_chart_reconstruction.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "chart reconstruction evidence gates: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_component_instances.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "component instances and rendering: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_component_library.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "component library contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_content_inventory.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "content inventory and backend binding: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_current_run_graph_and_assets.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "current-run PageGraph/ImageGen/embedded-media gates: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_delivery_authoring_provenance_contract.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "delivery authoring/PageGraph/ImageGen provenance contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_distillation_record.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Distillation record tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_distillation_selection.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Distillation selection tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_editable_object_audit.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "page-scoped editable object audit: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_delivery.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "portable font delivery triple gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_embedding.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "PresentationML font embedding and restricted-rights gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_metadata_gate.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "font metadata gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_missing.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "font missing gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_font_weight_set_gate.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "font weight set gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_golden_promotion.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Golden promotion tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_golden_render.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "golden render regression: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_imagegen_final_assets.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "imagegen final-asset policy: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_imagegen_sheet_slicing.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_incremental_render.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "incremental selected-page render: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_irregular_regions.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "irregular region contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_layout_qa.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "semantic layout QA: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_manifest_registry.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "manifest registry tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_native_objects.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native objects contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_native_structure.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native panels and tables: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_object_drift_guard.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "Object drift guard tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_object_manifest_paths.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "separate assets_dir object-manifest paths: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_ooxml_compatibility.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "ooxml compatibility: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_ooxml_rich_text_order.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "OOXML rich-text child ordering: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_p2_guards.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "P2 multi-page, preview and strict-input gates: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_panel_approval.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "panel approval counts arbitrary N=1..9: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_panel_layer_order.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "panel substrate/native overlay layer order: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_perfect_sync.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "perfect-source parity gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_pipeline_engine.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "pipeline DAG/cache contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_pipeline_integration.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "pipeline DAG integration and incremental page mode: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_pptx_package.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "PPTX package unzip contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_preview_font_fallback.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "preview bold fallback: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_reconstruction_engine.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "PASS test_page_graph_projects_native_semantics\nPASS test_page_graph_rejects_unknown_relation_target\nPASS test_repair_router_allows_bounded_geometry_patch\nPASS test_repair_router_defers_semantic_p0\nPASS test_quality_gate_fails_closed_on_raster_or_p1\nPASS reconstruction contract suite (5 tests)\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_reconstruction_integration.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "reconstruction integration tests passed\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_reference_input_preflight.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "reference input preflight: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_reference_preflight.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "reference reconstruction preflight: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_region_visual_compare.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "region visual comparison: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_report_bundle.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "report bundle freshness and consistency: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_report_review.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "report envelope and HTML review: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_revision_guard.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "revision guard baseline: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_route_contracts.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "package and route contracts: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_schema_contracts.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "schema contracts: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_self_contained.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "editable self-contained smoke: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_semantic_layout.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_semantic_object_audit.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "semantic object audit: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_semantic_object_types.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native line semantic classification: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_skill_reference_integrity.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "skill reference integrity: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_slide_manifest_builder.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "slide manifest builder: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_source_crop_integrity.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "source crop integrity: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_source_manifest.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "source manifest: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_strict_authoring_routing.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_table_layout.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "table layout safety: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_text_ledger.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "text ledger character gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_text_model.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "text model contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_typography_calibration.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "typography calibration gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_unicom_next_work_case_contract.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "unicom next-work regression contract: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_validate_source_images.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "source image full-decode gate: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_viewer_capture.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "viewer capture normalization: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_visual_compare_dimensions.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual comparison size normalization: ok\n",
+      "stderr": ""
+    },
+    {
+      "test": "tests/test_visual_qa_bundle.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual QA evidence bundle: ok\n",
+      "stderr": ""
+    }
+  ],
+  "fixture_validation": {
+    "status": "passed",
+    "valid": true,
+    "files": [
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/ai-ppt-editable/evals/editable-trigger-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/ai-ppt-editable/evals/failure-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/ai-ppt-editable/evals/native-editability-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/ai-ppt-editable/evals/trigger-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/ai-ppt-editable/evals/workflow-cases.yaml"
+    ],
+    "issues": []
+  },
+  "failed": []
+}

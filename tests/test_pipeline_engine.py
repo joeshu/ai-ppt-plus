@@ -41,7 +41,16 @@ def main() -> int:
         assert second[0]["ok"] is True and second[0]["cache_hit"] is True
         assert json.loads((root / "run-2/probe.json").read_text(encoding="utf-8"))["schema"] == "ai-ppt-plus/environment-report/v1"
         checkpoint = json.loads((root / "run-2/pipeline-checkpoint.json").read_text(encoding="utf-8"))
-        assert checkpoint["schema"] == "ai-ppt-plus/pipeline-checkpoint/v1" and checkpoint["status"] == "completed"
+        assert checkpoint["schema"] == "ai-ppt-plus/pipeline-checkpoint/v2" and checkpoint["status"] == "completed"
+        resumed_executor = PipelineExecutor(root / "run-2", mode="dag", cache_dir=cache, max_workers=1, resume=True)
+        resumed_report = root / "run-2/probe.json"
+        resumed_executor.add(PipelineTask("probe", [str(ROOT / "scripts/probe_environment.py"), "--output", str(resumed_report)], outputs=(resumed_report,), inputs=(source,), metadata={"fixture": "pipeline-engine"}))
+        resumed = resumed_executor.run()
+        assert resumed[0]["resumed"] is True and resumed_executor.last_resume_hits == 1
+
+        resumed_report.write_text("corrupt", encoding="utf-8")
+        repaired = run_probe(root / "run-2", cache, source)
+        assert repaired[0]["ok"] is True
 
         cache_artifact = cache / first[0]["cache_key"] / "artifacts" / "probe.json"
         cache_artifact.write_text(cache_artifact.read_text(encoding="utf-8") + "\ncorrupted", encoding="utf-8")
@@ -80,6 +89,13 @@ def main() -> int:
         results = parallel.run()
         assert all(item["ok"] for item in results)
         assert results[2]["deps"] == ["a", "b"]
+
+        attempts = root / "attempts.txt"
+        retry = PipelineExecutor(root / "retry", mode="dag", cache_dir=root / "retry-cache", max_workers=1)
+        retry.add(PipelineTask("bounded-retry", ["-c", f"from pathlib import Path; p=Path({str(attempts)!r}); n=int(p.read_text()) if p.exists() else 0; p.write_text(str(n+1)); raise OSError('transient')"], max_retries=2, retry_failures=("command-failed",)))
+        retry_result = retry.run()[0]
+        assert retry_result["ok"] is False and retry_result["retry_count"] == 2
+        assert attempts.read_text() == "3"
     print("pipeline DAG/cache contract: ok")
     return 0
 

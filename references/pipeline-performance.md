@@ -13,6 +13,10 @@ This avoids repeatedly constructing and tearing down pools on the large
 validation graph while preserving the same dependency barriers and stable
 result ordering.
 
+When `--parallel-workers 0` is used (the default), the executor selects a
+bounded CPU-aware limit and leaves one CPU available. Explicit positive values
+remain available for reproducible benchmark runs.
+
 `--execution-mode dag` is the default. `--execution-mode linear` keeps the same
 commands and output contract with one worker and no cache, which is useful for
 diagnosing an ordering-sensitive environment. A dependency failure blocks
@@ -32,6 +36,17 @@ Artifacts are copied into the cache and restored into each new immutable run
 directory. The cache never reuses a run directory, report index or PPTX path.
 Failed or incomplete outputs are not cached. Use `--cache-dir PATH` to choose a
 cache location or `--no-cache` for a clean run.
+
+## Verified interruption recovery
+
+`pipeline-checkpoint.json` v2 stores each completed node's cache key, complete
+result record and declared-output SHA-256 values. Re-run with the same
+`--output-dir` and `--resume` to restore only nodes whose code fingerprint,
+runtime fingerprint, input/cache key and output hashes still match. A changed
+or corrupt output is a miss and is recomputed; failed nodes are never restored
+as successes. Retry policy is task-local and bounded. Deterministic command or
+quality-gate failures are not retried by default, and ImageGen remains blocked
+unless an owning caller explicitly declares a finite transient-error policy.
 
 ## Fast reconstruction profile
 

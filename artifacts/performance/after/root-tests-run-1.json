@@ -1,0 +1,630 @@
+{
+  "schema": "ai-ppt-plus/test-run/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-09-12T10:43:31.090430+00:00",
+  "python": "3.12.14",
+  "execution": {
+    "parallel_workers": 4,
+    "tests_total": 75,
+    "duration_ms": 55669.887,
+    "wall_duration_ms": 17329.014,
+    "max_test_duration_ms": 11813.697
+  },
+  "tests": [
+    {
+      "test": "tests/test_asset_hashes.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "asset hash gates: ok\n",
+      "stderr": "",
+      "duration_ms": 273.624
+    },
+    {
+      "test": "tests/test_authoring_contract.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "strict authoring contract: ok\n",
+      "stderr": "",
+      "duration_ms": 229.57
+    },
+    {
+      "test": "tests/test_authoring_modules.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "authoring module split and atomic output: ok\n",
+      "stderr": "",
+      "duration_ms": 710.75
+    },
+    {
+      "test": "tests/test_chart_line_primitives.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "diagonal line primitives: ok\n",
+      "stderr": "",
+      "duration_ms": 125.494
+    },
+    {
+      "test": "tests/test_chart_reconstruction.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "chart reconstruction evidence gates: ok\n",
+      "stderr": "",
+      "duration_ms": 202.596
+    },
+    {
+      "test": "tests/test_component_instances.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "component instances and rendering: ok\n",
+      "stderr": "",
+      "duration_ms": 1161.525
+    },
+    {
+      "test": "tests/test_component_library.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "component library contract: ok\n",
+      "stderr": "",
+      "duration_ms": 106.764
+    },
+    {
+      "test": "tests/test_content_inventory.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "content inventory and backend binding: ok\n",
+      "stderr": "",
+      "duration_ms": 418.006
+    },
+    {
+      "test": "tests/test_distillation_case_matrix.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "distillation case matrix: ok\n",
+      "stderr": "",
+      "duration_ms": 261.123
+    },
+    {
+      "test": "tests/test_distillation_improvement.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "distillation improvement gate: ok\n",
+      "stderr": "",
+      "duration_ms": 199.405
+    },
+    {
+      "test": "tests/test_editable_object_audit.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "page-scoped editable object audit: ok\n",
+      "stderr": "",
+      "duration_ms": 269.983
+    },
+    {
+      "test": "tests/test_engine_route.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "editable-first engine route: ok\n",
+      "stderr": "",
+      "duration_ms": 319.886
+    },
+    {
+      "test": "tests/test_environment_contract.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "environment contract gate: ok\n",
+      "stderr": "",
+      "duration_ms": 93.508
+    },
+    {
+      "test": "tests/test_font_delivery.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "portable font delivery triple gate: ok\n",
+      "stderr": "",
+      "duration_ms": 109.646
+    },
+    {
+      "test": "tests/test_font_embedding.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "PresentationML font embedding and restricted-rights gate: ok\n",
+      "stderr": "",
+      "duration_ms": 691.532
+    },
+    {
+      "test": "tests/test_font_metadata_gate.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "font metadata gate: ok\n",
+      "stderr": "",
+      "duration_ms": 667.622
+    },
+    {
+      "test": "tests/test_font_missing.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "font missing gate: ok\n",
+      "stderr": "",
+      "duration_ms": 69.371
+    },
+    {
+      "test": "tests/test_font_weight_set_gate.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "font weight set gate: ok\n",
+      "stderr": "",
+      "duration_ms": 1460.273
+    },
+    {
+      "test": "tests/test_fresh12_capability_gate.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "fresh12 capability gate tests passed\n",
+      "stderr": "",
+      "duration_ms": 35.2
+    },
+    {
+      "test": "tests/test_fresh12_protocol.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "{\"status\": \"AWAITING_FRESH_GENERATION\", \"run_id\": \"test-run\", \"run_dir\": \"/tmp/tmp23kqgnel/run\", \"case_count\": 12}\n{\"verdict\": \"INCOMPLETE\", \"complete_cases\": 0, \"passed_cases\": 0, \"failed_cases\": 0, \"incomplete_cases\": 12, \"capability_judgement_allowed\": false}\nfresh12 protocol tests passed\n",
+      "stderr": "",
+      "duration_ms": 40.621
+    },
+    {
+      "test": "tests/test_golden_render.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "golden render regression: ok\n",
+      "stderr": "",
+      "duration_ms": 936.851
+    },
+    {
+      "test": "tests/test_icon_layer_standalone.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "standalone illustration layer audit: ok\n",
+      "stderr": "",
+      "duration_ms": 66.533
+    },
+    {
+      "test": "tests/test_incremental_render.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "incremental selected-page render: ok\n",
+      "stderr": "",
+      "duration_ms": 3439.823
+    },
+    {
+      "test": "tests/test_irregular_regions.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "irregular region contract: ok\n",
+      "stderr": "",
+      "duration_ms": 103.731
+    },
+    {
+      "test": "tests/test_layout_qa.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "semantic layout QA: ok\n",
+      "stderr": "",
+      "duration_ms": 113.632
+    },
+    {
+      "test": "tests/test_manifest_registry.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "manifest registry tests passed\n",
+      "stderr": "",
+      "duration_ms": 496.686
+    },
+    {
+      "test": "tests/test_native_objects.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native objects contract: ok\n",
+      "stderr": "",
+      "duration_ms": 467.406
+    },
+    {
+      "test": "tests/test_native_route.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native route contract: ok\n",
+      "stderr": "",
+      "duration_ms": 178.513
+    },
+    {
+      "test": "tests/test_object_manifest_paths.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "separate assets_dir object-manifest paths: ok\n",
+      "stderr": "",
+      "duration_ms": 365.983
+    },
+    {
+      "test": "tests/test_ooxml_rich_text_order.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "OOXML rich-text child ordering: ok\n",
+      "stderr": "",
+      "duration_ms": 34.586
+    },
+    {
+      "test": "tests/test_p0_governance.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "root P0 governance: ok\n",
+      "stderr": "",
+      "duration_ms": 336.534
+    },
+    {
+      "test": "tests/test_p0_integrity.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "P0 recovery and sign-off integrity: ok\n",
+      "stderr": "",
+      "duration_ms": 266.135
+    },
+    {
+      "test": "tests/test_p1_governance.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "root P1 governance: ok\n",
+      "stderr": "",
+      "duration_ms": 418.501
+    },
+    {
+      "test": "tests/test_p2_guards.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "P2 multi-page, preview and strict-input gates: ok\n",
+      "stderr": "",
+      "duration_ms": 744.577
+    },
+    {
+      "test": "tests/test_panel_approval.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "panel approval counts arbitrary N=1..9: ok\n",
+      "stderr": "",
+      "duration_ms": 2376.254
+    },
+    {
+      "test": "tests/test_panel_layer_order.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "panel substrate/native overlay layer order: ok\n",
+      "stderr": "",
+      "duration_ms": 313.818
+    },
+    {
+      "test": "tests/test_pipeline_engine.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "pipeline DAG/cache contract: ok\n",
+      "stderr": "",
+      "duration_ms": 2328.47
+    },
+    {
+      "test": "tests/test_pipeline_integration.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "pipeline DAG integration and incremental page mode: ok\n",
+      "stderr": "",
+      "duration_ms": 3894.124
+    },
+    {
+      "test": "tests/test_pipeline_recovery_performance.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "{\"schema\": \"ai-ppt-plus/recovery-performance-proof/v1\", \"status\": \"passed\", \"cold_ms\": 323.042, \"hot_ms\": 9.517, \"hot_improvement\": 0.970539, \"incremental_ms\": 114.364, \"incremental_improvement\": 0.645978, \"incremental_cache_hit_rate\": 0.8, \"incremental_recomputed\": [\"page-2\"], \"forced_termination_resume_hits\": 1}\n",
+      "stderr": "",
+      "duration_ms": 1676.323
+    },
+    {
+      "test": "tests/test_pptx_case_replay.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "social-channel-commission-native-01 case replay: ok\n",
+      "stderr": "",
+      "duration_ms": 11813.697
+    },
+    {
+      "test": "tests/test_pptx_package.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "PPTX package unzip contract: ok\n",
+      "stderr": "",
+      "duration_ms": 216.182
+    },
+    {
+      "test": "tests/test_preview_font_fallback.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "preview bold fallback: ok\n",
+      "stderr": "",
+      "duration_ms": 36.562
+    },
+    {
+      "test": "tests/test_reference_input_preflight.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "reference input preflight: ok\n",
+      "stderr": "",
+      "duration_ms": 201.209
+    },
+    {
+      "test": "tests/test_report_bundle.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "report bundle freshness and consistency: ok\n",
+      "stderr": "",
+      "duration_ms": 281.466
+    },
+    {
+      "test": "tests/test_report_review.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "report envelope and HTML review: ok\n",
+      "stderr": "",
+      "duration_ms": 142.586
+    },
+    {
+      "test": "tests/test_revision_guard.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "revision guard baseline: ok\n",
+      "stderr": "",
+      "duration_ms": 391.79
+    },
+    {
+      "test": "tests/test_route_contracts.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "package and route contracts: ok\n",
+      "stderr": "",
+      "duration_ms": 490.137
+    },
+    {
+      "test": "tests/test_runtime_mirror.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "runtime mirror drift guard: ok\n",
+      "stderr": "",
+      "duration_ms": 209.997
+    },
+    {
+      "test": "tests/test_schema_contracts.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "schema contracts: ok\n",
+      "stderr": "",
+      "duration_ms": 28.382
+    },
+    {
+      "test": "tests/test_semantic_layout.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_ms": 26.411
+    },
+    {
+      "test": "tests/test_semantic_object_audit.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "semantic object audit: ok\n",
+      "stderr": "",
+      "duration_ms": 2114.705
+    },
+    {
+      "test": "tests/test_semantic_object_types.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native line semantic classification: ok\n",
+      "stderr": "",
+      "duration_ms": 324.354
+    },
+    {
+      "test": "tests/test_skill_reference_integrity.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "skill reference integrity: ok\n",
+      "stderr": "",
+      "duration_ms": 70.643
+    },
+    {
+      "test": "tests/test_slide_background_color.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native slide background color: ok\n",
+      "stderr": "",
+      "duration_ms": 265.085
+    },
+    {
+      "test": "tests/test_slide_manifest_builder.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "slide manifest builder: ok\n",
+      "stderr": "",
+      "duration_ms": 137.144
+    },
+    {
+      "test": "tests/test_source_manifest.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "source manifest: ok\n",
+      "stderr": "",
+      "duration_ms": 86.079
+    },
+    {
+      "test": "tests/test_strict_authoring_routing.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_ms": 41.491
+    },
+    {
+      "test": "tests/test_super_pipeline.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "super A-to-B pipeline: ok\n",
+      "stderr": "",
+      "duration_ms": 775.022
+    },
+    {
+      "test": "tests/test_super_pipeline_full.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "super full A-to-B pipeline: ok\n",
+      "stderr": "",
+      "duration_ms": 3460.071
+    },
+    {
+      "test": "tests/test_table_layout.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "table layout safety: ok\n",
+      "stderr": "",
+      "duration_ms": 30.334
+    },
+    {
+      "test": "tests/test_text_ledger.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "text ledger character gate: ok\n",
+      "stderr": "",
+      "duration_ms": 181.129
+    },
+    {
+      "test": "tests/test_text_model.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "text model contract: ok\n",
+      "stderr": "",
+      "duration_ms": 202.94
+    },
+    {
+      "test": "tests/test_three_skill_split.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "three self-contained skills: ok\n",
+      "stderr": "",
+      "duration_ms": 352.688
+    },
+    {
+      "test": "tests/test_typography_calibration.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "typography calibration gate: ok\n",
+      "stderr": "",
+      "duration_ms": 198.241
+    },
+    {
+      "test": "tests/test_unattended_distillation.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "unattended distillation controller: ok\n",
+      "stderr": "",
+      "duration_ms": 363.397
+    },
+    {
+      "test": "tests/test_validate_source_images.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "source image full-decode gate: ok\n",
+      "stderr": "",
+      "duration_ms": 155.421
+    },
+    {
+      "test": "tests/test_viewer_capture.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "viewer capture normalization: ok\n",
+      "stderr": "",
+      "duration_ms": 1048.656
+    },
+    {
+      "test": "tests/test_visual_assertions.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual assertion readback: ok\n",
+      "stderr": "",
+      "duration_ms": 1128.827
+    },
+    {
+      "test": "tests/test_visual_compare_dimensions.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual comparison size normalization: ok\n",
+      "stderr": "",
+      "duration_ms": 1007.074
+    },
+    {
+      "test": "tests/test_visual_creation_manifest_gates.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual-creation gate inference: ok\n",
+      "stderr": "",
+      "duration_ms": 66.499
+    },
+    {
+      "test": "tests/test_visual_generation_contract.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual generation contract: ok\n",
+      "stderr": "",
+      "duration_ms": 2907.395
+    },
+    {
+      "test": "tests/test_visual_generation_strip.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual generation strip: ok\n",
+      "stderr": "",
+      "duration_ms": 209.057
+    },
+    {
+      "test": "tests/test_visual_prompt_materializer.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual prompt materializer: ok\n",
+      "stderr": "",
+      "duration_ms": 338.197
+    },
+    {
+      "test": "tests/test_visual_qa_bundle.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual QA evidence bundle: ok\n",
+      "stderr": "",
+      "duration_ms": 120.962
+    },
+    {
+      "test": "tests/test_workflow_state.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "workflow state contract: ok\n",
+      "stderr": "",
+      "duration_ms": 241.078
+    }
+  ],
+  "fixture_validation": {
+    "status": "passed",
+    "valid": true,
+    "files": [
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/evals/editable-trigger-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/evals/failure-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/evals/p2-regression-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/evals/trigger-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/evals/visual-trigger-cases.yaml",
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/evals/workflow-cases.yaml"
+    ],
+    "issues": []
+  },
+  "failed": []
+}

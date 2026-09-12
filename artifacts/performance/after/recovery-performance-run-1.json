@@ -1,0 +1,1 @@
+{"schema": "ai-ppt-plus/recovery-performance-proof/v1", "status": "passed", "cold_ms": 324.081, "hot_ms": 8.119, "hot_improvement": 0.974948, "incremental_ms": 105.931, "incremental_improvement": 0.673134, "incremental_cache_hit_rate": 0.8, "incremental_recomputed": ["page-2"], "forced_termination_resume_hits": 1}

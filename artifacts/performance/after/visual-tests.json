@@ -1,0 +1,73 @@
+{
+  "schema": "ai-ppt-plus/test-run/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-09-12T10:44:34.702973+00:00",
+  "python": "3.12.14",
+  "execution": {
+    "parallel_workers": 4,
+    "tests_total": 6,
+    "duration_ms": 1503.185,
+    "wall_duration_ms": 832.143,
+    "max_test_duration_ms": 793.077
+  },
+  "tests": [
+    {
+      "test": "tests/test_copy_contract.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "copy contract: ok\n",
+      "stderr": "",
+      "duration_ms": 37.756
+    },
+    {
+      "test": "tests/test_materializer_canvas_policy.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "materializer canvas tolerance: ok\n",
+      "stderr": "",
+      "duration_ms": 37.843
+    },
+    {
+      "test": "tests/test_native_canvas.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "native canvas and manifest path: ok\n",
+      "stderr": "",
+      "duration_ms": 141.038
+    },
+    {
+      "test": "tests/test_register_generated_slide.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "register generated slide: ok\n",
+      "stderr": "",
+      "duration_ms": 180.101
+    },
+    {
+      "test": "tests/test_self_contained.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual self-contained smoke: ok\n",
+      "stderr": "",
+      "duration_ms": 313.37
+    },
+    {
+      "test": "tests/test_visual_assertions.py",
+      "status": "passed",
+      "returncode": 0,
+      "stdout": "visual assertion readback: ok\n",
+      "stderr": "",
+      "duration_ms": 793.077
+    }
+  ],
+  "fixture_validation": {
+    "status": "passed",
+    "valid": true,
+    "files": [
+      "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/ai-ppt-visual-gen/evals/visual-trigger-cases.yaml"
+    ],
+    "issues": []
+  },
+  "failed": []
+}
