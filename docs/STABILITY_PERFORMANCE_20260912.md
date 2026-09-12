@@ -61,8 +61,11 @@ process namespace is not stably visible through `ps`. Peak RSS and disk I/O
 therefore remain unavailable rather than being represented as zero. In
 addition, base PR #34 deliberately removed the retired 12-case binary replay
 assets, preventing a fresh full-pixel comparison of those historical cases.
-Under the requested fail-closed acceptance policy the overall verdict is
-therefore **BLOCKED**, even though all available regressions pass.
+The repository owner explicitly accepted both limitations on 2026-09-12.
+They are retained as visible evidence limitations rather than hidden or
+represented as successful measurements. The final verdict is therefore
+**PASSED WITH ACCEPTED LIMITATIONS**. This human acceptance does not change
+any visual threshold, quality gate, authoring rule or Golden policy.
 
 ## Rollback
 

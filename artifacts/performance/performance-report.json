@@ -1,6 +1,6 @@
 {
   "schema": "ai-ppt-plus/stability-performance-comparison/v1",
-  "status": "blocked",
+  "status": "passed_with_accepted_limitations",
   "base": {
     "branch": "main",
     "commit": "7d5f3c2339acca9497b19c0c24de93052b8c8494",
@@ -41,9 +41,17 @@
     "write_bytes": null,
     "reason": "managed execution environment denied /proc process metrics and did not expose a stable child-process namespace to ps"
   },
-  "blocking_issues": [
-    "peak memory and disk I/O comparison unavailable in this execution environment",
-    "PR #34 removed the 12-case binary replay assets, so full historical pixel metrics could not be recomputed"
+  "accepted_limitations": [
+    {
+      "issue": "peak memory and disk I/O comparison unavailable in this execution environment",
+      "accepted_by": "repository owner",
+      "accepted_on": "2026-09-12"
+    },
+    {
+      "issue": "PR #34 removed the 12-case binary replay assets, so full historical pixel metrics could not be recomputed",
+      "accepted_by": "repository owner",
+      "accepted_on": "2026-09-12"
+    }
   ],
-  "verdict": "BLOCKED"
+  "verdict": "PASSED_WITH_ACCEPTED_LIMITATIONS"
 }
