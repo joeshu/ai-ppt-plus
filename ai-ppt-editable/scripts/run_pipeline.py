@@ -21,7 +21,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--require-visual-generation]
        [--dpi N] [--strict-layout]
        [--execution-mode dag|linear] [--cache-dir DIR] [--no-cache]
-       [--parallel-workers N] [--affected-pages 1,3-4]
+       [--parallel-workers N] [--resume] [--affected-pages 1,3-4]
        [--page-cache-dir DIR] [--preview-dir DIR]
        [--affected-region name=x,y,w,h]
        [--chart-manifest CHARTS.json] [--require-chart-manifest]
@@ -385,7 +385,8 @@ def main() -> int:
     parser.add_argument("--execution-mode", choices=["dag", "linear"], default="dag", help="DAG execution with caching, or the compatibility linear runner")
     parser.add_argument("--cache-dir", help="content-addressed pipeline cache directory; defaults to PROJECT_DIR/.pipeline-cache in DAG mode")
     parser.add_argument("--no-cache", action="store_true", help="disable successful-task cache restores/writes")
-    parser.add_argument("--parallel-workers", type=int, default=4, help="maximum independent DAG checks to run concurrently")
+    parser.add_argument("--parallel-workers", type=int, default=0, help="maximum independent DAG checks; 0 selects a resource-aware limit")
+    parser.add_argument("--resume", action="store_true", help="resume hash-verified successful nodes from an existing --output-dir")
     parser.add_argument("--affected-pages", help="only render and compare selected pages, e.g. 1,3-4")
     parser.add_argument("--page-cache-dir", help="content-addressed validated page PNG cache; defaults to .pipeline-cache/render-pages in DAG mode")
     parser.add_argument("--affected-region", action="append", default=[], help="critical region affected by the change: name=x,y,w,h; checked by the render QA gate")
@@ -469,7 +470,7 @@ def main() -> int:
     except ValueError as exc:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "affected_pages_invalid", "message": str(exc)}, ensure_ascii=False))
         return 2
-    if args.parallel_workers < 1:
+    if args.parallel_workers < 0:
         print(json.dumps({"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "code": "parallel_workers_invalid"}, ensure_ascii=False))
         return 2
     if args.repair_round < 0:
@@ -605,11 +606,11 @@ def main() -> int:
             args.require_gradient_visual = args.require_gradient_visual or gate_requirements.get("gradient_visual", False)
     run_id = datetime.now(timezone.utc).strftime("run-%Y%m%dT%H%M%S.%fZ") + "-" + uuid.uuid4().hex[:8]
     run_dir = Path(args.output_dir).resolve() if args.output_dir else project / "pipeline-runs" / run_id
-    if run_dir.exists():
+    if run_dir.exists() and not args.resume:
         print(json.dumps({"valid": False, "code": "run_dir_exists", "path": str(run_dir)}, ensure_ascii=False))
         return 2
     run_dir.parent.mkdir(parents=True, exist_ok=True)
-    run_dir.mkdir()
+    run_dir.mkdir(exist_ok=args.resume)
     render_dir = run_dir / "rendered"
     cache_dir = None
     if args.execution_mode == "dag" and not args.no_cache:
@@ -617,7 +618,7 @@ def main() -> int:
     page_cache_dir = None
     if not args.no_cache and (args.execution_mode == "dag" or args.page_cache_dir):
         page_cache_dir = Path(args.page_cache_dir).resolve() if args.page_cache_dir else (cache_dir / "render-pages" if cache_dir else project / ".pipeline-cache" / "render-pages")
-    executor = PipelineExecutor(run_dir, mode=args.execution_mode, cache_dir=cache_dir, max_workers=args.parallel_workers)
+    executor = PipelineExecutor(run_dir, mode=args.execution_mode, cache_dir=cache_dir, max_workers=args.parallel_workers, resume=args.resume)
 
     def add_step(name, command=None, *, deps=(), outputs=(), inputs=(), metadata=None, cacheable=True, static_result=None):
         return executor.add(PipelineTask(
@@ -1618,7 +1619,11 @@ def main() -> int:
                 "duration_ms": executor.last_wall_duration_ms,
                 "task_duration_ms_sum": round(sum(float(step.get("duration_ms", 0) or 0) for step in current_steps), 3),
                 "critical_path_ms": executor.last_critical_path_ms,
+                "scheduler_idle_capacity_ms": executor.last_idle_wait_ms,
+                "resume_hits": executor.last_resume_hits,
                 "retry_count": sum(int(step.get("retry_count", 0) or 0) for step in current_steps),
+                "output_bytes": executor.last_output_bytes,
+                "temporary_bytes": executor.last_temporary_bytes,
                 "repair_rounds": args.repair_round,
                 "affected_pages": affected_pages or "all",
                 "affected_regions": list(args.affected_region),

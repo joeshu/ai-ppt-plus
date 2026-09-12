@@ -1,93 +1,19 @@
 {
-  "schema": "ai-ppt-plus/runtime-mirror/v1",
-  "source": ".",
+  "schema": "ai-ppt-plus/runtime-mirror-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "root": "/workspace/scratch/398e14ff4a6e/ai-ppt-plus",
+  "policy": "/workspace/scratch/398e14ff4a6e/ai-ppt-plus/assets/runtime-mirror-policy.json",
   "pairs": [
     {
       "worker": "ai-ppt-visual-gen",
-      "compare_globs": [
-        "scripts/*.py",
-        "references/*.md",
-        "assets/*.template.json",
-        "assets/schemas/*.json"
-      ],
-      "exclude": [
-        "assets/skill-package.json",
-        "scripts/compose_image_pptx.py",
-        "scripts/run_visual_pipeline.py",
-        "scripts/register_generated_slide.py",
-        "scripts/validate_outline_table.py",
-        "scripts/materialize_visual_generation_prompts.py",
-        "scripts/measure_command.py",
-        "scripts/validate_visual_assertions.py",
-        "scripts/validate_visual_generation_plan.py",
-        "assets/visual-generation-manifest.template.json",
-        "assets/visual-generation-plan.template.json",
-        "assets/schemas/visual-generation-manifest.schema.json",
-        "assets/schemas/visual-generation-plan.schema.json",
-        "references/skill-routing.md",
-        "references/three-skill-architecture.md",
-        "references/visual-generation-tool.md",
-        "references/visual-intermediate.md",
-        "references/outline-thought-table.md",
-        "references/rendered-slide-qa.md",
-        "references/operations-matrix.md"
-      ],
-      "required_paths": [
-        "scripts/atomic_output.py",
-        "scripts/build_visual_generation_strip.py",
-        "scripts/materialize_visual_generation_prompts.py",
-        "scripts/run_tests.py",
-        "scripts/validate_skill_package.py",
-        "scripts/validate_visual_generation_plan.py",
-        "scripts/validate_visual_assertions.py",
-        "scripts/validate_workflow_state.py"
-      ]
+      "compared_files": 10,
+      "adapter_exclusions": [],
+      "issues": []
     },
     {
       "worker": "ai-ppt-editable",
-      "compare_globs": [
-        "scripts/*.py",
-        "references/*.md",
-        "assets/*.template.json",
-        "assets/schemas/*.json",
-        "assets/fonts/*"
-      ],
-      "exclude": [
-        "scripts/asset_placement.py",
-        "scripts/audit_icon_layers.py",
-        "scripts/build_perfect_sync_manifest.py",
-        "scripts/build_slide_manifest.py",
-        "scripts/measure_command.py",
-        "scripts/pipeline_engine.py",
-        "scripts/probe_environment.py",
-        "scripts/run_tests.py",
-        "scripts/validate_routing_contract.py",
-        "scripts/validate_perfect_sync.py",
-        "assets/skill-package.json",
-        "assets/route-decision-visual-creation.template.json",
-        "assets/skill-routing.template.json",
-        "assets/schemas/pipeline-run.schema.json",
-        "assets/schemas/skill-routing.schema.json",
-        "references/authoring-backend.md",
-        "references/icon-asset-protocol.md",
-        "references/panel-asset-protocol.md",
-        "references/perfect-source-sync.md",
-        "references/pipeline-performance.md",
-        "references/skill-routing.md",
-        "references/text-layout-model.md",
-        "references/visual-intermediate.md",
-        "references/operations-matrix.md"
-      ],
-      "required_paths": [
-        "scripts/atomic_output.py",
-        "scripts/run_pipeline.py",
-        "scripts/run_tests.py",
-        "scripts/validate_handoff.py",
-        "scripts/validate_route.py",
-        "scripts/validate_skill_package.py",
-        "scripts/validate_visual_generation_plan.py",
-        "scripts/validate_workflow_state.py"
-      ],
+      "compared_files": 140,
       "adapter_exclusions": [
         {
           "path": "assets/schemas/difference-graph.schema.json",
@@ -201,7 +127,9 @@
           "path": "references/optimization-validation.md",
           "reason": "worker-specific optimization validation entrypoints and artifact-tool runtime notes"
         }
-      ]
+      ],
+      "issues": []
     }
-  ]
+  ],
+  "issues": []
 }

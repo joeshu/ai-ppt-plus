@@ -1,0 +1,57 @@
+{
+  "schema": "ai-ppt-plus/stability-performance-comparison/v1",
+  "status": "passed_with_accepted_limitations",
+  "base": {
+    "branch": "main",
+    "commit": "7d5f3c2339acca9497b19c0c24de93052b8c8494",
+    "package_revision": "2026.09.12.02",
+    "root_tests": "74/74",
+    "cold_wall_median_ms": 17528.957
+  },
+  "candidate": {
+    "branch": "codex/stability-performance-engine-20260912",
+    "package_revision": "2026.09.12.03",
+    "root_tests": "75/75",
+    "cold_wall_median_ms": 17329.014,
+    "cold_wall_change": -0.011406,
+    "runtime_mirror": "passed",
+    "perfect_sync": "passed",
+    "skill_package": "passed",
+    "editable_worker_tests": "passed",
+    "visual_worker_tests": "passed"
+  },
+  "engine_benchmark_medians": {
+    "hot_start_improvement": 0.974948,
+    "incremental_improvement": 0.668257,
+    "unchanged_page_cache_hit_rate": 0.8,
+    "incremental_recomputed_tasks": ["page-2"],
+    "forced_termination_resume_hits": 1
+  },
+  "quality_invariants": {
+    "threshold_files_changed": 0,
+    "quality_gate_count_reduced": false,
+    "authoring_route_changed": false,
+    "golden_history_rewritten": false,
+    "whole_page_image_policy_changed": false
+  },
+  "resource_measurement": {
+    "status": "blocked",
+    "peak_rss_bytes": null,
+    "read_bytes": null,
+    "write_bytes": null,
+    "reason": "managed execution environment denied /proc process metrics and did not expose a stable child-process namespace to ps"
+  },
+  "accepted_limitations": [
+    {
+      "issue": "peak memory and disk I/O comparison unavailable in this execution environment",
+      "accepted_by": "repository owner",
+      "accepted_on": "2026-09-12"
+    },
+    {
+      "issue": "PR #34 removed the 12-case binary replay assets, so full historical pixel metrics could not be recomputed",
+      "accepted_by": "repository owner",
+      "accepted_on": "2026-09-12"
+    }
+  ],
+  "verdict": "PASSED_WITH_ACCEPTED_LIMITATIONS"
+}
