@@ -589,9 +589,9 @@ Golden manifest 保留：
 - semantic_evidence；
 - promotion_evidence。
 
-## 21. 12-case Regression Matrix
+## 21. 12-case Regression Matrix（历史归档）
 
-真实 12-case suite 用于防止只修一个示例后破坏其他能力。
+真实 12-case suite 的契约、脚本和机器可读报告作为历史归档保留，用于回溯曾经的横向覆盖；它已从活动 CI 和发布选择中移除。PPTX、渲染图和视觉对照图已按体积治理清理，清单见 `evals/case-replay-12/purged-presentation-artifacts.json`，因此不能被当作当前可新鲜运行的门禁。
 
 覆盖：
 
@@ -608,7 +608,7 @@ Golden manifest 保留：
 - portability；
 - idempotency/cache。
 
-Strict replay：
+历史手动 replay（需要先恢复外部 PPTX/PNG 制品）：
 
 ```bash
 python evals/case-replay-12/run_replay_suite.py --strict

@@ -27,6 +27,19 @@ def load(path: Path) -> dict[str, Any]:
         raise ValueError(f"invalid case matrix: {path}")
     if not isinstance(value.get("cases"), list):
         raise ValueError("case matrix cases must be an array")
+    active_scope = value.get("active_scope")
+    if not isinstance(active_scope, dict):
+        raise ValueError("case matrix active_scope must be an object")
+    excluded_ids = active_scope.get("excluded_case_ids")
+    if not isinstance(excluded_ids, list) or any(not isinstance(item, str) for item in excluded_ids):
+        raise ValueError("active_scope.excluded_case_ids must be a string array")
+    case_ids = {
+        case.get("case_id") for case in value["cases"]
+        if isinstance(case, dict) and isinstance(case.get("case_id"), str)
+    }
+    leaked_ids = case_ids & set(excluded_ids)
+    if leaked_ids:
+        raise ValueError(f"active matrix selects archived case IDs: {sorted(leaked_ids)}")
     return value
 
 
@@ -96,6 +109,20 @@ def main() -> int:
         "selection_mode": "full" if args.full or (not args.category and not args.priority) else "targeted",
         "requested_categories": args.category,
         "requested_priorities": args.priority,
+        "active_scope": {
+            "name": matrix.get("active_scope", {}).get("name"),
+            "excluded_historical_suites": [
+                item.get("suite_id")
+                for item in matrix.get("active_scope", {}).get("excluded_historical_suites", [])
+                if isinstance(item, dict)
+            ],
+            "excluded_case_ids": matrix.get("active_scope", {}).get("excluded_case_ids", []),
+            "controlled_limitations": [
+                item.get("id")
+                for item in matrix.get("active_scope", {}).get("controlled_limitations", [])
+                if isinstance(item, dict)
+            ],
+        },
         "selected_case_ids": selected_ids,
         "selected_cases": selected,
         "required_replay_cases": [case.get("case_id") for case in replay_cases],

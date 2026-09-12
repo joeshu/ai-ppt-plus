@@ -319,9 +319,9 @@ Golden baseline 是版本化、不可覆盖的 manifest，并保留 previous gol
 
 ---
 
-## 9. 12-case 回归与 provider-neutral full loop
+## 9. 12-case 历史回放归档与 provider-neutral full loop
 
-仓库内置真实 12-case replay suite，覆盖：
+仓库保留真实 12-case replay suite 的案例契约、脚本和机器可读报告，覆盖：
 
 1. 默认 editable 路由；
 2. native shape/card；
@@ -336,7 +336,9 @@ Golden baseline 是版本化、不可覆盖的 manifest，并保留 previous gol
 11. package/render portability；
 12. cache/idempotency。
 
-严格运行：
+该套件已从活动 CI/发布矩阵移除。为控制仓库体积，PPTX、渲染图和视觉对照图已清理；清单与清理前库存摘要保留在 `evals/case-replay-12/purged-presentation-artifacts.json`。因此它只用于历史人工回溯，不能被当作当前可新鲜运行的发布门禁。
+
+历史手动核验（需要先恢复外部 PPTX/PNG 制品）：
 
 ```bash
 python evals/case-replay-12/run_replay_suite.py --strict
@@ -431,13 +433,13 @@ python3 scripts/run_tests.py --parallel-workers 4 --report test-report.json
 python3 ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
 ```
 
-### 真实 12-case replay
+### 真实 12-case replay（历史手动流程）
 
 ```bash
 python3 evals/case-replay-12/run_replay_suite.py --strict
 ```
 
-### 生成 Astra 12-case closed-loop batch
+### 生成 Astra 12-case closed-loop batch（历史手动流程）
 
 ```bash
 python3 evals/case-replay-12/build_astra_closed_loop_batch.py \
@@ -486,10 +488,9 @@ python3 evals/case-replay-12/promote_astra_golden.py ...
 - runtime mirror validation；
 - standalone worker smoke tests；
 - Astra reconstruction contract tests；
-- 12-case Astra closed-loop batch；
+- 历史 12-case replay 只保留为归档证据，不作为活动 CI/发布矩阵门禁；
 - schema / DAG / package / golden regressions；
 - social-channel 真 PPTX replay；
-- 12-case visual/native-editability replay；
 - distillation matrix validation；
 - strict P2 guards；
 - whitespace gate。

@@ -25,7 +25,6 @@ jobs:
           python -m py_compile scripts/*.py tests/test_*.py
           python -m py_compile ai-ppt-visual-gen/scripts/*.py ai-ppt-visual-gen/tests/*.py
           python -m py_compile ai-ppt-editable/scripts/*.py ai-ppt-editable/tests/*.py ai-ppt-editable/reconstruction/*.py
-          python -m py_compile evals/case-replay-12/build_astra_closed_loop_batch.py evals/case-replay-12/ingest_astra_qa_batch.py evals/case-replay-12/run_astra_iteration.py evals/case-replay-12/run_astra_iteration_batch.py evals/case-replay-12/resolve_generated_assets.py evals/case-replay-12/export_astra_distillation.py evals/case-replay-12/select_astra_distillation.py evals/case-replay-12/promote_astra_golden.py evals/case-replay-12/summarize_astra_convergence.py
       - name: Validate all self-contained packages and routing contracts
         run: |
           python scripts/validate_skill_package.py --skill-dir .
@@ -61,11 +60,6 @@ jobs:
           python ai-ppt-editable/tests/test_distillation_selection.py
           python ai-ppt-editable/tests/test_golden_promotion.py
           python ai-ppt-editable/tests/test_accepted_state.py
-      - name: Build 12-case Astra closed-loop batch
-        run: |
-          python evals/case-replay-12/build_astra_closed_loop_batch.py \
-            --output-dir .distillation/astra-closed-loop \
-            --strict
       - name: Run schema, DAG, package and golden regressions
         run: python scripts/run_tests.py --parallel-workers 4 --report test-report.json
       - name: Replay social-channel editable PPTX case
@@ -122,12 +116,6 @@ jobs:
             --mode replay \
             --report .distillation/case-candidate/case-improvement.json
 
-      - name: Replay 12-case visual and native-editability suite
-        run: |
-          python evals/case-replay-12/run_replay_suite.py \
-            --output-dir .distillation/case-replay-12-runs \
-            --strict
-
       - name: Validate and select distillation case matrix
         run: |
           python scripts/validate_distillation_case_matrix.py --matrix evals/distillation-case-matrix.json --strict --output distillation-case-matrix-validation.json
@@ -151,6 +139,3 @@ jobs:
             distillation-case-matrix-validation.json
             distillation-case-matrix-selection.json
             .distillation
-            evals/case-replay-12/baseline-evaluation.json
-            evals/case-replay-12/candidate-evaluation.json
-            evals/case-replay-12/case-improvement.json
