@@ -1,66 +1,147 @@
 #!/usr/bin/env python3
-"""Check font-family availability and CJK fallback before PPTX generation.
+"""Discover local font files, families, weights and CJK coverage."""
+from __future__ import annotations
 
-Usage: probe_fonts.py --output font-report.json [--font-dir DIR] [--font "Noto Sans CJK SC"]...
-Output: JSON report. Exit 0 if probe completed, 2 if fontconfig is unavailable.
-Read-only and idempotent. Requires fc-match from fontconfig.
-Example: probe_fonts.py -o font-report.json --font "Noto Sans CJK SC"
-"""
-import argparse, json, os, shutil, subprocess, tempfile
+import argparse
+import hashlib
+import json
+import os
+import shutil
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
-from atomic_output import atomic_write_json, atomic_write_text
-# Keep the probe's implicit route on redistributable/open families.  A
-# proprietary family can still be requested explicitly with --font after the
-# caller has established its license and device availability.
-DEFAULT=['Noto Sans CJK SC','Noto Sans SC','WenQuanYi Zen Hei']
-def license_status(font_dir):
-    if not font_dir or not font_dir.is_dir():
-        return {'status':'not_applicable','files':[]}
-    names={'license','licence','copying','notice','readme'}
-    files=sorted(str(x) for x in font_dir.rglob('*') if x.is_file() and x.name.lower().split('.')[0] in names)
-    manifest = font_dir / 'font-manifest.json'
-    manifest_declared = False
-    if manifest.is_file():
-        try:
-            data = json.loads(manifest.read_text(encoding='utf-8'))
-            manifest_declared = bool(data.get('license') and data.get('license_url')) if isinstance(data, dict) else False
-        except (OSError, ValueError, UnicodeError):
-            manifest_declared = False
-    return {'status':'declared' if files or manifest_declared else 'unverified','files':files,'manifest_declared':manifest_declared}
-def main():
-    ap=argparse.ArgumentParser(description=__doc__,formatter_class=argparse.RawDescriptionHelpFormatter);ap.add_argument('--output','-o',required=True);ap.add_argument('--font-dir');ap.add_argument('--font',action='append',default=[]);ap.add_argument('--require-cjk',action='store_true',help='return a failing exit code when no CJK-capable family resolves');a=ap.parse_args(); tool=shutil.which('fc-match')
+
+from atomic_output import atomic_write_json
+
+try:
+    from fontTools.ttLib import TTFont
+except Exception:  # pragma: no cover
+    TTFont = None
+
+FONT_EXTENSIONS = {".ttf", ".otf", ".ttc"}
+DEFAULT_FAMILIES = ["Noto Sans CJK SC", "Noto Sans SC", "WenQuanYi Zen Hei"]
+CJK_PROBES = (0x4E2D, 0x6587, 0x8052, 0x901A, 0x70B9, 0x6570)
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def name_value(font, name_id: int) -> str | None:
+    if "name" not in font:
+        return None
+    for item in font["name"].names:
+        if item.nameID == name_id:
+            try:
+                return item.toUnicode()
+            except Exception:
+                return None
+    return None
+
+
+def inspect_font(path: Path) -> dict:
+    record = {"path": str(path.resolve()), "filename": path.name, "sha256": sha256(path),
+              "family": None, "subfamily": None, "postscript": None, "weight": None,
+              "style": None, "cjk": False, "cjk_missing": list(CJK_PROBES), "error": None}
+    if TTFont is None:
+        record["error"] = "fontTools unavailable"
+        return record
+    try:
+        font = TTFont(str(path), fontNumber=0)
+        record.update({"family": name_value(font, 1), "subfamily": name_value(font, 2),
+                       "postscript": name_value(font, 6),
+                       "weight": int(font["OS/2"].usWeightClass) if "OS/2" in font else None})
+        cmap = set()
+        for table in font["cmap"].tables:
+            cmap.update(table.cmap.keys())
+        missing = [code for code in CJK_PROBES if code not in cmap]
+        record["cjk_missing"] = missing
+        record["cjk"] = not missing
+        record["style"] = "italic" if "italic" in (record.get("subfamily") or "").lower() else "normal"
+        font.close()
+    except Exception as exc:
+        record["error"] = f"{type(exc).__name__}: {exc}"
+    return record
+
+
+def candidate_dirs(explicit: list[str]) -> list[Path]:
+    cwd = Path.cwd().resolve()
+    values = [Path(item).expanduser() for item in explicit]
+    values += [cwd / "assets" / "fonts", cwd / "fonts", cwd / "project-fonts",
+               cwd / "ai-ppt-editable" / "assets" / "fonts"]
+    result = []
+    for value in values:
+        value = value.resolve()
+        if value.is_dir() and value not in result:
+            result.append(value)
+    return result
+
+
+def license_status(dirs: list[Path]) -> dict:
+    found = []
+    for root in dirs:
+        for path in root.iterdir():
+            if path.is_file() and path.name.lower().split(".")[0] in {"license", "licence", "copying", "notice", "ofl"}:
+                found.append(str(path))
+    return {"status": "declared" if found else "unverified", "files": sorted(found)}
+
+
+def fc_resolve(family: str, font_env: dict) -> str | None:
+    tool = shutil.which("fc-match")
     if not tool:
-        out={'schema':'ai-ppt-plus/font-report/v1','ok':False,'error':'fc-match not found','fonts':[]};atomic_write_json(Path(a.output), out);print(json.dumps(out,ensure_ascii=False));return 2
-    font_dir=Path(a.font_dir).resolve() if a.font_dir else None
-    font_env=os.environ.copy(); temp_config=None
-    if font_dir and font_dir.is_dir():
-        temp_config=tempfile.TemporaryDirectory(prefix='ai-ppt-fontconfig-')
-        config=Path(temp_config.name)/'fonts.conf'
-        atomic_write_text(config, f'<?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "fonts.dtd"><fontconfig><dir>{font_dir}</dir><include ignore_missing="yes">/etc/fonts/fonts.conf</include></fontconfig>')
-        font_env['FONTCONFIG_FILE']=str(config)
-    local_files=sorted(str(x) for x in font_dir.rglob('*') if x.suffix.lower() in {'.ttf','.otf','.ttc'} ) if font_dir and font_dir.is_dir() else []
-    local_families=[]
-    scan=shutil.which('fc-scan')
-    for f in local_files:
-        cp=subprocess.run([scan,'-f','%{family}\n',f],capture_output=True,text=True,env=font_env) if scan else None
-        local_families.extend(x for x in (cp.stdout.splitlines() if cp and cp.returncode==0 else []) if x)
-    records=[]
-    requested_fonts=list(a.font)
-    if not requested_fonts and local_families:
-        discovered=sorted({family.split(',')[0].strip() for family in local_families if family.strip()})
-        requested_fonts=discovered+DEFAULT
-    for requested in requested_fonts or DEFAULT:
-        cp=subprocess.run([tool,'-f','%{family}\n',requested],capture_output=True,text=True,env=font_env); resolved=cp.stdout.strip().split('\n')[0] if cp.returncode==0 else None
-        exact=bool((resolved and requested.lower() in resolved.lower()) or any(requested.lower() in x.lower() for x in local_families))
-        records.append({'requested':requested,'resolved':resolved,'exact_or_family_match':exact,'cjk_ready':exact})
-    cjk_supported=any(x['cjk_ready'] for x in records)
-    license_info=license_status(font_dir)
-    out={'schema':'ai-ppt-plus/font-report/v1','ok':True,'generated_at':datetime.now(timezone.utc).isoformat(),'font_dir':str(font_dir) if font_dir else None,'local_font_files':local_files,'local_font_families':sorted(set(local_families)),'fonts':records,'cjk_delivery_supported':cjk_supported,'font_status':{'files_found':bool(local_files),'family_discovered':bool(local_families),'glyph_route_available':cjk_supported,'render_review':'required','license':license_info['status'],'license_files':license_info['files'],'redistribution':'unverified' if license_info['status']!='declared' else 'requires_project_review'},'rule':'Do not declare Chinese render validation passed unless cjk_delivery_supported is true and rendered pages are visually reviewed. Do not imply redistribution permission from font discovery.'}
-    if a.require_cjk and not cjk_supported:
-        out['ok']=False
-        out['error']='cjk_font_unresolved'
-    atomic_write_json(Path(a.output), out);print(json.dumps(out,ensure_ascii=False));
-    if temp_config: temp_config.cleanup()
-    return 0 if out.get('ok') is True else 2
-if __name__=='__main__':raise SystemExit(main())
+        return None
+    proc = subprocess.run([tool, "-f", "%{family}\n", family], capture_output=True, text=True, env=font_env)
+    return proc.stdout.strip().splitlines()[0] if proc.returncode == 0 and proc.stdout.strip() else None
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", "-o", required=True)
+    parser.add_argument("--font-dir", action="append", default=[])
+    parser.add_argument("--font", action="append", default=[])
+    parser.add_argument("--font-family-alias", help="registration family used by the renderer when files have distinct internal family names")
+    parser.add_argument("--require-cjk", action="store_true")
+    args = parser.parse_args()
+    dirs = candidate_dirs(args.font_dir)
+    paths = sorted({path.resolve() for root in dirs for path in root.rglob("*") if path.is_file() and path.suffix.lower() in FONT_EXTENSIONS})
+    files = [inspect_font(path) for path in paths]
+    families = sorted({item["family"] for item in files if item.get("family")})
+    requested = args.font or families or DEFAULT_FAMILIES
+    env = os.environ.copy()
+    records = []
+    for family in requested:
+        matching = [item for item in files if str(item.get("family", "")).lower() == family.lower()]
+        alias_files = [item for item in files if item.get("cjk")] if args.font_family_alias else []
+        resolved = matching[0]["family"] if matching else (args.font_family_alias if alias_files else fc_resolve(family, env))
+        local_files = matching or alias_files
+        records.append({"requested": family, "resolved": resolved,
+                        "registration_family": args.font_family_alias,
+                        "exact_or_family_match": bool(matching) or bool(alias_files) or bool(resolved and family.lower() in resolved.lower()),
+                        "local_files": [item["path"] for item in local_files],
+                        "cjk_ready": any(item.get("cjk") for item in local_files)})
+    cjk_ready = any(item.get("cjk") for item in files)
+    weights = sorted({int(item["weight"]) for item in files if isinstance(item.get("weight"), int)})
+    missing_weights = [weight for weight in (400, 500, 600, 700) if weight not in weights]
+    output = {"schema": "ai-ppt-plus/font-report/v2", "ok": not (args.require_cjk and not cjk_ready),
+              "generated_at": datetime.now(timezone.utc).isoformat(), "font_dirs": [str(path) for path in dirs],
+              "font_files": files, "discovered_families": families, "requested": records,
+              "registration_family": args.font_family_alias,
+              "cjk_delivery_supported": cjk_ready, "weights_found": weights,
+              "missing_weights": missing_weights, "simulated_bold_possible": 700 not in weights,
+              "font_status": {"files_found": bool(files), "family_discovered": bool(families),
+                              "glyph_route_available": cjk_ready, "license": license_status(dirs),
+                              "render_review": "required", "silent_fallback": False},
+              "rule": "Discovery is not render proof; actual renderer family and visible CJK smoke evidence must be recorded separately."}
+    if not cjk_ready and args.require_cjk:
+        output["error"] = "cjk_font_unresolved"
+    atomic_write_json(Path(args.output).resolve(), output)
+    print(json.dumps(output, ensure_ascii=False))
+    return 0 if output["ok"] else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
