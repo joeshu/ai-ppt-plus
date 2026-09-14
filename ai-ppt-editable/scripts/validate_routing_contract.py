@@ -67,6 +67,7 @@ def main() -> int:
         "backend": "@oai/artifact-tool",
         "language": "javascript",
         "module_format": "ESM",
+        "builder": "scripts/artifact_tool_authoring.mjs",
         "runtime_entrypoint": "scripts/artifact_tool_runtime.mjs",
         "contract": "ai-ppt-plus/authoring-contract/v1",
         "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"],
@@ -78,9 +79,10 @@ def main() -> int:
     for field, value in strict_expected.items():
         if strict_authoring.get(field) != value:
             issues.append({"severity": "blocker", "code": "strict_authoring_binding_mismatch", "field": field, "expected": value, "observed": strict_authoring.get(field)})
-    strict_runtime = strict_authoring.get("runtime_entrypoint")
-    if isinstance(strict_runtime, str) and not (root / strict_runtime).is_file():
-        issues.append({"severity": "blocker", "code": "strict_authoring_runtime_missing", "path": strict_runtime})
+    for field, code in (("builder", "strict_authoring_builder_missing"), ("runtime_entrypoint", "strict_authoring_runtime_missing")):
+        strict_path = strict_authoring.get(field)
+        if isinstance(strict_path, str) and not (root / strict_path).is_file():
+            issues.append({"severity": "blocker", "code": code, "path": strict_path})
     result = {
         "schema": "ai-ppt-editable/routing-validation/v1",
         "valid": not issues,

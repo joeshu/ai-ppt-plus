@@ -103,13 +103,37 @@ def next_retry_request(request: dict[str, Any], quality: dict[str, Any], *, prev
             "choices": ["continue-native-generation", "crop-matting-fallback"],
             "reason": "native image-generation retry budget exhausted",
         }
+    issue_codes = [str(item) for item in (quality.get("issue_codes") or []) if str(item).strip()]
+    background_failure = "background_noncompliance" in issue_codes
+    requested_mode = str(request.get("background_mode") or "transparent")
+    generation_action = "regenerate"
+    fallback_level = request.get("fallback_level", "direct-alpha")
+    background_mode = requested_mode
+    status = "retry-native-generation"
+    if background_failure and requested_mode == "transparent" and next_attempt == 2:
+        generation_action = "edit-to-transparent"
+        fallback_level = "transparent-edit"
+        status = "retry-native-image-edit"
+    elif background_failure and requested_mode == "transparent" and next_attempt == 3:
+        generation_action = "generate-chroma-fallback"
+        fallback_level = "chroma-key"
+        background_mode = str(request.get("chroma_fallback_mode") or "green")
+        if background_mode not in {"green", "magenta", "red"}:
+            raise ValueError("chroma_fallback_mode must be green, magenta or red")
+        status = "retry-native-generation"
+    failed_asset_ids = [str(item) for item in (quality.get("failed_asset_ids") or []) if str(item).strip()]
+    retry_scope = "failed-assets-only" if failed_asset_ids else "single-asset"
     return {
         "object_id": request.get("object_id"),
-        "status": "retry-native-generation",
+        "status": status,
         "attempt": next_attempt,
         "max_native_attempts": policy.max_native_attempts,
         "generation_prompt": strengthen_prompt(request.get("generation_prompt"), quality, attempt=next_attempt),
-        "background_mode": request.get("background_mode", "transparent"),
+        "generation_action": generation_action,
+        "fallback_level": fallback_level,
+        "background_mode": background_mode,
+        "retry_scope": retry_scope,
+        "failed_asset_ids": failed_asset_ids,
         "preserve_geometry": dict(request.get("preserve_geometry") or {}),
         "quality_failure": {
             "score": quality.get("score"),

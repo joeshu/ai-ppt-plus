@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "repository_sha", "inputs", "fonts", "final_pptx", "qa_dir", "render_tool", "issues"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/source-manifest/v2"},
+    "repository_sha": {"type": "string", "minLength": 7},
+    "inputs": {"type": "array", "items": {"$ref": "#/$defs/file"}},
+    "fonts": {"type": "array", "items": {"$ref": "#/$defs/file"}},
+    "independent_image_assets": {"type": "array", "items": {"$ref": "#/$defs/file"}},
+    "final_pptx": {"$ref": "#/$defs/file"},
+    "qa_dir": {"type": "string"},
+    "render_tool": {"type": "string", "minLength": 1},
+    "issues": {"type": "array"}
+  },
+  "$defs": {
+    "file": {"type": "object", "required": ["path", "exists", "sha256"], "properties": {"path": {"type": ["string", "null"]}, "exists": {"type": "boolean"}, "sha256": {"type": ["string", "null"]}, "size": {"type": ["integer", "null"], "minimum": 0}}}
+  }
+}

@@ -1224,7 +1224,9 @@ def main() -> int:
         if args.expected_ratio is not None:
             comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.visual_threshold is not None:
-            comparison_args.extend(["--threshold", str(args.visual_threshold)])
+            comparison_args.extend(["--min-reference-fidelity", str(args.visual_threshold)])
+        elif args.release:
+            comparison_args.append("--strict")
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
     elif args.reference_dir:
         comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "visual-comparison.json")]

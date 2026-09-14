@@ -13,13 +13,17 @@ directory to the font probes.
 For a Chinese deck, also copy the bundled font into the task font directory
 before the first font probe; do not rely on the host's installed-font list.
 
-Use this font priority:
+Use this font priority for this skill:
 
-1. A user-supplied licensed font explicitly requested for the project.
-2. The bundled Noto Sans CJK SC fallback (the manifest's canonical family name).
-3. Microsoft YaHei only when explicitly requested, already licensed and
-   available on the authoring/rendering device; never select or package it
-   implicitly.
+1. Microsoft YaHei on a licensed Windows authoring/rendering device. Reference
+   the installed system font and never copy or bundle its binary in the skill.
+2. A user-supplied licensed font explicitly requested for the project.
+3. The bundled Noto Sans CJK SC fallback only after explicit approval when
+   Microsoft YaHei is unavailable.
+
+The checked-in `assets/default-font-policy.json` fixes the family name and
+system discovery candidates for future runs. A missing Microsoft YaHei font is
+a fail-closed preflight condition, not permission for silent substitution.
 
 After copying a task-local font set, run
 `scripts/validate_font_asset.py --font-dir project-fonts/ --require-cjk

@@ -42,7 +42,7 @@ def main() -> int:
             ]}]
         })
 
-        missing = validate_reference_preflight(layout, json.loads(layout.read_text()), embed_fonts=False)
+        missing = validate_reference_preflight(layout, json.loads(layout.read_text(encoding="utf-8")), embed_fonts=False)
         codes = {item["code"] for item in missing["issues"]}
         assert "imagegen_final_asset_manifest_missing" in codes
         assert "reference_cjk_requires_embedded_fonts" in codes
@@ -54,7 +54,7 @@ def main() -> int:
         write(root / "slide-object-manifest.json", {
             "slides": [{"objects": [{"object_id": "logo-1", "object_type": "independent_image", "role": "logo"}]}]
         })
-        mismatch = validate_reference_preflight(layout, json.loads(layout.read_text()), embed_fonts=False)
+        mismatch = validate_reference_preflight(layout, json.loads(layout.read_text(encoding="utf-8")), embed_fonts=False)
         assert any(item["code"] == "visual_asset_inventory_mismatch" for item in mismatch["issues"])
         write(root / "slide-object-manifest.json", {
             "slides": [{"objects": [
@@ -67,7 +67,7 @@ def main() -> int:
             "provenance_policy": "imagegen_final_assets",
             "assets": [{"asset_id": "icon-1", "asset_class": "icon", "provenance_mode": "source_reuse", "source_reuse": True}],
         })
-        bad_route = validate_reference_preflight(layout, json.loads(layout.read_text()), embed_fonts=True, font_manifest="font-manifest.json")
+        bad_route = validate_reference_preflight(layout, json.loads(layout.read_text(encoding="utf-8")), embed_fonts=True, font_manifest="font-manifest.json")
         bad_codes = {item["code"] for item in bad_route["issues"]}
         assert "imagegen_final_asset_gate_failed" in bad_codes
         assert "reference_cjk_font_evidence_missing" in bad_codes
@@ -91,11 +91,24 @@ def main() -> int:
             }],
         })
         write(root / "font-manifest.json", {"schema": "ai-ppt-plus/font-manifest-test/v1", "fonts": [{"family": "Test CJK Sans", "path": "fonts/test.ttf"}]})
-        good = validate_reference_preflight(layout, json.loads(layout.read_text()), embed_fonts=True, font_manifest="font-manifest.json")
+        good = validate_reference_preflight(layout, json.loads(layout.read_text(encoding="utf-8")), embed_fonts=True, font_manifest="font-manifest.json")
         assert good["valid"], good
         assert good["imagegen_required"] is True
         assert good["cjk_required"] is True
         assert good["font_evidence"]["manifest_readable"] is True
+
+        # Strict Artifact Tool authoring registers the licensed task-local
+        # faces in JavaScript; it does not use the compatibility OOXML
+        # post-processor.  The CJK preflight must accept that delivery path.
+        artifact_good = validate_reference_preflight(
+            layout,
+            json.loads(layout.read_text(encoding="utf-8")),
+            embed_fonts=False,
+            authoring_backend="artifact-tool",
+            font_manifest="font-manifest.json",
+        )
+        assert artifact_good["valid"], artifact_good
+        assert artifact_good["authoring_backend"] == "artifact-tool"
 
         # Missing generated coverage is blocked even if the manifest itself is otherwise valid.
         write(root / "page-graph.json", page_graph([

@@ -13,6 +13,14 @@
   ],
   "frame_preview": "qa/frame-preview-gray.png",
   "contact_sheet": "qa/icon-contact-sheet.png",
+  "generation_accounting": {
+    "billable_generation_calls": 1,
+    "billable_transparent_edit_calls": 0,
+    "local_derivative_count": 2,
+    "qa_preview_count": 1,
+    "full_sheet_retries": 0,
+    "single_asset_retries": 0
+  },
   "assets": [
     {
       "asset_id": "icon-1",
@@ -24,13 +32,19 @@
         "w": 1,
         "h": 1
       },
-      "extraction_method": "chroma-cutout",
+      "extraction_method": "alpha-sheet-split",
       "frame_exclusion": "verified-not-in-frame",
       "asset_path": "assets/icons/icon-1.png",
       "editability_level": "L2",
       "sha256": "",
       "replaceable": true,
-      "cutout_method": "chroma_key.py --preset icon-safe --scale 2",
+      "prompt_ref": "prompts/icons.txt",
+      "split_method": "slice_grid.py --auto --pad 24",
+      "background_mode": "transparent",
+      "fallback_level": "direct-alpha",
+      "canonical_asset": true,
+      "qa_preview_only": false,
+      "cache_key": "<64-char-sha256-of-reference+bbox+prompt+backend+style-lock>",
       "alpha_quality": "pass",
       "edge_touch": false,
       "split_status": "single",

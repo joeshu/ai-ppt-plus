@@ -52,9 +52,14 @@ export async function registerFonts(fonts, nodeModules) {
 
 export function parseFontArgs(argv = process.argv.slice(2)) {
   const fonts = [];
+  // The CLI contract is `--font-path FILE [FAMILY]`.  The old parser advanced
+  // past FILE while looking for the optional family, which made a valid
+  // invocation try to open the family name as a file.  Consume the required
+  // path first, then inspect the following token for an optional family.
   for (let i = 0; i < argv.length; i += 1) if (argv[i] === "--font-path" && argv[i + 1]) {
-    const family = argv[i + 2] && !argv[i + 2].startsWith("--") ? argv[++i] : undefined;
-    fonts.push({ path: argv[++i], family });
+    const fontPath = argv[++i];
+    const family = argv[i + 1] && !argv[i + 1].startsWith("--") ? argv[++i] : undefined;
+    fonts.push({ path: fontPath, family });
   }
   return fonts;
 }

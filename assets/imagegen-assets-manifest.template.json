@@ -2,7 +2,16 @@
   "schema": "ai-ppt-plus/imagegen-assets/v1",
   "request_id": "<current-reference-rerun-request-id>",
   "provenance_policy": "imagegen_or_source_reuse",
+  "asset_generation_policy": "transparent_first_v1",
   "run_root": "/workspace/.../unique-run",
+  "generation_accounting": {
+    "billable_generation_calls": 3,
+    "billable_transparent_edit_calls": 0,
+    "local_derivative_count": 2,
+    "qa_preview_count": 1,
+    "full_sheet_retries": 0,
+    "single_asset_retries": 0
+  },
   "assets": [
     {
       "id": "background",
@@ -14,7 +23,11 @@
       "actual_sha256": "<sha256-of-final-background>",
       "prompt_file": "editable/01/prompts/background.txt",
       "backend": "codex-imagegen",
-      "key_color": "#00ff00"
+      "background_mode": "opaque",
+      "fallback_level": "opaque",
+      "canonical_asset": true,
+      "qa_preview_only": false,
+      "cache_key": "<64-char-background-cache-key>"
     },
     {
       "id": "frame_raw",
@@ -26,7 +39,11 @@
       "actual_sha256": "<sha256-of-final-frame>",
       "prompt_file": "editable/01/prompts/frame.txt",
       "backend": "codex-imagegen",
-      "key_color": "#00ff00"
+      "background_mode": "transparent",
+      "fallback_level": "direct-alpha",
+      "canonical_asset": true,
+      "qa_preview_only": false,
+      "cache_key": "<64-char-frame-cache-key>"
     },
     {
       "id": "icons_raw_1",
@@ -38,7 +55,11 @@
       "actual_sha256": "<sha256-of-final-icons>",
       "prompt_file": "editable/01/prompts/icons.txt",
       "backend": "codex-imagegen",
-      "key_color": "#00ff00"
+      "background_mode": "transparent",
+      "fallback_level": "direct-alpha",
+      "canonical_asset": true,
+      "qa_preview_only": false,
+      "cache_key": "<64-char-icons-cache-key>"
     }
   ]
 }

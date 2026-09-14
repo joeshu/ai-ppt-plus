@@ -12,6 +12,9 @@ def main() -> int:
     assert 'current-rerun.json' in delivery
     assert 'authoring_provenance_failed' in delivery
     assert 'validate_authoring_provenance' in delivery
+    assert 'reference_visual_comparison_missing' in delivery
+    assert 'reference_fidelity_below_threshold' in delivery
+    assert 'reference_layout_fidelity_below_threshold' in delivery
     assert 'current_rerun_path.unlink()' in rerun
     assert 'page-graph-provenance.json' in rerun
     assert 'validate_page_graph_provenance.py' in rerun

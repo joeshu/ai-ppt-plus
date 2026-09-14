@@ -26,3 +26,10 @@ Check semantic layout and object anchors separately from pixel similarity.
 Finalization is followed by package, OOXML, import, mutation, font, layout and
 render checks. Any replay regression blocks promotion and requires candidate
 rollback; no threshold or editability rule may be lowered.
+
+For reference reconstruction, a visual comparison is mandatory release
+evidence. Enforce the user's requested threshold on the balanced
+`reference_fidelity_score`, which averages blurred layout SSIM and blurred
+color fidelity; when the user gives no threshold, use 0.90. Keep raw pixel
+fidelity diagnostic because font antialiasing varies by renderer.
+Do not infer a pass from stage completion or a separate subjective score.

@@ -119,6 +119,7 @@ def main() -> int:
             "backend": "@oai/artifact-tool",
             "language": "javascript",
             "module_format": "ESM",
+            "builder": "ai-ppt-editable/scripts/artifact_tool_authoring.mjs",
             "runtime_entrypoint": "ai-ppt-editable/scripts/artifact_tool_runtime.mjs",
             "contract": "ai-ppt-plus/authoring-contract/v1",
             "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"],
@@ -141,7 +142,7 @@ def main() -> int:
         "visual_generation": ("skill_entrypoint", "runtime_entrypoint"),
         "reconstruction": ("skill_entrypoint", "runtime_entrypoint"),
         "authoring": ("entrypoint", "font_postprocessor"),
-        "strict_authoring": ("runtime_entrypoint",),
+        "strict_authoring": ("builder", "runtime_entrypoint"),
     }.items():
         binding = bindings.get(section) if isinstance(bindings, dict) else None
         if not isinstance(binding, dict):

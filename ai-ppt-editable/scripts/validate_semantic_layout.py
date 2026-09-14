@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 
@@ -16,7 +17,9 @@ FALSE_POSITIVE = "TABLE-SEMANTIC-FALSE-POSITIVE-001"
 FLATTENED = "REPEATED-COMPONENT-FLATTENED-001"
 EDITABILITY_INCOMPLETE = "COMPONENT-EDITABILITY-INCOMPLETE-001"
 TYPE_MISMATCH = "OBJECT-TYPE-REFERENCE-MISMATCH-001"
+AMBIGUOUS = "TABLE-SEMANTIC-AMBIGUOUS-001"
 REPEATED_TYPES = {"repeated_component_group", "information_list", "card_list"}
+TABLE_TYPES = {"native_table", "editable_table", "data_table", "field_data_matrix"}
 
 
 def _associated_icons(table: dict, slide: dict) -> list[str]:
@@ -32,6 +35,22 @@ def _associated_icons(table: dict, slide: dict) -> list[str]:
         if max(tx, ix) < min(tx + tw, ix + iw) and max(ty, iy) < min(ty + th, iy + ih):
             found.append(str(item.get("object_id") or item.get("name") or "icon"))
     return found
+
+
+def _cell_text(value) -> str:
+    if isinstance(value, dict):
+        if value.get("text") is not None:
+            return str(value.get("text") or "").strip()
+        runs = value.get("runs")
+        if isinstance(runs, list):
+            return "".join(str(run.get("text") or "") for run in runs if isinstance(run, dict)).strip()
+        return ""
+    return str(value or "").strip()
+
+
+def _numeric_or_formula(value: str) -> bool:
+    compact = re.sub(r"\s+", "", value)
+    return bool(compact) and bool(re.fullmatch(r"[\d.,%￥¥$€£+\-×xX*/=:（）()年月日张分元户]+", compact))
 
 
 def classify_table(table: dict, slide: dict) -> dict:
@@ -50,19 +69,32 @@ def classify_table(table: dict, slide: dict) -> dict:
         (table.get("native_required") or table.get("merges") or table.get("rich_text_required"))
     )
     has_header = explicit_header or inferred_header
-    has_uniform_fields = bool(table.get("field_schema") or table.get("columns_schema") or table.get("data_source") or (has_header and rectangular))
+    schema_evidence = bool(table.get("field_schema") or table.get("columns_schema"))
+    source_evidence = bool(table.get("data_source") or table.get("data_snapshot"))
+    operation_evidence = bool(table.get("requires_cell_editing") or table.get("requires_row_column_operations") or table.get("grid_data_required"))
+    has_uniform_fields = bool(schema_evidence or (has_header and rectangular))
     explicit_data_relation = bool(table.get("data_source") or table.get("data_snapshot") or table.get("data_relation"))
     inferred_data_relation = bool(has_header and rectangular and any(str(value).strip() for row in rows[1:] for value in row))
     has_data_relation = explicit_data_relation or inferred_data_relation
     semantic_type = str(table.get("semantic_type") or "").casefold()
     list_evidence = []
-    table_evidence = ["aligned_rows"]
+    table_evidence = ["aligned_rows"] if rectangular else []
     if table.get("border") or table.get("grid"):
         table_evidence.append("separators_or_border")
     if table.get("column_widths"):
         table_evidence.append("aligned_columns")
     if inferred_header:
         table_evidence.append("declared_table_field_labels")
+    if explicit_header:
+        table_evidence.append("explicit_header")
+    if schema_evidence:
+        table_evidence.append("field_schema")
+    if source_evidence:
+        table_evidence.append("data_source")
+    if explicit_data_relation:
+        table_evidence.append("data_relation")
+    if operation_evidence:
+        table_evidence.append("row_column_editing")
     if not has_header:
         list_evidence.append("no_header")
     if not has_uniform_fields:
@@ -75,36 +107,78 @@ def classify_table(table: dict, slide: dict) -> dict:
         list_evidence.append("declared_repeated_component")
     if any("\n" in str(row[0]) for row in rows if row):
         list_evidence.append("heterogeneous_descriptions")
-    # A two-column, headerless, source-less region with a real list signal
-    # (icons, long explanatory copy, explicit item metadata or paragraph
-    # breaks) is a repeated-item candidate.  Short, data-shaped fixtures with
-    # no list signal remain available for an explicit table contract; the
-    # caller still has to supply field/data evidence before release.
-    list_signal = bool(icons or table.get("item_ids") or table.get("list_items") or any(
-        "\n" in str(value) or len(str(value).strip()) >= 12
-        for row in rows for value in (row if isinstance(row, list) else [])
-    ))
-    headerless_item_rows = bool(rows) and not has_header and not has_data_relation and column_count == 2 and list_signal
+    body_rows = rows[1:] if has_header else rows
+    two_column_rows = [row for row in body_rows if isinstance(row, list) and len(row) == 2]
+    label_description = False
+    if not has_header and len(two_column_rows) >= 2:
+        left = [_cell_text(row[0]) for row in two_column_rows]
+        right = [_cell_text(row[1]) for row in two_column_rows]
+        left_avg = sum(len(value) for value in left) / max(1, len(left))
+        right_avg = sum(len(value) for value in right) / max(1, len(right))
+        label_description = bool(
+            left_avg <= 10
+            and right_avg >= max(4, left_avg * 2)
+            and any(not _numeric_or_formula(value) for value in right if value)
+        )
+    paragraph_signal = any("\n" in _cell_text(value) for row in rows if isinstance(row, list) for value in row)
+    item_metadata = bool(table.get("item_ids") or table.get("list_items"))
+    headerless_item_rows = bool(
+        rows and not has_header and not has_data_relation and column_count == 2
+        and (icons or item_metadata or label_description or paragraph_signal)
+    )
     if headerless_item_rows:
         list_evidence.append("two_column_item_layout")
-    is_repeated = semantic_type in REPEATED_TYPES or headerless_item_rows
-    if is_repeated:
+    if label_description:
+        list_evidence.append("short_label_long_description")
+    if item_metadata:
+        list_evidence.append("declared_item_metadata")
+    if paragraph_signal:
+        list_evidence.append("paragraph_content")
+
+    explicit_repeated = semantic_type in REPEATED_TYPES
+    # Geometric overlap alone does not make an icon an item marker: decorative
+    # header icons commonly sit inside a real table's bounding box.  Require
+    # explicit list semantics, item metadata, or a headerless item-row pattern.
+    strong_list = bool(explicit_repeated or item_metadata or headerless_item_rows)
+    has_body_values = bool(body_rows and any(_cell_text(value) for row in body_rows if isinstance(row, list) for value in row))
+    strong_table = bool(
+        rectangular and has_body_values and (
+            semantic_type in TABLE_TYPES
+            or (has_header and has_data_relation)
+            or (explicit_data_relation and (schema_evidence or operation_evidence or explicit_header))
+            or (schema_evidence and operation_evidence)
+        )
+    )
+
+    if explicit_repeated or (strong_list and not strong_table):
         candidate = "repeated_component_group"
+        semantic_structure = "icon_title_description_list"
+        confidence = 0.96 if explicit_repeated or icons else 0.90
         decision = "Lines and aligned columns divide repeated information items; they do not define a data matrix."
-    else:
+        blocking_code = FALSE_POSITIVE
+    elif strong_table and not strong_list:
         candidate = "native_table"
+        semantic_structure = "field_data_matrix"
+        confidence = 0.95
         decision = "The region has sufficient field/data evidence for a native table."
+        blocking_code = None
+    else:
+        candidate = "ambiguous_table_like"
+        semantic_structure = "unresolved_table_or_list"
+        confidence = 0.50
+        decision = "Visual alignment alone does not prove either a data table or a repeated information list."
+        blocking_code = AMBIGUOUS
     return {
         "region_id": str(table.get("object_id") or table.get("name") or "table-region"),
         "visual_structure": "repeated_rows_with_separators" if rows else "unknown",
-        "semantic_structure": "icon_title_description_list" if is_repeated else "field_data_matrix",
+        "semantic_structure": semantic_structure,
         "candidate_object_type": candidate,
         "table_evidence": table_evidence,
         "list_evidence": list_evidence,
         "associated_icon_ids": icons,
-        "confidence": 0.96 if is_repeated else 0.90,
+        "confidence": confidence,
         "decision_reason": decision,
-        "blocking_code": FALSE_POSITIVE if is_repeated else None,
+        "blocking_code": blocking_code,
     }
 
 
@@ -118,6 +192,8 @@ def validate(deck: dict) -> dict:
             regions.append(result)
             if result["candidate_object_type"] == "repeated_component_group" and table.get("representation", "native") == "native":
                 issues.append({"severity": "blocker", "code": FALSE_POSITIVE, "slide": slide_no, "object_id": result["region_id"]})
+            elif result["candidate_object_type"] == "ambiguous_table_like":
+                issues.append({"severity": "blocker", "code": AMBIGUOUS, "slide": slide_no, "object_id": result["region_id"]})
         # A converted repeated group carries an explicit child contract.  Keep
         # this check independent from the table classifier so a later authoring
         # change cannot silently flatten the icon/title/body children.

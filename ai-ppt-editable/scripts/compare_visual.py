@@ -80,6 +80,7 @@ def main() -> int:
     parser.add_argument("--min-layout-ssim", type=float)
     parser.add_argument("--min-pixel-fidelity", type=float)
     parser.add_argument("--min-blurred-pixel-fidelity", type=float)
+    parser.add_argument("--min-reference-fidelity", type=float, help="minimum balanced blurred layout/color fidelity score")
     parser.add_argument("--raw-slide", action="store_true", help="compare the complete authored canvases; disable viewer letterbox-crop detection")
     parser.add_argument("--report")
     args = parser.parse_args()
@@ -135,6 +136,7 @@ def main() -> int:
             "rmse": round(float(np.sqrt((diff * diff).mean())), 6),
             "pixel_fidelity_score": round(max(0.0, 1.0 - float(diff.mean())), 6),
             "blurred_pixel_fidelity_score": round(blurred_pixel_fidelity, 6),
+            "reference_fidelity_score": round((blurred_ssim + blurred_pixel_fidelity) / 2.0, 6),
             "layout_blur_radius": blur_radius,
         }
         thresholds = {
@@ -142,6 +144,7 @@ def main() -> int:
             "blurred_layout_ssim": args.min_layout_ssim if args.min_layout_ssim is not None else args.threshold,
             "pixel_fidelity_score": args.min_pixel_fidelity,
             "blurred_pixel_fidelity_score": args.min_blurred_pixel_fidelity,
+            "reference_fidelity_score": args.min_reference_fidelity,
         }
         if args.strict:
             thresholds = {key: value if value is not None else STRICT_DEFAULTS.get(key) for key, value in thresholds.items()}

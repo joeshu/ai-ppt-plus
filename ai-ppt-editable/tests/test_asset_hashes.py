@@ -48,6 +48,44 @@ def main() -> int:
         specialized = run("scripts/validate_imagegen_assets_manifest.py", str(imagegen), "--require-hashes")
         assert specialized.returncode == 0, specialized.stdout + specialized.stderr
 
+        transparent = root / "transparent-first-manifest.json"
+        write(transparent, {
+            "asset_generation_policy": "transparent_first_v1",
+            "generation_accounting": {
+                "billable_generation_calls": 1,
+                "billable_transparent_edit_calls": 0,
+                "local_derivative_count": 1,
+                "qa_preview_count": 1,
+                "full_sheet_retries": 0,
+                "single_asset_retries": 0,
+            },
+            "assets": [{
+                "asset_id": "icon-1",
+                "asset_class": "icon",
+                "provenance_mode": "imagegen",
+                "generated_source": "generated.png",
+                "copied_to": "generated.png",
+                "layer": "icons_raw_1",
+                "prompt_file": "prompt.txt",
+                "backend": "native-imagegen",
+                "background_mode": "transparent",
+                "fallback_level": "direct-alpha",
+                "canonical_asset": True,
+                "qa_preview_only": False,
+                "cache_key": "a" * 64,
+                "sha256": hashlib.sha256(copied.read_bytes()).hexdigest(),
+            }],
+        })
+        transparent_check = run("scripts/validate_imagegen_assets_manifest.py", str(transparent), "--require-hashes")
+        assert transparent_check.returncode == 0, transparent_check.stdout + transparent_check.stderr
+
+        invalid_transparent = json.loads(transparent.read_text(encoding="utf-8"))
+        invalid_transparent["assets"][0]["key_color"] = "#00ff00"
+        write(transparent, invalid_transparent)
+        invalid_check = run("scripts/validate_imagegen_assets_manifest.py", str(transparent), "--require-hashes")
+        assert invalid_check.returncode == 2, invalid_check.stdout + invalid_check.stderr
+        assert "transparent_asset_must_not_declare_key_color" in invalid_check.stdout
+
         source = root / "source.png"
         source.write_bytes(b"authoritative source")
         reused = root / "reused.png"

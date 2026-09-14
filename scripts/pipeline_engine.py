@@ -216,9 +216,12 @@ class PipelineExecutor:
         # Inline scripts and compound arguments can embed an absolute run
         # directory without being path arguments themselves. Normalize that
         # prefix first so identical work in a fresh run directory shares cache.
+        # Python ``repr(Path(...))`` embeds Windows separators as doubled
+        # backslashes; normalize that escaped spelling as well.
         run_prefix = str(self.run_dir)
-        if run_prefix in value:
-            value = value.replace(run_prefix, "<run_dir>")
+        for prefix in (run_prefix, run_prefix.replace("\\", "\\\\"), run_prefix.replace("\\", "/")):
+            if prefix in value:
+                value = value.replace(prefix, "<run_dir>")
         try:
             path = Path(value).resolve()
             relative = path.relative_to(self.run_dir)

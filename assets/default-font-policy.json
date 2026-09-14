@@ -1,0 +1,10 @@
+{
+  "schema": "ai-ppt-plus/default-font-policy/v1",
+  "family": "Microsoft YaHei",
+  "localized_family": "微软雅黑",
+  "policy": "required_when_available_on_licensed_windows_host",
+  "system_candidates": ["C:/Windows/Fonts/msyh.ttf", "C:/Windows/Fonts/msyh.ttc", "C:/Windows/Fonts/msyhbd.ttc", "C:/Windows/Fonts/msyhl.ttc"],
+  "redistribution": "system_reference_only_do_not_copy_or_bundle",
+  "portable_fallback": "Noto Sans CJK SC",
+  "missing_behavior": "block_or_require_explicit_fallback_approval"
+}

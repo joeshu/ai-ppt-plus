@@ -125,6 +125,22 @@ def main() -> int:
         expected_objects = expected_slide.get("objects", []) if isinstance(expected_slide, dict) else []
         expected_by_id = {str(item.get("object_id")): item for item in expected_objects if isinstance(item, dict) and item.get("object_id")}
         observed = {str(shape.name): (shape, parent) for shape, parent in walk(slide.shapes)}
+        # Artifact Tool table frames have empty OOXML display names. Alias
+        # them to declared table IDs in layout order for case replay, just as
+        # the authoring and semantic audits do.
+        unnamed_tables = [
+            (shape, parent) for shape, parent in walk(slide.shapes)
+            if not shape.name and actual_kind(shape) == "editable_table"
+        ]
+        table_ids = [
+            object_id for object_id, expected in expected_by_id.items()
+            if str(expected.get("object_type", "")) == "editable_table"
+            or expected.get("role") in {"table", "data-table", "editable-table", "data-grid"}
+        ]
+        for table_index, object_id in enumerate(table_ids):
+            if table_index >= len(unnamed_tables):
+                break
+            observed[object_id] = unnamed_tables[table_index]
         table_records = []
         panel_records = []
         text_records = []

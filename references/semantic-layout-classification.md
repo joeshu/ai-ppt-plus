@@ -4,6 +4,11 @@ Use this gate in E1 before choosing an authoring primitive. Lines, repeated
 rows, aligned columns and a border are visual evidence only; they do not prove
 that a region is a table.
 
+Classify every table-like region into exactly one of three states:
+`native_table`, `repeated_component_group`, or `ambiguous_table_like`. Never
+promote the third state to a table by default. It is a blocking result that
+requires stronger source evidence or an explicit semantic declaration.
+
 ## Native table
 
 Choose `native_table` only when all of the following are evidenced: a
@@ -24,6 +29,23 @@ fields, or use lines only to separate items. Such regions must not become
 box, background shape and divider line, optionally inside a movable group;
 never flatten an item into a picture or one large text box.
 
+Detect label-plus-description rows with language-independent relative evidence:
+compare the two columns' text lengths and content roles, and distinguish prose
+from numeric/formula values. Do not use a fixed character-count threshold.
+Icons inferred only from bounding-box overlap are weak evidence because a
+decorative header icon may overlap a real table. Treat icons as list evidence
+only with headerless item rows, explicit item metadata, or declared repeated
+component semantics.
+
+## Ambiguous table-like region
+
+Choose `ambiguous_table_like` when the region is rectangular but neither table
+semantics nor repeated-item semantics are strong enough. Emit blocker
+`TABLE-SEMANTIC-AMBIGUOUS-001`; do not author the region until its semantic
+contract is resolved. A headerless numeric grid needs an explicit table type,
+field schema, data source, or editing contract before it can become a native
+table.
+
 Every ambiguous region must emit `visual_structure`, `semantic_structure`,
 `candidate_object_type`, `table_evidence`, `list_evidence`, `confidence`, and
 `decision_reason` in PageGraph. A native table candidate with list semantics
@@ -41,3 +63,5 @@ regions are lists; do not optimize for a target table count.
 This gate does not change visual thresholds. The candidate must still pass the
 existing rendered pixel, region, typography, asset, overflow and collision
 gates. Asset files and hashes are immutable inputs to this classification.
+Changing the semantic primitive must preserve the reference geometry, fills,
+borders, spacing, typography, layering and independent editability.

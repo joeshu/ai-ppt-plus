@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema", "schema_version", "run_id", "repository_sha", "package_revision", "inputs", "fonts", "stages", "artifact_marker", "completed_validations", "resume"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/incremental-checkpoint/v1"},
+    "schema_version": {"const": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "project_root": {"type": "string", "minLength": 1},
+    "repository_sha": {"type": "string", "minLength": 7},
+    "package_revision": {"type": "string", "minLength": 1},
+    "inputs": {"type": "array", "items": {"$ref": "#/$defs/file"}},
+    "fonts": {"type": "array", "items": {"$ref": "#/$defs/file"}},
+    "stages": {"type": "object", "minProperties": 15},
+    "artifact_marker": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pending", "passed"]}, "receipt_sha256": {"type": ["string", "null"]}}},
+    "build_source_sha": {"type": ["string", "null"]},
+    "intermediate_pptx_sha": {"type": ["string", "null"]},
+    "final_pptx_sha": {"type": ["string", "null"]},
+    "completed_validations": {"type": "array", "items": {"type": "string"}},
+    "failures": {"type": "array"},
+    "resume": {"type": "object", "required": ["invalidated", "entry_stage"]}
+  },
+  "$defs": {
+    "file": {"type": "object", "required": ["path", "exists", "sha256"], "properties": {"path": {"type": "string"}, "exists": {"type": "boolean"}, "sha256": {"type": ["string", "null"]}, "size": {"type": ["integer", "null"], "minimum": 0}}}
+  }
+}

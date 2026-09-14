@@ -22,7 +22,7 @@ from pptx_primitives import add_charts, add_groups, add_shapes, add_tables, add_
 # Use the family name exposed by the bundled redistributable font. Keep the
 # declared family and the asset name table aligned so renderers do not
 # silently substitute a thinner host face.
-DEFAULT_FONT_FAMILY = "Noto Sans CJK SC"
+DEFAULT_FONT_FAMILY = "Microsoft YaHei"
 BACKEND_ID = "python-pptx"
 
 

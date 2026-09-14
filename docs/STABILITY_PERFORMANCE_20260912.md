@@ -35,7 +35,7 @@ fixed worker count, and incomplete scheduler/cache/retry telemetry.
   and temporary bytes, external-call counters and explicit unavailable
   resource fields rather than silently emitting zero.
 - Root and standalone `ai-ppt-editable` adapters carry the same recovery
-  behavior. Runtime Mirror and Perfect Sync remain passing.
+  behavior. Runtime Mirror remains the active cross-package consistency gate.
 
 ## Results
 
@@ -47,7 +47,7 @@ fixed worker count, and incomplete scheduler/cache/retry telemetry.
 | One-page incremental | baseline | 66.83% lower | Target met |
 | Unchanged-page cache hit rate | baseline | 80% | Target met |
 | Forced termination recovery | unavailable | 1 verified node resumed | Passed |
-| Runtime Mirror / Perfect Sync | passed | passed | No regression |
+| Runtime Mirror | passed | passed | No regression |
 
 The synthetic engine benchmark is repeated three times with identical inputs
 and configuration. It exercises real subprocess nodes, cache publication,

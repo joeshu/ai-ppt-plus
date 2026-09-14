@@ -26,7 +26,7 @@ Usage: run_pipeline.py PROJECT_DIR --deck DECK.pptx --expected-pages N
        [--page-cache-dir DIR] [--preview-dir DIR]
        [--affected-region name=x,y,w,h]
        [--chart-manifest CHARTS.json] [--require-chart-manifest]
-       [--output-dir RUN_DIR]
+       [--output-dir RUN_DIR] [--incremental-state CHECKPOINT.json]
 """
 import argparse
 import hashlib
@@ -394,9 +394,38 @@ def main() -> int:
     parser.add_argument("--page-cache-dir", help="content-addressed validated page PNG cache; defaults to .pipeline-cache/render-pages in DAG mode")
     parser.add_argument("--affected-region", action="append", default=[], help="critical region affected by the change: name=x,y,w,h; checked by the render QA gate")
     parser.add_argument("--output-dir")
+    parser.add_argument("--incremental-state", help="A-O checkpoint to initialize or hash-verify before running QA")
+    parser.add_argument("--repository-sha", help="repository SHA bound to --incremental-state")
+    parser.add_argument("--package-revision", help="package revision bound to --incremental-state")
+    parser.add_argument("--incremental-input", action="append", default=[], help="input path recorded in the A-O checkpoint")
+    parser.add_argument("--incremental-font", action="append", default=[], help="font path recorded in the A-O checkpoint")
     args = parser.parse_args()
     project = Path(args.project_dir).resolve()
     deck = Path(args.deck).resolve()
+    incremental_resume = None
+    if args.incremental_state:
+        # The QA pipeline remains the authority for rendered evidence; this
+        # optional hook only creates/validates the shared A-O control plane.
+        # It never treats a QA pass as an authoring or finalizer pass.
+        from incremental_orchestrator import CheckpointStore
+        checkpoint_path = Path(args.incremental_state).resolve()
+        package_path = SCRIPT_DIR.parent / "assets" / "skill-package.json"
+        package_revision = args.package_revision
+        if not package_revision and package_path.is_file():
+            try:
+                package_revision = json.loads(package_path.read_text(encoding="utf-8")).get("package_revision")
+            except (OSError, json.JSONDecodeError):
+                package_revision = None
+        package_revision = package_revision or "working-tree"
+        repository_sha = args.repository_sha or "working-tree"
+        checkpoint_inputs = list(args.incremental_input) or [str(deck)]
+        if checkpoint_path.is_file():
+            store = CheckpointStore(checkpoint_path)
+            store.load()
+            incremental_resume = store.resume_plan(repository_sha=repository_sha, package_revision=package_revision)
+        else:
+            CheckpointStore.create(checkpoint_path, project_root=project, repository_sha=repository_sha, package_revision=package_revision, inputs=checkpoint_inputs, fonts=args.incremental_font)
+            incremental_resume = {"schema": "ai-ppt-plus/resume-plan/v1", "consistent": True, "changed_inputs": [], "output_mismatches": [], "invalidated": [], "entry_stage": "A", "artifact_marker_reusable": False}
     if args.require_root_p0:
         args.require_route = True
         args.require_engine_route = True
@@ -1298,7 +1327,9 @@ def main() -> int:
         if args.expected_ratio is not None:
             comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
         if args.visual_threshold is not None:
-            comparison_args.extend(["--threshold", str(args.visual_threshold)])
+            comparison_args.extend(["--min-reference-fidelity", str(args.visual_threshold)])
+        elif args.release:
+            comparison_args.append("--strict")
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
     elif args.reference_dir:
         comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "visual-comparison.json")]
@@ -1946,6 +1977,12 @@ def main() -> int:
     signoff_report = load_report(run_dir / "signoff-validation.json") if args.release else None
     quality_evidence, quality_degradations = collect_quality_evidence(preflight_bundle_path, "report_bundle_preflight")
     result = build_pipeline_result(steps, quality_evidence, quality_degradations, release_report, preflight_report, signoff_report)
+    if args.incremental_state:
+        result["incremental_checkpoint"] = {
+            "path": str(Path(args.incremental_state).resolve()),
+            "resume_plan": incremental_resume,
+            "state_role": "preflight control plane only; existing pipeline and finalizer gates remain authoritative",
+        }
     performance_report_path = run_dir / "performance-report.json"
     result["performance_report"] = str(performance_report_path)
     atomic_write_json(run_dir / "pipeline-result.json", result)

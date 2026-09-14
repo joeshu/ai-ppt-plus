@@ -56,7 +56,12 @@ and does not need a redundant generation call.
 Before composition, every page must contain `imagegen-assets-manifest.json`,
 which is the backwards-compatible visual-asset provenance manifest. For
 `provenance_mode: imagegen`, record non-empty `generated_source`, `copied_to`,
-`layer`, `prompt_file`, `backend`, and `key_color`. For
+`layer`, `prompt_file`, `backend`, and `background_mode`. Record `key_color`
+only when `background_mode` is a chroma-key mode. Also record
+`fallback_level`, `canonical_asset`, `qa_preview_only`, and a SHA-256 cache key
+derived from the reference SHA, source bboxes, normalized prompt, backend, and
+style lock. At the manifest top level, record billable generation/edit calls
+separately from local derivatives and QA previews. For
 `provenance_mode: source_reuse`, record `source_ref`, `source_bbox`,
 `source_sha256`, `copied_to`, `layer`, and `extraction_method`. Copied assets
 remain inside the unique RUN_ROOT and must pass current SHA-256 validation.
@@ -64,11 +69,18 @@ Missing provenance or a stale hash blocks conversion. Run
 `scripts/validate_imagegen_assets_manifest.py imagegen-assets-manifest.json`
 before B5; the validator accepts both modes and reports which one was used.
 
-This evidence gate is separate from the visual route: reference reconstruction does not generate a new whole-slide visual intermediate, but it may generate an isolated missing icon sheet under this rule. A generated icon sheet is still only an intermediate; after copying it into RUN_ROOT it must pass B5 chroma-key, split, contact-sheet, edge and placement review.
+This evidence gate is separate from the visual route: reference reconstruction
+does not generate a new whole-slide visual intermediate, but it may generate an
+isolated missing icon sheet under this rule. A generated icon sheet is still
+only an intermediate. After copying it into RUN_ROOT, validate direct alpha
+first. If alpha passes, skip chroma keying and continue with split,
+contact-sheet, edge and placement review. Chroma keying is a last fallback.
 
 ## B5: cut out, split and inspect
 
-For generated or supplied assets on a flat background, use the portable tools:
+Request genuine transparent PNG output first and use `slice_grid.py` directly
+when alpha validation passes. For assets that reached the final chroma-key
+fallback, use the portable tools:
 
 ```bash
 python3 scripts/probe_palette.py reference/slide-1.png --output qa/palette-report.json
@@ -78,6 +90,11 @@ python3 scripts/placement_qa.py reference/slide-1.png slide-manifest.json --out-
 python3 scripts/validate_icon_assets.py icon-asset-manifest.json --report reports/icon-assets.json
 python3 scripts/audit_icon_layers.py icon-asset-manifest.json --report reports/icon-layers.json
 ```
+
+Do not generate multiple background-color variants. Direct-alpha is attempt
+one; edit-to-transparent is attempt two; one selected chroma color is the final
+fallback. Red/gray/white composites are allowed only as one locally derived QA
+preview marked `qa_preview_only`.
 
 Use `frame-safe` for a frame layer and `icon-safe` for icons, decoration,
 and artistic typography. Preserve RGB colors, thin strokes, glows and
@@ -93,6 +110,9 @@ explicit key color and conservative hard-key settings such as
 `--no-despill --no-edge-recover`, then composite the result over the generated
 background before accepting it. A successful command exit is not visual proof.
 
+For multi-icon sheets, preserve accepted cells and retry only failed asset IDs.
+Never regenerate the complete sheet because one cell failed.
+
 Every item must pass: non-empty alpha, valid visible bbox, no unaccepted
 edge-touch/truncation, no residual key color or grid line, no unintended
 connected-component merge, no duplicate frame/icon occurrence, and correct
@@ -107,9 +127,13 @@ independent icon/decorative asset. Each record includes `asset_id`, `role`,
 `source_ref`, `source_bbox`, `extraction_method`, `frame_exclusion`,
 `asset_path`, `sha256`, `editability_level`, `replaceable`, `alpha_quality`,
 `edge_touch`, `split_status`, `duplicate_guard`, `anchor`, and
-`review_status`. The top level also records `source_vs_frame_review`,
+`review_status`. Imagegen records additionally include `background_mode`,
+`fallback_level`, `canonical_asset`, `qa_preview_only`, and `cache_key`. The top
+level also records `source_vs_frame_review`,
 `frame_asset_ids`, `icon_asset_ids`, `frame_preview`, and
-`contact_sheet`.
+`contact_sheet`, plus `generation_accounting` with billable generation calls,
+billable transparent-edit calls, local derivative count, QA preview count,
+full-sheet retries, and single-asset retries.
 
 `sha256` is the hash of the delivered file at `asset_path`, not the hash of
 the source screenshot. Run `scripts/validate_icon_assets.py --require-hashes`

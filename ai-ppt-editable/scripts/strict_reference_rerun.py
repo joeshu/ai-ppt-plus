@@ -61,6 +61,14 @@ def main() -> int:
     parser.add_argument("--font-dir")
     parser.add_argument("--font-manifest")
     parser.add_argument("--preview-dir")
+    parser.add_argument(
+        "--authoring-backend",
+        choices=("artifact-tool", "python-pptx"),
+        default="artifact-tool",
+        help="strict native Artifact Tool route by default; python-pptx is retained for legacy reruns",
+    )
+    parser.add_argument("--node", help="Node executable for the Artifact Tool route")
+    parser.add_argument("--node-modules", help="bundled node_modules directory for the Artifact Tool route")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
@@ -152,7 +160,22 @@ def main() -> int:
         out.unlink()
     out.parent.mkdir(parents=True, exist_ok=True)
 
-    command = [sys.executable, str(SCRIPT_DIR / "compose_pptx.py"), str(layout), str(out), "--strict-input", "--require-native-structure", "--embed-fonts"]
+    command = [
+        sys.executable,
+        str(SCRIPT_DIR / "compose_pptx.py"),
+        str(layout),
+        str(out),
+        "--strict-input",
+        "--require-native-structure",
+        "--authoring-backend",
+        args.authoring_backend,
+    ]
+    if args.authoring_backend == "python-pptx":
+        command.append("--embed-fonts")
+    if args.node:
+        command.extend(["--node", str(Path(args.node).resolve())])
+    if args.node_modules:
+        command.extend(["--node-modules", str(Path(args.node_modules).resolve())])
     if args.font_dir:
         command += ["--font-dir", str(Path(args.font_dir).resolve())]
     if args.font_manifest:

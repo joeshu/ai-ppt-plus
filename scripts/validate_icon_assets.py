@@ -16,7 +16,7 @@ except ImportError:  # pragma: no cover
     Image = None
 
 ROLES = {"icon", "decoration", "badge", "logo", "illustration", "decorative_word_art", "frame_exclusion"}
-METHODS = {"approved-source-asset", "image-generation", "native-vector", "chroma-cutout", "contact-sheet-split", "placeholder"}
+METHODS = {"approved-source-asset", "image-generation", "native-vector", "alpha-sheet-split", "chroma-cutout", "contact-sheet-split", "placeholder"}
 LEVELS = {"L1", "L2", "L4", "L5"}
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
@@ -101,6 +101,10 @@ def main() -> int:
         if asset.get("editability_level") == "L2" and asset.get("replaceable") is not True: add(issues, "blocker", "l2_not_replaceable", index)
         if asset.get("editability_level") == "L5": add(issues, "blocker", "unresolved_asset", index)
         if asset.get("extraction_method") == "image-generation" and not isinstance(asset.get("prompt_ref"), str): add(issues, "blocker", "generation_evidence_missing", index)
+        if asset.get("extraction_method") == "alpha-sheet-split":
+            if not isinstance(asset.get("prompt_ref"), str): add(issues, "blocker", "generation_evidence_missing", index)
+            if not isinstance(asset.get("split_method"), str): add(issues, "blocker", "split_evidence_missing", index)
+            if asset.get("background_mode") != "transparent": add(issues, "blocker", "alpha_split_requires_transparent_background", index)
         if asset.get("extraction_method") in {"chroma-cutout", "contact-sheet-split"} and not isinstance(asset.get("cutout_method"), str): add(issues, "blocker", "cutout_evidence_missing", index)
         asset_path = asset.get("asset_path")
         native_ref = isinstance(asset_path, str) and asset_path.startswith("native:")

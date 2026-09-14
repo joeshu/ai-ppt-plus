@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from atomic_output import atomic_write_json
@@ -38,6 +39,27 @@ def main() -> int:
         slides.append({"slide": si, "shape_count": len(shapes), "shapes": shapes})
         names = {s["name"] for s in shapes}
         expected = expected_by_slide.get(si, {})
+        unnamed_pictures = [shape for shape in slide.shapes if str(getattr(shape, "shape_type", "")).upper() == "PICTURE" and not shape.name]
+        icon_items = [(oid, obj) for oid, obj in expected.items() if obj.get("object_type") == "extracted_icon" or obj.get("role") == "icon"]
+        for oid, obj in icon_items:
+            declared_hash = str(obj.get("source_sha256") or obj.get("asset_sha256") or "").lower()
+            matches = [shape for shape in unnamed_pictures if declared_hash and hashlib.sha256(shape.image.blob).hexdigest() == declared_hash]
+            if not matches and len(icon_items) == 1 and len(unnamed_pictures) == 1:
+                matches = list(unnamed_pictures)
+            if len(matches) == 1:
+                names.add(oid)
+                unnamed_pictures.remove(matches[0])
+        unnamed_tables = [shape for shape in slide.shapes if bool(getattr(shape, "has_table", False)) and not shape.name]
+        table_items = [(oid, obj) for oid, obj in expected.items() if obj.get("object_type") == "editable_table" or obj.get("role") in {"table", "data-table", "editable-table", "data-grid"}]
+        for oid, obj in table_items:
+            snapshot = obj.get("data_snapshot") or obj.get("table_data") or obj.get("data") or {}
+            expected_values = snapshot.get("values") if isinstance(snapshot, dict) else None
+            matches = [shape for shape in unnamed_tables if expected_values is not None and [[cell.text for cell in row.cells] for row in shape.table.rows] == expected_values]
+            if not matches and len(table_items) == 1 and len(unnamed_tables) == 1:
+                matches = list(unnamed_tables)
+            if len(matches) == 1:
+                names.add(oid)
+                unnamed_tables.remove(matches[0])
         for oid, obj in expected.items():
             if oid not in names:
                 errors.append({"code": "manifest_object_missing_in_pptx", "slide": si, "object_id": oid, "role": obj.get("role")})
@@ -55,7 +77,7 @@ def main() -> int:
     expected_object_count = sum(len(objects) for objects in expected_by_slide.values())
     if whole_slide_images and expected_object_count:
         warnings.append({"code": "whole_slide_picture_present", "names": whole_slide_images})
-    result = {"schema": "ai-ppt-plus/editable-object-audit/v1", "valid": not errors, "deck": str(Path(args.deck).resolve()), "slides": slides, "expected_object_count": expected_object_count, "observed_shape_count": sum(s["shape_count"] for s in slides), "whole_slide_pictures": whole_slide_images, "errors": errors, "warnings": warnings, "human_visual_review_required": True}
+    result = {"schema": "ai-ppt-plus/editable-object-audit/v1", "valid": not errors, "deck": str(Path(args.deck).resolve()), "slides": slides, "expected_object_count": expected_object_count, "observed_shape_count": sum(s["shape_count"] for s in slides), "whole_slide_pictures": whole_slide_images, "errors": errors, "warnings": warnings, "human_visual_review_required": True, "unnamed_object_binding": "content_identity_then_unique_pair"}
     if args.report:
         out = Path(args.report); out.parent.mkdir(parents=True, exist_ok=True)
         atomic_write_json(out.resolve(), result)

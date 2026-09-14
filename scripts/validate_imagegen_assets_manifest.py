@@ -18,13 +18,23 @@ from pathlib import Path
 from atomic_output import atomic_write_json
 
 
-REQUIRED = ("generated_source", "copied_to", "layer", "prompt_file", "backend", "key_color")
+REQUIRED = ("generated_source", "copied_to", "layer", "prompt_file", "backend")
 SOURCE_REUSE_REQUIRED = ("source_ref", "source_bbox", "source_sha256", "copied_to", "layer", "extraction_method")
 LAYERS = {"background", "frame_raw", "icons"}
 IMAGEGEN_WORD = re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])", re.I)
 HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 PROVENANCE_MODES = {"imagegen", "source_reuse"}
+BACKGROUND_MODES = {"transparent", "green", "red", "magenta", "chroma_key", "opaque", "source"}
+FALLBACK_LEVELS = {"direct-alpha", "transparent-edit", "chroma-key", "opaque", "source"}
+ACCOUNTING_FIELDS = (
+    "billable_generation_calls",
+    "billable_transparent_edit_calls",
+    "local_derivative_count",
+    "qa_preview_count",
+    "full_sheet_retries",
+    "single_asset_retries",
+)
 MANDATORY_IMAGEGEN_CLASSES = {"icon", "icons", "badge", "gradient", "gradient_visual", "complex_art", "illustration", "artistic_typography", "decorative_art"}
 
 
@@ -93,6 +103,16 @@ def main() -> int:
     if not isinstance(data, dict):
         add(issues, "manifest_not_object")
         data = {}
+    transparent_first = data.get("asset_generation_policy") == "transparent_first_v1"
+    accounting = data.get("generation_accounting")
+    if transparent_first:
+        if not isinstance(accounting, dict):
+            add(issues, "generation_accounting_missing")
+        else:
+            for field in ACCOUNTING_FIELDS:
+                value = accounting.get(field)
+                if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+                    add(issues, "generation_accounting_invalid", field=field, value=value)
     assets = data.get("assets")
     if assets is None:
         assets = []
@@ -144,8 +164,33 @@ def main() -> int:
             if not isinstance(backend, str) or not IMAGEGEN_WORD.search(backend):
                 add(issues, "non_imagegen_backend", asset_index=index, backend=backend)
             key_color = asset.get("key_color")
-            if not isinstance(key_color, str) or not HEX.fullmatch(key_color):
+            background_mode = asset.get("background_mode")
+            if background_mode is None and isinstance(key_color, str) and key_color:
+                background_mode = "chroma_key"  # backwards-compatible legacy manifest
+            if transparent_first and background_mode is None:
+                add(issues, "background_mode_missing", asset_index=index)
+            if background_mode is not None and background_mode not in BACKGROUND_MODES:
+                add(issues, "invalid_background_mode", asset_index=index, background_mode=background_mode)
+            if background_mode in {"green", "red", "magenta", "chroma_key"}:
+                if not isinstance(key_color, str) or not HEX.fullmatch(key_color):
+                    add(issues, "invalid_key_color", asset_index=index, key_color=key_color)
+            elif background_mode == "transparent" and key_color not in (None, ""):
+                add(issues, "transparent_asset_must_not_declare_key_color", asset_index=index, key_color=key_color)
+            elif key_color not in (None, "") and (not isinstance(key_color, str) or not HEX.fullmatch(key_color)):
                 add(issues, "invalid_key_color", asset_index=index, key_color=key_color)
+            if transparent_first:
+                fallback_level = asset.get("fallback_level")
+                if fallback_level not in FALLBACK_LEVELS:
+                    add(issues, "fallback_level_missing_or_invalid", asset_index=index, fallback_level=fallback_level)
+                if not isinstance(asset.get("canonical_asset"), bool):
+                    add(issues, "canonical_asset_flag_missing", asset_index=index)
+                if not isinstance(asset.get("qa_preview_only"), bool):
+                    add(issues, "qa_preview_only_flag_missing", asset_index=index)
+                if asset.get("canonical_asset") is True and asset.get("qa_preview_only") is True:
+                    add(issues, "qa_preview_cannot_be_canonical", asset_index=index)
+                cache_key = asset.get("cache_key")
+                if not isinstance(cache_key, str) or not SHA256_RE.fullmatch(cache_key):
+                    add(issues, "cache_key_missing", asset_index=index)
         copied = asset.get("copied_to")
         if isinstance(copied, str) and copied:
             copied_path = Path(copied)
@@ -202,6 +247,8 @@ def main() -> int:
         "provenance_modes": provenance_modes,
         "mandatory_imagegen_classes": sorted(MANDATORY_IMAGEGEN_CLASSES),
         "hashes_required": args.require_hashes,
+        "asset_generation_policy": data.get("asset_generation_policy"),
+        "generation_accounting": accounting,
         "issues": issues,
         "human_visual_review_required": True,
     }

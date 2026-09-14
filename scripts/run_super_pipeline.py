@@ -128,6 +128,15 @@ def main() -> int:
     parser.add_argument("--require-workflow-state", action="store_true", help="require PROJECT_DIR/workflow-state.json or the path passed to --workflow-state")
     parser.add_argument("--handoff", help="formal handoff path; defaults to PROJECT/handoff.json")
     parser.add_argument("--font-dir")
+    parser.add_argument(
+        "--authoring-backend",
+        choices=("python-pptx", "artifact-tool"),
+        default="python-pptx",
+        help="authoring engine passed to the editable worker",
+    )
+    parser.add_argument("--node", help="Node executable for the strict artifact-tool authoring route")
+    parser.add_argument("--node-modules", help="bundled node_modules directory for the strict artifact-tool authoring route")
+    parser.add_argument("--strict-input", action="store_true", help="reject implicit primitive types, unsupported alignments and out-of-slide geometry")
     parser.add_argument("--human-signoff")
     parser.add_argument("--quality-score", type=float)
     parser.add_argument("--release", action="store_true", help="pass the strict release profile to the editable worker")
@@ -221,7 +230,23 @@ def main() -> int:
         add_not_used(steps, "A-visual", VISUAL)
 
     compose_deps = ["bundle"] + (["route"] if args.mode == "full" else []) + (["workflow-state"] if workflow_state_enabled else []) + ["A-visual"]
-    add_step(steps, "B-editable-compose", [sys.executable, str(EDITABLE / "scripts" / "compose_pptx.py"), str(editable_layout), str(output_deck)], EDITABLE, log_dir, deps=compose_deps)
+    compose_command = [
+        sys.executable,
+        str(EDITABLE / "scripts" / "compose_pptx.py"),
+        str(editable_layout),
+        str(output_deck),
+        "--authoring-backend",
+        args.authoring_backend,
+    ]
+    if args.font_dir:
+        compose_command.extend(["--font-dir", str(Path(args.font_dir).resolve())])
+    if args.node:
+        compose_command.extend(["--node", str(Path(args.node).resolve())])
+    if args.node_modules:
+        compose_command.extend(["--node-modules", str(Path(args.node_modules).resolve())])
+    if args.strict_input:
+        compose_command.append("--strict-input")
+    add_step(steps, "B-editable-compose", compose_command, EDITABLE, log_dir, deps=compose_deps)
     add_step(steps, "B-editable-inspect", [sys.executable, str(EDITABLE / "scripts" / "inspect_pptx.py"), str(output_deck), "--report", str(project / "qa" / "editable-inspection.json")], EDITABLE, log_dir, deps=["B-editable-compose"])
 
     if args.mode == "full":

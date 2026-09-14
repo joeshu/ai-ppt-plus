@@ -14,6 +14,8 @@ The implementation is split into focused modules:
 | `preview_renderer.py` | optional Pillow preview rendering and preview font selection |
 | `atomic_output.py` | sibling temporary files, atomic replacement and ZIP rewrites |
 | `authoring_backend.py` | `python-pptx` backend orchestration and optional font embedding |
+| `artifact_tool_authoring.mjs` | strict native ESM authoring through `@oai/artifact-tool` |
+| `artifact_tool_runtime.mjs` | absolute runtime/module resolution and font registration |
 | `embed_fonts.py` | licensed PresentationML font post-processing |
 
 The backend order is fixed for reconstruction fidelity:
@@ -57,3 +59,41 @@ coordinates fail authoring instead of being silently normalized.
 The backend preserves the existing `compose_pptx.py` CLI and the compatibility
 imports used by manifest builders. R13 remains a frozen regression fixture;
 this split changes ownership and testability, not the reconstruction contract.
+
+## Strict Artifact Tool route
+
+New image/reference-to-editable runs use the JavaScript ESM adapter when the
+`strict_authoring` route is selected. The wrapper performs the existing layout
+and semantic preflight, then serializes the normalized deck to a temporary JSON
+file and invokes `scripts/artifact_tool_authoring.mjs`. The adapter resolves
+the bundled Node module tree by absolute path, registers all task-local font
+faces, creates native text/shapes/groups/tables/charts/images, exports with
+`PresentationFile.exportPptx`, and writes an inspect NDJSON plus a SHA-256
+bound report next to the output.
+
+```bash
+python3 scripts/compose_pptx.py layout.json output.pptx \
+  --authoring-backend artifact-tool \
+  --node "$CODEX_PRIMARY_RUNTIME_NODE" \
+  --node-modules "$CODEX_PRIMARY_RUNTIME_NODE_MODULES" \
+  --font-dir assets/fonts --strict-input
+```
+
+The compatibility `python-pptx` backend remains the default solely for frozen
+historical fixtures and existing callers. It is not used by the strict route,
+and no Python process reopens or resaves a strict output.
+
+The transaction entrypoint for a fixed reference follows the same rule. Its
+default is now the strict Artifact Tool route and it accepts either a task
+font directory or a manifest whose concrete files exist beside it:
+
+```bash
+python3 scripts/strict_reference_rerun.py PROJECT \
+  --source source/reference.png --layout layout.json --out output.pptx \
+  --font-manifest assets/fonts/font-manifest.json \
+  --node "$CODEX_PRIMARY_RUNTIME_NODE" \
+  --node-modules "$CODEX_PRIMARY_RUNTIME_NODE_MODULES"
+```
+
+Use `--authoring-backend python-pptx` only when replaying a frozen legacy
+transaction that explicitly requires OOXML font embedding.

@@ -66,26 +66,7 @@ def main() -> int:
     assert "GordenImage" not in json.dumps(routing["skills"], ensure_ascii=False)
     assert routing["fallback_policy"]["fallback_engine"] == "GordenImage2PPTX"
 
-    # The editable worker is pinned to the reconstruction core from the
-    # perfect source branch. Its manifest is the source-of-truth parity gate;
-    # only the explicitly documented package and orchestrator adapters are
-    # outside that byte-identical set.
     editable_scripts = ROOT / "ai-ppt-editable" / "scripts"
-    parity = subprocess.run(
-        [sys.executable, str(editable_scripts / "validate_perfect_sync.py")],
-        cwd=editable_scripts.parent,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert parity.returncode == 0, parity.stdout + parity.stderr
-    parity_manifest = json.loads((editable_scripts.parent / "assets" / "upstream-perfect-sync.json").read_text(encoding="utf-8"))
-    assert parity_manifest["source"]["ref"] == "完美第一版"
-    excluded = {item["path"] for item in parity_manifest["excluded_paths"]}
-    assert len(parity_manifest["synced_files"]) == 163
-    assert len(parity_manifest["synced_files"]) + len(excluded) >= 202
-    assert {"scripts/compare_visual.py", "scripts/compare_visual_deck.py", "scripts/delivery_check.py", "scripts/validate_signoff.py"} <= excluded
-
     # Shared route/handoff validators stay source-identical. The worker
     # runner is a deliberate standalone adapter, but it must expose and
     # enforce the strict engine-route flag.

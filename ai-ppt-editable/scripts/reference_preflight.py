@@ -120,6 +120,7 @@ def validate_reference_preflight(
     deck: dict,
     *,
     embed_fonts: bool,
+    authoring_backend: str = "python-pptx",
     font_dir: str | None = None,
     font_manifest: str | None = None,
 ) -> dict:
@@ -136,6 +137,7 @@ def validate_reference_preflight(
         "imagegen_required": False,
         "cjk_required": False,
         "font_evidence": None,
+        "authoring_backend": authoring_backend,
         "issues": issues,
     }
     if not route_path.is_file():
@@ -201,7 +203,12 @@ def validate_reference_preflight(
     cjk_required = _contains_cjk(deck)
     result["cjk_required"] = cjk_required
     if cjk_required:
-        if not embed_fonts:
+        # The compatibility backend delivers CJK through OOXML font embedding.
+        # Artifact Tool delivers the same task-local faces through its native
+        # font registry; requiring --embed-fonts here would reject the strict
+        # route before the JavaScript adapter gets a chance to author the deck.
+        artifact_route = authoring_backend in {"artifact-tool", "@oai/artifact-tool"}
+        if not embed_fonts and not artifact_route:
             issues.append({"code": "reference_cjk_requires_embedded_fonts"})
         resolved_font_dir = font_dir or deck.get("font_dir")
         resolved_font_manifest = font_manifest or deck.get("font_manifest")

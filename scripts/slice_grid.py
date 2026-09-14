@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Slice a transparent icon/frame image into individual alpha-trimmed PNGs.
 
-Pipeline position (Part 2): after you generate a multi-icon chroma-key sheet
-and run `chroma_key.py` to make it transparent, this tool cuts it into individual
-icon PNGs. Prefer `--auto` for generated icon sheets: it segments by transparent
+Pipeline position (Part 2): after direct transparent generation passes alpha
+validation, or after the last-resort chroma-key fallback is made transparent,
+this tool cuts the sheet into individual icon PNGs. Prefer `--auto` for generated icon sheets: it segments by transparent
 gaps and is more tolerant when AI does not place icons perfectly inside cells.
 Optional: when the user explicitly asks to split a full-slide framework image
 into movable pieces, use `--components`. It slices by connected non-transparent
@@ -17,7 +17,8 @@ Usage:
     python3 scripts/slice_grid.py frame.png out/frame_parts --components --prefix fp
 
 Notes:
-- Input MUST already be a transparent PNG (run remove_chroma_key.py first).
+- Input MUST already be a transparent PNG. Direct RGBA output is preferred;
+  run `chroma_key.py` only for the declared fallback path.
 - Cells are cut by equal fractions, so the source grid must be evenly divided.
 - Near-empty cells (mostly transparent) are skipped and reported.
 - Emits a manifest JSON describing each saved cutout (grid position + size).
@@ -223,7 +224,7 @@ def _write_contact_sheet(icon_paths, out_path: Path):
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("input", help="Transparent grid PNG (already chroma-keyed).")
+    ap.add_argument("input", help="Transparent grid PNG (direct RGBA preferred; chroma-keyed fallback accepted).")
     ap.add_argument("out_dir", help="Directory for the sliced icon PNGs.")
     ap.add_argument("--grid", default="4x4", help="Grid as ROWSxCOLS, e.g. 4x4 or 2x2.")
     ap.add_argument("--auto", action="store_true",

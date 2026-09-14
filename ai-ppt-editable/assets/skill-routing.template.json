@@ -22,6 +22,7 @@
       "backend": "@oai/artifact-tool",
       "language": "javascript",
       "module_format": "ESM",
+      "builder": "scripts/artifact_tool_authoring.mjs",
       "runtime_entrypoint": "scripts/artifact_tool_runtime.mjs",
       "contract": "ai-ppt-plus/authoring-contract/v1",
       "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"]

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["phase", "tool", "command", "duration_ms", "exit_code", "retry_count", "outputs"],
+  "properties": {
+    "phase": {"type": "string"},
+    "tool": {"type": "string"},
+    "command": {"type": "array", "items": {"type": "string"}},
+    "input_sha256": {"type": ["string", "null"]},
+    "duration_ms": {"type": "number", "minimum": 0},
+    "exit_code": {"type": ["integer", "null"]},
+    "error_class": {"type": ["string", "null"]},
+    "retry_count": {"type": "integer", "minimum": 0, "maximum": 2},
+    "outputs": {"type": "object", "additionalProperties": {"type": "string"}}
+  }
+}

@@ -94,6 +94,8 @@ def main() -> int:
     parser.add_argument("--expected-ratio", type=float)
     parser.add_argument("--quality-score", type=float)
     parser.add_argument("--quality-threshold", type=float, default=80)
+    parser.add_argument("--reference-fidelity-threshold", type=float, default=0.90,
+                        help="minimum pixel fidelity and blurred layout SSIM for reference reconstruction")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
 
@@ -146,6 +148,19 @@ def main() -> int:
     check(bool(render and render.get("deck_sha256") == current_hash), "stale_render_report", "render report must be hash-bound to the current PPTX")
 
     reference_release = bool(route_report and route_report.get("route") == "reference-reconstruction")
+    visual_comparison_report = load(args.visual_comparison) if args.visual_comparison else None
+    if reference_release:
+        check(bool(visual_comparison_report), "reference_visual_comparison_missing", "reference reconstruction requires a fresh visual comparison report")
+        if visual_comparison_report:
+            metrics = visual_comparison_report.get("metrics") or {}
+            threshold = float(args.reference_fidelity_threshold)
+            check(visual_comparison_report.get("valid") is True, "reference_visual_comparison_failed", "reference visual comparison must pass its declared thresholds")
+            check(float(metrics.get("reference_fidelity_score", -1)) >= threshold,
+                  "reference_fidelity_below_threshold",
+                  f"reference_fidelity_score must be >= {threshold:.2f}; observed {metrics.get('reference_fidelity_score')}")
+            check(float(metrics.get("blurred_layout_ssim", -1)) >= threshold,
+                  "reference_layout_fidelity_below_threshold",
+                  f"blurred_layout_ssim must be >= {threshold:.2f}; observed {metrics.get('blurred_layout_ssim')}")
     authoring_provenance_required = bool(args.require_authoring_provenance or reference_release)
     if authoring_provenance_required:
         pointer_path = Path(args.current_rerun).resolve() if args.current_rerun else Path(args.manifest).resolve().parent / "current-rerun.json"

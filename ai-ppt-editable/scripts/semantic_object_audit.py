@@ -207,6 +207,11 @@ def _actual_kind(shape) -> str:
         return "picture"
     if shape_type == types.GROUP:
         return "native_group"
+    # Artifact Tool may export editable text as a populated text frame on
+    # different native shape enums. Inspect the OOXML text body itself before
+    # the generic geometry branches.
+    if getattr(shape, "has_text_frame", False) and _text_from_shape(shape).strip():
+        return "native_text"
     # python-pptx exposes connector/line primitives as LINE rather than
     # AUTO_SHAPE.  They are still native, movable PowerPoint geometry and
     # must satisfy manifests that declare a native_shape object.
@@ -218,10 +223,9 @@ def _actual_kind(shape) -> str:
 
 
 def _is_native_textbox(shape) -> bool:
-    _, types = _shape_type(shape)
     return bool(
         getattr(shape, "has_text_frame", False)
-        and getattr(shape, "shape_type", None) == types.TEXT_BOX
+        and _text_from_shape(shape).strip()
         and not bool(getattr(shape, "is_placeholder", False))
     )
 
@@ -712,6 +716,53 @@ def audit(
             by_name.setdefault(shape.name, []).append((shape, parent))
         raw_objects = slide_spec.get("objects", [])
         objects = [obj for obj in raw_objects if isinstance(obj, dict)] if isinstance(raw_objects, list) else []
+        # Resolve unnamed Artifact Tool objects by content identity. Pictures
+        # match declared source hashes; tables match their editable cell data.
+        # Order is used only for a one-to-one candidate pair.
+        unnamed_picture_entries = [
+            (shape, parent) for shape, parent in entries
+            if not shape.name and _actual_kind(shape) == "picture"
+        ]
+        icon_objects = [
+            obj for obj in objects
+            if obj.get("object_type") == "extracted_icon" or obj.get("role") == "icon"
+        ]
+        mapped_asset_shape_ids: set[int] = set()
+        unmatched_pictures = list(unnamed_picture_entries)
+        for icon_obj in icon_objects:
+            declared_hashes, _, _ = _hash_candidates(icon_obj, asset_records, object_manifest_path.parent)
+            matches = []
+            for entry in unmatched_pictures:
+                _, blob = _shape_media(entry[0])
+                if blob is not None and hashlib.sha256(blob).hexdigest() in declared_hashes:
+                    matches.append(entry)
+            if not matches and len(icon_objects) == 1 and len(unmatched_pictures) == 1:
+                matches = list(unmatched_pictures)
+            if len(matches) == 1:
+                shape, parent = matches[0]
+                by_name.setdefault(str(icon_obj.get("object_id")), []).append((shape, parent))
+                mapped_asset_shape_ids.add(id(shape))
+                unmatched_pictures.remove(matches[0])
+        unnamed_table_entries = [
+            (shape, parent) for shape, parent in entries
+            if not shape.name and _actual_kind(shape) == "editable_table"
+        ]
+        table_objects = [
+            obj for obj in objects
+            if obj.get("object_type") == "editable_table"
+            or obj.get("role") in {"table", "data-table", "editable-table", "data-grid"}
+        ]
+        unmatched_tables = list(unnamed_table_entries)
+        for table_obj in table_objects:
+            expected_values = _expected_table_values(table_obj, object_manifest_path.parent)
+            matches = [entry for entry in unmatched_tables if expected_values is not None and _table_evidence(entry[0])["values"] == expected_values]
+            if not matches and len(table_objects) == 1 and len(unmatched_tables) == 1:
+                matches = list(unmatched_tables)
+            if len(matches) == 1:
+                shape, parent = matches[0]
+                by_name.setdefault(str(table_obj.get("object_id")), []).append((shape, parent))
+                mapped_asset_shape_ids.add(id(shape))
+                unmatched_tables.remove(matches[0])
         declared_ids = {str(obj.get("object_id")) for obj in objects if obj.get("object_id")}
         allowed_names = set(str(value) for value in (object_manifest.get("allowed_shape_names") or []))
         allowed_names.update(str(value) for value in (slide_spec.get("allowed_shape_names") or []))
@@ -724,6 +775,8 @@ def audit(
             if parent is not None:
                 continue
             observed_top_level += 1
+            if id(shape) in mapped_asset_shape_ids:
+                continue
             if shape.name in declared_ids or shape.name in allowed_names or shape.name in ignored_names:
                 continue
             if bool(getattr(shape, "is_placeholder", False)) and not _text_from_shape(shape).strip():

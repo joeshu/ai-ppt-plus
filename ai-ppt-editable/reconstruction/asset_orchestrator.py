@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-ALLOWED_BACKGROUND_MODES = {"transparent", "green", "red", "opaque", "source"}
+ALLOWED_BACKGROUND_MODES = {"transparent", "green", "red", "magenta", "opaque", "source"}
 
 
 class AssetGenerationError(ValueError):
@@ -74,6 +74,8 @@ def _image_evidence(path: Path) -> dict[str, Any]:
             rgba = image.convert("RGBA")
             alpha = rgba.getchannel("A")
             alpha_extrema = alpha.getextrema()
+            alpha_histogram = alpha.histogram()
+            total_pixels = max(1, width * height)
             corners = [rgba.getpixel((0, 0)), rgba.getpixel((width - 1, 0)), rgba.getpixel((0, height - 1)), rgba.getpixel((width - 1, height - 1))]
     except Exception as exc:
         raise AssetGenerationError(f"generated asset is not a readable image: {path}") from exc
@@ -86,6 +88,8 @@ def _image_evidence(path: Path) -> dict[str, Any]:
         "height": height,
         "alpha_min": int(alpha_extrema[0]),
         "alpha_max": int(alpha_extrema[1]),
+        "transparent_fraction": sum(alpha_histogram[:16]) / total_pixels,
+        "opaque_fraction": sum(alpha_histogram[240:]) / total_pixels,
         "corners": [list(pixel) for pixel in corners],
     }
 
@@ -98,6 +102,11 @@ def _is_green(pixel: list[int] | tuple[int, ...]) -> bool:
 def _is_red(pixel: list[int] | tuple[int, ...]) -> bool:
     r, g, b = pixel[:3]
     return r >= 180 and r >= g + 55 and r >= b + 55
+
+
+def _is_magenta(pixel: list[int] | tuple[int, ...]) -> bool:
+    r, g, b = pixel[:3]
+    return r >= 180 and b >= 180 and g + 55 <= min(r, b)
 
 
 def validate_generated_asset(request: dict[str, Any], response: dict[str, Any], *, base_dir: Path | None = None) -> GeneratedAssetResult:
@@ -128,12 +137,17 @@ def validate_generated_asset(request: dict[str, Any], response: dict[str, Any], 
         raise AssetGenerationError("generated asset must be PNG at the deterministic handoff boundary")
 
     corners = evidence["corners"]
-    if expected_mode == "transparent" and evidence["alpha_min"] >= 250:
-        raise AssetGenerationError("transparent asset has no meaningful alpha transparency")
+    if expected_mode == "transparent":
+        if evidence["alpha_min"] >= 250 or evidence["transparent_fraction"] < 0.001:
+            raise AssetGenerationError("transparent asset has no meaningful alpha transparency")
+        if any(pixel[3] > 32 for pixel in corners):
+            raise AssetGenerationError("transparent asset corners are not transparent")
     if expected_mode == "green" and not all(_is_green(pixel) for pixel in corners):
         raise AssetGenerationError("green-background asset does not have green key-color corners")
     if expected_mode == "red" and not all(_is_red(pixel) for pixel in corners):
         raise AssetGenerationError("red-background asset does not have red key-color corners")
+    if expected_mode == "magenta" and not all(_is_magenta(pixel) for pixel in corners):
+        raise AssetGenerationError("magenta-background asset does not have magenta key-color corners")
 
     digest = _sha256(path)
     declared = response.get("sha256")
@@ -167,6 +181,9 @@ def bind_generated_asset(deck: dict[str, Any], request: dict[str, Any], result: 
         "kind": "native_image_generation",
         "finding_id": request.get("finding_id"),
         "generation_prompt": request.get("generation_prompt"),
+        "generation_action": request.get("generation_action", "generate"),
+        "fallback_level": request.get("fallback_level", "direct-alpha"),
+        "cache_key": request.get("cache_key"),
         "sha256": result.sha256,
         "width": result.width,
         "height": result.height,

@@ -437,11 +437,9 @@ Golden manifest 是 immutable versioned record。
 
 不允许用同一个 version 覆盖旧 Golden。
 
-## 15. Golden 与完美第一版
+## 15. Golden 版本治理
 
-“完美第一版”是人工认可的历史强基线。
-
-Astra Golden 不应通过简单覆盖它来取代，而应该：
+Astra Golden 的更新必须：
 
 - 版本化晋升；
 - 保留 previous golden；

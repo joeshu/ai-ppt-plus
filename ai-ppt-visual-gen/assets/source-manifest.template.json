@@ -1,0 +1,17 @@
+{
+  "schema": "ai-ppt-plus/source-manifest/v2",
+  "repository_sha": "8e070acb5e1b94b5aff743b47ebb675735904f0f",
+  "inputs": [
+    {"path": "C:/work/upload/page-1.png", "exists": true, "sha256": "", "size": 0, "page": 1, "width": 0, "height": 0, "format": "PNG"}
+  ],
+  "fonts": [],
+  "independent_image_assets": [],
+  "build_script": {"path": "build/deck.mjs", "exists": true, "sha256": "", "size": 0},
+  "final_pptx": {"path": "deliverables/final.pptx", "exists": true, "sha256": "", "size": 0},
+  "qa_dir": "qa",
+  "render_tool": "LibreOffice+Poppler",
+  "render_report": {"path": "qa/render-report.json", "sha256": ""},
+  "finalizer_receipt": {"path": "qa/finalizer-receipt.json", "sha256": ""},
+  "authoring_contract": {"path": "qa/authoring-contract.json", "sha256": ""},
+  "issues": []
+}

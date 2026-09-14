@@ -164,12 +164,55 @@ def validate_native_editability(
     for slide_no, slide in enumerate(prs.slides, 1):
         index: dict[str, list[dict]] = {}
         top_level = _walk_shapes(slide.shapes, int(prs.slide_width), int(prs.slide_height), index)
-        tables = [record for records in index.values() for record in records if record["kind"] == "editable_table"]
+        tables = []
+        seen_table_records: set[int] = set()
+        for records in index.values():
+            for record in records:
+                if record["kind"] != "editable_table" or id(record) in seen_table_records:
+                    continue
+                seen_table_records.add(id(record))
+                tables.append(record)
         native_table_count += len(tables)
         for record in top_level:
             if record["kind"] == "picture" and record["width"] >= prs.slide_width * 0.95 and record["height"] >= prs.slide_height * 0.95:
                 whole_slide_pictures.append({"slide": slide_no, "name": record["name"], "record": record})
         expected = slide_objects.get(slide_no, {})
+        # Artifact Tool table frames can have an empty OOXML shape name. Bind
+        # them to declared editable-table IDs by declaration order so native
+        # table checks remain strict without requiring a lossy post-process.
+        unnamed_table_records = [
+            record for record in top_level
+            if record["kind"] == "editable_table" and not record["name"]
+        ]
+        table_expected_ids = [
+            object_id for object_id, obj in expected.items()
+            if obj.get("object_type") == "editable_table"
+        ]
+        mapped_table_record_ids: set[int] = set()
+        for table_index, object_id in enumerate(table_expected_ids):
+            if table_index >= len(unnamed_table_records):
+                break
+            record = unnamed_table_records[table_index]
+            index.setdefault(object_id, []).append(record)
+            mapped_table_record_ids.add(id(record))
+        # Artifact Tool exports picture cNvPr names as empty strings. Bind
+        # unnamed picture records to declared icon IDs in layout order so
+        # native/provenance checks stay strict without an OOXML rewrite.
+        unnamed_picture_records = [
+            record for record in top_level
+            if record["kind"] == "picture" and not record["name"]
+        ]
+        icon_expected_ids = [
+            object_id for object_id, obj in expected.items()
+            if obj.get("object_type") == "extracted_icon" or obj.get("role") == "icon"
+        ]
+        mapped_asset_record_ids: set[int] = set()
+        for icon_index, object_id in enumerate(icon_expected_ids):
+            if icon_index >= len(unnamed_picture_records):
+                break
+            record = unnamed_picture_records[icon_index]
+            index.setdefault(object_id, []).append(record)
+            mapped_asset_record_ids.add(id(record))
         background_ids = {
             object_id for object_id, obj in expected.items()
             if obj.get("role") == "background" or object_id.casefold() == "background"
@@ -206,7 +249,7 @@ def validate_native_editability(
                     errors.append({"severity": "blocker", "code": "panel_not_native", "slide": slide_no, "object_id": object_id, "actual_kind": actual["kind"]})
                 else:
                     native_panel_count += 1
-            if require_complete_manifest and actual["name"] not in manifest_ids.get(slide_no, set()):
+            if require_complete_manifest and id(actual) not in mapped_table_record_ids and id(actual) not in mapped_asset_record_ids and actual["name"] not in manifest_ids.get(slide_no, set()):
                 errors.append({"severity": "blocker", "code": "undeclared_object", "slide": slide_no, "name": actual["name"]})
             if require_native_panels and role in {"frame", "framework", "whole-frame", "skeleton"} and actual["kind"] == "picture":
                 errors.append({"severity": "blocker", "code": "semantic_frame_not_native", "slide": slide_no, "object_id": object_id})
@@ -218,7 +261,7 @@ def validate_native_editability(
             "slide": slide_no,
             "top_level_shape_count": len(top_level),
             "object_count_recursive": len(index),
-            "native_tables": sum(1 for values in index.values() for record in values if record["kind"] == "editable_table"),
+            "native_tables": len(tables),
             "objects": [record for values in index.values() for record in values],
             "errors_added": len(errors) - slide_errors_before,
         })

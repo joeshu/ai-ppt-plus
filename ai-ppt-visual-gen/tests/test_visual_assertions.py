@@ -27,8 +27,13 @@ def main() -> int:
         image = root / "slide-1.png"
         canvas = Image.new("RGB", (800, 450), "white")
         draw = ImageDraw.Draw(canvas)
-        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-        font = ImageFont.truetype(font_path, 42) if Path(font_path).is_file() else None
+        font_candidates = (
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            r"C:\\Windows\\Fonts\\arial.ttf",
+            r"C:\\Windows\\Fonts\\segoeui.ttf",
+        )
+        font_path = next((candidate for candidate in font_candidates if Path(candidate).is_file()), None)
+        font = ImageFont.truetype(font_path, 42) if font_path else None
         draw.text((40, 40), "REAL TEXT", fill="#F28C28", font=font)
         canvas.save(image)
         plan = root / "plan.json"

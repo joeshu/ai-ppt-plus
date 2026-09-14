@@ -87,6 +87,32 @@ def test_retry_policy_never_automatically_selects_crop_fallback():
     assert "selected_choice" not in result
 
 
+def test_background_failure_uses_transparent_edit_before_single_chroma_fallback():
+    request = {
+        "object_id": "icons-sheet",
+        "generation_prompt": "match the icon roster",
+        "background_mode": "transparent",
+        "chroma_fallback_mode": "green",
+    }
+    quality = {
+        "issue_codes": ["background_noncompliance"],
+        "failed_asset_ids": ["icon-3"],
+    }
+    edit = next_retry_request(request, quality, previous_attempts=1)
+    assert edit["status"] == "retry-native-image-edit"
+    assert edit["generation_action"] == "edit-to-transparent"
+    assert edit["background_mode"] == "transparent"
+    assert edit["fallback_level"] == "transparent-edit"
+    assert edit["retry_scope"] == "failed-assets-only"
+    assert edit["failed_asset_ids"] == ["icon-3"]
+
+    chroma = next_retry_request(request, quality, previous_attempts=2)
+    assert chroma["status"] == "retry-native-generation"
+    assert chroma["generation_action"] == "generate-chroma-fallback"
+    assert chroma["background_mode"] == "green"
+    assert chroma["fallback_level"] == "chroma-key"
+
+
 if __name__ == "__main__":
     for name, value in sorted(globals().items()):
         if name.startswith("test_") and callable(value):

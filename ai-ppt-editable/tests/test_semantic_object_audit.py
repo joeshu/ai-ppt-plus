@@ -44,7 +44,7 @@ def main() -> int:
             "slides": [{
                 "icons": [{"object_id": "logo", "role": "brand_lockup", "file": "logo.png", "x": 0.8, "y": 0.05, "w": 0.1, "h": 0.1}],
                 "texts": [{"object_id": "title", "text": "语义校验", "x": 0.1, "y": 0.1, "w": 0.5, "h": 0.2, "size": 18}],
-                "tables": [{"object_id": "table", "x": 0.1, "y": 0.4, "w": 0.3, "h": 0.2, "rows": [["A", "B"], ["1", "2"]]}],
+                "tables": [{"object_id": "table", "semantic_type": "native_table", "x": 0.1, "y": 0.4, "w": 0.3, "h": 0.2, "rows": [["A", "B"], ["1", "2"]]}],
                 "charts": [{"object_id": "chart", "type": "column", "x": 0.5, "y": 0.4, "w": 0.3, "h": 0.3, "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, 2]}]}],
             }],
         })

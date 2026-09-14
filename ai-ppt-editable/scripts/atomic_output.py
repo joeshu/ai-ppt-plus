@@ -32,7 +32,10 @@ def atomic_replace(target: str | Path, writer: Callable[[Path], None], *, suffix
         # The writer may be a library call (python-pptx, Pillow, or ZIP).  By
         # the time it returns the file should be complete; flush it before the
         # rename so a successful command cannot publish an unwritten buffer.
-        with temporary.open("rb") as stream:
+        # Windows rejects fsync on a read-only descriptor (EBADF/errno 9),
+        # while POSIX accepts it.  Open read/write so the same durability
+        # barrier works on every supported platform.
+        with temporary.open("r+b") as stream:
             os.fsync(stream.fileno())
         os.replace(temporary, destination)
         # A rename is atomic, but the directory entry itself is not durable

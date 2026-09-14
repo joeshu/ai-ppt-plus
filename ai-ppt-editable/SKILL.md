@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.12.03
+  package_revision: 2026.09.14.01
 ---
 
 # AI PPT Editable
@@ -13,6 +13,12 @@ Create or repair editable PPTX while preserving the declared visual and text
 authorities. This worker owns decomposition, object planning, authoring,
 rendering, technical QA, and technical repair. It does not own narrative
 redesign, deck-wide release, or human sign-off.
+
+The default Chinese presentation family is Microsoft YaHei (`微软雅黑`) as
+declared in `assets/default-font-policy.json`. Resolve it from the licensed
+Windows system font directory and record the exact file hashes. Never copy or
+redistribute Microsoft font binaries with this skill. If the family is absent,
+block or obtain explicit approval before using the bundled Noto fallback.
 
 This skill is independently installable and invokable. Run commands from this
 skill directory; its reconstruction scripts, references, templates, schemas,
@@ -27,39 +33,22 @@ python3 scripts/validate_skill_package.py --skill-dir .
 python3 scripts/validate_routing_contract.py
 ```
 
-The reconstruction engine and shared QA contracts are byte-synchronized with
-the pinned `完美第一版` snapshot of `joeshu/ai-ppt-plus`. Explicitly
-documented post-baseline adapters extend that frozen core for portable resource
-paths, font-directory precedence, native semantic objects and route-bound
-quality evidence; they do not change the visual decomposition contract. Verify that source relationship before authoring:
-
-```bash
-python3 scripts/validate_perfect_sync.py
-```
-
-The exact source commit, file mapping, and intentional package-boundary or
-post-baseline adapter exceptions are recorded in
-`references/perfect-source-sync.md` and `assets/upstream-perfect-sync.json`.
 The worker remains independently runnable;
 when called by `ai-ppt-plus`, it consumes the orchestrator's approved handoff
 and returns worker-level technical evidence. It never owns deck-wide narrative,
 release eligibility, or human sign-off.
 
-The split changes ownership and invocation only. Keep the checked-in
-image-to-PPTX decomposition, asset extraction, composition, rendering, and QA
-algorithms stable; any generality fix must be isolated, documented as an
-explicit post-baseline adapter, and covered by a regression test.
+Keep image-to-PPTX decomposition, asset extraction, composition, rendering,
+and QA changes incremental, documented, and covered by focused regression
+tests. The current skill contract and quality gates are authoritative.
 
 ## Authority model
 
 In orchestrated mode, consume the immutable route decision, approved outline,
 formal-text authority, design revision, reference roster, editability target,
-and worker manifests supplied by `$ai-ppt-plus`. The pinned reconstruction
-baseline intentionally uses the same mutually exclusive `route-decision/v1`
-routes as `完美第一版`: `visual-creation` and
-`reference-reconstruction`. A post-baseline native-authoring route is an
-orchestrator extension, not a replacement for this worker's synchronized
-reconstruction contract.
+and worker manifests supplied by `$ai-ppt-plus`. Follow the current route
+contract for `visual-creation`, `reference-reconstruction`, and strict native
+authoring.
 
 In standalone mode:
 
@@ -75,6 +64,9 @@ Read `references/source-intake.md`, `references/source-crop-integrity.md`,
 `references/editability-levels.md`, `references/native-object-protocol.md`, and
 the asset/text/chart protocols relevant to the page.
 For any table-like region, also read `references/semantic-layout-classification.md`.
+Use its three-state decision: native table, repeated component, or blocking
+ambiguous. Never default insufficient semantic evidence to a native table, and
+preserve reference geometry, styling, layering and independent editability.
 Do not infer a native table from borders, aligned rows or two columns alone.
 Icon/title/body lists are `repeated_component_group` regions and must not emit
 `a:tbl`; classify them before E3 and keep their children independently editable.
@@ -171,8 +163,11 @@ Use `references/icon-asset-protocol.md` and `references/imagegen-sheet-slicing.m
 `references/chart-reconstruction.md` for every chart. A source crop is valid
 only with bbox and source hash; missing assets use the declared generation
 route and remain independent assets after extraction. For icons, gradient
-visuals and complex artistic elements, the route is native `imagegen` by
-default; if generation fails, pause and ask the user to choose exactly one:
+visuals and complex artistic elements, prefer exact `source_reuse` when the
+supplied reference contains a complete, unobstructed, text-free asset that can
+be isolated with a recorded bbox and source hash. Use native `imagegen` only
+when exact isolation is impossible or the asset is missing; if generation
+fails, pause and ask the user to choose exactly one:
 continue/retry native imagegen, or use original-image crop/cutout
 (`source_reuse`). Never make that choice implicitly. Record the explicit user
 decision, reason and timestamp in the asset manifest; an undecided asset is
@@ -180,13 +175,31 @@ blocked. For `source_reuse` crops,
 the delivered-file hash alone is insufficient: record `source_crop_policy` and
 the canonical RGBA `source_crop_sha256`, then run
 `validate_source_crop_integrity.py`. For icons, gradient visuals and complex
-artistic elements, source crops are reference/QA evidence only and never the
-delivered final asset: those classes must use native `imagegen` and remain
-independent assets. Run `validate_imagegen_final_assets.py --strict` before
+artistic elements, source-locked crops may be delivered as independent L2
+assets when they pass crop-integrity, text-free, placement and hash gates.
+Never replace an exact authoritative icon with a merely similar generated icon
+to satisfy a routing preference. Run `validate_imagegen_final_assets.py --strict` before
 composition and after the final render. Exact crops must
 match the declared source bbox pixel-for-pixel; derived crops must explicitly
 declare their alpha/processing step. This prevents a neighboring crop from
 passing merely because its metadata and file hash are internally consistent.
+
+For B4 overlay assets, use a transparent-first generation contract. Ask native
+imagegen for genuine RGBA transparency on the first attempt and validate alpha
+before doing any matting. A valid transparent result goes directly to B5
+slicing; do not generate or derive alternate red, white, gray, green, or
+magenta-background versions as candidate assets. A local neutral/contact-sheet
+composite may be created once for QA, but it is `qa_preview_only`, is never a
+generation attempt, and must not enter the PPTX or canonical asset list.
+
+If direct alpha fails, edit that same generated asset to transparency once.
+Only if the transparent edit also fails may the run request one flat chroma-key
+version and execute `chroma_key.py`. Record the fallback level and key color;
+never cycle through multiple key colors. For multi-icon sheets, retry only the
+failed cells and splice them back into the approved roster. Cache accepted
+assets by reference SHA, source bboxes, normalized prompt, backend, and style
+lock so resumed runs do not regenerate unchanged icons. The manifest must
+separate billable generation/edit calls from local derivatives and QA previews.
 
 Run the reference-fidelity asset-boundary subgate after the contact sheet and
 after the final render. It must check for neighboring text/separators/header
@@ -211,6 +224,18 @@ under the brand exception.
 For every reference-led page, run the authoring contract gate before
 composition and again after the final render:
 
+Before issuing the Artifact Tool marker, every `reference-reconstruction`
+request must also run `scripts/reference_preflight.py` against its unique run
+root. A passing authoring-contract report alone is insufficient: it verifies
+the backend and native-object mechanics but cannot prove that the reference's
+icon and illustration inventory was covered. If PageGraph identifies any
+icon, badge, decorative art, complex illustration, gradient or texture,
+`reference_preflight.py` must find a strict `imagegen-assets-manifest.json`
+with one approved independent asset for every required ID. Missing coverage is
+a blocker; native-shape approximations are not a substitute for that asset
+route. Record the preflight report in the checkpoint before H and require it
+again at final delivery.
+
 ```bash
 python3 scripts/validate_authoring_contract.py --strict \
   --report authoring-contract.json
@@ -220,6 +245,22 @@ The authoring contract is not a status note: it must identify the JS ESM
 builder, `@oai/artifact-tool`, exactly one artifact-operation marker, the
 actual final output, and each independent image exception. Missing or stale
 evidence blocks delivery; it is never repaired by rasterizing semantic content.
+
+Use the repository-owned adapter for the strict authoring pass. It consumes the
+same normalized layout contract as the compatibility composer and writes the
+PPTX directly through Artifact Tool:
+
+```bash
+python3 scripts/compose_pptx.py layout.json output.pptx \
+  --authoring-backend artifact-tool \
+  --node "$CODEX_PRIMARY_RUNTIME_NODE" \
+  --node-modules "$CODEX_PRIMARY_RUNTIME_NODE_MODULES" \
+  --font-dir assets/fonts --strict-input
+```
+
+The command emits an adjacent `output.artifact-tool.json` report and inspect
+NDJSON. Keep the historical default only for frozen compatibility fixtures;
+new image-to-editable runs must select `artifact-tool` and retain its report.
 
 Never assume a generated asset sheet is a uniform grid. Before B5, inspect
 alpha row/column spans and classify the sheet as `uniform_grid`, `variable_row`,
@@ -246,6 +287,14 @@ gradients have been composed. Run
 part set, media bytes, picture count, text-run/style digest, or gradient count
 changes. This is a technical preservation gate; the repaired file still needs
 rendered visual comparison and human review.
+
+When the root skill supplies an A–O checkpoint, consume its approved manifests
+and font evidence rather than creating a second run state. The shared
+`references/incremental-optimization-protocol.md`, `references/tool-adapter.md`
+and `references/font-preflight.md` define the resume, staging and font
+contracts. A changed source or font hash invalidates this worker's affected
+pages and all downstream evidence; it never lowers the native editability
+target or skips finalizer and final-render checks.
 ## E3 — Author editable objects
 
 1. Build/update the canonical slide-object manifest before composition.

@@ -6,7 +6,8 @@ produce.
 
 ## Classify before slicing
 
-Read the alpha channel of the chroma-keyed sheet and record occupied row and
+Read the alpha channel of the direct transparent sheet, or of the chroma-keyed
+fallback sheet, and record occupied row and
 column spans. Classify it as:
 
 - `uniform_grid`: every row has the same object count and comparable spacing;
@@ -42,8 +43,15 @@ with a fallback that makes Chinese text disappear.
 
 ## Required evidence
 
-Preserve the raw generated path, chroma-keyed path, contact sheet, crop
-manifest and final independent object IDs. Row-aware and full-row crops are
+Preserve the raw generated path, the validated-alpha path, any conditional
+chroma-keyed fallback path, one contact sheet, crop manifest and final
+independent object IDs. Do not require a chroma-keyed path when direct alpha
+passed. Row-aware and full-row crops are
 derived crops of an imagegen asset, not `source_reuse`. The final manifest must
 pass strict imagegen validation and the rendered slide must be compared with
 the frozen reference.
+
+If only some cells fail, keep the accepted crops and regenerate only the failed
+asset IDs. Record `full_sheet_retries: 0` unless the entire sheet is unusable.
+QA background composites are local derivatives, not image-generation outputs;
+keep at most one consolidated preview and exclude it from delivered assets.

@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.12.03
+  package_revision: 2026.09.14.01
 ---
 
 # AI PPT Plus Orchestrator
@@ -15,6 +15,11 @@ outline, route decisions, design-system revision, deck-wide state, report
 aggregation, human closeout, and delivery eligibility. It does not duplicate
 the workers' generation or reconstruction procedures.
 
+Chinese PPTX authoring defaults to Microsoft YaHei (`微软雅黑`) through
+`assets/default-font-policy.json`. Resolve the installed licensed Windows font
+without copying its binary into the skill; fail closed or request explicit
+fallback approval when it is unavailable.
+
 The repository is one bundle with three self-contained skill directories.
 The repository root is the `ai-ppt-plus` Super skill; each worker owns its own
 `scripts/`, `references/`, `assets/`, package validator, and tests. Read
@@ -24,6 +29,10 @@ module/step/tool map, cache policy and recovery policy. Validate the bundle
 before intake:
 
 For reference reconstruction, read `references/semantic-layout-classification.md`
+and classify every table-like region as native table, repeated component, or
+blocking ambiguous. Never default insufficient semantic evidence to a native
+table; preserve the reference geometry, styling, layering and editability when
+selecting the authoring primitive.
 before choosing native tables. Visual grid evidence is not table semantics;
 ambiguous icon/title/body lists must be classified as repeated component groups
 and must pass both the object-type gate and the unchanged visual gates.
@@ -59,6 +68,18 @@ for inspection and QA only; `python-pptx` is not a creation or repair fallback
 and must not reopen or resave the final deck. Bind the run with
 `scripts/validate_authoring_contract.py --strict` and record the builder and
 artifact-tool render evidence before finalization.
+
+The checked-in strict builder is declared by the `strict_authoring` route and
+is invoked through the worker composer, so preflight, font registration,
+native object authoring and the inspect/report receipts stay on one path:
+
+```bash
+python3 ai-ppt-editable/scripts/compose_pptx.py layout.json output.pptx \
+  --authoring-backend artifact-tool \
+  --node "$CODEX_PRIMARY_RUNTIME_NODE" \
+  --node-modules "$CODEX_PRIMARY_RUNTIME_NODE_MODULES" \
+  --font-dir ai-ppt-editable/assets/fonts --strict-input
+```
 
 The root package validator also validates both child packages. If any
 configured runtime copy differs by revision or managed-file SHA-256,
@@ -162,6 +183,16 @@ manifests. Require editable-object evidence, rendered previews, technical QA,
 and a worker handoff. The worker may repair its own technical defects but may
 not change the story or redesign an approved reference.
 
+For B4 overlay assets, require a transparent-first generation transaction from
+the editable worker: direct RGBA generation, one edit-to-transparent retry if
+alpha validation fails, then at most one chroma-key fallback. A successful
+transparent result skips chroma processing. Alternate red/white/gray/green
+background composites are local QA previews, not generation attempts or
+canonical assets. Multi-icon retries must target only failed asset IDs, and
+accepted assets must be reused from a hash-bound cache. Require separate counts
+for billable generation/edit calls, local derivatives, QA previews, full-sheet
+retries, and single-asset retries in the worker manifest.
+
 After A's generated images/evidence and B's reviewed editable layout plan exist,
 the deterministic handoff can be executed in one command:
 
@@ -260,6 +291,21 @@ diagnostic unless the corresponding strict gate is requested.
 - No three-skill package change is valid unless all three entrypoints share the
   same `package_revision`, each directory passes its own package validation,
   and the root bundle validation passes.
+
+## Incremental reconstruction entrypoint
+
+For image/reference reconstruction, load
+`references/incremental-optimization-protocol.md`,
+`references/tool-adapter.md` and `references/font-preflight.md` before the
+first authoring command. Use `scripts/incremental_orchestrator.py` to create
+and resume the A–O checkpoint, `scripts/tool_adapter.py` for runtime,
+resource, geometry, command and staging boundaries, and
+`scripts/font_preflight.py` for fail-closed font evidence. Validate the stage
+table with `scripts/validate_stage_protocol.py` and a saved state with
+`scripts/validate_incremental_checkpoint.py`. A checkpoint hash
+mismatch invalidates only its affected stage and downstream stages. The
+protocol keeps the existing native-editability and finalizer gates; it never
+trades objects, render checks or evidence for speed.
 
 
 <!-- unattended-distillation:entrypoint -->

@@ -1,0 +1,18 @@
+{
+  "schema": "ai-ppt-plus/incremental-checkpoint/v1",
+  "schema_version": 1,
+  "run_id": "run-20260913-example",
+  "project_root": "C:/work/reconstruction",
+  "repository_sha": "8e070acb5e1b94b5aff743b47ebb675735904f0f",
+  "package_revision": "2026.09.14.01",
+  "inputs": [{"path": "upload/page-1.png", "exists": true, "sha256": "", "size": 0}],
+  "fonts": [{"path": "assets/fonts/NotoSansCJK-Regular.otf", "exists": true, "sha256": "", "size": 0}],
+  "stages": {},
+  "artifact_marker": {"status": "pending", "receipt_sha256": null},
+  "build_source_sha": null,
+  "intermediate_pptx_sha": null,
+  "final_pptx_sha": null,
+  "completed_validations": [],
+  "failures": [],
+  "resume": {"last_plan_at": null, "invalidated": [], "entry_stage": "A"}
+}

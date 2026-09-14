@@ -88,6 +88,25 @@ def test_background_mismatch_and_bad_hash_fail_closed():
             raise AssertionError("expected hash mismatch")
 
 
+def test_transparent_asset_rejects_opaque_matte_corners():
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "fake-transparent.png"
+        image = Image.new("RGBA", (32, 32), (255, 255, 255, 255))
+        for x in (15, 16):
+            for y in (15, 16):
+                image.putpixel((x, y), (255, 255, 255, 0))
+        image.save(path, format="PNG")
+        try:
+            validate_generated_asset(
+                _request("transparent"),
+                {"object_id": "icon", "file": str(path), "background_mode": "transparent"},
+            )
+        except AssetGenerationError as exc:
+            assert "corners" in str(exc)
+        else:
+            raise AssertionError("expected opaque matte corners to fail transparent validation")
+
+
 def test_object_binding_mismatch_fails_closed():
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "icon.png"
