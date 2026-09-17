@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.09.17.01",
+  "package_revision": "2026.09.18.01",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -14,14 +14,8 @@
     ]
   },
   "bundled_skills": [
-    {
-      "name": "ai-ppt-visual-gen",
-      "root": "ai-ppt-visual-gen"
-    },
-    {
-      "name": "ai-ppt-editable",
-      "root": "ai-ppt-editable"
-    }
+    {"name": "ai-ppt-visual-gen", "root": "ai-ppt-visual-gen"},
+    {"name": "ai-ppt-editable", "root": "ai-ppt-editable"}
   ],
   "managed_globs": [
     "SKILL.md",
@@ -68,6 +62,10 @@
     "scripts/tool_adapter.py",
     "scripts/font_preflight.py",
     "scripts/ppt_text_fit.py",
+    "scripts/text_fit_deck.py",
+    "scripts/normalize_layout_fidelity.py",
+    "scripts/patch_chart_blank_series.py",
+    "scripts/curate_icon_assets.py",
     "scripts/validate_transparent_assets.py",
     "scripts/audit_pptx_layers.py",
     "scripts/validate_incremental_checkpoint.py",
