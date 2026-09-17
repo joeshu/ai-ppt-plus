@@ -492,17 +492,21 @@ function addChart(slide, spec, theme, deck, dimensions) {
   const pos = position(spec, deck, dimensions);
   const type = String(spec.type || "column").toLowerCase();
   const chartType = type === "column" ? "bar" : type;
+  const series = spec.series || [];
   const config = {
     position: pos,
     title: spec.title,
     categories: (spec.categories || []).map(String),
-    series: spec.series || [],
-    hasLegend: spec.legend !== undefined ? Boolean(spec.legend) : (spec.series || []).length > 1,
+    series,
+    hasLegend: spec.legend !== undefined ? Boolean(spec.legend) : series.length > 1,
     ...(type === "column" ? { barOptions: { direction: "column" } } : {}),
-    ...(spec.colors ? { series: (spec.series || []).map((series, index) => ({ ...series, fill: series.fill || spec.colors[index] })) } : {}),
+    ...(spec.colors ? { series: series.map((item, index) => ({ ...item, fill: item.fill || spec.colors[index] })) } : {}),
     ...(spec.data_labels ? { dataLabels: spec.data_labels } : {}),
     ...(spec.x_axis ? { xAxis: spec.x_axis } : {}),
     ...(spec.y_axis ? { yAxis: spec.y_axis } : {}),
+    ...(spec.display_blanks_as || spec.displayBlanksAs
+      ? { displayBlanksAs: spec.display_blanks_as || spec.displayBlanksAs }
+      : {}),
   };
   return slide.charts.add(chartType, config);
 }
