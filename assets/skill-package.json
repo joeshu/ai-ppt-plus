@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.09.14.01",
+  "package_revision": "2026.09.17.01",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -67,6 +67,9 @@
     "scripts/incremental_orchestrator.py",
     "scripts/tool_adapter.py",
     "scripts/font_preflight.py",
+    "scripts/ppt_text_fit.py",
+    "scripts/validate_transparent_assets.py",
+    "scripts/audit_pptx_layers.py",
     "scripts/validate_incremental_checkpoint.py",
     "scripts/validate_stage_protocol.py",
     "assets/route-decision-native-authoring.template.json",
@@ -109,7 +112,8 @@
     "references/skill-routing.md",
     "references/incremental-optimization-protocol.md",
     "references/tool-adapter.md",
-    "references/font-preflight.md"
+    "references/font-preflight.md",
+    "references/knight-fidelity-port.md"
   ],
   "runtime_sync": {
     "required": true,

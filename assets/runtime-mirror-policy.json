@@ -30,6 +30,7 @@
         "references/visual-intermediate.md",
         "references/outline-thought-table.md",
         "references/rendered-slide-qa.md",
+        "references/incremental-optimization-protocol.md",
         "references/operations-matrix.md"
       ],
       "required_paths": [
@@ -197,6 +198,22 @@
         {
           "path": "references/optimization-validation.md",
           "reason": "worker-specific optimization validation entrypoints and artifact-tool runtime notes"
+        },
+        {
+          "path": "references/knight-fidelity-port.md",
+          "reason": "worker-specific full last-mile fidelity contract; root keeps an orchestration binding stub"
+        },
+        {
+          "path": "scripts/ppt_text_fit.py",
+          "reason": "worker-owned portable text-fit implementation; root exposes a delegation wrapper"
+        },
+        {
+          "path": "scripts/validate_transparent_assets.py",
+          "reason": "worker-owned alpha geometry validator; root exposes a delegation wrapper"
+        },
+        {
+          "path": "scripts/audit_pptx_layers.py",
+          "reason": "worker-owned physical shape-tree audit; root exposes a delegation wrapper"
         }
       ]
     }

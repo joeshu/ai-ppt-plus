@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.14.01
+  package_revision: 2026.09.17.01
 ---
 
 # AI PPT Plus Orchestrator
@@ -147,7 +147,10 @@ workers return evidence and issues, not replacement authority.
 
 For `reference-reconstruction`, `editable-pptx`, and `native-authoring`,
 `ai-ppt-editable` is the primary execution engine. The route decision must
-persist `primary_engine`, `fallback_policy`, `fallback_used`,
+also bind `references/knight-fidelity-port.md`: text-slot preflight,
+content-aware grid cutting, alpha-centroid placement, physical z-order audit
+and local crop QA are mandatory last-mile evidence.
+The route decision must persist `primary_engine`, `fallback_policy`, `fallback_used`,
 `fallback_events`, and `editable_object_policy` before delegation.
 
 `GordenImage2PPTX` is not a fourth business skill and is never selected as the
