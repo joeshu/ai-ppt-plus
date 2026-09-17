@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 import argparse
+import io
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 import numpy as np
+from openpyxl import load_workbook
 from PIL import Image, ImageDraw
 from pptx import Presentation
+from pptx.chart.data import ChartData
+from pptx.enum.chart import XL_CHART_TYPE
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.util import Inches
 
@@ -16,6 +21,7 @@ sys.path.insert(0, str(SCRIPTS))
 
 from asset_placement import alpha_centroid_fit
 from audit_pptx_layers import audit
+from patch_chart_blank_series import patch_chart
 from ppt_text_fit import best_fit
 from slice_grid import _detect_grid, _square_repack
 from validate_transparent_assets import validate
@@ -75,6 +81,36 @@ def test_alpha_centroid_fit_places_asymmetric_asset_by_visible_subject():
         assert width > 4000 and height > 3000
         assert (x, y, width, height) != (1000, 2000, 4000, 3000)
         assert y < 2000
+
+
+def test_native_chart_gap_removes_future_zero_points_from_xml_and_workbook():
+    with tempfile.TemporaryDirectory() as temp:
+        root = Path(temp)
+        source = root / "chart-source.pptx"
+        repaired = root / "chart-repaired.pptx"
+        presentation = Presentation()
+        slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+        data = ChartData()
+        data.categories = [f"M{index}" for index in range(1, 14)]
+        data.add_series("2025", tuple(range(120, 107, -1)))
+        data.add_series("2026", (96, 91, 87, 82, 78, 73, 69, 0, 0, 0, 0, 0, 0))
+        slide.shapes.add_chart(XL_CHART_TYPE.LINE, Inches(1), Inches(1), Inches(8), Inches(4), data)
+        presentation.save(source)
+
+        report = patch_chart(source, repaired, chart_index=0, series_index=1, first_blank_index=7)
+        assert report["valid"]
+        assert report["patched_series_count"] == 7
+        assert report["display_blanks_as"] == "gap"
+
+        with zipfile.ZipFile(repaired, "r") as package:
+            chart_xml = package.read(report["chart_path"]).decode("utf-8")
+            workbook = load_workbook(io.BytesIO(package.read(report["workbook_path"])), data_only=False)
+        assert "$C$2:$C$8" in chart_xml
+        assert "$C$2:$C$14" not in chart_xml
+        assert 'dispBlanksAs val="gap"' in chart_xml
+        sheet = workbook["ChartData"]
+        assert [sheet.cell(row, 3).value for row in range(2, 9)] == [96, 91, 87, 82, 78, 73, 69]
+        assert all(sheet.cell(row, 3).value is None for row in range(9, 15))
 
 
 def _deck(path: Path, icon_path: Path, bad_order: bool) -> None:
