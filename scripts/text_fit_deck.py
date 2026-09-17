@@ -117,9 +117,39 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
         text = _text(spec)
         result = best_fit(_make_args(deck, spec, text, box, font_file))
         target = result.get("target") or {}
-        slots.append({"slide": slide_no, "object_id": object_id, "text": text, "box_px": [round(box[0], 2), round(box[1], 2)], "target_pt": _target_pt(spec), "target_fits": bool(target.get("fits")), "recommended_pt": result.get("recommended_pt"), "reference_scale": result.get("reference_scale"), "line_count": target.get("line_count", result.get("line_count")), "font_path": result.get("font_path")})
+        reference_scale = result.get("reference_scale")
+        target_fits = bool(target.get("fits"))
+        geometry_defect = (not target_fits) or (reference_scale is not None and float(reference_scale) < 0.90)
+        slots.append({
+            "slide": slide_no,
+            "object_id": object_id,
+            "text": text,
+            "box_px": [round(box[0], 2), round(box[1], 2)],
+            "target_pt": _target_pt(spec),
+            "target_fits": target_fits,
+            "recommended_pt": result.get("recommended_pt"),
+            "reference_scale": reference_scale,
+            "required_box_px": target.get("required_box_px"),
+            "box_deficit_px": target.get("box_deficit_px"),
+            "geometry_defect": geometry_defect,
+            "repair_priority": "geometry_first" if geometry_defect else "none",
+            "line_count": target.get("line_count", result.get("line_count")),
+            "font_path": result.get("font_path"),
+        })
     not_fit = [slot for slot in slots if not slot["target_fits"]]
-    return {"schema": "ai-ppt-plus/text-fit-deck/v1", "valid": True, "layout": str(layout), "slot_count": len(slots), "fit_count": len(slots) - len(not_fit), "target_not_fit_count": len(not_fit), "all_slots_measured": True, "slots": slots}
+    geometry_defects = [slot for slot in slots if slot["geometry_defect"]]
+    return {
+        "schema": "ai-ppt-plus/text-fit-deck/v2",
+        "valid": True,
+        "layout": str(layout),
+        "slot_count": len(slots),
+        "fit_count": len(slots) - len(not_fit),
+        "target_not_fit_count": len(not_fit),
+        "geometry_defect_count": len(geometry_defects),
+        "all_slots_measured": True,
+        "repair_policy": "geometry_first_font_shrink_last",
+        "slots": slots,
+    }
 
 
 def main() -> int:
@@ -132,11 +162,11 @@ def main() -> int:
     try:
         report = audit_layout(args.layout.resolve(), font_file=args.font_file)
     except Exception as exc:
-        print(json.dumps({"schema": "ai-ppt-plus/text-fit-deck/v1", "valid": False, "status": "blocked", "code": "text_fit_deck_failed", "message": str(exc)}, ensure_ascii=False))
+        print(json.dumps({"schema": "ai-ppt-plus/text-fit-deck/v2", "valid": False, "status": "blocked", "code": "text_fit_deck_failed", "message": str(exc)}, ensure_ascii=False))
         return 2
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({k: report[k] for k in ("schema", "valid", "slot_count", "fit_count", "target_not_fit_count")}, ensure_ascii=False))
+    print(json.dumps({k: report[k] for k in ("schema", "valid", "slot_count", "fit_count", "target_not_fit_count", "geometry_defect_count")}, ensure_ascii=False))
     return 3 if args.fail_on_target_not_fit and report["target_not_fit_count"] else 0
 
 
