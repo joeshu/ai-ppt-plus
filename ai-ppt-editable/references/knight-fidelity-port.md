@@ -29,7 +29,12 @@ visual gates; these rules strengthen the last-mile reconstruction path.
    optional `visual_scale` (for example `0.86` on oversized pictograms), then
    run `normalize_layout_fidelity.py` to convert the visible-content target into
    ordinary authoring coordinates. Edge decorations should stay on `contain`
-   unless bleed is explicit.
+   unless bleed is explicit. For hard-region replay, PageGraph/Visual Lock
+   should also write `reference_visual_bbox_px: [x,y,w,h]` for the visible
+   subject. The normalizer must fit the alpha-visible bbox to that source bbox,
+   not to the transparent PNG canvas. If the source lock has a measured visual
+   centroid, add `reference_visual_centroid_px: [cx,cy]`; this takes precedence
+   over bbox-center alignment. This is the preferred Card/icon repair route.
 5. **Native chart gap preservation** — Missing future values must never be
    serialized as zeros. After Artifact Tool authoring, use
    `patch_chart_blank_series.py` to materialize an embedded workbook and shorten
@@ -75,6 +80,7 @@ python3 scripts/audit_pptx_layers.py repaired.pptx \
 ```
 
 The compact run report must list full text-fit coverage, target-fit exceptions,
-alpha-centroid placement evidence, native chart gap evidence, transparent-asset
-QA, physical layer audit and normalized local-crop evidence. Code generation
-without the final render and crop evidence is incomplete.
+alpha-centroid placement evidence, source visual-lock bbox evidence, native chart
+gap evidence, transparent-asset QA, physical layer audit and normalized
+local-crop evidence. Code generation without the final render and crop evidence
+is incomplete.
