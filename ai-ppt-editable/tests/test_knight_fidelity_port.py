@@ -19,7 +19,7 @@ from pptx.util import Inches
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from asset_placement import alpha_centroid_fit
+from asset_placement import alpha_centroid_fit, reference_crop_fit, reference_foreground_geometry
 from audit_pptx_layers import audit
 from patch_chart_blank_series import patch_chart
 from ppt_text_fit import best_fit
@@ -83,6 +83,25 @@ def test_alpha_centroid_fit_places_asymmetric_asset_by_visible_subject():
         assert y < 2000
 
 
+def test_reference_crop_fit_matches_visible_subject_geometry_without_source_crop_fallback():
+    with tempfile.TemporaryDirectory() as temp:
+        root = Path(temp)
+        asset = root / "generated.png"
+        reference = root / "reference.png"
+        generated = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
+        ImageDraw.Draw(generated).ellipse((10, 20, 50, 60), fill=(220, 0, 0, 255))
+        generated.save(asset)
+        crop = Image.new("RGB", (200, 100), (250, 250, 250))
+        ImageDraw.Draw(crop).ellipse((120, 25, 160, 65), fill=(220, 0, 0))
+        crop.save(reference)
+        geo = reference_foreground_geometry(reference)
+        assert geo["foreground_bbox_px"][0] >= 118
+        x, y, width, height = reference_crop_fit(asset, reference, 1000, 2000, 4000, 2000)
+        assert x > 3000
+        assert width > 1500
+        assert height > 1500
+
+
 def test_native_chart_gap_removes_future_zero_points_from_xml_and_workbook():
     with tempfile.TemporaryDirectory() as temp:
         root = Path(temp)
@@ -96,12 +115,10 @@ def test_native_chart_gap_removes_future_zero_points_from_xml_and_workbook():
         data.add_series("2026", (96, 91, 87, 82, 78, 73, 69, 0, 0, 0, 0, 0, 0))
         slide.shapes.add_chart(XL_CHART_TYPE.LINE, Inches(1), Inches(1), Inches(8), Inches(4), data)
         presentation.save(source)
-
         report = patch_chart(source, repaired, chart_index=0, series_index=1, first_blank_index=7)
         assert report["valid"]
         assert report["patched_series_count"] == 7
         assert report["display_blanks_as"] == "gap"
-
         with zipfile.ZipFile(repaired, "r") as package:
             chart_xml = package.read(report["chart_path"]).decode("utf-8")
             workbook = load_workbook(io.BytesIO(package.read(report["workbook_path"])), data_only=False)
