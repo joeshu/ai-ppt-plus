@@ -53,20 +53,10 @@ def inspect_entrypoint(root: Path, package: dict, issues: list[dict]) -> None:
     text = path.read_text(encoding="utf-8")
     name = NAME_RE.search(text)
     if not name or name.group(1) != skill:
-        issues.append({
-            "severity": "blocker",
-            "code": "entrypoint_name_mismatch",
-            "expected": skill,
-            "observed": name.group(1) if name else None,
-        })
+        issues.append({"severity": "blocker", "code": "entrypoint_name_mismatch", "expected": skill, "observed": name.group(1) if name else None})
     declared_revision = REVISION_RE.search(text)
     if not declared_revision or declared_revision.group(1) != revision:
-        issues.append({
-            "severity": "blocker",
-            "code": "entrypoint_revision_mismatch",
-            "expected": revision,
-            "observed": declared_revision.group(1) if declared_revision else None,
-        })
+        issues.append({"severity": "blocker", "code": "entrypoint_revision_mismatch", "expected": revision, "observed": declared_revision.group(1) if declared_revision else None})
 
 
 def inspect_self_contained(root: Path, package: dict, issues: list[dict]) -> None:
@@ -135,8 +125,12 @@ def inspect_bundled_skills(root: Path, package: dict, revision, issues: list[dic
             continue
         name = item.get("name")
         relative = safe_relative(item.get("root"), code="bundled_skill_root_invalid", issues=issues)
+        expected_revision = item.get("package_revision") or revision
         if not isinstance(name, str) or not name:
             issues.append({"severity": "blocker", "code": "bundled_skill_name_invalid", "index": index})
+            continue
+        if not isinstance(expected_revision, str) or not expected_revision:
+            issues.append({"severity": "blocker", "code": "bundled_skill_revision_contract_missing", "name": name})
             continue
         if name in seen_names:
             issues.append({"severity": "blocker", "code": "bundled_skill_duplicate_name", "name": name})
@@ -152,18 +146,13 @@ def inspect_bundled_skills(root: Path, package: dict, revision, issues: list[dic
         try:
             child = load_json(manifest)
         except Exception as exc:
-            issues.append({
-                "severity": "blocker",
-                "code": "bundled_skill_manifest_unreadable",
-                "name": name,
-                "message": f"{type(exc).__name__}: {exc}",
-            })
+            issues.append({"severity": "blocker", "code": "bundled_skill_manifest_unreadable", "name": name, "message": f"{type(exc).__name__}: {exc}"})
         if child.get("schema") != PACKAGE_SCHEMA:
             issues.append({"severity": "blocker", "code": "bundled_skill_schema_invalid", "name": name, "observed": child.get("schema")})
         if child.get("skill") != name:
             issues.append({"severity": "blocker", "code": "bundled_skill_name_mismatch", "expected": name, "observed": child.get("skill")})
-        if child.get("package_revision") != revision:
-            issues.append({"severity": "blocker", "code": "bundled_skill_revision_mismatch", "name": name, "expected": revision, "observed": child.get("package_revision")})
+        if child.get("package_revision") != expected_revision:
+            issues.append({"severity": "blocker", "code": "bundled_skill_revision_mismatch", "name": name, "expected": expected_revision, "observed": child.get("package_revision")})
         child_issues: list[dict] = []
         if child:
             inspect_entrypoint(child_root, child, child_issues)
@@ -171,7 +160,7 @@ def inspect_bundled_skills(root: Path, package: dict, revision, issues: list[dic
             collect_managed_files(child_root, child, child_issues)
         for issue in child_issues:
             issues.append({**issue, "bundled_skill": name})
-        evidence.append({"name": name, "root": str(child_root), "manifest": str(manifest), "issues": child_issues})
+        evidence.append({"name": name, "root": str(child_root), "manifest": str(manifest), "expected_revision": expected_revision, "issues": child_issues})
     return evidence
 
 
@@ -189,7 +178,6 @@ def main() -> int:
     except Exception as exc:
         package = {}
         issues.append({"severity": "blocker", "code": "package_manifest_unreadable", "message": f"{type(exc).__name__}: {exc}"})
-
     if package.get("schema") != PACKAGE_SCHEMA:
         issues.append({"severity": "blocker", "code": "package_schema_invalid", "observed": package.get("schema")})
     skill = package.get("skill")
@@ -198,15 +186,12 @@ def main() -> int:
     revision = package.get("package_revision")
     if not isinstance(revision, str) or not revision:
         issues.append({"severity": "blocker", "code": "package_revision_missing"})
-
     inspect_entrypoint(root, package, issues)
     inspect_self_contained(root, package, issues)
     file_hashes = collect_managed_files(root, package, issues)
     bundled_evidence = inspect_bundled_skills(root, package, revision, issues)
     reference_records, reference_issues = scan_skill_references(root)
-    for issue in reference_issues:
-        issues.append(issue)
-
+    issues.extend(reference_issues)
     runtime_evidence = None
     if args.runtime_skill_dir:
         runtime_root = Path(args.runtime_skill_dir).resolve()
@@ -221,21 +206,7 @@ def main() -> int:
             if observed != expected:
                 runtime_evidence["mismatches"].append({"path": relative, "expected": expected, "observed": observed})
                 issues.append({"severity": "blocker", "code": "runtime_file_mismatch", "path": relative})
-
-    result = {
-        "schema": "ai-ppt-plus/skill-package-validation/v2",
-        "valid": not issues,
-        "status": "passed" if not issues else "blocked",
-        "skill": skill,
-        "package_revision": revision,
-        "skill_dir": str(root),
-        "managed_file_count": len(file_hashes),
-        "required_files": file_hashes,
-        "bundled_skills": bundled_evidence,
-        "reference_integrity": {"valid": not reference_issues, "references": reference_records, "issues": reference_issues},
-        "runtime": runtime_evidence,
-        "issues": issues,
-    }
+    result = {"schema": "ai-ppt-plus/skill-package-validation/v2", "valid": not issues, "status": "passed" if not issues else "blocked", "skill": skill, "package_revision": revision, "skill_dir": str(root), "managed_file_count": len(file_hashes), "required_files": file_hashes, "bundled_skills": bundled_evidence, "reference_integrity": {"valid": not reference_issues, "references": reference_records, "issues": reference_issues}, "runtime": runtime_evidence, "issues": issues}
     if args.report:
         atomic_write_json(Path(args.report).resolve(), result)
     print(json.dumps(result, ensure_ascii=False))
