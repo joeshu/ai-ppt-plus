@@ -73,6 +73,30 @@ def main() -> int:
         assert "non_native_imagegen_backend" in codes
         assert "imagegen_evidence_file_missing" in codes
 
+        # Slicing a generated contact/sprite sheet is not an independent final
+        # asset.  The ancestry must fail even if copied_to has an innocent name.
+        contact_dir = root / "gen" / "contact-sheet"
+        contact_dir.mkdir()
+        sheet_source = contact_dir / "icons.png"
+        sheet_source.write_bytes(b"sheet")
+        sheet_copy = root / "editable" / "single-icon.png"
+        sheet_copy.write_bytes(b"sheet")
+        sheet_prompt = root / "prompts" / "sheet.txt"
+        sheet_prompt.write_text("icon sheet", encoding="utf-8")
+        sheet = root / "sheet.json"
+        sheet.write_text(json.dumps({
+            "provenance_policy": "imagegen_final_assets",
+            "assets": [{
+                "asset_id": "sheet-child", "asset_class": "icon", "provenance_mode": "imagegen",
+                "generated_source": "gen/contact-sheet/icons.png", "copied_to": "editable/single-icon.png",
+                "prompt_file": "prompts/sheet.txt", "backend": "native-imagegen", "sha256": sha(sheet_copy),
+                **geometry(),
+            }],
+        }), encoding="utf-8")
+        report = validate(sheet, strict=True)
+        assert not report["valid"]
+        assert "sheet_not_independent_asset" in {item["code"] for item in report["errors"]}
+
         source = root / "source.png"
         source.write_bytes(b"authoritative-source")
         fallback = root / "fallback.json"
