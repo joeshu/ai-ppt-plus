@@ -72,9 +72,36 @@ class AssetJobRuntimeTest(unittest.TestCase):
             record = json.loads(Path(state["registered"]).read_text(encoding="utf-8"))
             self.assertEqual(record["intended_slot_bbox_emu"], [100, 100, 300, 200])
             self.assertEqual(record["placement_bbox_emu"], [50, 60, 400, 400])
-            self.assertEqual(record["placement_transform"], "alpha-centroid-fit")
+            self.assertEqual(record["placement_transform"], "alpha-centroid-fit-contained")
             self.assertEqual(record["alpha_geometry"]["visible_alpha_bbox"], [0.2, 0.1, 0.8, 0.6])
             self.assertEqual(record["alpha_geometry"]["alpha_centroid"], [0.5, 0.35])
+
+    def test_asymmetric_alpha_centroid_cannot_push_visible_bbox_outside_slot(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "source.png"
+            generated = root / "generated.png"
+            Image.new("RGB", (100, 100), "white").save(source)
+            im = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
+            for x in range(20, 80):
+                for y in range(20, 80):
+                    alpha = 16 if y < 50 else 255
+                    im.putpixel((x, y), (220, 0, 20, alpha))
+            im.save(generated)
+            rt = AssetJobRuntime(
+                self._job(align_visible_alpha=True, visible_contain=1.0),
+                root,
+                source,
+                slide_size_emu=(1000, 500),
+            )
+            state = rt.register({"attempt": 1, "generated_source": str(generated)})
+            record = json.loads(Path(state["registered"]).read_text(encoding="utf-8"))
+            px, py, pw, ph = record["placement_bbox_emu"]
+            left, top, right, bottom = record["alpha_geometry"]["visible_alpha_bbox"]
+            self.assertGreaterEqual(px + left * pw, 100 - 1)
+            self.assertLessEqual(px + right * pw, 400 + 1)
+            self.assertGreaterEqual(py + top * ph, 100 - 1)
+            self.assertLessEqual(py + bottom * ph, 300 + 1)
 
     def test_cache_invalidates_when_delivered_bytes_change(self):
         with tempfile.TemporaryDirectory() as td:
