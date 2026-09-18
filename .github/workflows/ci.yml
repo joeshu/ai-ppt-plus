@@ -34,56 +34,15 @@ jobs:
           python scripts/probe_environment.py --output environment-report.json
           python scripts/validate_environment_contract.py --report environment-report.json --output environment-validation.json
           python scripts/validate_runtime_mirror.py --root . --report runtime-mirror-report.json
-      - name: Run standalone worker smoke tests
+      - name: Run standalone worker regression suites
         run: |
-          python ai-ppt-visual-gen/scripts/run_tests.py --output visual-skill-test-report.json
-          python ai-ppt-editable/scripts/run_tests.py --output editable-skill-test-report.json
-      - name: Run Astra reconstruction contract tests
-        run: |
-          python ai-ppt-editable/tests/test_astra_reconstruction.py
-          python ai-ppt-editable/tests/test_evidence_bridge.py
-          python ai-ppt-editable/tests/test_asset_orchestrator.py
-          python ai-ppt-editable/tests/test_asset_quality_qa.py
-          python ai-ppt-editable/tests/test_asset_retry_policy.py
-          python ai-ppt-editable/tests/test_repair_executors.py
-          python ai-ppt-editable/tests/test_batch_ingestion.py
-          python ai-ppt-editable/tests/test_accepted_state.py
-      - name: Run schema, DAG and package regressions
-        run: |
-          python tests/test_package_metadata.py
-          python tests/test_schema_contract.py
-          python tests/test_pipeline_dag.py
-          python tests/test_quality_gate.py
-          python tests/test_difference_graph.py
-          python tests/test_repair_router.py
-          python tests/test_manifest_bridge.py
-          python tests/test_astra_contract.py
-          python tests/test_evidence_bridge.py
-          python tests/test_asset_orchestrator.py
-          python tests/test_asset_quality_qa.py
-          python tests/test_asset_retry_policy.py
-          python tests/test_repair_executors.py
-          python tests/test_batch_ingestion.py
-          python tests/test_accepted_state.py
-      - name: Run core regression suite
-        run: python scripts/run_tests.py --output test-report.json --jobs 4
-      - name: Run strict P2 guard smoke tests
-        run: |
-          python tests/test_reference_input_preflight.py
-          python tests/test_asset_hashes.py
-          python tests/test_report_bundle.py
-          python tests/test_visual_assertions.py
-          python tests/test_content_inventory.py
-          python tests/test_multipage_layout.py
-          python tests/test_atomic_output.py
-          python tests/test_authoring_contract.py
-          python tests/test_preview_consistency.py
-          python tests/test_performance_report.py
-          python tests/test_component_instances.py
-          python tests/test_run_pipeline_gate.py
+          python ai-ppt-visual-gen/scripts/run_tests.py --report visual-skill-test-report.json --parallel-workers 4
+          python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json --parallel-workers 4
+      - name: Run complete root regression suite
+        run: python scripts/run_tests.py --report test-report.json --parallel-workers 4
       - name: Check whitespace
         run: git diff --check
-      - name: Upload test report
+      - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
