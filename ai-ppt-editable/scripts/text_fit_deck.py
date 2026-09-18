@@ -27,7 +27,7 @@ def _text(spec: object) -> str:
 
 
 def _target_pt(spec: dict, default: float = 18.0) -> float:
-    candidates = [spec.get("font_size_pt"), spec.get("size_pt"), spec.get("size")]
+    candidates = [spec.get("font_size_pt"), spec.get("size_pt"), spec.get("size"), spec.get("font_size")]
     run_sizes = []
     for run in spec.get("runs") or []:
         if isinstance(run, dict):
@@ -67,13 +67,14 @@ def _box_px(deck: dict, spec: dict, *, fraction: tuple[float, float] | None = No
 
 
 def _slots(deck: dict):
+    """Yield every formal text-producing path with a stable slot kind."""
     for slide_no, slide in enumerate(deck.get("slides") or [], 1):
         for index, spec in enumerate(slide.get("texts") or []):
             if _text(spec).strip():
-                yield slide_no, f"text:{spec.get('object_id') or spec.get('name') or index+1}", spec, _box_px(deck, spec)
+                yield slide_no, "text", f"text:{spec.get('object_id') or spec.get('name') or index+1}", spec, _box_px(deck, spec)
         for index, spec in enumerate(slide.get("shapes") or []):
             if _text(spec).strip():
-                yield slide_no, f"shape:{spec.get('object_id') or spec.get('name') or index+1}", spec, _box_px(deck, spec)
+                yield slide_no, "shape_text", f"shape:{spec.get('object_id') or spec.get('name') or index+1}", spec, _box_px(deck, spec)
         for table_index, table in enumerate(slide.get("tables") or []):
             rows = table.get("rows") or []
             columns = int(table.get("columns") or max((len(row) for row in rows if isinstance(row, list)), default=1))
@@ -92,13 +93,13 @@ def _slots(deck: dict):
                     if isinstance(cell, dict):
                         style.update(cell)
                     style["text"] = text
-                    yield slide_no, f"table:{table.get('object_id') or table_index+1}:{row_index},{col_index}", style, (col_w, row_h)
+                    yield slide_no, "table_cell", f"table:{table.get('object_id') or table_index+1}:{row_index},{col_index}", style, (col_w, row_h)
         for chart_index, chart in enumerate(slide.get("charts") or []):
             title = chart.get("title")
             if title:
                 spec = {"text": str(title), "font_size_pt": chart.get("title_font_size_pt", 16), "font": chart.get("font") or deck.get("font_family")}
                 chart_w, chart_h = _box_px(deck, chart)
-                yield slide_no, f"chart:{chart.get('object_id') or chart_index+1}:title", spec, (chart_w, max(24.0, chart_h * 0.15))
+                yield slide_no, "chart_title", f"chart:{chart.get('object_id') or chart_index+1}:title", spec, (chart_w, max(24.0, chart_h * 0.15))
 
 
 def _make_args(deck: dict, spec: dict, text: str, box: tuple[float, float], font_file: str | None) -> Namespace:
@@ -113,7 +114,9 @@ def _make_args(deck: dict, spec: dict, text: str, box: tuple[float, float], font
 def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
     deck = json.loads(layout.read_text(encoding="utf-8"))
     slots = []
-    for slide_no, object_id, spec, box in _slots(deck):
+    coverage: dict[str, int] = {"text": 0, "shape_text": 0, "table_cell": 0, "chart_title": 0}
+    for slide_no, kind, object_id, spec, box in _slots(deck):
+        coverage[kind] = coverage.get(kind, 0) + 1
         text = _text(spec)
         result = best_fit(_make_args(deck, spec, text, box, font_file))
         target = result.get("target") or {}
@@ -122,6 +125,7 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
         geometry_defect = (not target_fits) or (reference_scale is not None and float(reference_scale) < 0.90)
         slots.append({
             "slide": slide_no,
+            "kind": kind,
             "object_id": object_id,
             "text": text,
             "box_px": [round(box[0], 2), round(box[1], 2)],
@@ -138,15 +142,20 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
         })
     not_fit = [slot for slot in slots if not slot["target_fits"]]
     geometry_defects = [slot for slot in slots if slot["geometry_defect"]]
+    measured_ids = [slot["object_id"] for slot in slots]
+    duplicate_ids = sorted({item for item in measured_ids if measured_ids.count(item) > 1})
     return {
-        "schema": "ai-ppt-plus/text-fit-deck/v2",
-        "valid": True,
+        "schema": "ai-ppt-plus/text-fit-deck/v3",
+        "valid": not duplicate_ids,
         "layout": str(layout),
         "slot_count": len(slots),
         "fit_count": len(slots) - len(not_fit),
         "target_not_fit_count": len(not_fit),
         "geometry_defect_count": len(geometry_defects),
         "all_slots_measured": True,
+        "coverage_by_kind": coverage,
+        "measured_object_ids": measured_ids,
+        "duplicate_object_ids": duplicate_ids,
         "repair_policy": "geometry_first_font_shrink_last",
         "slots": slots,
     }
@@ -158,15 +167,23 @@ def main() -> int:
     parser.add_argument("--font-file")
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--fail-on-target-not-fit", action="store_true")
+    parser.add_argument("--require-kind", action="append", choices=["text", "shape_text", "table_cell", "chart_title"], default=[])
     args = parser.parse_args()
     try:
         report = audit_layout(args.layout.resolve(), font_file=args.font_file)
     except Exception as exc:
-        print(json.dumps({"schema": "ai-ppt-plus/text-fit-deck/v2", "valid": False, "status": "blocked", "code": "text_fit_deck_failed", "message": str(exc)}, ensure_ascii=False))
+        print(json.dumps({"schema": "ai-ppt-plus/text-fit-deck/v3", "valid": False, "status": "blocked", "code": "text_fit_deck_failed", "message": str(exc)}, ensure_ascii=False))
         return 2
+    missing_kinds = [kind for kind in args.require_kind if report["coverage_by_kind"].get(kind, 0) == 0]
+    report["required_kinds"] = args.require_kind
+    report["missing_required_kinds"] = missing_kinds
+    if missing_kinds:
+        report["valid"] = False
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({k: report[k] for k in ("schema", "valid", "slot_count", "fit_count", "target_not_fit_count", "geometry_defect_count")}, ensure_ascii=False))
+    print(json.dumps({k: report[k] for k in ("schema", "valid", "slot_count", "fit_count", "target_not_fit_count", "geometry_defect_count", "coverage_by_kind", "missing_required_kinds")}, ensure_ascii=False))
+    if not report["valid"]:
+        return 4
     return 3 if args.fail_on_target_not_fit and report["target_not_fit_count"] else 0
 
 
