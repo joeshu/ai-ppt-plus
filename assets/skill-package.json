@@ -6,7 +6,7 @@
   "entrypoint": "SKILL.md",
   "self_contained": {"policy":"self-contained","required_dirs":["agents","scripts","references","assets"]},
   "bundled_skills": [
-    {"name":"ai-ppt-visual-gen","root":"ai-ppt-visual-gen"},
+    {"name":"ai-ppt-visual-gen","root":"ai-ppt-visual-gen","package_revision":"2026.09.17.01"},
     {"name":"ai-ppt-editable","root":"ai-ppt-editable","package_revision":"2026.09.18.02"}
   ],
   "managed_globs": ["SKILL.md","agents/*.yaml","assets/*","assets/schemas/*.json","assets/fonts/*","references/*.md","scripts/*.py","scripts/*.mjs","evals/*.yaml"],
