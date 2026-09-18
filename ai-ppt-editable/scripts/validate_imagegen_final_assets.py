@@ -13,6 +13,7 @@ REQUIRED = {
     "brand_band","skyline","ribbon","5g_mark","locked_brand_art"
 }
 IMAGEGEN_WORD=re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])",re.I)
+SHEET_WORD=re.compile(r"(^|[-_. /])(contact[-_ ]?sheet|sprite[-_ ]?sheet|icon[-_ ]?sheet|sheet)([-_. /]|$)",re.I)
 SHA256_RE=re.compile(r"^[0-9a-f]{64}$")
 
 def _class(item):
@@ -25,6 +26,12 @@ def _sha256(path):
 def _resolve(manifest,value):
     if not isinstance(value,str) or not value.strip(): return None
     p=Path(value); return (p if p.is_absolute() else manifest.parent/p).resolve()
+def _sheet_ancestry(item):
+    if item.get("sprite_sheet") is True or item.get("contact_sheet") is True: return True
+    for field in ("generated_source","copied_to","source_ref","parent_asset","generation_parent"):
+        value=item.get(field)
+        if isinstance(value,str) and SHEET_WORD.search(value.replace("\\","/")): return True
+    return False
 
 def validate(path:Path,*,strict=False):
     data=json.loads(path.read_text(encoding="utf-8")); errors=[]
@@ -43,7 +50,7 @@ def validate(path:Path,*,strict=False):
         if missing and not fallback: errors.append({"code":"imagegen_evidence_missing","asset_id":asset_id,"missing":missing})
         if (item.get("source_reuse") is True or item.get("extraction_method") in {"source_reuse","exact_crop","crop"}) and not fallback: errors.append({"code":"source_reuse_final_asset_forbidden","asset_id":asset_id})
         if fallback and not (item.get("source_ref") and item.get("source_bbox") and item.get("source_sha256")): errors.append({"code":"approved_fallback_missing_source_evidence","asset_id":asset_id})
-        if item.get("sprite_sheet") is True or item.get("contact_sheet") is True or "sheet" in str(item.get("copied_to","")).lower(): errors.append({"code":"sheet_not_independent_asset","asset_id":asset_id})
+        if _sheet_ancestry(item): errors.append({"code":"sheet_not_independent_asset","asset_id":asset_id})
         # Knight-style deterministic geometry evidence is mandatory for final generated visuals.
         if route=="imagegen":
             for key in ("visible_alpha_bbox","alpha_centroid","placement_bbox"):
