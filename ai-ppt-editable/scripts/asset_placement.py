@@ -177,7 +177,7 @@ def alpha_centroid_fit(path: Path, x: int, y: int, width: int, height: int, *, t
     """
     geometry = alpha_geometry(path, threshold=threshold)
     canvas_w, canvas_h = geometry["canvas_px"]
-    _, _, visible_w, visible_h = geometry["visible_bbox_px"]
+    visible_x, visible_y, visible_w, visible_h = geometry["visible_bbox_px"]
     centroid_x, centroid_y = geometry["visible_centroid_px"]
     contain = max(0.05, min(1.0, float(contain)))
     fit_w, fit_h = width * contain, height * contain
@@ -185,9 +185,31 @@ def alpha_centroid_fit(path: Path, x: int, y: int, width: int, height: int, *, t
     canvas_out_w = max(1, int(round(canvas_w * scale)))
     canvas_out_h = max(1, int(round(canvas_h * scale)))
     target_cx, target_cy = x + width / 2.0, y + height / 2.0
-    placed_x = int(round(target_cx - centroid_x * scale))
-    placed_y = int(round(target_cy - centroid_y * scale))
-    return placed_x, placed_y, canvas_out_w, canvas_out_h
+    placed_x = target_cx - centroid_x * scale
+    placed_y = target_cy - centroid_y * scale
+
+    # Centroid alignment is a preference, not permission for the visible
+    # subject to escape the declared slot.  Asymmetric alpha mass (for
+    # example a skyline above a heavy ribbon) can shift the centroid far from
+    # the visible-bbox center.  Clamp the placed canvas just enough to keep
+    # the complete visible bbox inside the requested contain box.
+    safe_left = x + (width - fit_w) / 2.0
+    safe_top = y + (height - fit_h) / 2.0
+    safe_right = safe_left + fit_w
+    safe_bottom = safe_top + fit_h
+    visible_left = placed_x + visible_x * scale
+    visible_top = placed_y + visible_y * scale
+    visible_right = visible_left + visible_w * scale
+    visible_bottom = visible_top + visible_h * scale
+    if visible_left < safe_left:
+        placed_x += safe_left - visible_left
+    elif visible_right > safe_right:
+        placed_x -= visible_right - safe_right
+    if visible_top < safe_top:
+        placed_y += safe_top - visible_top
+    elif visible_bottom > safe_bottom:
+        placed_y -= visible_bottom - safe_bottom
+    return int(round(placed_x)), int(round(placed_y)), canvas_out_w, canvas_out_h
 
 
 def add_background(slide, slide_spec: dict, assets_dir: Path, sw_emu: int, sh_emu: int):
