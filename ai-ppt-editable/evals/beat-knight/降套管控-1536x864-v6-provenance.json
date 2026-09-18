@@ -1,0 +1,41 @@
+{
+  "schema": "ai-ppt-plus/imagegen-final-assets/v3",
+  "source_reference": {"file": "supplied 1536x864 reference image", "sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99", "size_px": [1536, 864]},
+  "assets": [
+    {
+      "asset_id": "brand-logo-lockup",
+      "final_file": "brand-logo-lockup.png",
+      "final_sha256": "e7caa276c0336a030d032aaab30c250a62ec466ac802ab26393aac9e756a130f",
+      "generation_mode": "native_image_generation",
+      "raw_imagegen_file": "native ImageGen output (external regression artifact)",
+      "raw_imagegen_sha256": "a863f4e9ac17e660e070ba67712defd1de50381f84f2913b8a076f7413367fa6",
+      "postprocess_file": "deterministic postprocess artifact",
+      "postprocess_sha256": "e7caa276c0336a030d032aaab30c250a62ec466ac802ab26393aac9e756a130f",
+      "postprocess": "color correction only; same canvas; final pixels equal postprocess",
+      "source_crop_fallback": false,
+      "contact_sheet_ancestry": false
+    },
+    {
+      "asset_id": "service-calligraphy-lockup",
+      "final_file": "service-calligraphy-lockup.png",
+      "final_sha256": "703a33c0b54440c4513d0bcc1eab4be73f172aa8288bdb97ff1ff7c9bc17e702",
+      "generation_mode": "native_image_generation",
+      "raw_imagegen_file": "native ImageGen output (external regression artifact)",
+      "raw_imagegen_sha256": "703a33c0b54440c4513d0bcc1eab4be73f172aa8288bdb97ff1ff7c9bc17e702",
+      "postprocess": "none; final pixels equal raw ImageGen output",
+      "source_crop_fallback": false,
+      "contact_sheet_ancestry": false
+    },
+    {
+      "asset_id": "bottom-brand-band",
+      "final_file": "bottom-brand-band.png",
+      "final_sha256": "449a3ad6e4110fb21d34f9cb03280d1ea44c09955d731b0ffb8d88b249a4a6ed",
+      "generation_mode": "native_image_generation",
+      "raw_imagegen_file": "native ImageGen output (external regression artifact)",
+      "raw_imagegen_sha256": "f10be69526a04e8762be3061c2f69f4750c65026420ccb0dfe8491f6b22c10a1",
+      "postprocess": "transparent vertical trim y=65:692 only; final pixels equal exact raw ImageGen crop",
+      "source_crop_fallback": false,
+      "contact_sheet_ancestry": false
+    }
+  ]
+}
