@@ -1,0 +1,54 @@
+{
+  "schema": "ai-ppt-plus/icon-local-crop-backfill-replay/v1",
+  "case_id": "lifecycle-customer-operations-1536x864-20260919",
+  "source": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "width_px": 1536,
+    "height_px": 864
+  },
+  "baseline": {
+    "method": "alpha-centroid-fit",
+    "mean_local_crop_ssim": 0.3836169832248498
+  },
+  "candidate": {
+    "method": "adaptive-alpha-fit",
+    "mean_local_crop_ssim": 0.6252797098025962
+  },
+  "delta": {
+    "absolute": 0.2416627265777464,
+    "relative": 0.6299583624953862
+  },
+  "regions": {
+    "gear": {
+      "baseline_ssim": 0.32555373122436165,
+      "candidate_ssim": 0.5338674680437997,
+      "baseline_placement_px": [55, 470, 46, 46],
+      "candidate_placement_px": [63, 480, 31, 31]
+    },
+    "group": {
+      "baseline_ssim": 0.5381779857818141,
+      "candidate_ssim": 0.7178487873075022,
+      "baseline_placement_px": [58, 542, 42, 46],
+      "candidate_placement_px": [63, 553, 31, 31]
+    },
+    "phone": {
+      "baseline_ssim": 0.36533990779349096,
+      "candidate_ssim": 0.6328171523774412,
+      "baseline_placement_px": [543, 450, 54, 54],
+      "candidate_placement_px": [555, 463, 31, 31]
+    },
+    "list": {
+      "baseline_ssim": 0.30539630809973234,
+      "candidate_ssim": 0.6165854314816414,
+      "baseline_placement_px": [545, 532, 53, 53],
+      "candidate_placement_px": [555, 546, 31, 31]
+    }
+  },
+  "interpretation": {
+    "scope": "placement-only targeted replay",
+    "content_regeneration": false,
+    "source_crop_fallback": false,
+    "thresholds_changed": false,
+    "full_five_dimension_rerun": false
+  }
+}
