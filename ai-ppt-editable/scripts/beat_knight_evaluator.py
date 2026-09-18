@@ -23,8 +23,8 @@ def _score_dimension(name,evidence):
     if name=="local_crop": return min(_num(evidence.get("worst_layout_ssim")),_num(evidence.get("worst_pixel_fidelity")))
     raise KeyError(name)
 
-def _absolute_floor(c):
-    e=c.get("editability",{}); t=c.get("text",{}); o=c.get("object",{}); i=c.get("icon_asset",{})
+def _absolute_floor(c,*,require_imagegen=False):
+    e=c.get("editability",{}); t=c.get("text",{}); o=c.get("object",{}); i=c.get("icon_asset",{}); provenance=c.get("asset_provenance",{})
     checks={
       "formal_text_native":bool(e.get("formal_text_native",False)),
       "no_whole_slide_picture":int(e.get("whole_slide_picture_count",1))==0,
@@ -35,6 +35,12 @@ def _absolute_floor(c):
       "icon_assets_independent":bool(i.get("independent_assets",True)),
       "alpha_assets_valid":int(i.get("alpha_failure_count",0))==0,
     }
+    if require_imagegen:
+        checks.update({
+          "imagegen_final_assets":bool(provenance.get("imagegen_final_assets",False)),
+          "alpha_centroid_evidence":bool(provenance.get("alpha_centroid_evidence",False)),
+          "no_contact_sheet_ancestry":int(provenance.get("contact_sheet_ancestry_count",1))==0,
+        })
     return all(checks.values()),checks
 
 def _visual_gate(profile,c,rows):
@@ -43,7 +49,6 @@ def _visual_gate(profile,c,rows):
         passed=_num(p.get("layout_ssim"))>=0.90 and _num(p.get("pixel_fidelity"))>=0.90
         return passed,{"mode":"absolute_standard","layout_ssim_floor":0.90,"pixel_fidelity_floor":0.90}
     if profile=="dense_editable":
-        # Dense editable pages are judged by semantic/editability floors plus multi-signal regional fidelity.
         components={
           "geometry":_num(composite.get("geometry",regional.get("geometry",rows["object"]["candidate"]))),
           "typography":_num(composite.get("typography",rows["text"]["candidate"])),
@@ -57,7 +62,6 @@ def _visual_gate(profile,c,rows):
     if profile in ("gradient","complex_illustration"):
         regional_score=_num(regional.get("mean_layout_ssim",rows["local_crop"]["candidate"])); asset=rows["icon_asset"]["candidate"]
         return regional_score>=0.75 and asset>=0.75,{"mode":profile+"_regional","regional":regional_score,"asset":asset,"floor":0.75}
-    # competitive_ab intentionally uses relative non-inferiority; absolute semantic/editability floor remains mandatory.
     return True,{"mode":"competitive_relative","whole_slide_ssim_diagnostic":_num(p.get("layout_ssim"))}
 
 def main():
@@ -69,9 +73,10 @@ def main():
         elif delta<-a.tolerance: verdict="loss"; losses.append(name)
         else: verdict="tie"
         rows[name]={"knight":ks,"candidate":cs,"delta":delta,"verdict":verdict}
-    floor_pass,floor_checks=_absolute_floor(candidate); visual_gate,visual_evidence=_visual_gate(a.profile,candidate,rows); key_win=rows["pixel"]["verdict"]=="win" or rows["local_crop"]["verdict"]=="win"
+    require_imagegen=a.profile=="competitive_ab"
+    floor_pass,floor_checks=_absolute_floor(candidate,require_imagegen=require_imagegen); visual_gate,visual_evidence=_visual_gate(a.profile,candidate,rows); key_win=rows["pixel"]["verdict"]=="win" or rows["local_crop"]["verdict"]=="win"
     relative_pass=not losses and strict_wins>=3 and key_win
     beat=floor_pass and visual_gate and relative_pass
-    report={"schema":"ai-ppt-plus/beat-knight-report/v2","profile":a.profile,"beat_knight":beat,"tolerance":a.tolerance,"strict_win_count":strict_wins,"loss_dimensions":losses,"relative_pass":relative_pass,"visual_gate_pass":visual_gate,"visual_gate":visual_evidence,"absolute_quality_floor_pass":floor_pass,"absolute_quality_floor":floor_checks,"pixel_or_local_crop_win":key_win,"dimensions":rows,"decision":"candidate_win" if beat else "not_proven"}
+    report={"schema":"ai-ppt-plus/beat-knight-report/v2","profile":a.profile,"beat_knight":beat,"tolerance":a.tolerance,"strict_win_count":strict_wins,"loss_dimensions":losses,"relative_pass":relative_pass,"visual_gate_pass":visual_gate,"visual_gate":visual_evidence,"absolute_quality_floor_pass":floor_pass,"absolute_quality_floor":floor_checks,"imagegen_provenance_required":require_imagegen,"pixel_or_local_crop_win":key_win,"dimensions":rows,"decision":"candidate_win" if beat else "not_proven"}
     a.report.parent.mkdir(parents=True,exist_ok=True); a.report.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"); print(json.dumps(report,ensure_ascii=False)); return 0 if beat else 3
 if __name__=="__main__": raise SystemExit(main())
