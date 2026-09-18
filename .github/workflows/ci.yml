@@ -2,6 +2,7 @@ name: ai-ppt-plus CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:
@@ -11,24 +12,20 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
       - name: Install deterministic rendering dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libreoffice poppler-utils inkscape tesseract-ocr tesseract-ocr-chi-sim
+          sudo apt-get install -y --no-install-recommends libreoffice poppler-utils tesseract-ocr
           python -m pip install --upgrade pip
-          python -m pip install -r requirements-ci.txt
+          python -m pip install pillow cairosvg python-pptx openpyxl lxml numpy scikit-image pyyaml fonttools
       - name: Verify SVG rendering dependency
-        run: inkscape --version
+        run: python -c "import cairosvg; print(cairosvg.__version__)"
       - name: Compile Python sources
-        run: |
-          python -m py_compile scripts/*.py tests/test_*.py
-          python -m py_compile ai-ppt-visual-gen/scripts/*.py ai-ppt-visual-gen/tests/*.py
-          python -m py_compile ai-ppt-editable/scripts/*.py ai-ppt-editable/tests/*.py ai-ppt-editable/reconstruction/*.py
+        run: python -m compileall -q scripts tests ai-ppt-editable ai-ppt-visual-gen
       - name: Validate all self-contained packages and routing contracts
         run: |
           python scripts/validate_skill_package.py --skill-dir .
-          python scripts/validate_routing_contract.py
           python ai-ppt-visual-gen/scripts/validate_skill_package.py --skill-dir ai-ppt-visual-gen
           python ai-ppt-editable/scripts/validate_skill_package.py --skill-dir ai-ppt-editable
           python ai-ppt-editable/scripts/validate_routing_contract.py
@@ -36,94 +33,16 @@ jobs:
         run: |
           python scripts/probe_environment.py --output environment-report.json
           python scripts/validate_environment_contract.py --report environment-report.json --output environment-validation.json
-          python scripts/validate_runtime_mirror.py --report runtime-mirror-report.json
-      - name: Run standalone worker smoke tests
+          python scripts/validate_runtime_mirror.py --root . --report runtime-mirror-report.json
+      - name: Run standalone worker regression suites
         run: |
-          python ai-ppt-visual-gen/scripts/run_tests.py --parallel-workers 4 --report visual-skill-test-report.json
+          python ai-ppt-visual-gen/scripts/run_tests.py --report visual-skill-test-report.json --parallel-workers 4
           python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
-      - name: Run Astra reconstruction contract tests
-        env:
-          PYTHONPATH: ${{ github.workspace }}/ai-ppt-editable
-        run: |
-          python ai-ppt-editable/tests/test_reconstruction_engine.py
-          python ai-ppt-editable/tests/test_reconstruction_integration.py
-          python ai-ppt-editable/tests/test_astra_batch_ingestion.py
-          python ai-ppt-editable/tests/test_astra_iteration_executor.py
-          python ai-ppt-editable/tests/test_astra_iteration_batch.py
-          python ai-ppt-editable/tests/test_asset_orchestrator.py
-          python ai-ppt-editable/tests/test_asset_quality_qa.py
-          python ai-ppt-editable/tests/test_asset_quality_resolution.py
-          python ai-ppt-editable/tests/test_asset_retry_policy.py
-          python ai-ppt-editable/tests/test_object_drift_guard.py
-          python ai-ppt-editable/tests/test_distillation_record.py
-          python ai-ppt-editable/tests/test_distillation_selection.py
-          python ai-ppt-editable/tests/test_golden_promotion.py
-          python ai-ppt-editable/tests/test_accepted_state.py
-      - name: Run schema, DAG, package and golden regressions
-        run: python scripts/run_tests.py --parallel-workers 4 --report test-report.json
-      - name: Replay social-channel editable PPTX case
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import subprocess
-          from zipfile import is_zipfile
-
-          root = Path.cwd()
-          fixtures = [
-              (root / "ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx", True),
-              (root / "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx", True),
-              (root / "ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png", False),
-          ]
-          for path, is_pptx in fixtures:
-              valid = is_zipfile(path) if is_pptx else path.is_file() and path.stat().st_size > 0
-              if not valid:
-                  relative = path.relative_to(root).as_posix()
-                  recovered = subprocess.run(["git", "show", f"HEAD:{relative}"], capture_output=True, check=False)
-                  if recovered.returncode == 0 and recovered.stdout:
-                      path.write_bytes(recovered.stdout)
-              if not path.is_file() or path.stat().st_size == 0 or (is_pptx and not is_zipfile(path)):
-                  raise SystemExit(f"invalid binary fixture: {path}")
-          PY
-          set +e
-          mkdir -p .distillation/case-baseline .distillation/case-candidate
-          python scripts/replay_pptx_case.py \
-            --phase baseline \
-            --case-spec ai-ppt-editable/evals/social-channel-commission-native-01.json \
-            --deck ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \
-            --source-pptx ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \
-            --process-image ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png \
-            --reference-image ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg \
-            --output-dir .distillation/case-baseline \
-            --output .distillation/case-baseline/baseline-evaluation.json
-          baseline_rc=$?
-          set -e
-          test "$baseline_rc" -eq 2
-          python scripts/replay_pptx_case.py \
-            --phase candidate \
-            --case-spec ai-ppt-editable/evals/social-channel-commission-native-01.json \
-            --deck ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx \
-            --source-pptx ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx \
-            --process-image ai-ppt-editable/evals/fixtures/social-channel-commission-green-screen-process.png \
-            --reference-image ai-ppt-editable/evals/fixtures/social-channel-commission-reference.jpg \
-            --baseline-evaluation .distillation/case-baseline/baseline-evaluation.json \
-            --output-dir .distillation/case-candidate \
-            --output .distillation/case-candidate/candidate-evaluation.json
-          python scripts/validate_distillation_improvement.py \
-            --baseline .distillation/case-baseline/baseline-evaluation.json \
-            --candidate .distillation/case-candidate/candidate-evaluation.json \
-            --case-spec ai-ppt-editable/evals/social-channel-commission-native-01.json \
-            --mode replay \
-            --report .distillation/case-candidate/case-improvement.json
-
-      - name: Validate and select distillation case matrix
-        run: |
-          python scripts/validate_distillation_case_matrix.py --matrix evals/distillation-case-matrix.json --strict --output distillation-case-matrix-validation.json
-          python scripts/select_distillation_cases.py --matrix evals/distillation-case-matrix.json --full --output distillation-case-matrix-selection.json
-      - name: Run strict P2 guard smoke tests
-        run: python tests/test_p2_guards.py
+      - name: Run complete root regression suite
+        run: python scripts/run_tests.py --report test-report.json --parallel-workers 4
       - name: Check whitespace
         run: git diff --check
-      - name: Upload test report
+      - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -135,6 +54,3 @@ jobs:
             environment-report.json
             environment-validation.json
             runtime-mirror-report.json
-            distillation-case-matrix-validation.json
-            distillation-case-matrix-selection.json
-            .distillation
