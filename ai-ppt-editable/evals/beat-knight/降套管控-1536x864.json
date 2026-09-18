@@ -1,0 +1,32 @@
+{
+  "schema": "ai-ppt-plus/beat-knight-case/v1",
+  "case_id": "降套管控-1536x864",
+  "source": {
+    "filename": "WecomSave_a796a229d41950dfd301669d8858a906.jpeg",
+    "sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99",
+    "width_px": 1536,
+    "height_px": 864,
+    "aspect_ratio": 1.7777777778
+  },
+  "slide": {"width_in": 13.333333, "height_in": 7.5},
+  "intent": "one-to-one editable reconstruction; no redesign",
+  "hard_regions": [
+    {"id":"header-logo-title","bbox":[0.018,0.000,0.964,0.142],"min_layout_ssim":0.90,"min_pixel_fidelity":0.90},
+    {"id":"overall-thinking","bbox":[0.022,0.141,0.956,0.065],"min_layout_ssim":0.91,"min_pixel_fidelity":0.91},
+    {"id":"left-red-control-card","bbox":[0.018,0.220,0.326,0.690],"min_layout_ssim":0.90,"min_pixel_fidelity":0.90},
+    {"id":"middle-blue-retention-card","bbox":[0.350,0.220,0.319,0.690],"min_layout_ssim":0.90,"min_pixel_fidelity":0.90},
+    {"id":"right-orange-innovation-card","bbox":[0.674,0.220,0.309,0.690],"min_layout_ssim":0.90,"min_pixel_fidelity":0.90},
+    {"id":"right-daily-mechanism","bbox":[0.687,0.285,0.284,0.310],"min_layout_ssim":0.91,"min_pixel_fidelity":0.91},
+    {"id":"right-four-icon-row","bbox":[0.687,0.600,0.284,0.165],"min_layout_ssim":0.91,"min_pixel_fidelity":0.91},
+    {"id":"bottom-brand-band","bbox":[0.000,0.887,1.000,0.113],"min_layout_ssim":0.90,"min_pixel_fidelity":0.90}
+  ],
+  "semantic_locks": [
+    "三栏分别为红色分级分类管控、蓝色强化穿透前置维系、橙色创新管理防患未然",
+    "左栏和中栏均为三个编号模块，不得误判成原生表格",
+    "右栏下方四个圆形图标必须保持四个独立可移动资产",
+    "正式正文必须保持原生可编辑文本，不得整页截图化",
+    "底部红色飘带、城市剪影和5G标识属于视觉资产层，不得覆盖正文编辑层"
+  ],
+  "required_evidence": ["text-fit-deck-v3","alpha-geometry-qa-v1","hard-region-crop-gate-v1","beat-knight-report-v1"],
+  "win_policy": {"no_dimension_loss":true,"strict_wins_min":3,"pixel_or_local_crop_must_win":true,"visual_gate_min":0.90,"whole_slide_picture_count":0}
+}
