@@ -24,6 +24,15 @@ def page_graph(nodes: list[dict]) -> dict:
     }
 
 
+def imagegen_geometry() -> dict:
+    return {
+        "visible_alpha_bbox": [0.08, 0.08, 0.92, 0.92],
+        "alpha_centroid": [0.5, 0.5],
+        "placement_bbox": [0.1, 0.1, 0.05, 0.05],
+        "independent_asset": True,
+    }
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="reference-preflight-") as temp:
         root = Path(temp)
@@ -50,7 +59,6 @@ def main() -> int:
         assert missing["visual_asset_ids"] == ["icon-1"]
         assert missing["imagegen_required"] is True
 
-        # A downstream manifest cannot hide a visual asset identified by PageGraph.
         write(root / "slide-object-manifest.json", {
             "slides": [{"objects": [{"object_id": "logo-1", "object_type": "independent_image", "role": "logo"}]}]
         })
@@ -88,6 +96,7 @@ def main() -> int:
                 "asset_id": "icon-1", "asset_class": "icon", "provenance_mode": "imagegen",
                 "generated_source": "generated/icon-1.png", "copied_to": "assets/icon-1.png",
                 "prompt_file": "prompts/icon-1.txt", "backend": "native-imagegen", "sha256": digest,
+                **imagegen_geometry(),
             }],
         })
         write(root / "font-manifest.json", {"schema": "ai-ppt-plus/font-manifest-test/v1", "fonts": [{"family": "Test CJK Sans", "path": "fonts/test.ttf"}]})
@@ -97,9 +106,6 @@ def main() -> int:
         assert good["cjk_required"] is True
         assert good["font_evidence"]["manifest_readable"] is True
 
-        # Strict Artifact Tool authoring registers the licensed task-local
-        # faces in JavaScript; it does not use the compatibility OOXML
-        # post-processor.  The CJK preflight must accept that delivery path.
         artifact_good = validate_reference_preflight(
             layout,
             json.loads(layout.read_text(encoding="utf-8")),
@@ -110,7 +116,6 @@ def main() -> int:
         assert artifact_good["valid"], artifact_good
         assert artifact_good["authoring_backend"] == "artifact-tool"
 
-        # Missing generated coverage is blocked even if the manifest itself is otherwise valid.
         write(root / "page-graph.json", page_graph([
             {"id": "icon-1", "type": "icon", "role": "icon", "bbox": [0.1, 0.1, 0.05, 0.05]},
             {"id": "icon-2", "type": "icon", "role": "icon", "bbox": [0.2, 0.1, 0.05, 0.05]},
@@ -119,7 +124,6 @@ def main() -> int:
         coverage = validate_reference_preflight(layout, {"text": "English only"}, embed_fonts=False)
         assert any(item["code"] == "imagegen_asset_coverage_missing" for item in coverage["issues"])
 
-        # A page with no icon/illustration/complex-visual nodes does not require imagegen.
         write(root / "page-graph.json", page_graph([
             {"id": "text-only", "type": "text", "bbox": [0.1, 0.1, 0.6, 0.1]},
         ]))
@@ -129,7 +133,8 @@ def main() -> int:
         assert no_visual_assets["valid"], no_visual_assets
         assert no_visual_assets["imagegen_required"] is False
 
-        # Brand-only PageGraph uses the authorized-source exception and does not force imagegen.
+        # Brand-only PageGraph remains outside the preflight visual inventory; the final-asset
+        # validator separately enforces ImageGen when a logo/brand is present in its manifest.
         write(root / "page-graph.json", page_graph([
             {"id": "logo-1", "type": "image", "role": "logo", "bbox": [0.8, 0.02, 0.15, 0.08]},
         ]))
@@ -138,12 +143,11 @@ def main() -> int:
         assert brand_only["valid"], brand_only
         assert brand_only["imagegen_required"] is False
 
-        # Missing PageGraph itself is fail-closed: visual decomposition is the authority.
         (root / "page-graph.json").unlink()
         missing_graph = validate_reference_preflight(layout, {"text": "English only"}, embed_fonts=False)
         assert any(item["code"] == "reference_page_graph_missing" for item in missing_graph["issues"])
 
-    print("reference reconstruction preflight: ok")
+    print("reference reconstruction preflight v3: ok")
     return 0
 
 
