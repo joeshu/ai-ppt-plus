@@ -1,0 +1,68 @@
+{
+  "schema": "ai-ppt-plus/knight-five-axis-candidate/v18",
+  "source": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "size_px": [1536, 864]
+  },
+  "candidate": {
+    "pptx_sha256": "0b99eb6cbb9368987a0999ae6ce62d20b8c5a2255867ef4a34c31b1fd8e52da0",
+    "render_sha256": "979884621eae0dfda70f0646fc42baff0fe23e90e0dfa1b6c3eee8283928e64d",
+    "raw_pixel": {
+      "ssim": 0.543452,
+      "mae_0_255": 28.4235
+    },
+    "compare_visual": {
+      "blurred_layout_ssim": 0.866937,
+      "blurred_pixel_fidelity_score": 0.946715,
+      "strict_thresholds": {
+        "blurred_layout_ssim": 0.9,
+        "blurred_pixel_fidelity_score": 0.9
+      },
+      "strict_valid": false
+    },
+    "objects": {
+      "shape_count": 143,
+      "type_counts": {
+        "AUTO_SHAPE (1)": 115,
+        "PICTURE (13)": 27,
+        "CHART (3)": 1
+      },
+      "whole_slide_pictures": [],
+      "native_chart_count": 1
+    },
+    "text": {
+      "text_object_count": 66,
+      "text_char_count": 709
+    },
+    "chart_gap": {
+      "future_zero_points_in_chart_xml": false,
+      "red_series_short_range": true,
+      "valid": true
+    }
+  },
+  "baseline_v10": {
+    "raw_ssim": 0.535566,
+    "mae_0_255": 29.2249,
+    "blurred_layout_ssim": 0.846475,
+    "blurred_pixel_fidelity_score": 0.943054
+  },
+  "repair_trace": {
+    "accepted": [
+      "widen native chart plot frame and shorten chart title pill",
+      "add native repeated-component outcome cards",
+      "refine footer wave layers without rasterizing formal content",
+      "redistribute Card 1 and Card 3 body text vertically",
+      "replace outcomes upright triangle with source-like slanted parallelogram"
+    ],
+    "rejected": [
+      "global card body font enlargement: raw/card regressions",
+      "Card 2 downward text shift: local blurred SSIM regression",
+      "footer red-wave/upshift plus pale skyline experiment: footer blurred SSIM regression"
+    ]
+  },
+  "decision": {
+    "visual": "blocked",
+    "merge_pr36": false,
+    "reason": "Existing strict blurred-layout SSIM threshold 0.90 remains unmet; threshold unchanged. v18 improves the v10 baseline but remains a blocked candidate pending production font/authoring runtime replay."
+  }
+}

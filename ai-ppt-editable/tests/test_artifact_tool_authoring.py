@@ -33,7 +33,7 @@ def main() -> int:
                 "texts": [{"object_id": "title", "runs": [{"text": "原生", "size": 20}, {"text": "可编辑", "size": 20, "bold": True, "color": "#C00000"}], "x": 0.08, "y": 0.08, "w": 0.84, "h": 0.18, "size": 20}],
                 "shapes": [{"object_id": "rule", "type": "line", "x": 0.08, "y": 0.3, "w": 0.84, "h": 0, "line": "#C00000", "line_width": 2}],
                 "tables": [{"object_id": "table", "x": 0.08, "y": 0.4, "w": 0.4, "h": 0.35, "rows": [["指标", "值"], ["得分", "90"]], "header_fill": "#FDE9D9", "header_bold": True}],
-                "charts": [{"object_id": "chart", "type": "column", "x": 0.54, "y": 0.4, "w": 0.38, "h": 0.35, "categories": ["A", "B"], "series": [{"name": "分数", "values": [90, 75]}], "legend": False}],
+                "charts": [{"object_id": "chart", "type": "column", "x": 0.54, "y": 0.4, "w": 0.38, "h": 0.35, "categories": ["A", "B"], "series": [{"name": "分数", "values": [90, None]}], "legend": False, "display_blanks_as": "gap", "y_axis": {"min": 50, "max": 100, "majorUnit": 10}}],
                 "speaker_notes": "strict adapter smoke",
             }
         ],
@@ -65,9 +65,12 @@ def main() -> int:
         assert len(report["fonts"]) == 4
         with zipfile.ZipFile(output) as package:
             xml = package.read("ppt/slides/slide1.xml")
+            chart_xml = package.read("ppt/slides/charts/chart1.xml")
         assert "原生".encode("utf-8") in xml and "可编辑".encode("utf-8") in xml
         assert b"<a:srgbClr val=\"C00000\"" in xml or b"<a:srgbClr val=\"C00000\" />" in xml
         assert b"<a:rPr sz=\"2000\" b=\"1\"" in xml
+        assert b"<c:dispBlanksAs val=\"gap\"" in chart_xml
+        assert b"<c:min val=\"50\"" in chart_xml and b"<c:max val=\"100\"" in chart_xml
 
         # Exercise the real worker composer as well.  A manifest-only CJK
         # invocation must register the four concrete faces before the strict

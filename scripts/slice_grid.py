@@ -19,7 +19,8 @@ Usage:
 Notes:
 - Input MUST already be a transparent PNG. Direct RGBA output is preferred;
   run `chroma_key.py` only for the declared fallback path.
-- Cells are cut by equal fractions, so the source grid must be evenly divided.
+- `--detect-grid` locates declared rows/columns from alpha projections and
+  cuts at center midpoints, tolerating generated-sheet outer margins.
 - Near-empty cells (mostly transparent) are skipped and reported.
 - Emits a manifest JSON describing each saved cutout (grid position + size).
 - Optional --contact-sheet emits a labeled preview sheet for visual QA.
@@ -28,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -49,6 +51,94 @@ def _alpha_bbox(im, min_alpha: int):
     # Threshold the alpha channel then use getbbox for speed.
     mask = alpha.point(lambda a: 255 if a > min_alpha else 0)
     return mask.getbbox()
+
+
+def _weighted_centers(projection, expected: int):
+    """Return stable foreground centers using weighted one-dimensional k-means."""
+    import numpy as np
+
+    positions = np.flatnonzero(projection > 0).astype(float)
+    if expected <= 0 or len(positions) < expected:
+        raise ValueError(f"cannot detect {expected} centers from {len(positions)} foreground positions")
+    weights = projection[positions.astype(int)].astype(float)
+    cumulative = np.cumsum(weights)
+    total = cumulative[-1]
+    centers = np.array([
+        positions[int(np.searchsorted(cumulative, total * (index + 0.5) / expected))]
+        for index in range(expected)
+    ], dtype=float)
+    for _ in range(40):
+        labels = np.abs(positions[:, None] - centers[None, :]).argmin(axis=1)
+        updated = centers.copy()
+        for index in range(expected):
+            selected = labels == index
+            if selected.any():
+                updated[index] = np.average(positions[selected], weights=weights[selected])
+        if np.max(np.abs(updated - centers)) < 0.05:
+            centers = updated
+            break
+        centers = updated
+    centers = np.sort(centers)
+    if len(centers) != expected or any(b <= a for a, b in zip(centers, centers[1:])):
+        raise ValueError(f"detected center count/order mismatch: {centers.tolist()}")
+    return centers.tolist()
+
+
+def _center_edges(centers, limit: int):
+    if len(centers) == 1:
+        return [0, limit]
+    edges = [0]
+    edges.extend(int(round((left + right) / 2)) for left, right in zip(centers, centers[1:]))
+    edges.append(limit)
+    return edges
+
+
+def _detect_grid(im, rows: int, cols: int, min_alpha: int):
+    import numpy as np
+
+    mask = np.asarray(im.getchannel("A")) > min_alpha
+    row_centers = _weighted_centers(mask.sum(axis=1), rows)
+    col_centers = _weighted_centers(mask.sum(axis=0), cols)
+    return row_centers, col_centers, _center_edges(row_centers, im.height), _center_edges(col_centers, im.width)
+
+
+def _square_repack(icon, min_alpha: int, pad: int):
+    """Repack around the alpha visual centroid while preserving safe padding."""
+    import numpy as np
+    from PIL import Image
+
+    alpha = np.asarray(icon.getchannel("A"))
+    ys, xs = np.where(alpha > min_alpha)
+    if not len(xs):
+        return icon, {"centroid_delta_px": [0.0, 0.0], "alpha_bbox": None}
+    left, right = int(xs.min()), int(xs.max()) + 1
+    top, bottom = int(ys.min()), int(ys.max()) + 1
+    content = icon.crop((left, top, right, bottom))
+    content_alpha = np.asarray(content.getchannel("A"), dtype=float)
+    weights = content_alpha.sum()
+    cy, cx = np.indices(content_alpha.shape)
+    centroid_x = float((cx * content_alpha).sum() / weights)
+    centroid_y = float((cy * content_alpha).sum() / weights)
+    side = max(
+        max(content.width, content.height) + 2 * pad,
+        int(math.ceil(2 * (pad + content.width - centroid_x) - 1)),
+        int(math.ceil(2 * (pad + centroid_x) + 1)),
+        int(math.ceil(2 * (pad + content.height - centroid_y) - 1)),
+        int(math.ceil(2 * (pad + centroid_y) + 1)),
+    )
+    target = (side - 1) / 2
+    paste_x = int(round(target - centroid_x))
+    paste_y = int(round(target - centroid_y))
+    paste_x = min(max(pad, paste_x), side - pad - content.width)
+    paste_y = min(max(pad, paste_y), side - pad - content.height)
+    canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    canvas.alpha_composite(content, (paste_x, paste_y))
+    final_centroid = [paste_x + centroid_x, paste_y + centroid_y]
+    return canvas, {
+        "alpha_bbox": [paste_x, paste_y, paste_x + content.width, paste_y + content.height],
+        "centroid_delta_px": [round(final_centroid[0] - target, 3), round(final_centroid[1] - target, 3)],
+        "repack_padding_px": pad,
+    }
 
 
 def _runs(flags, min_gap):
@@ -229,6 +319,8 @@ def main() -> None:
     ap.add_argument("--grid", default="4x4", help="Grid as ROWSxCOLS, e.g. 4x4 or 2x2.")
     ap.add_argument("--auto", action="store_true",
                     help="Ignore --grid; auto-segment items by transparent gaps (robust to imperfect grids).")
+    ap.add_argument("--detect-grid", action="store_true",
+                    help="Detect declared ROWSxCOLS content centers from alpha projections before cutting.")
     ap.add_argument("--components", action="store_true",
                     help="Ignore --grid/--auto; slice connected non-transparent components, for frame parts.")
     ap.add_argument("--prefix", default="icon", help="Filename prefix for cutouts.")
@@ -306,12 +398,9 @@ def main() -> None:
         saved = []
         for bbox, r, c in segments:
             icon = im.crop(bbox)
+            repack = None
             if args.square:
-                side = max(icon.size)
-                canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
-                canvas.paste(icon, ((side - icon.size[0]) // 2,
-                                    (side - icon.size[1]) // 2), icon)
-                icon = canvas
+                icon, repack = _square_repack(icon, args.min_alpha, args.pad)
             name = f"{args.prefix}_r{r}c{c}.png"
             edge_touch = {
                 "left": bbox[0] <= args.pad,
@@ -327,7 +416,7 @@ def main() -> None:
                 "width": icon.size[0], "height": icon.size[1],
                 "aspect": round(icon.size[0] / icon.size[1], 4),
                 "bbox": list(bbox),
-                "edge_touch": edge_touch})
+                "edge_touch": edge_touch, "repack": repack})
         atomic_write_json(out_dir / "icons_manifest.json", manifest)
         if args.contact_sheet:
             _write_contact_sheet(saved, out_dir / "icons_contact_sheet.png")
@@ -340,16 +429,30 @@ def main() -> None:
     cell_w = W / cols
     cell_h = H / rows
 
-    manifest = {"source": str(src), "grid": [rows, cols], "size": [W, H], "icons": []}
+    if args.detect_grid:
+        try:
+            row_centers, col_centers, row_edges, col_edges = _detect_grid(im, rows, cols, args.min_alpha)
+        except Exception as exc:
+            print(f"Error: declared grid detection failed: {exc}", file=sys.stderr)
+            raise SystemExit(2)
+    else:
+        row_centers = [cell_h * (index + 0.5) for index in range(rows)]
+        col_centers = [cell_w * (index + 0.5) for index in range(cols)]
+        row_edges = [int(round(index * cell_h)) for index in range(rows + 1)]
+        col_edges = [int(round(index * cell_w)) for index in range(cols + 1)]
+
+    manifest = {"source": str(src), "grid": [rows, cols], "size": [W, H],
+                "cut_mode": "detected-centers" if args.detect_grid else "equal-cells",
+                "detected_row_centers": [round(value, 3) for value in row_centers],
+                "detected_column_centers": [round(value, 3) for value in col_centers],
+                "row_edges": row_edges, "column_edges": col_edges, "icons": []}
     skipped = []
     saved = []
 
     for r in range(rows):
         for c in range(cols):
-            left = int(round(c * cell_w))
-            top = int(round(r * cell_h))
-            right = int(round((c + 1) * cell_w))
-            bottom = int(round((r + 1) * cell_h))
+            left, right = col_edges[c], col_edges[c + 1]
+            top, bottom = row_edges[r], row_edges[r + 1]
             cell = im.crop((left, top, right, bottom))
             cw, ch = cell.size
 
@@ -377,12 +480,9 @@ def main() -> None:
             pb = min(ch, bbox[3] + args.pad)
             icon = cell.crop((pl, pt, pr, pb))
 
+            repack = None
             if args.square:
-                side = max(icon.size)
-                canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
-                canvas.paste(icon, ((side - icon.size[0]) // 2,
-                                    (side - icon.size[1]) // 2), icon)
-                icon = canvas
+                icon, repack = _square_repack(icon, args.min_alpha, args.pad)
 
             name = f"{args.prefix}_r{r+1}c{c+1}.png"
             out_path = out_dir / name
@@ -396,6 +496,9 @@ def main() -> None:
                 "height": icon.size[1],
                 "aspect": round(icon.size[0] / icon.size[1], 4),
                 "edge_touch": edge_touch,
+                "cell_bbox": [left, top, right, bottom],
+                "content_bbox_in_cell": list(bbox),
+                "repack": repack,
             })
 
     manifest["skipped_empty_cells"] = skipped

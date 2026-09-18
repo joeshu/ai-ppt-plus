@@ -145,6 +145,28 @@ def cleanup_temporary_files(paths: list[Path]) -> None:
         path.unlink(missing_ok=True)
 
 
+def alpha_centroid_fit(path: Path, x: int, y: int, width: int, height: int) -> tuple[int, int, int, int]:
+    """Map visible alpha content into a target slot without stretching it."""
+    try:
+        import numpy as np
+        from PIL import Image
+    except ImportError:
+        _die("alpha-centroid placement requires Pillow and numpy")
+    with Image.open(path) as source:
+        rgba = source.convert("RGBA")
+    alpha = np.asarray(rgba.getchannel("A"), dtype=float)
+    ys, xs = np.where(alpha > 0)
+    if not len(xs):
+        _die(f"transparent asset has empty alpha: {path}")
+    visible_w = int(xs.max() - xs.min() + 1); visible_h = int(ys.max() - ys.min() + 1)
+    scale = min(width / visible_w, height / visible_h); total = alpha.sum()
+    grid_y, grid_x = np.indices(alpha.shape)
+    centroid_x = float((grid_x * alpha).sum() / total); centroid_y = float((grid_y * alpha).sum() / total)
+    canvas_w = max(1, int(round(rgba.width * scale))); canvas_h = max(1, int(round(rgba.height * scale)))
+    placed_x = int(round(x + width / 2 - centroid_x * scale)); placed_y = int(round(y + height / 2 - centroid_y * scale))
+    return placed_x, placed_y, canvas_w, canvas_h
+
+
 def add_background(slide, slide_spec: dict, assets_dir: Path, sw_emu: int, sh_emu: int):
     from pptx.util import Emu
 
@@ -222,12 +244,12 @@ def add_icons(slide, specs: list[dict], assets_dir: Path, deck: dict, ref_w: flo
         source_path = path
         if path.suffix.casefold() == ".svg":
             source_path = svg_to_png(path, temporary_files)
+        target = (int(fx * sw_emu), int(fy * sh_emu), int(fw * sw_emu), int(fh * sh_emu))
+        if icon.get("placement_mode") == "alpha-centroid-fit" or icon.get("align_by_alpha") is True:
+            target = alpha_centroid_fit(source_path, *target)
         picture = slide.shapes.add_picture(
-            str(source_path),
-            Emu(int(fx * sw_emu)),
-            Emu(int(fy * sh_emu)),
-            width=Emu(int(fw * sw_emu)),
-            height=Emu(int(fh * sh_emu)),
+            str(source_path), Emu(target[0]), Emu(target[1]),
+            width=Emu(target[2]), height=Emu(target[3]),
         )
         picture.name = str(icon.get("name") or icon.get("object_id") or f"icon-{icon_index:02d}")
         set_alt_text(picture, icon.get("alt_text"))

@@ -54,8 +54,9 @@ def main() -> int:
         assert composed.returncode == 0, composed.stdout + composed.stderr
         with zipfile.ZipFile(deck) as package:
             xml = b"".join(package.read(name) for name in package.namelist() if name.endswith(".xml"))
-        assert b"Noto Sans CJK SC" in xml or b"Noto Sans SC" in xml
-        assert b"Microsoft YaHei" not in xml
+        font_policy = json.loads((ROOT / "assets" / "default-font-policy.json").read_text(encoding="utf-8"))
+        expected_family = str(font_policy["family"]).encode("utf-8")
+        assert expected_family in xml
 
         svg = work / "icon.svg"
         svg.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="#ff0000"/></svg>', encoding="utf-8")

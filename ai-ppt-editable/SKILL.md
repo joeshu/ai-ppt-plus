@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.14.01
+  package_revision: 2026.09.17.01
 ---
 
 # AI PPT Editable
@@ -75,7 +75,8 @@ For last-mile viewer compatibility and preservation, also read
 For the mandatory final visual-asset route, also read
 `references/imagegen-final-asset-policy.md`.
 For the strict image-to-editable hardening contracts, also read
-`references/optimization-validation.md`; do not replace the synchronized core
+`references/optimization-validation.md` and
+`references/knight-fidelity-port.md`; do not replace the synchronized core
 with a simplified reconstruction path.
 
 For every reference-led page, build and validate the current fidelity and
@@ -161,24 +162,22 @@ Use `references/icon-asset-protocol.md` and `references/imagegen-sheet-slicing.m
 `references/panel-asset-protocol.md` for independent panels,
 `references/text-style-protocol.md` for mixed color/weight/line breaks, and
 `references/chart-reconstruction.md` for every chart. A source crop is valid
-only with bbox and source hash; missing assets use the declared generation
-route and remain independent assets after extraction. For icons, gradient
-visuals and complex artistic elements, prefer exact `source_reuse` when the
-supplied reference contains a complete, unobstructed, text-free asset that can
-be isolated with a recorded bbox and source hash. Use native `imagegen` only
-when exact isolation is impossible or the asset is missing; if generation
-fails, pause and ask the user to choose exactly one:
+as reference evidence only with bbox and source hash; missing assets use the
+declared generation route and remain independent assets after extraction. For
+icons, pictograms, gradient visuals, complex arrows and complex artistic
+elements, native `imagegen` is the required final-asset route even when an
+exact crop can be isolated. Supplied official brand marks are the exact-source
+exception. If generation fails, pause and ask the user to choose exactly one:
 continue/retry native imagegen, or use original-image crop/cutout
 (`source_reuse`). Never make that choice implicitly. Record the explicit user
 decision, reason and timestamp in the asset manifest; an undecided asset is
 blocked. For `source_reuse` crops,
 the delivered-file hash alone is insufficient: record `source_crop_policy` and
 the canonical RGBA `source_crop_sha256`, then run
-`validate_source_crop_integrity.py`. For icons, gradient visuals and complex
-artistic elements, source-locked crops may be delivered as independent L2
-assets when they pass crop-integrity, text-free, placement and hash gates.
-Never replace an exact authoritative icon with a merely similar generated icon
-to satisfy a routing preference. Run `validate_imagegen_final_assets.py --strict` before
+`validate_source_crop_integrity.py`. Only an explicit user-approved fallback
+may deliver a source-locked crop as an independent L2 asset after
+crop-integrity, text-free, placement and hash gates. Run
+`validate_imagegen_final_assets.py --strict` before
 composition and after the final render. Exact crops must
 match the declared source bbox pixel-for-pixel; derived crops must explicitly
 declare their alpha/processing step. This prevents a neighboring crop from
@@ -264,8 +263,10 @@ new image-to-editable runs must select `artifact-tool` and retain its report.
 
 Never assume a generated asset sheet is a uniform grid. Before B5, inspect
 alpha row/column spans and classify the sheet as `uniform_grid`, `variable_row`,
-or `artistic_row`. Fixed `4x4` slicing is permitted only after uniform-grid
-evidence is recorded; variable-row sheets require row-aware explicit crops,
+or `artistic_row`. Fixed origin-based slicing is permitted only after
+uniform-grid evidence is recorded. For a declared grid, use
+`slice_grid.py --detect-grid` and require the expected row/column center counts;
+variable-row sheets require row-aware explicit crops,
 and complex artistic typography requires one full-row asset per visual line.
 Contact-sheet review must reject clipped glyphs, edge-touching circles, merged
 neighboring objects, or an art row split into character fragments. See
@@ -302,15 +303,21 @@ target or skips finalizer and final-render checks.
    source evidence, text authority, or an explicit generated-asset record.
 3. Keep text as real text boxes/runs with stable line breaks, emphasis, and
    font evidence. Never copy pseudo-text from a generated image into formal copy.
+   Before first composition, run `scripts/ppt_text_fit.py` for every visible
+   text-producing path. Preserve source line counts and repair geometry when
+   `reference_scale < 0.90`; unexplained fixed-size text is a blocker.
 4. Keep charts native only when source data is verified; otherwise use the
    declared hybrid/static representation and preserve labels as native text.
 5. Keep PPTX and preview drawing order equivalent so technical previews are
    meaningful.
+   Build components in container → generated asset → editable text order, use
+   `placement_mode: alpha-centroid-fit` for asymmetric transparent assets, and
+   validate the saved physical shape tree with `audit_pptx_layers.py`.
 6. For reference reconstruction, compose simple semantic panels/cards as
    native shapes or groups and verified tables as native PowerPoint tables.
    Preserve complex gradients, illustrations, icons and textures as independent
    visual assets; do not trade their fidelity for a generic editable substitute.
-6. Treat an adapter preview with missing CJK glyphs as a renderer diagnostic,
+7. Treat an adapter preview with missing CJK glyphs as a renderer diagnostic,
    not as permission to rasterize text. Embed the task-local font, render the
    exact embedded PPTX with the release renderer, and require preview/final
    render consistency plus native-text object evidence before delivery.
@@ -325,7 +332,12 @@ object-audit reports are evidence, not human sign-off.
 
 Render every page and run structural, object, asset-hash, font, text-layout,
 overflow, overlap, panel, chart, route, and preview-consistency gates applicable
-to the project. Run `semantic_object_audit.py` with the final object manifest,
+to the project. Run `validate_transparent_assets.py` for every final ImageGen
+asset directory and preserve alpha bbox, padding and visual-centroid evidence.
+Produce same-coordinate local reference/candidate crops for dense text, icon
+slots, compact non-straight arrows with labels, table boundaries and
+user-flagged regions; full-page comparison alone is insufficient. Run
+`semantic_object_audit.py` with the final object manifest,
 text manifest, `--require-source-hashes`, and
 `--require-independent-text-manifest`; `inspect_editable_objects.py` alone is
 not a completeness gate because it can prove the declared objects while still
