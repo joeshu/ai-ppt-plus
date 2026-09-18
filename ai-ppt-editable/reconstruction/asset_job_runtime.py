@@ -16,26 +16,42 @@ def _json_hash(value: Mapping[str, Any]) -> str:
 
 
 def _placement_from_result(result, slot: tuple[int, int, int, int], request: Mapping[str, Any]) -> tuple[int, int, int, int]:
-    """Apply the same visible-alpha centroid fit used by the PPTX placement layer.
-
-    ``validate_generated_asset`` already measured normalized visible bbox and
-    alpha-weighted centroid, so the job runtime can persist a deterministic
-    placement transform without re-reading or re-interpreting the image.
-    """
+    """Apply the same contained visible-alpha centroid fit as PPTX placement."""
     x, y, width, height = slot
     if request.get("align_visible_alpha") is not True:
         return slot
     left, top, right, bottom = (float(v) for v in result.visible_alpha_bbox)
+    visible_x = left * result.width
+    visible_y = top * result.height
     visible_w = max(1e-9, (right - left) * result.width)
     visible_h = max(1e-9, (bottom - top) * result.height)
     contain = max(0.05, min(1.0, float(request.get("visible_contain", 1.0))))
-    scale = min((width * contain) / visible_w, (height * contain) / visible_h)
+    fit_w, fit_h = width * contain, height * contain
+    scale = min(fit_w / visible_w, fit_h / visible_h)
     centroid_x = float(result.alpha_centroid[0]) * result.width
     centroid_y = float(result.alpha_centroid[1]) * result.height
     target_cx, target_cy = x + width / 2.0, y + height / 2.0
+    placed_x = target_cx - centroid_x * scale
+    placed_y = target_cy - centroid_y * scale
+    safe_left = x + (width - fit_w) / 2.0
+    safe_top = y + (height - fit_h) / 2.0
+    safe_right = safe_left + fit_w
+    safe_bottom = safe_top + fit_h
+    visible_left = placed_x + visible_x * scale
+    visible_top = placed_y + visible_y * scale
+    visible_right = visible_left + visible_w * scale
+    visible_bottom = visible_top + visible_h * scale
+    if visible_left < safe_left:
+        placed_x += safe_left - visible_left
+    elif visible_right > safe_right:
+        placed_x -= visible_right - safe_right
+    if visible_top < safe_top:
+        placed_y += safe_top - visible_top
+    elif visible_bottom > safe_bottom:
+        placed_y -= visible_bottom - safe_bottom
     return (
-        int(round(target_cx - centroid_x * scale)),
-        int(round(target_cy - centroid_y * scale)),
+        int(round(placed_x)),
+        int(round(placed_y)),
         max(1, int(round(result.width * scale))),
         max(1, int(round(result.height * scale))),
     )
@@ -132,7 +148,7 @@ class AssetJobRuntime:
             },
             "intended_slot_bbox_emu": list(slot),
             "placement_bbox_emu": list(placement),
-            "placement_transform": "alpha-centroid-fit" if request.get("align_visible_alpha") is True else "slot-bbox",
+            "placement_transform": "alpha-centroid-fit-contained" if request.get("align_visible_alpha") is True else "slot-bbox",
             "receipt": dict(receipt),
         }
         registered = attempt_dir / "registered.json"
