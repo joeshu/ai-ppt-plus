@@ -1,10 +1,16 @@
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 from pptx import Presentation
 
-from scripts.authoring_backend import _normalize_text_size_aliases, build_pptx
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / "scripts"
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
+
+from authoring_backend import _normalize_text_size_aliases, build_pptx
 
 
 class AuthoringTextSizeAliasTest(unittest.TestCase):
