@@ -4,7 +4,8 @@
 The deterministic PPTX engine never generates icons/gradients/artwork itself.
 This module is the strict handoff boundary: native image generation happens
 outside the deterministic engine; returned assets are validated here before a
-layout may resume its repair iteration.
+layout may resume its repair iteration.  It also performs deterministic
+visible-alpha placement so transparent padding cannot shift the apparent icon.
 """
 from __future__ import annotations
 
@@ -30,6 +31,8 @@ class GeneratedAssetResult:
     width: int
     height: int
     background_mode: str
+    visible_alpha_bbox: list[float]
+    alpha_centroid: list[float]
     validation: dict[str, Any]
 
 
@@ -60,7 +63,58 @@ def _locate(deck: dict[str, Any], object_id: str) -> tuple[str, dict[str, Any]]:
     return matches[0]
 
 
-def _image_evidence(path: Path) -> dict[str, Any]:
+def _is_green(pixel: list[int] | tuple[int, ...]) -> bool:
+    r, g, b = pixel[:3]
+    return g >= 180 and g >= r + 55 and g >= b + 55
+
+
+def _is_red(pixel: list[int] | tuple[int, ...]) -> bool:
+    r, g, b = pixel[:3]
+    return r >= 180 and r >= g + 55 and r >= b + 55
+
+
+def _is_magenta(pixel: list[int] | tuple[int, ...]) -> bool:
+    r, g, b = pixel[:3]
+    return r >= 180 and b >= 180 and g + 55 <= min(r, b)
+
+
+def _foreground_weight(pixel: tuple[int, int, int, int], background_mode: str) -> float:
+    if background_mode == "transparent":
+        return pixel[3] / 255.0
+    if background_mode == "green":
+        return 0.0 if _is_green(pixel) else 1.0
+    if background_mode == "red":
+        return 0.0 if _is_red(pixel) else 1.0
+    if background_mode == "magenta":
+        return 0.0 if _is_magenta(pixel) else 1.0
+    return pixel[3] / 255.0
+
+
+def _visible_geometry(rgba: Any, background_mode: str) -> tuple[list[float], list[float]]:
+    width, height = rgba.size
+    left, top, right, bottom = width, height, -1, -1
+    total = weighted_x = weighted_y = 0.0
+    pixels = rgba.load()
+    for y in range(height):
+        for x in range(width):
+            weight = _foreground_weight(pixels[x, y], background_mode)
+            if weight <= 0.05:
+                continue
+            left = min(left, x)
+            top = min(top, y)
+            right = max(right, x)
+            bottom = max(bottom, y)
+            total += weight
+            weighted_x += (x + 0.5) * weight
+            weighted_y += (y + 0.5) * weight
+    if right < left or bottom < top or total <= 0:
+        raise AssetGenerationError("generated asset has no visible foreground")
+    bbox = [left / width, top / height, (right + 1) / width, (bottom + 1) / height]
+    centroid = [weighted_x / total / width, weighted_y / total / height]
+    return [round(v, 8) for v in bbox], [round(v, 8) for v in centroid]
+
+
+def _image_evidence(path: Path, background_mode: str) -> dict[str, Any]:
     try:
         from PIL import Image
     except ImportError as exc:
@@ -77,6 +131,9 @@ def _image_evidence(path: Path) -> dict[str, Any]:
             alpha_histogram = alpha.histogram()
             total_pixels = max(1, width * height)
             corners = [rgba.getpixel((0, 0)), rgba.getpixel((width - 1, 0)), rgba.getpixel((0, height - 1)), rgba.getpixel((width - 1, height - 1))]
+            visible_alpha_bbox, alpha_centroid = _visible_geometry(rgba, background_mode)
+    except AssetGenerationError:
+        raise
     except Exception as exc:
         raise AssetGenerationError(f"generated asset is not a readable image: {path}") from exc
     if width <= 0 or height <= 0:
@@ -91,22 +148,37 @@ def _image_evidence(path: Path) -> dict[str, Any]:
         "transparent_fraction": sum(alpha_histogram[:16]) / total_pixels,
         "opaque_fraction": sum(alpha_histogram[240:]) / total_pixels,
         "corners": [list(pixel) for pixel in corners],
+        "visible_alpha_bbox": visible_alpha_bbox,
+        "alpha_centroid": alpha_centroid,
     }
 
 
-def _is_green(pixel: list[int] | tuple[int, ...]) -> bool:
-    r, g, b = pixel[:3]
-    return g >= 180 and g >= r + 55 and g >= b + 55
+def _placement_for_visible_bbox(target: dict[str, Any], visible_bbox: list[float]) -> dict[str, float]:
+    required = ("x", "y", "w", "h")
+    if any(key not in target for key in required):
+        raise AssetGenerationError("alpha-aligned placement requires preserve_geometry x/y/w/h")
+    left, top, right, bottom = [float(v) for v in visible_bbox]
+    visible_w = right - left
+    visible_h = bottom - top
+    if visible_w <= 0 or visible_h <= 0:
+        raise AssetGenerationError("visible alpha bbox must have positive area")
+    target_x, target_y, target_w, target_h = (float(target[key]) for key in required)
+    outer_w = target_w / visible_w
+    outer_h = target_h / visible_h
+    return {
+        "x": target_x - left * outer_w,
+        "y": target_y - top * outer_h,
+        "w": outer_w,
+        "h": outer_h,
+    }
 
 
-def _is_red(pixel: list[int] | tuple[int, ...]) -> bool:
-    r, g, b = pixel[:3]
-    return r >= 180 and r >= g + 55 and r >= b + 55
-
-
-def _is_magenta(pixel: list[int] | tuple[int, ...]) -> bool:
-    r, g, b = pixel[:3]
-    return r >= 180 and b >= 180 and g + 55 <= min(r, b)
+def _local_crop_bbox(target: dict[str, Any], padding_ratio: float = 0.25) -> list[float] | None:
+    if any(key not in target for key in ("x", "y", "w", "h")):
+        return None
+    x, y, w, h = (float(target[key]) for key in ("x", "y", "w", "h"))
+    px, py = w * padding_ratio, h * padding_ratio
+    return [round(max(0.0, x - px), 8), round(max(0.0, y - py), 8), round(min(1.0, x + w + px), 8), round(min(1.0, y + h + py), 8)]
 
 
 def validate_generated_asset(request: dict[str, Any], response: dict[str, Any], *, base_dir: Path | None = None) -> GeneratedAssetResult:
@@ -132,7 +204,7 @@ def validate_generated_asset(request: dict[str, Any], response: dict[str, Any], 
     if not path.is_file():
         raise AssetGenerationError(f"generated asset file does not exist: {path}")
 
-    evidence = _image_evidence(path)
+    evidence = _image_evidence(path, expected_mode)
     if evidence["format"] != "PNG":
         raise AssetGenerationError("generated asset must be PNG at the deterministic handoff boundary")
 
@@ -161,12 +233,14 @@ def validate_generated_asset(request: dict[str, Any], response: dict[str, Any], 
         width=int(evidence["width"]),
         height=int(evidence["height"]),
         background_mode=expected_mode,
+        visible_alpha_bbox=list(evidence["visible_alpha_bbox"]),
+        alpha_centroid=list(evidence["alpha_centroid"]),
         validation=evidence,
     )
 
 
 def bind_generated_asset(deck: dict[str, Any], request: dict[str, Any], result: GeneratedAssetResult) -> dict[str, Any]:
-    """Bind a validated generated asset without changing requested geometry."""
+    """Bind a validated asset; optionally map its visible alpha bbox to the target bbox."""
     repaired = deepcopy(deck)
     _, item = _locate(repaired, result.object_id)
     preserved_before = {key: item.get(key) for key in ("x", "y", "w", "h", "rotation") if key in item}
@@ -174,6 +248,13 @@ def bind_generated_asset(deck: dict[str, Any], request: dict[str, Any], result: 
     for key, expected in expected_geometry.items():
         if key in preserved_before and preserved_before[key] != expected:
             raise AssetGenerationError(f"asset geometry changed before bind for {key}")
+
+    placement = {key: item.get(key) for key in ("x", "y", "w", "h") if key in item}
+    if request.get("align_visible_alpha") is True:
+        placement = _placement_for_visible_bbox(expected_geometry, result.visible_alpha_bbox)
+        for key, value in placement.items():
+            item[key] = value
+
     item["file"] = result.file
     item["source_sha256"] = result.sha256
     item["background_mode"] = result.background_mode
@@ -187,17 +268,27 @@ def bind_generated_asset(deck: dict[str, Any], request: dict[str, Any], result: 
         "sha256": result.sha256,
         "width": result.width,
         "height": result.height,
+        "visible_alpha_bbox": result.visible_alpha_bbox,
+        "alpha_centroid": result.alpha_centroid,
+        "placement_bbox": [placement.get("x"), placement.get("y"), placement.get("w"), placement.get("h")],
     }
-    preserved_after = {key: item.get(key) for key in preserved_before}
-    if preserved_after != preserved_before:
-        raise AssetGenerationError("asset bind mutated placement geometry")
+    if request.get("align_visible_alpha") is not True:
+        preserved_after = {key: item.get(key) for key in preserved_before}
+        if preserved_after != preserved_before:
+            raise AssetGenerationError("asset bind mutated placement geometry")
+    else:
+        preserved_after = expected_geometry
+
     return {
         "deck": repaired,
         "report": {
-            "schema": "ai-ppt-plus/generated-asset-bind/v1",
+            "schema": "ai-ppt-plus/generated-asset-bind/v2",
             "valid": True,
             "object_id": result.object_id,
             "asset": asdict(result),
+            "intended_visible_bbox": expected_geometry if request.get("align_visible_alpha") is True else None,
+            "placement_bbox": [placement.get("x"), placement.get("y"), placement.get("w"), placement.get("h")],
+            "local_crop_bbox": _local_crop_bbox(expected_geometry),
             "preserved_geometry": preserved_after,
         },
     }
