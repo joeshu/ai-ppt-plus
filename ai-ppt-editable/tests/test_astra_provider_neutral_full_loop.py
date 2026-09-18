@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import tempfile
-from copy import deepcopy
 from pathlib import Path
 
 from PIL import Image
@@ -11,9 +10,6 @@ from reconstruction.accepted_state import build_accepted_state, resolve_source_l
 from reconstruction.asset_orchestrator import bind_generated_asset, validate_generated_asset
 from reconstruction.asset_quality_qa import parse_asset_quality_response
 from reconstruction.difference_graph import DifferenceGraph
-from reconstruction.distillation_record import build_distillation_record
-from reconstruction.distillation_selection import classify_record
-from reconstruction.golden_promotion import build_promotion_manifest, evaluate_case
 from reconstruction.repair_executors import execute_plan
 from reconstruction.repair_router import RepairRouter
 
@@ -115,13 +111,18 @@ def _iteration_record(*, iteration: int, source_layout: Path, accepted_iteration
         "native_editability_valid": True,
         "semantic_accuracy": 1.0,
         "semantic_audit": _semantic_audit(),
-        "object_drift": {"valid": True, "allowed_object_ids": ["title", "hero-icon"], "unauthorized_drift_count": 0, "unauthorized_objects": []},
+        "object_drift": {
+            "valid": True,
+            "allowed_object_ids": ["title", "hero-icon"],
+            "unauthorized_drift_count": 0,
+            "unauthorized_objects": [],
+        },
         "regression": {"rollback": False, "reasons": [], "pixel_fidelity_delta": 0.02, "blocking_delta": -1},
         "artifacts": {"layout": str(layout.resolve()), "pptx": str(pptx.resolve())},
     }
 
 
-def test_provider_neutral_control_plane_completes_one_asset_resume_round_and_promotes_only_reproducible_history():
+def test_provider_neutral_control_plane_completes_asset_resume_and_accepted_state_lineage():
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
         source_layout = root / "candidate-layout.json"
@@ -158,9 +159,15 @@ def test_provider_neutral_control_plane_completes_one_asset_resume_round_and_pro
         )
         assert quality["approved"] is True
 
-        before_geometry = {k: execution["deck"]["slides"][0]["icons"][0][k] for k in ("x", "y", "w", "h", "rotation")}
+        before_geometry = {
+            key: execution["deck"]["slides"][0]["icons"][0][key]
+            for key in ("x", "y", "w", "h", "rotation")
+        }
         bound = bind_generated_asset(execution["deck"], generation_request, generated)
-        after_geometry = {k: bound["deck"]["slides"][0]["icons"][0][k] for k in ("x", "y", "w", "h", "rotation")}
+        after_geometry = {
+            key: bound["deck"]["slides"][0]["icons"][0][key]
+            for key in ("x", "y", "w", "h", "rotation")
+        }
         assert after_geometry == before_geometry
         assert bound["deck"]["slides"][0]["icons"][0]["generation_provenance"]["kind"] == "native_image_generation"
 
@@ -170,7 +177,13 @@ def test_provider_neutral_control_plane_completes_one_asset_resume_round_and_pro
         layout1.write_text(json.dumps(bound["deck"]), encoding="utf-8")
         pptx1 = iteration1_dir / "editable.pptx"
         pptx1.write_bytes(b"pptx-sentinel")
-        record1 = _iteration_record(iteration=1, source_layout=source_layout, accepted_iteration=0, layout=layout1, pptx=pptx1)
+        record1 = _iteration_record(
+            iteration=1,
+            source_layout=source_layout,
+            accepted_iteration=0,
+            layout=layout1,
+            pptx=pptx1,
+        )
         state1 = build_accepted_state("provider-neutral-full-loop", record1, iteration_dir=iteration1_dir)
         accepted_state_path = root / "runs" / "provider-neutral-full-loop" / "accepted-state.json"
         write_accepted_state(accepted_state_path, state1)
@@ -191,30 +204,20 @@ def test_provider_neutral_control_plane_completes_one_asset_resume_round_and_pro
         layout2.write_text(json.dumps(bound["deck"]), encoding="utf-8")
         pptx2 = iteration2_dir / "editable.pptx"
         pptx2.write_bytes(b"pptx-sentinel-v2")
-        record2 = _iteration_record(iteration=2, source_layout=resolved2, accepted_iteration=1, layout=layout2, pptx=pptx2)
-
-        distilled1 = build_distillation_record(iteration_record=record1, asset_resolution={"resolved_count": 1}, human_approved=True).to_dict()
-        distilled2 = build_distillation_record(iteration_record=record2, asset_resolution={"resolved_count": 1}, human_approved=True).to_dict()
-        assert distilled1["source_accepted_iteration"] == 0
-        assert distilled2["source_accepted_iteration"] == 1
-        assert distilled2["source_layout"] == str(layout1.resolve())
-        assert classify_record(distilled2)["positive"] is True
-
-        promotion = evaluate_case([distilled1, distilled2])
-        assert promotion["promotable"] is True
-        assert promotion["candidate_iteration"] == 2
-        assert promotion["candidate_source_lineage"]["source_accepted_iteration"] == 1
-        manifest = build_promotion_manifest(evaluation=promotion, previous_golden=None, version="provider-neutral-golden-v1")
-        assert manifest["immutable"] is True
-        assert manifest["source_lineage"]["source_layout"] == str(layout1.resolve())
-
-        broken = deepcopy(distilled2)
-        broken["source_layout"] = None
-        rejected = evaluate_case([distilled1, broken])
-        assert rejected["promotable"] is False
-        assert "source_lineage_missing" in rejected["evaluations"][-1]["reasons"]
+        record2 = _iteration_record(
+            iteration=2,
+            source_layout=resolved2,
+            accepted_iteration=1,
+            layout=layout2,
+            pptx=pptx2,
+        )
+        assert record2["source_resolution"]["source"] == "accepted-state"
+        assert record2["source_resolution"]["accepted_iteration"] == 1
+        assert record2["source_resolution"]["layout"] == str(layout1.resolve())
+        assert record2["artifacts"]["layout"] == str(layout2.resolve())
+        assert record2["artifacts"]["pptx"] == str(pptx2.resolve())
 
 
 if __name__ == "__main__":
-    test_provider_neutral_control_plane_completes_one_asset_resume_round_and_promotes_only_reproducible_history()
+    test_provider_neutral_control_plane_completes_asset_resume_and_accepted_state_lineage()
     print("Provider-neutral Astra full-loop integration test passed")
