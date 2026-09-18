@@ -1,0 +1,6 @@
+{
+  "schema": "ai-ppt-plus/retired-feature/v1",
+  "feature": "unattended-distillation",
+  "enabled": false,
+  "status": "retired"
+}
