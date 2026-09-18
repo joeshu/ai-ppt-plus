@@ -132,12 +132,7 @@ def cleanup_temporary_files(paths: list[Path]) -> None:
 
 
 def alpha_geometry(path: Path, *, threshold: int = 8) -> dict:
-    """Measure the visible subject independently from its transparent canvas.
-
-    A small alpha threshold suppresses resampling noise while alpha-weighted
-    moments preserve anti-aliased edges.  Returned values are source-pixel
-    coordinates and are suitable for deterministic placement/QA evidence.
-    """
+    """Measure the visible subject independently from its transparent canvas."""
     try:
         import numpy as np
         from PIL import Image
@@ -168,13 +163,7 @@ def alpha_geometry(path: Path, *, threshold: int = 8) -> dict:
 
 
 def alpha_centroid_fit(path: Path, x: int, y: int, width: int, height: int, *, threshold: int = 8, contain: float = 1.0) -> tuple[int, int, int, int]:
-    """Fit the *visible* alpha bbox into a slot and align visual centroids.
-
-    Unlike canvas-centering, transparent margins do not bias scale or center.
-    ``contain`` (<1) reserves symmetric breathing room without changing the
-    source asset.  The returned rectangle still places the complete canvas so
-    the asset remains independently movable and its alpha is preserved.
-    """
+    """Fit visible alpha into a slot and align visual centroids."""
     geometry = alpha_geometry(path, threshold=threshold)
     canvas_w, canvas_h = geometry["canvas_px"]
     visible_x, visible_y, visible_w, visible_h = geometry["visible_bbox_px"]
@@ -187,12 +176,6 @@ def alpha_centroid_fit(path: Path, x: int, y: int, width: int, height: int, *, t
     target_cx, target_cy = x + width / 2.0, y + height / 2.0
     placed_x = target_cx - centroid_x * scale
     placed_y = target_cy - centroid_y * scale
-
-    # Centroid alignment is a preference, not permission for the visible
-    # subject to escape the declared slot.  Asymmetric alpha mass (for
-    # example a skyline above a heavy ribbon) can shift the centroid far from
-    # the visible-bbox center.  Clamp the placed canvas just enough to keep
-    # the complete visible bbox inside the requested contain box.
     safe_left = x + (width - fit_w) / 2.0
     safe_top = y + (height - fit_h) / 2.0
     safe_right = safe_left + fit_w
@@ -210,6 +193,58 @@ def alpha_centroid_fit(path: Path, x: int, y: int, width: int, height: int, *, t
     elif visible_bottom > safe_bottom:
         placed_y -= visible_bottom - safe_bottom
     return int(round(placed_x)), int(round(placed_y)), canvas_out_w, canvas_out_h
+
+
+def reference_foreground_geometry(path: Path, *, threshold: float = 24.0, border_fraction: float = 0.08) -> dict:
+    """Measure foreground geometry in a reference crop without reusing its pixels."""
+    try:
+        import numpy as np
+        from PIL import Image
+    except ImportError:
+        _die("reference foreground geometry requires Pillow and numpy")
+    with Image.open(path) as source:
+        rgb = np.asarray(source.convert("RGB"), dtype=np.float64)
+    h, w, _ = rgb.shape
+    band = max(1, int(round(min(w, h) * max(0.01, min(0.25, border_fraction)))))
+    border = np.concatenate((rgb[:band].reshape(-1, 3), rgb[-band:].reshape(-1, 3), rgb[:, :band].reshape(-1, 3), rgb[:, -band:].reshape(-1, 3)))
+    background = np.median(border, axis=0)
+    delta = np.linalg.norm(rgb - background, axis=2)
+    mask = delta >= max(1.0, float(threshold))
+    ys, xs = np.where(mask)
+    if not len(xs):
+        _die(f"reference crop has no detectable foreground: {path}")
+    x0, x1 = int(xs.min()), int(xs.max()) + 1
+    y0, y1 = int(ys.min()), int(ys.max()) + 1
+    weights = np.where(mask, delta, 0.0)
+    total = float(weights.sum())
+    grid_y, grid_x = np.indices(mask.shape)
+    return {
+        "canvas_px": [w, h],
+        "foreground_bbox_px": [x0, y0, x1 - x0, y1 - y0],
+        "foreground_centroid_px": [float((grid_x * weights).sum() / total), float((grid_y * weights).sum() / total)],
+        "background_rgb": [float(v) for v in background],
+        "foreground_area_ratio": float(mask.sum() / mask.size),
+        "threshold": float(threshold),
+    }
+
+
+def reference_crop_fit(path: Path, reference_crop: Path, x: int, y: int, width: int, height: int, *, alpha_threshold: int = 8, foreground_threshold: float = 24.0, contain: float = 1.0) -> tuple[int, int, int, int]:
+    """Match generated RGBA visible geometry to a same-coordinate reference crop."""
+    candidate = alpha_geometry(path, threshold=alpha_threshold)
+    reference = reference_foreground_geometry(reference_crop, threshold=foreground_threshold)
+    cw, ch = candidate["canvas_px"]
+    _, _, vw, vh = candidate["visible_bbox_px"]
+    rcw, rch = reference["canvas_px"]
+    _, _, rw, rh = reference["foreground_bbox_px"]
+    contain = max(0.05, min(1.0, float(contain)))
+    target_w = width * (rw / rcw) * contain
+    target_h = height * (rh / rch) * contain
+    scale = min(target_w / vw, target_h / vh)
+    out_w, out_h = max(1, int(round(cw * scale))), max(1, int(round(ch * scale)))
+    target_cx = x + width * (reference["foreground_centroid_px"][0] / rcw)
+    target_cy = y + height * (reference["foreground_centroid_px"][1] / rch)
+    ccx, ccy = candidate["visible_centroid_px"]
+    return int(round(target_cx - ccx * scale)), int(round(target_cy - ccy * scale)), out_w, out_h
 
 
 def add_background(slide, slide_spec: dict, assets_dir: Path, sw_emu: int, sh_emu: int):
@@ -265,7 +300,13 @@ def add_icons(slide, specs: list[dict], assets_dir: Path, deck: dict, ref_w: flo
         if path.suffix.casefold() == ".svg":
             source_path = svg_to_png(path, temporary_files)
         target = (int(fx * sw_emu), int(fy * sh_emu), int(fw * sw_emu), int(fh * sh_emu))
-        if icon.get("placement_mode") == "alpha-centroid-fit" or icon.get("align_by_alpha") is True:
+        placement_mode = icon.get("placement_mode")
+        if placement_mode == "reference-crop-fit":
+            reference_crop = _resolve(assets_dir, icon.get("reference_crop", ""))
+            if not reference_crop.is_file():
+                _die(f"slide {slide_no}: reference-crop-fit requires reference_crop: {reference_crop}")
+            target = reference_crop_fit(source_path, reference_crop, *target, alpha_threshold=int(icon.get("alpha_threshold", 8)), foreground_threshold=float(icon.get("foreground_threshold", 24.0)), contain=float(icon.get("visible_contain", 1.0)))
+        elif placement_mode == "alpha-centroid-fit" or icon.get("align_by_alpha") is True:
             target = alpha_centroid_fit(source_path, *target, threshold=int(icon.get("alpha_threshold", 8)), contain=float(icon.get("visible_contain", 1.0)))
         picture = slide.shapes.add_picture(str(source_path), Emu(target[0]), Emu(target[1]), width=Emu(target[2]), height=Emu(target[3]))
         picture.name = str(icon.get("name") or icon.get("object_id") or f"icon-{icon_index:02d}")
