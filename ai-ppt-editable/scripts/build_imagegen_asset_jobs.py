@@ -3,7 +3,8 @@
 from __future__ import annotations
 import argparse,hashlib,json
 from pathlib import Path
-NATIVE={"formal_text","text","data","chart_data","native_shape","line","simple_shape","table"}\nICON_CLASSES={"icon","icon_asset","glyph","pictogram","badge"}
+NATIVE={"formal_text","text","data","chart_data","native_shape","line","simple_shape","table"}
+ICON_CLASSES={"icon","icon_asset","glyph","pictogram","badge"}
 def stable_hash(obj): return hashlib.sha256(json.dumps(obj,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()).hexdigest()
 def route(item):
     explicit=str(item.get("route","")).lower()
@@ -34,5 +35,6 @@ def plan(data):
         jobs.append({"job_id":f"imagegen-{aid}-{key[:12]}","asset_id":aid,"route":"imagegen_asset","cache_key":key,"reference":ref,"output":f"assets/imagegen/{aid}.png","prompt_file":f"assets/prompts/{aid}.txt","request":request,"cache":{"evidence":f"assets/cache/{aid}-{key}.json","reuse_requires":["cache_key_match","asset_sha256_match","alpha_geometry_pass","local_crop_qa_pass"]},"handoff":{"validator":"reconstruction.asset_orchestrator.validate_generated_asset","binder":"reconstruction.asset_orchestrator.bind_generated_asset","placement":"scripts.asset_placement.adaptive_alpha_fit" if placement_mode=="adaptive-alpha-fit" else ("scripts.asset_placement.alpha_centroid_fit" if alpha_required else "slot-bbox")},"qa":qa,"retry_scope":"asset_only","retry":{"policy":"reconstruction.asset_retry_policy.next_retry_request","max_native_attempts":3,"scope":"asset_only","transparent_edit_before_chroma":True,"automatic_source_reuse":False},"state_order":["cache_lookup","native_imagegen","validate_bytes","measure_alpha_geometry","bind_alpha_centroid","render_local_crop","asset_visual_qa","cache_commit_or_asset_retry"],"source_reuse":"forbidden_without_user_approved_fallback"})
     return {"schema":"ai-ppt-plus/imagegen-asset-jobs/v2","source":source,"native_editable_assets":native,"jobs":jobs,"job_count":len(jobs),"cache_policy":"reuse only when cache key, delivered hash, alpha geometry and local-crop QA evidence all pass","failure_policy":"retry only failing asset; never silently source-reuse"}
 def main():
-    p=argparse.ArgumentParser(); p.add_argument("input",type=Path); p.add_argument("--output",type=Path,required=True); a=p.parse_args(); r=plan(json.loads(a.input.read_text(encoding="utf-8"))); a.output.parent.mkdir(parents=True,exist_ok=True); a.output.write_text(json.dumps(r,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"); print(json.dumps({"job_count":r["job_count"],"output":str(a.output)}))
+    p=argparse.ArgumentParser(); p.add_argument("input",type=Path); p.add_argument("--output",type=Path,required=True); a=p.parse_args(); r=plan(json.loads(a.input.read_text(encoding="utf-8"))); a.output.parent.mkdir(parents=True,exist_ok=True); a.output.write_text(json.dumps(r,ensure_ascii=False,indent=2)+"
+",encoding="utf-8"); print(json.dumps({"job_count":r["job_count"],"output":str(a.output)}))
 if __name__=="__main__": main()
