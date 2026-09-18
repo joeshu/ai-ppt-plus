@@ -1,0 +1,49 @@
+{
+  "schema": "ai-ppt-plus/knight-five-axis-candidate/v31",
+  "source": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "size_px": [1536, 864]
+  },
+  "candidate": {
+    "pptx_sha256": "ac1e761f9a7836d5230d6a2590f0eb4070ce90745c8bfe561c027693d74e3884",
+    "render_sha256": "fb7bf2c6d3481d0ac2cb2050eb80fc9dba3c6255eda003e27c7c661bc4b6d19a",
+    "compare_visual": {
+      "global_ssim": 0.571488,
+      "blurred_layout_ssim": 0.907578,
+      "blurred_pixel_fidelity_score": 0.954519,
+      "strict_thresholds": {"blurred_layout_ssim": 0.9, "blurred_pixel_fidelity_score": 0.9},
+      "strict_valid": true
+    },
+    "local_blurred_layout_ssim": {
+      "header": 0.94955,
+      "summary": 0.918584,
+      "chart": 0.894047,
+      "card1": 0.90746,
+      "card2": 0.885977,
+      "card3": 0.923772,
+      "management": 0.934459,
+      "outcomes": 0.81189,
+      "footer": 0.859866
+    },
+    "objects": {
+      "shape_count": 143,
+      "type_counts": {"AUTO_SHAPE (1)": 115, "PICTURE (13)": 27, "CHART (3)": 1},
+      "whole_slide_pictures": [],
+      "native_chart_count": 1
+    },
+    "text": {"text_object_count": 66, "text_char_count": 709, "canonical_coverage": 1.0},
+    "icons": {"mean_red_mask_iou": 0.6434, "min_red_mask_iou": 0.3606},
+    "chart_gap": {
+      "future_zero_points_in_chart_xml": false,
+      "red_series_short_range": true,
+      "workbook_future_values": [null, null, null, null, null, null],
+      "valid": true
+    }
+  },
+  "baseline_v18": {"blurred_layout_ssim": 0.866937, "blurred_pixel_fidelity_score": 0.946715, "global_ssim": 0.543452},
+  "decision": {
+    "visual": "pass",
+    "merge_pr36": "pending_code_and_ci_replay",
+    "reason": "Existing strict visual gate is met in the current fallback-font runtime; distill accepted geometry repairs into the formal worker contract, rerun CI, then reassess PR readiness."
+  }
+}
