@@ -1,0 +1,42 @@
+{
+  "schema": "ai-ppt-plus/beat-knight-report/v2",
+  "case_id": "降套管控-1536x864",
+  "profile": "competitive_ab",
+  "candidate_revision": "feat/beat-knight-fidelity-20260918",
+  "candidate_variant": "v4 evidence-driven body-layer repair",
+  "tolerance": 0.002,
+  "absolute_quality_floor_pass": true,
+  "absolute_quality_floor": {
+    "formal_text_native": true,
+    "no_whole_slide_picture": true,
+    "no_missing_text": true,
+    "no_text_overflow": true,
+    "no_blocking_object": true,
+    "icon_assets_independent": true,
+    "alpha_assets_valid": true,
+    "slide_size_13.333333x7.5": true
+  },
+  "dimensions": {
+    "pixel": {"knight": 0.6418715545365413, "candidate": 0.6539488510769805, "delta": 0.012077296540439209, "verdict": "win"},
+    "text": {"knight": 1.0, "candidate": 1.0, "delta": 0.0, "verdict": "tie"},
+    "object": {"knight": 1.0, "candidate": 1.0, "delta": 0.0, "verdict": "tie"},
+    "icon_asset": {"knight": 0.5828872012936432, "candidate": 0.6440556242047353, "delta": 0.061168422911092035, "verdict": "win"},
+    "local_crop": {"knight": 0.5007865387206804, "candidate": 0.5137916537693911, "delta": 0.013005115048710714, "verdict": "win"}
+  },
+  "strict_win_count": 3,
+  "loss_dimensions": [],
+  "pixel_or_local_crop_win": true,
+  "beat_knight": true,
+  "diagnostics": {
+    "pixel_fidelity_knight": 0.9116437435150146,
+    "pixel_fidelity_candidate": 0.9184221029281616,
+    "local_crop_mean_knight": 0.6283822159223901,
+    "local_crop_mean_candidate": 0.6399390005826405
+  },
+  "repair_trace": {
+    "finding": "render correlation identified the three-card body layer as approximately 2 px too low",
+    "repair": "move only the three-card body layer upward by 2 source pixels; keep title, overall-thinking band and bottom brand layer fixed",
+    "result": "pixel, icon_asset and local_crop became strict wins without changing tolerance or gate policy"
+  },
+  "baseline_note": "Knight repository is represented by the frozen Knight-method baseline available to this benchmark; no nonexistent end-to-end generator is claimed."
+}
