@@ -32,10 +32,35 @@ hash. Generated assets must not contain formal text, numbers, chart data, or
 logos that are authoritative for the page. Formal text remains native rich
 text; exact data charts remain native/declared chart objects.
 
-Official brand marks and wordmarks are governed by the brand-asset contract:
-use an authorized official source asset rather than asking imagegen to redraw a
-legally or visually sensitive logo. This is a brand-asset exception, not a
-general source-reuse fallback.
+## Exact brand-asset preservation exception
+
+Official brand identity is not an ImageGen reconstruction target. When the
+user supplies an exact official brand asset, or explicitly identifies a source
+region as authoritative brand artwork, preserve that asset exactly instead of
+redrawing or approximating it. This follows the same fidelity principle used by
+Knight for supplied real logo/brand marks.
+
+The exception covers independently movable brand furniture whose fidelity
+depends on exact artwork, including:
+
+- corporate logos and logo lockups;
+- official wordmarks and calligraphic service slogans;
+- approved brand signatures/seals;
+- official footer/header brand bands that combine a logo/wordmark with a
+  skyline, ribbon, 5G mark, campaign signature or other locked brand artwork.
+
+These objects use `provenance_mode: exact_brand_asset`, not `imagegen` and not a
+generic `source_reuse` fallback. They must remain independent PPT picture
+objects, preserve aspect ratio, use the supplied/canonical pixels without
+redrawing, and record source hash plus source/target bbox. Do not OCR and
+re-typeset text that is an inseparable part of an authoritative brand lockup.
+Do not expand this exception to ordinary icons, decorative art, charts, body
+text, cards, or arbitrary screenshot fragments.
+
+If only a slide reference exists and the brand region has not been explicitly
+approved as authoritative exact artwork, keep the normal ImageGen/source-reuse
+decision gate. A whole-slide or large content-region crop can never be relabeled
+as a brand asset to bypass editability requirements.
 
 ## Required evidence
 
@@ -52,5 +77,7 @@ Run the validator before composition and after rendering. The post-render
 record must identify the delivered PPT object and preserve the generated asset
 hash. For an approved fallback, the record must additionally include
 `fallback_decision: user_approved`, `decision_id`, `decision_reason`, and
-source bbox/hash evidence. A passing visual score cannot waive a route or
+source bbox/hash evidence. Exact brand assets instead record
+`provenance_mode: exact_brand_asset`, their authoritative source hash and their
+independent PPT object ID. A passing visual score cannot waive a route or
 provenance failure.
