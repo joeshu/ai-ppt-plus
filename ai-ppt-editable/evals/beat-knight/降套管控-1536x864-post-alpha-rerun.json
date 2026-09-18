@@ -1,0 +1,50 @@
+{
+  "schema": "ai-ppt-plus/beat-knight-post-alpha-rerun/v1",
+  "case_id": "降套管控-1536x864",
+  "run_date": "2026-09-18",
+  "candidate_revision": "feat/beat-knight-fidelity-20260918",
+  "candidate_deck": "feat-beat-knight-fidelity-20260918_降套管控_v4_13.333333x7.5_editable.pptx",
+  "knight_baseline_deck": "Knight_method_降套管控_13.333333x7.5_editable.pptx",
+  "source_sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99",
+  "fresh_render_revalidation": {
+    "renderer": "LibreOffice + Poppler",
+    "source_size_px": [1536, 864],
+    "standard_ssim": {
+      "knight": 0.5034007502347769,
+      "candidate": 0.5199452900906102,
+      "delta": 0.0165445398558333,
+      "verdict": "candidate_win"
+    },
+    "mean_absolute_pixel_fidelity": {
+      "knight": 0.8756647439188832,
+      "candidate": 0.884720751626107,
+      "delta": 0.0090560077072238,
+      "verdict": "candidate_win"
+    },
+    "hard_region_ssim": {
+      "header-logo-title": {"knight": 0.6239044307878644, "candidate": 0.6239044307878644, "verdict": "tie"},
+      "overall-thinking": {"knight": 0.37689468070243404, "candidate": 0.3839818389100778, "verdict": "candidate_win"},
+      "left-red-control-card": {"knight": 0.4074892690387484, "candidate": 0.4332139402710257, "verdict": "candidate_win"},
+      "middle-blue-retention-card": {"knight": 0.5115510510172517, "candidate": 0.5285224275820931, "verdict": "candidate_win"},
+      "right-orange-innovation-card": {"knight": 0.5387822827628576, "candidate": 0.5611086581038375, "verdict": "candidate_win"},
+      "right-daily-mechanism": {"knight": 0.5165031558427081, "candidate": 0.570708833910203, "verdict": "candidate_win"},
+      "right-four-icon-row": {"knight": 0.5151003739728556, "candidate": 0.5258008018032846, "verdict": "candidate_win"},
+      "bottom-brand-band": {"knight": 0.5453608903167212, "candidate": 0.5505493044896747, "verdict": "candidate_win"}
+    }
+  },
+  "previous_five_dimension_result": {
+    "pixel": "win",
+    "text": "tie",
+    "object": "tie",
+    "icon_asset": "win",
+    "local_crop": "win",
+    "strict_win_count": 3,
+    "loss_dimensions": []
+  },
+  "current_policy_eligibility": {
+    "eligible_for_post_alpha_final_claim": false,
+    "reason": "The frozen v4 benchmark deck predates the current imagegen-final-assets/v3 requirement and its visual assets were produced from legacy source-crop fixtures. A fresh render proves the visual advantage remains, but it cannot prove the new native-ImageGen alpha-centroid path on this case.",
+    "required_next_run": "Regenerate each non-native visual as an independent native ImageGen asset, record visible_alpha_bbox/alpha_centroid/placement_bbox, forbid contact/sprite-sheet ancestry, rebuild the candidate deck, then rerun the five-dimensional evaluator without changing thresholds."
+  },
+  "threshold_policy_changed": false
+}
