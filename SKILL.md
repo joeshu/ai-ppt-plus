@@ -33,9 +33,10 @@ and classify every table-like region as native table, repeated component, or
 blocking ambiguous. Never default insufficient semantic evidence to a native
 table; preserve the reference geometry, styling, layering and editability when
 selecting the authoring primitive.
-before choosing native tables. Visual grid evidence is not table semantics;
-ambiguous icon/title/body lists must be classified as repeated component groups
-and must pass both the object-type gate and the unchanged visual gates.
+Before choosing native tables, remember that visual grid evidence is not table
+semantics; ambiguous icon/title/body lists must be classified as repeated
+component groups and must pass both the object-type gate and unchanged visual
+gates.
 
 ```bash
 python3 scripts/validate_skill_package.py --skill-dir .
@@ -138,10 +139,11 @@ Choose one visual authority per page and persist `route-decision.json`:
   directly by `$ai-ppt-editable` from approved content.
 
 Bind the route decision to the outline contract and run both
-`scripts/validate_route.py` and `scripts/validate_orchestration_gates.py`. A `needs_user` or `blocked` route cannot
-proceed. Persist the deck design system and its revision before delegating.
-The orchestrator's outline/design revisions are immutable inputs to workers;
-workers return evidence and issues, not replacement authority.
+`scripts/validate_route.py` and `scripts/validate_orchestration_gates.py`. A
+`needs_user` or `blocked` route cannot proceed. Persist the deck design system
+and its revision before delegating. The orchestrator's outline/design revisions
+are immutable inputs to workers; workers return evidence and issues, not
+replacement authority.
 
 ### Engine routing contract
 
@@ -150,8 +152,9 @@ For `reference-reconstruction`, `editable-pptx`, and `native-authoring`,
 also bind `references/knight-fidelity-port.md`: text-slot preflight,
 content-aware grid cutting, alpha-centroid placement, physical z-order audit
 and local crop QA are mandatory last-mile evidence.
-The route decision must persist `primary_engine`, `fallback_policy`, `fallback_used`,
-`fallback_events`, and `editable_object_policy` before delegation.
+The route decision must persist `primary_engine`, `fallback_policy`,
+`fallback_used`, `fallback_events`, and `editable_object_policy` before
+delegation.
 
 `GordenImage2PPTX` is not a fourth business skill and is never selected as the
 primary engine. It is an explicitly approved, region-only fallback for visual
@@ -164,9 +167,9 @@ asset record and explicit user decision; otherwise the route is blocked.
 ### O3 — Delegate visual generation
 
 For image slides or high-end visual intermediates, invoke
-`$ai-ppt-visual-gen` from `ai-ppt-visual-gen/`. Supply approved outline rows, source references, design
-system, page count, ratio, language, density, reference policy, and target
-mode. Require its A1–A5 outputs:
+`$ai-ppt-visual-gen` from `ai-ppt-visual-gen/`. Supply approved outline rows,
+source references, design system, page count, ratio, language, density,
+reference policy, and target mode. Require its A1–A5 outputs:
 
 - `visual-generation-plan.json` and materialized prompt files;
 - retained generated source plus project copy for every page;
@@ -180,11 +183,12 @@ provisional until reconciled against the approved formal-text authority.
 
 Invoke `$ai-ppt-editable` when the deliverable is editable PPTX, when a fixed
 reference must be reconstructed, or when approved content must be authored as
-native objects. Invoke it from `ai-ppt-editable/` and supply route decision, formal-text authority, references or
-visual intermediates, design revision, editability target, fonts, and worker
-manifests. Require editable-object evidence, rendered previews, technical QA,
-and a worker handoff. The worker may repair its own technical defects but may
-not change the story or redesign an approved reference.
+native objects. Invoke it from `ai-ppt-editable/` and supply route decision,
+formal-text authority, references or visual intermediates, design revision,
+editability target, fonts, and worker manifests. Require editable-object
+evidence, rendered previews, technical QA, and a worker handoff. The worker may
+repair its own technical defects but may not change the story or redesign an
+approved reference.
 
 For B4 overlay assets, require a transparent-first generation transaction from
 the editable worker: direct RGBA generation, one edit-to-transparent retry if
@@ -252,13 +256,13 @@ evidence; they are not silently substituted.
 
 ## Shared state and recovery
 
-The canonical state is files, not conversation: workflow state, brief, source inventory,
-outline, design system, route decision, worker manifests, object manifests,
-report index, issue log, handoff, and delivery report. Freeze accepted
-regression baselines with `scripts/revision_guard.py freeze`; never overwrite a
-baseline. On interruption, resume only after validating hashes and remaining
-slides. A failed worker page is retried within that worker's bounded policy;
-successful pages and unrelated downstream artifacts remain intact.
+The canonical state is files, not conversation: workflow state, brief, source
+inventory, outline, design system, route decision, worker manifests, object
+manifests, report index, issue log, handoff, and delivery report. Freeze
+accepted regression baselines with `scripts/revision_guard.py freeze`; never
+overwrite a baseline. On interruption, resume only after validating hashes and
+remaining slides. A failed worker page is retried within that worker's bounded
+policy; successful pages and unrelated downstream artifacts remain intact.
 
 P1 reinforcement is available through `--require-p1`: it adds the approved
 deck-wide design-system gate, structured issue-log closure gate, atomic DAG
@@ -305,34 +309,7 @@ and resume the A–O checkpoint, `scripts/tool_adapter.py` for runtime,
 resource, geometry, command and staging boundaries, and
 `scripts/font_preflight.py` for fail-closed font evidence. Validate the stage
 table with `scripts/validate_stage_protocol.py` and a saved state with
-`scripts/validate_incremental_checkpoint.py`. A checkpoint hash
-mismatch invalidates only its affected stage and downstream stages. The
-protocol keeps the existing native-editability and finalizer gates; it never
-trades objects, render checks or evidence for speed.
-
-
-<!-- unattended-distillation:entrypoint -->
-## Unattended distillation
-
-When an unattended maintenance cycle is enabled, use `scripts/unattended_distillation_agent.py` and `assets/unattended-distillation-policy.json`. The controller may analyze structured gate evidence, apply only an allowlisted repair rule, rerun the package/route/governance gates, and report a candidate as promotable. GitHub Actions owns branch, PR and merge operations. Unknown failures, implementation changes, visual ambiguity, human sign-off, image-generation decisions and protected-file edits remain blocked. Read `references/unattended-distillation.md` for trigger, scope, three-round and stopping rules.
-<!-- /unattended-distillation:entrypoint -->
-<!-- unattended-distillation:improvement-proof -->
-## Improvement proof requirement
-
-Unattended distillation may be promoted only when the checked-out baseline is reproducibly red, the candidate is green, the candidate declares a real behavioural change, regression metrics do not degrade, and the improvement validator returns `promotion=improved`. A passing gate without this red-green proof is not a promotion signal.
-<!-- /unattended-distillation:improvement-proof -->
-
-<!-- unattended-distillation:case-replay -->
-## Case-level replay requirement
-
-A generic repository test is never sufficient evidence that a PPTX reconstruction improved. For native-structure or text/visual distillation, require a fresh baseline/candidate case replay with the actual deck, source/process hashes, rendered output, OOXML `a:tbl` count, table merge topology, native panel audit, native text audit, visual comparison, object comparison and mutation smoke test. Promote only when the candidate is bound to the current repair fingerprint and returns `promotion=improved`.
-<!-- /unattended-distillation:case-replay -->
-
-
-## Distillation case matrix
-
-A single integrated replay case is a golden anchor, not full skill coverage. The checked-in matrix at `evals/distillation-case-matrix.json` separates atomic contract cases from actual PPTX replay cases across P0 routing/package safety, P1 native structure and visual fidelity, and P2 full-deck/cache consistency.
-
-Targeted failure runs select the direct responsibility, adjacent responsibilities, and all P0 safety cases. Pre-merge, nightly, and manual full evaluations select the complete matrix. Every replay candidate must emit baseline, candidate, improvement, object, visual, and mutation evidence; unit-test success alone is insufficient.
-
-The current social case is marked `static_sentinel`: it verifies that the replay/audit machinery can run, but it cannot promote a distilled repair. A real candidate must be regenerated after the repair and bound to that repair's fingerprint. The validator reports replay coverage debt, and the unattended controller blocks promotion when the affected category has no actual replay evidence.
+`scripts/validate_incremental_checkpoint.py`. A checkpoint hash mismatch
+invalidates only its affected stage and downstream stages. The protocol keeps
+the existing native-editability and finalizer gates; it never trades objects,
+render checks or evidence for speed.
