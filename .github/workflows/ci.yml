@@ -37,7 +37,7 @@ jobs:
       - name: Run standalone worker regression suites
         run: |
           python ai-ppt-visual-gen/scripts/run_tests.py --report visual-skill-test-report.json --parallel-workers 4
-          python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json --parallel-workers 4
+          python ai-ppt-editable/scripts/run_tests.py --report editable-skill-test-report.json
       - name: Run complete root regression suite
         run: python scripts/run_tests.py --report test-report.json --parallel-workers 4
       - name: Check whitespace
