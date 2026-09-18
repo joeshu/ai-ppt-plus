@@ -52,6 +52,29 @@ visual gates; these rules strengthen the last-mile reconstruction path.
    computing crop or icon metrics.
 9. **Effect hygiene** — Flat references must not acquire theme or shape-level
    shadows, glow, reflection or soft edges. Scan the complete PPTX package.
+10. **Native geometry locks extend beyond icons** — PageGraph source bboxes are
+   authoritative for dense native panels, repeated-component containers and
+   text slots as well as raster assets. When a hard-region crop shows a stable
+   translation/width error, repair the owning native object to its source bbox
+   before changing font size. Do not move an already-passing icon merely to
+   compensate for a neighboring text or panel error. Record each accepted bbox
+   correction in Repair Trace and reject any change that regresses another hard
+   region.
+11. **Fallback-font compensation is local, never deck-wide** — If the declared
+   production font is unavailable, do not globally enlarge or shrink body text.
+   Compare source and rendered text slots region by region. Prefer x/y/w/h and
+   margin corrections; when the selected authoring backend exposes explicit
+   character spacing, a small audited tracking correction may be used after the
+   bbox is correct. The compensation must be object-scoped, recorded with the
+   actual fallback family, and revalidated against icon locks and neighboring
+   regions. A global body-font change that improves one card but regresses the
+   page must be rolled back.
+12. **Repeated-component and decorative last-mile repair** — Repeated cards,
+   chevrons, title tips and footer art must preserve their source distribution,
+   not merely their object count. Simple native decorative waves may use
+   multi-stop gradient fills and opacity to match the reference; complex art
+   remains an independent asset. Prefer source-like gradient/opacity geometry
+   over a flat saturated substitute, and keep all formal text native.
 
 ## Commands
 
@@ -82,5 +105,6 @@ python3 scripts/audit_pptx_layers.py repaired.pptx \
 The compact run report must list full text-fit coverage, target-fit exceptions,
 alpha-centroid placement evidence, source visual-lock bbox evidence, native chart
 gap evidence, transparent-asset QA, physical layer audit and normalized
-local-crop evidence. Code generation without the final render and crop evidence
-is incomplete.
+local-crop evidence. For hard-region repairs it must also list native geometry
+locks, fallback-font compensation and accepted/rejected Repair Trace deltas.
+Code generation without the final render and crop evidence is incomplete.
