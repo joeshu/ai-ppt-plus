@@ -13,7 +13,6 @@ from zipfile import is_zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 REPLAY = ROOT / "scripts" / "replay_pptx_case.py"
-PROOF = ROOT / "scripts" / "validate_distillation_improvement.py"
 CASE = ROOT / "ai-ppt-editable" / "evals" / "social-channel-commission-native-01.json"
 
 
@@ -90,14 +89,13 @@ def main() -> int:
             [1, 0, 2, 0], [3, 0, 4, 0], [5, 0, 6, 0], [7, 0, 8, 0]
         ], candidate_data
         assert candidate_data["text_audit"]["body_native_text"] is True, candidate_data
-        proof_path = candidate_dir / "improvement.json"
-        proof = subprocess.run([
-            sys.executable, str(PROOF), "--baseline", str(baseline_path),
-            "--candidate", str(candidate_path), "--case-spec", str(CASE),
-            "--mode", "replay", "--report", str(proof_path),
-        ], capture_output=True, text=True, check=False)
-        assert proof.returncode == 0, proof.stdout + proof.stderr
-        assert json.loads(proof_path.read_text(encoding="utf-8"))["promotion"] == "improved"
+
+        # The replay itself is the retained regression proof: the historical
+        # baseline must fail the native-table gate while the candidate must
+        # pass the same case contract. Distillation promotion is intentionally
+        # not part of the runtime or regression contract anymore.
+        assert baseline_data["valid"] is False, baseline_data
+        assert candidate_data["valid"] is True, candidate_data
     print("social-channel-commission-native-01 case replay: ok")
     return 0
 
