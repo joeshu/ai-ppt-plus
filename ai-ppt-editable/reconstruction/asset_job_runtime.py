@@ -7,12 +7,38 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Mapping
 
-from reconstruction.asset_orchestrator import bind_generated_asset, validate_generated_asset
+from reconstruction.asset_orchestrator import validate_generated_asset
 
 
 def _json_hash(value: Mapping[str, Any]) -> str:
     payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+def _placement_from_result(result, slot: tuple[int, int, int, int], request: Mapping[str, Any]) -> tuple[int, int, int, int]:
+    """Apply the same visible-alpha centroid fit used by the PPTX placement layer.
+
+    ``validate_generated_asset`` already measured normalized visible bbox and
+    alpha-weighted centroid, so the job runtime can persist a deterministic
+    placement transform without re-reading or re-interpreting the image.
+    """
+    x, y, width, height = slot
+    if request.get("align_visible_alpha") is not True:
+        return slot
+    left, top, right, bottom = (float(v) for v in result.visible_alpha_bbox)
+    visible_w = max(1e-9, (right - left) * result.width)
+    visible_h = max(1e-9, (bottom - top) * result.height)
+    contain = max(0.05, min(1.0, float(request.get("visible_contain", 1.0))))
+    scale = min((width * contain) / visible_w, (height * contain) / visible_h)
+    centroid_x = float(result.alpha_centroid[0]) * result.width
+    centroid_y = float(result.alpha_centroid[1]) * result.height
+    target_cx, target_cy = x + width / 2.0, y + height / 2.0
+    return (
+        int(round(target_cx - centroid_x * scale)),
+        int(round(target_cy - centroid_y * scale)),
+        max(1, int(round(result.width * scale))),
+        max(1, int(round(result.height * scale))),
+    )
 
 
 class AssetJobRuntime:
@@ -74,20 +100,39 @@ class AssetJobRuntime:
         staged = attempt_dir / "generated.png"
         shutil.copy2(generated, staged)
         request = dict(self.job.get("request", {}))
-        validation = validate_generated_asset(request, {"object_id": self.job["asset_id"], "file": str(staged), "background_mode": request.get("background_mode", "transparent")})
-        if not validation.valid:
-            raise ValueError("generated asset failed byte/alpha validation: " + "; ".join(validation.issues))
+        # Validation is fail-closed: validate_generated_asset returns a
+        # GeneratedAssetResult on success and raises AssetGenerationError on
+        # any byte/background/alpha/provenance contract violation.
+        result = validate_generated_asset(
+            request,
+            {
+                "object_id": self.job["asset_id"],
+                "file": str(staged),
+                "background_mode": request.get("background_mode", "transparent"),
+            },
+        )
         sw, sh = self.slide_size_emu
         geom = request.get("preserve_geometry", {})
-        slot = (int(float(geom.get("x", 0)) * sw), int(float(geom.get("y", 0)) * sh), int(float(geom.get("w", 0)) * sw), int(float(geom.get("h", 0)) * sh))
-        bound = bind_generated_asset(str(staged), slot)
+        slot = (
+            int(float(geom.get("x", 0)) * sw),
+            int(float(geom.get("y", 0)) * sh),
+            int(float(geom.get("w", 0)) * sw),
+            int(float(geom.get("h", 0)) * sh),
+        )
+        placement = _placement_from_result(result, slot, request)
         record = {
             "asset_id": self.job["asset_id"],
             "attempt": attempt,
-            "asset": {"file": str(staged), "sha256": hashlib.sha256(staged.read_bytes()).hexdigest()},
-            "validation": asdict(validation),
-            "alpha_geometry": bound.alpha_geometry,
-            "placement_bbox_emu": list(bound.placement_bbox),
+            "asset": {"file": str(staged), "sha256": result.sha256},
+            "validation": asdict(result),
+            "alpha_geometry": {
+                "canvas_px": [result.width, result.height],
+                "visible_alpha_bbox": list(result.visible_alpha_bbox),
+                "alpha_centroid": list(result.alpha_centroid),
+            },
+            "intended_slot_bbox_emu": list(slot),
+            "placement_bbox_emu": list(placement),
+            "placement_transform": "alpha-centroid-fit" if request.get("align_visible_alpha") is True else "slot-bbox",
             "receipt": dict(receipt),
         }
         registered = attempt_dir / "registered.json"
