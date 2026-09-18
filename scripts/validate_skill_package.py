@@ -135,8 +135,12 @@ def inspect_bundled_skills(root: Path, package: dict, revision, issues: list[dic
             continue
         name = item.get("name")
         relative = safe_relative(item.get("root"), code="bundled_skill_root_invalid", issues=issues)
+        expected_revision = item.get("package_revision") or revision
         if not isinstance(name, str) or not name:
             issues.append({"severity": "blocker", "code": "bundled_skill_name_invalid", "index": index})
+            continue
+        if not isinstance(expected_revision, str) or not expected_revision:
+            issues.append({"severity": "blocker", "code": "bundled_skill_revision_contract_missing", "name": name})
             continue
         if name in seen_names:
             issues.append({"severity": "blocker", "code": "bundled_skill_duplicate_name", "name": name})
@@ -162,8 +166,8 @@ def inspect_bundled_skills(root: Path, package: dict, revision, issues: list[dic
             issues.append({"severity": "blocker", "code": "bundled_skill_schema_invalid", "name": name, "observed": child.get("schema")})
         if child.get("skill") != name:
             issues.append({"severity": "blocker", "code": "bundled_skill_name_mismatch", "expected": name, "observed": child.get("skill")})
-        if child.get("package_revision") != revision:
-            issues.append({"severity": "blocker", "code": "bundled_skill_revision_mismatch", "name": name, "expected": revision, "observed": child.get("package_revision")})
+        if child.get("package_revision") != expected_revision:
+            issues.append({"severity": "blocker", "code": "bundled_skill_revision_mismatch", "name": name, "expected": expected_revision, "observed": child.get("package_revision")})
         child_issues: list[dict] = []
         if child:
             inspect_entrypoint(child_root, child, child_issues)
@@ -171,7 +175,7 @@ def inspect_bundled_skills(root: Path, package: dict, revision, issues: list[dic
             collect_managed_files(child_root, child, child_issues)
         for issue in child_issues:
             issues.append({**issue, "bundled_skill": name})
-        evidence.append({"name": name, "root": str(child_root), "manifest": str(manifest), "issues": child_issues})
+        evidence.append({"name": name, "root": str(child_root), "manifest": str(manifest), "expected_revision": expected_revision, "issues": child_issues})
     return evidence
 
 
