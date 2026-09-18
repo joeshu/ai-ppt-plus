@@ -212,6 +212,92 @@ def alpha_centroid_fit(path: Path, x: int, y: int, width: int, height: int, *, t
     return int(round(placed_x)), int(round(placed_y)), canvas_out_w, canvas_out_h
 
 
+def _placement_evidence(path: Path, slot: tuple[int, int, int, int], placed: tuple[int, int, int, int], *, threshold: int = 8, mode: str) -> dict:
+    """Return deterministic visible-geometry evidence for a placement transform."""
+    geometry = alpha_geometry(path, threshold=threshold)
+    x, y, width, height = slot
+    px, py, pw, ph = placed
+    canvas_w, canvas_h = geometry["canvas_px"]
+    vx, vy, vw, vh = geometry["visible_bbox_px"]
+    scale_x = pw / canvas_w
+    scale_y = ph / canvas_h
+    visible = [px + vx * scale_x, py + vy * scale_y, vw * scale_x, vh * scale_y]
+    cx = px + geometry["visible_centroid_px"][0] * scale_x
+    cy = py + geometry["visible_centroid_px"][1] * scale_y
+    return {
+        "placement_mode": mode,
+        "slot_bbox": [x, y, width, height],
+        "placement_bbox": [px, py, pw, ph],
+        "placed_visible_bbox": visible,
+        "placed_visible_centroid": [cx, cy],
+        "visible_bbox_fraction_of_slot": [
+            (visible[0] - x) / width,
+            (visible[1] - y) / height,
+            visible[2] / width,
+            visible[3] / height,
+        ],
+        "centroid_fraction_of_slot": [(cx - x) / width, (cy - y) / height],
+    }
+
+
+def _reference_visible_fit(path: Path, x: int, y: int, width: int, height: int, reference_bbox, *, threshold: int = 8) -> tuple[int, int, int, int]:
+    """Fit generated visible alpha to immutable E1 reference-visible geometry."""
+    if not isinstance(reference_bbox, (list, tuple)) or len(reference_bbox) != 4:
+        _die("reference_visible_bbox_norm must contain four values")
+    rx, ry, rw, rh = (float(v) for v in reference_bbox)
+    if rw <= 0 or rh <= 0 or rx < 0 or ry < 0 or rx + rw > 1 or ry + rh > 1:
+        _die(f"invalid reference_visible_bbox_norm: {reference_bbox}")
+    geometry = alpha_geometry(path, threshold=threshold)
+    canvas_w, canvas_h = geometry["canvas_px"]
+    visible_x, visible_y, visible_w, visible_h = geometry["visible_bbox_px"]
+    target_x, target_y = x + rx * width, y + ry * height
+    target_w, target_h = rw * width, rh * height
+    scale = min(target_w / visible_w, target_h / visible_h)
+    canvas_out_w = max(1, int(round(canvas_w * scale)))
+    canvas_out_h = max(1, int(round(canvas_h * scale)))
+    visible_out_w, visible_out_h = visible_w * scale, visible_h * scale
+    visible_left = target_x + (target_w - visible_out_w) / 2.0
+    visible_top = target_y + (target_h - visible_out_h) / 2.0
+    placed_x = visible_left - visible_x * scale
+    placed_y = visible_top - visible_y * scale
+    return int(round(placed_x)), int(round(placed_y)), canvas_out_w, canvas_out_h
+
+
+def adaptive_alpha_fit(path: Path, x: int, y: int, width: int, height: int, *, threshold: int = 8,
+                       contain: float = 1.0, reference_visible_bbox_norm=None,
+                       padding_balance_tolerance: float = 0.14,
+                       centroid_tolerance: float = 0.10,
+                       aspect_ratio_tolerance: float = 0.15,
+                       min_visible_extent: float = 0.42,
+                       return_evidence: bool = False):
+    """Preserve clean icon safe-padding; normalize only when alpha geometry requires it."""
+    slot = (int(x), int(y), int(width), int(height))
+    if reference_visible_bbox_norm is not None:
+        placed = _reference_visible_fit(path, *slot, reference_visible_bbox_norm, threshold=threshold)
+        mode = "reference-visible-fit"
+    else:
+        geometry = alpha_geometry(path, threshold=threshold)
+        canvas_w, canvas_h = geometry["canvas_px"]
+        vx, vy, vw, vh = geometry["visible_bbox_px"]
+        cx, cy = geometry["visible_centroid_px"]
+        pads = [vx / canvas_w, vy / canvas_h, (canvas_w - vx - vw) / canvas_w, (canvas_h - vy - vh) / canvas_h]
+        balanced = abs(pads[0] - pads[2]) <= padding_balance_tolerance and abs(pads[1] - pads[3]) <= padding_balance_tolerance
+        centered = abs(cx / canvas_w - 0.5) <= centroid_tolerance and abs(cy / canvas_h - 0.5) <= centroid_tolerance
+        canvas_ar = canvas_w / canvas_h
+        slot_ar = width / height
+        aspect_match = abs(math.log(max(1e-9, canvas_ar / slot_ar))) <= aspect_ratio_tolerance
+        visible_extent_ok = (vw / canvas_w) >= min_visible_extent and (vh / canvas_h) >= min_visible_extent
+        if balanced and centered and aspect_match and visible_extent_ok:
+            placed = slot
+            mode = "canvas-slot-fit"
+        else:
+            placed = alpha_centroid_fit(path, *slot, threshold=threshold, contain=contain)
+            mode = "alpha-centroid-fit-contained"
+    if return_evidence:
+        return placed, _placement_evidence(path, slot, placed, threshold=threshold, mode=mode)
+    return placed
+
+
 def add_background(slide, slide_spec: dict, assets_dir: Path, sw_emu: int, sh_emu: int):
     from pptx.util import Emu
     background = slide_spec.get("background")
@@ -265,7 +351,15 @@ def add_icons(slide, specs: list[dict], assets_dir: Path, deck: dict, ref_w: flo
         if path.suffix.casefold() == ".svg":
             source_path = svg_to_png(path, temporary_files)
         target = (int(fx * sw_emu), int(fy * sh_emu), int(fw * sw_emu), int(fh * sh_emu))
-        if icon.get("placement_mode") == "alpha-centroid-fit" or icon.get("align_by_alpha") is True:
+        placement_mode = str(icon.get("placement_mode") or "")
+        if placement_mode == "adaptive-alpha-fit":
+            target = adaptive_alpha_fit(
+                source_path, *target,
+                threshold=int(icon.get("alpha_threshold", 8)),
+                contain=float(icon.get("visible_contain", 1.0)),
+                reference_visible_bbox_norm=icon.get("reference_visible_bbox_norm"),
+            )
+        elif placement_mode == "alpha-centroid-fit" or icon.get("align_by_alpha") is True:
             target = alpha_centroid_fit(source_path, *target, threshold=int(icon.get("alpha_threshold", 8)), contain=float(icon.get("visible_contain", 1.0)))
         picture = slide.shapes.add_picture(str(source_path), Emu(target[0]), Emu(target[1]), width=Emu(target[2]), height=Emu(target[3]))
         picture.name = str(icon.get("name") or icon.get("object_id") or f"icon-{icon_index:02d}")
