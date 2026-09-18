@@ -53,6 +53,8 @@ def test_transparent_asset_validates_and_binds_without_geometry_drift():
         _png(path, "transparent")
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         result = validate_generated_asset(_request(), {"object_id": "icon", "file": str(path), "background_mode": "transparent", "sha256": digest})
+        assert result.visible_alpha_bbox == [0.25, 0.25, 0.75, 0.75]
+        assert result.alpha_centroid == [0.5, 0.5]
         bound = bind_generated_asset(_deck(), _request(), result)
         icon = bound["deck"]["slides"][0]["icons"][0]
         assert icon["file"] == str(path.resolve())
@@ -61,13 +63,41 @@ def test_transparent_asset_validates_and_binds_without_geometry_drift():
         assert icon["generation_provenance"]["kind"] == "native_image_generation"
 
 
-def test_green_and_red_key_backgrounds_are_accepted():
+def test_alpha_visible_bbox_alignment_compensates_transparent_padding():
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "asymmetric.png"
+        image = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
+        for x in range(20, 60):
+            for y in range(10, 70):
+                image.putpixel((x, y), (255, 255, 255, 255))
+        image.save(path, format="PNG")
+        request = _request()
+        request["align_visible_alpha"] = True
+        result = validate_generated_asset(request, {"object_id": "icon", "file": str(path), "background_mode": "transparent"})
+        assert result.visible_alpha_bbox == [0.2, 0.1, 0.6, 0.7]
+        assert result.alpha_centroid == [0.4, 0.4]
+        bound = bind_generated_asset(_deck(), request, result)
+        icon = bound["deck"]["slides"][0]["icons"][0]
+        # Outer image bbox expands/shifts so its *visible* alpha bbox maps exactly
+        # back to the immutable target bbox 0.8,0.1,0.08,0.08.
+        assert abs(icon["x"] - 0.76) < 1e-9
+        assert abs(icon["y"] - (0.1 - (0.1 * (0.08 / 0.6)))) < 1e-9
+        assert abs(icon["w"] - 0.2) < 1e-9
+        assert abs(icon["h"] - (0.08 / 0.6)) < 1e-9
+        report = bound["report"]
+        assert report["intended_visible_bbox"] == request["preserve_geometry"]
+        assert report["local_crop_bbox"] is not None
+        assert icon["generation_provenance"]["alpha_centroid"] == [0.4, 0.4]
+
+
+def test_green_and_red_key_backgrounds_are_accepted_and_get_foreground_geometry():
     with tempfile.TemporaryDirectory() as tmp:
         for mode in ("green", "red"):
             path = Path(tmp) / f"{mode}.png"
             _png(path, mode)
             result = validate_generated_asset(_request(mode), {"object_id": "icon", "file": str(path), "background_mode": mode})
             assert result.background_mode == mode
+            assert result.visible_alpha_bbox == [0.25, 0.25, 0.75, 0.75]
 
 
 def test_background_mismatch_and_bad_hash_fail_closed():
