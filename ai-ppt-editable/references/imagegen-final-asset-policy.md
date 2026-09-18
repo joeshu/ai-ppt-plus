@@ -7,16 +7,26 @@ independently.
 
 ## Mandatory route
 
-The following asset classes must use the native `imagegen` capability for the
-final PPT object:
+For image-to-editable reconstruction, use one deterministic classification:
+formal text/data and simple native PowerPoint primitives stay native; every
+other non-native visual asset must use native `imagegen` for the final PPT
+object. Do not add a brand-exception classification step.
+
+The mandatory ImageGen classes include:
 
 - icons and badges;
+- corporate logos, logo lockups and brand marks reconstructed from the reference;
+- wordmarks, calligraphic service slogans, signatures and seals;
+- footer/header brand bands, skylines, ribbons, 5G marks and other locked brand artwork;
 - gradient visual/image assets, glows, waves, textures and light effects;
 - complex illustrations, decorative art and artistic typography.
 
+The source crop is reference evidence, prompt guidance, bbox/geometry evidence
+and the crop-QA baseline. It is not the final PPT asset.
+
 `source_reuse` crops are allowed only as reference evidence, crop geometry, or
 source-vs-render comparison material. They must never be inserted as the final
-asset for those classes by default. If generation fails, pause at a user-
+asset for these classes by default. If generation fails, pause at a user-
 decision gate and present exactly two choices: (1) retry/continue native
 `imagegen`, or (2) use deterministic original-image crop/cutout
 (`source_reuse`). Never choose either route silently. The selected route,
@@ -25,17 +35,39 @@ user has not selected a route, the asset remains blocked; an unlabelled
 fallback, flat fill, generic icon, or full-slide screenshot is forbidden.
 
 Each generated final asset is independent and movable, and its manifest record
-must include `asset_id`, `asset_class`, `provenance_mode: imagegen` (or
-`source_reuse` only after the explicit fallback decision),
+must include `asset_id`, `asset_class`, `provenance_mode: imagegen`,
 `generated_source`, `copied_to`, `prompt_file`, `backend`, and a delivered-file
-hash. Generated assets must not contain formal text, numbers, chart data, or
-logos that are authoritative for the page. Formal text remains native rich
-text; exact data charts remain native/declared chart objects.
+hash. Formal body text, ordinary labels, numeric data and verified chart data
+remain native/declared semantic objects and may not be rasterized into these
+assets.
 
-Official brand marks and wordmarks are governed by the brand-asset contract:
-use an authorized official source asset rather than asking imagegen to redraw a
-legally or visually sensitive logo. This is a brand-asset exception, not a
-general source-reuse fallback.
+## Brand visual reconstruction
+
+Brand visuals use the same ImageGen route as other complex visual assets. There
+is no automatic `exact_brand_asset` fast path for screenshot/reference
+reconstruction.
+
+For each brand visual:
+
+1. measure/crop the source region only as reference evidence;
+2. record bbox, aspect ratio, dominant colors, alpha requirement and semantic role;
+3. invoke native ImageGen to reconstruct the visual at high resolution;
+4. require transparent RGBA when the visual overlays slide content; if direct
+   alpha fails, follow the normal transparent-edit/chroma-key fallback policy;
+5. keep the generated source and final transparent asset separately;
+6. place it as an independent movable PPT picture using visible-alpha bbox and
+   alpha-centroid alignment rather than opaque canvas bounds;
+7. compare the rendered same-coordinate local crop against the reference and
+   regenerate/repair when fidelity is inadequate.
+
+A brand lockup whose lettering is inseparable from its artwork is generated as
+one visual asset; do not OCR/re-typeset its internal artwork. This does not
+permit normal presentation copy to become raster text.
+
+Only when the user explicitly supplies an authoritative standalone brand file
+and explicitly asks to insert that exact file may the run use it directly.
+That is a user-directed source operation, not an automatic skill exception.
+Without that explicit instruction, ImageGen remains mandatory.
 
 ## Required evidence
 
@@ -50,7 +82,7 @@ python3 scripts/validate_imagegen_final_assets.py \
 
 Run the validator before composition and after rendering. The post-render
 record must identify the delivered PPT object and preserve the generated asset
-hash. For an approved fallback, the record must additionally include
-`fallback_decision: user_approved`, `decision_id`, `decision_reason`, and
-source bbox/hash evidence. A passing visual score cannot waive a route or
+hash. For a user-approved source-reuse fallback, the record must additionally
+include `fallback_decision: user_approved`, `decision_id`, `decision_reason`,
+and source bbox/hash evidence. A passing visual score cannot waive a route or
 provenance failure.

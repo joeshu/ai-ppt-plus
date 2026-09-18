@@ -30,18 +30,28 @@ def digest(path: Path) -> str:
 def main() -> int:
     root_package = json.loads((ROOT / "assets" / "skill-package.json").read_text(encoding="utf-8"))
     routing = json.loads((ROOT / "assets" / "skill-routing.template.json").read_text(encoding="utf-8"))
-    revision = root_package["package_revision"]
-    bundled = {item["name"]: item["root"] for item in root_package["bundled_skills"]}
+    root_revision = root_package["package_revision"]
+    bundled_items = {item["name"]: item for item in root_package["bundled_skills"]}
+    bundled = {name: item["root"] for name, item in bundled_items.items()}
     assert bundled == {
         "ai-ppt-visual-gen": "ai-ppt-visual-gen",
         "ai-ppt-editable": "ai-ppt-editable",
     }
+    expected_revisions = {
+        "ai-ppt-plus": root_revision,
+        **{name: item["package_revision"] for name, item in bundled_items.items()},
+    }
 
     for name, root in PACKAGES.items():
         package = json.loads((root / "assets" / "skill-package.json").read_text(encoding="utf-8"))
+        revision = expected_revisions[name]
         assert package["schema"] == "ai-ppt-plus/skill-package/v2"
         assert package["skill"] == name
-        assert package["package_revision"] == revision
+        # Worker skills are independently versioned.  The orchestrator pins the
+        # exact worker revision in bundled_skills; forcing all three revisions
+        # to equal the root revision makes a worker-only fidelity release fail
+        # even when the pin and worker package agree.
+        assert package["package_revision"] == revision, (name, package["package_revision"], revision)
         assert package["self_contained"]["policy"] == "self-contained"
         for directory in ("agents", "scripts", "references", "assets"):
             path = root / directory
