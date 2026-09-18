@@ -41,6 +41,40 @@ def _normalized_theme(deck: dict) -> dict:
     return normalized
 
 
+def _normalize_text_size_aliases(slide_spec: dict) -> dict:
+    """Keep TextFit's ``font_size_pt`` contract aligned with PPTX authoring.
+
+    Historical authoring primitives accept ``size``/``size_px`` while the
+    full-slot TextFit contract emits ``font_size_pt``.  Silently ignoring the
+    latter makes measured text render at the 18 pt fallback and can create
+    severe overflow.  Normalize only when no explicit legacy size field is
+    present, preserving backwards compatibility and run-level overrides.
+    """
+    normalized = dict(slide_spec)
+    texts = []
+    for raw in slide_spec.get("texts", []) or []:
+        if not isinstance(raw, dict):
+            texts.append(raw)
+            continue
+        item = dict(raw)
+        if item.get("font_size_pt") is not None and not any(item.get(key) is not None for key in ("size", "size_px", "size_ratio", "size_pct")):
+            item["size"] = item["font_size_pt"]
+        if isinstance(item.get("runs"), list):
+            runs = []
+            for raw_run in item["runs"]:
+                if not isinstance(raw_run, dict):
+                    runs.append(raw_run)
+                    continue
+                run = dict(raw_run)
+                if run.get("font_size_pt") is not None and not any(run.get(key) is not None for key in ("size", "size_px", "size_ratio", "size_pct")):
+                    run["size"] = run["font_size_pt"]
+                runs.append(run)
+            item["runs"] = runs
+        texts.append(item)
+    normalized["texts"] = texts
+    return normalized
+
+
 def _validate_native_structure_input(deck: dict, slide_spec: dict, slide_no: int) -> None:
     """Reject semantic raster layers when the route asks for native objects."""
     if not deck.get("require_native_structure"):
@@ -79,7 +113,8 @@ def build_pptx(deck: dict, out_path: Path) -> None:
     temporary_files: list[Path] = []
 
     try:
-        for slide_no, slide_spec in enumerate(deck["slides"], 1):
+        for slide_no, raw_slide_spec in enumerate(deck["slides"], 1):
+            slide_spec = _normalize_text_size_aliases(raw_slide_spec)
             _validate_native_structure_input(deck, slide_spec, slide_no)
             slide = presentation.slides.add_slide(_choose_slide_layout(presentation, slide_spec, theme, deck))
             add_background(slide, slide_spec, assets_dir, slide_width_emu, slide_height_emu)
