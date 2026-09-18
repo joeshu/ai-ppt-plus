@@ -10,6 +10,11 @@ Two placement contracts are supported:
    high-fidelity replay because transparent canvas padding no longer changes the
    visible subject's size or position.
 
+For every 16:9 reconstruction, the authored PowerPoint canvas is normalized to
+PowerPoint's standard widescreen physical size: 13.333333 x 7.5 inches
+(1280 x 720 CSS px). Original raster dimensions remain authoritative in
+``ref_width``/``ref_height`` for PageGraph, TextGraph and Visual Lock geometry.
+
 ``reference_visual_centroid_px`` may be supplied together with the reference bbox
 when the source lock has a more precise visual centroid than the bbox center.
 """
@@ -17,10 +22,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
+
+STANDARD_WIDESCREEN_WIDTH_PX = 1280.0
+STANDARD_WIDESCREEN_HEIGHT_PX = 720.0
+STANDARD_WIDESCREEN_WIDTH_IN = 13.333333333333334
+STANDARD_WIDESCREEN_HEIGHT_IN = 7.5
+WIDESCREEN_RATIO = 16.0 / 9.0
 
 
 def _canvas(deck: dict) -> tuple[float, float]:
@@ -28,6 +40,26 @@ def _canvas(deck: dict) -> tuple[float, float]:
         float(deck.get("ref_width") or deck.get("reference_width") or deck.get("slide_width_px") or 1672),
         float(deck.get("ref_height") or deck.get("reference_height") or deck.get("slide_height_px") or 941),
     )
+
+
+def _enforce_standard_widescreen(deck: dict) -> bool:
+    """Keep source coordinates while forcing standard physical 16:9 output."""
+    source_width, source_height = _canvas(deck)
+    if source_width <= 0 or source_height <= 0:
+        raise ValueError("layout canvas must be positive")
+    if not math.isclose(source_width / source_height, WIDESCREEN_RATIO, rel_tol=0.0, abs_tol=0.002):
+        return False
+    deck.setdefault("ref_width", source_width)
+    deck.setdefault("ref_height", source_height)
+    deck["slide_width_px"] = STANDARD_WIDESCREEN_WIDTH_PX
+    deck["slide_height_px"] = STANDARD_WIDESCREEN_HEIGHT_PX
+    deck["slide_width_in"] = STANDARD_WIDESCREEN_WIDTH_IN
+    deck["slide_height_in"] = STANDARD_WIDESCREEN_HEIGHT_IN
+    canvas = deck.get("canvas")
+    if isinstance(canvas, dict):
+        canvas["width"] = STANDARD_WIDESCREEN_WIDTH_PX
+        canvas["height"] = STANDARD_WIDESCREEN_HEIGHT_PX
+    return True
 
 
 def _to_px(deck: dict, value: float, axis: int) -> float:
@@ -153,6 +185,7 @@ def _place_to_slot(deck: dict, icon: dict, geometry: dict) -> tuple[list[float],
 
 def normalize(layout: Path) -> tuple[dict, list[dict]]:
     deck = json.loads(layout.read_text(encoding="utf-8"))
+    standard_widescreen_enforced = _enforce_standard_widescreen(deck)
     records = []
     for slide_no, slide in enumerate(deck.get("slides") or [], 1):
         for index, icon in enumerate(slide.get("icons") or [], 1):
@@ -197,6 +230,7 @@ def normalize(layout: Path) -> tuple[dict, list[dict]]:
                 "scale": round(scale, 6),
                 "alpha_geometry": geometry,
             })
+    deck["standard_widescreen_enforced"] = standard_widescreen_enforced
     return deck, records
 
 
@@ -210,22 +244,26 @@ def main() -> int:
         deck, records = normalize(args.layout.resolve())
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(deck, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        standard_widescreen_enforced = bool(deck.get("standard_widescreen_enforced"))
         report = {
-            "schema": "ai-ppt-plus/alpha-centroid-layout/v2",
+            "schema": "ai-ppt-plus/alpha-centroid-layout/v3",
             "valid": True,
             "input": str(args.layout.resolve()),
             "output": str(args.output.resolve()),
             "normalized_count": len(records),
             "visual_lock_count": sum(1 for record in records if record["mode"] == "reference_visual_lock"),
+            "standard_widescreen_enforced": standard_widescreen_enforced,
+            "authored_slide_px": [STANDARD_WIDESCREEN_WIDTH_PX, STANDARD_WIDESCREEN_HEIGHT_PX] if standard_widescreen_enforced else None,
+            "authored_slide_in": [STANDARD_WIDESCREEN_WIDTH_IN, STANDARD_WIDESCREEN_HEIGHT_IN] if standard_widescreen_enforced else None,
             "records": records,
         }
         if args.report:
             args.report.parent.mkdir(parents=True, exist_ok=True)
             args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        print(json.dumps({"schema": report["schema"], "valid": True, "normalized_count": len(records), "visual_lock_count": report["visual_lock_count"]}, ensure_ascii=False))
+        print(json.dumps({"schema": report["schema"], "valid": True, "normalized_count": len(records), "visual_lock_count": report["visual_lock_count"], "standard_widescreen_enforced": standard_widescreen_enforced}, ensure_ascii=False))
         return 0
     except Exception as exc:
-        print(json.dumps({"schema": "ai-ppt-plus/alpha-centroid-layout/v2", "valid": False, "status": "blocked", "code": "alpha_centroid_layout_failed", "message": str(exc)}, ensure_ascii=False))
+        print(json.dumps({"schema": "ai-ppt-plus/alpha-centroid-layout/v3", "valid": False, "status": "blocked", "code": "alpha_centroid_layout_failed", "message": str(exc)}, ensure_ascii=False))
         return 2
 
 
