@@ -10,6 +10,17 @@ from pathlib import Path
 from ppt_text_fit import best_fit
 
 
+TEXT_SLOT_KINDS = (
+    "text",
+    "shape_text",
+    "table_cell",
+    "chart_title",
+    "chart_legend",
+    "chart_category_label",
+    "chart_data_label",
+)
+
+
 def _text(spec: object) -> str:
     if isinstance(spec, str):
         return spec
@@ -66,6 +77,64 @@ def _box_px(deck: dict, spec: dict, *, fraction: tuple[float, float] | None = No
     return w, h
 
 
+def _chart_text_spec(chart: dict, text: object, *, size: float, max_lines: int = 1) -> dict:
+    return {
+        "text": str(text),
+        "font_size_pt": size,
+        "font": chart.get("font"),
+        "bold": False,
+        "max_lines": max_lines,
+        "width_safety": chart.get("text_fit_width_safety", 0.90),
+        "height_safety": chart.get("text_fit_height_safety", 0.92),
+    }
+
+
+def _chart_slots(deck: dict, slide_no: int, chart_index: int, chart: dict):
+    chart_id = chart.get("object_id") or chart.get("name") or chart_index + 1
+    chart_w, chart_h = _box_px(deck, chart)
+    title = chart.get("title")
+    if title:
+        spec = _chart_text_spec(chart, title, size=float(chart.get("title_font_size_pt", 16)), max_lines=2)
+        yield slide_no, "chart_title", f"chart:{chart_id}:title", spec, (chart_w, max(24.0, chart_h * 0.15))
+
+    series = [item for item in (chart.get("series") or []) if isinstance(item, dict)]
+    legend_enabled = bool(chart.get("legend", len(series) > 1))
+    if legend_enabled and series:
+        legend_w = max(24.0, chart_w / max(1, len(series)))
+        legend_h = max(18.0, chart_h * 0.10)
+        legend_size = float(chart.get("legend_font_size_pt", chart.get("chart_legend_size", 8)))
+        for series_index, item in enumerate(series):
+            name = item.get("name")
+            if name is None or not str(name).strip():
+                continue
+            spec = _chart_text_spec(chart, name, size=legend_size)
+            yield slide_no, "chart_legend", f"chart:{chart_id}:legend:{series_index}", spec, (legend_w, legend_h)
+
+    categories = list(chart.get("categories") or [])
+    if categories:
+        plot_w = chart_w * 0.82
+        category_w = max(18.0, plot_w / max(1, len(categories)))
+        category_h = max(18.0, chart_h * 0.11)
+        category_size = float(chart.get("category_font_size_pt", chart.get("chart_tick_size", 8)))
+        for category_index, category in enumerate(categories):
+            if category is None or not str(category).strip():
+                continue
+            spec = _chart_text_spec(chart, category, size=category_size, max_lines=2)
+            yield slide_no, "chart_category_label", f"chart:{chart_id}:category:{category_index}", spec, (category_w, category_h)
+
+    if chart.get("data_labels") and series:
+        point_count = max([len(item.get("values") or []) for item in series] + [len(categories), 1])
+        label_w = max(24.0, chart_w * 0.82 / point_count * 0.95)
+        label_h = max(16.0, chart_h * 0.09)
+        label_size = float(chart.get("data_label_font_size_pt", chart.get("chart_label_size", 7)))
+        for series_index, item in enumerate(series):
+            for point_index, value in enumerate(item.get("values") or []):
+                if value is None or value == "":
+                    continue
+                spec = _chart_text_spec(chart, value, size=label_size)
+                yield slide_no, "chart_data_label", f"chart:{chart_id}:data:{series_index}:{point_index}", spec, (label_w, label_h)
+
+
 def _slots(deck: dict):
     """Yield every formal text-producing path with a stable slot kind."""
     for slide_no, slide in enumerate(deck.get("slides") or [], 1):
@@ -95,11 +164,7 @@ def _slots(deck: dict):
                     style["text"] = text
                     yield slide_no, "table_cell", f"table:{table.get('object_id') or table_index+1}:{row_index},{col_index}", style, (col_w, row_h)
         for chart_index, chart in enumerate(slide.get("charts") or []):
-            title = chart.get("title")
-            if title:
-                spec = {"text": str(title), "font_size_pt": chart.get("title_font_size_pt", 16), "font": chart.get("font") or deck.get("font_family")}
-                chart_w, chart_h = _box_px(deck, chart)
-                yield slide_no, "chart_title", f"chart:{chart.get('object_id') or chart_index+1}:title", spec, (chart_w, max(24.0, chart_h * 0.15))
+            yield from _chart_slots(deck, slide_no, chart_index, chart)
 
 
 def _make_args(deck: dict, spec: dict, text: str, box: tuple[float, float], font_file: str | None) -> Namespace:
@@ -114,7 +179,7 @@ def _make_args(deck: dict, spec: dict, text: str, box: tuple[float, float], font
 def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
     deck = json.loads(layout.read_text(encoding="utf-8"))
     slots = []
-    coverage: dict[str, int] = {"text": 0, "shape_text": 0, "table_cell": 0, "chart_title": 0}
+    coverage: dict[str, int] = {kind: 0 for kind in TEXT_SLOT_KINDS}
     for slide_no, kind, object_id, spec, box in _slots(deck):
         coverage[kind] = coverage.get(kind, 0) + 1
         text = _text(spec)
@@ -167,7 +232,7 @@ def main() -> int:
     parser.add_argument("--font-file")
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--fail-on-target-not-fit", action="store_true")
-    parser.add_argument("--require-kind", action="append", choices=["text", "shape_text", "table_cell", "chart_title"], default=[])
+    parser.add_argument("--require-kind", action="append", choices=list(TEXT_SLOT_KINDS), default=[])
     args = parser.parse_args()
     try:
         report = audit_layout(args.layout.resolve(), font_file=args.font_file)
