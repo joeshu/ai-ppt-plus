@@ -15,8 +15,10 @@ jobs:
           python-version: '3.11'
       - name: Install deterministic rendering dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libreoffice poppler-utils tesseract-ocr
           python -m pip install --upgrade pip
-          python -m pip install pillow cairosvg python-pptx openpyxl lxml numpy scikit-image
+          python -m pip install pillow cairosvg python-pptx openpyxl lxml numpy scikit-image pyyaml fonttools
       - name: Verify SVG rendering dependency
         run: python -c "import cairosvg; print(cairosvg.__version__)"
       - name: Compile Python sources
