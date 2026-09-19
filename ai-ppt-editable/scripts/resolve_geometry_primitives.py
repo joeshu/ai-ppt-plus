@@ -5,10 +5,14 @@ import argparse
 import json
 from pathlib import Path
 
-SCHEMA = "ai-ppt-plus/geometry-primitive-resolution/v1"
+SCHEMA = "ai-ppt-plus/geometry-primitive-resolution/v2"
 PLAN_SCHEMA = "ai-ppt-plus/authoring-plan/v1"
 
-NATIVE_TYPES = {"RECT", "ROUNDRECT", "ELLIPSE", "FILLED_ARROW", "CONNECTOR", "FREEFORM_BEZIER", "TABLE", "CHART"}
+PRIMITIVES = {
+    "RECT", "ROUNDRECT", "ELLIPSE", "TRAPEZOID", "FUNNEL",
+    "FILLED_ARROW", "CONNECTOR", "FREEFORM_BEZIER", "TABLE", "CHART",
+    "IMAGEGEN_COMPLEX",
+}
 
 
 def load(path: Path) -> dict:
@@ -18,25 +22,32 @@ def load(path: Path) -> dict:
     return value
 
 
-def classify(obj: dict) -> tuple[str, str, list[str]]:
+def _num(value, default=None):
+    if isinstance(value, (int, float)):
+        return float(value)
+    return default
+
+
+def classify(obj: dict) -> tuple[str, str, list[str], dict]:
     impl = str(obj.get("implementation_type") or "")
     role = str(obj.get("semantic_role") or "").lower()
     g = obj.get("geometry_contract") if isinstance(obj.get("geometry_contract"), dict) else {}
     evidence: list[str] = []
+    params: dict = {}
 
     explicit = str(g.get("primitive_hint") or "").upper()
     if explicit:
         evidence.append("explicit primitive_hint")
-        if explicit not in NATIVE_TYPES | {"IMAGEGEN_COMPLEX"}:
-            return "UNRESOLVED", "unknown primitive_hint", evidence
-        return explicit, "explicit geometry contract", evidence
+        if explicit not in PRIMITIVES:
+            return "UNRESOLVED", "unknown primitive_hint", evidence, params
+        return explicit, "explicit geometry contract", evidence, resolve_params(explicit, g)
 
     if impl == "native_table":
-        return "TABLE", "native_table implementation", ["implementation_type=native_table"]
+        return "TABLE", "native_table implementation", ["implementation_type=native_table"], {}
     if impl == "native_chart":
-        return "CHART", "native_chart implementation", ["implementation_type=native_chart"]
+        return "CHART", "native_chart implementation", ["implementation_type=native_chart"], {}
     if impl == "imagegen_asset":
-        return "IMAGEGEN_COMPLEX", "complex visual routed to asset", ["implementation_type=imagegen_asset"]
+        return "IMAGEGEN_COMPLEX", "complex visual routed to asset", ["implementation_type=imagegen_asset"], {}
 
     filled = bool(g.get("filled_body"))
     has_arrowhead = bool(g.get("arrowhead")) or "arrow" in role
@@ -44,30 +55,72 @@ def classify(obj: dict) -> tuple[str, str, list[str]]:
     stroke_only = bool(g.get("stroke_only"))
     endpoints = g.get("endpoints")
     curvature = str(g.get("curvature") or "").lower()
-    requires_cubic = bool(g.get("requires_cubic_bezier")) or curvature in {"cubic", "bezier", "curved"}
+    requires_cubic = bool(g.get("requires_cubic_bezier")) or curvature in {"cubic", "bezier", "curved", "arc"}
     complex_art = bool(g.get("complex_art")) or bool(g.get("gradient_3d")) or bool(g.get("glow_storytelling"))
     rounded = bool(g.get("rounded_corners")) or "round" in role
     ellipse = bool(g.get("ellipse")) or any(x in role for x in ("circle", "node", "dot"))
+    trapezoid = bool(g.get("trapezoid")) or "trapezoid" in role
+    funnel = bool(g.get("funnel")) or "funnel" in role
 
     if complex_art:
-        return "IMAGEGEN_COMPLEX", "artistic geometry should not be approximated by native primitive", ["complex_art evidence"]
+        return "IMAGEGEN_COMPLEX", "artistic geometry should not be approximated by native primitive", ["complex_art evidence"], {}
     if requires_cubic:
-        return "FREEFORM_BEZIER", "continuous curved path requires cubic Bezier", ["requires_cubic_bezier"]
+        return "FREEFORM_BEZIER", "continuous curved path requires cubic Bezier", ["requires_cubic_bezier"], resolve_params("FREEFORM_BEZIER", g)
     if stroke_only and isinstance(endpoints, list) and len(endpoints) == 2:
-        return "CONNECTOR", "stroke-only two-endpoint geometry", ["stroke_only", "two endpoints"]
+        return "CONNECTOR", "stroke-only two-endpoint geometry", ["stroke_only", "two endpoints"], resolve_params("CONNECTOR", g)
     if has_arrowhead and filled and has_shaft:
-        return "FILLED_ARROW", "filled arrow body with shaft/head", ["filled_body", "shaft", "arrowhead"]
+        return "FILLED_ARROW", "filled arrow body with shaft/head", ["filled_body", "shaft", "arrowhead"], resolve_params("FILLED_ARROW", g)
+    if funnel:
+        return "FUNNEL", "direction-sensitive funnel geometry", ["funnel semantic"], resolve_params("FUNNEL", g)
+    if trapezoid:
+        return "TRAPEZOID", "direction-sensitive trapezoid geometry", ["trapezoid semantic"], resolve_params("TRAPEZOID", g)
     if ellipse:
-        return "ELLIPSE", "ellipse/circle semantic geometry", ["ellipse semantic"]
+        return "ELLIPSE", "ellipse/circle semantic geometry", ["ellipse semantic"], {}
     if rounded:
-        return "ROUNDRECT", "rounded rectangular geometry", ["rounded_corners"]
-    if impl in {"connector"}:
-        return "CONNECTOR", "connector implementation", ["implementation_type=connector"]
-    if impl in {"freeform"}:
-        return "FREEFORM_BEZIER", "freeform implementation", ["implementation_type=freeform"]
+        return "ROUNDRECT", "rounded rectangular geometry", ["rounded_corners"], resolve_params("ROUNDRECT", g)
+    if impl == "connector":
+        return "CONNECTOR", "connector implementation", ["implementation_type=connector"], resolve_params("CONNECTOR", g)
+    if impl == "freeform":
+        return "FREEFORM_BEZIER", "freeform implementation", ["implementation_type=freeform"], resolve_params("FREEFORM_BEZIER", g)
     if impl == "native_shape":
-        return "RECT", "default simple native shape", ["implementation_type=native_shape"]
-    return "UNRESOLVED", "insufficient geometry evidence", evidence
+        return "RECT", "default simple native shape", ["implementation_type=native_shape"], {}
+    return "UNRESOLVED", "insufficient geometry evidence", evidence, params
+
+
+def resolve_params(primitive: str, g: dict) -> dict:
+    if primitive == "ROUNDRECT":
+        radius = _num(g.get("corner_radius_norm"))
+        if radius is None:
+            radius = _num(g.get("roundrect_adjustment"), 0.12)
+        return {"corner_radius_norm": max(0.0, min(radius, 0.5))}
+    if primitive in {"TRAPEZOID", "FUNNEL"}:
+        direction = str(g.get("direction") or "").lower() or "down"
+        if direction not in {"up", "down", "left", "right"}:
+            direction = "down"
+        taper = _num(g.get("taper_ratio"), 0.35)
+        return {"direction": direction, "taper_ratio": max(0.0, min(taper, 1.0))}
+    if primitive == "FILLED_ARROW":
+        direction = str(g.get("direction") or "").lower() or "right"
+        head = _num(g.get("head_ratio"), 0.28)
+        shaft = _num(g.get("shaft_ratio"), 0.42)
+        return {
+            "direction": direction,
+            "head_ratio": max(0.05, min(head, 0.8)),
+            "shaft_ratio": max(0.05, min(shaft, 0.9)),
+        }
+    if primitive == "CONNECTOR":
+        return {
+            "endpoints": g.get("endpoints"),
+            "arrow_start": bool(g.get("arrow_start")),
+            "arrow_end": bool(g.get("arrow_end") or g.get("arrowhead")),
+        }
+    if primitive == "FREEFORM_BEZIER":
+        return {
+            "requires_cubic_bezier": True,
+            "control_points": g.get("control_points") or [],
+            "ooxml_requirement": "a:cubicBezTo",
+        }
+    return {}
 
 
 def expected_impl(primitive: str) -> str | None:
@@ -80,6 +133,8 @@ def expected_impl(primitive: str) -> str | None:
         "RECT": "native_shape",
         "ROUNDRECT": "native_shape",
         "ELLIPSE": "native_shape",
+        "TRAPEZOID": "native_shape",
+        "FUNNEL": "native_shape",
         "FILLED_ARROW": "native_shape",
     }.get(primitive)
 
@@ -94,7 +149,7 @@ def resolve(plan: dict) -> dict:
             continue
         oid = obj.get("object_id")
         impl = obj.get("implementation_type")
-        primitive, reason, evidence = classify(obj)
+        primitive, reason, evidence, params = classify(obj)
         expected = expected_impl(primitive)
         status = "resolved"
         if primitive == "UNRESOLVED":
@@ -111,12 +166,16 @@ def resolve(plan: dict) -> dict:
                 "primitive": primitive,
                 "detail": "repair AuthoringPlan implementation choice before build",
             })
+        if primitive == "FREEFORM_BEZIER" and not params.get("requires_cubic_bezier"):
+            status = "blocked"
+            issues.append({"severity": "blocker", "code": "geometry_cubic_bezier_required", "object_id": oid, "detail": "curved freeform must retain cubic Bezier semantics"})
         resolutions.append({
             "object_id": oid,
             "semantic_role": obj.get("semantic_role"),
             "declared_implementation_type": impl,
             "primitive": primitive,
             "expected_implementation_type": expected,
+            "parameters": params,
             "status": status,
             "reason": reason,
             "evidence": evidence,
