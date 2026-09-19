@@ -1,0 +1,29 @@
+{
+  "schema": "ai-ppt-plus/text-coverage/v1",
+  "source": {
+    "authoring_plan_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "pptx_sha256": null
+  },
+  "entries": [
+    {
+      "target_id": "title",
+      "owner_object_id": "title",
+      "producer_kind": "rich_text_runs",
+      "expected_text": "示例标题",
+      "authoring_path": "artifact_tool:textbox",
+      "text_fit_evidence_id": "text:title",
+      "text_fit_evidence": {
+        "measured": true,
+        "fit_decision": "slot-preserved",
+        "font_family": "Noto Sans CJK SC",
+        "font_size_pt": 28,
+        "line_count": 1
+      },
+      "output_binding": {
+        "kind": "shape",
+        "binding_id": "title"
+      },
+      "formal_text_required": true
+    }
+  ]
+}
