@@ -29,9 +29,11 @@ def obj(object_id, impl, role, geometry):
 
 
 def test_filled_arrow_is_not_connector(tmp_path):
-    out, report = run(tmp_path, [obj("a", "native_shape", "process arrow", {"filled_body": True, "shaft": True, "arrowhead": True})])
+    out, report = run(tmp_path, [obj("a", "native_shape", "process arrow", {"filled_body": True, "shaft": True, "arrowhead": True, "direction": "right"})])
     assert out.returncode == 0
-    assert report["resolutions"][0]["primitive"] == "FILLED_ARROW"
+    r = report["resolutions"][0]
+    assert r["primitive"] == "FILLED_ARROW"
+    assert r["parameters"]["direction"] == "right"
     assert report["repair_required"] is False
 
 
@@ -41,6 +43,7 @@ def test_curved_path_requires_freeform_bezier(tmp_path):
     r = report["resolutions"][0]
     assert r["primitive"] == "FREEFORM_BEZIER"
     assert r["expected_implementation_type"] == "freeform"
+    assert r["parameters"]["ooxml_requirement"] == "a:cubicBezTo"
     assert report["repair_required"] is True
 
 
@@ -48,6 +51,31 @@ def test_stroke_only_two_endpoint_path_is_connector(tmp_path):
     out, report = run(tmp_path, [obj("line", "connector", "connector", {"stroke_only": True, "endpoints": [[0, 0], [1, 1]]})])
     assert out.returncode == 0
     assert report["resolutions"][0]["primitive"] == "CONNECTOR"
+
+
+def test_direction_sensitive_trapezoid(tmp_path):
+    out, report = run(tmp_path, [obj("trap", "native_shape", "trapezoid", {"trapezoid": True, "direction": "left", "taper_ratio": 0.2})])
+    assert out.returncode == 0
+    r = report["resolutions"][0]
+    assert r["primitive"] == "TRAPEZOID"
+    assert r["parameters"] == {"direction": "left", "taper_ratio": 0.2}
+
+
+def test_funnel_direction_and_taper_are_preserved(tmp_path):
+    out, report = run(tmp_path, [obj("fun", "native_shape", "funnel", {"funnel": True, "direction": "up", "taper_ratio": 0.6})])
+    assert out.returncode == 0
+    r = report["resolutions"][0]
+    assert r["primitive"] == "FUNNEL"
+    assert r["parameters"]["direction"] == "up"
+    assert r["parameters"]["taper_ratio"] == 0.6
+
+
+def test_roundrect_adjustment_is_parameterized(tmp_path):
+    out, report = run(tmp_path, [obj("card", "native_shape", "round card", {"rounded_corners": True, "corner_radius_norm": 0.18})])
+    assert out.returncode == 0
+    r = report["resolutions"][0]
+    assert r["primitive"] == "ROUNDRECT"
+    assert r["parameters"]["corner_radius_norm"] == 0.18
 
 
 def test_complex_art_routes_to_imagegen_asset(tmp_path):
