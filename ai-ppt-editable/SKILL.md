@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.20.01
+  package_revision: 2026.09.20.02
 ---
 
 # AI PPT Editable
@@ -13,13 +13,13 @@ Reconstruct or repair editable PPTX with the supplied reference as visual author
 
 New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python is inspection/QA only and is not an authoring fallback. Whole-page raster fallback is forbidden.
 
-Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
+Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
 
 ## Formal production chain
 
 For normal fixed-reference reconstruction run this chain and no additional visual release-gate chain:
 
-`Reference -> Visual Inventory -> AuthoringPlan -> native_editable/imagegen_asset -> Text Slot Preflight -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> 5-10 key Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
+`Reference -> Visual Inventory -> AuthoringPlan -> native_editable/imagegen_asset -> Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> 5-10 key Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
 
 PageGraph, TextGraph, ChartGraph, manifests, SSIM, pixel diff, five-dimensional A/B and other metrics may support diagnosis, traceability and regression analysis. They do not replace looking at the fresh render and do not independently block a visually repairable page.
 
@@ -60,7 +60,23 @@ Measure every visible native text path before authoring. Determine the true edit
 
 When text does not fit, repair in this order: text-slot bbox -> margins -> divider/icon reservation -> intended wrapping/line spacing -> role-consistent font adjustment. Do not shrink first. Repeated cards may use component-local divider positions, body widths, icon slots and font scales when the reference differs.
 
-## 6. Asset Generation
+## 6. Text Coverage Audit
+
+After Text Slot Preflight and before build/release acceptance, materialize `text-coverage.json` and audit every formal-text producer path. Every AuthoringPlan `native_text` object must have at least one coverage entry; table cells, badge labels, chart labels and number+unit compositions must be traceable through stable synthetic text targets owned by their AuthoringPlan object.
+
+Each entry records the formal text, concrete authoring helper/path, TextFit measurement evidence and final output binding. A helper must not write formal text directly to the deck without recording this evidence.
+
+Validate with:
+
+```bash
+python3 scripts/audit_text_coverage.py PROJECT/authoring-plan.json PROJECT/text-coverage.json --json
+```
+
+Missing native-text coverage, missing measurement evidence, duplicate output binding, unknown owner or AuthoringPlan SHA mismatch are deterministic formal-text/provenance blockers. This auditor does not create SSIM, pixel or typography-similarity thresholds.
+
+See `references/text-coverage-auditor.md` and `assets/text-coverage.template.json`.
+
+## 15. Asset Generation
 
 Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha. Validate non-empty alpha bbox, transparent corners, safe padding, clipping and plausible subject coverage. For grids, detect actual row/column centers before slicing; repack by visible alpha bbox and visual centroid.
 
