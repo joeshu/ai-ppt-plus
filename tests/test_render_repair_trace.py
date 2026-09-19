@@ -28,13 +28,17 @@ def main()->int:
     }
     trace=build_trace(layout,regional,target=0.90,max_actions=10)
     assert trace["valid"]
-    assert [a["object_id"] for a in trace["pending_actions"]]==["card2_body","trend_chart"]
+    # target remains accepted only for compatibility; a region above the old
+    # 0.90 threshold is still ranked for human/render review instead of being
+    # silently discarded.
+    assert [a["object_id"] for a in trace["pending_actions"]]==["card2_body","trend_chart","brand_lockup"]
     first=trace["pending_actions"][0]
-    assert first["responsibility"]=="typography"
+    assert first["responsibility"]=="typography-density"
     assert first["auto_patch_allowed"] is False
     assert first["crop_evidence"]["reference_crop"]=="r.png"
-    assert "geometry/margins before font shrink" in trace["policy"]
-    print("crop-driven render Repair Trace: ok")
+    assert "text-slot geometry and line topology before font shrink" in trace["policy"]
+    assert "without a fixed visual threshold" in trace["selection_policy"]
+    print("crop-driven threshold-free render Repair Trace: ok")
     return 0
 
 
