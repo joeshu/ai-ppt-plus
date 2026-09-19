@@ -1,24 +1,27 @@
-# Portable CJK font fallback
+# Runtime-managed CJK fonts
 
-The `NotoSansSC-*.ttf` files are the portable Chinese fallback used for local
-rendering and font parity checks when a user-provided font is unavailable.
+This directory intentionally contains **policy and license metadata only**. Large
+TTF/TTC binaries are not repository assets.
 
-The task-local set contains real static 400/500/600/700 faces:
+For Chinese authoring, resolve a real installed CJK family from the runtime
+environment. The preferred CI/runtime family is `Noto Sans CJK SC`; platform
+fonts such as Microsoft YaHei or PingFang SC may be used when they are actually
+installed and selected by the deck.
 
-- `NotoSansSC-Regular.ttf` — 400
-- `NotoSansSC-Medium.ttf` — 500
-- `NotoSansSC-SemiBold.ttf` — 600
-- `NotoSansSC-Bold.ttf` — 700
+Run:
 
-- Family: Noto Sans CJK SC
-- License: SIL Open Font License 1.1
-- Source: Noto CJK / validated reconstruction asset
-- Source file: `NotoSansSC-VF.ttf`
-- Source SHA-256: `763146584cf0710223441356b4395e279021b0806c196614377a7a0174ae074a`
-- Generation: `fontTools.varLib.instancer` static `wght` instances
-- License text: https://scripts.sil.org/OFL
-- SHA-256: `2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b`
-- Additional face hashes are recorded in `font-manifest.json`.
+```bash
+python scripts/prepare_runtime_fonts.py \
+  --family "Noto Sans CJK SC" \
+  --output-dir .runtime/fonts \
+  --report .runtime/font-runtime.json
+```
 
-Microsoft YaHei remains preferred when it is supplied by the user or already
-available on the target device. Do not copy or redistribute Microsoft fonts.
+The generated `.runtime/fonts` cache is ignored by Git. Text fitting and strict
+authoring must use the same resolved face. If no CJK-capable face can be
+resolved, fail closed rather than silently substituting an unknown font.
+
+PowerPoint text runs must also bind the declared family in OOXML, including the
+East Asian typeface (`a:ea`) and complex-script typeface (`a:cs`) in addition
+to the normal run family. This reduces viewer-specific CJK fallback and layout
+drift without committing font binaries to the skill repository.
