@@ -73,16 +73,21 @@ def main()->int:
     visual_report=run_dir/"strict-reference-visual.json";visual_cmd=[sys.executable,str(SCRIPT_DIR/"compare_visual.py"),str(rendered),str(source),"--raw-slide","--strict","--report",str(visual_report)]
     visual=subprocess.run(visual_cmd,text=True,capture_output=True,check=False)
     if visual.stdout:print(visual.stdout,end="")
-    regions_path=run_dir/"auto-layout-regions.json";region_manifest(layout,regions_path);region_report=run_dir/"auto-region-visual.json"
-    region_run=subprocess.run([sys.executable,str(SCRIPT_DIR/"compare_visual_regions.py"),str(rendered),str(source),str(regions_path),"--report",str(region_report)],text=True,capture_output=True,check=False)
+    regions_path=run_dir/"auto-layout-regions.json";region_manifest(layout,regions_path);region_report=run_dir/"auto-region-visual.json";crop_dir=run_dir/"local-crop-qa"
+    region_run=subprocess.run([sys.executable,str(SCRIPT_DIR/"compare_visual_regions.py"),str(rendered),str(source),str(regions_path),"--report",str(region_report),"--crop-dir",str(crop_dir)],text=True,capture_output=True,check=False)
     if region_run.stdout:print(region_run.stdout,end="")
+    if region_run.returncode!=0:
+        if region_run.stderr:print(region_run.stderr,file=sys.stderr)
+        raise SystemExit("local crop QA failed to produce valid same-coordinate region evidence")
+    repair_trace=run_dir/"render-repair-trace.json"
+    run([sys.executable,str(SCRIPT_DIR/"build_render_repair_trace.py"),str(layout),str(region_report),"--report",str(repair_trace)],"render review Repair Trace")
     visual_passed=visual.returncode==0
     status="golden-ready" if visual_passed else "draft-needs-render-repair"
-    current.update({"render":str(rendered),"render_report":str(render_report),"strict_reference_visual":str(visual_report),"auto_region_visual":str(region_report),"visual_review_required":True,"strict_visual_target_passed":visual_passed,"golden_promotion_requested":bool(a.require_golden),"status":status})
+    current.update({"render":str(rendered),"render_report":str(render_report),"strict_reference_visual":str(visual_report),"auto_region_visual":str(region_report),"local_crop_qa":str(crop_dir),"repair_trace":str(repair_trace),"visual_review_required":True,"strict_visual_target_passed":visual_passed,"golden_promotion_requested":bool(a.require_golden),"status":status})
     current_path.write_text(json.dumps(current,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     if a.require_golden and not visual_passed:
         if visual.stderr:print(visual.stderr,file=sys.stderr)
         raise SystemExit("fresh render is a valid draft but failed Golden visual promotion; repair responsible objects/layers and rerun")
-    print(json.dumps({"status":status,"deck":str(out),"render":str(rendered),"visual_report":str(visual_report),"region_report":str(region_report),"strict_visual_target_passed":visual_passed,"golden_ready":visual_passed},ensure_ascii=False,indent=2));return 0
+    print(json.dumps({"status":status,"deck":str(out),"render":str(rendered),"visual_report":str(visual_report),"region_report":str(region_report),"repair_trace":str(repair_trace),"local_crop_qa":str(crop_dir),"strict_visual_target_passed":visual_passed,"golden_ready":visual_passed},ensure_ascii=False,indent=2));return 0
 
 if __name__=="__main__":raise SystemExit(main())
