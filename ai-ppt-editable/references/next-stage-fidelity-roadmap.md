@@ -4,7 +4,7 @@ This roadmap sequences the next six improvements after the Knight-style short-lo
 
 ## Batch 1 — P0 AuthoringPlan
 
-Status: **in implementation**.
+Status: **merged / complete**.
 
 Deliverables:
 - versioned `AuthoringPlan` schema and template;
@@ -21,6 +21,8 @@ Exit criteria:
 - package validation, Runtime Mirror and full regression are green.
 
 ## Batch 2 — P0 Text Coverage Auditor
+
+Status: **in implementation**.
 
 Goal: every visible formal-text-producing path is traceable to TextGraph/TextFit evidence.
 
