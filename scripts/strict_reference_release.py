@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Fresh reference reconstruction render/review entrypoint.
 
-Hard authoring/provenance failures remain fail-closed. Fresh render comparison
-always runs. Visual fidelity is diagnostic during the repair loop; strict
-visual success is required only when --require-golden is requested for final
-Golden/release promotion.
+Hard authoring/provenance failures remain fail-closed. Fresh render comparison,
+local crops and Repair Trace always run. Visual metrics are diagnostic evidence;
+normal execution has no universal numeric visual threshold.
 """
 from __future__ import annotations
 import argparse,json,subprocess,sys
@@ -57,7 +56,6 @@ def main()->int:
     p.add_argument("--request-id");p.add_argument("--font-dir");p.add_argument("--font-manifest");p.add_argument("--preview-dir")
     p.add_argument("--authoring-backend",choices=("artifact-tool","python-pptx"),default="artifact-tool");p.add_argument("--node");p.add_argument("--node-modules")
     p.add_argument("--overwrite",action="store_true");p.add_argument("--dpi",type=int,default=144)
-    p.add_argument("--require-golden",action="store_true",help="fail unless the fresh render passes the strict visual target; use only for final Golden/release promotion")
     a=p.parse_args();project=Path(a.project).resolve();source=Path(a.source).resolve();layout=Path(a.layout).resolve();out=Path(a.out).resolve()
     command=[sys.executable,str(SCRIPT_DIR/"strict_reference_rerun.py"),str(project),"--source",str(source),"--layout",str(layout),"--out",str(out),"--authoring-backend",a.authoring_backend]
     for flag,value in (("--request-id",a.request_id),("--font-dir",a.font_dir),("--font-manifest",a.font_manifest),("--preview-dir",a.preview_dir),("--node",a.node),("--node-modules",a.node_modules)):
@@ -70,7 +68,7 @@ def main()->int:
     if a.font_dir:render_cmd += ["--font-dir",str(Path(a.font_dir).resolve())]
     run(render_cmd,"fresh PPTX render");rendered=render_dir/"slide-1.png"
     if not rendered.is_file():raise SystemExit("fresh render did not produce slide-1.png")
-    visual_report=run_dir/"strict-reference-visual.json";visual_cmd=[sys.executable,str(SCRIPT_DIR/"compare_visual.py"),str(rendered),str(source),"--raw-slide","--strict","--report",str(visual_report)]
+    visual_report=run_dir/"reference-visual.json";visual_cmd=[sys.executable,str(SCRIPT_DIR/"compare_visual.py"),str(rendered),str(source),"--raw-slide","--report",str(visual_report)]
     visual=subprocess.run(visual_cmd,text=True,capture_output=True,check=False)
     if visual.stdout:print(visual.stdout,end="")
     regions_path=run_dir/"auto-layout-regions.json";region_manifest(layout,regions_path);region_report=run_dir/"auto-region-visual.json";crop_dir=run_dir/"local-crop-qa"
@@ -81,13 +79,12 @@ def main()->int:
         raise SystemExit("local crop QA failed to produce valid same-coordinate region evidence")
     repair_trace=run_dir/"render-repair-trace.json"
     run([sys.executable,str(SCRIPT_DIR/"build_render_repair_trace.py"),str(layout),str(region_report),"--report",str(repair_trace)],"render review Repair Trace")
-    visual_passed=visual.returncode==0
-    status="golden-ready" if visual_passed else "draft-needs-render-repair"
-    current.update({"render":str(rendered),"render_report":str(render_report),"strict_reference_visual":str(visual_report),"auto_region_visual":str(region_report),"local_crop_qa":str(crop_dir),"repair_trace":str(repair_trace),"visual_review_required":True,"strict_visual_target_passed":visual_passed,"golden_promotion_requested":bool(a.require_golden),"status":status})
-    current_path.write_text(json.dumps(current,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    if a.require_golden and not visual_passed:
+    if visual.returncode!=0:
         if visual.stderr:print(visual.stderr,file=sys.stderr)
-        raise SystemExit("fresh render is a valid draft but failed Golden visual promotion; repair responsible objects/layers and rerun")
-    print(json.dumps({"status":status,"deck":str(out),"render":str(rendered),"visual_report":str(visual_report),"region_report":str(region_report),"repair_trace":str(repair_trace),"local_crop_qa":str(crop_dir),"strict_visual_target_passed":visual_passed,"golden_ready":visual_passed},ensure_ascii=False,indent=2));return 0
+        raise SystemExit("fresh render comparison failed structural validation")
+    status="review-ready"
+    current.update({"render":str(rendered),"render_report":str(render_report),"reference_visual":str(visual_report),"auto_region_visual":str(region_report),"local_crop_qa":str(crop_dir),"repair_trace":str(repair_trace),"visual_review_required":True,"visual_metrics_diagnostic_only":True,"status":status})
+    current_path.write_text(json.dumps(current,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    print(json.dumps({"status":status,"deck":str(out),"render":str(rendered),"visual_report":str(visual_report),"region_report":str(region_report),"repair_trace":str(repair_trace),"local_crop_qa":str(crop_dir),"visual_metrics_diagnostic_only":True},ensure_ascii=False,indent=2));return 0
 
 if __name__=="__main__":raise SystemExit(main())
