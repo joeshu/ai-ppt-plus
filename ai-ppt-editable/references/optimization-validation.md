@@ -57,22 +57,13 @@ editability.
 
 Whole-page SSIM, blurred layout/color fidelity, regional SSIM and crop metrics
 are **diagnostic during the repair loop**. They rank repair work, protect
-regional wins and reject whole-page regression, but a draft is not required to
-cross 0.90 before another responsible-layer repair may be attempted. Raw pixel
+regional wins and reject whole-page regression, and are never a universal pass/fail threshold for ordinary execution. Raw pixel
 fidelity is always diagnostic because renderer/font antialiasing varies.
 
 ### Final acceptance and Golden promotion
 
 Final acceptance requires fresh rendered evidence plus local-crop review,
 formal-text equality, object/editability QA, asset QA and absence of hard
-blockers. The default `reference_fidelity_score` target remains 0.90 when the
-user supplies no other target, but it is a **Golden-promotion/release-quality
-criterion**, not the sole reconstruction objective and not a substitute for
-visual review. A candidate below the target may be retained only as a draft or
-Hard Negative for further repair; it must never be labeled Golden merely
-because contracts passed. Human approval may accept a documented special case,
-but automation must not silently lower the target.
+blockers. There is no built-in 0.90 or other universal numeric target for normal delivery. Numeric visual thresholds are opt-in project parameters only. Final acceptance is based on fresh render review, same-coordinate local crops, exact formal text, object/editability QA, asset/alpha QA, semantic correctness and absence of hard blockers.
 
-For A/B skill evaluation, compare the final corrected candidate against the
-external baseline on pixel/layout, text, object/editability, icon/asset and
-local-crop dimensions. Do not substitute historical scores for the fresh run.
+External A/B evaluation is optional and separate from normal execution. Ordinary image-to-editable runs must be self-contained and must not depend on another skill being installed or runnable.
