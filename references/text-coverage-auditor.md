@@ -15,6 +15,7 @@ Every formal text producer must create one coverage entry with:
 - `producer_kind`: `text_box`, `rich_text_runs`, `table_cell`, `badge_label`, `chart_label`, `number_unit`, or `other`.
 - `expected_text`: formal text authority for the target.
 - `authoring_path`: concrete authoring helper/path.
+- `text_fit_evidence_id`: stable slot ID from `text_fit_deck.py`.
 - `text_fit_evidence`: proof that the slot was measured before or during authoring.
 - `output_binding`: final PPT binding identifier.
 
@@ -52,3 +53,8 @@ For a valid run, the audit report must return `valid=true` and `uncovered_native
 No helper is allowed to write formal text directly to the deck unless it also records a coverage entry. When a helper creates many text-bearing children, such as table cells or chart labels, each material formal-text target must still be individually traceable.
 
 Text fitting remains repair-oriented: repair slot geometry, margins, reservations, wrapping and line spacing before shrinking type.
+
+
+## Automatic materialization
+
+Use `scripts/build_text_coverage.py` to materialize the coverage ledger from the measured `text_fit_deck.py` report. This keeps `text_fit_evidence_id` tied to the actual slot measurement instead of handwritten evidence.
