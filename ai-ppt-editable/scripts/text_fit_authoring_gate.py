@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E3/E4 full-slot text-fit gates shared by PPTX authoring entrypoints."""
+"""E3/E4 full-slot text-fit and reference-asset gates shared by authoring entrypoints."""
 from __future__ import annotations
 
 import hashlib
@@ -8,29 +8,34 @@ import tempfile
 from pathlib import Path
 
 from text_fit_deck import TEXT_SLOT_KINDS, audit_layout
+from validate_brand_asset_coverage import validate_brand_coverage
 from validate_text_topology import audit_text_topology
 
 
 def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, required: bool) -> dict:
-    """Measure every formal text-producing slot before authoring."""
+    """Measure formal text slots and fail closed on declared reference topology/brand coverage."""
     report_path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".text-fit-e3-", dir=str(report_path.parent)) as raw:
         normalized = Path(raw) / "normalized-layout.json"
         normalized.write_text(json.dumps(deck, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         report = audit_layout(normalized)
         topology = audit_text_topology(normalized)
+    brand = validate_brand_coverage(layout_path.resolve().parent)
     report["stage"] = "E3"
     report["source_layout"] = str(layout_path.resolve())
     report["required_slot_kinds"] = list(TEXT_SLOT_KINDS)
     report["blocking"] = bool(required)
     report["text_topology"] = topology
     report["topology_defect_count"] = len(topology.get("issues") or [])
+    report["brand_asset_coverage"] = brand
+    report["brand_defect_count"] = len(brand.get("issues") or [])
     report["gate_passed"] = bool(
         report.get("valid")
         and report.get("all_slots_measured")
         and int(report.get("target_not_fit_count") or 0) == 0
         and int(report.get("geometry_defect_count") or 0) == 0
         and topology.get("valid")
+        and brand.get("valid")
     )
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return report
@@ -38,17 +43,18 @@ def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, require
 
 def text_fit_failure_message(report: dict) -> str:
     return (
-        "E3 full-slot text-fit gate failed: "
+        "E3 strict authoring gate failed: "
         f"target_not_fit={report.get('target_not_fit_count')}, "
         f"geometry_defects={report.get('geometry_defect_count')}, "
         f"topology_defects={report.get('topology_defect_count')}, "
+        f"brand_defects={report.get('brand_defect_count')}, "
         f"duplicates={len(report.get('duplicate_object_ids') or [])}; "
-        "repair geometry and reference line topology first and shrink font only as a last resort"
+        "repair geometry/reference line topology/brand assets before font shrink or composition"
     )
 
 
 def write_text_fit_e4_receipt(report_path: Path, output_path: Path, e3: dict, *, required: bool) -> dict | None:
-    """Bind the successful E3 audit to the exact authored PPTX for E4 QA."""
+    """Bind successful E3 evidence to the exact authored PPTX for E4 QA."""
     if not output_path.is_file():
         return None
     payload = {
@@ -64,6 +70,7 @@ def write_text_fit_e4_receipt(report_path: Path, output_path: Path, e3: dict, *,
         "target_not_fit_count": e3.get("target_not_fit_count"),
         "geometry_defect_count": e3.get("geometry_defect_count"),
         "topology_defect_count": e3.get("topology_defect_count"),
+        "brand_defect_count": e3.get("brand_defect_count"),
         "render_validation_required": True,
         "strict_reference_release_required": True,
         "release_note": "E4 receipt is not a visual pass. Fixed-reference work must run strict_reference_release.py and pass its fresh rendered reference gate.",
