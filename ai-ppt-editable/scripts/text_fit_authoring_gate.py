@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 
 from text_fit_deck import TEXT_SLOT_KINDS, audit_layout
+from validate_text_topology import audit_text_topology
 
 
 def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, required: bool) -> dict:
@@ -17,15 +18,19 @@ def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, require
         normalized = Path(raw) / "normalized-layout.json"
         normalized.write_text(json.dumps(deck, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         report = audit_layout(normalized)
+        topology = audit_text_topology(normalized)
     report["stage"] = "E3"
     report["source_layout"] = str(layout_path.resolve())
     report["required_slot_kinds"] = list(TEXT_SLOT_KINDS)
     report["blocking"] = bool(required)
+    report["text_topology"] = topology
+    report["topology_defect_count"] = len(topology.get("issues") or [])
     report["gate_passed"] = bool(
         report.get("valid")
         and report.get("all_slots_measured")
         and int(report.get("target_not_fit_count") or 0) == 0
         and int(report.get("geometry_defect_count") or 0) == 0
+        and topology.get("valid")
     )
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return report
@@ -36,8 +41,9 @@ def text_fit_failure_message(report: dict) -> str:
         "E3 full-slot text-fit gate failed: "
         f"target_not_fit={report.get('target_not_fit_count')}, "
         f"geometry_defects={report.get('geometry_defect_count')}, "
+        f"topology_defects={report.get('topology_defect_count')}, "
         f"duplicates={len(report.get('duplicate_object_ids') or [])}; "
-        "repair geometry first and shrink font only as a last resort"
+        "repair geometry and reference line topology first and shrink font only as a last resort"
     )
 
 
@@ -46,7 +52,7 @@ def write_text_fit_e4_receipt(report_path: Path, output_path: Path, e3: dict, *,
     if not output_path.is_file():
         return None
     payload = {
-        "schema": "ai-ppt-plus/text-fit-e4-receipt/v1",
+        "schema": "ai-ppt-plus/text-fit-e4-receipt/v2",
         "stage": "E4",
         "valid": bool(e3.get("gate_passed")),
         "blocking": bool(required),
@@ -57,8 +63,10 @@ def write_text_fit_e4_receipt(report_path: Path, output_path: Path, e3: dict, *,
         "coverage_by_kind": e3.get("coverage_by_kind", {}),
         "target_not_fit_count": e3.get("target_not_fit_count"),
         "geometry_defect_count": e3.get("geometry_defect_count"),
+        "topology_defect_count": e3.get("topology_defect_count"),
         "render_validation_required": True,
-        "release_note": "E4 receipt must be paired with render/typography/visual gates; it is not a visual-pass substitute.",
+        "strict_reference_release_required": True,
+        "release_note": "E4 receipt is not a visual pass. Fixed-reference work must run strict_reference_release.py and pass its fresh rendered reference gate.",
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
