@@ -1,21 +1,24 @@
 {
-  "schema": "ai-ppt-plus/font-manifest/v1",
+  "schema": "ai-ppt-plus/font-runtime-policy/v2",
   "family": "Noto Sans CJK SC",
-  "role": "portable_cjk_fallback",
-  "file": "NotoSansSC-Regular.ttf",
-  "files": [
-    {"file": "NotoSansSC-Regular.ttf", "weight": 400, "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"},
-    {"file": "NotoSansSC-Medium.ttf", "weight": 500, "sha256": "cee007590cb79ee3d784a5303c97843d3e7578d285a9631a97a29dddbb5990fe"},
-    {"file": "NotoSansSC-SemiBold.ttf", "weight": 600, "sha256": "eae2b4135b7826c0b6ecd6de7adb9c8ef8a494f3c0c095a595e6fe194aaece33"},
-    {"file": "NotoSansSC-Bold.ttf", "weight": 700, "sha256": "dbe64c10fb587680687a078b0e1851896fac0c0a9a4905c11119cf96a1a3e223"}
-  ],
-  "weights": [400, 500, 600, 700],
-  "source": "Noto CJK / validated reconstruction asset",
-  "source_file": "NotoSansSC-VF.ttf",
-  "source_sha256": "763146584cf0710223441356b4395e279021b0806c196614377a7a0174ae074a",
-  "generation": {"method": "fontTools.varLib.instancer", "axis": "wght", "static_instances": {"400": "NotoSansSC-Regular.ttf", "500": "NotoSansSC-Medium.ttf", "600": "NotoSansSC-SemiBold.ttf", "700": "NotoSansSC-Bold.ttf"}},
-  "license": "SIL Open Font License 1.1",
-  "license_url": "https://scripts.sil.org/OFL",
-  "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
-  "embedding": "must_be_verified_in_final_pptx_or_marked_unsupported"
+  "role": "runtime_cjk_preferred",
+  "repository_font_binary_required": false,
+  "required_runtime_faces": ["regular", "bold"],
+  "fallback_families": ["Noto Sans SC", "Microsoft YaHei", "PingFang SC", "HarmonyOS Sans SC", "WenQuanYi Zen Hei"],
+  "resolution": {
+    "linux": "fontconfig/fc-match",
+    "windows": "installed Windows Fonts",
+    "macos": "installed system font registry"
+  },
+  "ci": {
+    "ubuntu_packages": ["fonts-noto-cjk"],
+    "prepare": "python scripts/prepare_runtime_fonts.py --output-dir .runtime/fonts --report .runtime/font-runtime.json"
+  },
+  "authoring": {
+    "runtime_cache": ".runtime/fonts",
+    "ooxml": "set run font family plus explicit East Asian and complex-script typefaces",
+    "text_fit": "measure with the exact runtime-resolved face used for authoring"
+  },
+  "failure_policy": "fail closed when a CJK-capable runtime face cannot be resolved; never silently substitute an unknown font",
+  "license": "runtime provider is responsible for installed font licensing; CI uses Ubuntu fonts-noto-cjk"
 }

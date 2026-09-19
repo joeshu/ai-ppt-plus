@@ -15,8 +15,6 @@ def main() -> int:
     assert REPLAY.is_file(), "replay implementation must remain available for runtime-generated decks"
     spec = json.loads(CASE.read_text(encoding="utf-8"))
     assert isinstance(spec, dict) and spec, "case specification must be non-empty JSON"
-
-    # Generated PPTX files are intentionally not repository fixtures anymore.
     forbidden = [
         ROOT / "ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx",
         ROOT / "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx",
@@ -25,7 +23,6 @@ def main() -> int:
         ROOT / "evals/case-replay-social-01/runs/candidate/mutation-smoke.pptx",
     ]
     assert not [path for path in forbidden if path.exists()], "generated PPTX artifacts must be rebuilt, not committed"
-
     replay_source = REPLAY.read_text(encoding="utf-8")
     assert "--source-pptx" in replay_source and "--deck" in replay_source
     assert "native-table" in replay_source

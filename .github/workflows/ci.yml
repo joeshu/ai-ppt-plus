@@ -16,9 +16,16 @@ jobs:
       - name: Install deterministic rendering dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libreoffice poppler-utils tesseract-ocr
+          sudo apt-get install -y --no-install-recommends libreoffice poppler-utils tesseract-ocr fonts-noto-cjk
+          fc-cache -f
           python -m pip install --upgrade pip
           python -m pip install pillow cairosvg python-pptx openpyxl lxml numpy scikit-image pyyaml fonttools
+      - name: Prepare runtime CJK font cache
+        run: |
+          python scripts/runtime_fonts.py --family "Noto Sans CJK SC" --output runtime-font-evidence.json
+          python scripts/prepare_runtime_fonts.py --family "Noto Sans CJK SC" --output-dir ai-ppt-editable/assets/fonts --report runtime-font-materialization.json
+          cp ai-ppt-editable/assets/fonts/NotoSansSC-Regular.ttf assets/fonts/NotoSansSC-Regular.ttf
+          cp ai-ppt-editable/assets/fonts/NotoSansSC-Bold.ttf assets/fonts/NotoSansSC-Bold.ttf
       - name: Verify SVG rendering dependency
         run: python -c "import cairosvg; print(cairosvg.__version__)"
       - name: Compile Python sources
@@ -54,3 +61,5 @@ jobs:
             environment-report.json
             environment-validation.json
             runtime-mirror-report.json
+            runtime-font-evidence.json
+            runtime-font-materialization.json

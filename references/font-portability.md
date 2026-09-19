@@ -1,74 +1,69 @@
-# Font portability and no-blank-text contract
+# Runtime font portability and CJK OOXML contract
 
-## Required behavior
+## Principle
 
-Formal text must remain real PPTX text, but the deck must carry a declared,
-legally redistributable CJK fallback for rendering and delivery checks. For
-weight-sensitive decks, carry the complete static face set
-(`NotoSansSC-Regular.ttf`, `NotoSansSC-Medium.ttf`, `NotoSansSC-SemiBold.ttf`,
-and `NotoSansSC-Bold.ttf`) and its manifest in the task's `project-fonts/`
-directory. Register every face under the same renderer alias and pass the
-directory to the font probes.
+Fonts are an **environment capability**, not a large binary asset of the skill
+repository. Keep font policy, resolution logic, provenance and OOXML binding in
+Git; keep TTF/TTC/OTF files in the operating system, user project, or ignored
+runtime cache.
 
-For a Chinese deck, also copy the bundled font into the task font directory
-before the first font probe; do not rely on the host's installed-font list.
+This follows the useful Knight reconstruction pattern: use a real font for text
+measurement, bind the East Asian typeface in PowerPoint OOXML, render the PPTX,
+and inspect the result. Do not make repository size the mechanism for font
+correctness.
 
-Use this font priority for this skill:
+## Runtime resolution
 
-1. Microsoft YaHei on a licensed Windows authoring/rendering device. Reference
-   the installed system font and never copy or bundle its binary in the skill.
-2. A user-supplied licensed font explicitly requested for the project.
-3. The bundled Noto Sans CJK SC fallback only after explicit approval when
-   Microsoft YaHei is unavailable.
+For Chinese work:
 
-The checked-in `assets/default-font-policy.json` fixes the family name and
-system discovery candidates for future runs. A missing Microsoft YaHei font is
-a fail-closed preflight condition, not permission for silent substitution.
+1. honor an explicitly supplied licensed project font;
+2. otherwise resolve the declared family from the host (`fontconfig` on Linux,
+   installed system fonts on Windows/macOS);
+3. prefer `Noto Sans CJK SC` for deterministic Linux CI; Microsoft YaHei,
+   PingFang SC, HarmonyOS Sans SC and other declared families are valid only
+   when actually installed and resolved;
+4. fail closed when no CJK-capable face can be resolved. Never silently switch
+   to an unknown serif/default font.
 
-After copying a task-local font set, run
-`scripts/validate_font_asset.py --font-dir project-fonts/ --require-cjk
---require-weights --report font-asset-validation.json`. This validates the
-manifest hash, the declared family, a representative CJK glyph set, the
-license declaration and the raw SFNT family/style/weight metadata. The weight
-gate requires real 400/500/600/700 faces; a simulated bold face is not a
-replacement for the set.
+Use `scripts/runtime_fonts.py` to inspect the environment. When a tool needs
+file paths rather than a family name, materialize an ignored task-local cache:
 
-For a legacy single-face project, omit `--require-weights` and preserve the
-missing-weight finding in the report. This validates the manifest hash, the
-declared family, a representative CJK glyph set, the license declaration and
-the raw SFNT family/style/weight metadata; font discovery alone is not
-asset-integrity evidence. A manifest that calls a file Regular while its
-default SFNT face is Thin or ExtraLight is invalid, even if fontconfig lists a
-regular named instance for the same variable file.
+```bash
+python scripts/prepare_runtime_fonts.py \
+  --family "Noto Sans CJK SC" \
+  --output-dir .runtime/fonts \
+  --report .runtime/font-runtime.json
+```
+
+The cache is generated from installed fonts and must not be committed.
+
+## Measurement and authoring parity
+
+Text-fit measurement and PPTX authoring must use the same resolved family/face.
+Record the resolved file path and SHA-256 in runtime evidence. A font-family
+string alone is not render proof.
+
+For every PowerPoint text run, set the normal run family and explicit CJK
+OOXML typefaces. The native writer must keep `run.font.name` plus `a:ea` and
+`a:cs` typeface declarations aligned to the same family. This reduces
+PowerPoint/LibreOffice fallback drift while preserving native editable text.
+
+## CI
+
+CI installs the open-source Noto CJK package through the operating system,
+refreshes fontconfig, materializes the ignored runtime cache, then runs package,
+text-fit, authoring and render regression tests. The repository therefore does
+not need duplicated 40+ MB CJK font binaries.
 
 ## Hard gates
 
-- Never generate a Chinese PPTX with an unresolved font family.
-- Never accept a preview that has blank, missing, or substituted Chinese text.
-- Run `probe_fonts.py` with the actual task font directory before authoring and
-  rerun it during final verification.
-- The final render must be produced with the same task-local font directory
-  used during authoring. Record the family, file, SHA-256 and license source
-  in the delivery report.
-- When a finalizer does not expose native font-render proof, retain its raw
-  `native_font_rendering_verified` value and attach independently generated
-  artifact-tool registration/render evidence. The compatibility evidence may
-  close the actual-render gate, but it must never rewrite the upstream field.
-- If the authoring backend supports OOXML font embedding, embed the declared
-  font and verify the embedded font parts in the final PPTX. With this
-  repository's `python-pptx` composer, use `scripts/embed_fonts.py` as the
-  post-processor. If neither the composer nor the adapter can embed, report
-  `embedding: unsupported` and stop final delivery until the user accepts a
-  non-embedded delivery; do not claim that a sidecar font is an embedded font.
+- unresolved CJK family: blocker;
+- silent font substitution: blocker;
+- blank/missing Chinese glyphs in fresh render: blocker;
+- text-fit measured with a different face than authoring: blocker;
+- missing `a:ea` on CJK runs: blocker;
+- repository font binary reintroduced under `assets/fonts`: repository-hygiene blocker.
 
-## Portable delivery
-
-The final PPTX must be checked from the exact task-local font directory used
-during authoring. Keep formal text as native text so it remains editable. A
-font report alone is not evidence that the PPTX is portable: combine
-`font-report.json`, `font-asset-validation.json`, the final `inspection.json`,
-`render-report.json` and `render-visual-gate.json` with
-`scripts/validate_font_delivery.py`. The resulting `declared_font`,
-`resolved_font`, `render_visible` and (when required) `embedded_font` fields
-are separate gates. Device-specific compatibility claims are outside this
-skill's automatic release contract and remain human review items.
+Font embedding remains an explicit compatibility option, not a requirement for
+normal strict Artifact Tool authoring. If embedding is requested, use a
+licensed task-local font and verify the embedded OOXML parts separately.
