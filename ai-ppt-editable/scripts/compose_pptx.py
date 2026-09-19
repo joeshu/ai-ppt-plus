@@ -7,13 +7,12 @@ preview rendering, atomic output and font embedding now live in focused
 modules so the entrypoint only coordinates the workflow.
 
 Strict/reference authoring also runs the full-slot E3 text-fit gate before any
-PPTX bytes are authored.  The gate measures text boxes, shape text, table cells,
-chart titles, legends, category labels and data labels with real font metrics.
+PPTX bytes are authored. The gate implementation lives in
+``text_fit_authoring_gate`` so this entrypoint remains orchestration-only.
 """
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import shutil
@@ -28,7 +27,7 @@ from component_expander import _choose_slide_layout, _expand_components, _frac, 
 from preview_renderer import find_cjk_font as _find_cjk_font
 from preview_renderer import render_previews
 from reference_preflight import validate_reference_preflight
-from text_fit_deck import TEXT_SLOT_KINDS, audit_layout
+from text_fit_authoring_gate import run_text_fit_e3, text_fit_failure_message, write_text_fit_e4_receipt
 from validate_semantic_layout import validate as validate_semantic_layout
 from pptx_primitives import (
     _add_outer_shadow,
@@ -74,72 +73,6 @@ def _manifest_font_paths(manifest_path: str | Path | None) -> list[Path]:
 def _die(message: str, code: int = 2):
     print(f"Error: {message}", file=sys.stderr)
     raise SystemExit(code)
-
-
-def _run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, required: bool) -> dict:
-    """Measure every formal text-producing slot before authoring.
-
-    Component expansion/native promotion happen before this call, so the gate
-    audits the exact normalized deck that will be handed to the authoring
-    backend rather than the pre-expansion source JSON.
-    """
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix=".text-fit-e3-", dir=str(report_path.parent)) as raw:
-        normalized = Path(raw) / "normalized-layout.json"
-        normalized.write_text(json.dumps(deck, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        report = audit_layout(normalized)
-    report["stage"] = "E3"
-    report["source_layout"] = str(layout_path.resolve())
-    report["required_slot_kinds"] = list(TEXT_SLOT_KINDS)
-    report["blocking"] = bool(required)
-    report["gate_passed"] = bool(
-        report.get("valid")
-        and report.get("all_slots_measured")
-        and int(report.get("target_not_fit_count") or 0) == 0
-        and int(report.get("geometry_defect_count") or 0) == 0
-    )
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    if required and not report["gate_passed"]:
-        _die(
-            "E3 full-slot text-fit gate failed: "
-            f"target_not_fit={report.get('target_not_fit_count')}, "
-            f"geometry_defects={report.get('geometry_defect_count')}, "
-            f"duplicates={len(report.get('duplicate_object_ids') or [])}; "
-            "repair geometry first and shrink font only as a last resort"
-        )
-    return report
-
-
-def _write_text_fit_e4_receipt(report_path: Path, output_path: Path, e3: dict, *, required: bool) -> None:
-    """Bind the successful E3 audit to the exact authored PPTX for E4 QA.
-
-    This receipt does not replace rendered typography/visual QA.  It prevents a
-    later authoring/output substitution from claiming the pre-authoring audit
-    and explicitly requires downstream render validation before release.
-    """
-    if not output_path.is_file():
-        if required:
-            _die("E4 text-fit receipt cannot bind missing authored PPTX")
-        return
-    payload = {
-        "schema": "ai-ppt-plus/text-fit-e4-receipt/v1",
-        "stage": "E4",
-        "valid": bool(e3.get("gate_passed")),
-        "blocking": bool(required),
-        "pptx": str(output_path),
-        "pptx_sha256": hashlib.sha256(output_path.read_bytes()).hexdigest(),
-        "e3_schema": e3.get("schema"),
-        "slot_count": e3.get("slot_count"),
-        "coverage_by_kind": e3.get("coverage_by_kind", {}),
-        "target_not_fit_count": e3.get("target_not_fit_count"),
-        "geometry_defect_count": e3.get("geometry_defect_count"),
-        "render_validation_required": True,
-        "release_note": "E4 receipt must be paired with render/typography/visual gates; it is not a visual-pass substitute.",
-    }
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    if required and not payload["valid"]:
-        _die("E4 text-fit receipt blocked because E3 did not pass")
 
 
 def main() -> None:
@@ -195,12 +128,12 @@ def main() -> None:
         issue_codes = ", ".join(str(item.get("code")) for item in preflight.get("issues", []))
         _die(f"reference reconstruction preflight failed: {issue_codes}")
 
-    # Artifact Tool is the formal strict route.  --strict-input and the
-    # explicit flag also make the gate mandatory for compatibility runs.
     require_text_fit = bool(args.require_text_fit or args.strict_input or args.authoring_backend == "artifact-tool")
     text_fit_report = Path(args.text_fit_report).resolve() if args.text_fit_report else output_path.with_name(f"{output_path.stem}.text-fit-e3.json")
     text_fit_e4 = Path(args.text_fit_e4_receipt).resolve() if args.text_fit_e4_receipt else output_path.with_name(f"{output_path.stem}.text-fit-e4.json")
-    e3_report = _run_text_fit_e3(deck, layout_path, text_fit_report, required=require_text_fit)
+    e3_report = run_text_fit_e3(deck, layout_path, text_fit_report, required=require_text_fit)
+    if require_text_fit and not e3_report.get("gate_passed"):
+        _die(text_fit_failure_message(e3_report))
 
     if args.authoring_backend == "artifact-tool":
         if args.embed_fonts:
@@ -248,12 +181,13 @@ def main() -> None:
                 if completed.stderr:
                     print(completed.stderr, file=sys.stderr, end="")
                 _die(f"Artifact Tool strict authoring failed with exit code {completed.returncode}")
-        _write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
+        e4 = write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
+        if require_text_fit and e4 is None:
+            _die("E4 text-fit receipt cannot bind missing authored PPTX")
+        if require_text_fit and not e4.get("valid"):
+            _die("E4 text-fit receipt blocked because E3 did not pass")
         return
 
-    # Keep the historical backend import lazy: the strict route above should
-    # load only the ESM adapter and never create or rewrite a deck through the
-    # compatibility implementation.
     from authoring_backend import build_pptx, build_with_embedded_fonts
 
     if args.embed_fonts:
@@ -276,7 +210,11 @@ def main() -> None:
             build_pptx(deck, output_path)
         except (KeyError, OSError, TypeError, ValueError) as exc:
             _die(f"authoring failed: {type(exc).__name__}: {exc}")
-    _write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
+    e4 = write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
+    if require_text_fit and e4 is None:
+        _die("E4 text-fit receipt cannot bind missing authored PPTX")
+    if require_text_fit and not e4.get("valid"):
+        _die("E4 text-fit receipt blocked because E3 did not pass")
     if args.preview_dir:
         render_previews(deck, Path(args.preview_dir))
 
