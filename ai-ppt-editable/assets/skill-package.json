@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.20.02",
+  "package_revision": "2026.09.20.03",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -18,6 +18,7 @@
     "assets/skill-routing.template.json", "assets/schemas/skill-routing.schema.json",
     "assets/authoring-plan.template.json", "assets/schemas/authoring-plan.schema.json", "references/authoring-plan.md", "scripts/validate_authoring_plan.py",
     "assets/text-coverage.template.json", "assets/schemas/text-coverage.schema.json", "references/text-coverage-auditor.md", "scripts/build_text_coverage.py", "scripts/audit_text_coverage.py",
+    "assets/schemas/asset-identity-contract.schema.json", "references/asset-color-identity-contract.md", "scripts/validate_asset_identity_contracts.py", "scripts/build_imagegen_asset_jobs.py",
     "assets/fonts/font-manifest.json", "assets/fonts/OFL.txt", "assets/fonts/README.md",
     "scripts/runtime_fonts.py", "scripts/prepare_runtime_fonts.py",
     "scripts/validate_skill_package.py", "scripts/validate_routing_contract.py", "scripts/run_pipeline.py", "scripts/compose_pptx.py",
