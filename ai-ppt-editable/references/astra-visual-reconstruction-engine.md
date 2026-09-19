@@ -124,28 +124,27 @@ Unsafe, incomplete or low-confidence repairs are deferred and can block delivery
 
 ## Quality gate
 
-`reconstruction/quality_gate.py` evaluates four independent contracts:
+`reconstruction/quality_gate.py` separates two decisions:
 
-1. visual fidelity: global and critical-region similarity;
-2. editability: semantic object editability ratio and full-slide-raster prohibition;
-3. semantic correctness: object type/data contract accuracy;
-4. renderer stability: renderer-specific regressions (PowerPoint/WPS evidence when available).
+1. **hard correctness** — editability ratio, semantic accuracy, full-slide-raster prohibition, renderer regressions and non-diagnostic P0/P1 findings;
+2. **Golden visual target** — global and critical-region similarity used for final promotion/release-quality assessment.
 
-A high global similarity score cannot override semantic/editability failure.
+Visual metrics remain visible on every iteration, but they do not replace render review and do not turn a technically valid draft into a hard failure by themselves. A high visual score still cannot override semantic/editability failure.
 
 ## Closed-loop behavior
 
 `reconstruction/pipeline.py` implements a bounded state machine:
 
-`UNDERSTAND -> AUTHOR -> RENDER -> QA -> GATE -> REPAIR`
+`UNDERSTAND -> AUTHOR -> RENDER -> QA -> GATE -> REPAIR -> REVIEW/COMPLETE`
 
 The pipeline:
 
 - edits only findings that have safe executable actions;
-- stops on unresolved blocking semantic findings;
-- stops after a configured maximum number of repair iterations;
-- preserves per-iteration metrics and actions for `performance-report.json` / distillation evidence;
-- re-renders after every repair before another decision.
+- re-renders after every accepted repair;
+- stops on unresolved hard correctness failures;
+- returns `REVIEW` rather than falsely declaring completion when the deck is technically valid but below the Golden visual target or has low-confidence/deferred visual findings;
+- preserves per-iteration metrics/actions and draft lineage for Repair Trace / distillation evidence;
+- promotes to `COMPLETE` only when hard correctness passes, no further safe repair is pending, and the Golden visual target is met.
 
 ## Astra host contract
 
@@ -171,11 +170,12 @@ This architecture **extends rather than replaces** the existing engine:
 
 ## Acceptance policy
 
-A candidate may be delivered only when:
+A draft may continue through render-driven repair when hard correctness passes even if the Golden visual target has not yet been met. Golden/release promotion requires:
 
-- no blocking DifferenceGraph findings remain;
-- QualityGate passes;
+- no blocking non-diagnostic DifferenceGraph findings remain;
+- hard QualityGate correctness passes;
+- Golden visual target passes or a documented human-approved special-case decision exists;
 - no full-slide semantic raster exists;
 - critical editable objects pass native-object audit;
 - source image remains the immutable visual reference;
-- every repair round is reflected in evidence/history.
+- same-coordinate local-crop evidence and Repair Trace cover the last accepted repair round.
