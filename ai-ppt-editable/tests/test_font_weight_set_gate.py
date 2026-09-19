@@ -10,10 +10,13 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "ai-ppt-editable" / "scripts"))
+from runtime_fonts import resolve_font_file  # noqa: E402
 
 
 def main() -> int:
-    bundled = ROOT / "assets/fonts/NotoSansSC-Regular.ttf"
+    bundled = resolve_font_file("Noto Sans CJK SC", bold=False)
+    assert bundled is not None and bundled.is_file(), "runtime CJK regular font unresolved"
     with tempfile.TemporaryDirectory(prefix="font-weight-set-") as temp:
         work = Path(temp)
         for weight in (400, 500, 600, 700):
