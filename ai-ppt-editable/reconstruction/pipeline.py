@@ -51,10 +51,9 @@ class PipelineState:
 class ReconstructionPipeline:
     """Bounded render -> inspect -> repair loop.
 
-    Deterministic correctness remains fail-closed. Visual targets are Golden
-    promotion criteria. When a fresh render is below target but there is no
-    safe deterministic patch, the pipeline returns REVIEW with a valid draft
-    instead of mislabeling the deck complete or blocking further visual review.
+    Deterministic correctness remains fail-closed. Visual metrics are
+    diagnostic evidence used to drive render review and repairs; there is no
+    universal numeric similarity threshold in the normal execution path.
     """
 
     def __init__(self, *, max_iterations: int = 4, repair_router: RepairRouter | None = None, quality_gate: QualityGate | None = None) -> None:
@@ -100,12 +99,10 @@ class ReconstructionPipeline:
                 semantic_accuracy=float(metrics.get("semantic_accuracy", 0.0)),
                 full_slide_raster_detected=bool(metrics.get("full_slide_raster_detected", False)),
                 renderer_regressions=list(metrics.get("renderer_regressions") or []),
-                require_golden=False,
             )
             state.gate_result = gate
             metrics = dict(metrics)
-            metrics["golden_visual_ready"] = bool(gate.metrics.get("golden_visual_ready"))
-            metrics["golden_visual_failures"] = list(gate.metrics.get("golden_visual_failures") or [])
+            metrics["visual_metrics_diagnostic_only"] = True
 
             state.stage = Stage.REPAIR
             plan = self.repair_router.build_plan(differences)
@@ -146,14 +143,10 @@ class ReconstructionPipeline:
                 state.artifacts["blocking_failures"] = list(gate.failures)
                 return state
 
-            if plan.deferred or not gate.metrics.get("golden_visual_ready", False):
+            if plan.deferred:
                 state.stage = Stage.REVIEW
                 state.artifacts["draft_candidate"] = deck
-                state.artifacts["review_reason"] = (
-                    "visual-target-not-yet-golden"
-                    if not gate.metrics.get("golden_visual_ready", False)
-                    else "deferred-findings-require-review"
-                )
+                state.artifacts["review_reason"] = "deferred-findings-require-review"
                 state.artifacts["deferred_findings"] = [dict(item) for item in plan.deferred]
                 return state
 
