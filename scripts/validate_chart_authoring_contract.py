@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bind authored charts to the validated reconstruction representation contract."""
+"""Bind reference-reconstruction charts to the validated representation contract."""
 from __future__ import annotations
 
 import argparse
@@ -9,17 +9,28 @@ from pathlib import Path
 from validate_chart_manifest import validate as validate_chart_manifest
 
 
+def _reference_route(root: Path) -> bool:
+    route = root / "route-decision.json"
+    if not route.is_file():
+        return False
+    try:
+        return json.loads(route.read_text(encoding="utf-8")).get("route") == "reference-reconstruction"
+    except Exception:
+        return False
+
+
 def validate_chart_authoring_contract(layout_path: Path, deck: dict) -> dict:
     authored = []
     for slide_no, slide in enumerate(deck.get("slides") or [], 1):
         for index, chart in enumerate(slide.get("charts") or [], 1):
-            if not isinstance(chart, dict):
-                continue
-            authored.append({"slide_no": slide_no, "chart_id": str(chart.get("object_id") or chart.get("chart_id") or chart.get("name") or f"chart-{index}")})
-    result = {"schema": "ai-ppt-plus/chart-authoring-contract/v1", "valid": True, "required": bool(authored), "authored_charts": authored, "issues": []}
-    if not authored:
+            if isinstance(chart, dict):
+                authored.append({"slide_no": slide_no, "chart_id": str(chart.get("object_id") or chart.get("chart_id") or chart.get("name") or f"chart-{index}")})
+    root = layout_path.resolve().parent
+    manifest_path = root / "chart-reconstruction.json"
+    required = bool(authored) and (_reference_route(root) or manifest_path.is_file())
+    result = {"schema": "ai-ppt-plus/chart-authoring-contract/v1", "valid": True, "required": required, "authored_charts": authored, "issues": []}
+    if not required:
         return result
-    manifest_path = layout_path.resolve().parent / "chart-reconstruction.json"
     if not manifest_path.is_file():
         result["valid"] = False
         result["issues"].append({"severity": "blocker", "code": "chart_reconstruction_manifest_missing", "path": str(manifest_path)})
