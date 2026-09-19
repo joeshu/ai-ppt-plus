@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""Block QA/debug/composite images from final authoring asset roots.
-
-Strict reconstruction must keep authorable visual assets physically separate
-from contact sheets, debug crops, comparison montages, previews and other QA
-evidence.  This gate checks both the files referenced by the normalized deck
-and the complete image inventory under ``assets_dir`` so a temporary QA image
-cannot be picked up later by a broad asset lookup or manifest rewrite.
-"""
+"""Block QA/debug/composite images from final authoring asset roots."""
 from __future__ import annotations
 
 import argparse
@@ -16,11 +9,6 @@ from pathlib import Path
 from typing import Any
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"}
-
-# Directory names are intentionally exact-ish: a legitimate asset named
-# ``product_review_icon.png`` should not be rejected merely because it contains
-# an English word such as "review".  QA roots, however, must never sit inside
-# the final authoring asset tree.
 FORBIDDEN_DIR_RE = re.compile(
     r"^(?:qa|debug|review|evidence|previews?|renders?|diffs?|comparisons?|"
     r"contact[-_ ]?sheets?|sprite[-_ ]?sheets?|montages?|composites?|"
@@ -48,7 +36,7 @@ def _is_forbidden(path: Path, *, root: Path | None = None) -> tuple[bool, str | 
         try:
             parts = candidate.relative_to(root.resolve()).parts
         except ValueError:
-            parts = candidate.parts
+            pass
     for part in parts[:-1]:
         if FORBIDDEN_DIR_RE.fullmatch(part):
             return True, f"forbidden_directory:{part}"
@@ -102,9 +90,18 @@ def validate_deck_asset_isolation(deck: dict[str, Any], layout_path: Path, *, sc
     errors: list[dict[str, Any]] = []
     references = _referenced_assets(deck, assets_dir)
 
+    # The root itself is a directory, so check its basename directly instead of
+    # passing it through _is_forbidden(), which intentionally treats the final
+    # path component as a filename.
+    if FORBIDDEN_DIR_RE.fullmatch(assets_dir.name):
+        errors.append({
+            "code": "final_asset_root_is_qa_directory",
+            "assets_dir": str(assets_dir),
+            "reason": f"forbidden_directory:{assets_dir.name}",
+        })
+
     for record in references:
-        path = Path(record["path"])
-        forbidden, reason = _is_forbidden(path, root=assets_dir)
+        forbidden, reason = _is_forbidden(Path(record["path"]), root=assets_dir)
         if forbidden:
             errors.append({"code": "qa_asset_referenced_by_deck", "reason": reason, **record})
 
@@ -125,12 +122,6 @@ def validate_deck_asset_isolation(deck: dict[str, Any], layout_path: Path, *, sc
                 "count": len(forbidden_inventory),
                 "files": forbidden_inventory,
             })
-
-    # A final asset root must itself not be a QA/debug directory.  This catches
-    # layouts that point assets_dir directly at a review or crop workspace.
-    root_forbidden, root_reason = _is_forbidden(assets_dir.parent / assets_dir.name, root=assets_dir.parent)
-    if root_forbidden:
-        errors.append({"code": "final_asset_root_is_qa_directory", "assets_dir": str(assets_dir), "reason": root_reason})
 
     return {
         "schema": "ai-ppt-plus/final-asset-isolation/v1",
