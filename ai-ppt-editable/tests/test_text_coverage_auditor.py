@@ -36,7 +36,7 @@ def coverage(plan_sha):
         "entries": [{
             "target_id": "title", "owner_object_id": "title",
             "producer_kind": "rich_text_runs", "expected_text": "标题",
-            "authoring_path": "artifact_tool:textbox",
+            "authoring_path": "artifact_tool:textbox", "text_fit_evidence_id": "text:title",
             "text_fit_evidence": {"measured": True, "fit_decision": "slot-preserved"},
             "output_binding": {"kind": "shape", "binding_id": "title"}
         }]
@@ -88,3 +88,21 @@ def test_duplicate_output_binding_is_blocked(tmp_path):
     out, report = run(tmp_path, mutate)
     assert out.returncode == 1
     assert any(x["code"] == "text_coverage_output_binding_duplicate" for x in report["issues"])
+
+
+def test_unmeasured_evidence_id_is_blocked(tmp_path):
+    p = tmp_path / "authoring-plan.json"
+    p.write_text(json.dumps(plan(), ensure_ascii=False), encoding="utf-8")
+    c = coverage(digest(p))
+    cp = tmp_path / "text-coverage.json"
+    cp.write_text(json.dumps(c, ensure_ascii=False), encoding="utf-8")
+    fit = tmp_path / "text-fit.json"
+    fit.write_text(json.dumps({
+        "schema": "ai-ppt-plus/text-fit-deck/v3",
+        "all_slots_measured": True,
+        "measured_object_ids": ["text:other"]
+    }), encoding="utf-8")
+    out = subprocess.run([sys.executable, str(SCRIPT), str(p), str(cp), "--text-fit-report", str(fit), "--json"], capture_output=True, text=True)
+    report = json.loads(out.stdout)
+    assert out.returncode == 1
+    assert any(x["code"] == "text_coverage_evidence_id_unmeasured" for x in report["issues"])
