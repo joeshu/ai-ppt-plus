@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.19.01
+  package_revision: 2026.09.19.02
 ---
 
 # AI PPT Editable
@@ -21,7 +21,26 @@ For fixed-reference work, use the Knight-style execution order:
 
 `reference -> visual inventory -> native_editable/imagegen_asset classification -> assets -> fresh editable PPTX -> fresh render -> full-page + local-crop review -> object-level repair -> re-render`.
 
-The first authored PPTX is a draft. PageGraph, TextGraph, ChartGraph and manifests support reconstruction and repair; they are not a replacement for looking at the fresh render. Do not add a new blocking contract merely because a visual metric is imperfect. Deterministic correctness defects are hard blockers; visual-fidelity metrics guide the repair loop and final Golden promotion.
+The first authored PPTX is a draft. PageGraph, TextGraph, ChartGraph and manifests support reconstruction and repair; they are not a replacement for looking at the fresh render. Do not add a new blocking contract merely because a visual metric is imperfect. Deterministic correctness defects are hard blockers; visual-fidelity metrics guide the repair loop only. There is no universal numeric visual threshold for normal execution or delivery.
+
+
+## Mandatory execution contract
+
+A normal image-to-editable run is self-contained and must not depend on running another skill or an A/B comparator. Track these phases for every page and do not claim completion if a required phase is skipped:
+
+1. `input_prepared`: freeze source path/page, dimensions, aspect ratio and SHA-256.
+2. `visual_inventory_done`: inventory all major text blocks, cards/panels, tables, charts, arrows/connectors, icons, logos, decorations and complex visuals with stable IDs and approximate source bboxes.
+3. `asset_classification_done`: classify every non-text visual as exactly `native_editable` or `imagegen_asset` before authoring.
+4. `imagegen_assets_done`: every `imagegen_asset` must have a generated source, final independent transparent PNG, provenance, native-alpha validation and crop/contact-sheet QA. If ImageGen is unavailable or repeatedly fails, stop and report the blocker; never silently substitute a script-drawn icon, source crop or low-quality approximation.
+5. `text_fit_done`: determine the true usable text slot first, then text-fit every visible native text object; geometry/margins/wrap are repaired before font shrink. CJK runs must write Latin/East-Asian/complex-script typeface metadata required for stable PowerPoint rendering.
+6. `pptx_built`: author native text/shapes/tables/connectors and independently movable image assets; preserve stable object IDs.
+7. `z_order_done`: perform a physical layer-order pass. Preserve native internal order, place independent visual assets at the intended layer, then ensure readable text/labels are not hidden or clipped.
+8. `render_qa_done`: fresh-render the exact PPTX and compare full page against the immutable reference.
+9. `local_crop_qa_done`: inspect same-coordinate crops for dense cards, icon slots, charts, arrow-label components, bottom bars and user-flagged regions.
+10. `repair_done`: map every material visual defect to the responsible object/layer, repair that object, and re-render. Do not repair by chasing a single scalar score.
+11. `validation_done`: run editability, text, asset-alpha, semantic table/chart and provenance checks; only hard correctness defects block delivery.
+
+The compact execution report should record these phase results and evidence paths. A/B comparison with Knight or any external baseline is an evaluation workflow only; it is never required for ordinary skill execution.
 
 ## Authority and decomposition
 
@@ -79,7 +98,7 @@ Fail closed for: provenance/hash mismatch; corrupt/unrenderable output; formal-t
 
 Whole-page SSIM, balanced reference-fidelity score, regional SSIM and crop metrics are diagnostic during reconstruction. They rank repairs and detect regressions. Do not optimize a page by blindly chasing one scalar score.
 
-The default 0.90 reference-fidelity target is retained for final Golden promotion/release-quality assessment when the user supplies no other target. It is not a precondition for continuing the repair loop and is not sufficient by itself for acceptance. A below-target deck remains Draft/Hard Negative unless explicitly accepted as a documented special case.
+There is no built-in 0.90 or other universal numeric visual pass threshold. Whole-page and regional metrics are diagnostic evidence for regression detection and repair prioritization. Final acceptance is based on render review, local-crop review, object/editability correctness, asset fidelity/provenance, semantic correctness and absence of hard blockers. A project may opt into an explicit numeric threshold only when the user or project contract supplies one.
 
 ## Final acceptance
 
@@ -94,4 +113,4 @@ A corrected final PPTX requires all of the following evidence:
 - no hard blockers;
 - Repair Trace showing the last accepted changes.
 
-For skill A/B evaluation, compare the corrected final candidate against the baseline on pixel/layout, text, object/editability, icon/asset and local-crop dimensions. Historical scores cannot substitute for a fresh run.
+External A/B evaluation is optional and separate from normal execution. When explicitly requested, compare the corrected final candidate against the selected baseline on pixel/layout, text, object/editability, icon/asset and local-crop dimensions; never make ordinary delivery depend on another skill being available.
