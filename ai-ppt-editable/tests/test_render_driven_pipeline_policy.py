@@ -41,24 +41,18 @@ def _metrics(score:float)->dict:
     }
 
 
-def test_visual_target_is_diagnostic_until_golden_requested():
+def test_visual_metrics_are_diagnostic_not_numeric_gate():
     gate=QualityGate()
-    draft=gate.evaluate(
-        differences=_empty_diff(),global_visual_similarity=0.60,critical_region_scores={"title":0.55},
+    result=gate.evaluate(
+        differences=_empty_diff(),global_visual_similarity=0.10,critical_region_scores={"title":0.05},
         editable_ratio=1.0,semantic_accuracy=1.0,full_slide_raster_detected=False,renderer_regressions=[],
     )
-    assert draft.passed is True
-    assert draft.metrics["golden_visual_ready"] is False
-    golden=gate.evaluate(
-        differences=_empty_diff(),global_visual_similarity=0.60,critical_region_scores={"title":0.55},
-        editable_ratio=1.0,semantic_accuracy=1.0,full_slide_raster_detected=False,renderer_regressions=[],
-        require_golden=True,
-    )
-    assert golden.passed is False
-    assert any("Golden target" in item for item in golden.failures)
+    assert result.passed is True
+    assert result.metrics["visual_metrics_diagnostic_only"] is True
+    assert result.metrics["global_visual_similarity"]==0.10
 
 
-def test_pipeline_returns_review_for_valid_below_target_draft():
+def test_pipeline_completes_when_hard_correctness_passes_and_no_repairs_remain():
     pipe=ReconstructionPipeline(max_iterations=2)
     state=pipe.run(
         understand=_page_graph,
@@ -66,14 +60,14 @@ def test_pipeline_returns_review_for_valid_below_target_draft():
         render=lambda deck:"render.png",
         inspect=lambda graph,deck,rendered:_empty_diff(),
         apply_repairs=lambda deck,plan:execute_plan(deck,plan),
-        measure=lambda graph,deck,rendered,differences:_metrics(0.60),
+        measure=lambda graph,deck,rendered,differences:_metrics(0.20),
     )
-    assert state.stage==Stage.REVIEW
-    assert state.artifacts["review_reason"]=="visual-target-not-yet-golden"
-    assert "draft_candidate" in state.artifacts
+    assert state.stage==Stage.COMPLETE
+    assert "final" in state.artifacts
+    assert state.history[-1].metrics["visual_metrics_diagnostic_only"] is True
 
 
-def test_pipeline_applies_safe_object_repair_before_review():
+def test_pipeline_applies_safe_object_repair_before_completion():
     calls={"inspect":0}
     def inspect(graph,deck,rendered):
         calls["inspect"]+=1
@@ -93,9 +87,9 @@ def test_pipeline_applies_safe_object_repair_before_review():
         render=lambda deck:"render.png",
         inspect=inspect,
         apply_repairs=lambda deck,plan:execute_plan(deck,plan),
-        measure=lambda graph,deck,rendered,differences:_metrics(0.65),
+        measure=lambda graph,deck,rendered,differences:_metrics(0.25),
     )
-    assert state.stage==Stage.REVIEW
+    assert state.stage==Stage.COMPLETE
     repaired=state.artifacts["candidate_2"]
     assert repaired["slides"][0]["texts"][0]["w"]==0.45
     assert len(state.history)>=2
