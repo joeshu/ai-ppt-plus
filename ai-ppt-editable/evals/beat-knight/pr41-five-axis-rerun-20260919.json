@@ -1,0 +1,39 @@
+{
+  "schema": "ai-ppt-plus/five-axis-rerun-control/v1",
+  "created_at": "2026-09-19T02:13:44Z",
+  "pr": 41,
+  "head": "0e76c1a8fe3b1771e131ba663db69a21cabd65c5",
+  "base": "25b349a1e714e827929e5b5462ceb4a2e8d6c507",
+  "reference": {
+    "filename": "DCB89475-DA25-4CE1-8E58-770F5806629E(3).jpeg",
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "size_px": [1536, 864],
+    "canvas_inches": [13.333333, 7.5]
+  },
+  "comparison": {
+    "candidate": "PR #41 formal ai-ppt-plus -> ai-ppt-editable strict route",
+    "baseline": "knight-imagetopptx-skill",
+    "axes": ["pixel", "text", "object", "icon-asset", "local-crop"],
+    "acceptance": "0 loss + >=3/5 strict wins + (pixel or local-crop win) + absolute editability/provenance floors"
+  },
+  "prior_measured_baseline": {
+    "report": "five_axis_ab_report.json (2026-09-17)",
+    "candidate_text_coverage": 1.0,
+    "knight_text_coverage": 0.9429,
+    "candidate_icon_mean_red_mask_iou": 0.309,
+    "knight_icon_mean_red_mask_iou": 0.1462,
+    "candidate_full_page_ssim": 0.484858,
+    "knight_full_page_ssim": 0.486935,
+    "note": "diagnostic baseline only; it must not be represented as the PR41 fresh rerun"
+  },
+  "pr41_delta": {
+    "output_mutation_expected": false,
+    "reason": "PR41 changes add E3/E4 text-fit receipts and fail-closed final-asset isolation/preflight gates; no rendering geometry, typography, chart values, icon placement, or asset pixels are intentionally modified by this PR delta. A fresh formal run is still mandatory before merge."
+  },
+  "fresh_rerun": {
+    "generated": false,
+    "five_axis_measured": false,
+    "status": "pending-formal-runtime-execution",
+    "must_not_claim_pass": true
+  }
+}
