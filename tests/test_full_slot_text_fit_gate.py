@@ -53,7 +53,8 @@ def main() -> int:
     subprocess_call = compose.index("completed = subprocess.run", artifact_branch)
     assert e3_call < artifact_branch < subprocess_call
 
-    # The extracted gate remains fail-closed; extraction must not weaken E3/E4.
+    # The extracted gate remains fail-closed; E4 is only a receipt and must
+    # explicitly hand fixed-reference work to the fresh rendered release gate.
     for token in (
         "from text_fit_deck import TEXT_SLOT_KINDS, audit_layout",
         'report["stage"] = "E3"',
@@ -62,7 +63,9 @@ def main() -> int:
         '"stage": "E4"',
         '"pptx_sha256"',
         '"render_validation_required": True',
-        "must be paired with render/typography/visual gates",
+        '"strict_reference_release_required": True',
+        "E4 receipt is not a visual pass",
+        "strict_reference_release.py",
     ):
         assert token in gate, token
 
