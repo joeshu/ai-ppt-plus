@@ -12,6 +12,7 @@ import json
 import re
 from pathlib import Path
 
+from validate_final_asset_isolation import validate_deck_asset_isolation
 from validate_imagegen_final_assets import validate as validate_final_imagegen_assets
 
 CJK_RE = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
@@ -128,19 +129,44 @@ def validate_reference_preflight(
     route_path = root / "route-decision.json"
     issues: list[dict] = []
     result = {
-        "schema": "ai-ppt-plus/reference-compose-preflight/v3",
+        "schema": "ai-ppt-plus/reference-compose-preflight/v4",
         "valid": True,
         "required": False,
         "route": None,
         "visual_inventory_source": None,
         "visual_asset_ids": [],
         "imagegen_required": False,
+        "asset_isolation": None,
         "cjk_required": False,
         "font_evidence": None,
         "authoring_backend": authoring_backend,
         "issues": issues,
     }
+
+    # Strict Artifact Tool authoring is fail-closed even when a task omitted
+    # route-decision.json.  QA/debug/composite images must be physically
+    # separated from the final authoring asset tree before any PPTX bytes are
+    # created.  Reference reconstruction also requires the same gate on the
+    # compatibility backend.
+    artifact_route = authoring_backend in {"artifact-tool", "@oai/artifact-tool"}
+    route_hint = None
+    if route_path.is_file():
+        try:
+            route_hint = _load_json(route_path).get("route")
+        except Exception:
+            route_hint = None
+    if artifact_route or route_hint == "reference-reconstruction":
+        try:
+            isolation = validate_deck_asset_isolation(deck, layout_path, scan_tree=True)
+        except Exception as exc:
+            issues.append({"code": "final_asset_isolation_unreadable", "message": f"{type(exc).__name__}: {exc}"})
+        else:
+            result["asset_isolation"] = isolation
+            if not isolation.get("valid"):
+                issues.append({"code": "final_asset_isolation_failed", "errors": isolation.get("errors", [])})
+
     if not route_path.is_file():
+        result["valid"] = not issues
         return result
     try:
         route = _load_json(route_path)
@@ -150,6 +176,7 @@ def validate_reference_preflight(
         return result
     result["route"] = route.get("route")
     if route.get("route") != "reference-reconstruction":
+        result["valid"] = not issues
         return result
     result["required"] = True
 
@@ -207,7 +234,6 @@ def validate_reference_preflight(
         # Artifact Tool delivers the same task-local faces through its native
         # font registry; requiring --embed-fonts here would reject the strict
         # route before the JavaScript adapter gets a chance to author the deck.
-        artifact_route = authoring_backend in {"artifact-tool", "@oai/artifact-tool"}
         if not embed_fonts and not artifact_route:
             issues.append({"code": "reference_cjk_requires_embedded_fonts"})
         resolved_font_dir = font_dir or deck.get("font_dir")
