@@ -32,6 +32,14 @@ SCHEMA = "ai-ppt-plus/report-envelope/v1"
 REPORT_TYPE = "report-bundle-validation"
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 NON_TECHNICAL_STEPS = {"signoff-validation", "release-check"}
+VISUAL_DIAGNOSTIC_STEPS = {
+    "render-visual-gate",
+    "visual-comparison",
+    "dual-comparison",
+    "visual-compare-qa",
+    "preview-consistency",
+    "gradient-visual",
+}
 
 
 def sha256(path: Path) -> str:
@@ -276,13 +284,42 @@ def validate_bundle(
     actual_failed = {step.get("name") for step in steps if isinstance(step, dict) and step.get("ok") is not True and isinstance(step.get("name"), str)}
     declared_failed = {name for name in (pipeline.get("failed_steps") or []) if isinstance(name, str)} if isinstance(pipeline.get("failed_steps"), list) else set()
     declared_technical_failed = {name for name in (pipeline.get("technical_failed_steps") or []) if isinstance(name, str)} if isinstance(pipeline.get("technical_failed_steps"), list) else set()
-    expected_technical_failed = actual_failed - NON_TECHNICAL_STEPS
+    diagnostic_failed = actual_failed & VISUAL_DIAGNOSTIC_STEPS
+    expected_technical_failed = actual_failed - NON_TECHNICAL_STEPS - VISUAL_DIAGNOSTIC_STEPS
     check(declared_failed == actual_failed, "failed_steps_complete", "failed_steps must list every failed pipeline step", expected=sorted(actual_failed), observed=sorted(declared_failed))
-    check(declared_technical_failed == expected_technical_failed, "technical_failed_steps_complete", "technical_failed_steps must not hide a failed technical step", expected=sorted(expected_technical_failed), observed=sorted(declared_technical_failed))
+    check(declared_technical_failed == expected_technical_failed, "technical_failed_steps_complete", "technical_failed_steps must exclude visual diagnostic failures but must not hide hard technical failures", expected=sorted(expected_technical_failed), observed=sorted(declared_technical_failed))
+    if diagnostic_failed:
+        check(
+            pipeline.get("repair_loop_required") is True or project_report.get("repair_loop_required") is True,
+            "diagnostic_failure_requires_repair_state",
+            "failed visual-diagnostic steps must surface as repair-loop state rather than a hidden production failure",
+            diagnostic_failed_steps=sorted(diagnostic_failed),
+        )
     check(pipeline.get("valid") is pipeline.get("technical_valid"), "technical_truth_alias", "pipeline valid must equal technical_valid")
     expected_pipeline_status = "passed" if pipeline.get("technical_valid") is True else "failed"
     check(pipeline.get("status") == expected_pipeline_status, "pipeline_status_consistent", "pipeline status must match technical_valid", expected=expected_pipeline_status, observed=pipeline.get("status"))
+    repair_loop_required = bool(
+        pipeline.get("repair_loop_required") is True
+        or project_report.get("repair_loop_required") is True
+        or diagnostic_failed
+    )
+    expected_production_state = "hard-correctness-fail" if pipeline.get("technical_valid") is not True else "repair-required" if repair_loop_required else "final-pptx-ready"
+    check(
+        pipeline.get("production_state") in {None, expected_production_state},
+        "pipeline_production_state_consistent",
+        "pipeline production state must distinguish hard failure, repair-required, and final-PPTX-ready",
+        expected=expected_production_state,
+        observed=pipeline.get("production_state"),
+    )
+    check(
+        project_report.get("production_state") in {None, expected_production_state},
+        "aggregate_production_state_consistent",
+        "aggregate production state must agree with the short-loop state",
+        expected=expected_production_state,
+        observed=project_report.get("production_state"),
+    )
     if pipeline.get("release_eligible") is True:
+        check(not repair_loop_required, "release_requires_repair_complete", "release eligibility requires the render/repair loop to be resolved")
         release_evidence = pipeline.get("release_evidence") if isinstance(pipeline.get("release_evidence"), dict) else {}
         check(pipeline.get("technical_valid") is True, "release_requires_technical_valid", "release eligibility requires a passing technical pipeline")
         check(release_evidence.get("report_bundle_valid") is True, "release_requires_bundle", "release eligibility requires a passing report bundle")
@@ -331,6 +368,8 @@ def validate_bundle(
         "technical_valid": not issues,
         "technical_status": "passed" if not issues else "failed",
         "human_review_required": True,
+        "repair_loop_required": repair_loop_required,
+        "production_state": expected_production_state,
         "human_review_status": "pending",
         "release_eligible": False,
         "release_status": "blocked-pending-bundle-and-human-gates",
