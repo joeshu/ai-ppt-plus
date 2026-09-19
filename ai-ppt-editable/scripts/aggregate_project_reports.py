@@ -11,6 +11,16 @@ from atomic_output import atomic_write_json
 from report_envelope import normalize_child
 
 
+VISUAL_DIAGNOSTIC_REPORT_TYPES = {
+    "render-visual-gate",
+    "visual-comparison",
+    "dual-comparison",
+    "visual-compare-qa",
+    "preview-consistency",
+    "gradient-visual-validation",
+}
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -55,6 +65,7 @@ def main() -> int:
     input_hashes = {}
     required_failures = 0
     optional_failures = 0
+    repair_signals = []
     component_usage = None
     for position, entry in enumerate(reports):
         if not isinstance(entry, dict):
@@ -111,18 +122,33 @@ def main() -> int:
         evidence.update(normalize_child(report_type, report_path, normalized_report, required=required, stage=entry.get("stage"), deck_sha256=index.get("deck_sha256")))
         evidence.update({"present": True, "valid": child_valid, "native_status": report.get("status"), "schema": report.get("schema"), "sha256": report_hash, "issues": child_issues})
         if child_valid is not True:
-            severity = "blocker" if required else "major"
-            issues.append({"severity": severity, "code": "required_report_failed" if required else "optional_report_failed", "report_type": report_type, "path": str(report_path), "child_status": child_status, "child_issues": child_issues})
-            if required:
-                required_failures += 1
+            if report_type in VISUAL_DIAGNOSTIC_REPORT_TYPES:
+                signal = {
+                    "severity": "major",
+                    "code": "visual_diagnostic_requires_repair",
+                    "report_type": report_type,
+                    "path": str(report_path),
+                    "child_status": child_status,
+                    "child_issues": child_issues,
+                    "diagnostic_only": True,
+                }
+                issues.append(signal)
+                repair_signals.append(signal)
             else:
-                optional_failures += 1
+                severity = "blocker" if required else "major"
+                issues.append({"severity": severity, "code": "required_report_failed" if required else "optional_report_failed", "report_type": report_type, "path": str(report_path), "child_status": child_status, "child_issues": child_issues})
+                if required:
+                    required_failures += 1
+                else:
+                    optional_failures += 1
         report_deck_hash = report.get("deck_sha256")
         if index.get("deck_sha256") and report_deck_hash and report_deck_hash != index.get("deck_sha256"):
             issues.append({"severity": "blocker", "code": "child_report_deck_hash_mismatch", "report_type": report_type, "expected": index.get("deck_sha256"), "observed": report_deck_hash})
         report_evidence.append(evidence)
     valid = not any(item.get("severity") == "blocker" for item in issues)
-    status = "passed" if valid and not optional_failures else "degraded" if valid else "failed"
+    repair_loop_required = bool(repair_signals)
+    status = "repair-required" if valid and repair_loop_required else "passed" if valid and not optional_failures else "degraded" if valid else "failed"
+    production_state = "hard-correctness-fail" if not valid else "repair-required" if repair_loop_required else "final-pptx-ready"
     result = {
         "schema": "ai-ppt-plus/report-envelope/v1",
         "report_type": "project-aggregate",
@@ -149,10 +175,13 @@ def main() -> int:
         "reports_total": len(reports),
         "required_failures": required_failures,
         "optional_failures": optional_failures,
+        "repair_loop_required": repair_loop_required,
+        "repair_signals": repair_signals,
+        "production_state": production_state,
         "component_usage": component_usage,
         "requires_human_closeout": True,
         "may_claim_complete": False,
-        "next_state": "validated" if valid else "revision-required",
+        "next_state": production_state,
         "issues": issues,
         "evidence": {"reports": report_evidence},
         "source_references": list(index.get("source_references") or []) + [item.get("source") for item in report_evidence if isinstance(item, dict) and item.get("source")],
