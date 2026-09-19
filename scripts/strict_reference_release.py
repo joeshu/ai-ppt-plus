@@ -97,14 +97,21 @@ def key_region_manifest(layout:Path,output:Path)->dict:
             score=180+min(box[2]*box[3],0.35)*100
             if any(token in role for token in ("footer","header","brand","hero")):score+=40
             candidates.append(_candidate(slide_no,"semantic-region",oid,box,score,semantic_role=role,synthetic=False))
+        # A bottom visual system is easy to miss when it is fragmented into many
+        # thin shapes. Force one same-coordinate crop whenever slide content
+        # materially occupies the bottom band.
         if any(box[1]+box[3]>=0.84 for box in material_boxes):
             candidates.append(_candidate(slide_no,"semantic-region","__footer_band__",[0.0,0.82,1.0,0.18],260,semantic_role="footer-band",synthetic=True))
+        # The top title/brand system also benefits from a composed crop when it
+        # exists; it catches title scale and logo-anchor drift missed by object crops.
         if any(box[1]<=0.14 for box in material_boxes):
             candidates.append(_candidate(slide_no,"semantic-region","__header_band__",[0.0,0.0,1.0,0.20],220,semantic_role="header-band",synthetic=True))
         candidates.sort(key=lambda item:item[0],reverse=True)
         selected=[]
         for _,row in candidates:
             if len(selected)>=10:break
+            # Keep semantic regions even when they overlap children; otherwise
+            # avoid near-duplicate object crops so 5-10 slots cover more causes.
             if row["kind"]!="semantic-region" and any(_iou(row["bbox"],s["bbox"])>0.86 and s["kind"]!="semantic-region" for s in selected):
                 continue
             selected.append(row)
