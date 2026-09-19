@@ -1,0 +1,36 @@
+{
+  "schema": "ai-ppt-plus/pr41-knight-independence-audit/v1",
+  "candidate": {
+    "sha256": "c6ea72d5a70ca630a3bb49c63eeafc45f6b26b8b8369b66ad1b2ee3571bf8bc6",
+    "slide_count": 1,
+    "slide_size_emu": [14630400, 8229600],
+    "shape_count": 194,
+    "shape_type_counts": {"AUTO_SHAPE (1)": 168, "PICTURE (13)": 26},
+    "text_object_count": 86,
+    "text_char_count": 767,
+    "structural_fingerprint_sha256": "5844f5be847a29970eedefff2524d6a8a80aa586adefc73b0df339a06b7a3e81",
+    "media_count": 26
+  },
+  "purported_knight": {
+    "sha256": "f061b8f09173fbae073e28f6b049aa1e75bfa0e336a25cd8033438feab06f7cc",
+    "slide_count": 1,
+    "slide_size_emu": [14630400, 8229600],
+    "shape_count": 194,
+    "shape_type_counts": {"AUTO_SHAPE (1)": 168, "PICTURE (13)": 26},
+    "text_object_count": 86,
+    "text_char_count": 767,
+    "structural_fingerprint_sha256": "5844f5be847a29970eedefff2524d6a8a80aa586adefc73b0df339a06b7a3e81",
+    "media_count": 26
+  },
+  "checks": {
+    "same_structural_fingerprint": true,
+    "same_shape_count": true,
+    "same_shape_type_counts": true,
+    "same_text_object_count": true,
+    "same_text_char_count": true,
+    "media_all_same": false
+  },
+  "decision": "reject_as_independent_knight_baseline",
+  "reason": "The candidate and purported Knight deck have identical ordered shape type, geometry, rotation and text structure across all 194 shapes; only media/package payloads differ. This is insufficient evidence of an independently authored Knight baseline and must not be used for the final five-axis A/B claim.",
+  "required_next": "Run Knight independently from the same SHA-256 reference image, retain Knight-native authoring provenance/run id and fresh render, then evaluate Pixel/Text/Object/Icon-Asset/Local-Crop."
+}
