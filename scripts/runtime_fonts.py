@@ -34,6 +34,7 @@ def _fc_match_file(pattern: str) -> Path | None:
 
 
 def resolve_font_file(family: str, *, bold: bool = False) -> Path | None:
+    """Resolve one real runtime font file for measurement/registration."""
     family = str(family or "").strip() or DEFAULT_CJK_FAMILIES[0]
     style = "Bold" if bold else "Regular"
     resolved = _fc_match_file(f"{family}:style={style}") or _fc_match_file(family)
