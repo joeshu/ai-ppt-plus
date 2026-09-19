@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/beat-knight-full-five-dim-rerun/v1",
   "case_id": "lifecycle-customer-operations-1536x864-20260919",
-  "status": "started",
+  "status": "source_revalidated_ci_green_pending_fresh_candidate",
   "branch": "fix/icon-local-crop-backfill-20260919",
   "baseline_main_sha": "4eb810230d4385b58344f5d2f5406e7e5f3e87d2",
   "candidate_head_sha_at_start": "6a633bd84f1688fcdb7b316288611fadf94af0cb",
@@ -9,7 +9,8 @@
     "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
     "width_px": 1536,
     "height_px": 864,
-    "role": "sole_visual_baseline"
+    "role": "sole_visual_baseline",
+    "attachment_revalidated_20260919": true
   },
   "dimensions": [
     "pixel",
@@ -44,8 +45,21 @@
       "candidate_mean_local_crop_ssim": 0.6252797098025962,
       "relative_improvement": 0.6299583624953862
     },
-    "ci_head_6a633bd8": "success"
+    "ci_head_6a633bd8": "success",
+    "ci_run_889": {
+      "head_sha": "2a4ba87266e223333ab30b43df4f1d280c72163b",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 35407482349
+    }
+  },
+  "fresh_candidate": {
+    "required": true,
+    "generated": false,
+    "pptx_sha256": null,
+    "render_sha256": null,
+    "evidence_sha256": null
   },
   "results": null,
-  "promotion_decision": "pending_full_five_dimension_rerun"
+  "promotion_decision": "pending_fresh_main_candidate_and_full_five_dimension_rerun"
 }
