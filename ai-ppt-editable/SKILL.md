@@ -76,13 +76,13 @@ Missing native-text coverage, missing measurement evidence, duplicate output bin
 
 See `references/text-coverage-auditor.md` and `assets/text-coverage.template.json`.
 
-## 15. Asset Generation
+## 7. Asset Generation
 
 Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha. Validate non-empty alpha bbox, transparent corners, safe padding, clipping and plausible subject coverage. For grids, detect actual row/column centers before slicing; repack by visible alpha bbox and visual centroid.
 
 Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon.
 
-## 7. Artifact Tool Build
+## 8. Artifact Tool Build
 
 Build a fresh editable PPTX through the strict repository `@oai/artifact-tool` authoring path. Preserve stable object IDs/names for selection-pane inspection and Repair Trace. Build component-local layers in container -> asset/icon -> text order, then audit physical z-order. Do not reopen/resave the authored deck through `python-pptx` as a repair path.
 
@@ -92,31 +92,31 @@ Complex visual systems may be one or a small number of semantic image assets whe
 
 Charts remain native/editable when data are known. Missing future values stay blank and must never be serialized as zero.
 
-## 8. Fresh PowerPoint Render
+## 9. Fresh PowerPoint Render
 
 Render the exact current candidate after authoring and after every meaningful repair batch. Final evidence must link to the delivered PPTX hash. An old render cannot prove a new candidate.
 
-## 9. Full-page Compare
+## 10. Full-page Compare
 
 Compare the fresh render with the immutable reference. Whole-page SSIM, pixel diff, balanced fidelity scores and regional metrics are diagnostic evidence only unless the user/project explicitly supplies a numeric target. A low visual metric creates repair work; it does not terminate production by itself.
 
-## 10. 5-10 key Local Crops
+## 11. 5-10 key Local Crops
 
 For each page inspect 5-10 same-coordinate reference/candidate crops, prioritizing the most material regions: dense text/cards, icon slots, charts, compact arrow+label components, bottom bars, circular centers, right-side tool panels and user-flagged areas. If a page genuinely has fewer than five material regions, inspect all of them.
 
 Asset thumbnails are insufficient. Icon visibility, clipping, centering and z-order must be proven from the final PPT render crop.
 
-## 11. Responsible Object Repair
+## 12. Responsible Object Repair
 
 Every material mismatch must map to the responsible object/layer. Record page, crop/object IDs, mismatch, proposed delta, before evidence, after evidence, accepted/rejected state and reason. Prefer the 3-5 highest-impact defects in each iteration.
 
 Repair the owning object instead of compensating through neighbors or chasing one scalar score. Protect already-correct regions. Pure placement defects should not trigger unnecessary ImageGen regeneration.
 
-## 12. Re-render
+## 13. Re-render
 
 Every accepted material repair requires a fresh render. Re-check the affected crop and the full page. Reject a local repair that materially regresses a protected crop or the whole page unless explicit human review establishes that the scalar regression is a renderer artifact and the visual/object evidence is better.
 
-## 13. Hard Correctness Check
+## 14. Hard Correctness Check
 
 Normal fixed-reference production has only these blocking categories:
 
@@ -142,7 +142,7 @@ python3 scripts/validate_short_loop_run.py PROJECT/short-loop-run.json --root PR
 
 Use `assets/short-loop-run.template.json` as the compact report shape.
 
-## 14. Final PPTX
+## 15. Final PPTX
 
 Deliver only the candidate whose final PPTX/render hashes correspond to the accepted evidence and which has zero active hard blockers. Final acceptance requires current-source hash match, fresh full-page review, final local-crop review, exact formal-text ledger, object/editability inspection, independent asset alpha/provenance QA, semantic chart/table checks where applicable and Repair Trace for the last accepted material changes.
 
