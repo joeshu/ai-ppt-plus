@@ -25,7 +25,7 @@ def main() -> int:
     # Fresh visual comparison is always recorded; only explicit Golden promotion
     # fails closed on a below-target render.
     assert "visual.returncode==0" in compact
-    assert "ifa.require-goldenandnotvisual_passed:" in compact
+    assert "ifa.require_goldenandnotvisual_passed:" in compact
     print("strict reference release render-driven gate: ok")
     return 0
 
