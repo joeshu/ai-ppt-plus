@@ -30,7 +30,7 @@ def main() -> int:
             "slides": [{
                 "shapes": [{"object_id": "background", "type": "rect", "x": 0, "y": 0, "w": 1, "h": 1, "fill": "#061A35"}],
                 "groups": [{"object_id": "native-panel", "role": "semantic-panel", "native_required": True, "x": 0.05, "y": 0.05, "w": 0.35, "h": 0.3, "children_coordinate_space": "local", "children": [{"object_id": "native-panel-fill", "type": "rounded_rect", "x": 0, "y": 0, "w": 1, "h": 1, "fill": "#0C2B4D"}]}],
-                "tables": [{"object_id": "merged-table", "native_required": True, "x": 0.45, "y": 0.1, "w": 0.45, "h": 0.6, "rows": [["场景", "状态"], ["发展", {"runs": [{"text": "增收", "bold": True, "color": "#E60012"}, {"text": "有奖", "color": "#061A35"}]}], ["", "减收不罚"]], "merges": [[1, 0, 2, 0]], "rich_text_required": True}],
+                "tables": [{"object_id": "merged-table", "native_required": True, "x": 0.45, "y": 0.1, "w": 0.45, "h": 0.6, "font_size_pt": 8, "rows": [["场景", "状态"], ["发展", {"runs": [{"text": "增收", "bold": True, "color": "#E60012"}, {"text": "有奖", "color": "#061A35"}]}], ["", "减收不罚"]], "merges": [[1, 0, 2, 0]], "rich_text_required": True}],
                 "texts": [{"object_id": "formal-title", "text": "原生回放", "x": 0.05, "y": 0.82, "w": 0.4, "h": 0.1, "size": 14}],
             }],
         }
