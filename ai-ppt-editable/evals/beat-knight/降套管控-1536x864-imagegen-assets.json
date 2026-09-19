@@ -24,7 +24,23 @@
       "source_bbox": [0.016276041666666668, 0.005787037037037037, 0.126953125, 0.10416666666666667],
       "aspect_ratio": 2.1666666666666665,
       "alpha_required": true,
-      "prompt": "Recreate the China Unicom logo lockup from the supplied reference crop as one independent high-fidelity visual asset. Preserve the red knot mark, black Chinese name 中国联通, English China unicom, and the small gray slogan 创新·与智慧同行 with the same relative geometry, stroke weight, spacing and proportions. No redesign, no added content. Output genuine transparent RGBA with generous safe padding; no white matte."
+      "prompt": "Recreate the China Unicom logo lockup from the supplied reference crop as one independent high-fidelity visual asset. Preserve the red knot mark, black Chinese name 中国联通, English China unicom, and the small gray slogan 创新·与智慧同行 with the same relative geometry, stroke weight, spacing and proportions. No redesign, no added content. Output genuine transparent RGBA with generous safe padding; no white matte.",
+      "asset_contract": {
+        "schema": "ai-ppt-plus/asset-identity-contract/v1",
+        "semantic_identity": {
+          "subject": "China Unicom corporate logo lockup",
+          "must_preserve": ["red China Unicom knot mark", "black 中国联通 wordmark", "English China unicom line", "small gray 创新·与智慧同行 slogan", "original relative lockup geometry"],
+          "forbidden_substitutions": ["generic telecom logo", "generic red knot", "text-only replacement"]
+        },
+        "contour_traits": ["interlocking rounded red knot silhouette at left", "compact horizontal logo-and-wordmark lockup"],
+        "color_roles": [
+          {"role": "brand_red", "hex": "#E60012"},
+          {"role": "wordmark_black", "hex": "#1A1A1A"},
+          {"role": "slogan_gray", "hex": "#777777"}
+        ],
+        "alpha": {"required": true, "transparent_edges": true, "safe_padding_ratio": 0.06},
+        "provenance": {"generation_required": true, "source_crop_final_fallback": false, "reference_sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99"}
+      }
     },
     {
       "asset_id": "service-calligraphy-lockup",
@@ -33,7 +49,19 @@
       "source_bbox": [0.87890625, 0.0, 0.12044270833333333, 0.11574074074074074],
       "aspect_ratio": 1.85,
       "alpha_required": true,
-      "prompt": "Recreate the red handwritten/calligraphic brand slogan 联通好服务 用心为客户 from the supplied reference crop as one independent visual asset. Preserve the two-line composition, brush character, sweeping underline flourish, red hue, stroke rhythm and proportions. No redesign, no extra text. Output genuine transparent RGBA with safe padding; no white matte."
+      "prompt": "Recreate the red handwritten/calligraphic brand slogan 联通好服务 用心为客户 from the supplied reference crop as one independent visual asset. Preserve the two-line composition, brush character, sweeping underline flourish, red hue, stroke rhythm and proportions. No redesign, no extra text. Output genuine transparent RGBA with safe padding; no white matte.",
+      "asset_contract": {
+        "schema": "ai-ppt-plus/asset-identity-contract/v1",
+        "semantic_identity": {
+          "subject": "联通好服务 用心为客户 red calligraphic service slogan",
+          "must_preserve": ["two-line Chinese calligraphy", "handwritten brush character", "sweeping underline flourish", "original line hierarchy and proportions"],
+          "forbidden_substitutions": ["typeset sans-serif slogan", "generic red handwriting", "single-line slogan"]
+        },
+        "contour_traits": ["irregular brush-stroke glyph contours", "long sweeping lower-right underline flourish"],
+        "color_roles": [{"role": "calligraphy_red", "hex": "#E60012"}],
+        "alpha": {"required": true, "transparent_edges": true, "safe_padding_ratio": 0.08},
+        "provenance": {"generation_required": true, "source_crop_final_fallback": false, "reference_sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99"}
+      }
     },
     {
       "asset_id": "bottom-brand-band",
@@ -42,7 +70,24 @@
       "source_bbox": [0.0, 0.8819444444444444, 1.0, 0.11805555555555555],
       "aspect_ratio": 15.058823529411764,
       "alpha_required": true,
-      "prompt": "Recreate the complete bottom brand visual band from the supplied reference crop as one independent wide visual asset: layered flowing red ribbons, pale red city skyline, centered 5Gⁿ mark with small brand line, left white calligraphic slogan 强基固本 守正创新, and right China Unicom service-team brand wording. Preserve the original wide geometry, red gradients, skyline placement, 5G center anchor and edge-to-edge ribbon silhouette. No redesign or added content. Output genuine transparent RGBA outside the visible ribbon/skyline artwork, with no rectangular white matte."
+      "prompt": "Recreate the complete bottom brand visual band from the supplied reference crop as one independent wide visual asset: layered flowing red ribbons, pale red city skyline, centered 5Gⁿ mark with small brand line, left white calligraphic slogan 强基固本 守正创新, and right China Unicom service-team brand wording. Preserve the original wide geometry, red gradients, skyline placement, 5G center anchor and edge-to-edge ribbon silhouette. No redesign or added content. Output genuine transparent RGBA outside the visible ribbon/skyline artwork, with no rectangular white matte.",
+      "asset_contract": {
+        "schema": "ai-ppt-plus/asset-identity-contract/v1",
+        "semantic_identity": {
+          "subject": "China Unicom bottom brand ribbon and skyline band",
+          "must_preserve": ["layered flowing red ribbons", "pale red city skyline", "centered 5Gⁿ mark", "left white 强基固本 守正创新 calligraphy", "right China Unicom service-team branding", "edge-to-edge wide composition"],
+          "forbidden_substitutions": ["generic red footer", "flat rectangular banner", "ribbon without skyline or center 5G anchor"]
+        },
+        "contour_traits": ["multiple overlapping wave-like ribbon silhouettes", "thin skyline rising above the ribbon band", "very wide shallow horizontal silhouette"],
+        "color_roles": [
+          {"role": "primary_brand_red", "hex": "#E60012"},
+          {"role": "deep_ribbon_red", "hex": "#B80018"},
+          {"role": "pale_skyline_red", "hex": "#F3A6AE"},
+          {"role": "foreground_white", "hex": "#FFFFFF"}
+        ],
+        "alpha": {"required": true, "transparent_edges": true, "safe_padding_ratio": 0.02},
+        "provenance": {"generation_required": true, "source_crop_final_fallback": false, "reference_sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99"}
+      }
     }
   ]
 }
