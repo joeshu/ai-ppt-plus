@@ -13,8 +13,12 @@ def main() -> int:
     assert 'authoring_provenance_failed' in delivery
     assert 'validate_authoring_provenance' in delivery
     assert 'reference_visual_comparison_missing' in delivery
-    assert 'reference_fidelity_below_threshold' in delivery
-    assert 'reference_layout_fidelity_below_threshold' in delivery
+    # Visual fidelity remains required evidence, but scalar visual metrics are
+    # diagnostic repair signals rather than production hard blockers.
+    assert '"diagnostic_only": True' in delivery
+    assert '"repair_loop_required": visual_comparison_report.get("valid") is not True' in delivery
+    assert 'reference_fidelity_below_threshold' not in delivery
+    assert 'reference_layout_fidelity_below_threshold' not in delivery
     assert 'current_rerun_path.unlink()' in rerun
     assert 'page-graph-provenance.json' in rerun
     assert 'validate_page_graph_provenance.py' in rerun
@@ -25,7 +29,7 @@ def main() -> int:
     assert 'validate_current_run_imagegen' in authoring
     assert 'validate_embedded_imagegen_assets' in authoring
     assert 'strict-rerun-request/v2' in authoring
-    print("delivery authoring/PageGraph/ImageGen provenance contract: ok")
+    print("delivery authoring/PageGraph/ImageGen provenance + diagnostic visual contract: ok")
     return 0
 
 
