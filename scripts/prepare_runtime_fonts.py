@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Materialize a task-local CJK font cache from system/runtime fonts.
 
-The repository intentionally does not carry large TTF/TTC binaries. This helper
-resolves installed fonts, copies only the regular/bold faces needed by text-fit
-and strict authoring into an ignored runtime cache, and emits provenance.
+The repository intentionally does not carry large TTF/TTC binaries. Runtime
+font discovery may resolve a TTC collection (common for Noto CJK and Windows
+CJK fonts), while downstream text-fit/font QA expects a standalone SFNT face.
+This helper therefore extracts the requested family/weight from a collection
+instead of merely renaming TTC bytes to ``.ttf``.
 """
 from __future__ import annotations
 
@@ -24,6 +26,103 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def _is_collection(path: Path) -> bool:
+    try:
+        with path.open("rb") as stream:
+            return stream.read(4) == b"ttcf"
+    except OSError:
+        return False
+
+
+def _name_values(face) -> set[str]:
+    table = face.get("name")
+    values: set[str] = set()
+    if table is None:
+        return values
+    for record in table.names:
+        if record.nameID not in {1, 4, 6, 16, 21}:
+            continue
+        try:
+            value = record.toUnicode().strip()
+        except Exception:
+            continue
+        if value:
+            values.add(value)
+    return values
+
+
+def _select_collection_face(source: Path, family: str, *, bold: bool):
+    from fontTools.ttLib import TTCollection
+
+    collection = TTCollection(str(source))
+    wanted = family.casefold().strip()
+    target_weight = 700 if bold else 400
+    ranked = []
+    for index, face in enumerate(collection.fonts):
+        names = _name_values(face)
+        folded = {name.casefold() for name in names}
+        family_score = 0
+        if wanted in folded:
+            family_score = 3
+        elif any(wanted in name or name in wanted for name in folded):
+            family_score = 2
+        os2 = face.get("OS/2")
+        weight = int(os2.usWeightClass) if os2 is not None else 400
+        ranked.append((family_score, -abs(weight - target_weight), -index, index, face, names, weight))
+    if not ranked:
+        collection.close()
+        raise RuntimeError(f"empty font collection: {source}")
+    ranked.sort(reverse=True, key=lambda item: item[:3])
+    best = ranked[0]
+    if best[0] == 0 and len(collection.fonts) > 1:
+        collection.close()
+        raise RuntimeError(f"requested family {family!r} not found in collection {source}")
+    return collection, best[3], best[4], best[5], best[6]
+
+
+def materialize_runtime_face(source: Path, target: Path, family: str, *, bold: bool) -> dict:
+    """Copy a standalone font or extract one family/weight face from a TTC."""
+    source = Path(source).resolve()
+    target = Path(target).resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if not _is_collection(source):
+        shutil.copyfile(source, target)
+        mode = "copied-standalone-sfnt"
+        face_index = None
+        names: list[str] = []
+        weight = None
+    else:
+        collection, face_index, face, face_names, weight = _select_collection_face(source, family, bold=bold)
+        try:
+            face.save(str(target))
+        finally:
+            collection.close()
+        mode = "extracted-standalone-face-from-collection"
+        names = sorted(face_names)
+    if _is_collection(target):
+        raise RuntimeError(f"runtime cache must be standalone SFNT, got collection bytes: {target}")
+    # Prove the materialized output opens as a standalone face.
+    from fontTools.ttLib import TTFont
+
+    probe = TTFont(str(target))
+    try:
+        os2 = probe.get("OS/2")
+        output_weight = int(os2.usWeightClass) if os2 is not None else None
+    finally:
+        probe.close()
+    return {
+        "source": str(source),
+        "target": str(target),
+        "mode": mode,
+        "source_face_index": face_index,
+        "source_face_names": names,
+        "source_weight": weight,
+        "output_weight": output_weight,
+        "sha256": sha256(target),
+        "standalone_sfnt": True,
+    }
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--family", default="Noto Sans CJK SC")
@@ -39,10 +138,15 @@ def main() -> int:
             print(json.dumps({"valid": False, "code": "runtime_cjk_font_unresolved", "family": a.family}, ensure_ascii=False))
             return 2
         target = out / name
-        shutil.copyfile(source, target)
-        records.append({"role": "bold" if bold else "regular", "source": str(source), "target": str(target), "sha256": sha256(target)})
+        try:
+            record = materialize_runtime_face(source, target, a.family, bold=bold)
+        except Exception as exc:
+            print(json.dumps({"valid": False, "code": "runtime_cjk_font_materialization_failed", "family": a.family, "source": str(source), "message": f"{type(exc).__name__}: {exc}"}, ensure_ascii=False))
+            return 2
+        record["role"] = "bold" if bold else "regular"
+        records.append(record)
     report = {
-        "schema": "ai-ppt-plus/runtime-font-materialization/v1",
+        "schema": "ai-ppt-plus/runtime-font-materialization/v2",
         "valid": True,
         "family": a.family,
         "repository_font_binary_required": False,
