@@ -14,7 +14,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from pipeline_engine import PipelineExecutor, PipelineTask
 
 
-def task_command(source: Path, output: Path, delay: float = 0.08) -> list[str]:
+# Keep synthetic work long enough that scheduler jitter from the parallel root
+# test runner cannot dominate the cache-performance signal. Thresholds remain
+# unchanged: hot <70% of cold and one-page incremental <60% of cold.
+SYNTHETIC_WORK_SECONDS = 0.25
+
+
+def task_command(source: Path, output: Path, delay: float = SYNTHETIC_WORK_SECONDS) -> list[str]:
     code = (
         "import pathlib,time; "
         f"time.sleep({delay}); "
@@ -28,7 +34,7 @@ def build(run: Path, cache: Path, sources: list[Path], *, resume: bool = False, 
     engine = PipelineExecutor(run, mode="dag", cache_dir=cache, max_workers=2, resume=resume)
     for index, source in enumerate(sources, 1):
         output = run / f"page-{index}.json"
-        engine.add(PipelineTask(f"page-{index}", task_command(source, output, 20.0 if slow_last and index == len(sources) else 0.08), outputs=(output,), inputs=(source,)))
+        engine.add(PipelineTask(f"page-{index}", task_command(source, output, 20.0 if slow_last and index == len(sources) else SYNTHETIC_WORK_SECONDS), outputs=(output,), inputs=(source,)))
     return engine
 
 
