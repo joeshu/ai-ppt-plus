@@ -35,11 +35,32 @@ def _implementation(obj):
     return "native_shape"
 
 def _text_contract(obj):
-    return {"producer":obj.get("text_producer","text_box"),"slot_bbox":_bbox(obj),"target_lines":obj.get("target_lines"),"line_breaks":obj.get("line_breaks"),"first_baseline":obj.get("first_baseline"),"baseline_delta":obj.get("baseline_delta",obj.get("target_line_height")),"inner_margins":obj.get("inner_margins"),"font_face":obj.get("font_face"),"font_size":obj.get("font_size"),"font_weight":obj.get("font_weight"),"runs":obj.get("runs"),"fit_evidence_required":True}
+    return {
+        "producer": obj.get("text_producer","text_box"),
+        "slot_bbox": _bbox(obj),
+        "target_lines": obj.get("target_lines"),
+        "line_breaks": obj.get("line_breaks"),
+        "first_baseline": obj.get("first_baseline"),
+        "baseline_delta": obj.get("baseline_delta",obj.get("target_line_height")),
+        "inner_margins": obj.get("inner_margins"),
+        "font_face": obj.get("font_face"),
+        "font_size": obj.get("font_size"),
+        "font_weight": obj.get("font_weight"),
+        "runs": obj.get("runs"),
+        "fit_evidence_required": True,
+    }
 
 def _asset_contract(obj):
-    identity=obj.get("identity_contract") or {}; color=obj.get("color_contract") or {}
-    return {"identity":{"semantic_identity":identity.get("semantic_identity",obj.get("semantic_identity")),"contour_traits":identity.get("contour_traits",obj.get("contour_traits")),"forbidden_substitutions":identity.get("forbidden_substitutions",[])},"color":{"foreground":color.get("foreground"),"internal_detail":color.get("internal_detail"),"host_background":color.get("host_background"),"evidence_status":color.get("evidence_status","specified" if color else "unavailable")},"alpha_required":bool(obj.get("alpha_required",True)),"safe_padding":obj.get("safe_padding"),"reference_visible_bbox_norm":obj.get("reference_visible_bbox_norm"),"visual_centroid":obj.get("visual_centroid")}
+    identity=obj.get("identity_contract") or {}
+    color=obj.get("color_contract") or {}
+    return {
+        "identity": {"semantic_identity":identity.get("semantic_identity",obj.get("semantic_identity")),"contour_traits":identity.get("contour_traits",obj.get("contour_traits")),"forbidden_substitutions":identity.get("forbidden_substitutions",[])},
+        "color": {"foreground":color.get("foreground"),"internal_detail":color.get("internal_detail"),"host_background":color.get("host_background"),"evidence_status":color.get("evidence_status","specified" if color else "unavailable")},
+        "alpha_required": bool(obj.get("alpha_required",True)),
+        "safe_padding": obj.get("safe_padding"),
+        "reference_visible_bbox_norm": obj.get("reference_visible_bbox_norm"),
+        "visual_centroid": obj.get("visual_centroid"),
+    }
 
 def build_plan(data):
     issues=[]; out=[]; seen=set()
@@ -48,7 +69,8 @@ def build_plan(data):
         if oid in seen: issues.append({"code":"duplicate_object_id","object_id":oid}); continue
         seen.add(oid); impl=_implementation(obj); bbox=_bbox(obj)
         if bbox is None: issues.append({"code":"missing_bbox","object_id":oid})
-        parent=obj.get("parent_id") or obj.get("parent"); z=obj.get("z_role") or ("text" if impl=="native_text" else "asset" if impl=="imagegen_asset" else "geometry")
+        parent=obj.get("parent_id") or obj.get("parent")
+        z=obj.get("z_role") or ("text" if impl=="native_text" else "asset" if impl=="imagegen_asset" else "geometry")
         if z not in VALID_Z: issues.append({"code":"invalid_z_role","object_id":oid,"observed":z})
         entry={"object_id":oid,"semantic_role":obj.get("semantic_role",obj.get("type")),"implementation_type":impl,"parent_id":parent,"bbox":bbox,"anchors":obj.get("anchors",obj.get("anchor")),"relationships":obj.get("relationships",{}),"z_role":z,"protected_neighbors":list(obj.get("protected_neighbors") or [])}
         if impl=="native_text": entry["text_contract"]=_text_contract(obj)
@@ -62,5 +84,6 @@ def build_plan(data):
     return {"schema":"ai-ppt-plus/authoring-plan/v1","source":data.get("source",{}),"valid":not issues,"issues":issues,"objects":out,"object_count":len(out),"policy":{"authoring_order":["parent/container geometry","assets and native geometry","native text"],"repair_owner_first":True,"visual_threshold_blocker":False}}
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument("inventory",type=Path); p.add_argument("--output",type=Path,required=True); a=p.parse_args(); result=build_plan(json.loads(a.inventory.read_text(encoding="utf-8"))); a.output.parent.mkdir(parents=True,exist_ok=True); a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"); print(json.dumps({"valid":result["valid"],"objects":result["object_count"],"output":str(a.output)})); return 0 if result["valid"] else 2
+    p=argparse.ArgumentParser(); p.add_argument("inventory",type=Path); p.add_argument("--output",type=Path,required=True); a=p.parse_args()
+    result=build_plan(json.loads(a.inventory.read_text(encoding="utf-8"))); a.output.parent.mkdir(parents=True,exist_ok=True); a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"); print(json.dumps({"valid":result["valid"],"objects":result["object_count"],"output":str(a.output)})); return 0 if result["valid"] else 2
 if __name__=="__main__": raise SystemExit(main())
