@@ -13,6 +13,8 @@ Create or repair editable PPTX while preserving declared visual/text authorities
 
 New strict image-to-editable work uses JavaScript ESM with `@oai/artifact-tool`. Validate the package and routing contract before work. Python is inspection/QA only, not an authoring fallback.
 
+The detailed reconstruction loop and Knight-derived fidelity rules are defined in `references/astra-visual-reconstruction-engine.md` and `references/knight-fidelity-port.md`; final asset boundaries are defined in `references/imagegen-final-asset-policy.md`.
+
 ## Operating principle: reconstruct first, validate what matters
 
 For fixed-reference work, use the Knight-style execution order:
