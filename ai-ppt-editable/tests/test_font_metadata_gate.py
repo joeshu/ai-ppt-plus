@@ -13,10 +13,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from validate_font_asset import inspect_font_metadata  # noqa: E402
+from runtime_fonts import resolve_font_file  # noqa: E402
 
 
 def main() -> int:
-    bundled = ROOT / "assets/fonts/NotoSansSC-Regular.ttf"
+    bundled = resolve_font_file("Noto Sans CJK SC", bold=False)
+    assert bundled is not None and bundled.is_file(), "runtime CJK regular font unresolved"
     metadata, error = inspect_font_metadata(bundled)
     assert error is None, error
     assert metadata and 300 <= metadata["weight_class"] <= 700, metadata
