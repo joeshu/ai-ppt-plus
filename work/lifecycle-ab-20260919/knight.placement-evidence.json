@@ -1,0 +1,710 @@
+{
+  "schema": "ai-ppt-plus/placement-evidence/v1",
+  "variant": "knight",
+  "source_sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+  "canvas_px": [
+    1536,
+    864
+  ],
+  "canvas_in": [
+    13.333333,
+    7.5
+  ],
+  "placement_policy": "alpha-centroid-fit",
+  "assets": [
+    {
+      "object_id": "unicom-knot-mark",
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        1318,
+        14,
+        53,
+        53
+      ],
+      "placement_bbox": [
+        1309,
+        5,
+        71,
+        71
+      ],
+      "reference_visible_bbox_norm": [
+        0.1,
+        0.1,
+        0.8,
+        0.8
+      ]
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        67,
+        168,
+        62,
+        62
+      ],
+      "placement_bbox": [
+        61,
+        159,
+        85,
+        85
+      ],
+      "placed_visible_bbox": [
+        67.41509433962264,
+        168.30188679245282,
+        61.90566037735849,
+        51.64150943396226
+      ],
+      "placed_visible_centroid": [
+        103.19025137387925,
+        201.2537889688806
+      ],
+      "reference_visible_bbox_norm": [
+        0.14,
+        0.16,
+        0.72,
+        0.66
+      ],
+      "object_id": "current-bar"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        322,
+        168,
+        62,
+        62
+      ],
+      "placement_bbox": [
+        312,
+        162,
+        79,
+        79
+      ],
+      "placed_visible_bbox": [
+        322.4698795180723,
+        168.3453815261044,
+        61.23293172690763,
+        61.867469879518076
+      ],
+      "placed_visible_centroid": [
+        351.18673060146426,
+        201.29288916368947
+      ],
+      "reference_visible_bbox_norm": [
+        0.13,
+        0.13,
+        0.74,
+        0.74
+      ],
+      "object_id": "target"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        63,
+        417,
+        58,
+        58
+      ],
+      "placement_bbox": [
+        57,
+        408,
+        80,
+        80
+      ],
+      "placed_visible_bbox": [
+        63.0377358490566,
+        416.75471698113205,
+        58.264150943396224,
+        48.60377358490566
+      ],
+      "placed_visible_centroid": [
+        96.70847188129811,
+        447.76827197071117
+      ],
+      "reference_visible_bbox_norm": [
+        0.18,
+        0.16,
+        0.64,
+        0.67
+      ],
+      "object_id": "card1-bar"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        145,
+        416,
+        55,
+        55
+      ],
+      "placement_bbox": [
+        132,
+        409,
+        82,
+        82
+      ],
+      "placed_visible_bbox": [
+        147.13304721030042,
+        416.0386266094421,
+        51.73390557939914,
+        55.25321888412017
+      ],
+      "placed_visible_centroid": [
+        172.6593970908181,
+        449.75990083766953
+      ],
+      "reference_visible_bbox_norm": [
+        0.19,
+        0.15,
+        0.62,
+        0.7
+      ],
+      "object_id": "card1-person"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        145,
+        466,
+        55,
+        55
+      ],
+      "placement_bbox": [
+        139,
+        460,
+        67,
+        67
+      ],
+      "placed_visible_bbox": [
+        144.92920353982302,
+        466.22566371681415,
+        54.84513274336283,
+        54.25221238938053
+      ],
+      "placed_visible_centroid": [
+        172.21958691251797,
+        493.24154817927837
+      ],
+      "reference_visible_bbox_norm": [
+        0.14,
+        0.14,
+        0.72,
+        0.72
+      ],
+      "object_id": "card1-gear"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        62,
+        515,
+        60,
+        60
+      ],
+      "placement_bbox": [
+        56,
+        510,
+        71,
+        71
+      ],
+      "placed_visible_bbox": [
+        61.62641509433962,
+        522.5924528301887,
+        60.01509433962264,
+        39.11698113207547
+      ],
+      "placed_visible_centroid": [
+        91.42674198061077,
+        545.379613285821
+      ],
+      "reference_visible_bbox_norm": [
+        0.11,
+        0.17,
+        0.78,
+        0.58
+      ],
+      "object_id": "card1-group"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        64,
+        612,
+        60,
+        60
+      ],
+      "placement_bbox": [
+        52,
+        605,
+        91,
+        91
+      ],
+      "placed_visible_bbox": [
+        63.928838951310865,
+        611.816479400749,
+        55.89513108614232,
+        59.98501872659176
+      ],
+      "placed_visible_centroid": [
+        97.20639454316651,
+        650.2562713899152
+      ],
+      "reference_visible_bbox_norm": [
+        0.12,
+        0.18,
+        0.76,
+        0.62
+      ],
+      "object_id": "card1-trend"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        574,
+        416,
+        55,
+        55
+      ],
+      "placement_bbox": [
+        561,
+        409,
+        82,
+        82
+      ],
+      "placed_visible_bbox": [
+        576.1330472103004,
+        416.0386266094421,
+        51.73390557939914,
+        55.25321888412017
+      ],
+      "placed_visible_centroid": [
+        601.6593970908181,
+        449.75990083766953
+      ],
+      "reference_visible_bbox_norm": [
+        0.19,
+        0.15,
+        0.62,
+        0.7
+      ],
+      "object_id": "card2-person"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        574,
+        466,
+        55,
+        55
+      ],
+      "placement_bbox": [
+        559,
+        459,
+        76,
+        76
+      ],
+      "placed_visible_bbox": [
+        573.9606299212599,
+        465.5826771653543,
+        55.05511811023622,
+        54.75590551181103
+      ],
+      "placed_visible_centroid": [
+        596.9315010683781,
+        496.71152414021185
+      ],
+      "reference_visible_bbox_norm": [
+        0.18,
+        0.14,
+        0.66,
+        0.72
+      ],
+      "object_id": "card2-phone"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        574,
+        516,
+        55,
+        55
+      ],
+      "placement_bbox": [
+        568,
+        510,
+        68,
+        68
+      ],
+      "placed_visible_bbox": [
+        574.2962962962963,
+        521.0185185185185,
+        55.092592592592595,
+        45.64814814814815
+      ],
+      "placed_visible_centroid": [
+        601.7790687264417,
+        543.7228722281735
+      ],
+      "reference_visible_bbox_norm": [
+        0.13,
+        0.15,
+        0.74,
+        0.7
+      ],
+      "object_id": "card2-list"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        574,
+        612,
+        60,
+        60
+      ],
+      "placement_bbox": [
+        566,
+        603,
+        76,
+        76
+      ],
+      "placed_visible_bbox": [
+        573.9817351598174,
+        618.9634703196347,
+        60.38356164383561,
+        53.0958904109589
+      ],
+      "placed_visible_centroid": [
+        603.9718794334647,
+        640.993531020239
+      ],
+      "reference_visible_bbox_norm": [
+        0.12,
+        0.16,
+        0.76,
+        0.68
+      ],
+      "object_id": "card2-heart"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        1080,
+        416,
+        60,
+        60
+      ],
+      "placement_bbox": [
+        1074,
+        411,
+        71,
+        71
+      ],
+      "placed_visible_bbox": [
+        1079.6264150943396,
+        423.5924528301887,
+        60.01509433962264,
+        39.11698113207547
+      ],
+      "placed_visible_centroid": [
+        1109.4267419806108,
+        446.37961328582105
+      ],
+      "reference_visible_bbox_norm": [
+        0.1,
+        0.17,
+        0.8,
+        0.58
+      ],
+      "object_id": "card3-group"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        1080,
+        466,
+        60,
+        60
+      ],
+      "placement_bbox": [
+        1074,
+        460,
+        72,
+        72
+      ],
+      "placed_visible_bbox": [
+        1080.5454545454545,
+        474.8531468531469,
+        60.41958041958043,
+        37.51048951048951
+      ],
+      "placed_visible_centroid": [
+        1109.9076916812119,
+        495.92995652426913
+      ],
+      "reference_visible_bbox_norm": [
+        0.1,
+        0.22,
+        0.8,
+        0.58
+      ],
+      "object_id": "card3-coins"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        1080,
+        516,
+        60,
+        60
+      ],
+      "placement_bbox": [
+        1074,
+        507,
+        82,
+        82
+      ],
+      "placed_visible_bbox": [
+        1080.188679245283,
+        515.9735849056603,
+        59.720754716981126,
+        49.8188679245283
+      ],
+      "placed_visible_centroid": [
+        1114.7011836783306,
+        547.7624787699789
+      ],
+      "reference_visible_bbox_norm": [
+        0.15,
+        0.16,
+        0.7,
+        0.65
+      ],
+      "object_id": "card3-bar"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        1080,
+        612,
+        60,
+        60
+      ],
+      "placement_bbox": [
+        1074,
+        605,
+        73,
+        73
+      ],
+      "placed_visible_bbox": [
+        1081.2683982683982,
+        611.6363636363636,
+        58.46320346320346,
+        60.04329004329004
+      ],
+      "placed_visible_centroid": [
+        1110.456872282607,
+        641.4253470244653
+      ],
+      "reference_visible_bbox_norm": [
+        0.12,
+        0.13,
+        0.76,
+        0.74
+      ],
+      "object_id": "card3-link"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        607,
+        684,
+        58,
+        42
+      ],
+      "placement_bbox": [
+        609,
+        677,
+        53,
+        53
+      ],
+      "placed_visible_bbox": [
+        617.3916666666667,
+        683.8458333333333,
+        36.4375,
+        41.7375
+      ],
+      "placed_visible_centroid": [
+        635.4880114196706,
+        703.4641478458319
+      ],
+      "reference_visible_bbox_norm": [
+        0.18,
+        0.1,
+        0.64,
+        0.78
+      ],
+      "object_id": "management-shield"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        1002,
+        684,
+        58,
+        42
+      ],
+      "placement_bbox": [
+        1005,
+        679,
+        52,
+        52
+      ],
+      "placed_visible_bbox": [
+        1014.2695652173913,
+        683.5217391304348,
+        35.04347826086956,
+        41.6
+      ],
+      "placed_visible_centroid": [
+        1030.8841205015692,
+        704.8018240287122
+      ],
+      "reference_visible_bbox_norm": [
+        0.18,
+        0.1,
+        0.64,
+        0.78
+      ],
+      "object_id": "management-doc"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        274,
+        748,
+        58,
+        50
+      ],
+      "placement_bbox": [
+        268,
+        739,
+        80,
+        80
+      ],
+      "placed_visible_bbox": [
+        274.0377358490566,
+        747.7547169811321,
+        58.264150943396224,
+        48.60377358490566
+      ],
+      "placed_visible_centroid": [
+        307.7084718812981,
+        778.7682719707111
+      ],
+      "reference_visible_bbox_norm": [
+        0.14,
+        0.14,
+        0.72,
+        0.7
+      ],
+      "object_id": "outcome-bar"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        592,
+        748,
+        58,
+        50
+      ],
+      "placement_bbox": [
+        589,
+        740,
+        63,
+        63
+      ],
+      "placed_visible_bbox": [
+        598.975,
+        748.1375,
+        43.3125,
+        49.612500000000004
+      ],
+      "placed_visible_centroid": [
+        620.485749423382,
+        771.4573832884417
+      ],
+      "reference_visible_bbox_norm": [
+        0.18,
+        0.08,
+        0.64,
+        0.84
+      ],
+      "object_id": "outcome-shield"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        932,
+        748,
+        58,
+        50
+      ],
+      "placement_bbox": [
+        927,
+        739,
+        69,
+        69
+      ],
+      "placed_visible_bbox": [
+        932.4679245283019,
+        751.2377358490565,
+        58.324528301886794,
+        38.01509433962264
+      ],
+      "placed_visible_centroid": [
+        961.4288055867908,
+        773.3830044608684
+      ],
+      "reference_visible_bbox_norm": [
+        0.1,
+        0.16,
+        0.8,
+        0.62
+      ],
+      "object_id": "outcome-group"
+    },
+    {
+      "mode": "alpha-centroid-fit",
+      "slot_bbox": [
+        1260,
+        746,
+        65,
+        54
+      ],
+      "placement_bbox": [
+        1258,
+        740,
+        69,
+        69
+      ],
+      "placed_visible_bbox": [
+        1267.144578313253,
+        745.5421686746988,
+        53.48192771084337,
+        54.036144578313255
+      ],
+      "placed_visible_centroid": [
+        1292.2263849557094,
+        774.3191057252477
+      ],
+      "reference_visible_bbox_norm": [
+        0.12,
+        0.1,
+        0.76,
+        0.78
+      ],
+      "object_id": "outcome-target"
+    }
+  ]
+}

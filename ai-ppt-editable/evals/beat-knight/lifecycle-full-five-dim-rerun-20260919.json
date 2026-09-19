@@ -1,0 +1,99 @@
+{
+  "schema": "ai-ppt-plus/beat-knight-full-five-dim-rerun/v1",
+  "case_id": "lifecycle-customer-operations-1536x864-20260919",
+  "status": "fresh_five_dimension_ab_complete_candidate_win",
+  "branch": "fix/icon-local-crop-backfill-20260919",
+  "baseline_main_sha": "4eb810230d4385b58344f5d2f5406e7e5f3e87d2",
+  "candidate_head_sha_at_start": "d283858287fd1a51351ebd2988d2d2f389706455",
+  "reference": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "width_px": 1536,
+    "height_px": 864,
+    "role": "sole_visual_baseline",
+    "attachment_revalidated_20260919": true
+  },
+  "dimensions": [
+    "pixel",
+    "text",
+    "object",
+    "icon_asset",
+    "local_crop"
+  ],
+  "promotion_gate": {
+    "losses_required": 0,
+    "strict_wins_min": 3,
+    "must_win_one_of": ["pixel", "local_crop"],
+    "thresholds_may_be_lowered": false,
+    "source_crop_fallback_allowed": false,
+    "whole_slide_picture_allowed": false
+  },
+  "execution_contract": {
+    "regenerate_main_candidate": true,
+    "reuse_historical_main_candidate": false,
+    "reuse_historical_render": false,
+    "reuse_historical_pptx": false,
+    "knight_comparator": "knight-imagetopptx-skill fresh baseline",
+    "canvas_in": [13.333333, 7.5],
+    "editable_text_required": true,
+    "independent_icon_assets_required": true,
+    "native_imagegen_provenance_required_for_generated_art": true,
+    "full_five_dimension_rerun_required": true
+  },
+  "preflight": {
+    "targeted_icon_local_crop_replay": {
+      "baseline_mean_local_crop_ssim": 0.3836169832248498,
+      "candidate_mean_local_crop_ssim": 0.6252797098025962,
+      "relative_improvement": 0.6299583624953862
+    },
+    "ci_head_d2838582": "success",
+    "ci_run_890": {
+      "head_sha": "d283858287fd1a51351ebd2988d2d2f389706455",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 35407482349
+    }
+  },
+  "knight_baseline": {
+    "required": true,
+    "generated": true,
+    "comparator": "knight-imagetopptx-skill",
+    "layout": "work/lifecycle-ab-20260919/knight.layout.json",
+    "pptx": "work/lifecycle-ab-20260919/knight.pptx",
+    "pptx_sha256": "7d390fc73aa90bd560ab31cebd3b2b3d4e85568b2d0decedafa833ea9de87b60",
+    "render": "work/lifecycle-ab-20260919/knight-render/slide-1.png",
+    "render_sha256": "c5ed3898ff9817f973196887dd9254f8ed03aa990e604f59158003600f1b3a3d",
+    "evidence": "work/lifecycle-ab-20260919/knight-five-dim-evidence.json",
+    "evidence_sha256": "c49dd792cbaa88ca73221bc3e40747b7b4ae71c46277902abda44b4c8e721a32"
+  },
+  "fresh_candidate": {
+    "required": true,
+    "generated": true,
+    "comparator": "PR #40 latest-code candidate",
+    "layout": "work/lifecycle-ab-20260919/pr40.layout.json",
+    "pptx": "work/lifecycle-ab-20260919/pr40.pptx",
+    "pptx_sha256": "5bc0158b1e79ec6a6b3ba07630449fc02da5edd2b86fbe68bb59227df0d12c9d",
+    "render": "work/lifecycle-ab-20260919/pr40-render/slide-1.png",
+    "render_sha256": "81339ed4903710a1753061d0c6add340888b0db60a21cdf17b8401c402f3ab89",
+    "evidence": "work/lifecycle-ab-20260919/pr40-five-dim-evidence.json",
+    "evidence_sha256": "ee57eaa2e51219038d5fd275417562f1a39391e32a42603278fe072b66d99bd2"
+  },
+  "results": {
+    "report": "work/lifecycle-ab-20260919/five-dim-ab-result.json",
+    "report_sha256": "80e02b6486188d84efcd11d89bf6a8fa85afe183db293a289655275fda7cc931",
+    "profile": "competitive_ab",
+    "tolerance": 0.002,
+    "beat_knight": true,
+    "strict_win_count": 3,
+    "loss_dimensions": [],
+    "dimensions": {
+      "pixel": {"knight": 0.632391, "candidate": 0.653699, "delta": 0.021308, "verdict": "win"},
+      "text": {"knight": 1.0, "candidate": 1.0, "delta": 0.0, "verdict": "tie"},
+      "object": {"knight": 1.0, "candidate": 1.0, "delta": 0.0, "verdict": "tie"},
+      "icon_asset": {"knight": 0.0, "candidate": 0.467158, "delta": 0.467158, "verdict": "win"},
+      "local_crop": {"knight": 0.309985, "candidate": 0.320298, "delta": 0.010313, "verdict": "win"}
+    },
+    "absolute_quality_floor_pass": true,
+    "promotion_gate_pass": true
+  },
+  "promotion_decision": "candidate_win_ready_for_pr_review_and_merge_gate"
+}

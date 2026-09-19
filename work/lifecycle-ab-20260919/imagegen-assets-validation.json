@@ -1,0 +1,34 @@
+{
+  "schema": "ai-ppt-plus/imagegen-assets-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "manifest": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/work/lifecycle-ab-20260919/imagegen-assets-manifest.json",
+  "asset_count": 18,
+  "hashed_asset_count": 18,
+  "provenance_modes": {
+    "imagegen": 18
+  },
+  "mandatory_imagegen_classes": [
+    "artistic_typography",
+    "badge",
+    "complex_art",
+    "decorative_art",
+    "gradient",
+    "gradient_visual",
+    "icon",
+    "icons",
+    "illustration"
+  ],
+  "hashes_required": true,
+  "asset_generation_policy": "transparent_first_v1",
+  "generation_accounting": {
+    "billable_generation_calls": 3,
+    "billable_transparent_edit_calls": 0,
+    "local_derivative_count": 16,
+    "qa_preview_count": 1,
+    "full_sheet_retries": 0,
+    "single_asset_retries": 0
+  },
+  "issues": [],
+  "human_visual_review_required": true
+}

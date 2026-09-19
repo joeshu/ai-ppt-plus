@@ -1,0 +1,2061 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/work/lifecycle-ab-20260919/pr40.pptx",
+  "object_manifest": null,
+  "requirements": {
+    "require_native_panels": false,
+    "require_native_tables": false,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": false
+  },
+  "native_table_count": 0,
+  "native_panel_count": 0,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 127,
+      "object_count_recursive": 127,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "header-slash-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 285750,
+          "top": 200025,
+          "width": 152400,
+          "height": 419100,
+          "normalized_box": [
+            0.019531,
+            0.024306,
+            0.010417,
+            0.050926
+          ],
+          "text": ""
+        },
+        {
+          "name": "header-slash-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 495300,
+          "top": 200025,
+          "width": 152400,
+          "height": 419100,
+          "normalized_box": [
+            0.033854,
+            0.024306,
+            0.010417,
+            0.050926
+          ],
+          "text": ""
+        },
+        {
+          "name": "status-container",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 276225,
+          "top": 1219200,
+          "width": 4629150,
+          "height": 1943100,
+          "normalized_box": [
+            0.01888,
+            0.148148,
+            0.316406,
+            0.236111
+          ],
+          "text": ""
+        },
+        {
+          "name": "status-current",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 409575,
+          "top": 1409700,
+          "width": 1819275,
+          "height": 1466850,
+          "normalized_box": [
+            0.027995,
+            0.171296,
+            0.124349,
+            0.178241
+          ],
+          "text": ""
+        },
+        {
+          "name": "status-target",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2809875,
+          "top": 1409700,
+          "width": 2057400,
+          "height": 1466850,
+          "normalized_box": [
+            0.192057,
+            0.171296,
+            0.140625,
+            0.178241
+          ],
+          "text": ""
+        },
+        {
+          "name": "status-arrow-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2333625,
+          "top": 1895475,
+          "width": 190500,
+          "height": 238125,
+          "normalized_box": [
+            0.159505,
+            0.230324,
+            0.013021,
+            0.028935
+          ],
+          "text": ""
+        },
+        {
+          "name": "status-arrow-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2505075,
+          "top": 1895475,
+          "width": 190500,
+          "height": 238125,
+          "normalized_box": [
+            0.171224,
+            0.230324,
+            0.013021,
+            0.028935
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-title-pill",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5086350,
+          "top": 1257300,
+          "width": 2762250,
+          "height": 371475,
+          "normalized_box": [
+            0.347656,
+            0.152778,
+            0.188802,
+            0.045139
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-outline",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5476875,
+          "top": 1790700,
+          "width": 8734425,
+          "height": 1095375,
+          "normalized_box": [
+            0.374349,
+            0.217593,
+            0.597005,
+            0.133102
+          ],
+          "text": ""
+        },
+        {
+          "name": "chart-target-pill-outline",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 12077700,
+          "top": 1609725,
+          "width": 2019300,
+          "height": 342900,
+          "normalized_box": [
+            0.825521,
+            0.195602,
+            0.138021,
+            0.041667
+          ],
+          "text": ""
+        },
+        {
+          "name": "card1-body",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 285750,
+          "top": 3848100,
+          "width": 4638675,
+          "height": 2514600,
+          "normalized_box": [
+            0.019531,
+            0.467593,
+            0.317057,
+            0.305556
+          ],
+          "text": ""
+        },
+        {
+          "name": "card1-header",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 285750,
+          "top": 3305175,
+          "width": 4638675,
+          "height": 552450,
+          "normalized_box": [
+            0.019531,
+            0.40162,
+            0.317057,
+            0.06713
+          ],
+          "text": ""
+        },
+        {
+          "name": "card2-body",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5095875,
+          "top": 3848100,
+          "width": 4591050,
+          "height": 2514600,
+          "normalized_box": [
+            0.348307,
+            0.467593,
+            0.313802,
+            0.305556
+          ],
+          "text": ""
+        },
+        {
+          "name": "card2-header",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5095875,
+          "top": 3305175,
+          "width": 4591050,
+          "height": 552450,
+          "normalized_box": [
+            0.348307,
+            0.40162,
+            0.313802,
+            0.06713
+          ],
+          "text": ""
+        },
+        {
+          "name": "card3-body",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9896475,
+          "top": 3848100,
+          "width": 4457700,
+          "height": 2514600,
+          "normalized_box": [
+            0.676432,
+            0.467593,
+            0.304688,
+            0.305556
+          ],
+          "text": ""
+        },
+        {
+          "name": "card3-header",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9896475,
+          "top": 3305175,
+          "width": 4457700,
+          "height": 552450,
+          "normalized_box": [
+            0.676432,
+            0.40162,
+            0.304688,
+            0.06713
+          ],
+          "text": ""
+        },
+        {
+          "name": "card1-bottom-fill",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 428625,
+          "top": 5791200,
+          "width": 4352925,
+          "height": 504825,
+          "normalized_box": [
+            0.029297,
+            0.703704,
+            0.297526,
+            0.061343
+          ],
+          "text": ""
+        },
+        {
+          "name": "card2-bottom-fill",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5238750,
+          "top": 5791200,
+          "width": 4305300,
+          "height": 504825,
+          "normalized_box": [
+            0.358073,
+            0.703704,
+            0.294271,
+            0.061343
+          ],
+          "text": ""
+        },
+        {
+          "name": "card3-bottom-fill",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 10039350,
+          "top": 5791200,
+          "width": 4171950,
+          "height": 504825,
+          "normalized_box": [
+            0.686198,
+            0.703704,
+            0.285156,
+            0.061343
+          ],
+          "text": ""
+        },
+        {
+          "name": "management-band",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 285750,
+          "top": 6467475,
+          "width": 14058900,
+          "height": 533400,
+          "normalized_box": [
+            0.019531,
+            0.78588,
+            0.960938,
+            0.064815
+          ],
+          "text": ""
+        },
+        {
+          "name": "management-divider-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 6191250,
+          "top": 6486525,
+          "width": 9525,
+          "height": 495300,
+          "normalized_box": [
+            0.423177,
+            0.788194,
+            0.000651,
+            0.060185
+          ],
+          "text": ""
+        },
+        {
+          "name": "management-divider-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9848850,
+          "top": 6486525,
+          "width": 9525,
+          "height": 495300,
+          "normalized_box": [
+            0.673177,
+            0.788194,
+            0.000651,
+            0.060185
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcomes-strip",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 285750,
+          "top": 7058025,
+          "width": 14058900,
+          "height": 762000,
+          "normalized_box": [
+            0.019531,
+            0.857639,
+            0.960938,
+            0.092593
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcomes-title",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 285750,
+          "top": 7058025,
+          "width": 2286000,
+          "height": 762000,
+          "normalized_box": [
+            0.019531,
+            0.857639,
+            0.15625,
+            0.092593
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-card-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2571750,
+          "top": 7058025,
+          "width": 2733675,
+          "height": 762000,
+          "normalized_box": [
+            0.175781,
+            0.857639,
+            0.186849,
+            0.092593
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-card-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5734050,
+          "top": 7058025,
+          "width": 2733675,
+          "height": 762000,
+          "normalized_box": [
+            0.391927,
+            0.857639,
+            0.186849,
+            0.092593
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-card-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 8896350,
+          "top": 7058025,
+          "width": 2733675,
+          "height": 762000,
+          "normalized_box": [
+            0.608073,
+            0.857639,
+            0.186849,
+            0.092593
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-card-4",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 12058650,
+          "top": 7058025,
+          "width": 2286000,
+          "height": 762000,
+          "normalized_box": [
+            0.824219,
+            0.857639,
+            0.15625,
+            0.092593
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-arrow-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5314950,
+          "top": 7343775,
+          "width": 285750,
+          "height": 228600,
+          "normalized_box": [
+            0.363281,
+            0.892361,
+            0.019531,
+            0.027778
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-arrow-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 8477250,
+          "top": 7343775,
+          "width": 285750,
+          "height": 228600,
+          "normalized_box": [
+            0.579427,
+            0.892361,
+            0.019531,
+            0.027778
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-arrow-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 11639550,
+          "top": 7343775,
+          "width": 285750,
+          "height": 228600,
+          "normalized_box": [
+            0.795573,
+            0.892361,
+            0.019531,
+            0.027778
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-67-168",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 638175,
+          "top": 1600200,
+          "width": 590550,
+          "height": 590550,
+          "normalized_box": [
+            0.04362,
+            0.194444,
+            0.040365,
+            0.071759
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-322-168",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 3067050,
+          "top": 1600200,
+          "width": 590550,
+          "height": 590550,
+          "normalized_box": [
+            0.209635,
+            0.194444,
+            0.040365,
+            0.071759
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-63-417",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 600075,
+          "top": 3971925,
+          "width": 552450,
+          "height": 552450,
+          "normalized_box": [
+            0.041016,
+            0.482639,
+            0.03776,
+            0.06713
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-145-416",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1381125,
+          "top": 3962400,
+          "width": 523875,
+          "height": 523875,
+          "normalized_box": [
+            0.094401,
+            0.481481,
+            0.035807,
+            0.063657
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-145-466",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1381125,
+          "top": 4438650,
+          "width": 523875,
+          "height": 523875,
+          "normalized_box": [
+            0.094401,
+            0.539352,
+            0.035807,
+            0.063657
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-62-515",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 590550,
+          "top": 4905375,
+          "width": 571500,
+          "height": 571500,
+          "normalized_box": [
+            0.040365,
+            0.596065,
+            0.039062,
+            0.069444
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-64-612",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 609600,
+          "top": 5829300,
+          "width": 571500,
+          "height": 571500,
+          "normalized_box": [
+            0.041667,
+            0.708333,
+            0.039062,
+            0.069444
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-574-416",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5467350,
+          "top": 3962400,
+          "width": 523875,
+          "height": 523875,
+          "normalized_box": [
+            0.373698,
+            0.481481,
+            0.035807,
+            0.063657
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-574-466",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5467350,
+          "top": 4438650,
+          "width": 523875,
+          "height": 523875,
+          "normalized_box": [
+            0.373698,
+            0.539352,
+            0.035807,
+            0.063657
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-574-516",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5467350,
+          "top": 4914900,
+          "width": 523875,
+          "height": 523875,
+          "normalized_box": [
+            0.373698,
+            0.597222,
+            0.035807,
+            0.063657
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-574-612",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5467350,
+          "top": 5829300,
+          "width": 571500,
+          "height": 571500,
+          "normalized_box": [
+            0.373698,
+            0.708333,
+            0.039062,
+            0.069444
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-1080-416",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 10287000,
+          "top": 3962400,
+          "width": 571500,
+          "height": 571500,
+          "normalized_box": [
+            0.703125,
+            0.481481,
+            0.039062,
+            0.069444
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-1080-466",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 10287000,
+          "top": 4438650,
+          "width": 571500,
+          "height": 571500,
+          "normalized_box": [
+            0.703125,
+            0.539352,
+            0.039062,
+            0.069444
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-1080-516",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 10287000,
+          "top": 4914900,
+          "width": 571500,
+          "height": 571500,
+          "normalized_box": [
+            0.703125,
+            0.597222,
+            0.039062,
+            0.069444
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-host-1080-612",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 10287000,
+          "top": 5829300,
+          "width": 571500,
+          "height": 571500,
+          "normalized_box": [
+            0.703125,
+            0.708333,
+            0.039062,
+            0.069444
+          ],
+          "text": ""
+        },
+        {
+          "name": "Chart",
+          "kind": "editable_chart",
+          "parent": null,
+          "left": 5476875,
+          "top": 1790700,
+          "width": 8734425,
+          "height": 1095375,
+          "normalized_box": [
+            0.374349,
+            0.217593,
+            0.597005,
+            0.133102
+          ],
+          "text": ""
+        },
+        {
+          "name": "unicom-knot-mark",
+          "kind": "picture",
+          "parent": null,
+          "left": 12534900,
+          "top": 114300,
+          "width": 542925,
+          "height": 542925,
+          "normalized_box": [
+            0.856771,
+            0.013889,
+            0.037109,
+            0.065972
+          ],
+          "text": ""
+        },
+        {
+          "name": "bottom-ribbon-skyline",
+          "kind": "picture",
+          "parent": null,
+          "left": 4457700,
+          "top": 7658100,
+          "width": 5715000,
+          "height": 1905000,
+          "normalized_box": [
+            0.304688,
+            0.930556,
+            0.390625,
+            0.231481
+          ],
+          "text": ""
+        },
+        {
+          "name": "current-bar",
+          "kind": "picture",
+          "parent": null,
+          "left": 676275,
+          "top": 1647825,
+          "width": 581025,
+          "height": 581025,
+          "normalized_box": [
+            0.046224,
+            0.200231,
+            0.039714,
+            0.070602
+          ],
+          "text": ""
+        },
+        {
+          "name": "target",
+          "kind": "picture",
+          "parent": null,
+          "left": 3076575,
+          "top": 1628775,
+          "width": 561975,
+          "height": 561975,
+          "normalized_box": [
+            0.210286,
+            0.197917,
+            0.038411,
+            0.068287
+          ],
+          "text": ""
+        },
+        {
+          "name": "card1-bar",
+          "kind": "picture",
+          "parent": null,
+          "left": 666750,
+          "top": 4048125,
+          "width": 485775,
+          "height": 485775,
+          "normalized_box": [
+            0.045573,
+            0.491898,
+            0.033203,
+            0.059028
+          ],
+          "text": ""
+        },
+        {
+          "name": "card1-person",
+          "kind": "picture",
+          "parent": null,
+          "left": 1381125,
+          "top": 4010025,
+          "width": 514350,
+          "height": 514350,
+          "normalized_box": [
+            0.094401,
+            0.487269,
+            0.035156,
+            0.0625
+          ],
+          "text": ""
+        },
+        {
+          "name": "card1-gear",
+          "kind": "picture",
+          "parent": null,
+          "left": 1409700,
+          "top": 4467225,
+          "width": 457200,
+          "height": 457200,
+          "normalized_box": [
+            0.096354,
+            0.542824,
+            0.03125,
+            0.055556
+          ],
+          "text": ""
+        },
+        {
+          "name": "card1-group",
+          "kind": "picture",
+          "parent": null,
+          "left": 609600,
+          "top": 4933950,
+          "width": 523875,
+          "height": 523875,
+          "normalized_box": [
+            0.041667,
+            0.599537,
+            0.035807,
+            0.063657
+          ],
+          "text": ""
+        },
+        {
+          "name": "card1-trend",
+          "kind": "picture",
+          "parent": null,
+          "left": 657225,
+          "top": 5895975,
+          "width": 533400,
+          "height": 533400,
+          "normalized_box": [
+            0.044922,
+            0.716435,
+            0.036458,
+            0.064815
+          ],
+          "text": ""
+        },
+        {
+          "name": "card2-person",
+          "kind": "picture",
+          "parent": null,
+          "left": 5467350,
+          "top": 4010025,
+          "width": 514350,
+          "height": 514350,
+          "normalized_box": [
+            0.373698,
+            0.487269,
+            0.035156,
+            0.0625
+          ],
+          "text": ""
+        },
+        {
+          "name": "card2-phone",
+          "kind": "picture",
+          "parent": null,
+          "left": 5467350,
+          "top": 4486275,
+          "width": 476250,
+          "height": 476250,
+          "normalized_box": [
+            0.373698,
+            0.545139,
+            0.032552,
+            0.05787
+          ],
+          "text": ""
+        },
+        {
+          "name": "card2-list",
+          "kind": "picture",
+          "parent": null,
+          "left": 5486400,
+          "top": 4933950,
+          "width": 476250,
+          "height": 476250,
+          "normalized_box": [
+            0.375,
+            0.599537,
+            0.032552,
+            0.05787
+          ],
+          "text": ""
+        },
+        {
+          "name": "card2-heart",
+          "kind": "picture",
+          "parent": null,
+          "left": 5476875,
+          "top": 5810250,
+          "width": 542925,
+          "height": 542925,
+          "normalized_box": [
+            0.374349,
+            0.706019,
+            0.037109,
+            0.065972
+          ],
+          "text": ""
+        },
+        {
+          "name": "card3-group",
+          "kind": "picture",
+          "parent": null,
+          "left": 10306050,
+          "top": 3981450,
+          "width": 542925,
+          "height": 542925,
+          "normalized_box": [
+            0.704427,
+            0.483796,
+            0.037109,
+            0.065972
+          ],
+          "text": ""
+        },
+        {
+          "name": "card3-coins",
+          "kind": "picture",
+          "parent": null,
+          "left": 10296525,
+          "top": 4476750,
+          "width": 542925,
+          "height": 542925,
+          "normalized_box": [
+            0.703776,
+            0.543981,
+            0.037109,
+            0.065972
+          ],
+          "text": ""
+        },
+        {
+          "name": "card3-bar",
+          "kind": "picture",
+          "parent": null,
+          "left": 10334625,
+          "top": 4962525,
+          "width": 552450,
+          "height": 552450,
+          "normalized_box": [
+            0.70638,
+            0.603009,
+            0.03776,
+            0.06713
+          ],
+          "text": ""
+        },
+        {
+          "name": "card3-link",
+          "kind": "picture",
+          "parent": null,
+          "left": 10315575,
+          "top": 5857875,
+          "width": 514350,
+          "height": 514350,
+          "normalized_box": [
+            0.705078,
+            0.711806,
+            0.035156,
+            0.0625
+          ],
+          "text": ""
+        },
+        {
+          "name": "management-shield",
+          "kind": "picture",
+          "parent": null,
+          "left": 5857875,
+          "top": 6505575,
+          "width": 400050,
+          "height": 400050,
+          "normalized_box": [
+            0.400391,
+            0.790509,
+            0.027344,
+            0.048611
+          ],
+          "text": ""
+        },
+        {
+          "name": "management-doc",
+          "kind": "picture",
+          "parent": null,
+          "left": 9620250,
+          "top": 6524625,
+          "width": 390525,
+          "height": 390525,
+          "normalized_box": [
+            0.657552,
+            0.792824,
+            0.026693,
+            0.047454
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-bar",
+          "kind": "picture",
+          "parent": null,
+          "left": 2647950,
+          "top": 7134225,
+          "width": 542925,
+          "height": 542925,
+          "normalized_box": [
+            0.18099,
+            0.866898,
+            0.037109,
+            0.065972
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-shield",
+          "kind": "picture",
+          "parent": null,
+          "left": 5657850,
+          "top": 7096125,
+          "width": 504825,
+          "height": 504825,
+          "normalized_box": [
+            0.386719,
+            0.862269,
+            0.034505,
+            0.061343
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-group",
+          "kind": "picture",
+          "parent": null,
+          "left": 8886825,
+          "top": 7115175,
+          "width": 523875,
+          "height": 523875,
+          "normalized_box": [
+            0.607422,
+            0.864583,
+            0.035807,
+            0.063657
+          ],
+          "text": ""
+        },
+        {
+          "name": "outcome-target",
+          "kind": "picture",
+          "parent": null,
+          "left": 12049125,
+          "top": 7115175,
+          "width": 514350,
+          "height": 514350,
+          "normalized_box": [
+            0.823568,
+            0.864583,
+            0.035156,
+            0.0625
+          ],
+          "text": ""
+        },
+        {
+          "name": "title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 819150,
+          "top": 114300,
+          "width": 9906000,
+          "height": 514350,
+          "normalized_box": [
+            0.05599,
+            0.013889,
+            0.677083,
+            0.0625
+          ],
+          "text": "聚焦流失三大根因，构建全生命周期客户运营体系"
+        },
+        {
+          "name": "subtitle",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 895350,
+          "top": 666750,
+          "width": 9906000,
+          "height": 323850,
+          "normalized_box": [
+            0.061198,
+            0.081019,
+            0.677083,
+            0.039352
+          ],
+          "text": "主动干预 · 强化挽留 · 前置维系，推动流失收入持续压降"
+        },
+        {
+          "name": "unicom-cn",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 13125450,
+          "top": 123825,
+          "width": 1285875,
+          "height": 304800,
+          "normalized_box": [
+            0.897135,
+            0.015046,
+            0.087891,
+            0.037037
+          ],
+          "text": "中国联通"
+        },
+        {
+          "name": "unicom-en",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 13134975,
+          "top": 409575,
+          "width": 1190625,
+          "height": 152400,
+          "normalized_box": [
+            0.897786,
+            0.049769,
+            0.08138,
+            0.018519
+          ],
+          "text": "china unicom"
+        },
+        {
+          "name": "unicom-slogan",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 13115925,
+          "top": 561975,
+          "width": 1362075,
+          "height": 161925,
+          "normalized_box": [
+            0.896484,
+            0.068287,
+            0.093099,
+            0.019676
+          ],
+          "text": "创新 · 与智慧同行"
+        },
+        {
+          "name": "status-current-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 914400,
+          "top": 1533525,
+          "width": 895350,
+          "height": 323850,
+          "normalized_box": [
+            0.0625,
+            0.186343,
+            0.061198,
+            0.039352
+          ],
+          "text": "现状"
+        },
+        {
+          "name": "status-current-value",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 533400,
+          "top": 1981200,
+          "width": 1543050,
+          "height": 647700,
+          "normalized_box": [
+            0.036458,
+            0.240741,
+            0.105469,
+            0.078704
+          ],
+          "text": "趋势向好\n仍在高位"
+        },
+        {
+          "name": "status-target-label",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3333750,
+          "top": 1533525,
+          "width": 895350,
+          "height": 323850,
+          "normalized_box": [
+            0.227865,
+            0.186343,
+            0.061198,
+            0.039352
+          ],
+          "text": "目标"
+        },
+        {
+          "name": "status-target-value-main",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 2952750,
+          "top": 1981200,
+          "width": 1390650,
+          "height": 552450,
+          "normalized_box": [
+            0.201823,
+            0.240741,
+            0.095052,
+            0.06713
+          ],
+          "text": "流失收入\n持续压降"
+        },
+        {
+          "name": "status-target-value-percent",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 4191000,
+          "top": 2276475,
+          "width": 647700,
+          "height": 552450,
+          "normalized_box": [
+            0.286458,
+            0.27662,
+            0.044271,
+            0.06713
+          ],
+          "text": "10%"
+        },
+        {
+          "name": "chart-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5219700,
+          "top": 1295400,
+          "width": 2495550,
+          "height": 495300,
+          "normalized_box": [
+            0.356771,
+            0.157407,
+            0.170573,
+            0.060185
+          ],
+          "text": "出账流失收入（单位：万元）"
+        },
+        {
+          "name": "chart-target-pill",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 12077700,
+          "top": 1609725,
+          "width": 2019300,
+          "height": 342900,
+          "normalized_box": [
+            0.825521,
+            0.195602,
+            0.138021,
+            0.041667
+          ],
+          "text": "目标：持续压降10% ↓"
+        },
+        {
+          "name": "chart-blue-value-1",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5581650,
+          "top": 1752644,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.38151,
+            0.212968,
+            0.021484,
+            0.015046
+          ],
+          "text": "218.9"
+        },
+        {
+          "name": "chart-blue-value-2",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6256338,
+          "top": 1744186,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.427626,
+            0.211941,
+            0.021484,
+            0.015046
+          ],
+          "text": "222.5"
+        },
+        {
+          "name": "chart-blue-value-3",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6931025,
+          "top": 1671822,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.473741,
+            0.203147,
+            0.021484,
+            0.015046
+          ],
+          "text": "253.3"
+        },
+        {
+          "name": "chart-blue-value-4",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7605713,
+          "top": 1668767,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.519857,
+            0.202776,
+            0.021484,
+            0.015046
+          ],
+          "text": "254.6"
+        },
+        {
+          "name": "chart-blue-value-5",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8280400,
+          "top": 1584890,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.565972,
+            0.192584,
+            0.021484,
+            0.015046
+          ],
+          "text": "290.3"
+        },
+        {
+          "name": "chart-blue-value-6",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8955087,
+          "top": 1526858,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.612088,
+            0.185532,
+            0.021484,
+            0.015046
+          ],
+          "text": "315.0"
+        },
+        {
+          "name": "chart-blue-value-7",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9629775,
+          "top": 1485036,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.658203,
+            0.180451,
+            0.021484,
+            0.015046
+          ],
+          "text": "332.8"
+        },
+        {
+          "name": "chart-blue-value-8",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10304463,
+          "top": 1719751,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.704319,
+            0.208971,
+            0.021484,
+            0.015046
+          ],
+          "text": "232.9"
+        },
+        {
+          "name": "chart-blue-value-9",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10979150,
+          "top": 1712468,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.750434,
+            0.208086,
+            0.021484,
+            0.015046
+          ],
+          "text": "236.0"
+        },
+        {
+          "name": "chart-blue-value-10",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 11653838,
+          "top": 1726565,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.79655,
+            0.209799,
+            0.021484,
+            0.015046
+          ],
+          "text": "230.0"
+        },
+        {
+          "name": "chart-blue-value-11",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 12328525,
+          "top": 1746066,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.842665,
+            0.212169,
+            0.021484,
+            0.015046
+          ],
+          "text": "221.7"
+        },
+        {
+          "name": "chart-blue-value-12",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 13003212,
+          "top": 1764392,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.88878,
+            0.214396,
+            0.021484,
+            0.015046
+          ],
+          "text": "213.9"
+        },
+        {
+          "name": "chart-blue-value-13",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 13677900,
+          "top": 1643158,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.934896,
+            0.199664,
+            0.021484,
+            0.015046
+          ],
+          "text": "265.5"
+        },
+        {
+          "name": "chart-red-value-1",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5581650,
+          "top": 1962194,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.38151,
+            0.238431,
+            0.021484,
+            0.015046
+          ],
+          "text": "218.9"
+        },
+        {
+          "name": "chart-red-value-2",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6256338,
+          "top": 1935410,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.427626,
+            0.235177,
+            0.021484,
+            0.015046
+          ],
+          "text": "230.3"
+        },
+        {
+          "name": "chart-red-value-3",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6931025,
+          "top": 1957730,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.473741,
+            0.237889,
+            0.021484,
+            0.015046
+          ],
+          "text": "220.8"
+        },
+        {
+          "name": "chart-red-value-4",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7605713,
+          "top": 1893119,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.519857,
+            0.230038,
+            0.021484,
+            0.015046
+          ],
+          "text": "248.3"
+        },
+        {
+          "name": "chart-red-value-5",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8280400,
+          "top": 1929771,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.565972,
+            0.234491,
+            0.021484,
+            0.015046
+          ],
+          "text": "232.7"
+        },
+        {
+          "name": "chart-red-value-6",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 8955087,
+          "top": 1905102,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.612088,
+            0.231494,
+            0.021484,
+            0.015046
+          ],
+          "text": "243.2"
+        },
+        {
+          "name": "chart-red-value-7",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9629775,
+          "top": 1950212,
+          "width": 314325,
+          "height": 123825,
+          "normalized_box": [
+            0.658203,
+            0.236975,
+            0.021484,
+            0.015046
+          ],
+          "text": "224.0"
+        },
+        {
+          "name": "card1-header-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 457200,
+          "top": 3324225,
+          "width": 4295775,
+          "height": 457200,
+          "normalized_box": [
+            0.03125,
+            0.403935,
+            0.29362,
+            0.055556
+          ],
+          "text": "01  发展质量  |  主动干预（端网业适配）"
+        },
+        {
+          "name": "card2-header-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5267325,
+          "top": 3324225,
+          "width": 4248150,
+          "height": 457200,
+          "normalized_box": [
+            0.360026,
+            0.403935,
+            0.290365,
+            0.055556
+          ],
+          "text": "02  满卡满融  |  强化挽留（拆机挽留）"
+        },
+        {
+          "name": "card3-header-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10067925,
+          "top": 3324225,
+          "width": 4114800,
+          "height": 609600,
+          "normalized_box": [
+            0.688151,
+            0.403935,
+            0.28125,
+            0.074074
+          ],
+          "text": "03  事后回捞  |  前置维系（新入网&金融维系）"
+        },
+        {
+          "name": "card1-goal",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1943100,
+          "top": 3924300,
+          "width": 2724150,
+          "height": 285750,
+          "normalized_box": [
+            0.132812,
+            0.476852,
+            0.186198,
+            0.034722
+          ],
+          "text": "目标用户：40万"
+        },
+        {
+          "name": "card1-adapt",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1943100,
+          "top": 4229100,
+          "width": 2762250,
+          "height": 800100,
+          "normalized_box": [
+            0.132812,
+            0.513889,
+            0.188802,
+            0.097222
+          ],
+          "text": "套餐适配＋ FTTR / 5G光猫，\n次推优选千兆、CBSS弹窗拦截"
+        },
+        {
+          "name": "card1-org",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1943100,
+          "top": 4895850,
+          "width": 2781300,
+          "height": 933450,
+          "normalized_box": [
+            0.132812,
+            0.594907,
+            0.190104,
+            0.113426
+          ],
+          "text": "营销组织：智客结对协同营销，\nOMO触达（到厅、看弹窗、看推荐）"
+        },
+        {
+          "name": "card1-bottom",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 666750,
+          "top": 5876925,
+          "width": 3810000,
+          "height": 409575,
+          "normalized_box": [
+            0.045573,
+            0.71412,
+            0.260417,
+            0.049769
+          ],
+          "text": "提升匹配度，降低流失风险"
+        },
+        {
+          "name": "card2-goal",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6791325,
+          "top": 3924300,
+          "width": 2571750,
+          "height": 285750,
+          "normalized_box": [
+            0.464193,
+            0.476852,
+            0.175781,
+            0.034722
+          ],
+          "text": "目标用户：20万"
+        },
+        {
+          "name": "card2-scene",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6791325,
+          "top": 4229100,
+          "width": 2714625,
+          "height": 876300,
+          "normalized_box": [
+            0.464193,
+            0.513889,
+            0.185547,
+            0.106481
+          ],
+          "text": "发展场景：①外呼越商同时推荐搭载，\n②触达对派单，③前期已发展用户\n④到厅用户—看弹窗"
+        },
+        {
+          "name": "card2-action",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6791325,
+          "top": 5010150,
+          "width": 2724150,
+          "height": 914400,
+          "normalized_box": [
+            0.464193,
+            0.608796,
+            0.186198,
+            0.111111
+          ],
+          "text": "举措：三抓（挖需求、搭载、降套）\n三换（装老门、方案升级、问题解决）\n中台拆机：挖真实需求，定制挽留方案"
+        },
+        {
+          "name": "card2-bottom",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5543550,
+          "top": 5876925,
+          "width": 3714750,
+          "height": 409575,
+          "normalized_box": [
+            0.378906,
+            0.71412,
+            0.253906,
+            0.049769
+          ],
+          "text": "深挖需求，提升价值与粘性"
+        },
+        {
+          "name": "card3-new",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10915650,
+          "top": 3914775,
+          "width": 3133725,
+          "height": 800100,
+          "normalized_box": [
+            0.746094,
+            0.475694,
+            0.214193,
+            0.097222
+          ],
+          "text": "新入网维系：\n发展主动联系用户，做关爱提醒，\n到厅充值送小礼品，促二次保长期在网"
+        },
+        {
+          "name": "card3-finance",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10915650,
+          "top": 4705350,
+          "width": 3133725,
+          "height": 609600,
+          "normalized_box": [
+            0.746094,
+            0.571759,
+            0.214193,
+            0.074074
+          ],
+          "text": "金融维系：\n回访、包装价值是否足额，促进实发展"
+        },
+        {
+          "name": "card3-monitor",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10915650,
+          "top": 5267325,
+          "width": 3133725,
+          "height": 800100,
+          "normalized_box": [
+            0.746094,
+            0.640046,
+            0.214193,
+            0.097222
+          ],
+          "text": "分类分级监控：\n按入网时长、套餐种类、客户价值分类，\n识别风险客群并前置维系。"
+        },
+        {
+          "name": "card3-bottom",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10382250,
+          "top": 5876925,
+          "width": 3657600,
+          "height": 409575,
+          "normalized_box": [
+            0.709635,
+            0.71412,
+            0.25,
+            0.049769
+          ],
+          "text": "前置服务，延长在网生命周期"
+        },
+        {
+          "name": "management-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 523875,
+          "top": 6496050,
+          "width": 4953000,
+          "height": 514350,
+          "normalized_box": [
+            0.035807,
+            0.789352,
+            0.338542,
+            0.0625
+          ],
+          "text": "管理保障  |  借鉴郑州经验，营造高质量发展氛围"
+        },
+        {
+          "name": "management-rule1",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6524625,
+          "top": 6496050,
+          "width": 3009900,
+          "height": 514350,
+          "normalized_box": [
+            0.445964,
+            0.789352,
+            0.205729,
+            0.0625
+          ],
+          "text": "① 建立一线员工信誉分管理体系"
+        },
+        {
+          "name": "management-rule2",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10134600,
+          "top": 6496050,
+          "width": 3943350,
+          "height": 514350,
+          "normalized_box": [
+            0.692708,
+            0.789352,
+            0.269531,
+            0.0625
+          ],
+          "text": "② 明确违反生产经营管理秩序行为处理标准"
+        },
+        {
+          "name": "outcomes-title-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 495300,
+          "top": 7229475,
+          "width": 1581150,
+          "height": 409575,
+          "normalized_box": [
+            0.033854,
+            0.878472,
+            0.108073,
+            0.049769
+          ],
+          "text": "预期成效"
+        },
+        {
+          "name": "outcome-1-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3238500,
+          "top": 7181850,
+          "width": 1695450,
+          "height": 457200,
+          "normalized_box": [
+            0.221354,
+            0.872685,
+            0.115885,
+            0.055556
+          ],
+          "text": "高质量发展\n提升收入持续性"
+        },
+        {
+          "name": "outcome-2-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6400800,
+          "top": 7181850,
+          "width": 1752600,
+          "height": 457200,
+          "normalized_box": [
+            0.4375,
+            0.872685,
+            0.119792,
+            0.055556
+          ],
+          "text": "降低流失风险\n减少非必要流失"
+        },
+        {
+          "name": "outcome-3-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9563100,
+          "top": 7181850,
+          "width": 1752600,
+          "height": 457200,
+          "normalized_box": [
+            0.653646,
+            0.872685,
+            0.119792,
+            0.055556
+          ],
+          "text": "客户价值提升\nARPU与粘性增长"
+        },
+        {
+          "name": "outcome-4-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 12763500,
+          "top": 7143750,
+          "width": 1485900,
+          "height": 590550,
+          "normalized_box": [
+            0.872396,
+            0.868056,
+            0.101562,
+            0.071759
+          ],
+          "text": "流失收入\n持续压降\n目标 10%"
+        },
+        {
+          "name": "footer-left",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 257175,
+          "top": 7820025,
+          "width": 3143250,
+          "height": 285750,
+          "normalized_box": [
+            0.017578,
+            0.950231,
+            0.214844,
+            0.034722
+          ],
+          "text": "联通世界  创享美好智慧生活"
+        },
+        {
+          "name": "footer-5g",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 13668375,
+          "top": 7858125,
+          "width": 666750,
+          "height": 285750,
+          "normalized_box": [
+            0.934245,
+            0.954861,
+            0.045573,
+            0.034722
+          ],
+          "text": "5Gⁿ"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

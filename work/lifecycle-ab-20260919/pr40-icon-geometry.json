@@ -1,0 +1,313 @@
+{
+  "schema": "ai-ppt-plus/alpha-geometry-manifest/v1",
+  "assets": [
+    {
+      "object_id": "unicom-knot-mark",
+      "file": "generated/unicom-knot-mark.png",
+      "x": 1316,
+      "y": 12,
+      "w": 57,
+      "h": 57,
+      "visual_lock_bbox": [
+        1323.3,
+        19.3,
+        42.400000000000006,
+        42.400000000000006
+      ]
+    },
+    {
+      "object_id": "current-bar",
+      "file": "icons/icon_r1c1.png",
+      "x": 71,
+      "y": 173,
+      "w": 61,
+      "h": 61,
+      "visual_lock_bbox": [
+        75.68,
+        177.92,
+        44.64,
+        40.92
+      ]
+    },
+    {
+      "object_id": "target",
+      "file": "icons/icon_r1c2.png",
+      "x": 323,
+      "y": 171,
+      "w": 59,
+      "h": 59,
+      "visual_lock_bbox": [
+        330.06,
+        176.06,
+        45.88,
+        45.88
+      ]
+    },
+    {
+      "object_id": "card1-bar",
+      "file": "icons/icon_r1c1.png",
+      "x": 70,
+      "y": 425,
+      "w": 51,
+      "h": 51,
+      "visual_lock_bbox": [
+        73.44,
+        426.28,
+        37.12,
+        38.86
+      ]
+    },
+    {
+      "object_id": "card1-person",
+      "file": "icons/icon_r1c3.png",
+      "x": 145,
+      "y": 421,
+      "w": 54,
+      "h": 54,
+      "visual_lock_bbox": [
+        155.45,
+        424.25,
+        34.1,
+        38.5
+      ]
+    },
+    {
+      "object_id": "card1-gear",
+      "file": "icons/icon_r1c4.png",
+      "x": 148,
+      "y": 469,
+      "w": 48,
+      "h": 48,
+      "visual_lock_bbox": [
+        152.7,
+        473.7,
+        39.6,
+        39.6
+      ]
+    },
+    {
+      "object_id": "card1-group",
+      "file": "icons/icon_r2c1.png",
+      "x": 64,
+      "y": 518,
+      "w": 55,
+      "h": 55,
+      "visual_lock_bbox": [
+        68.6,
+        525.2,
+        46.800000000000004,
+        34.8
+      ]
+    },
+    {
+      "object_id": "card1-trend",
+      "file": "icons/icon_r3c2.png",
+      "x": 69,
+      "y": 619,
+      "w": 56,
+      "h": 56,
+      "visual_lock_bbox": [
+        71.2,
+        622.8,
+        45.6,
+        37.2
+      ]
+    },
+    {
+      "object_id": "card2-person",
+      "file": "icons/icon_r1c3.png",
+      "x": 574,
+      "y": 421,
+      "w": 54,
+      "h": 54,
+      "visual_lock_bbox": [
+        584.45,
+        424.25,
+        34.1,
+        38.5
+      ]
+    },
+    {
+      "object_id": "card2-phone",
+      "file": "icons/icon_r2c2.png",
+      "x": 574,
+      "y": 471,
+      "w": 50,
+      "h": 50,
+      "visual_lock_bbox": [
+        583.9,
+        473.7,
+        36.300000000000004,
+        39.6
+      ]
+    },
+    {
+      "object_id": "card2-list",
+      "file": "icons/icon_r2c3.png",
+      "x": 576,
+      "y": 518,
+      "w": 50,
+      "h": 50,
+      "visual_lock_bbox": [
+        581.15,
+        524.25,
+        40.7,
+        38.5
+      ]
+    },
+    {
+      "object_id": "card2-heart",
+      "file": "icons/icon_r2c4.png",
+      "x": 575,
+      "y": 610,
+      "w": 57,
+      "h": 57,
+      "visual_lock_bbox": [
+        581.2,
+        621.6,
+        45.6,
+        40.800000000000004
+      ]
+    },
+    {
+      "object_id": "card3-group",
+      "file": "icons/icon_r2c1.png",
+      "x": 1082,
+      "y": 418,
+      "w": 57,
+      "h": 57,
+      "visual_lock_bbox": [
+        1086.0,
+        426.2,
+        48.0,
+        34.8
+      ]
+    },
+    {
+      "object_id": "card3-coins",
+      "file": "icons/icon_r3c1.png",
+      "x": 1081,
+      "y": 470,
+      "w": 57,
+      "h": 57,
+      "visual_lock_bbox": [
+        1086.0,
+        479.2,
+        48.0,
+        34.8
+      ]
+    },
+    {
+      "object_id": "card3-bar",
+      "file": "icons/icon_r1c1.png",
+      "x": 1085,
+      "y": 521,
+      "w": 58,
+      "h": 58,
+      "visual_lock_bbox": [
+        1089.0,
+        525.6,
+        42.0,
+        39.0
+      ]
+    },
+    {
+      "object_id": "card3-link",
+      "file": "icons/icon_r3c3.png",
+      "x": 1083,
+      "y": 615,
+      "w": 54,
+      "h": 54,
+      "visual_lock_bbox": [
+        1087.2,
+        619.8,
+        45.6,
+        44.4
+      ]
+    },
+    {
+      "object_id": "management-shield",
+      "file": "icons/icon_r3c4.png",
+      "x": 615,
+      "y": 683,
+      "w": 42,
+      "h": 42,
+      "visual_lock_bbox": [
+        617.44,
+        688.2,
+        37.12,
+        32.76
+      ]
+    },
+    {
+      "object_id": "management-doc",
+      "file": "icons/icon_r4c1.png",
+      "x": 1010,
+      "y": 685,
+      "w": 41,
+      "h": 41,
+      "visual_lock_bbox": [
+        1012.44,
+        688.2,
+        37.12,
+        32.76
+      ]
+    },
+    {
+      "object_id": "outcome-bar",
+      "file": "icons/icon_r1c1.png",
+      "x": 278,
+      "y": 749,
+      "w": 57,
+      "h": 57,
+      "visual_lock_bbox": [
+        282.12,
+        755.0,
+        41.76,
+        35.0
+      ]
+    },
+    {
+      "object_id": "outcome-shield",
+      "file": "icons/icon_r3c4.png",
+      "x": 594,
+      "y": 745,
+      "w": 53,
+      "h": 53,
+      "visual_lock_bbox": [
+        602.44,
+        752.0,
+        37.12,
+        42.0
+      ]
+    },
+    {
+      "object_id": "outcome-group",
+      "file": "icons/icon_r2c1.png",
+      "x": 933,
+      "y": 747,
+      "w": 55,
+      "h": 55,
+      "visual_lock_bbox": [
+        937.8,
+        756.0,
+        46.400000000000006,
+        31.0
+      ]
+    },
+    {
+      "object_id": "outcome-target",
+      "file": "icons/icon_r1c2.png",
+      "x": 1265,
+      "y": 747,
+      "w": 54,
+      "h": 54,
+      "visual_lock_bbox": [
+        1267.8,
+        751.4,
+        49.4,
+        42.120000000000005
+      ]
+    }
+  ]
+}

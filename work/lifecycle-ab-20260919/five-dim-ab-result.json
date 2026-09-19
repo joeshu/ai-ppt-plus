@@ -1,0 +1,63 @@
+{
+  "schema": "ai-ppt-plus/beat-knight-report/v2",
+  "profile": "competitive_ab",
+  "beat_knight": true,
+  "tolerance": 0.002,
+  "strict_win_count": 3,
+  "loss_dimensions": [],
+  "relative_pass": true,
+  "visual_gate_pass": true,
+  "visual_gate": {
+    "mode": "competitive_relative",
+    "whole_slide_ssim_diagnostic": 0.653699
+  },
+  "absolute_quality_floor_pass": true,
+  "absolute_quality_floor": {
+    "formal_text_native": true,
+    "no_whole_slide_picture": true,
+    "no_blocking_defect": true,
+    "no_missing_text": true,
+    "no_text_overflow": true,
+    "no_blocking_object": true,
+    "icon_assets_independent": true,
+    "alpha_assets_valid": true,
+    "imagegen_final_assets": true,
+    "alpha_centroid_evidence": true,
+    "no_contact_sheet_ancestry": true
+  },
+  "imagegen_provenance_required": true,
+  "pixel_or_local_crop_win": true,
+  "dimensions": {
+    "pixel": {
+      "knight": 0.632391,
+      "candidate": 0.653699,
+      "delta": 0.021307999999999994,
+      "verdict": "win"
+    },
+    "text": {
+      "knight": 1.0,
+      "candidate": 1.0,
+      "delta": 0.0,
+      "verdict": "tie"
+    },
+    "object": {
+      "knight": 1.0,
+      "candidate": 1.0,
+      "delta": 0.0,
+      "verdict": "tie"
+    },
+    "icon_asset": {
+      "knight": 0.0,
+      "candidate": 0.4671583,
+      "delta": 0.4671583,
+      "verdict": "win"
+    },
+    "local_crop": {
+      "knight": 0.309985,
+      "candidate": 0.320298,
+      "delta": 0.010313000000000017,
+      "verdict": "win"
+    }
+  },
+  "decision": "candidate_win"
+}
