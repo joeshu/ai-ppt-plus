@@ -1,0 +1,104 @@
+{
+  "schema": "ai-ppt-plus/pr41-fresh-optimization-r6-r12/v1",
+  "generated_at": "2026-09-19T06:27:00Z",
+  "reference": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "size_px": [
+      1536,
+      864
+    ]
+  },
+  "runtime": {
+    "artifact_tool_python": "2.8.22",
+    "authoring": "official artifact_tool RPC runtime",
+    "renderer": "LibreOffice fresh render",
+    "comparison": "render normalized to 1536x864 before SSIM"
+  },
+  "iterations": {
+    "r6": {
+      "ssim": 0.5613998622816458,
+      "selected": false,
+      "notes": [
+        "true editable line primitives fixed chart segment drift",
+        "explicit card3 label/body boxes",
+        "footer experiment regressed"
+      ]
+    },
+    "r7": {
+      "ssim": 0.5781875131338414,
+      "selected": false,
+      "notes": [
+        "restored stronger incumbent footer/header/management while keeping chart/text fixes"
+      ]
+    },
+    "r8": {
+      "ssim": 0.5893484624790025,
+      "selected": false,
+      "notes": [
+        "gradient headers",
+        "outcome pale modules and triple-chevron transitions"
+      ]
+    },
+    "r9": {
+      "ssim": 0.5850631849471623,
+      "selected": false,
+      "rejection_reason": "card2/card3 typography rewrite regressed whole-page fidelity"
+    },
+    "r10": {
+      "ssim": 0.5995983717402787,
+      "selected": false,
+      "notes": [
+        "header title scale corrected",
+        "brand lockup aspect ratio tightened"
+      ]
+    },
+    "r11": {
+      "ssim": 0.6003215745372904,
+      "selected": false,
+      "notes": [
+        "outcome diagonal tab and larger module icons improved outcome but halo experiments slightly regressed cards"
+      ]
+    },
+    "r12": {
+      "candidate_sha256": "da460991b63b9d5639f9df831492eb95471cd0ba50a01cac698ad21b40e9693d",
+      "render_sha256": "804e205e2b1944fa14bb6de24a464ef6cd47981547968ce0bc1d40db7b2ec70e",
+      "ssim": 0.6005496473231348,
+      "mae_normalized": 0.11102268099784851,
+      "selected": true,
+      "regional_ssim": {
+        "header": 0.6286693069854522,
+        "top": 0.6363571304023301,
+        "cards": 0.5598530965470222,
+        "management": 0.6354667403655713,
+        "outcome": 0.4900027592113379,
+        "footer": 0.6680972885303625,
+        "card1": 0.5971885232242587,
+        "card2": 0.5068233170331427,
+        "card3": 0.5201049914073815,
+        "chart": 0.5985008342558799
+      },
+      "notes": [
+        "kept R10 card geometry/text",
+        "kept R11 outcome-only improvement",
+        "new current incumbent"
+      ]
+    }
+  },
+  "strict_threshold": 0.9,
+  "release_status": "blocked-by-rendered-reference-fidelity",
+  "merge_allowed": false,
+  "current_incumbent": "R12",
+  "next_repair_regions": [
+    "outcome",
+    "card2",
+    "card3",
+    "cards",
+    "chart"
+  ],
+  "policy": [
+    "promote only on whole-page fidelity improvement",
+    "reject region-only wins that regress the whole page",
+    "no source-crop or full-slide raster fallback",
+    "do not lower strict threshold"
+  ]
+}
