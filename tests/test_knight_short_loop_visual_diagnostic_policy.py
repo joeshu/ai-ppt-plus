@@ -41,3 +41,33 @@ def test_external_dual_compare_is_not_auto_required_for_release():
         forbidden = '''if args.reference or args.reference_dir:
             args.require_dual_comparison = True'''
         assert forbidden not in text
+
+
+def test_aggregate_converts_visual_failures_to_repair_signals():
+    for path in ("scripts/aggregate_project_reports.py", "ai-ppt-editable/scripts/aggregate_project_reports.py"):
+        text = read(path)
+        assert "VISUAL_DIAGNOSTIC_REPORT_TYPES" in text
+        assert '"visual_diagnostic_requires_repair"' in text
+        assert '"repair_loop_required": repair_loop_required' in text
+        assert '"production_state": production_state' in text
+        assert '"next_state": production_state' in text
+
+
+def test_report_bundle_excludes_visual_diagnostics_from_hard_technical_failures():
+    for path in ("scripts/validate_report_bundle.py", "ai-ppt-editable/scripts/validate_report_bundle.py"):
+        text = read(path)
+        assert "VISUAL_DIAGNOSTIC_STEPS" in text
+        assert "actual_failed - NON_TECHNICAL_STEPS - VISUAL_DIAGNOSTIC_STEPS" in text
+        assert '"diagnostic_failure_requires_repair_state"' in text
+        assert '"release_requires_repair_complete"' in text
+        assert '"production_state": expected_production_state' in text
+
+
+def test_pipeline_exposes_only_three_short_loop_production_states():
+    for path in ("scripts/run_pipeline.py", "ai-ppt-editable/scripts/run_pipeline.py"):
+        text = read(path)
+        assert '"hard-correctness-fail"' in text
+        assert '"repair-required"' in text
+        assert '"final-pptx-ready"' in text
+        assert "and step[\"name\"] not in VISUAL_DIAGNOSTIC_STEPS" in text
+        assert "and not repair_loop_required" in text
