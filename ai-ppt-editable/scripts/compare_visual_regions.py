@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
-"""Score reference fidelity by declared semantic regions.
+"""Score reference fidelity by declared semantic regions and emit local-crop QA.
 
-The region manifest uses normalized ``bbox`` values ``[x, y, w, h]`` in
-``0..1``. Each region may declare ``weight`` and ``role``. Background regions
-default to a low weight; foreground regions default to 1.0. This report ranks
-candidates and attributes weak areas. It complements, but never replaces, the
-strict whole-page blocker in ``compare_visual.py``.
+The region manifest uses normalized bbox values [x, y, w, h] in 0..1.
+When --crop-dir is supplied, reference/candidate/absolute-difference crops are
+written at exactly the same coordinates for every valid region.  These crops
+are primary render-review evidence; scalar metrics rank work but do not replace
+visual inspection.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image, ImageChops, ImageFilter
 
 from atomic_output import atomic_write_json
 from compare_visual import sha256, ssim
@@ -41,6 +42,27 @@ def metrics(candidate: Image.Image, reference: Image.Image) -> dict:
     }
 
 
+def _slug(value: str) -> str:
+    text = re.sub(r"[^A-Za-z0-9_.-]+", "-", value).strip("-")
+    return text[:120] or "region"
+
+
+def _write_crops(crop_dir: Path, region_id: str, candidate: Image.Image, reference: Image.Image) -> dict:
+    crop_dir.mkdir(parents=True, exist_ok=True)
+    stem = _slug(region_id)
+    reference_path = crop_dir / f"{stem}__reference.png"
+    candidate_path = crop_dir / f"{stem}__candidate.png"
+    diff_path = crop_dir / f"{stem}__diff.png"
+    reference.save(reference_path)
+    candidate.save(candidate_path)
+    ImageChops.difference(candidate, reference).save(diff_path)
+    return {
+        "reference_crop": str(reference_path.resolve()),
+        "candidate_crop": str(candidate_path.resolve()),
+        "difference_crop": str(diff_path.resolve()),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("candidate")
@@ -48,11 +70,13 @@ def main() -> int:
     parser.add_argument("regions")
     parser.add_argument("--threshold", type=float)
     parser.add_argument("--report")
+    parser.add_argument("--crop-dir")
     args = parser.parse_args()
     candidate_path, reference_path = Path(args.candidate), Path(args.reference)
     manifest = json.loads(Path(args.regions).read_text(encoding="utf-8"))
     reference = load_rgb(reference_path)
     candidate = load_rgb(candidate_path, reference.size)
+    crop_dir = Path(args.crop_dir).resolve() if args.crop_dir else None
     rows, issues = [], []
     weighted_sum = weight_sum = 0.0
     for index, region in enumerate(manifest.get("regions", [])):
@@ -65,30 +89,50 @@ def main() -> int:
         if min(x, y, w, h) < 0 or x + w > 1 or y + h > 1 or w <= 0 or h <= 0:
             issues.append({"severity": "blocker", "code": "region_bbox_out_of_bounds", "region_id": region_id})
             continue
-        box = (round(x * reference.width), round(y * reference.height), round((x + w) * reference.width), round((y + h) * reference.height))
-        row_metrics = metrics(candidate.crop(box), reference.crop(box))
+        box = (
+            round(x * reference.width),
+            round(y * reference.height),
+            round((x + w) * reference.width),
+            round((y + h) * reference.height),
+        )
+        candidate_crop = candidate.crop(box)
+        reference_crop = reference.crop(box)
+        row_metrics = metrics(candidate_crop, reference_crop)
         role = str(region.get("role") or "foreground")
         weight = float(region.get("weight", 0.25 if role == "background" else 1.0))
         score = 0.2 * row_metrics["global_ssim"] + 0.5 * row_metrics["layout_ssim"] + 0.3 * row_metrics["pixel_fidelity"]
         weighted_sum += score * weight
         weight_sum += weight
-        rows.append({"region_id": region_id, "role": role, "weight": weight, "bbox": bbox, "score": round(score, 6), "metrics": row_metrics})
+        row = {
+            "region_id": region_id,
+            "role": role,
+            "weight": weight,
+            "bbox": bbox,
+            "bbox_px": list(box),
+            "score": round(score, 6),
+            "metrics": row_metrics,
+        }
+        if crop_dir is not None:
+            row["crop_evidence"] = _write_crops(crop_dir, region_id, candidate_crop, reference_crop)
+        rows.append(row)
     if not rows:
         issues.append({"severity": "blocker", "code": "regions_missing"})
     weighted_score = round(weighted_sum / weight_sum, 6) if weight_sum else 0.0
     if args.threshold is not None and weighted_score < args.threshold:
         issues.append({"severity": "blocker", "code": "foreground_weighted_threshold_not_met", "threshold": args.threshold, "observed": weighted_score})
     result = {
-        "schema": "ai-ppt-plus/region-visual-comparison/v1",
+        "schema": "ai-ppt-plus/region-visual-comparison/v2",
         "valid": not issues,
         "candidate": str(candidate_path.resolve()),
         "candidate_sha256": sha256(candidate_path),
         "reference": str(reference_path.resolve()),
         "reference_sha256": sha256(reference_path),
         "foreground_weighted_score": weighted_score,
+        "crop_dir": str(crop_dir) if crop_dir is not None else None,
         "regions": sorted(rows, key=lambda row: row["score"]),
         "issues": issues,
         "human_visual_review_required": True,
+        "policy": "same-coordinate local crops are primary repair evidence; scalar scores rank work",
     }
     if args.report:
         atomic_write_json(Path(args.report).resolve(), result)
