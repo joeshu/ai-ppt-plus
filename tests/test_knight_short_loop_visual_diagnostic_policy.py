@@ -71,3 +71,15 @@ def test_pipeline_exposes_only_three_short_loop_production_states():
         assert '"final-pptx-ready"' in text
         assert "and step[\"name\"] not in VISUAL_DIAGNOSTIC_STEPS" in text
         assert "and not repair_loop_required" in text
+
+
+def test_numeric_quality_score_is_diagnostic_only():
+    for path in ("scripts/delivery_check.py", "ai-ppt-editable/scripts/delivery_check.py"):
+        text = read(path)
+        assert "quality_threshold_not_met" not in text
+        assert '"declared_quality_score"' in text
+        assert '"diagnostic_only": True' in text
+    for path in ("scripts/run_pipeline.py", "ai-ppt-editable/scripts/run_pipeline.py"):
+        text = read(path)
+        assert 'missing.append("--quality-score")' not in text
+        assert 'optional diagnostic quality score' in text
