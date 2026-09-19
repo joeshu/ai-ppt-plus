@@ -1,0 +1,75 @@
+{
+  "schema": "ai-ppt-plus/source-image-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-09-11T10:35:04.423584+00:00",
+  "images": [
+    {
+      "path": "/workspace/scratch/d0e96217094b/work/run-01/reference.png",
+      "exists": true,
+      "decoded": true,
+      "bytes": 1963388,
+      "sha256": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "path": "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/rural.png",
+      "exists": true,
+      "decoded": true,
+      "bytes": 24637,
+      "sha256": "99b31eb40ca1832d381f39aaab91350b3002fc5795cd5a6e4d349a68a8b99608",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 132,
+      "height": 132
+    },
+    {
+      "path": "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/community.png",
+      "exists": true,
+      "decoded": true,
+      "bytes": 22653,
+      "sha256": "3c029fbf3c0ad1ac28fbfa5faf406e6ff29c17c76953f612b5b0579159e7bf09",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 132,
+      "height": 132
+    },
+    {
+      "path": "/workspace/scratch/d0e96217094b/work/run-01/assets/icons/target.png",
+      "exists": true,
+      "decoded": true,
+      "bytes": 14887,
+      "sha256": "da297b594a93aa6623b0b875c612c10c6db823cf400decfde1439dbd1652934a",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 92,
+      "height": 100
+    },
+    {
+      "path": "/workspace/scratch/d0e96217094b/work/run-01/assets/logo.png",
+      "exists": true,
+      "decoded": true,
+      "bytes": 27222,
+      "sha256": "51799519c433b46cdfecfbe64f74458c39e5d46ffa3ad24639d1327300ea8e87",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 230,
+      "height": 95
+    },
+    {
+      "path": "/workspace/scratch/d0e96217094b/work/run-01/assets/bottom-wave.png",
+      "exists": true,
+      "decoded": true,
+      "bytes": 69334,
+      "sha256": "11ed3b03fbf1ed79978a3b09e506e5ae7c36469811db423178e0dc71ca70b7ee",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 1536,
+      "height": 80
+    }
+  ],
+  "issues": []
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "ai-ppt-plus/route-validation/v2",
+  "valid": true,
+  "ready_for_delivery": true,
+  "route_file": "/workspace/scratch/d0e96217094b/work/run-01/route-decision.json",
+  "route_sha256": "c845f86903e01d2edaebe30a146ef330080ee656ec22c74d3e590d41f32b3c07",
+  "route": "reference-reconstruction",
+  "status": "decided",
+  "visual_authority": "approved_reference_image",
+  "formal_content_authority": "user_transcription",
+  "visual_generation_mode": null,
+  "formal_content_ready": true,
+  "requires_image_generation": false,
+  "engine_route": {},
+  "issues": [],
+  "evidence": {
+    "route_file": "/workspace/scratch/d0e96217094b/work/run-01/route-decision.json",
+    "reference_files": [
+      {
+        "slide_no": 1,
+        "path": "/workspace/scratch/d0e96217094b/work/run-01/reference.png",
+        "sha256": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "comparison_path": "/workspace/scratch/d0e96217094b/work/run-01/qa/reference-16x9.png",
+        "comparison_sha256": "70d1fe89074965078f0c6fac588a41f596cc05907989481c32a0a4c22607390b",
+        "derived_from_sha256": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+        "comparison_transform": "QA-only: raster resized from 1536x1024 to 1536x864; authoring uses semantic vertical reflow with preserved object aspect ratios."
+      }
+    ],
+    "external_reference_files": [],
+    "visual_intermediate_manifest": null,
+    "visual_generation_plan": null,
+    "visual_generation_manifest": null,
+    "formal_content_ready": true
+  }
+}

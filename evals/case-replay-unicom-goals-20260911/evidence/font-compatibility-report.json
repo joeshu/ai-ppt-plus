@@ -1,0 +1,104 @@
+{
+  "schema": "ai-ppt-plus/font-compatibility-report/v1",
+  "status": "passed",
+  "font_family": "Noto Sans CJK SC",
+  "requested_family": "Noto Sans CJK SC",
+  "substitution": null,
+  "font_probe": {
+    "schema": "ai-ppt-plus/font-report/v1",
+    "ok": true,
+    "generated_at": "2026-09-11T09:57:55.331543+00:00",
+    "font_dir": "/workspace/scratch/d0e96217094b/work/ai-ppt-plus/ai-ppt-editable/assets/fonts",
+    "local_font_files": [
+      "/workspace/scratch/d0e96217094b/work/ai-ppt-plus/ai-ppt-editable/assets/fonts/NotoSansSC-Regular.ttf"
+    ],
+    "local_font_families": [
+      "Noto Sans CJK SC"
+    ],
+    "fonts": [
+      {
+        "requested": "Noto Sans CJK SC",
+        "resolved": "Noto Sans CJK SC",
+        "exact_or_family_match": true,
+        "cjk_ready": true
+      }
+    ],
+    "cjk_delivery_supported": true,
+    "font_status": {
+      "files_found": true,
+      "family_discovered": true,
+      "glyph_route_available": true,
+      "render_review": "required",
+      "license": "declared",
+      "license_files": [
+        "/workspace/scratch/d0e96217094b/work/ai-ppt-plus/ai-ppt-editable/assets/fonts/README.md"
+      ],
+      "redistribution": "requires_project_review"
+    },
+    "rule": "Do not declare Chinese render validation passed unless cjk_delivery_supported is true and rendered pages are visually reviewed. Do not imply redistribution permission from font discovery."
+  },
+  "embedding": {
+    "schema": "ai-ppt-plus/font-embedding/v1",
+    "valid": true,
+    "status": "passed",
+    "generated_at": "2026-09-11T10:32:39.793386+00:00",
+    "input": "/workspace/scratch/d0e96217094b/work/run-01/.candidate-final-4irhn57u.staging.pptx",
+    "output": "/workspace/scratch/d0e96217094b/work/run-01/unicom-goals-16x9-editable-final.pptx",
+    "fonts": [
+      {
+        "family": "Noto Sans CJK SC",
+        "style": "regular",
+        "file": "/workspace/scratch/d0e96217094b/work/ai-ppt-plus/ai-ppt-editable/assets/fonts/NotoSansSC-Regular.ttf",
+        "source_sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+        "license": "SIL Open Font License 1.1",
+        "license_url": "https://scripts.sil.org/OFL",
+        "font_data_size": 16437364,
+        "eot_sha256": "4d3831b34a217da372900d0ec4e9aacbf1b001e4abede94abb417bcfd6b9f048",
+        "embedding_rights": {
+          "fsType": 0,
+          "restricted_license": false,
+          "preview_print": false,
+          "editable": false
+        },
+        "metadata": {
+          "family": "Noto Sans CJK SC",
+          "style_name": "Regular",
+          "full_name": "Noto Sans CJK SC",
+          "weight": 400,
+          "italic": false,
+          "sfnt_format": "OTTO"
+        },
+        "eot": {
+          "format": "EOT v2.0001",
+          "compression": "none",
+          "sfnt_format": "OTTO",
+          "eot_size": 16437642,
+          "font_data_size": 16437364,
+          "font_data_offset": 278
+        },
+        "relationship_id": "rId9",
+        "part": "ppt/fonts/font1.fntdata"
+      }
+    ],
+    "package": {
+      "embedTrueTypeFonts": true,
+      "saveSubsetFonts": false,
+      "content_type": "application/x-fontdata",
+      "font_parts": [
+        "ppt/fonts/font1.fntdata"
+      ],
+      "output_sha256": "329c942e56788e55446a2976b79add45cb363fc670bdbe430008cac6619ec41f"
+    },
+    "issues": []
+  },
+  "render_font": [
+    "Noto Sans CJK SC"
+  ],
+  "compatibility": {
+    "cjk_delivery_supported": true,
+    "embedded_true_type_fonts": true,
+    "visual_render_reviewed": true,
+    "redistribution_note": "Font license is declared in the repo asset manifest; redistribution still requires project review."
+  },
+  "issues": []
+}

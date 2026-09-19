@@ -1,0 +1,56 @@
+{
+  "schema": "ai-ppt-plus/slide-object-manifest-validation/v1",
+  "valid": true,
+  "manifest": "/workspace/scratch/d0e96217094b/work/run-01/slide-object-manifest.json",
+  "slides": [
+    {
+      "slide": 1,
+      "object_count": 94,
+      "counts_by_level": {
+        "L0": 0,
+        "L1": 84,
+        "L2": 10,
+        "L3": 0,
+        "L4": 0,
+        "L5": 0
+      },
+      "primary_level": "L2",
+      "fully_editable_object_count": 84,
+      "raster_object_count": 10,
+      "placeholder_count": 0,
+      "blocked_object_count": 0,
+      "fully_editable_ratio": 0.8936,
+      "human_review_required": true,
+      "formal_content_rasterized": false,
+      "delivery_decision": "allowed-with-disclosure",
+      "issues": []
+    }
+  ],
+  "panel_ids": [
+    "top-red-band",
+    "sec1-pill",
+    "sec1-panel",
+    "sec1-rural-card",
+    "sec1-community-card",
+    "sec1-target-card",
+    "sec1-rural-label",
+    "sec1-community-label",
+    "sec2-pill",
+    "sec3-pill",
+    "sec3-panel",
+    "goal-bg-1",
+    "goal-bg-2",
+    "goal-bg-3",
+    "goal-bg-4",
+    "goal-bg-5"
+  ],
+  "component_usage": {
+    "instances": 0,
+    "distinct_components": 0,
+    "by_component": {},
+    "reused_component_types": 0
+  },
+  "errors": [],
+  "warnings": [],
+  "human_visual_review_required": true
+}

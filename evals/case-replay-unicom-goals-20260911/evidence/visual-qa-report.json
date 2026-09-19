@@ -1,0 +1,25 @@
+{
+  "schema": "ai-ppt-plus/render-visual-gate/v1",
+  "valid": true,
+  "render_dir": "/workspace/scratch/d0e96217094b/work/run-01/render-final",
+  "expected_pages": 1,
+  "selected_pages": "all",
+  "pages": [
+    {
+      "page": "slide-1.png",
+      "width": 1920,
+      "height": 1080,
+      "stats": {
+        "mean": 221.041,
+        "stddev": 65.192,
+        "min": 0,
+        "max": 255,
+        "nonuniform": true
+      },
+      "regions": []
+    }
+  ],
+  "issues": [],
+  "human_visual_review_required": true,
+  "limitation": "non-blank checks do not prove semantic text correctness or reference fidelity"
+}

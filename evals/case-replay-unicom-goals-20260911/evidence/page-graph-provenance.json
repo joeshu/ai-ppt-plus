@@ -1,0 +1,18 @@
+{
+  "schema": "ai-ppt-plus/page-graph-provenance/v1",
+  "request_id": "reference-reconstruction-20260911-图片1",
+  "producer": {
+    "task": "visual-reconstruction",
+    "provider": "GitHub joeshu/ai-ppt-plus",
+    "model": "Codex",
+    "generation_id": "reference-reconstruction-20260911-图片1"
+  },
+  "source": {
+    "path": "reference.png",
+    "sha256": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50"
+  },
+  "page_graph": {
+    "path": "page-graph.json",
+    "sha256": "ebdd6dd6e1330a0e78ad266bbf0dbc004f5b4d232c64cff66ea7afd07c320f87"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "ai-ppt-plus/font-embedding/v1",
+  "valid": true,
+  "status": "passed",
+  "generated_at": "2026-09-11T10:32:39.793386+00:00",
+  "input": "/workspace/scratch/d0e96217094b/work/run-01/.candidate-final-4irhn57u.staging.pptx",
+  "output": "/workspace/scratch/d0e96217094b/work/run-01/candidate-final.pptx",
+  "fonts": [
+    {
+      "family": "Noto Sans CJK SC",
+      "style": "regular",
+      "file": "/workspace/scratch/d0e96217094b/work/ai-ppt-plus/ai-ppt-editable/assets/fonts/NotoSansSC-Regular.ttf",
+      "source_sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+      "license": "SIL Open Font License 1.1",
+      "license_url": "https://scripts.sil.org/OFL",
+      "font_data_size": 16437364,
+      "eot_sha256": "4d3831b34a217da372900d0ec4e9aacbf1b001e4abede94abb417bcfd6b9f048",
+      "embedding_rights": {
+        "fsType": 0,
+        "restricted_license": false,
+        "preview_print": false,
+        "editable": false
+      },
+      "metadata": {
+        "family": "Noto Sans CJK SC",
+        "style_name": "Regular",
+        "full_name": "Noto Sans CJK SC",
+        "weight": 400,
+        "italic": false,
+        "sfnt_format": "OTTO"
+      },
+      "eot": {
+        "format": "EOT v2.0001",
+        "compression": "none",
+        "sfnt_format": "OTTO",
+        "eot_size": 16437642,
+        "font_data_size": 16437364,
+        "font_data_offset": 278
+      },
+      "relationship_id": "rId9",
+      "part": "ppt/fonts/font1.fntdata"
+    }
+  ],
+  "package": {
+    "embedTrueTypeFonts": true,
+    "saveSubsetFonts": false,
+    "content_type": "application/x-fontdata",
+    "font_parts": [
+      "ppt/fonts/font1.fntdata"
+    ],
+    "output_sha256": "b359fabdae1f1208f1f8643ce2e41d8bc95ccd335b8fdc401c00cef7ee781835"
+  },
+  "issues": []
+}

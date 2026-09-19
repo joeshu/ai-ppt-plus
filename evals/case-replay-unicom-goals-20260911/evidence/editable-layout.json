@@ -1,0 +1,1237 @@
+{
+  "schema": "ai-ppt-plus/reference-reconstruction-layout/v2",
+  "project_id": "unicom-goals-16x9-20260911",
+  "slide_width_in": 13.333,
+  "slide_height_in": 7.5,
+  "units": "px",
+  "ref_width": 1536,
+  "ref_height": 864,
+  "assets_dir": "/workspace/scratch/d0e96217094b/work/run-01/assets",
+  "font_dir": "/workspace/scratch/d0e96217094b/ai-ppt-plus/ai-ppt-editable/assets/fonts",
+  "font_manifest": "/workspace/scratch/d0e96217094b/ai-ppt-plus/ai-ppt-editable/assets/fonts/font-manifest.json",
+  "font_family": "Noto Sans CJK SC",
+  "editable_object_policy": "native-semantic-objects",
+  "route": "reference-reconstruction",
+  "theme": {
+    "font": "Noto Sans CJK SC",
+    "text_color": "#111111",
+    "size": 16,
+    "layout_name": "Blank"
+  },
+  "slides": [
+    {
+      "layout_name": "Blank",
+      "shapes": [
+        {
+          "object_id": "top-red-band",
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "w": 164,
+          "h": 92,
+          "fill": "#D40000",
+          "role": "framework",
+          "native_required": true
+        },
+        {
+          "object_id": "top-red-separator",
+          "type": "rect",
+          "x": 163,
+          "y": 0,
+          "w": 3,
+          "h": 92,
+          "fill": "#D40000",
+          "role": "divider",
+          "native_required": true
+        },
+        {
+          "object_id": "header-rule",
+          "type": "rect",
+          "x": 0,
+          "y": 90,
+          "w": 1536,
+          "h": 3,
+          "fill": "#D71920",
+          "role": "divider",
+          "native_required": true
+        },
+        {
+          "object_id": "sec1-pill",
+          "type": "rounded_rect",
+          "x": 24,
+          "y": 169,
+          "w": 277,
+          "h": 49,
+          "fill": "#F4F4F4",
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec1-num",
+          "type": "rounded_rect",
+          "x": 32,
+          "y": 177,
+          "w": 37,
+          "h": 37,
+          "fill": "#D71920",
+          "role": "section-number",
+          "native_required": true
+        },
+        {
+          "object_id": "sec1-panel",
+          "type": "rounded_rect",
+          "x": 24,
+          "y": 221,
+          "w": 1488,
+          "h": 166,
+          "fill": "#FFFFFF",
+          "line": "#E05B5B",
+          "line_width": 0.9,
+          "shadow": true,
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec1-rural-card",
+          "type": "rounded_rect",
+          "x": 303,
+          "y": 249,
+          "w": 293,
+          "h": 129,
+          "gradient": {
+            "angle": 0,
+            "stops": [
+              {
+                "position": 0,
+                "color": "#FFF6F6"
+              },
+              {
+                "position": 1,
+                "color": "#FCEAEA"
+              }
+            ]
+          },
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec1-community-card",
+          "type": "rounded_rect",
+          "x": 895,
+          "y": 249,
+          "w": 260,
+          "h": 129,
+          "gradient": {
+            "angle": 0,
+            "stops": [
+              {
+                "position": 0,
+                "color": "#FFF6F6"
+              },
+              {
+                "position": 1,
+                "color": "#FCEAEA"
+              }
+            ]
+          },
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec1-target-card",
+          "type": "rounded_rect",
+          "x": 1198,
+          "y": 221,
+          "w": 314,
+          "h": 166,
+          "gradient": {
+            "angle": 0,
+            "stops": [
+              {
+                "position": 0,
+                "color": "#FFF9EE"
+              },
+              {
+                "position": 1,
+                "color": "#FFF4DD"
+              }
+            ]
+          },
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec1-divider",
+          "type": "line",
+          "x": 623,
+          "y": 248,
+          "w": 0,
+          "h": 0,
+          "line": "#EEB0B0",
+          "line_width": 0.8,
+          "role": "divider",
+          "native_required": true,
+          "x2": 623,
+          "y2": 383
+        },
+        {
+          "object_id": "sec1-rural-label",
+          "type": "rounded_rect",
+          "x": 159,
+          "y": 282,
+          "w": 129,
+          "h": 57,
+          "fill": "#D71920",
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec1-community-label",
+          "type": "rounded_rect",
+          "x": 759,
+          "y": 282,
+          "w": 132,
+          "h": 57,
+          "fill": "#D71920",
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec2-pill",
+          "type": "rounded_rect",
+          "x": 24,
+          "y": 407,
+          "w": 277,
+          "h": 49,
+          "fill": "#F4F4F4",
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec2-num",
+          "type": "rounded_rect",
+          "x": 32,
+          "y": 414,
+          "w": 37,
+          "h": 37,
+          "fill": "#D71920",
+          "role": "section-number",
+          "native_required": true
+        },
+        {
+          "object_id": "timeline-track-soft",
+          "type": "rect",
+          "x": 96,
+          "y": 544,
+          "w": 1307,
+          "h": 10,
+          "fill": "#FFE5E6",
+          "role": "timeline",
+          "native_required": true
+        },
+        {
+          "object_id": "timeline-track",
+          "type": "rect",
+          "x": 282,
+          "y": 544,
+          "w": 1101,
+          "h": 10,
+          "fill": "#F25760",
+          "opacity": 0.86,
+          "role": "timeline",
+          "native_required": true
+        },
+        {
+          "object_id": "timeline-arrow",
+          "type": "right_arrow",
+          "x": 1371,
+          "y": 532,
+          "w": 35,
+          "h": 34,
+          "fill": "#E6232A",
+          "role": "timeline-arrow",
+          "native_required": true
+        },
+        {
+          "object_id": "timeline-dot-1",
+          "type": "oval",
+          "x": 183,
+          "y": 540,
+          "w": 15,
+          "h": 15,
+          "fill": "#F9C1C3",
+          "role": "timeline-node",
+          "native_required": true
+        },
+        {
+          "object_id": "timeline-dot-2",
+          "type": "oval",
+          "x": 274,
+          "y": 540,
+          "w": 15,
+          "h": 15,
+          "fill": "#E6232A",
+          "role": "timeline-node",
+          "native_required": true
+        },
+        {
+          "object_id": "timeline-dot-3",
+          "type": "oval",
+          "x": 775,
+          "y": 540,
+          "w": 15,
+          "h": 15,
+          "fill": "#E6232A",
+          "role": "timeline-node",
+          "native_required": true
+        },
+        {
+          "object_id": "timeline-dot-4",
+          "type": "oval",
+          "x": 1186,
+          "y": 540,
+          "w": 15,
+          "h": 15,
+          "fill": "#E6232A",
+          "role": "timeline-node",
+          "native_required": true
+        },
+        {
+          "object_id": "timeline-dot-5",
+          "type": "oval",
+          "x": 1310,
+          "y": 540,
+          "w": 15,
+          "h": 15,
+          "fill": "#F9C1C3",
+          "role": "timeline-node",
+          "native_required": true
+        },
+        {
+          "object_id": "date-628-bg",
+          "type": "rounded_rect",
+          "x": 154,
+          "y": 452,
+          "w": 73,
+          "h": 28,
+          "fill": "#D71920",
+          "role": "timeline-date",
+          "native_required": true
+        },
+        {
+          "object_id": "date-7120-bg",
+          "type": "rounded_rect",
+          "x": 496,
+          "y": 447,
+          "w": 144,
+          "h": 28,
+          "fill": "#D71920",
+          "role": "timeline-date",
+          "native_required": true
+        },
+        {
+          "object_id": "date-72131-bg",
+          "type": "rounded_rect",
+          "x": 927,
+          "y": 447,
+          "w": 144,
+          "h": 28,
+          "fill": "#D71920",
+          "role": "timeline-date",
+          "native_required": true
+        },
+        {
+          "object_id": "date-83-bg",
+          "type": "rounded_rect",
+          "x": 1270,
+          "y": 452,
+          "w": 90,
+          "h": 28,
+          "fill": "#D71920",
+          "role": "timeline-date",
+          "native_required": true
+        },
+        {
+          "object_id": "start-pin-circle",
+          "type": "oval",
+          "x": 251,
+          "y": 476,
+          "w": 64,
+          "h": 64,
+          "fill": "#F05A5D",
+          "role": "timeline-node",
+          "native_required": true
+        },
+        {
+          "object_id": "start-pin-tip",
+          "type": "triangle",
+          "x": 272,
+          "y": 527,
+          "w": 22,
+          "h": 24,
+          "fill": "#F05A5D",
+          "rotation": 180,
+          "role": "timeline-node",
+          "native_required": true
+        },
+        {
+          "object_id": "end-node",
+          "type": "oval",
+          "x": 1403,
+          "y": 495,
+          "w": 78,
+          "h": 78,
+          "fill": "#D71920",
+          "role": "timeline-node",
+          "native_required": true
+        },
+        {
+          "object_id": "sec3-pill",
+          "type": "rounded_rect",
+          "x": 24,
+          "y": 569,
+          "w": 240,
+          "h": 49,
+          "fill": "#F4F4F4",
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "sec3-num",
+          "type": "rounded_rect",
+          "x": 32,
+          "y": 576,
+          "w": 37,
+          "h": 37,
+          "fill": "#D71920",
+          "role": "section-number",
+          "native_required": true
+        },
+        {
+          "object_id": "sec3-panel",
+          "type": "rounded_rect",
+          "x": 28,
+          "y": 604,
+          "w": 1464,
+          "h": 194,
+          "fill": "#FFFFFF",
+          "line": "#E2E2E2",
+          "line_width": 0.9,
+          "shadow": true,
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "goal-divider-1",
+          "type": "line",
+          "x": 330,
+          "y": 621,
+          "w": 0,
+          "h": 0,
+          "line": "#BFC0C0",
+          "line_width": 0.9,
+          "role": "divider",
+          "native_required": true,
+          "x2": 330,
+          "y2": 775
+        },
+        {
+          "object_id": "goal-divider-2",
+          "type": "line",
+          "x": 636,
+          "y": 621,
+          "w": 0,
+          "h": 0,
+          "line": "#BFC0C0",
+          "line_width": 0.9,
+          "role": "divider",
+          "native_required": true,
+          "x2": 636,
+          "y2": 775
+        },
+        {
+          "object_id": "goal-divider-3",
+          "type": "line",
+          "x": 911,
+          "y": 621,
+          "w": 0,
+          "h": 0,
+          "line": "#BFC0C0",
+          "line_width": 0.9,
+          "role": "divider",
+          "native_required": true,
+          "x2": 911,
+          "y2": 775
+        },
+        {
+          "object_id": "goal-divider-4",
+          "type": "line",
+          "x": 1202,
+          "y": 621,
+          "w": 0,
+          "h": 0,
+          "line": "#BFC0C0",
+          "line_width": 0.9,
+          "role": "divider",
+          "native_required": true,
+          "x2": 1202,
+          "y2": 775
+        },
+        {
+          "object_id": "goal-bg-1",
+          "type": "rounded_rect",
+          "x": 45,
+          "y": 617,
+          "w": 255,
+          "h": 164,
+          "fill": "#FFFFFF",
+          "opacity": 0.05,
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "goal-bg-2",
+          "type": "rounded_rect",
+          "x": 350,
+          "y": 617,
+          "w": 255,
+          "h": 164,
+          "fill": "#FFFFFF",
+          "opacity": 0.05,
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "goal-bg-3",
+          "type": "rounded_rect",
+          "x": 657,
+          "y": 617,
+          "w": 230,
+          "h": 164,
+          "fill": "#FFFFFF",
+          "opacity": 0.05,
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "goal-bg-4",
+          "type": "rounded_rect",
+          "x": 931,
+          "y": 617,
+          "w": 255,
+          "h": 164,
+          "fill": "#FFFFFF",
+          "opacity": 0.05,
+          "role": "semantic-panel",
+          "native_required": true
+        },
+        {
+          "object_id": "goal-bg-5",
+          "type": "rounded_rect",
+          "x": 1222,
+          "y": 617,
+          "w": 238,
+          "h": 164,
+          "fill": "#FFFFFF",
+          "opacity": 0.05,
+          "role": "semantic-panel",
+          "native_required": true
+        }
+      ],
+      "groups": [
+        {
+          "object_id": "goal-component-1",
+          "x": 45,
+          "y": 617,
+          "w": 255,
+          "h": 164,
+          "children_coordinate_space": "local",
+          "role": "repeated_component_group",
+          "native_required": true,
+          "alt_text": "目标要求组件1",
+          "children": []
+        },
+        {
+          "object_id": "goal-component-2",
+          "x": 350,
+          "y": 617,
+          "w": 255,
+          "h": 164,
+          "children_coordinate_space": "local",
+          "role": "repeated_component_group",
+          "native_required": true,
+          "alt_text": "目标要求组件2",
+          "children": []
+        },
+        {
+          "object_id": "goal-component-3",
+          "x": 657,
+          "y": 617,
+          "w": 230,
+          "h": 164,
+          "children_coordinate_space": "local",
+          "role": "repeated_component_group",
+          "native_required": true,
+          "alt_text": "目标要求组件3",
+          "children": []
+        },
+        {
+          "object_id": "goal-component-4",
+          "x": 931,
+          "y": 617,
+          "w": 255,
+          "h": 164,
+          "children_coordinate_space": "local",
+          "role": "repeated_component_group",
+          "native_required": true,
+          "alt_text": "目标要求组件4",
+          "children": []
+        },
+        {
+          "object_id": "goal-component-5",
+          "x": 1222,
+          "y": 617,
+          "w": 238,
+          "h": 164,
+          "children_coordinate_space": "local",
+          "role": "repeated_component_group",
+          "native_required": true,
+          "alt_text": "目标要求组件5",
+          "children": []
+        }
+      ],
+      "icons": [
+        {
+          "object_id": "icon-rural",
+          "file": "icons/rural.png",
+          "x": 47,
+          "y": 247,
+          "w": 124,
+          "h": 124,
+          "role": "icon",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            46,
+            291,
+            132,
+            132
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "农村市场图标"
+        },
+        {
+          "object_id": "icon-community",
+          "file": "icons/community.png",
+          "x": 642,
+          "y": 247,
+          "w": 124,
+          "h": 124,
+          "role": "icon",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            640,
+            291,
+            132,
+            132
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "社区市场图标"
+        },
+        {
+          "object_id": "icon-target",
+          "file": "icons/target.png",
+          "x": 1216,
+          "y": 255,
+          "w": 88,
+          "h": 96,
+          "role": "icon",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            1218,
+            304,
+            92,
+            100
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "目标要求图标"
+        },
+        {
+          "object_id": "icon-logo",
+          "file": "logo.png",
+          "x": 1295,
+          "y": 7,
+          "w": 214,
+          "h": 88,
+          "role": "logo",
+          "asset_policy": "brand_lockup",
+          "source_bbox": [
+            1280,
+            8,
+            230,
+            95
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "中国联通 China Unicom 标志"
+        },
+        {
+          "object_id": "icon-goal-1",
+          "file": "icons/goal1.png",
+          "x": 132,
+          "y": 619,
+          "w": 94,
+          "h": 94,
+          "role": "icon",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            130,
+            732,
+            96,
+            96
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "对标先进图标"
+        },
+        {
+          "object_id": "icon-goal-2",
+          "file": "icons/goal2.png",
+          "x": 435,
+          "y": 619,
+          "w": 94,
+          "h": 94,
+          "role": "icon",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            433,
+            732,
+            96,
+            96
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "聚焦双新图标"
+        },
+        {
+          "object_id": "icon-goal-3",
+          "file": "icons/goal3.png",
+          "x": 722,
+          "y": 619,
+          "w": 94,
+          "h": 94,
+          "role": "icon",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            720,
+            732,
+            96,
+            96
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "全员参与图标"
+        },
+        {
+          "object_id": "icon-goal-4",
+          "file": "icons/goal4.png",
+          "x": 1011,
+          "y": 619,
+          "w": 94,
+          "h": 94,
+          "role": "icon",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            1009,
+            732,
+            96,
+            96
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "以质取胜图标"
+        },
+        {
+          "object_id": "icon-goal-5",
+          "file": "icons/goal5.png",
+          "x": 1289,
+          "y": 619,
+          "w": 94,
+          "h": 94,
+          "role": "icon",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            1287,
+            732,
+            96,
+            96
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "持续增长图标"
+        },
+        {
+          "object_id": "bottom-wave",
+          "file": "bottom-wave.png",
+          "x": 0,
+          "y": 794,
+          "w": 1536,
+          "h": 70,
+          "role": "decorative_art",
+          "asset_policy": "normal_asset",
+          "source_bbox": [
+            0,
+            944,
+            1536,
+            80
+          ],
+          "extraction_method": "source_reuse",
+          "alt_text": "底部红色弧形装饰"
+        }
+      ],
+      "texts": [
+        {
+          "object_id": "top-kicker",
+          "text": "夺高点\n争上扬",
+          "x": 31,
+          "y": 13,
+          "w": 111,
+          "h": 72,
+          "size_px": 28,
+          "font": "Noto Sans CJK SC",
+          "color": "#FFF200",
+          "bold": true,
+          "align": "center",
+          "valign": "middle",
+          "line_spacing": 0.92,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            32,
+            16,
+            98,
+            76
+          ]
+        },
+        {
+          "object_id": "top-section",
+          "text": "第二部分",
+          "x": 201,
+          "y": 27,
+          "w": 174,
+          "h": 50,
+          "size_px": 34,
+          "font": "Noto Sans CJK SC",
+          "color": "#565656",
+          "bold": true,
+          "align": "left",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            201,
+            45,
+            161,
+            38
+          ]
+        },
+        {
+          "object_id": "top-title",
+          "text": "目标（干多少）",
+          "x": 385,
+          "y": 18,
+          "w": 450,
+          "h": 67,
+          "size_px": 56,
+          "font": "Noto Sans CJK SC",
+          "color": "#C9151E",
+          "bold": true,
+          "align": "left",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            385,
+            31,
+            390,
+            57
+          ]
+        },
+        {
+          "object_id": "strategy-banner",
+          "text": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！",
+          "x": 188,
+          "y": 119,
+          "w": 1160,
+          "h": 44,
+          "size_px": 30,
+          "font": "Noto Sans CJK SC",
+          "color": "#111111",
+          "bold": true,
+          "align": "center",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "runs": [
+            {
+              "text": "紧盯标杆打造目标，以",
+              "color": "#111111",
+              "bold": true,
+              "size_px": 30
+            },
+            {
+              "text": "移宽双新融合",
+              "color": "#D71920",
+              "bold": true,
+              "size_px": 30
+            },
+            {
+              "text": "为主攻方向，全力完成三季度发展任务！",
+              "color": "#111111",
+              "bold": true,
+              "size_px": 30
+            }
+          ],
+          "source_bbox": [
+            204,
+            145,
+            1129,
+            39
+          ]
+        },
+        {
+          "object_id": "sec1-num-text",
+          "text": "1",
+          "x": 32,
+          "y": 177,
+          "w": 37,
+          "h": 37,
+          "size_px": 29,
+          "font": "Noto Sans CJK SC",
+          "color": "#FFFFFF",
+          "bold": true,
+          "align": "center",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            42,
+            216,
+            22,
+            34
+          ]
+        },
+        {
+          "object_id": "sec1-title",
+          "text": "标杆打造目标",
+          "x": 82,
+          "y": 172,
+          "w": 220,
+          "h": 42,
+          "size_px": 30,
+          "font": "Noto Sans CJK SC",
+          "color": "#C9151E",
+          "bold": true,
+          "align": "left",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            83,
+            216,
+            202,
+            33
+          ]
+        },
+        {
+          "object_id": "rural-label-text",
+          "text": "农村市场",
+          "x": 166,
+          "y": 291,
+          "w": 117,
+          "h": 38,
+          "size_px": 24,
+          "font": "Noto Sans CJK SC",
+          "color": "#FFFFFF",
+          "bold": true,
+          "align": "center",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            175,
+            345,
+            101,
+            31
+          ]
+        },
+        {
+          "object_id": "rural-kpi",
+          "text": "50个重点网格30户\n其余网格20户",
+          "x": 318,
+          "y": 308,
+          "w": 270,
+          "h": 75,
+          "size_px": 20,
+          "font": "Noto Sans CJK SC",
+          "color": "#111111",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "line_spacing": 1.18,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "runs": [
+            {
+              "text": "50个",
+              "color": "#D71920",
+              "bold": true,
+              "size_px": 29
+            },
+            {
+              "text": "重点网格",
+              "color": "#111111",
+              "bold": true,
+              "size_px": 21
+            },
+            {
+              "text": "30户",
+              "color": "#D71920",
+              "bold": true,
+              "size_px": 29
+            },
+            {
+              "text": "\n其余网格",
+              "color": "#111111",
+              "bold": true,
+              "size_px": 21
+            },
+            {
+              "text": "20户",
+              "color": "#D71920",
+              "bold": true,
+              "size_px": 29
+            }
+          ],
+          "source_bbox": [
+            318,
+            322,
+            274,
+            88
+          ]
+        },
+        {
+          "object_id": "community-label-text",
+          "text": "社区市场",
+          "x": 767,
+          "y": 291,
+          "w": 117,
+          "h": 38,
+          "size_px": 24,
+          "font": "Noto Sans CJK SC",
+          "color": "#FFFFFF",
+          "bold": true,
+          "align": "center",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            771,
+            345,
+            103,
+            31
+          ]
+        },
+        {
+          "object_id": "community-kpi",
+          "text": "每个标杆社区20户",
+          "x": 913,
+          "y": 326,
+          "w": 235,
+          "h": 42,
+          "size_px": 20,
+          "font": "Noto Sans CJK SC",
+          "color": "#111111",
+          "bold": true,
+          "align": "left",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "runs": [
+            {
+              "text": "每个标杆社区",
+              "color": "#111111",
+              "bold": true,
+              "size_px": 22
+            },
+            {
+              "text": "20户",
+              "color": "#D71920",
+              "bold": true,
+              "size_px": 29
+            }
+          ],
+          "source_bbox": [
+            913,
+            360,
+            235,
+            32
+          ]
+        },
+        {
+          "object_id": "target-title",
+          "text": "目标要求",
+          "x": 1312,
+          "y": 266,
+          "w": 177,
+          "h": 40,
+          "size_px": 28,
+          "font": "Noto Sans CJK SC",
+          "color": "#C9151E",
+          "bold": true,
+          "align": "left",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            1316,
+            311,
+            116,
+            32
+          ]
+        },
+        {
+          "object_id": "target-body",
+          "text": "全部以79元及以上\n移宽双新融合为目标",
+          "x": 1312,
+          "y": 322,
+          "w": 180,
+          "h": 66,
+          "size_px": 17,
+          "font": "Noto Sans CJK SC",
+          "color": "#111111",
+          "bold": true,
+          "align": "left",
+          "valign": "top",
+          "line_spacing": 1.26,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "runs": [
+            {
+              "text": "全部以",
+              "color": "#111111",
+              "bold": true,
+              "size_px": 18
+            },
+            {
+              "text": "79元及以上",
+              "color": "#D71920",
+              "bold": true,
+              "size_px": 18
+            },
+            {
+              "text": "\n移宽双新融合为目标",
+              "color": "#111111",
+              "bold": true,
+              "size_px": 18
+            }
+          ],
+          "source_bbox": [
+            1315,
+            366,
+            173,
+            53
+          ]
+        },
+        {
+          "object_id": "sec2-num-text",
+          "text": "2",
+          "x": 32,
+          "y": 414,
+          "w": 37,
+          "h": 37,
+          "size_px": 29,
+          "font": "Noto Sans CJK SC",
+          "color": "#FFFFFF",
+          "bold": true,
+          "align": "center",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            42,
+            491,
+            22,
+            34
+          ]
+        },
+        {
+          "object_id": "sec2-title",
+          "text": "推进节奏安排",
+          "x": 82,
+          "y": 410,
+          "w": 220,
+          "h": 42,
+          "size_px": 30,
+          "font": "Noto Sans CJK SC",
+          "color": "#C9151E",
+          "bold": true,
+          "align": "left",
+          "valign": "middle",
+          "line_spacing": 1.0,
+          "margin_left": 0,
+          "margin_right": 0,
+          "margin_top": 0,
+          "margin_bottom": 0,
+          "role": "formal-text",
+          "source_bbox": [
+            83,
+            493,
+            202,
+            33
+          ]
+        },
+        {
+          "object_id": "date-6

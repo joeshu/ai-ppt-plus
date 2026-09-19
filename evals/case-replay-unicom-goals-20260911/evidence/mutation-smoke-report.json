@@ -1,0 +1,32 @@
+{
+  "schema": "ai-ppt-plus/mutation-smoke/v1",
+  "status": "passed",
+  "formal_deck": "/workspace/scratch/d0e96217094b/work/run-01/unicom-goals-16x9-editable-final.pptx",
+  "mutation_deck": "/workspace/scratch/d0e96217094b/work/run-01/mutation-smoke.pptx",
+  "mutations": [
+    "title text",
+    "date-628 text",
+    "date-628-bg fill",
+    "icon-goal-1 left"
+  ],
+  "checks": {
+    "title_changed": true,
+    "number_changed": true,
+    "color_changed": true,
+    "icon_position_changed": true,
+    "formal_final_unchanged": true
+  },
+  "original": {
+    "title": "目标（干多少）",
+    "number": "6.28",
+    "block_fill": "D71920",
+    "icon_left": 1047723
+  },
+  "reopened": {
+    "title": "目标（干多少）*",
+    "number": "9.99",
+    "block_fill": "0066CC",
+    "icon_left": 1147723
+  },
+  "restored_formal_version": true
+}

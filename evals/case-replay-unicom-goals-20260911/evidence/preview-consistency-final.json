@@ -1,0 +1,48 @@
+{
+  "schema": "ai-ppt-plus/preview-consistency-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "rendered_dir": "/workspace/scratch/d0e96217094b/work/run-01/render-final",
+  "preview_dir": "/workspace/scratch/d0e96217094b/work/run-01/preview-final",
+  "expected_pages": 1,
+  "require": true,
+  "threshold": null,
+  "pages": [
+    {
+      "slide": 1,
+      "rendered": "/workspace/scratch/d0e96217094b/work/run-01/render-final/slide-1.png",
+      "preview": "/workspace/scratch/d0e96217094b/work/run-01/preview-final/slide_01.png",
+      "metrics": {
+        "global_ssim": 0.766963,
+        "blurred_layout_ssim": 0.949809,
+        "mean_absolute_error": 0.061984,
+        "rmse": 0.183998,
+        "pixel_fidelity_score": 0.938016,
+        "rendered_size": [
+          1920,
+          1080
+        ],
+        "preview_size": [
+          1536,
+          864
+        ],
+        "comparison_size": [
+          1920,
+          1080
+        ],
+        "resized_for_comparison": true
+      },
+      "issues": []
+    }
+  ],
+  "aggregate": {
+    "compared_pages": 1,
+    "worst_blurred_layout_ssim": 0.949809,
+    "mean_blurred_layout_ssim": 0.949809,
+    "mean_pixel_fidelity_score": 0.938016
+  },
+  "issues": [],
+  "warnings": [],
+  "human_visual_review_required": true,
+  "limitation": "the final renderer remains the visual source of truth; preview metrics are diagnostic and do not prove semantic correctness"
+}

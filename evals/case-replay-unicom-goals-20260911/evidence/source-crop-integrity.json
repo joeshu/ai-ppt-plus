@@ -1,0 +1,202 @@
+{
+  "schema": "ai-ppt-plus/source-crop-integrity/v1",
+  "manifest": "/workspace/scratch/d0e96217094b/work/run-01/imagegen-assets-manifest.json",
+  "status": "passed",
+  "valid": true,
+  "source_reuse_count": 10,
+  "verified_count": 10,
+  "records": [
+    {
+      "asset_id": "icon-rural",
+      "source_bbox": [
+        46,
+        291,
+        132,
+        132
+      ],
+      "source_crop_policy": "derived",
+      "source_crop_size": [
+        132,
+        132
+      ],
+      "observed_source_crop_sha256": "0b27ca19c974e1aefbdd3d2ab6b8ba9475cd6f37df3d62271d3ccbb019138ae4"
+    },
+    {
+      "asset_id": "icon-community",
+      "source_bbox": [
+        640,
+        291,
+        132,
+        132
+      ],
+      "source_crop_policy": "derived",
+      "source_crop_size": [
+        132,
+        132
+      ],
+      "observed_source_crop_sha256": "7f58bc20f6d29ba27d021dbe54cc2e65d60247315d92c3da44087cceab57114b"
+    },
+    {
+      "asset_id": "icon-target",
+      "source_bbox": [
+        1218,
+        304,
+        92,
+        100
+      ],
+      "source_crop_policy": "exact",
+      "source_crop_size": [
+        92,
+        100
+      ],
+      "observed_source_crop_sha256": "71ca1668925b329ceaba5281ad34281182a102ec63f12c5aa077e4d50a8cc78c",
+      "copied_asset_size": [
+        92,
+        100
+      ],
+      "copied_asset_pixel_sha256": "71ca1668925b329ceaba5281ad34281182a102ec63f12c5aa077e4d50a8cc78c"
+    },
+    {
+      "asset_id": "icon-logo",
+      "source_bbox": [
+        1280,
+        8,
+        230,
+        95
+      ],
+      "source_crop_policy": "exact",
+      "source_crop_size": [
+        230,
+        95
+      ],
+      "observed_source_crop_sha256": "6a10182c0114c3544b4a18e39109dffa5ae8c9eaaff5c774721f359f42e362ff",
+      "copied_asset_size": [
+        230,
+        95
+      ],
+      "copied_asset_pixel_sha256": "6a10182c0114c3544b4a18e39109dffa5ae8c9eaaff5c774721f359f42e362ff"
+    },
+    {
+      "asset_id": "icon-goal-1",
+      "source_bbox": [
+        130,
+        732,
+        96,
+        96
+      ],
+      "source_crop_policy": "exact",
+      "source_crop_size": [
+        96,
+        96
+      ],
+      "observed_source_crop_sha256": "4f1e705c965e5ad955a2711ae196e707488f92b45bd24b504af75b3d3f3c7550",
+      "copied_asset_size": [
+        96,
+        96
+      ],
+      "copied_asset_pixel_sha256": "4f1e705c965e5ad955a2711ae196e707488f92b45bd24b504af75b3d3f3c7550"
+    },
+    {
+      "asset_id": "icon-goal-2",
+      "source_bbox": [
+        433,
+        732,
+        96,
+        96
+      ],
+      "source_crop_policy": "exact",
+      "source_crop_size": [
+        96,
+        96
+      ],
+      "observed_source_crop_sha256": "5772cfdb423efbe300c8b533d7bccdb270e614d9c84a3a5e0756e24e1d3dea04",
+      "copied_asset_size": [
+        96,
+        96
+      ],
+      "copied_asset_pixel_sha256": "5772cfdb423efbe300c8b533d7bccdb270e614d9c84a3a5e0756e24e1d3dea04"
+    },
+    {
+      "asset_id": "icon-goal-3",
+      "source_bbox": [
+        720,
+        732,
+        96,
+        96
+      ],
+      "source_crop_policy": "exact",
+      "source_crop_size": [
+        96,
+        96
+      ],
+      "observed_source_crop_sha256": "387e1ed1311f3c639bd908d04eb28742c5728385923d9635f73df1886f92fa1d",
+      "copied_asset_size": [
+        96,
+        96
+      ],
+      "copied_asset_pixel_sha256": "387e1ed1311f3c639bd908d04eb28742c5728385923d9635f73df1886f92fa1d"
+    },
+    {
+      "asset_id": "icon-goal-4",
+      "source_bbox": [
+        1009,
+        732,
+        96,
+        96
+      ],
+      "source_crop_policy": "exact",
+      "source_crop_size": [
+        96,
+        96
+      ],
+      "observed_source_crop_sha256": "ef10c0d5591e7d215e605d83ccd5f3f1fcfff55ad4362483fce3af8819a2ece3",
+      "copied_asset_size": [
+        96,
+        96
+      ],
+      "copied_asset_pixel_sha256": "ef10c0d5591e7d215e605d83ccd5f3f1fcfff55ad4362483fce3af8819a2ece3"
+    },
+    {
+      "asset_id": "icon-goal-5",
+      "source_bbox": [
+        1287,
+        732,
+        96,
+        96
+      ],
+      "source_crop_policy": "exact",
+      "source_crop_size": [
+        96,
+        96
+      ],
+      "observed_source_crop_sha256": "143a1bf730d404875a5adc3383494a193a2d16e81428f8e3ab3d175c63b947c9",
+      "copied_asset_size": [
+        96,
+        96
+      ],
+      "copied_asset_pixel_sha256": "143a1bf730d404875a5adc3383494a193a2d16e81428f8e3ab3d175c63b947c9"
+    },
+    {
+      "asset_id": "bottom-wave",
+      "source_bbox": [
+        0,
+        944,
+        1536,
+        80
+      ],
+      "source_crop_policy": "exact",
+      "source_crop_size": [
+        1536,
+        80
+      ],
+      "observed_source_crop_sha256": "893cdc9d9d8d562c5934ac31eab541792d40553c80a779808dee517c5df8d40f",
+      "copied_asset_size": [
+        1536,
+        80
+      ],
+      "copied_asset_pixel_sha256": "893cdc9d9d8d562c5934ac31eab541792d40553c80a779808dee517c5df8d40f"
+    }
+  ],
+  "issues": [],
+  "human_visual_review_required": true
+}

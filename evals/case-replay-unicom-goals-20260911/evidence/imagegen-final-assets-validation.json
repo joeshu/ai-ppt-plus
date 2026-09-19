@@ -1,0 +1,89 @@
+{
+  "schema": "ai-ppt-plus/imagegen-final-assets/v2",
+  "valid": true,
+  "strict": true,
+  "required_classes": [
+    "artistic_typography",
+    "badge",
+    "complex_art",
+    "decorative_art",
+    "gradient",
+    "gradient_visual",
+    "icon",
+    "icons",
+    "illustration"
+  ],
+  "asset_count": 10,
+  "records": [
+    {
+      "asset_id": "icon-rural",
+      "asset_class": "icon",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/icons/rural.png"
+    },
+    {
+      "asset_id": "icon-community",
+      "asset_class": "icon",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/icons/community.png"
+    },
+    {
+      "asset_id": "icon-target",
+      "asset_class": "icon",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/icons/target.png"
+    },
+    {
+      "asset_id": "icon-logo",
+      "asset_class": "logo",
+      "route": "official-brand-exception"
+    },
+    {
+      "asset_id": "icon-goal-1",
+      "asset_class": "icon",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/icons/goal1.png"
+    },
+    {
+      "asset_id": "icon-goal-2",
+      "asset_class": "icon",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/icons/goal2.png"
+    },
+    {
+      "asset_id": "icon-goal-3",
+      "asset_class": "icon",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/icons/goal3.png"
+    },
+    {
+      "asset_id": "icon-goal-4",
+      "asset_class": "icon",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/icons/goal4.png"
+    },
+    {
+      "asset_id": "icon-goal-5",
+      "asset_class": "icon",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/icons/goal5.png"
+    },
+    {
+      "asset_id": "bottom-wave",
+      "asset_class": "decorative_art",
+      "route": "source_reuse",
+      "generated_source": null,
+      "copied_to": "assets/bottom-wave.png"
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

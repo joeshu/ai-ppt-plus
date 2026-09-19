@@ -1,0 +1,1526 @@
+{
+  "schema_version": "1.1",
+  "kind": "slide",
+  "schema": "ai-ppt-plus/slide-manifest/v1",
+  "project_id": "unicom-goals-16x9-20260911",
+  "state": "reconstruction",
+  "outline_revision": 1,
+  "design_system_revision": 1,
+  "backend": "python-pptx",
+  "editability_protocol": "L0-L5/v1",
+  "assets": [],
+  "gate_requirements": {
+    "object_manifest": true,
+    "semantic_object_audit": true,
+    "manifest_registry": true,
+    "text_model": true,
+    "text_style_map": true,
+    "icon_assets": true,
+    "imagegen_assets": true,
+    "panel_assets": true,
+    "panel_approval": true,
+    "gradient_visual": true,
+    "source_image_validation": true,
+    "reference_audit": true,
+    "content_inventory": true,
+    "asset_hashes": true
+  },
+  "slides": [
+    {
+      "slide_id": "S01",
+      "slide_no": 1,
+      "page_type": "infographic",
+      "state": "reconstruction",
+      "batch_id": "B01",
+      "reference_image": "reference.png",
+      "formal_content_source": "formal-copy.json",
+      "visual_source": "reference.png",
+      "object_plan": "/workspace/scratch/d0e96217094b/work/run-01/slide-object-manifest.json",
+      "asset_status": "complete",
+      "placeholder_reason": null,
+      "asset_ids": [
+        "icon-rural",
+        "icon-community",
+        "icon-target",
+        "icon-logo",
+        "icon-goal-1",
+        "icon-goal-2",
+        "icon-goal-3",
+        "icon-goal-4",
+        "icon-goal-5",
+        "bottom-wave"
+      ],
+      "objects": [
+        {
+          "object_id": "top-red-band",
+          "role": "framework",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "top-red-separator",
+          "role": "divider",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "header-rule",
+          "role": "divider",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "sec1-pill",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec1-num",
+          "role": "section-number",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "sec1-panel",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec1-rural-card",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec1-community-card",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec1-target-card",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec1-divider",
+          "role": "divider",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "sec1-rural-label",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec1-community-label",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec2-pill",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec2-num",
+          "role": "section-number",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "timeline-track-soft",
+          "role": "timeline",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "timeline-track",
+          "role": "timeline",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "timeline-arrow",
+          "role": "timeline-arrow",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "timeline-dot-1",
+          "role": "timeline-node",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "timeline-dot-2",
+          "role": "timeline-node",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "timeline-dot-3",
+          "role": "timeline-node",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "timeline-dot-4",
+          "role": "timeline-node",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "timeline-dot-5",
+          "role": "timeline-node",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "date-628-bg",
+          "role": "timeline-date",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "date-7120-bg",
+          "role": "timeline-date",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "date-72131-bg",
+          "role": "timeline-date",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "date-83-bg",
+          "role": "timeline-date",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "start-pin-circle",
+          "role": "timeline-node",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "start-pin-tip",
+          "role": "timeline-node",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "end-node",
+          "role": "timeline-node",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "sec3-pill",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "sec3-num",
+          "role": "section-number",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "sec3-panel",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "goal-divider-1",
+          "role": "divider",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "goal-divider-2",
+          "role": "divider",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "goal-divider-3",
+          "role": "divider",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "goal-divider-4",
+          "role": "divider",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null
+        },
+        {
+          "object_id": "goal-bg-1",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "goal-bg-2",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "goal-bg-3",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "goal-bg-4",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "goal-bg-5",
+          "role": "semantic-panel",
+          "object_type": "native_shape",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "component_ref": null,
+          "independent": true
+        },
+        {
+          "object_id": "goal-component-1",
+          "role": "repeated_component_group",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [],
+          "component_ref": null
+        },
+        {
+          "object_id": "goal-component-2",
+          "role": "repeated_component_group",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [],
+          "component_ref": null
+        },
+        {
+          "object_id": "goal-component-3",
+          "role": "repeated_component_group",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [],
+          "component_ref": null
+        },
+        {
+          "object_id": "goal-component-4",
+          "role": "repeated_component_group",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [],
+          "component_ref": null
+        },
+        {
+          "object_id": "goal-component-5",
+          "role": "repeated_component_group",
+          "object_type": "native_group",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "native_required": true,
+          "editable_components": true,
+          "children": [],
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-rural",
+          "role": "icon",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/icons/rural.png",
+          "provenance": "icons/rural.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "99b31eb40ca1832d381f39aaab91350b3002fc5795cd5a6e4d349a68a8b99608",
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-community",
+          "role": "icon",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/icons/community.png",
+          "provenance": "icons/community.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "3c029fbf3c0ad1ac28fbfa5faf406e6ff29c17c76953f612b5b0579159e7bf09",
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-target",
+          "role": "icon",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/icons/target.png",
+          "provenance": "icons/target.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "da297b594a93aa6623b0b875c612c10c6db823cf400decfde1439dbd1652934a",
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-logo",
+          "role": "logo",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/logo.png",
+          "provenance": "logo.png",
+          "asset_policy": "brand_lockup",
+          "brand_asset_contract": {
+            "whole_asset": true,
+            "allow_crop": false
+          },
+          "source_sha256": "51799519c433b46cdfecfbe64f74458c39e5d46ffa3ad24639d1327300ea8e87",
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-goal-1",
+          "role": "icon",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/icons/goal1.png",
+          "provenance": "icons/goal1.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "3e1ef3ad4b7b1be657c52ee8d8eb4da1b4184996a09b6f643d5d30c4ed6ece55",
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-goal-2",
+          "role": "icon",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/icons/goal2.png",
+          "provenance": "icons/goal2.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "820a5bf9c7ccf87f86823f538a2f604be633ece627e2dfd0847d2664b63abdda",
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-goal-3",
+          "role": "icon",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/icons/goal3.png",
+          "provenance": "icons/goal3.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "53ea467adb49734e6e6a461d9a8196f2d739227ab4b69c6b86f6a54bb4fdf16c",
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-goal-4",
+          "role": "icon",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/icons/goal4.png",
+          "provenance": "icons/goal4.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "b05125b62b46d73551732444eed938e558479cbfa446953b4200985e75464e45",
+          "component_ref": null
+        },
+        {
+          "object_id": "icon-goal-5",
+          "role": "icon",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/icons/goal5.png",
+          "provenance": "icons/goal5.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "457235c0e8053c9f62d3bdd3dea537cc2180815739dc3c08bd2b1aae5aeb816d",
+          "component_ref": null
+        },
+        {
+          "object_id": "bottom-wave",
+          "role": "decorative_art",
+          "object_type": "extracted_icon",
+          "editability_level": "L2",
+          "required_for_delivery": true,
+          "human_review_required": true,
+          "replaceable": true,
+          "vector_asset": false,
+          "contains_formal_content": false,
+          "source_path": "assets/bottom-wave.png",
+          "provenance": "bottom-wave.png",
+          "asset_policy": "normal_asset",
+          "brand_asset_contract": null,
+          "source_sha256": "11ed3b03fbf1ed79978a3b09e506e5ae7c36469811db423178e0dc71ca70b7ee",
+          "component_ref": null
+        },
+        {
+          "object_id": "top-kicker",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "top-kicker",
+            "slide_no": 1,
+            "content": "夺高点\n争上扬",
+            "source_bbox": [
+              32.0,
+              16.0,
+              98.0,
+              76.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 31.0,
+              "y": 13.0,
+              "w": 111.0,
+              "h": 72.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 28,
+              "color": "#FFF200",
+              "bold": true,
+              "line_spacing": 0.92,
+              "align": "center",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 1,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "raw_text_present": true,
+            "declared_text": "夺高点\n争上扬"
+          }
+        },
+        {
+          "object_id": "top-section",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "top-section",
+            "slide_no": 1,
+            "content": "第二部分",
+            "source_bbox": [
+              201.0,
+              45.0,
+              161.0,
+              38.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 201.0,
+              "y": 27.0,
+              "w": 174.0,
+              "h": 50.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 34,
+              "color": "#565656",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "left",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 2,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "raw_text_present": true,
+            "declared_text": "第二部分"
+          }
+        },
+        {
+          "object_id": "top-title",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "top-title",
+            "slide_no": 1,
+            "content": "目标（干多少）",
+            "source_bbox": [
+              385.0,
+              31.0,
+              390.0,
+              57.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 385.0,
+              "y": 18.0,
+              "w": 450.0,
+              "h": 67.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 56,
+              "color": "#C9151E",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "left",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 3,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "raw_text_present": true,
+            "declared_text": "目标（干多少）"
+          }
+        },
+        {
+          "object_id": "strategy-banner",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "strategy-banner",
+            "slide_no": 1,
+            "content": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！",
+            "source_bbox": [
+              204.0,
+              145.0,
+              1129.0,
+              39.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 188.0,
+              "y": 119.0,
+              "w": 1160.0,
+              "h": 44.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 30,
+              "color": "#111111",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "center",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [
+              {
+                "run_id": "strategy-banner.r01",
+                "text": "紧盯标杆打造目标，以",
+                "style": {
+                  "size_px": 30,
+                  "color": "#111111",
+                  "bold": true
+                }
+              },
+              {
+                "run_id": "strategy-banner.r02",
+                "text": "移宽双新融合",
+                "style": {
+                  "size_px": 30,
+                  "color": "#D71920",
+                  "bold": true
+                }
+              },
+              {
+                "run_id": "strategy-banner.r03",
+                "text": "为主攻方向，全力完成三季度发展任务！",
+                "style": {
+                  "size_px": 30,
+                  "color": "#111111",
+                  "bold": true
+                }
+              }
+            ],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 4,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "declared_text": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！"
+          }
+        },
+        {
+          "object_id": "sec1-num-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "sec1-num-text",
+            "slide_no": 1,
+            "content": "1",
+            "source_bbox": [
+              42.0,
+              216.0,
+              22.0,
+              34.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 32.0,
+              "y": 177.0,
+              "w": 37.0,
+              "h": 37.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 29,
+              "color": "#FFFFFF",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "center",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 5,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "raw_text_present": true,
+            "declared_text": "1"
+          }
+        },
+        {
+          "object_id": "sec1-title",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "sec1-title",
+            "slide_no": 1,
+            "content": "标杆打造目标",
+            "source_bbox": [
+              83.0,
+              216.0,
+              202.0,
+              33.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 82.0,
+              "y": 172.0,
+              "w": 220.0,
+              "h": 42.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 30,
+              "color": "#C9151E",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "left",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 6,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "raw_text_present": true,
+            "declared_text": "标杆打造目标"
+          }
+        },
+        {
+          "object_id": "rural-label-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "rural-label-text",
+            "slide_no": 1,
+            "content": "农村市场",
+            "source_bbox": [
+              175.0,
+              345.0,
+              101.0,
+              31.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 166.0,
+              "y": 291.0,
+              "w": 117.0,
+              "h": 38.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 24,
+              "color": "#FFFFFF",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "center",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 7,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "raw_text_present": true,
+            "declared_text": "农村市场"
+          }
+        },
+        {
+          "object_id": "rural-kpi",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "rural-kpi",
+            "slide_no": 1,
+            "content": "50个重点网格30户\n其余网格20户",
+            "source_bbox": [
+              318.0,
+              322.0,
+              274.0,
+              88.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 318.0,
+              "y": 308.0,
+              "w": 270.0,
+              "h": 75.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 20,
+              "color": "#111111",
+              "bold": true,
+              "line_spacing": 1.18,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [
+              {
+                "run_id": "rural-kpi.r01",
+                "text": "50个",
+                "style": {
+                  "size_px": 29,
+                  "color": "#D71920",
+                  "bold": true
+                }
+              },
+              {
+                "run_id": "rural-kpi.r02",
+                "text": "重点网格",
+                "style": {
+                  "size_px": 21,
+                  "color": "#111111",
+                  "bold": true
+                }
+              },
+              {
+                "run_id": "rural-kpi.r03",
+                "text": "30户",
+                "style": {
+                  "size_px": 29,
+                  "color": "#D71920",
+                  "bold": true
+                }
+              },
+              {
+                "run_id": "rural-kpi.r04",
+                "text": "\n其余网格",
+                "style": {
+                  "size_px": 21,
+                  "color": "#111111",
+                  "bold": true
+                }
+              },
+              {
+                "run_id": "rural-kpi.r05",
+                "text": "20户",
+                "style": {
+                  "size_px": 29,
+                  "color": "#D71920",
+                  "bold": true
+                }
+              }
+            ],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 8,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "declared_text": "50个重点网格30户\n其余网格20户"
+          }
+        },
+        {
+          "object_id": "community-label-text",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "community-label-text",
+            "slide_no": 1,
+            "content": "社区市场",
+            "source_bbox": [
+              771.0,
+              345.0,
+              103.0,
+              31.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 767.0,
+              "y": 291.0,
+              "w": 117.0,
+              "h": 38.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 24,
+              "color": "#FFFFFF",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "center",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 9,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "raw_text_present": true,
+            "declared_text": "社区市场"
+          }
+        },
+        {
+          "object_id": "community-kpi",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "community-kpi",
+            "slide_no": 1,
+            "content": "每个标杆社区20户",
+            "source_bbox": [
+              913.0,
+              360.0,
+              235.0,
+              32.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 913.0,
+              "y": 326.0,
+              "w": 235.0,
+              "h": 42.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 20,
+              "color": "#111111",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "left",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [
+              {
+                "run_id": "community-kpi.r01",
+                "text": "每个标杆社区",
+                "style": {
+                  "size_px": 22,
+                  "color": "#111111",
+                  "bold": true
+                }
+              },
+              {
+                "run_id": "community-kpi.r02",
+                "text": "20户",
+                "style": {
+                  "size_px": 29,
+                  "color": "#D71920",
+                  "bold": true
+                }
+              }
+            ],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 10,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "declared_text": "每个标杆社区20户"
+          }
+        },
+        {
+          "object_id": "target-title",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "target-title",
+            "slide_no": 1,
+            "content": "目标要求",
+            "source_bbox": [
+              1316.0,
+              311.0,
+              116.0,
+              32.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 1312.0,
+              "y": 266.0,
+              "w": 177.0,
+              "h": 40.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 28,
+              "color": "#C9151E",
+              "bold": true,
+              "line_spacing": 1.0,
+              "align": "left",
+              "valign": "middle",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "font_family": "Noto Sans CJK SC"
+            },
+            "runs": [],
+            "runs_input_valid": true,
+            "literal_redaction": false,
+            "emphasis_expected": false,
+            "wrap": {
+              "word_wrap": true,
+              "preserve_line_breaks": true
+            },
+            "source_index": 11,
+            "reference_size": {
+              "width": 1536,
+              "height": 864
+            },
+            "raw_text_present": true,
+            "declared_text": "目标要求"
+          }
+        },
+        {
+          "object_id": "target-body",
+          "role": "formal-text",
+          "object_type": "editable_text",
+          "editability_level": "L1",
+          "required_for_delivery": true,
+          "human_review_required": false,
+          "contains_formal_content": false,
+          "provenance": "layout.json",
+          "component_ref": null,
+          "text_spec": {
+            "text_id": "target-body",
+            "slide_no": 1,
+            "content": "全部以79元及以上\n移宽双新融合为目标",
+            "source_bbox": [
+              1315.0,
+              366.0,
+              173.0,
+              53.0
+            ],
+            "coordinate_space": "px",
+            "bbox": {
+              "x": 1312.0,
+              "y": 322.0,
+              "w": 180.0,
+              "h": 66.0
+            },
+            "style": {
+              "font": "Noto Sans CJK SC",
+              "size_px": 17,
+              "color": "#111111",
+              "bold": true,
+              "line_spacing": 1.26,
+              "align": "left",
+              "valign": "top",
+              "margin_left": 0,
+              "margin_right": 0,
+              "margin_top": 0,
+              "margin_bottom": 0,
+              "m��+�מ��+�$zzb�

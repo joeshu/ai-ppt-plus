@@ -1,0 +1,1533 @@
+{
+  "schema": "ai-ppt-plus/native-object-validation/v1",
+  "valid": true,
+  "status": "passed",
+  "deck": "/workspace/scratch/d0e96217094b/work/run-01/unicom-goals-16x9-editable-final.pptx",
+  "object_manifest": "/workspace/scratch/d0e96217094b/work/run-01/slide-object-manifest.json",
+  "requirements": {
+    "require_native_panels": true,
+    "require_native_tables": true,
+    "forbid_whole_slide_pictures": true,
+    "require_complete_manifest": true
+  },
+  "native_table_count": 0,
+  "native_panel_count": 46,
+  "whole_slide_pictures": [],
+  "slides": [
+    {
+      "slide": 1,
+      "top_level_shape_count": 94,
+      "object_count_recursive": 94,
+      "native_tables": 0,
+      "objects": [
+        {
+          "name": "top-red-band",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 1301717,
+          "height": 730250,
+          "normalized_box": [
+            0.0,
+            0.0,
+            0.106771,
+            0.106481
+          ],
+          "text": ""
+        },
+        {
+          "name": "top-red-separator",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1293780,
+          "top": 0,
+          "width": 23811,
+          "height": 730250,
+          "normalized_box": [
+            0.10612,
+            0.0,
+            0.001953,
+            0.106481
+          ],
+          "text": ""
+        },
+        {
+          "name": "header-rule",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 0,
+          "top": 714375,
+          "width": 12191695,
+          "height": 23812,
+          "normalized_box": [
+            0.0,
+            0.104167,
+            1.0,
+            0.003472
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-pill",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 190495,
+          "top": 1341437,
+          "width": 2198632,
+          "height": 388937,
+          "normalized_box": [
+            0.015625,
+            0.195602,
+            0.180339,
+            0.056713
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-num",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 253993,
+          "top": 1404937,
+          "width": 293680,
+          "height": 293687,
+          "normalized_box": [
+            0.020833,
+            0.204861,
+            0.024089,
+            0.042824
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-panel",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 190495,
+          "top": 1754187,
+          "width": 11810704,
+          "height": 1317625,
+          "normalized_box": [
+            0.015625,
+            0.255787,
+            0.96875,
+            0.19213
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-rural-card",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2405002,
+          "top": 1976437,
+          "width": 2325629,
+          "height": 1023937,
+          "normalized_box": [
+            0.197266,
+            0.288194,
+            0.190755,
+            0.149305
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-community-card",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 7103884,
+          "top": 1976437,
+          "width": 2063698,
+          "height": 1023937,
+          "normalized_box": [
+            0.582682,
+            0.288194,
+            0.169271,
+            0.149305
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-target-card",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9508887,
+          "top": 1754187,
+          "width": 2492312,
+          "height": 1317625,
+          "normalized_box": [
+            0.779948,
+            0.255787,
+            0.204427,
+            0.19213
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-divider",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 4944938,
+          "top": 1968500,
+          "width": 0,
+          "height": 1071562,
+          "normalized_box": [
+            0.405599,
+            0.287037,
+            0.0,
+            0.15625
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-rural-label",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1262030,
+          "top": 2238375,
+          "width": 1023911,
+          "height": 452437,
+          "normalized_box": [
+            0.103516,
+            0.326389,
+            0.083984,
+            0.065972
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec1-community-label",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 6024411,
+          "top": 2238375,
+          "width": 1047723,
+          "height": 452437,
+          "normalized_box": [
+            0.494141,
+            0.326389,
+            0.085937,
+            0.065972
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec2-pill",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 190495,
+          "top": 3230562,
+          "width": 2198632,
+          "height": 388937,
+          "normalized_box": [
+            0.015625,
+            0.471065,
+            0.180339,
+            0.056713
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec2-num",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 253993,
+          "top": 3286125,
+          "width": 293680,
+          "height": 293687,
+          "normalized_box": [
+            0.020833,
+            0.479167,
+            0.024089,
+            0.042824
+          ],
+          "text": ""
+        },
+        {
+          "name": "timeline-track-soft",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 761980,
+          "top": 4318000,
+          "width": 10374052,
+          "height": 79375,
+          "normalized_box": [
+            0.0625,
+            0.62963,
+            0.850911,
+            0.011574
+          ],
+          "text": ""
+        },
+        {
+          "name": "timeline-track",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2238319,
+          "top": 4318000,
+          "width": 8738968,
+          "height": 79375,
+          "normalized_box": [
+            0.183594,
+            0.62963,
+            0.716797,
+            0.011574
+          ],
+          "text": ""
+        },
+        {
+          "name": "timeline-arrow",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 10882040,
+          "top": 4222750,
+          "width": 277805,
+          "height": 269875,
+          "normalized_box": [
+            0.892578,
+            0.615741,
+            0.022786,
+            0.039352
+          ],
+          "text": ""
+        },
+        {
+          "name": "timeline-dot-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1452526,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062,
+          "normalized_box": [
+            0.119141,
+            0.625,
+            0.009766,
+            0.017361
+          ],
+          "text": ""
+        },
+        {
+          "name": "timeline-dot-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2174820,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062,
+          "normalized_box": [
+            0.178385,
+            0.625,
+            0.009766,
+            0.017361
+          ],
+          "text": ""
+        },
+        {
+          "name": "timeline-dot-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 6151408,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062,
+          "normalized_box": [
+            0.504557,
+            0.625,
+            0.009766,
+            0.017361
+          ],
+          "text": ""
+        },
+        {
+          "name": "timeline-dot-4",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9413639,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062,
+          "normalized_box": [
+            0.772135,
+            0.625,
+            0.009766,
+            0.017361
+          ],
+          "text": ""
+        },
+        {
+          "name": "timeline-dot-5",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 10397864,
+          "top": 4286250,
+          "width": 119059,
+          "height": 119062,
+          "normalized_box": [
+            0.852865,
+            0.625,
+            0.009766,
+            0.017361
+          ],
+          "text": ""
+        },
+        {
+          "name": "date-628-bg",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1222344,
+          "top": 3587750,
+          "width": 579423,
+          "height": 222250,
+          "normalized_box": [
+            0.10026,
+            0.523148,
+            0.047526,
+            0.032407
+          ],
+          "text": ""
+        },
+        {
+          "name": "date-7120-bg",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 3936901,
+          "top": 3548062,
+          "width": 1142971,
+          "height": 222250,
+          "normalized_box": [
+            0.322917,
+            0.517361,
+            0.09375,
+            0.032407
+          ],
+          "text": ""
+        },
+        {
+          "name": "date-72131-bg",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 7357878,
+          "top": 3548062,
+          "width": 1142971,
+          "height": 222250,
+          "normalized_box": [
+            0.603516,
+            0.517361,
+            0.09375,
+            0.032407
+          ],
+          "text": ""
+        },
+        {
+          "name": "date-83-bg",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 10080372,
+          "top": 3587750,
+          "width": 714357,
+          "height": 222250,
+          "normalized_box": [
+            0.826823,
+            0.523148,
+            0.058594,
+            0.032407
+          ],
+          "text": ""
+        },
+        {
+          "name": "start-pin-circle",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 1992262,
+          "top": 3778250,
+          "width": 507987,
+          "height": 508000,
+          "normalized_box": [
+            0.163411,
+            0.550926,
+            0.041667,
+            0.074074
+          ],
+          "text": ""
+        },
+        {
+          "name": "start-pin-tip",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2158945,
+          "top": 4183062,
+          "width": 174620,
+          "height": 190500,
+          "normalized_box": [
+            0.177083,
+            0.609954,
+            0.014323,
+            0.027778
+          ],
+          "text": ""
+        },
+        {
+          "name": "end-node",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 11136033,
+          "top": 3929062,
+          "width": 619109,
+          "height": 619125,
+          "normalized_box": [
+            0.913411,
+            0.572917,
+            0.050781,
+            0.090278
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec3-pill",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 190495,
+          "top": 4516437,
+          "width": 1904952,
+          "height": 388937,
+          "normalized_box": [
+            0.015625,
+            0.658565,
+            0.15625,
+            0.056713
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec3-num",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 253993,
+          "top": 4572000,
+          "width": 293680,
+          "height": 293687,
+          "normalized_box": [
+            0.020833,
+            0.666667,
+            0.024089,
+            0.042824
+          ],
+          "text": ""
+        },
+        {
+          "name": "sec3-panel",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 222244,
+          "top": 4794250,
+          "width": 11620209,
+          "height": 1539875,
+          "normalized_box": [
+            0.018229,
+            0.699074,
+            0.953125,
+            0.224537
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-divider-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2619309,
+          "top": 4929187,
+          "width": 0,
+          "height": 1222375,
+          "normalized_box": [
+            0.214844,
+            0.71875,
+            0.0,
+            0.178241
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-divider-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5048123,
+          "top": 4929187,
+          "width": 0,
+          "height": 1222375,
+          "normalized_box": [
+            0.414062,
+            0.71875,
+            0.0,
+            0.178241
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-divider-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 7230881,
+          "top": 4929187,
+          "width": 0,
+          "height": 1222375,
+          "normalized_box": [
+            0.593099,
+            0.71875,
+            0.0,
+            0.178241
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-divider-4",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9540636,
+          "top": 4929187,
+          "width": 0,
+          "height": 1222375,
+          "normalized_box": [
+            0.782552,
+            0.71875,
+            0.0,
+            0.178241
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-bg-1",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 357178,
+          "top": 4897437,
+          "width": 2024011,
+          "height": 1301750,
+          "normalized_box": [
+            0.029297,
+            0.71412,
+            0.166016,
+            0.189815
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-bg-2",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 2778055,
+          "top": 4897437,
+          "width": 2024011,
+          "height": 1301750,
+          "normalized_box": [
+            0.227865,
+            0.71412,
+            0.166016,
+            0.189815
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-bg-3",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 5214807,
+          "top": 4897437,
+          "width": 1825579,
+          "height": 1301750,
+          "normalized_box": [
+            0.427734,
+            0.71412,
+            0.14974,
+            0.189815
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-bg-4",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 7389627,
+          "top": 4897437,
+          "width": 2024011,
+          "height": 1301750,
+          "normalized_box": [
+            0.60612,
+            0.71412,
+            0.166016,
+            0.189815
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-bg-5",
+          "kind": "native_shape",
+          "parent": null,
+          "left": 9699382,
+          "top": 4897437,
+          "width": 1889077,
+          "height": 1301750,
+          "normalized_box": [
+            0.795573,
+            0.71412,
+            0.154948,
+            0.189815
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-component-1",
+          "kind": "native_group",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0,
+          "normalized_box": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-component-2",
+          "kind": "native_group",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0,
+          "normalized_box": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-component-3",
+          "kind": "native_group",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0,
+          "normalized_box": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-component-4",
+          "kind": "native_group",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0,
+          "normalized_box": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "goal-component-5",
+          "kind": "native_group",
+          "parent": null,
+          "left": 0,
+          "top": 0,
+          "width": 0,
+          "height": 0,
+          "normalized_box": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-rural",
+          "kind": "picture",
+          "parent": null,
+          "left": 373053,
+          "top": 1960562,
+          "width": 984225,
+          "height": 984250,
+          "normalized_box": [
+            0.030599,
+            0.28588,
+            0.080729,
+            0.143519
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-community",
+          "kind": "picture",
+          "parent": null,
+          "left": 5095747,
+          "top": 1960562,
+          "width": 984225,
+          "height": 984250,
+          "normalized_box": [
+            0.417969,
+            0.28588,
+            0.080729,
+            0.143519
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-target",
+          "kind": "picture",
+          "parent": null,
+          "left": 9651758,
+          "top": 2024062,
+          "width": 698482,
+          "height": 762000,
+          "normalized_box": [
+            0.791667,
+            0.295139,
+            0.057292,
+            0.111111
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-logo",
+          "kind": "picture",
+          "parent": null,
+          "left": 10278805,
+          "top": 55562,
+          "width": 1698582,
+          "height": 698500,
+          "normalized_box": [
+            0.843099,
+            0.008102,
+            0.139323,
+            0.101852
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-goal-1",
+          "kind": "picture",
+          "parent": null,
+          "left": 1047723,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125,
+          "normalized_box": [
+            0.085937,
+            0.716435,
+            0.061198,
+            0.108796
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-goal-2",
+          "kind": "picture",
+          "parent": null,
+          "left": 3452726,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125,
+          "normalized_box": [
+            0.283203,
+            0.716435,
+            0.061198,
+            0.108796
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-goal-3",
+          "kind": "picture",
+          "parent": null,
+          "left": 5730731,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125,
+          "normalized_box": [
+            0.470052,
+            0.716435,
+            0.061198,
+            0.108796
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-goal-4",
+          "kind": "picture",
+          "parent": null,
+          "left": 8024611,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125,
+          "normalized_box": [
+            0.658203,
+            0.716435,
+            0.061198,
+            0.108796
+          ],
+          "text": ""
+        },
+        {
+          "name": "icon-goal-5",
+          "kind": "picture",
+          "parent": null,
+          "left": 10231181,
+          "top": 4913312,
+          "width": 746106,
+          "height": 746125,
+          "normalized_box": [
+            0.839193,
+            0.716435,
+            0.061198,
+            0.108796
+          ],
+          "text": ""
+        },
+        {
+          "name": "bottom-wave",
+          "kind": "picture",
+          "parent": null,
+          "left": 0,
+          "top": 6302375,
+          "width": 12191695,
+          "height": 555625,
+          "normalized_box": [
+            0.0,
+            0.918981,
+            1.0,
+            0.081019
+          ],
+          "text": ""
+        },
+        {
+          "name": "top-kicker",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 246056,
+          "top": 103187,
+          "width": 881040,
+          "height": 571500,
+          "normalized_box": [
+            0.020182,
+            0.015046,
+            0.072266,
+            0.083333
+          ],
+          "text": "夺高点\n争上扬"
+        },
+        {
+          "name": "top-section",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1595397,
+          "top": 214312,
+          "width": 1381090,
+          "height": 396875,
+          "normalized_box": [
+            0.130859,
+            0.03125,
+            0.113281,
+            0.05787
+          ],
+          "text": "第二部分"
+        },
+        {
+          "name": "top-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3055861,
+          "top": 142875,
+          "width": 3571785,
+          "height": 531812,
+          "normalized_box": [
+            0.250651,
+            0.020833,
+            0.292969,
+            0.077546
+          ],
+          "text": "目标（干多少）"
+        },
+        {
+          "name": "strategy-banner",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1492212,
+          "top": 944562,
+          "width": 9207269,
+          "height": 349250,
+          "normalized_box": [
+            0.122396,
+            0.137731,
+            0.755208,
+            0.050926
+          ],
+          "text": "紧盯标杆打造目标，以移宽双新融合为主攻方向，全力完成三季度发展任务！"
+        },
+        {
+          "name": "sec1-num-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 253993,
+          "top": 1404937,
+          "width": 293680,
+          "height": 293687,
+          "normalized_box": [
+            0.020833,
+            0.204861,
+            0.024089,
+            0.042824
+          ],
+          "text": "1"
+        },
+        {
+          "name": "sec1-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 650858,
+          "top": 1365250,
+          "width": 1746206,
+          "height": 333375,
+          "normalized_box": [
+            0.053385,
+            0.199074,
+            0.143229,
+            0.048611
+          ],
+          "text": "标杆打造目标"
+        },
+        {
+          "name": "rural-label-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1317592,
+          "top": 2309812,
+          "width": 928664,
+          "height": 301625,
+          "normalized_box": [
+            0.108073,
+            0.336805,
+            0.076172,
+            0.043981
+          ],
+          "text": "农村市场"
+        },
+        {
+          "name": "rural-kpi",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 2524061,
+          "top": 2444750,
+          "width": 2143071,
+          "height": 595312,
+          "normalized_box": [
+            0.207031,
+            0.356481,
+            0.175781,
+            0.086805
+          ],
+          "text": "50个重点网格30户\n其余网格20户"
+        },
+        {
+          "name": "community-label-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 6087910,
+          "top": 2309812,
+          "width": 928664,
+          "height": 301625,
+          "normalized_box": [
+            0.499349,
+            0.336805,
+            0.076172,
+            0.043981
+          ],
+          "text": "社区市场"
+        },
+        {
+          "name": "community-kpi",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7246756,
+          "top": 2587625,
+          "width": 1865265,
+          "height": 333375,
+          "normalized_box": [
+            0.594401,
+            0.377315,
+            0.152995,
+            0.048611
+          ],
+          "text": "每个标杆社区20户"
+        },
+        {
+          "name": "target-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10413739,
+          "top": 2111375,
+          "width": 1404902,
+          "height": 317500,
+          "normalized_box": [
+            0.854167,
+            0.30787,
+            0.115234,
+            0.046296
+          ],
+          "text": "目标要求"
+        },
+        {
+          "name": "target-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10413739,
+          "top": 2555875,
+          "width": 1428714,
+          "height": 523875,
+          "normalized_box": [
+            0.854167,
+            0.372685,
+            0.117187,
+            0.076389
+          ],
+          "text": "全部以79元及以上\n移宽双新融合为目标"
+        },
+        {
+          "name": "sec2-num-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 253993,
+          "top": 3286125,
+          "width": 293680,
+          "height": 293687,
+          "normalized_box": [
+            0.020833,
+            0.479167,
+            0.024089,
+            0.042824
+          ],
+          "text": "2"
+        },
+        {
+          "name": "sec2-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 650858,
+          "top": 3254375,
+          "width": 1746206,
+          "height": 333375,
+          "normalized_box": [
+            0.053385,
+            0.474537,
+            0.143229,
+            0.048611
+          ],
+          "text": "推进节奏安排"
+        },
+        {
+          "name": "date-628",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1230281,
+          "top": 3635375,
+          "width": 563548,
+          "height": 206375,
+          "normalized_box": [
+            0.100911,
+            0.530093,
+            0.046224,
+            0.030093
+          ],
+          "text": "6.28"
+        },
+        {
+          "name": "date-628-sub",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 1135034,
+          "top": 3841750,
+          "width": 785792,
+          "height": 238125,
+          "normalized_box": [
+            0.093099,
+            0.560185,
+            0.064453,
+            0.034722
+          ],
+          "text": "上报目标"
+        },
+        {
+          "name": "start-pin-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 2031949,
+          "top": 3897312,
+          "width": 436551,
+          "height": 222250,
+          "normalized_box": [
+            0.166667,
+            0.568287,
+            0.035807,
+            0.032407
+          ],
+          "text": "启动"
+        },
+        {
+          "name": "date-7120",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3944838,
+          "top": 3548062,
+          "width": 1127096,
+          "height": 222250,
+          "normalized_box": [
+            0.323568,
+            0.517361,
+            0.092448,
+            0.032407
+          ],
+          "text": "7.1 - 7.20"
+        },
+        {
+          "name": "phase1-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3809904,
+          "top": 3786187,
+          "width": 1468400,
+          "height": 222250,
+          "normalized_box": [
+            0.3125,
+            0.552083,
+            0.120443,
+            0.032407
+          ],
+          "text": "一阶段：标杆打造"
+        },
+        {
+          "name": "phase1-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3047923,
+          "top": 4048125,
+          "width": 3016174,
+          "height": 238125,
+          "normalized_box": [
+            0.25,
+            0.590278,
+            0.247396,
+            0.034722
+          ],
+          "text": "高新完成4个社区，示范完成3个社区+1个行政村"
+        },
+        {
+          "name": "date-72131",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7365815,
+          "top": 3548062,
+          "width": 1127096,
+          "height": 222250,
+          "normalized_box": [
+            0.604167,
+            0.517361,
+            0.092448,
+            0.032407
+          ],
+          "text": "7.21 - 7.31"
+        },
+        {
+          "name": "phase2-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7246756,
+          "top": 3786187,
+          "width": 1452526,
+          "height": 222250,
+          "normalized_box": [
+            0.594401,
+            0.552083,
+            0.119141,
+            0.032407
+          ],
+          "text": "二阶段：培优补差"
+        },
+        {
+          "name": "phase2-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7016574,
+          "top": 4024312,
+          "width": 2143071,
+          "height": 317500,
+          "normalized_box": [
+            0.575521,
+            0.586805,
+            0.175781,
+            0.046296
+          ],
+          "text": "一阶段已达标的行政村和社区\n二阶段再完成10户目标"
+        },
+        {
+          "name": "date-83",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10080372,
+          "top": 3635375,
+          "width": 714357,
+          "height": 206375,
+          "normalized_box": [
+            0.826823,
+            0.530093,
+            0.058594,
+            0.030093
+          ],
+          "text": "8.3"
+        },
+        {
+          "name": "date-83-sub",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9786692,
+          "top": 3849687,
+          "width": 1309654,
+          "height": 238125,
+          "normalized_box": [
+            0.802734,
+            0.561343,
+            0.107422,
+            0.034722
+          ],
+          "text": "月度复盘表彰大会"
+        },
+        {
+          "name": "end-node-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 11223344,
+          "top": 4040187,
+          "width": 452426,
+          "height": 420687,
+          "normalized_box": [
+            0.920573,
+            0.58912,
+            0.037109,
+            0.061343
+          ],
+          "text": "工作\n结束"
+        },
+        {
+          "name": "sec3-num-text",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 253993,
+          "top": 4572000,
+          "width": 293680,
+          "height": 293687,
+          "normalized_box": [
+            0.020833,
+            0.666667,
+            0.024089,
+            0.042824
+          ],
+          "text": "3"
+        },
+        {
+          "name": "sec3-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 650858,
+          "top": 4540250,
+          "width": 1428714,
+          "height": 333375,
+          "normalized_box": [
+            0.053385,
+            0.662037,
+            0.117187,
+            0.048611
+          ],
+          "text": "目标要求"
+        },
+        {
+          "name": "goal1-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 873103,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000,
+          "normalized_box": [
+            0.071615,
+            0.819444,
+            0.078125,
+            0.037037
+          ],
+          "text": "对标先进"
+        },
+        {
+          "name": "goal1-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 571485,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875,
+          "normalized_box": [
+            0.046875,
+            0.863426,
+            0.123698,
+            0.05787
+          ],
+          "text": "对标前期先进网格找差距\n明确提升方向和路径"
+        },
+        {
+          "name": "goal2-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 3293980,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000,
+          "normalized_box": [
+            0.270182,
+            0.819444,
+            0.078125,
+            0.037037
+          ],
+          "text": "聚焦双新"
+        },
+        {
+          "name": "goal2-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 2992362,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875,
+          "normalized_box": [
+            0.245443,
+            0.863426,
+            0.123698,
+            0.05787
+          ],
+          "text": "坚持以移宽双新融合为主线\n提升发展效率和质量"
+        },
+        {
+          "name": "goal3-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5571985,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000,
+          "normalized_box": [
+            0.457031,
+            0.819444,
+            0.078125,
+            0.037037
+          ],
+          "text": "全员参与"
+        },
+        {
+          "name": "goal3-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 5270368,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875,
+          "normalized_box": [
+            0.432292,
+            0.863426,
+            0.123698,
+            0.05787
+          ],
+          "text": "网格CEO带头，全员上阵\n形成合力，全面推进"
+        },
+        {
+          "name": "goal4-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7881740,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000,
+          "normalized_box": [
+            0.646484,
+            0.819444,
+            0.078125,
+            0.037037
+          ],
+          "text": "以质取胜"
+        },
+        {
+          "name": "goal4-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 7580122,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875,
+          "normalized_box": [
+            0.621745,
+            0.863426,
+            0.123698,
+            0.05787
+          ],
+          "text": "注重发展质量和客户体验\n打造可复制的标杆样板"
+        },
+        {
+          "name": "goal5-title",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 10080372,
+          "top": 5619750,
+          "width": 952476,
+          "height": 254000,
+          "normalized_box": [
+            0.826823,
+            0.819444,
+            0.078125,
+            0.037037
+          ],
+          "text": "持续增长"
+        },
+        {
+          "name": "goal5-body",
+          "kind": "editable_text",
+          "parent": null,
+          "left": 9778755,
+          "top": 5921375,
+          "width": 1508087,
+          "height": 396875,
+          "normalized_box": [
+            0.802083,
+            0.863426,
+            0.123698,
+            0.05787
+          ],
+          "text": "以标杆带动整体提升\n确保三季度目标达成"
+        }
+      ],
+      "errors_added": 0
+    }
+  ],
+  "errors": [],
+  "human_visual_review_required": true
+}

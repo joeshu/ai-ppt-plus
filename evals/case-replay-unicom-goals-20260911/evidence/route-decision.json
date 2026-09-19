@@ -1,0 +1,34 @@
+{
+  "schema": "ai-ppt-plus/route-decision/v2",
+  "project_id": "unicom-goals-16x9-20260911",
+  "route": "reference-reconstruction",
+  "status": "decided",
+  "visual_authority": "approved_reference_image",
+  "formal_content_authority": "user_transcription",
+  "requires_image_generation": false,
+  "primary_engine": "ai-ppt-editable",
+  "fallback_policy": "scoped-visual-only",
+  "fallback_used": false,
+  "fallback_events": [],
+  "editable_object_policy": "native-semantic-objects",
+  "outline_contract": {
+    "path": "formal-copy.json",
+    "sha256": "78f62c8e2ebc9eeebca394c405363e76ddf50af1143d93a3bb1fb483011dcd40"
+  },
+  "reference_roster": [
+    {
+      "slide_no": 1,
+      "path": "reference.png",
+      "sha256": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+      "comparison_path": "qa/reference-16x9.png",
+      "comparison_sha256": "70d1fe89074965078f0c6fac588a41f596cc05907989481c32a0a4c22607390b",
+      "derived_from_sha256": "50f11e476bd66011822ecca5cd8d2623dfbd4b53ea69cb5507210664a6eb6d50",
+      "comparison_transform": "QA-only: raster resized from 1536x1024 to 1536x864; authoring uses semantic vertical reflow with preserved object aspect ratios."
+    }
+  ],
+  "visual_intermediate_manifest": null,
+  "native_content_manifest": null,
+  "reason": "用户指定固定参考图、reference-reconstruction 路由与 L5 可编辑目标。",
+  "confirmed_by": "user-task",
+  "confirmed_at": "2026-09-11T10:34:22+00:00"
+}
