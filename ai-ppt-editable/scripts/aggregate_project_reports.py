@@ -147,7 +147,9 @@ def main() -> int:
         report_evidence.append(evidence)
     valid = not any(item.get("severity") == "blocker" for item in issues)
     repair_loop_required = bool(repair_signals)
-    status = "repair-required" if valid and repair_loop_required else "passed" if valid and not optional_failures else "degraded" if valid else "failed"
+    # Keep the envelope status schema-stable. Repair state belongs in
+    # production_state/repair_loop_required, not in the generic status enum.
+    status = "passed" if valid and not optional_failures else "degraded" if valid else "failed"
     production_state = "hard-correctness-fail" if not valid else "repair-required" if repair_loop_required else "final-pptx-ready"
     result = {
         "schema": "ai-ppt-plus/report-envelope/v1",
