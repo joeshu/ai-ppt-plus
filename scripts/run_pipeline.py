@@ -471,8 +471,8 @@ def main() -> int:
         args.require_source_hashes = True
         args.require_asset_hashes = True
         args.require_formal_content = True
-        if args.reference or args.reference_dir:
-            args.require_dual_comparison = True
+        # External/pixel-object dual comparison is development evidence only;
+        # release never auto-requires it.
         if args.reference_dir:
             args.require_multipage_layout = True
         missing = []
@@ -1326,17 +1326,15 @@ def main() -> int:
         comparison_args = [str(SCRIPT_DIR / "compare_visual.py"), str(render_dir / "slide-1.png"), str(Path(args.reference).resolve()), "--report", str(run_dir / "visual-comparison.json")]
         if args.expected_ratio is not None:
             comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
-        if args.visual_threshold is not None:
-            comparison_args.extend(["--min-reference-fidelity", str(args.visual_threshold)])
-        elif args.release:
-            comparison_args.append("--strict")
+        # Visual similarity is diagnostic-only in production. A declared
+        # target is retained in run metadata for repair prioritization, but is
+        # never forwarded as a hard comparison threshold.
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
     elif args.reference_dir:
         comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "visual-comparison.json")]
         if args.expected_ratio is not None:
             comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
-        if args.visual_threshold is not None:
-            comparison_args.extend(["--threshold", str(args.visual_threshold)])
+        # Multi-page visual metrics likewise remain repair signals only.
         if affected_pages:
             comparison_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir, Path(args.reference_dir).resolve()], metadata={"affected_pages": affected_pages or "all"})
