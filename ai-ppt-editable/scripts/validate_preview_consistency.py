@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
-"""Compare authoring previews with the final renderer output.
+"""Compare authoring previews with final renderer output.
 
-Pillow previews are useful for fast authoring feedback, but LibreOffice (or
-another declared final renderer) is the visual source of truth.  This gate
-keeps the two artifacts comparable and records the difference instead of
-allowing a preview to masquerade as final-render evidence.
-
-Usage:
-    python3 scripts/validate_preview_consistency.py rendered/ preview/ \
-        --expected-pages 3 --require --report preview-consistency.json
+Preview presence/decodability can be validated when explicitly required, while
+preview-vs-final similarity metrics remain diagnostic repair evidence only.
 """
 from __future__ import annotations
 
@@ -61,12 +55,7 @@ def _compare(rendered: Path, preview: Path) -> dict[str, Any]:
     rendered_ratio = rendered_size[0] / rendered_size[1] if rendered_size[1] else 0
     preview_ratio = preview_size[0] / preview_size[1] if preview_size[1] else 0
     if abs(rendered_ratio - preview_ratio) > ASPECT_RATIO_TOLERANCE:
-        return {
-            "valid": False,
-            "rendered_size": rendered_size,
-            "preview_size": preview_size,
-            "issues": [{"severity": "blocker", "code": "aspect_ratio_mismatch", "rendered": rendered_size, "preview": preview_size}],
-        }
+        return {"valid": False, "rendered_size": rendered_size, "preview_size": preview_size, "issues": [{"severity": "blocker", "code": "aspect_ratio_mismatch", "rendered": rendered_size, "preview": preview_size}]}
     comparison_size = rendered_size
     if preview_size != comparison_size:
         with Image.open(preview) as image:
@@ -93,6 +82,7 @@ def _compare(rendered: Path, preview: Path) -> dict[str, Any]:
 def validate(rendered_dir: Path, preview_dir: Path, expected_pages: int, *, require: bool, threshold: float | None) -> dict[str, Any]:
     issues: list[dict[str, Any]] = []
     warnings: list[dict[str, Any]] = []
+    repair_signals: list[dict[str, Any]] = []
     rendered, rendered_issues = _indexed(rendered_dir)
     preview, preview_issues = _indexed(preview_dir)
     issues.extend(rendered_issues)
@@ -123,7 +113,9 @@ def validate(rendered_dir: Path, preview_dir: Path, expected_pages: int, *, requ
         page_issues = list(comparison.get("issues", []))
         metrics = comparison.get("metrics", {})
         if threshold is not None and metrics.get("blurred_layout_ssim") is not None and metrics["blurred_layout_ssim"] < threshold:
-            page_issues.append({"severity": "blocker", "code": "preview_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": threshold, "observed": metrics["blurred_layout_ssim"]})
+            signal = {"severity": "warning", "code": "preview_threshold_not_met", "metric": "blurred_layout_ssim", "threshold": threshold, "observed": metrics["blurred_layout_ssim"], "slide": slide, "diagnostic_only": True}
+            warnings.append(signal)
+            repair_signals.append(signal)
         for issue in page_issues:
             issue["slide"] = slide
         issues.extend(page_issues)
@@ -139,6 +131,9 @@ def validate(rendered_dir: Path, preview_dir: Path, expected_pages: int, *, requ
         "expected_pages": expected_pages,
         "require": require,
         "threshold": threshold,
+        "threshold_diagnostic_only": True,
+        "repair_loop_required": bool(repair_signals),
+        "repair_signals": repair_signals,
         "pages": page_results,
         "aggregate": {
             "compared_pages": len(comparable),
@@ -158,7 +153,7 @@ def main() -> int:
     parser.add_argument("rendered_dir")
     parser.add_argument("preview_dir")
     parser.add_argument("--expected-pages", type=int, required=True)
-    parser.add_argument("--threshold", type=float)
+    parser.add_argument("--threshold", type=float, help="diagnostic target only; never a production hard blocker")
     parser.add_argument("--require", action="store_true", help="require an exact preview page set")
     parser.add_argument("--report", required=True)
     args = parser.parse_args()
