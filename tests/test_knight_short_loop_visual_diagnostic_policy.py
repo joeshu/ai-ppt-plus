@@ -38,8 +38,7 @@ def test_pipeline_does_not_forward_visual_threshold_as_production_gate():
 def test_external_dual_compare_is_not_auto_required_for_release():
     for path in ("scripts/run_pipeline.py", "ai-ppt-editable/scripts/run_pipeline.py"):
         text = read(path)
-        forbidden = '''if args.reference or args.reference_dir:
-            args.require_dual_comparison = True'''
+        forbidden = '''if args.reference or args.reference_dir:\n            args.require_dual_comparison = True'''
         assert forbidden not in text
 
 
@@ -83,3 +82,30 @@ def test_numeric_quality_score_is_diagnostic_only():
         text = read(path)
         assert 'missing.append("--quality-score")' not in text
         assert 'optional diagnostic quality score' in text
+
+
+def test_preview_similarity_threshold_is_repair_signal_only():
+    for path in ("scripts/validate_preview_consistency.py", "ai-ppt-editable/scripts/validate_preview_consistency.py"):
+        text = read(path)
+        assert '"threshold_diagnostic_only": True' in text
+        assert '"repair_loop_required": bool(repair_signals)' in text
+        assert '"severity": "warning", "code": "preview_threshold_not_met"' in text
+        assert '"severity": "blocker", "code": "preview_threshold_not_met"' not in text
+
+
+def test_hard_region_scalar_thresholds_are_repair_diagnostics():
+    text = read("ai-ppt-editable/scripts/hard_region_crop_gate.py")
+    assert '"gate_mode": "repair_diagnostic"' in text
+    assert '"repair_loop_required": bool(diagnostic_failures)' in text
+    assert '"absolute_threshold_applied": False' in text
+    assert '"diagnostic_only": True' in text
+
+
+def test_visual_lock_scores_and_typography_deltas_are_repair_signals():
+    text = read("ai-ppt-editable/scripts/validate_visual_lock.py")
+    assert '"repair_loop_required": bool(repair_signals)' in text
+    assert '"critical_region_score_below_95"' in text
+    assert '"typography_delta_over_12_percent"' in text
+    assert '"diagnostic_only": True' in text
+    assert 'fail(f"{rid}:critical_region_score_below_95"' not in text
+    assert 'fail(f"{rid}:typography_delta_over_12_percent"' not in text
