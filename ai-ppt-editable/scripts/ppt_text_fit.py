@@ -100,6 +100,14 @@ def measure(text: str, pt: float, font_path: Path, px_per_pt: float, width_px: f
 
 
 def best_fit(args: argparse.Namespace) -> dict:
+    # Internal callers created before exact line-topology support do not yet
+    # populate these fields. Keep them valid while the new capability remains
+    # opt-in through layout evidence or the CLI.
+    if not hasattr(args, "target_lines"):
+        args.target_lines = 0
+    if not hasattr(args, "scan_step"):
+        args.scan_step = 0.25
+
     box_w, box_h = _pair(args.box)
     slide_w_px, _ = _pair(args.slide_px)
     slide_w_in, _ = _pair(args.slide_in)
