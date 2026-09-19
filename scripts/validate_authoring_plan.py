@@ -105,6 +105,7 @@ def validate(plan: dict) -> dict:
         if contract and not isinstance(obj.get(contract), dict):
             issues.append(issue("authoring_plan_type_contract_missing", f"{impl} requires {contract}", object_id=object_id))
 
+    # Reference integrity.
     for object_id, obj in by_id.items():
         parent = obj.get("parent_id")
         if parent is not None and parent not in by_id:
@@ -115,6 +116,7 @@ def validate(plan: dict) -> dict:
             elif neighbor == object_id:
                 issues.append(issue("authoring_plan_protected_neighbor_self", "object cannot protect itself", object_id=object_id))
 
+    # Parent cycles.
     for object_id in by_id:
         seen = set()
         current = object_id
