@@ -19,7 +19,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["target_id", "owner_object_id", "producer_kind", "expected_text", "authoring_path", "text_fit_evidence", "output_binding"],
+        "required": ["target_id", "owner_object_id", "producer_kind", "expected_text", "authoring_path", "text_fit_evidence_id", "text_fit_evidence", "output_binding"],
         "properties": {
           "target_id": {"type": "string", "minLength": 1},
           "owner_object_id": {"type": "string", "minLength": 1},
@@ -28,6 +28,7 @@
           },
           "expected_text": {"type": "string"},
           "authoring_path": {"type": "string", "minLength": 1},
+          "text_fit_evidence_id": {"type": "string", "minLength": 1},
           "text_fit_evidence": {
             "type": "object",
             "required": ["measured", "fit_decision"],
