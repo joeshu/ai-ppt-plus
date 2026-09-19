@@ -1,0 +1,93 @@
+{
+  "schema": "ai-ppt-plus/pr41-fresh-iteration-selection/v1",
+  "generated_at": "2026-09-19T06:27:00Z",
+  "ci": {
+    "run": 956,
+    "conclusion": "success",
+    "head": "136675946f4362b9d5d3f01fe6b2b0a2d1d1a0f3"
+  },
+  "reference": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "size_px": [
+      1536,
+      864
+    ]
+  },
+  "iterations": {
+    "r3": {
+      "candidate_sha256": "bb8714bb11c769790f2972471dc72c6a752159a6067ddd5af14b245e686eb5e8",
+      "render_sha256": "9abbfd7be05e85314b4300bb061d6ff9feb9cc0659494fb884616084e8b08ff4",
+      "ssim": 0.5668780579764797,
+      "regional_ssim": {
+        "header": 0.5507,
+        "top": 0.5959,
+        "cards": 0.5329,
+        "management": 0.6437,
+        "outcome": 0.4331,
+        "footer": 0.6617,
+        "card1": 0.5675,
+        "card2": 0.4935,
+        "card3": 0.4875,
+        "chart": 0.5347
+      },
+      "selected": false
+    },
+    "r4": {
+      "candidate_sha256": "983de77d01058cee3d948a9fb53a839e61ea8b01bafd7f62856f6262388b1edc",
+      "render_sha256": "e02f60523250392b2250be8589d9033d5ee268d45f85286d1e14f4f0b4de5a76",
+      "ssim": 0.5461392124984317,
+      "mae": 0.12665053088815256,
+      "regional_ssim": {
+        "header": 0.5269,
+        "top": 0.5971,
+        "cards": 0.529,
+        "management": 0.6357,
+        "outcome": 0.4251,
+        "footer": 0.4864,
+        "card1": 0.5668,
+        "card2": 0.4832,
+        "card3": 0.4851,
+        "chart": 0.5422
+      },
+      "selected": false,
+      "rejection_reason": "overall SSIM regressed; footer/header/card regions worsened despite small chart gain"
+    },
+    "r12": {
+      "candidate_sha256": "da460991b63b9d5639f9df831492eb95471cd0ba50a01cac698ad21b40e9693d",
+      "render_sha256": "804e205e2b1944fa14bb6de24a464ef6cd47981547968ce0bc1d40db7b2ec70e",
+      "ssim": 0.6005496473231348,
+      "mae": 0.11102268099784851,
+      "regional_ssim": {
+        "header": 0.6286693069854522,
+        "top": 0.6363571304023301,
+        "cards": 0.5598530965470222,
+        "management": 0.6354667403655713,
+        "outcome": 0.4900027592113379,
+        "footer": 0.6680972885303625,
+        "card1": 0.5971885232242587,
+        "card2": 0.5068233170331427,
+        "card3": 0.5201049914073815,
+        "chart": 0.5985008342558799
+      },
+      "selected": true,
+      "note": "current best fresh Artifact Tool candidate after R6-R12 incumbent-controlled optimization"
+    }
+  },
+  "strict_threshold": 0.9,
+  "release_status": "blocked-by-rendered-reference-fidelity",
+  "merge_allowed": false,
+  "prioritized_repair_regions": [
+    "outcome",
+    "card2",
+    "card3",
+    "cards",
+    "chart"
+  ],
+  "policy": [
+    "keep R12 as current best fresh candidate",
+    "reject any iteration that regresses whole-page rendered fidelity",
+    "repair region responsibility layers rather than page-specific raster fallback",
+    "do not lower strict threshold"
+  ],
+  "current_incumbent": "R12"
+}

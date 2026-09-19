@@ -13,3 +13,9 @@ python3 scripts/text_model.py validate text-layout-manifest.json \
 ```
 
 For exploratory layouts, missing boxes or typography are warnings. Strict reference reconstruction promotes warnings to blockers. The model never rewrites formal text, invents missing content or treats a logo wordmark as ordinary text. Existing `layout.json` and `validate_text_style_map.py` remain supported during migration.
+
+## Measured reference line boxes
+
+Reference-reconstruction should carry `reference_line_count` and measured `reference_line_boxes` for authoritative text slots, in the same source-coordinate space as `source_bbox`. When `require_measured_line_boxes: true`, the editable worker fails closed if a declared reference line topology lacks measured line boxes. Visual-creation does not require this source-only evidence.
+
+PageGraph object geometry is validated separately before typography repair, so font shrinking cannot hide upstream x/y/w/h drift. The final fresh rendered-reference gate remains authoritative for release.

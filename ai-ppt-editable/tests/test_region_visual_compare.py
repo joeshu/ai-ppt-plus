@@ -14,8 +14,8 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(candidate, reference, regions, report):
-    return subprocess.run([sys.executable, "scripts/compare_visual_regions.py", str(candidate), str(reference), str(regions), "--report", str(report)], cwd=ROOT, capture_output=True, text=True, check=False)
+def run(candidate, reference, regions, report, crop_dir):
+    return subprocess.run([sys.executable, "scripts/compare_visual_regions.py", str(candidate), str(reference), str(regions), "--report", str(report), "--crop-dir", str(crop_dir)], cwd=ROOT, capture_output=True, text=True, check=False)
 
 
 def main() -> int:
@@ -36,12 +36,19 @@ def main() -> int:
         ]}
         (root / "regions.json").write_text(json.dumps(regions), encoding="utf-8")
         a_report, b_report = root / "a.json", root / "b.json"
-        assert run(root / "foreground-match.png", root / "reference.png", root / "regions.json", a_report).returncode == 0
-        assert run(root / "background-match.png", root / "reference.png", root / "regions.json", b_report).returncode == 0
+        a_crops, b_crops = root / "a-crops", root / "b-crops"
+        assert run(root / "foreground-match.png", root / "reference.png", root / "regions.json", a_report, a_crops).returncode == 0
+        assert run(root / "background-match.png", root / "reference.png", root / "regions.json", b_report, b_crops).returncode == 0
         a = json.loads(a_report.read_text(encoding="utf-8"))
         b = json.loads(b_report.read_text(encoding="utf-8"))
         assert a["foreground_weighted_score"] > b["foreground_weighted_score"]
         assert a["regions"][0]["region_id"] == "background"
+        title = next(row for row in a["regions"] if row["region_id"] == "title")
+        assert title["bbox_px"] == [0, 0, 100, 55]
+        evidence = title["crop_evidence"]
+        assert Path(evidence["reference_crop"]).is_file()
+        assert Path(evidence["candidate_crop"]).is_file()
+        assert Path(evidence["difference_crop"]).is_file()
     print("region visual comparison: ok")
     return 0
 

@@ -1,0 +1,42 @@
+{
+  "schema": "ai-ppt-editable/knight-style-self-contained-case/v1",
+  "case": "降套管控",
+  "external_ab_required": false,
+  "universal_numeric_visual_gate": false,
+  "phase_status": {
+    "input_prepared": "pass",
+    "visual_inventory_done": "pass",
+    "asset_classification_done": "pass",
+    "imagegen_assets_done": "pass",
+    "text_fit_done": "pass-manual-slot-fit",
+    "pptx_built": "pass",
+    "z_order_done": "pass-by-build-order",
+    "render_qa_done": "pass",
+    "local_crop_qa_done": "pass",
+    "repair_done": "pass-r5-object-level",
+    "validation_done": "pass"
+  },
+  "reference": {
+    "width": 1536,
+    "height": 864,
+    "sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99"
+  },
+  "r5": {
+    "pptx_sha256": "ab54e51ff2b754a23a471fdb42631b259c7facf380c7e65a60263dddcce8eda9",
+    "render_sha256": "0fbd86d9abd29b236f2f29a26e4ec947ef32a190d1518d94c3114f1dd25b2cbc",
+    "calendar_megaphone_asset_sha256": "adb1ea29a2e50a5a13d61d3806040ae150d862ede7377d125030bf7c104cc922"
+  },
+  "accepted_repairs": [
+    "replace incorrect right-panel large icon with independent transparent ImageGen calendar+megaphone asset",
+    "replace weak blue-gray checkbox glyphs with editable native red checkboxes"
+  ],
+  "rejected_repairs": [
+    "top-right handwritten slogan ImageGen patch: rejected after fresh render because it regressed visual fidelity"
+  ],
+  "policy": [
+    "fresh render and local crops drive repair decisions",
+    "map defects to responsible objects",
+    "do not chase a universal SSIM threshold",
+    "protect the stronger incumbent when an experimental patch regresses"
+  ]
+}

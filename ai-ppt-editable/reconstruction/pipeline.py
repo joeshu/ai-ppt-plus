@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Closed-loop orchestration state for Astra + deterministic PPTX reconstruction."""
+"""Render-driven reconstruction orchestration with explicit human/agent review state."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -18,6 +18,7 @@ class Stage(str, Enum):
     RENDER = "render"
     QA = "qa"
     REPAIR = "repair"
+    REVIEW = "review"
     GATE = "gate"
     COMPLETE = "complete"
     BLOCKED = "blocked"
@@ -48,12 +49,11 @@ class PipelineState:
 
 
 class ReconstructionPipeline:
-    """Bounded orchestration shell.
+    """Bounded render -> inspect -> repair loop.
 
-    Model calls and rendering remain injected. Repair callbacks may return either
-    a repaired deck directly or ``{"deck": ..., "report": ...}`` from the
-    deterministic repair executors. A native image-generation request is an
-    explicit workflow boundary, not something the deterministic engine fakes.
+    Deterministic correctness remains fail-closed. Visual metrics are
+    diagnostic evidence used to drive render review and repairs; there is no
+    universal numeric similarity threshold in the normal execution path.
     """
 
     def __init__(self, *, max_iterations: int = 4, repair_router: RepairRouter | None = None, quality_gate: QualityGate | None = None) -> None:
@@ -101,44 +101,60 @@ class ReconstructionPipeline:
                 renderer_regressions=list(metrics.get("renderer_regressions") or []),
             )
             state.gate_result = gate
-
-            if gate.passed:
-                state.history.append(IterationRecord(index, len(differences.findings), len(differences.blocking()), 0, 0, True, metrics))
-                state.stage = Stage.COMPLETE
-                state.artifacts["final"] = deck
-                return state
+            metrics = dict(metrics)
+            metrics["visual_metrics_diagnostic_only"] = True
 
             state.stage = Stage.REPAIR
             plan = self.repair_router.build_plan(differences)
             state.repair_plan = plan
+
+            if plan.actions:
+                state.history.append(IterationRecord(
+                    index, len(differences.findings), len(differences.blocking()),
+                    len(plan.actions), len(plan.deferred), gate.passed, metrics,
+                ))
+                repair_result = apply_repairs(deck, plan)
+                if isinstance(repair_result, dict) and "deck" in repair_result and "report" in repair_result:
+                    report = repair_result.get("report") if isinstance(repair_result.get("report"), dict) else {}
+                    state.artifacts[f"repair_report_{index}"] = report
+                    deck = repair_result["deck"]
+                    if report.get("requires_external_asset_generation"):
+                        state.stage = Stage.EXTERNAL_ASSET
+                        state.artifacts["asset_regeneration_requests"] = list(report.get("regeneration_requests") or [])
+                        state.artifacts["blocked_candidate"] = deck
+                        return state
+                    if report.get("valid") is False:
+                        state.stage = Stage.BLOCKED
+                        state.artifacts["blocked_candidate"] = deck
+                        return state
+                else:
+                    deck = repair_result
+                state.artifacts[f"candidate_{index + 1}"] = deck
+                continue
+
             state.history.append(IterationRecord(
                 index, len(differences.findings), len(differences.blocking()),
-                len(plan.actions), len(plan.deferred), False, metrics,
+                0, len(plan.deferred), gate.passed, metrics,
             ))
 
-            if plan.has_blocking_deferred or not plan.actions:
+            if not gate.passed:
                 state.stage = Stage.BLOCKED
                 state.artifacts["blocked_candidate"] = deck
+                state.artifacts["blocking_failures"] = list(gate.failures)
                 return state
 
-            repair_result = apply_repairs(deck, plan)
-            if isinstance(repair_result, dict) and "deck" in repair_result and "report" in repair_result:
-                report = repair_result.get("report") if isinstance(repair_result.get("report"), dict) else {}
-                state.artifacts[f"repair_report_{index}"] = report
-                deck = repair_result["deck"]
-                if report.get("requires_external_asset_generation"):
-                    state.stage = Stage.EXTERNAL_ASSET
-                    state.artifacts["asset_regeneration_requests"] = list(report.get("regeneration_requests") or [])
-                    state.artifacts["blocked_candidate"] = deck
-                    return state
-                if report.get("valid") is False:
-                    state.stage = Stage.BLOCKED
-                    state.artifacts["blocked_candidate"] = deck
-                    return state
-            else:
-                deck = repair_result
-            state.artifacts[f"candidate_{index + 1}"] = deck
+            if plan.deferred:
+                state.stage = Stage.REVIEW
+                state.artifacts["draft_candidate"] = deck
+                state.artifacts["review_reason"] = "deferred-findings-require-review"
+                state.artifacts["deferred_findings"] = [dict(item) for item in plan.deferred]
+                return state
 
-        state.stage = Stage.BLOCKED
-        state.artifacts["blocked_candidate"] = deck
+            state.stage = Stage.COMPLETE
+            state.artifacts["final"] = deck
+            return state
+
+        state.stage = Stage.REVIEW if state.gate_result and state.gate_result.passed else Stage.BLOCKED
+        state.artifacts["draft_candidate" if state.stage == Stage.REVIEW else "blocked_candidate"] = deck
+        state.artifacts["review_reason"] = "iteration-budget-exhausted" if state.stage == Stage.REVIEW else "correctness-gate-failed"
         return state

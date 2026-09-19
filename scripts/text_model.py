@@ -97,6 +97,8 @@ def normalize_text_spec(item: dict[str, Any], slide_no: int, index: int, *, unit
         "content": content,
         "source_ref": item.get("source_ref") or item.get("provenance"),
         "source_bbox": _source_bbox(item),
+        "reference_line_count": item.get("reference_line_count"),
+        "reference_line_boxes": item.get("reference_line_boxes", item.get("source_line_boxes")),
         "coordinate_space": units,
         "bbox": _box(item),
         "style": _style(item),
@@ -238,6 +240,32 @@ def validate_manifest(data: dict[str, Any], *, strict: bool = False, require_sou
                 elif _valid_number(ref_size.get("width")) and _valid_number(ref_size.get("height")):
                     if source_bbox[0] < 0 or source_bbox[1] < 0 or source_bbox[0] + source_bbox[2] > ref_size["width"] or source_bbox[1] + source_bbox[3] > ref_size["height"]:
                         issues.append({"code": "text_source_bbox_out_of_bounds", "text_id": label})
+            line_count = spec.get("reference_line_count")
+            line_boxes = spec.get("reference_line_boxes")
+            if line_count is not None:
+                if not isinstance(line_count, int) or isinstance(line_count, bool) or line_count <= 0:
+                    issues.append({"code": "reference_line_count_invalid", "text_id": label})
+            if line_boxes is not None:
+                if not isinstance(line_boxes, list) or not line_boxes:
+                    issues.append({"code": "reference_line_boxes_invalid", "text_id": label})
+                else:
+                    parsed_boxes = []
+                    for line_index, line_box in enumerate(line_boxes, 1):
+                        if not isinstance(line_box, list) or len(line_box) != 4 or any(not _valid_number(value) for value in line_box):
+                            issues.append({"code": "reference_line_box_invalid", "text_id": label, "line": line_index})
+                            continue
+                        x, y, w, h = map(float, line_box)
+                        if w <= 0 or h <= 0:
+                            issues.append({"code": "reference_line_box_non_positive", "text_id": label, "line": line_index})
+                            continue
+                        parsed_boxes.append([x, y, w, h])
+                    if isinstance(line_count, int) and not isinstance(line_count, bool) and line_count > 0 and len(parsed_boxes) != line_count:
+                        issues.append({"code": "reference_line_box_count_mismatch", "text_id": label, "expected": line_count, "actual": len(parsed_boxes)})
+                    if source_bbox is not None and isinstance(source_bbox, list) and len(source_bbox) == 4 and all(_valid_number(value) for value in source_bbox):
+                        sx, sy, sw, sh = map(float, source_bbox)
+                        for line_index, (x, y, w, h) in enumerate(parsed_boxes, 1):
+                            if x < sx - 1 or y < sy - 1 or x + w > sx + sw + 1 or y + h > sy + sh + 1:
+                                issues.append({"code": "reference_line_box_outside_source_bbox", "text_id": label, "line": line_index})
             _validate_style(spec.get("style"), label, issues, warnings, required=bool(content.strip()))
             runs = spec.get("runs", [])
             if spec.get("runs_input_valid") is False:

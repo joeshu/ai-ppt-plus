@@ -1,0 +1,36 @@
+{
+  "schema": "ai-ppt-plus/pr41-fresh-runtime/v1",
+  "generated_at": "2026-09-19T06:05:00Z",
+  "reference": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "size_px": [1536, 864]
+  },
+  "runtime": {
+    "artifact_tool_python": "2.8.22",
+    "authoring": "official artifact_tool RPC runtime (Bun daemon with local @oai/walnut resolution)"
+  },
+  "candidate": {
+    "sha256": "51b915ceb9eced4fb3ce5771b0653cbf1a3550ba731a3eb6dc70d762a11e04ed",
+    "whole_page_ssim": 0.5490264827856001,
+    "regional_ssim": {
+      "header": 0.5074877796837082,
+      "top": 0.5989403499490741,
+      "cards": 0.5284398205218354,
+      "management": 0.6337094412501345,
+      "outcome": 0.43280230310426987,
+      "footer": 0.4936898004228764,
+      "card1": 0.567563929106958,
+      "card2": 0.48683022781597546,
+      "card3": 0.5044952735565963,
+      "chart": 0.5488606629829764
+    }
+  },
+  "incumbent_r3_ssim": 0.5668780579764797,
+  "strict_threshold": 0.90,
+  "selected": false,
+  "status": "rejected-regression",
+  "merge_allowed": false,
+  "decision": "R5 is a real fresh Artifact Tool candidate but regresses whole-page fidelity versus R3; reject it and keep R3 as incumbent.",
+  "next_priority": ["outcome", "card2", "footer", "card3", "header", "chart"],
+  "policy": "No iteration may replace the incumbent unless whole-page fidelity improves; strict release remains >=0.90."
+}

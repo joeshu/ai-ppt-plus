@@ -1,0 +1,39 @@
+{
+  "schema": "ai-ppt-editable/pr41-chart-gap-repair-verification/v1",
+  "generated_at": "2026-09-19T04:08:00Z",
+  "reference": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "width": 1536,
+    "height": 864,
+    "same_as_pr40_baseline": true
+  },
+  "verification_scope": "apply landed deterministic OOXML repair to the previously fresh Artifact Tool 2.8.22 candidate, then re-render with LibreOffice/Poppler",
+  "source_candidate": {
+    "sha256": "119bba3321a17f9e6c0f48fcb6648cdc1f19fc832cbf7b53ea5fa71180758e0a",
+    "artifact_tool": "2.8.22",
+    "known_failure": "2026 null points idx 7..12 serialized as numeric zero"
+  },
+  "repair": {
+    "chart_part": "ppt/slides/charts/chart1.xml",
+    "series_index": 1,
+    "removed_cached_point_indexes": [7, 8, 9, 10, 11, 12],
+    "displayBlanksAs": "gap",
+    "zero_points_remaining": [],
+    "valid": true
+  },
+  "repaired_candidate": {
+    "sha256": "16333d6fe7e8467fc8b8ec5010b0977cc8d11226555f400abd12c9525ef3be2f",
+    "render_sha256": "b9619002a053243a0e955dde89988fa78a8ad950fbcd9c5e2b3bc18b55bce6e6"
+  },
+  "render_gate": {
+    "before": "red 2026 line falls to baseline at August and renders zero markers through December",
+    "after": "red 2026 line terminates at July; August-December have no red baseline segment and no zero markers",
+    "p0_visual_regression_fixed": true
+  },
+  "fresh_regeneration": {
+    "attempted": true,
+    "status": "runtime-daemon-startup-timeout",
+    "note": "This verification does not replace the required final fresh formal runtime generation from PR41 HEAD. Full five-axis A/B remains fail-closed until that rerun is generated and measured."
+  },
+  "merge_allowed": false
+}

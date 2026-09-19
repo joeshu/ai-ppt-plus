@@ -124,28 +124,24 @@ Unsafe, incomplete or low-confidence repairs are deferred and can block delivery
 
 ## Quality gate
 
-`reconstruction/quality_gate.py` evaluates four independent contracts:
+`reconstruction/quality_gate.py` enforces deterministic hard correctness only: editability ratio, semantic accuracy, full-slide-raster prohibition, renderer regressions and non-diagnostic P0/P1 findings.
 
-1. visual fidelity: global and critical-region similarity;
-2. editability: semantic object editability ratio and full-slide-raster prohibition;
-3. semantic correctness: object type/data contract accuracy;
-4. renderer stability: renderer-specific regressions (PowerPoint/WPS evidence when available).
-
-A high global similarity score cannot override semantic/editability failure.
+Global and critical-region similarity remain diagnostic evidence for render review, regression detection and repair prioritization. There is no built-in universal numeric visual threshold. A high visual score can never override semantic/editability failure.
 
 ## Closed-loop behavior
 
 `reconstruction/pipeline.py` implements a bounded state machine:
 
-`UNDERSTAND -> AUTHOR -> RENDER -> QA -> GATE -> REPAIR`
+`UNDERSTAND -> AUTHOR -> RENDER -> QA -> GATE -> REPAIR -> REVIEW/COMPLETE`
 
 The pipeline:
 
 - edits only findings that have safe executable actions;
-- stops on unresolved blocking semantic findings;
-- stops after a configured maximum number of repair iterations;
-- preserves per-iteration metrics and actions for `performance-report.json` / distillation evidence;
-- re-renders after every repair before another decision.
+- re-renders after every accepted repair;
+- stops on unresolved hard correctness failures;
+- returns `REVIEW` when low-confidence/deferred visual findings still require human/agent inspection;
+- preserves per-iteration metrics/actions and draft lineage for Repair Trace / distillation evidence;
+- promotes to `COMPLETE` when hard correctness passes and no further safe/deferred repair is pending. Numeric similarity is evidence, not a universal completion gate.
 
 ## Astra host contract
 
@@ -171,11 +167,14 @@ This architecture **extends rather than replaces** the existing engine:
 
 ## Acceptance policy
 
-A candidate may be delivered only when:
+Final acceptance requires:
 
-- no blocking DifferenceGraph findings remain;
-- QualityGate passes;
+- no blocking non-diagnostic DifferenceGraph findings remain;
+- hard QualityGate correctness passes;
 - no full-slide semantic raster exists;
 - critical editable objects pass native-object audit;
 - source image remains the immutable visual reference;
-- every repair round is reflected in evidence/history.
+- fresh full-page render and same-coordinate local-crop evidence exist;
+- Repair Trace covers the last accepted repair round.
+
+No universal 0.90 or other scalar threshold is imposed. A project may opt into an explicit numeric target only when the user/project contract supplies one.

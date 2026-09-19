@@ -6,10 +6,9 @@ Deck loading/component expansion, native object authoring, asset placement,
 preview rendering, atomic output and font embedding now live in focused
 modules so the entrypoint only coordinates the workflow.
 
-Usage:
-    python3 scripts/compose_pptx.py deck.json out.pptx
-    python3 scripts/compose_pptx.py deck.json out.pptx --preview-dir out/preview
-    python3 scripts/compose_pptx.py deck.json out.pptx --font-dir project-fonts --embed-fonts
+Strict/reference authoring also runs the full-slot E3 text-fit gate before any
+PPTX bytes are authored. The gate implementation lives in
+``text_fit_authoring_gate`` so this entrypoint remains orchestration-only.
 """
 from __future__ import annotations
 
@@ -23,11 +22,14 @@ import tempfile
 from pathlib import Path
 
 from asset_placement import replace_svg_media as _replace_svg_media
+from calibrate_page_geometry import apply_page_graph_geometry
+from chart_blank_gap_repair import repair_chart_blank_gaps
 from asset_placement import svg_to_png as _svg_to_png
 from component_expander import _choose_slide_layout, _expand_components, _frac, _load_deck, _promote_native_structures, _resolve
 from preview_renderer import find_cjk_font as _find_cjk_font
 from preview_renderer import render_previews
 from reference_preflight import validate_reference_preflight
+from text_fit_authoring_gate import run_text_fit_e3, text_fit_failure_message, write_text_fit_e4_receipt
 from validate_semantic_layout import validate as validate_semantic_layout
 from pptx_primitives import (
     _add_outer_shadow,
@@ -46,13 +48,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 
 
 def _manifest_font_paths(manifest_path: str | Path | None) -> list[Path]:
-    """Resolve existing font files declared by a task-local manifest.
-
-    Artifact Tool registers concrete SFNT files, while the compatibility
-    backend can consume the manifest directly.  Keeping this small resolver in
-    the composer makes the strict route safe when a caller supplies only
-    ``font-manifest.json``.
-    """
+    """Resolve existing font files declared by a task-local manifest."""
     if not manifest_path:
         return []
     path = Path(manifest_path).resolve()
@@ -100,6 +96,9 @@ def main() -> None:
     parser.add_argument("--node-modules", help="bundled node_modules directory for --authoring-backend artifact-tool")
     parser.add_argument("--strict-input", action="store_true", help="reject implicit primitive types, unsupported alignments and out-of-slide geometry")
     parser.add_argument("--require-native-structure", action="store_true", help="require native panels/tables and forbid semantic full-slide frame pictures")
+    parser.add_argument("--require-text-fit", action="store_true", help="block authoring unless every formal text slot fits at its target typography")
+    parser.add_argument("--text-fit-report", help="E3 full-slot text-fit report; defaults next to output PPTX")
+    parser.add_argument("--text-fit-e4-receipt", help="E4 receipt binding the E3 audit to the exact authored PPTX")
     args = parser.parse_args()
 
     layout_path = Path(args.layout)
@@ -107,6 +106,29 @@ def main() -> None:
         _die(f"layout file not found: {layout_path}")
     deck = _promote_native_structures(_load_deck(layout_path))
     deck = _expand_components(deck)
+
+    # Fixed-reference authoring uses PageGraph geometry as the authoritative
+    # object-placement source before typography fitting.  This is deterministic
+    # and generic: only matching stable object ids are projected; unmatched
+    # nodes are left for the downstream fail-closed geometry audit.
+    route_path = layout_path.resolve().parent / "route-decision.json"
+    route = {}
+    if route_path.is_file():
+        try:
+            route = json.loads(route_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            route = {}
+    page_geometry_calibration = None
+    if route.get("route") == "reference-reconstruction":
+        page_graph_path = layout_path.resolve().parent / "page-graph.json"
+        if not page_graph_path.is_file():
+            _die(f"reference reconstruction requires PageGraph geometry: {page_graph_path}")
+        try:
+            page_graph = json.loads(page_graph_path.read_text(encoding="utf-8"))
+            deck, page_geometry_calibration = apply_page_graph_geometry(deck, page_graph)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            _die(f"PageGraph geometry calibration failed: {type(exc).__name__}: {exc}")
+
     semantic_report = validate_semantic_layout(deck)
     if not semantic_report.get("valid", False):
         issue_codes = ", ".join(str(item.get("code")) for item in semantic_report.get("issues", []))
@@ -114,6 +136,10 @@ def main() -> None:
     deck["strict_input"] = bool(args.strict_input)
     deck["require_native_structure"] = bool(args.require_native_structure or (args.strict_input and deck.get("editable_object_policy") == "native-semantic-objects"))
     output_path = Path(args.out).resolve()
+    if page_geometry_calibration is not None:
+        calibration_report = output_path.with_name(f"{output_path.stem}.page-geometry-calibration.json")
+        calibration_report.parent.mkdir(parents=True, exist_ok=True)
+        calibration_report.write_text(json.dumps(page_geometry_calibration, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if args.font_dir:
         deck["font_dir"] = str(Path(args.font_dir).resolve())
 
@@ -130,6 +156,13 @@ def main() -> None:
     if not preflight.get("valid", False):
         issue_codes = ", ".join(str(item.get("code")) for item in preflight.get("issues", []))
         _die(f"reference reconstruction preflight failed: {issue_codes}")
+
+    require_text_fit = bool(args.require_text_fit or args.strict_input or args.authoring_backend == "artifact-tool")
+    text_fit_report = Path(args.text_fit_report).resolve() if args.text_fit_report else output_path.with_name(f"{output_path.stem}.text-fit-e3.json")
+    text_fit_e4 = Path(args.text_fit_e4_receipt).resolve() if args.text_fit_e4_receipt else output_path.with_name(f"{output_path.stem}.text-fit-e4.json")
+    e3_report = run_text_fit_e3(deck, layout_path, text_fit_report, required=require_text_fit)
+    if require_text_fit and not e3_report.get("gate_passed"):
+        _die(text_fit_failure_message(e3_report))
 
     if args.authoring_backend == "artifact-tool":
         if args.embed_fonts:
@@ -177,11 +210,17 @@ def main() -> None:
                 if completed.stderr:
                     print(completed.stderr, file=sys.stderr, end="")
                 _die(f"Artifact Tool strict authoring failed with exit code {completed.returncode}")
+        chart_gap_report = output_path.with_name(f"{output_path.stem}.chart-blank-gap-repair.json")
+        gap_result = repair_chart_blank_gaps(output_path, deck, chart_gap_report)
+        if not gap_result.get("valid", False):
+            _die("Artifact Tool chart blank-gap OOXML repair failed")
+        e4 = write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
+        if require_text_fit and e4 is None:
+            _die("E4 text-fit receipt cannot bind missing authored PPTX")
+        if require_text_fit and not e4.get("valid"):
+            _die("E4 text-fit receipt blocked because E3 did not pass")
         return
 
-    # Keep the historical backend import lazy: the strict route above should
-    # load only the ESM adapter and never create or rewrite a deck through the
-    # compatibility implementation.
     from authoring_backend import build_pptx, build_with_embedded_fonts
 
     if args.embed_fonts:
@@ -204,6 +243,11 @@ def main() -> None:
             build_pptx(deck, output_path)
         except (KeyError, OSError, TypeError, ValueError) as exc:
             _die(f"authoring failed: {type(exc).__name__}: {exc}")
+    e4 = write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
+    if require_text_fit and e4 is None:
+        _die("E4 text-fit receipt cannot bind missing authored PPTX")
+    if require_text_fit and not e4.get("valid"):
+        _die("E4 text-fit receipt blocked because E3 did not pass")
     if args.preview_dir:
         render_previews(deck, Path(args.preview_dir))
 

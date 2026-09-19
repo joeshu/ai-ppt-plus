@@ -1,0 +1,45 @@
+{
+  "schema": "ai-ppt-plus/hard-negative-fresh-validation/v1",
+  "generated_at": "2026-09-19T04:50:00Z",
+  "reference": {
+    "file": "DCB89475-DA25-4CE1-8E58-770F5806629E(4).jpeg",
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "size_px": [
+      1536,
+      864
+    ]
+  },
+  "head": "c2ace8364a4ec87df2bcde5c74f87febd95fe0a3",
+  "authoring": {
+    "runtime": "official artifact_tool RPC runtime",
+    "artifact_tool_python": "2.8.22",
+    "candidate_sha256": "bb8714bb11c769790f2972471dc72c6a752159a6067ddd5af14b245e686eb5e8"
+  },
+  "changes_exercised": [
+    "whole-brand-lockup asset instead of mark + independently reflowed wordmark",
+    "editable chart primitives instead of viewer-dependent native-chart auto-layout",
+    "smaller single-line card headers",
+    "reduced dense-card typography"
+  ],
+  "rendered_fidelity": {
+    "ssim": 0.5668780579764797,
+    "strict_threshold": 0.9,
+    "passed": false
+  },
+  "blocking_findings": [
+    "overall geometry and scale remain materially different from the reference",
+    "chart plot area and labels still do not match the reference closely enough",
+    "02/03 dense text topology remains visually divergent",
+    "footer decoration and lower-band composition remain materially different",
+    "current generic gates correctly prevent release; this case remains a Hard Negative"
+  ],
+  "status": "blocked-by-rendered-reference-fidelity",
+  "merge_allowed": false,
+  "next_repair_layers": [
+    "PageGraph geometry calibration",
+    "TextGraph measured line-box reconstruction",
+    "ChartGraph reference-coordinate reconstruction",
+    "BrandAssetGraph final lockup provenance",
+    "footer/decorative asset placement"
+  ]
+}
