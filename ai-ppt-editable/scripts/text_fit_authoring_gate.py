@@ -11,6 +11,8 @@ from text_fit_deck import TEXT_SLOT_KINDS, audit_layout
 from validate_brand_asset_coverage import validate_brand_coverage
 from validate_chart_authoring_contract import validate_chart_authoring_contract
 from validate_text_topology import audit_text_topology
+from validate_page_geometry import audit_page_geometry
+from validate_measured_line_boxes import audit_measured_line_boxes
 
 
 def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, required: bool) -> dict:
@@ -23,6 +25,8 @@ def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, require
         topology = audit_text_topology(normalized)
     brand = validate_brand_coverage(layout_path.resolve().parent)
     chart = validate_chart_authoring_contract(layout_path.resolve(), deck)
+    page_geometry = audit_page_geometry(layout_path.resolve(), deck)
+    line_boxes = audit_measured_line_boxes(layout_path.resolve(), deck)
     report["stage"] = "E3"
     report["source_layout"] = str(layout_path.resolve())
     report["required_slot_kinds"] = list(TEXT_SLOT_KINDS)
@@ -33,6 +37,10 @@ def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, require
     report["brand_defect_count"] = len(brand.get("issues") or [])
     report["chart_authoring_contract"] = chart
     report["chart_defect_count"] = len(chart.get("issues") or [])
+    report["page_geometry"] = page_geometry
+    report["page_geometry_defect_count"] = len(page_geometry.get("issues") or [])
+    report["measured_line_boxes"] = line_boxes
+    report["measured_line_box_defect_count"] = len(line_boxes.get("issues") or [])
     report["gate_passed"] = bool(
         report.get("valid")
         and report.get("all_slots_measured")
@@ -41,6 +49,8 @@ def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, require
         and topology.get("valid")
         and brand.get("valid")
         and chart.get("valid")
+        and page_geometry.get("valid")
+        and line_boxes.get("valid")
     )
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return report
@@ -54,6 +64,8 @@ def text_fit_failure_message(report: dict) -> str:
         f"topology_defects={report.get('topology_defect_count')}, "
         f"brand_defects={report.get('brand_defect_count')}, "
         f"chart_defects={report.get('chart_defect_count')}, "
+        f"page_geometry_defects={report.get('page_geometry_defect_count')}, "
+        f"measured_line_box_defects={report.get('measured_line_box_defect_count')}, "
         f"duplicates={len(report.get('duplicate_object_ids') or [])}; "
         "repair geometry/reference line topology/brand/chart representation before composition"
     )
@@ -78,6 +90,8 @@ def write_text_fit_e4_receipt(report_path: Path, output_path: Path, e3: dict, *,
         "topology_defect_count": e3.get("topology_defect_count"),
         "brand_defect_count": e3.get("brand_defect_count"),
         "chart_defect_count": e3.get("chart_defect_count"),
+        "page_geometry_defect_count": e3.get("page_geometry_defect_count"),
+        "measured_line_box_defect_count": e3.get("measured_line_box_defect_count"),
         "render_validation_required": True,
         "strict_reference_release_required": True,
         "release_note": "E4 receipt is not a visual pass. Fixed-reference work must run strict_reference_release.py and pass its fresh rendered reference gate.",
