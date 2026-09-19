@@ -22,6 +22,7 @@ import tempfile
 from pathlib import Path
 
 from asset_placement import replace_svg_media as _replace_svg_media
+from calibrate_page_geometry import apply_page_graph_geometry
 from chart_blank_gap_repair import repair_chart_blank_gaps
 from asset_placement import svg_to_png as _svg_to_png
 from component_expander import _choose_slide_layout, _expand_components, _frac, _load_deck, _promote_native_structures, _resolve
@@ -105,6 +106,29 @@ def main() -> None:
         _die(f"layout file not found: {layout_path}")
     deck = _promote_native_structures(_load_deck(layout_path))
     deck = _expand_components(deck)
+
+    # Fixed-reference authoring uses PageGraph geometry as the authoritative
+    # object-placement source before typography fitting.  This is deterministic
+    # and generic: only matching stable object ids are projected; unmatched
+    # nodes are left for the downstream fail-closed geometry audit.
+    route_path = layout_path.resolve().parent / "route-decision.json"
+    route = {}
+    if route_path.is_file():
+        try:
+            route = json.loads(route_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            route = {}
+    page_geometry_calibration = None
+    if route.get("route") == "reference-reconstruction":
+        page_graph_path = layout_path.resolve().parent / "page-graph.json"
+        if not page_graph_path.is_file():
+            _die(f"reference reconstruction requires PageGraph geometry: {page_graph_path}")
+        try:
+            page_graph = json.loads(page_graph_path.read_text(encoding="utf-8"))
+            deck, page_geometry_calibration = apply_page_graph_geometry(deck, page_graph)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            _die(f"PageGraph geometry calibration failed: {type(exc).__name__}: {exc}")
+
     semantic_report = validate_semantic_layout(deck)
     if not semantic_report.get("valid", False):
         issue_codes = ", ".join(str(item.get("code")) for item in semantic_report.get("issues", []))
@@ -112,6 +136,10 @@ def main() -> None:
     deck["strict_input"] = bool(args.strict_input)
     deck["require_native_structure"] = bool(args.require_native_structure or (args.strict_input and deck.get("editable_object_policy") == "native-semantic-objects"))
     output_path = Path(args.out).resolve()
+    if page_geometry_calibration is not None:
+        calibration_report = output_path.with_name(f"{output_path.stem}.page-geometry-calibration.json")
+        calibration_report.parent.mkdir(parents=True, exist_ok=True)
+        calibration_report.write_text(json.dumps(page_geometry_calibration, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if args.font_dir:
         deck["font_dir"] = str(Path(args.font_dir).resolve())
 
