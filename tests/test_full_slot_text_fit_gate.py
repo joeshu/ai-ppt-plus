@@ -39,10 +39,11 @@ def main() -> int:
     compose = (EDITABLE / "compose_pptx.py").read_text(encoding="utf-8")
     gate = (EDITABLE / "text_fit_authoring_gate.py").read_text(encoding="utf-8")
     for token in (
-        "from text_fit_authoring_gate import run_text_fit_e3, write_text_fit_e4_receipt",
+        "from text_fit_authoring_gate import ",
         "run_text_fit_e3",
-        'args.authoring_backend == "artifact-tool"',
+        "text_fit_failure_message",
         "write_text_fit_e4_receipt",
+        'args.authoring_backend == "artifact-tool"',
     ):
         assert token in compose, token
 
