@@ -3,10 +3,9 @@
 This contract incorporates the strongest execution patterns studied from
 `knight6669/knight-imagetopptx-skill` at commit
 `9265818222fdbdd326410793956ad23a950d72a7`. The upstream project is MIT
-licensed. ai-ppt-editable keeps its own authoring, provenance, semantic and
-visual gates; these rules strengthen the last-mile reconstruction path.
+licensed. These rules are part of normal standalone execution; they do not require running Knight side-by-side or any A/B comparator.
 
-## Mandatory additions
+## Mandatory execution rules
 
 1. **Full text-slot preflight** — Run `scripts/text_fit_deck.py` against the
    approved layout before authoring. It must measure every visible text path:
@@ -108,3 +107,7 @@ gap evidence, transparent-asset QA, physical layer audit and normalized
 local-crop evidence. For hard-region repairs it must also list native geometry
 locks, fallback-font compensation and accepted/rejected Repair Trace deltas.
 Code generation without the final render and crop evidence is incomplete.
+
+## Self-contained acceptance rule
+
+Normal skill execution must succeed without any external comparator. Completion is based on the mandatory phase contract: visual inventory, asset classification, ImageGen asset completion, text-fit coverage, editable authoring, physical z-order pass, fresh render QA, same-coordinate local-crop QA, responsible-object repair, and final validation. Whole-page SSIM or any other scalar score is diagnostic only unless the user explicitly requests a numeric target. External Knight A/B remains an evaluation harness for skill development, not a runtime dependency.
