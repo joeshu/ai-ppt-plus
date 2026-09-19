@@ -36,7 +36,7 @@ def load_json(path: Path) -> dict:
         raise ValueError(f"{path} must contain a JSON object")
     return value
 
-def audit(plan: dict, coverage: dict, *, plan_sha256: str) -> dict:
+def audit(plan: dict, coverage: dict, *, plan_sha256: str, text_fit_report: dict | None = None) -> dict:
     issues: list[dict] = []
     if plan.get("schema") != PLAN_SCHEMA:
         issues.append(problem("text_coverage_plan_schema_invalid", f"expected {PLAN_SCHEMA}"))
@@ -56,6 +56,14 @@ def audit(plan: dict, coverage: dict, *, plan_sha256: str) -> dict:
         issues.append(problem("text_coverage_plan_sha_missing", "source.authoring_plan_sha256 must be a SHA-256"))
     elif declared_sha.lower() != plan_sha256.lower():
         issues.append(problem("text_coverage_plan_sha_mismatch", "coverage is not bound to the supplied AuthoringPlan"))
+
+    measured_ids: set[str] | None = None
+    if text_fit_report is not None:
+        if not str(text_fit_report.get("schema", "")).startswith("ai-ppt-plus/text-fit-deck/"):
+            issues.append(problem("text_coverage_text_fit_schema_invalid", "text-fit report schema is invalid"))
+        if text_fit_report.get("all_slots_measured") is not True:
+            issues.append(problem("text_coverage_text_fit_incomplete", "text-fit report must declare all_slots_measured=true"))
+        measured_ids = {str(x) for x in (text_fit_report.get("measured_object_ids") or []) if str(x)}
 
     entries = coverage.get("entries")
     if not isinstance(entries, list):
@@ -98,6 +106,12 @@ def audit(plan: dict, coverage: dict, *, plan_sha256: str) -> dict:
         if not isinstance(path, str) or not path.strip():
             issues.append(problem("text_coverage_authoring_path_missing", "authoring_path is required", target_id=target_id, owner_object_id=owner_id if isinstance(owner_id, str) else None))
 
+        evidence_id = entry.get("text_fit_evidence_id")
+        if not isinstance(evidence_id, str) or not evidence_id.strip():
+            issues.append(problem("text_coverage_evidence_id_missing", "text_fit_evidence_id is required", target_id=target_id, owner_object_id=owner_id if isinstance(owner_id, str) else None))
+        elif measured_ids is not None and evidence_id not in measured_ids:
+            issues.append(problem("text_coverage_evidence_id_unmeasured", "text_fit_evidence_id is absent from measured_object_ids", target_id=target_id, owner_object_id=owner_id if isinstance(owner_id, str) else None))
+
         evidence = entry.get("text_fit_evidence")
         if not isinstance(evidence, dict) or evidence.get("measured") is not True:
             issues.append(problem("text_coverage_measurement_missing", "text_fit_evidence.measured must be true", target_id=target_id, owner_object_id=owner_id if isinstance(owner_id, str) else None))
@@ -138,12 +152,14 @@ def main() -> int:
     parser.add_argument("authoring_plan", type=Path)
     parser.add_argument("coverage", type=Path)
     parser.add_argument("--report", type=Path)
+    parser.add_argument("--text-fit-report", type=Path)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     try:
         plan = load_json(args.authoring_plan)
         coverage = load_json(args.coverage)
-        result = audit(plan, coverage, plan_sha256=sha256(args.authoring_plan))
+        text_fit_report = load_json(args.text_fit_report) if args.text_fit_report else None
+        result = audit(plan, coverage, plan_sha256=sha256(args.authoring_plan), text_fit_report=text_fit_report)
     except Exception as exc:
         result = {
             "schema": "ai-ppt-plus/text-coverage-audit/v1",
