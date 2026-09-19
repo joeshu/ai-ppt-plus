@@ -17,7 +17,7 @@
     "scripts/validate_native_editability.py", "SKILL.md", "agents/openai.yaml", "assets/skill-package.json", "requirements-ci.txt",
     "assets/skill-routing.template.json", "assets/schemas/skill-routing.schema.json",
     "assets/authoring-plan.template.json", "assets/schemas/authoring-plan.schema.json", "references/authoring-plan.md", "scripts/validate_authoring_plan.py",
-    "assets/text-coverage.template.json", "assets/schemas/text-coverage.schema.json", "references/text-coverage-auditor.md", "scripts/audit_text_coverage.py",
+    "assets/text-coverage.template.json", "assets/schemas/text-coverage.schema.json", "references/text-coverage-auditor.md", "scripts/build_text_coverage.py", "scripts/audit_text_coverage.py",
     "assets/fonts/font-manifest.json", "assets/fonts/OFL.txt", "assets/fonts/README.md",
     "scripts/runtime_fonts.py", "scripts/prepare_runtime_fonts.py",
     "scripts/validate_skill_package.py", "scripts/validate_routing_contract.py", "scripts/run_pipeline.py", "scripts/compose_pptx.py",
