@@ -36,7 +36,7 @@ def main()->int:
     assert first["responsibility"]=="typography-density"
     assert first["auto_patch_allowed"] is False
     assert first["crop_evidence"]["reference_crop"]=="r.png"
-    assert "text-slot geometry and line topology before font shrink" in trace["policy"]
+    assert "text-slot geometry, exact line topology and baseline spacing before font shrink" in trace["policy"]
     assert "without a fixed visual threshold" in trace["selection_policy"]
     print("crop-driven threshold-free render Repair Trace: ok")
     return 0
