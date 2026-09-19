@@ -8,18 +8,30 @@
   "reference": {
     "filename": "DCB89475-DA25-4CE1-8E58-770F5806629E(3).jpeg",
     "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
-    "size_px": [1536, 864],
-    "canvas_inches": [13.333333, 7.5]
+    "size_px": [
+      1536,
+      864
+    ],
+    "canvas_inches": [
+      13.333333,
+      7.5
+    ]
   },
   "comparison": {
     "candidate": "PR #41 formal ai-ppt-plus -> ai-ppt-editable strict route",
     "baseline": "knight-imagetopptx-skill",
-    "axes": ["pixel", "text", "object", "icon-asset", "local-crop"],
+    "axes": [
+      "pixel",
+      "text",
+      "object",
+      "icon-asset",
+      "local-crop"
+    ],
     "acceptance": "0 loss + >=3/5 strict wins + (pixel or local-crop win) + absolute editability/provenance floors"
   },
   "prior_measured_baseline": {
     "report": "five_axis_ab_report.json (2026-09-17)",
-    "candidate_text_coverage": 1.0,
+    "candidate_text_coverage": 1,
     "knight_text_coverage": 0.9429,
     "candidate_icon_mean_red_mask_iou": 0.309,
     "knight_icon_mean_red_mask_iou": 0.1462,
@@ -28,17 +40,15 @@
     "note": "diagnostic baseline only; it must not be represented as the PR41 fresh rerun"
   },
   "pr41_delta": {
-    "output_mutation_expected": false,
-    "reason": "PR41 adds E3/E4 text-fit receipts and fail-closed final-asset isolation/preflight gates. Fresh runtime execution additionally exposed an Artifact Tool blank-value serialization defect that must be repaired before promotion."
+    "output_mutation_expected": true,
+    "reason": "PR41 now includes deterministic post-Artifact-Tool OOXML blank-gap repair: source-layout null indices remove cached c:pt nodes and enforce c:dispBlanksAs=gap. Fresh formal runtime rerun remains mandatory."
   },
   "fresh_rerun": {
-    "generated": true,
-    "rendered": true,
+    "generated": false,
     "five_axis_measured": false,
-    "status": "blocked-p0-artifact-tool-null-to-zero-chart-serialization",
-    "candidate_pptx_sha256": "119bba3321a17f9e6c0f48fcb6648cdc1f19fc832cbf7b53ea5fa71180758e0a",
-    "blocker_evidence": "ai-ppt-editable/evals/beat-knight/pr41-fresh-runtime-blocker-20260919.json",
-    "must_not_claim_pass": true,
-    "merge_allowed": false
+    "status": "repair-landed-awaiting-fresh-formal-runtime-rerun",
+    "blocker_fixed_in_head": "e79a8873431bd42dbbf3a8bcac3aa189eeaa6d86",
+    "merge_allowed": false,
+    "must_not_claim_pass": true
   }
 }
