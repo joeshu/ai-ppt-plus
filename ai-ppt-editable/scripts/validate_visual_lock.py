@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-"""Validate the last-mile visual-lock evidence contract.
+"""Validate last-mile visual-lock evidence without turning visual diagnostics into hard gates.
 
-The validator is intentionally evidence-driven: it does not infer visual
-correctness from XML object counts. It rejects missing formal text, wrong
-container assignment, empty declared containers, unapproved additions,
-unresolved icon style locks and typography/region regressions reported by the
-render comparison stage.
+Deterministic correctness failures remain errors. Typography deltas, line-count
+differences and region scores are repair signals for the render/repair loop.
 """
 from __future__ import annotations
 
@@ -33,6 +30,7 @@ def main() -> int:
     path = Path(args.manifest)
     errors: list[str] = []
     warnings: list[str] = []
+    repair_signals: list[dict[str, Any]] = []
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
@@ -60,11 +58,6 @@ def main() -> int:
     if args.strict and "added_regions" not in data:
         fail("added_regions_missing", errors)
     additions = as_list(data.get("added_regions"))
-    approved_additions = {
-        str(x.get("region_id"))
-        for x in additions
-        if isinstance(x, dict) and x.get("approved") is True
-    }
 
     for index, region in enumerate(regions):
         if not isinstance(region, dict):
@@ -102,8 +95,7 @@ def main() -> int:
         if role == "icon":
             style = region.get("style_contract", {})
             provenance = region.get("provenance", {})
-            for key in ("style_anchor_id", "silhouette_evidence", "palette",
-                        "container_shape", "shadow_policy"):
+            for key in ("style_anchor_id", "silhouette_evidence", "palette", "container_shape", "shadow_policy"):
                 if not style.get(key):
                     fail(f"{rid}:icon_style_{key}_missing", errors)
             mode = provenance.get("provenance_mode")
@@ -113,18 +105,17 @@ def main() -> int:
                 fail(f"{rid}:source_reuse_without_user_approval", errors)
 
         typography = region.get("typography_evidence", {})
-        for key in ("width_delta_ratio", "height_delta_ratio", "line_count_match"):
+        if "line_count_match" in typography and typography.get("line_count_match") is False:
+            repair_signals.append({"region_id": rid, "code": "line_count_mismatch", "diagnostic_only": True})
+        for key in ("width_delta_ratio", "height_delta_ratio"):
             if key not in typography:
                 continue
-            value = typography[key]
-            if key == "line_count_match" and value is False:
-                fail(f"{rid}:line_count_mismatch", errors)
-            if key != "line_count_match":
-                try:
-                    if abs(float(value)) > 0.12:
-                        fail(f"{rid}:typography_delta_over_12_percent", errors)
-                except (TypeError, ValueError):
-                    fail(f"{rid}:typography_evidence_invalid:{key}", errors)
+            try:
+                value = float(typography[key])
+                if abs(value) > 0.12:
+                    repair_signals.append({"region_id": rid, "code": "typography_delta_over_12_percent", "metric": key, "observed": value, "diagnostic_only": True})
+            except (TypeError, ValueError):
+                fail(f"{rid}:typography_evidence_invalid:{key}", errors)
 
     for addition in additions:
         if isinstance(addition, dict) and addition.get("approved") is not True:
@@ -132,11 +123,12 @@ def main() -> int:
     if not additions and "added_regions" in data:
         warnings.append("no_approved_added_regions")
 
-    scores = data.get("render_evidence", {}).get("region_scores", {})
+    scores = evidence.get("region_scores", {})
     for rid, score in scores.items() if isinstance(scores, dict) else []:
         try:
-            if float(score) < 95 and any(r.get("region_id") == rid and r.get("critical") for r in regions if isinstance(r, dict)):
-                fail(f"{rid}:critical_region_score_below_95", errors)
+            observed = float(score)
+            if observed < 95 and any(r.get("region_id") == rid and r.get("critical") for r in regions if isinstance(r, dict)):
+                repair_signals.append({"region_id": rid, "code": "critical_region_score_below_95", "observed": observed, "target": 95, "diagnostic_only": True})
         except (TypeError, ValueError):
             fail(f"{rid}:region_score_invalid", errors)
 
@@ -147,14 +139,16 @@ def main() -> int:
         "manifest": str(path.resolve()),
         "error_count": len(errors),
         "warning_count": len(warnings),
+        "repair_loop_required": bool(repair_signals),
+        "repair_signals": repair_signals,
         "errors": errors,
         "warnings": warnings,
-        "acceptance": "failed" if errors else "accept-for-human-review",
+        "acceptance": "failed" if errors else "repair-required" if repair_signals else "accept-for-human-review",
     }
     output = Path(args.report)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"ok": result["ok"], "errors": len(errors), "warnings": len(warnings)}))
+    print(json.dumps({"ok": result["ok"], "errors": len(errors), "warnings": len(warnings), "repair_signals": len(repair_signals)}))
     return 2 if errors else 0
 
 
