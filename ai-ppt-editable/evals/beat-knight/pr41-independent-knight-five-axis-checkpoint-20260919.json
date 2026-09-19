@@ -1,0 +1,21 @@
+{
+  "schema": "ai-ppt-plus/pr41-independent-knight-five-axis-checkpoint/v1",
+  "date": "2026-09-19",
+  "source": {"sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021", "size_px": [1536, 864]},
+  "candidate": {"id": "r16", "pptx_sha256": "c6ea72d5a70ca630a3bb49c63eeafc45f6b26b8b8369b66ad1b2ee3571bf8bc6", "authoring": "Artifact Tool 2.8.22 fresh authoring", "render": "LibreOffice fresh render", "incumbent": true},
+  "knight_baseline": {"provenance": "independently generated Knight baseline already frozen in PR40 evidence; same source SHA/canvas; not the contaminated r16-side synthetic knight clone", "fresh_in_this_exact_step": false},
+  "axes": {
+    "pixel": {"candidate": {"layout_ssim": 0.834923, "pixel_fidelity": 0.890248}, "knight": {"layout_ssim": 0.632391, "pixel_fidelity": 0.858997}, "verdict": "WIN"},
+    "text": {"candidate": {"canonical_expected": 35, "canonical_matched": 35, "coverage": 1.0, "missing_count": 0}, "knight": {"coverage": 1.0, "missing_count": 0}, "verdict": "TIE"},
+    "object": {"candidate": {"native_object_count": 194, "whole_slide_picture_count": 0, "coverage": 1.0}, "knight": {"native_object_count": 127, "whole_slide_picture_count": 0, "coverage": 1.0}, "verdict": "TIE"},
+    "icon_asset_visual": {"metric": "mean source-red-mask IoU across the same 18 semantic icon slots", "candidate": {"mean_red_mask_iou": 0.269531, "slot_count": 18}, "knight": {"mean_red_mask_iou": 0.1462, "slot_count": 18}, "verdict": "WIN"},
+    "local_crop": {"candidate": {"region_count": 8, "worst_layout_ssim": 0.593386, "worst_pixel_fidelity": 0.854786}, "knight": {"region_count": 8, "worst_layout_ssim": 0.309985, "worst_pixel_fidelity": 0.810641}, "verdict": "WIN"}
+  },
+  "summary": {"strict_wins": 3, "ties": 2, "losses": 0, "relative_knight_gate": "PASS", "golden_visual_target": 0.90, "golden_release": "NOT_YET", "reason": "Relative five-axis checkpoint passes, but r16 remains below the 0.90 Golden visual target; PR must stay Draft and continue render-driven repair."},
+  "rejected_experiments": [
+    {"id": "r17", "reason": "reference-visible icon lock implementation used alpha bbox without threshold initially; whole-page regression; rejected"},
+    {"id": "r18", "reason": "alpha-threshold correction improved icon geometry strongly but whole-page visual fidelity regressed; rejected by incumbent rule"},
+    {"id": "r19base", "reason": "selective status/card2/management icon repair improved compare_visual layout metric but skimage whole-page SSIM 0.603062 < r16 0.605280; rejected by incumbent rule"}
+  ],
+  "integrity": {"contaminated_synthetic_knight_excluded": true, "source_crop_fallback": false, "whole_slide_raster_fallback": false, "threshold_lowered": false}
+}
