@@ -12,3 +12,12 @@ ai-ppt-editable/evals/**/*.pptx
 **/outputs/
 **/rendered/
 **/mutation-render/
+
+# Runtime-managed fonts: policy stays in Git; binary caches do not.
+.runtime/
+assets/fonts/*.ttf
+assets/fonts/*.otf
+assets/fonts/*.ttc
+ai-ppt-editable/assets/fonts/*.ttf
+ai-ppt-editable/assets/fonts/*.otf
+ai-ppt-editable/assets/fonts/*.ttc
