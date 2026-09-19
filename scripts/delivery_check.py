@@ -92,10 +92,10 @@ def main() -> int:
     parser.add_argument("--require-font-delivery", action="store_true")
     parser.add_argument("--expected-slides", type=int)
     parser.add_argument("--expected-ratio", type=float)
-    parser.add_argument("--quality-score", type=float)
-    parser.add_argument("--quality-threshold", type=float, default=80)
-    parser.add_argument("--reference-fidelity-threshold", type=float, default=0.90,
-                        help="minimum pixel fidelity and blurred layout SSIM for reference reconstruction")
+    parser.add_argument("--quality-score", type=float, help="optional diagnostic score; never a production hard blocker")
+    parser.add_argument("--quality-threshold", type=float, default=80, help="optional diagnostic target paired with --quality-score")
+    parser.add_argument("--reference-fidelity-threshold", type=float,
+                        help="deprecated diagnostic-only visual target; never a production hard blocker")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
 
@@ -150,17 +150,17 @@ def main() -> int:
     reference_release = bool(route_report and route_report.get("route") == "reference-reconstruction")
     visual_comparison_report = load(args.visual_comparison) if args.visual_comparison else None
     if reference_release:
-        check(bool(visual_comparison_report), "reference_visual_comparison_missing", "reference reconstruction requires a fresh visual comparison report")
+        check(bool(visual_comparison_report), "reference_visual_comparison_missing", "reference reconstruction requires fresh full-page comparison evidence")
         if visual_comparison_report:
-            metrics = visual_comparison_report.get("metrics") or {}
-            threshold = float(args.reference_fidelity_threshold)
-            check(visual_comparison_report.get("valid") is True, "reference_visual_comparison_failed", "reference visual comparison must pass its declared thresholds")
-            check(float(metrics.get("reference_fidelity_score", -1)) >= threshold,
-                  "reference_fidelity_below_threshold",
-                  f"reference_fidelity_score must be >= {threshold:.2f}; observed {metrics.get('reference_fidelity_score')}")
-            check(float(metrics.get("blurred_layout_ssim", -1)) >= threshold,
-                  "reference_layout_fidelity_below_threshold",
-                  f"blurred_layout_ssim must be >= {threshold:.2f}; observed {metrics.get('blurred_layout_ssim')}")
+            quality_evidence["visual_comparison"] = {
+                "valid": visual_comparison_report.get("valid"),
+                "status": visual_comparison_report.get("status"),
+                "metrics": visual_comparison_report.get("metrics", {}),
+                "issues": visual_comparison_report.get("issues", []),
+                "diagnostic_only": True,
+                "repair_loop_required": visual_comparison_report.get("valid") is not True,
+                "declared_target": args.reference_fidelity_threshold,
+            }
     authoring_provenance_required = bool(args.require_authoring_provenance or reference_release)
     if authoring_provenance_required:
         pointer_path = Path(args.current_rerun).resolve() if args.current_rerun else Path(args.manifest).resolve().parent / "current-rerun.json"
@@ -224,7 +224,8 @@ def main() -> int:
     required_quality(asset_hash_report, args.require_asset_hashes, "asset_hash_validation_failed", "asset hash validation")
     required_quality(multipage_layout_report, args.require_multipage_layout, "multipage_layout_validation_failed", "multi-page layout validation")
     required_quality(preview_consistency_report, args.require_preview_consistency, "preview_consistency_validation_failed", "preview/final-render consistency")
-    required_quality(dual_report, args.require_dual_comparison, "dual_comparison_failed", "pixel/object dual baseline")
+    if args.require_dual_comparison and dual_report is None:
+        check(False, "dual_comparison_missing", "requested development dual-comparison evidence must be present")
     if dual_report:
         quality_evidence["dual_comparison"] = {
             "valid": dual_report.get("valid"),
@@ -328,12 +329,17 @@ def main() -> int:
     for option, label in ((args.render_visual_gate, "render-visual-gate"), (args.visual_comparison, "visual-comparison"), (args.ocr_report, "ocr-text-check")):
         report = load(option) if option else None
         if option:
-            if report and report.get("valid") is True:
+            visual_diagnostic = label in {"render-visual-gate", "visual-comparison"}
+            if report is None:
+                blocking.append({"type": "quality_report_missing", "severity": "blocking", "slide": None, "detail": f"{label} report must be present"})
+            elif visual_diagnostic:
+                passed.append({"type": "diagnostic_report_present", "severity": "passed", "slide": None, "detail": f"{label} retained as repair evidence; validity does not block delivery"})
+            elif report.get("valid") is True:
                 passed.append({"type": "quality_report_valid", "severity": "passed", "slide": None, "detail": f"{label} report is present and valid"})
             else:
                 blocking.append({"type": "quality_report_failed", "severity": "blocking", "slide": None, "detail": f"{label} report must be present and valid", "report_issues": (report or {}).get("issues", [])})
             if report is not None:
-                quality_evidence[label.replace("-", "_")] = {"valid": report.get("valid"), "status": report.get("status"), "language": report.get("language"), "metrics": report.get("metrics", {}), "issues": report.get("issues", [])}
+                quality_evidence[label.replace("-", "_")] = {"valid": report.get("valid"), "status": report.get("status"), "language": report.get("language"), "metrics": report.get("metrics", {}), "issues": report.get("issues", []), "diagnostic_only": visual_diagnostic}
                 if label == "ocr-text-check" and report.get("status") == "unavailable":
                     quality_degradations.append({"code": "ocr_unavailable", "language": report.get("language"), "requires_human_review": True})
 
@@ -393,7 +399,12 @@ def main() -> int:
     if args.require_editability:
         check(not any(item.get("status") != "typed" for item in editability_evidence), "editability_levels_missing", "every slide needs typed L0-L5 object records")
 
-    check(args.quality_score is not None and args.quality_score >= args.quality_threshold, "quality_threshold_not_met", f"score={args.quality_score}, threshold={args.quality_threshold}")
+    if args.quality_score is not None:
+        quality_evidence["declared_quality_score"] = {
+            "score": args.quality_score,
+            "target": args.quality_threshold,
+            "diagnostic_only": True,
+        }
     open_critical = [item for item in issue_log.get("issues", []) if item.get("severity") in {"blocker", "critical"} and item.get("status", "open") not in {"closed", "fixed", "accepted"}]
     check(not open_critical, "open_blocker_or_critical_issues", "all blocker/critical issues must be closed", [item.get("slide") for item in open_critical] or None)
 

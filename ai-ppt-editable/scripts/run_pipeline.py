@@ -47,6 +47,23 @@ from render_review_html import write_review
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
+VISUAL_DIAGNOSTIC_STEPS = {
+    "render-visual-gate",
+    "visual-comparison",
+    "dual-comparison",
+    "visual-compare-qa",
+    "preview-consistency",
+    "gradient-visual",
+}
+VISUAL_DIAGNOSTIC_EVIDENCE = {
+    "render_visual_gate",
+    "visual_comparison",
+    "dual_comparison",
+    "visual_compare_qa",
+    "preview_consistency",
+    "gradient_visual_validation",
+}
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -371,8 +388,8 @@ def main() -> int:
     parser.add_argument("--handoff", help="handoff.json; required by --release")
     parser.add_argument("--human-signoff", help="human-closeout.json; required by --release")
     parser.add_argument("--issue-log", help="issue-log.json passed to the release gate")
-    parser.add_argument("--quality-score", type=float, help="human/automated quality score for --release")
-    parser.add_argument("--quality-threshold", type=float, default=80, help="minimum quality score for --release")
+    parser.add_argument("--quality-score", type=float, help="optional diagnostic quality score for review evidence")
+    parser.add_argument("--quality-threshold", type=float, default=80, help="optional diagnostic target; never a production hard blocker")
     parser.add_argument("--require-embedded-fonts", action="store_true", help="require verified OOXML embedded fonts in strict release delivery")
     parser.add_argument("--dpi", type=int, default=96, help="render DPI; same-ratio reference comparisons are normalized when pixel sizes differ")
     parser.add_argument("--strict-layout", action="store_true", help="treat layout-audit warnings (such as missing source_bbox) as blockers")
@@ -435,8 +452,8 @@ def main() -> int:
         args.require_source_hashes = True
         args.require_asset_hashes = True
         args.require_formal_content = True
-        if args.reference or args.reference_dir:
-            args.require_dual_comparison = True
+        # External/pixel-object dual comparison is development evidence only;
+        # release never auto-requires it.
         if args.reference_dir:
             args.require_multipage_layout = True
         missing = []
@@ -448,8 +465,6 @@ def main() -> int:
             missing.append("--handoff")
         if not args.human_signoff:
             missing.append("--human-signoff")
-        if args.quality_score is None:
-            missing.append("--quality-score")
         if missing:
             result = {"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "release_evidence_missing", "missing": missing}
             print(json.dumps(result, ensure_ascii=False))
@@ -1223,17 +1238,15 @@ def main() -> int:
         comparison_args = [str(SCRIPT_DIR / "compare_visual.py"), str(render_dir / "slide-1.png"), str(Path(args.reference).resolve()), "--report", str(run_dir / "visual-comparison.json")]
         if args.expected_ratio is not None:
             comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
-        if args.visual_threshold is not None:
-            comparison_args.extend(["--min-reference-fidelity", str(args.visual_threshold)])
-        elif args.release:
-            comparison_args.append("--strict")
+        # Visual similarity is diagnostic-only in production. A declared
+        # target is retained in run metadata for repair prioritization, but is
+        # never forwarded as a hard comparison threshold.
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir / "slide-1.png", Path(args.reference).resolve()], metadata={"affected_pages": affected_pages or "all"})
     elif args.reference_dir:
         comparison_args = [str(SCRIPT_DIR / "compare_visual_deck.py"), str(render_dir), str(Path(args.reference_dir).resolve()), "--expected-pages", str(args.expected_pages), "--report", str(run_dir / "visual-comparison.json")]
         if args.expected_ratio is not None:
             comparison_args.extend(["--expected-ratio", str(args.expected_ratio)])
-        if args.visual_threshold is not None:
-            comparison_args.extend(["--threshold", str(args.visual_threshold)])
+        # Multi-page visual metrics likewise remain repair signals only.
         if affected_pages:
             comparison_args.extend(["--pages", ",".join(str(page) for page in affected_pages)])
         add_step("visual-comparison", comparison_args, deps=["render"], outputs=[run_dir / "visual-comparison.json"], inputs=[render_dir, Path(args.reference_dir).resolve()], metadata={"affected_pages": affected_pages or "all"})
@@ -1573,12 +1586,36 @@ def main() -> int:
 
     def build_pipeline_result(current_steps, evidence, degradations, release_report=None, bundle_report=None, signoff_report=None):
         failed = [step["name"] for step in current_steps if not step["ok"]]
-        technical_failed = [step["name"] for step in current_steps if not step["ok"] and step["name"] not in {"signoff-validation", "release-check"}]
+        technical_failed = [
+            step["name"]
+            for step in current_steps
+            if not step["ok"]
+            and step["name"] not in {"signoff-validation", "release-check"}
+            and step["name"] not in VISUAL_DIAGNOSTIC_STEPS
+        ]
         technical_valid = not technical_failed
+        repair_signals = []
+        for name in sorted(VISUAL_DIAGNOSTIC_EVIDENCE):
+            item = evidence.get(name)
+            if not isinstance(item, dict):
+                continue
+            if item.get("valid") is False or item.get("repair_loop_required") is True:
+                repair_signals.append({
+                    "evidence": name,
+                    "status": item.get("native_status") or item.get("status"),
+                    "issues": item.get("issues", []),
+                    "diagnostic_only": True,
+                })
+        diagnostic_failed_steps = sorted(set(failed) & VISUAL_DIAGNOSTIC_STEPS)
+        for name in diagnostic_failed_steps:
+            if not any(item.get("evidence") == name.replace("-", "_") for item in repair_signals):
+                repair_signals.append({"evidence": name.replace("-", "_"), "status": "failed-step", "issues": [], "diagnostic_only": True})
+        repair_loop_required = bool(repair_signals)
+        production_state = "hard-correctness-fail" if not technical_valid else "repair-required" if repair_loop_required else "final-pptx-ready"
         release_check_passed = bool(release_report and release_report.get("status") == "passed")
         bundle_passed = bool(bundle_report and bundle_report.get("valid") is True)
         signoff_passed = bool(signoff_report and signoff_report.get("valid") is True)
-        release_eligible = bool(args.release and technical_valid and bundle_passed and signoff_passed and release_check_passed)
+        release_eligible = bool(args.release and technical_valid and not repair_loop_required and bundle_passed and signoff_passed and release_check_passed)
         render_evidence = evidence.get("render", {})
         page_cache_evidence = render_evidence.get("page_cache", {}) if isinstance(render_evidence, dict) else {}
         conversion_evidence = render_evidence.get("conversion", {}) if isinstance(render_evidence, dict) else {}
@@ -1599,6 +1636,9 @@ def main() -> int:
             "release_profile": "strict" if args.release else "not_run",
             "release_eligible": release_eligible,
             "release_status": release_report.get("status") if release_report else "not_run",
+            "repair_loop_required": repair_loop_required,
+            "repair_signals": repair_signals,
+            "production_state": production_state,
             "human_review_required": True,
             "human_review_status": "approved" if signoff_passed else "pending",
             "run_id": run_id,
@@ -1642,7 +1682,7 @@ def main() -> int:
             "steps": current_steps,
             "failed_steps": failed,
             "technical_failed_steps": technical_failed,
-            "next_state": "delivered" if release_eligible else "validated" if technical_valid else "revision-required",
+            "next_state": "delivered" if release_eligible else production_state,
             "human_visual_review_required": True,
             "human_signoff_required": True,
             "quality_evidence": evidence,
@@ -1759,7 +1799,9 @@ def main() -> int:
         step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "source-crop-integrity": "source-crop-integrity", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
-    stage = "revision-required" if any(not step.get("ok") for step in steps) else "validated"
+    failed_step_names = {step.get("name") for step in steps if not step.get("ok") and isinstance(step.get("name"), str)}
+    hard_failed_step_names = failed_step_names - VISUAL_DIAGNOSTIC_STEPS
+    stage = "hard-correctness-fail" if hard_failed_step_names else "repair-required" if (failed_step_names & VISUAL_DIAGNOSTIC_STEPS) else "validated"
     report_index = {"schema": "ai-ppt-plus/report-index/v1", "project_id": project.name, "revision": args.revision_label or "working", "stage": stage, "validation_scope": "incremental" if affected_pages else "full", "deck_path": str(deck), "deck_sha256": sha256(deck), "source_references": [{"source_id": "deck", "path": str(deck), "sha256": sha256(deck)}], "reports": report_entries}
     atomic_write_json(run_dir / "report-index.json", report_index)
     steps.append(run_step(run_dir, "project-report-aggregate", [str(SCRIPT_DIR / "aggregate_project_reports.py"), str(run_dir / "report-index.json"), "--report", str(run_dir / "project-report.json")]))
@@ -1817,10 +1859,10 @@ def main() -> int:
             "--require-report-bundle",
             "--render-visual-gate", str(run_dir / "render-visual-gate.json"),
             "--expected-slides", str(args.expected_pages),
-            "--quality-score", str(args.quality_score),
-            "--quality-threshold", str(args.quality_threshold),
             "--output", str(run_dir / "release-check.json"),
         ]
+        if args.quality_score is not None:
+            release_args.extend(["--quality-score", str(args.quality_score), "--quality-threshold", str(args.quality_threshold)])
         if content_inventory_required:
             release_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json"), "--require-content-inventory"])
         if chart_manifest_enabled:

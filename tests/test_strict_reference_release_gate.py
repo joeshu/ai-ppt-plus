@@ -21,8 +21,8 @@ def main() -> int:
     assert "build_render_repair_trace.py" in worker
     assert "--require-golden" not in worker
     assert "visual_metrics_diagnostic_only" in worker
-    assert 'status="review-ready"' in compact
-    assert "fresh render comparison failed structural validation" in worker
+    assert 'status="repair-ready"' in compact
+    assert "full-page comparison failed structural validation" in worker
     print("strict reference release render-review contract: ok")
     return 0
 

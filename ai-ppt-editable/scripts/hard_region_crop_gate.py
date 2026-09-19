@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Measure hard-region local fidelity with profile-aware blocking semantics.
+"""Measure key-region local fidelity as render/repair diagnostics.
 
-Standard reconstruction keeps the historical absolute regional thresholds.
-Competitive A/B runs keep the same measurements as diagnostics but defer the
-pass/fail decision to the five-dimensional relative evaluator, avoiding a
-hidden 0.90 absolute gate that can contradict a genuine Beat-Knight result.
+Regional SSIM and pixel fidelity rank repair work. They never independently
+block normal fixed-reference production. Missing/invalid region evidence can
+still fail because the short loop requires same-coordinate crop evidence.
 """
 from __future__ import annotations
 
@@ -50,7 +49,6 @@ def evaluate(source: Image.Image, candidate: Image.Image, spec: dict, output_dir
     candidate = candidate.convert("RGB").resize(source.size, Image.Resampling.LANCZOS)
     output_dir.mkdir(parents=True, exist_ok=True)
     rows = []
-    absolute_threshold_applied = profile != "competitive_ab"
     for index, region in enumerate(spec.get("regions") or [], 1):
         rid = str(region.get("id") or f"region-{index}")
         box = _box_px(region["bbox"], *source.size)
@@ -59,27 +57,24 @@ def evaluate(source: Image.Image, candidate: Image.Image, spec: dict, output_dir
         scores = _score(src, cand)
         min_layout = float(region.get("min_layout_ssim", 0.90))
         min_pixel = float(region.get("min_pixel_fidelity", 0.90))
-        absolute_pass = scores["layout_ssim"] >= min_layout and scores["pixel_fidelity"] >= min_pixel
-        valid = absolute_pass if absolute_threshold_applied else True
+        diagnostic_pass = scores["layout_ssim"] >= min_layout and scores["pixel_fidelity"] >= min_pixel
         src_path = output_dir / f"{index:02d}-{rid}-source.png"
         cand_path = output_dir / f"{index:02d}-{rid}-candidate.png"
         src.save(src_path)
         cand.save(cand_path)
-        rows.append(
-            {
-                "id": rid,
-                "bbox_px": list(box),
-                "scores": scores,
-                "thresholds": {"layout_ssim": min_layout, "pixel_fidelity": min_pixel},
-                "absolute_threshold_applied": absolute_threshold_applied,
-                "absolute_threshold_pass": absolute_pass,
-                "valid": valid,
-                "source_crop": str(src_path),
-                "candidate_crop": str(cand_path),
-                "repair_trace": [] if valid else ["local_crop"],
-            }
-        )
-    failures = [row for row in rows if not row["valid"]]
+        rows.append({
+            "id": rid,
+            "bbox_px": list(box),
+            "scores": scores,
+            "thresholds": {"layout_ssim": min_layout, "pixel_fidelity": min_pixel},
+            "absolute_threshold_applied": False,
+            "absolute_threshold_pass": diagnostic_pass,
+            "valid": True,
+            "diagnostic_only": True,
+            "source_crop": str(src_path),
+            "candidate_crop": str(cand_path),
+            "repair_trace": [] if diagnostic_pass else ["local_crop"],
+        })
     diagnostic_failures = [row for row in rows if not row["absolute_threshold_pass"]]
     worst = min(
         rows,
@@ -88,14 +83,20 @@ def evaluate(source: Image.Image, candidate: Image.Image, spec: dict, output_dir
             row["scores"]["pixel_fidelity"] - row["thresholds"]["pixel_fidelity"],
         ),
     ) if rows else None
+    valid = bool(rows)
     return {
         "schema": "ai-ppt-plus/hard-region-crop-gate/v2",
         "profile": profile,
-        "gate_mode": "competitive_relative_diagnostic" if profile == "competitive_ab" else "absolute_regional",
-        "valid": bool(rows) and not failures,
+        "gate_mode": "repair_diagnostic",
+        "valid": valid,
         "region_count": len(rows),
-        "failure_count": len(failures),
+        "failure_count": 0 if valid else 1,
         "diagnostic_absolute_failure_count": len(diagnostic_failures),
+        "repair_loop_required": bool(diagnostic_failures),
+        "repair_signals": [
+            {"region_id": row["id"], "code": "regional_fidelity_below_target", "scores": row["scores"], "targets": row["thresholds"], "diagnostic_only": True}
+            for row in diagnostic_failures
+        ],
         "worst_region": worst["id"] if worst else None,
         "regions": rows,
     }
@@ -116,7 +117,7 @@ def main() -> int:
     report = evaluate(source, candidate, spec, args.output_dir, profile=args.profile)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({key: report[key] for key in ("schema", "profile", "gate_mode", "valid", "region_count", "failure_count", "diagnostic_absolute_failure_count", "worst_region")}, ensure_ascii=False))
+    print(json.dumps({key: report[key] for key in ("schema", "profile", "gate_mode", "valid", "region_count", "failure_count", "diagnostic_absolute_failure_count", "repair_loop_required", "worst_region")}, ensure_ascii=False))
     return 0 if report["valid"] else 3
 
 

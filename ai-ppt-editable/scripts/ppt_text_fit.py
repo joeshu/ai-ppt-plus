@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Preflight editable PowerPoint text with real font metrics.
+"""Preflight editable PowerPoint text with real runtime font metrics.
 
-Adapted from knight-imagetopptx-skill's text-fit helper and made portable for
-the bundled Noto Sans SC fonts used by ai-ppt-editable.
+The fitter preserves reference line topology when supplied. It uses the same
+runtime-resolved font family that authoring should use and reports geometry
+shortfalls instead of silently shrinking typography to compensate for a wrong
+text slot.
 """
 from __future__ import annotations
 
@@ -15,15 +17,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-
-FONT_FILES = {
-    "noto sans sc": ("NotoSansSC-Regular.ttf", "NotoSansSC-Bold.ttf"),
-    "noto sans cjk sc": ("NotoSansSC-Regular.ttf", "NotoSansSC-Bold.ttf"),
-    "思源黑体": ("NotoSansSC-Regular.ttf", "NotoSansSC-Bold.ttf"),
-    "microsoft yahei": ("msyh.ttc", "msyhbd.ttc"),
-    "微软雅黑": ("msyh.ttc", "msyhbd.ttc"),
-    "arial": ("arial.ttf", "arialbd.ttf"),
-}
+from runtime_fonts import resolve_font_file
 
 
 def _pair(value: str, separator: str = "x") -> tuple[float, float]:
@@ -37,29 +31,13 @@ def find_font(font_name: str, bold: bool, explicit: str | None = None) -> Path:
         if path.is_file():
             return path
         raise FileNotFoundError(f"font file not found: {path}")
-    regular, bold_file = FONT_FILES.get(
-        font_name.strip().lower(),
-        ("NotoSansSC-Regular.ttf", "NotoSansSC-Bold.ttf"),
+    resolved = resolve_font_file(font_name, bold=bold)
+    if resolved and resolved.is_file():
+        return resolved
+    raise FileNotFoundError(
+        f"no usable runtime font file found for {font_name!r}; "
+        "prepare/resolve the CJK runtime font before text fitting"
     )
-    filename = bold_file if bold else regular
-    here = Path(__file__).resolve()
-    candidates = [
-        here.parents[1] / "assets" / "fonts" / filename,
-        here.parents[2] / "assets" / "fonts" / filename,
-        Path("C:/Windows/Fonts") / filename,
-        Path("/usr/share/fonts/opentype/noto") / filename,
-        Path("/usr/share/fonts/truetype/noto") / filename,
-    ]
-    # YaHei may be requested on non-Windows runners. Use the bundled licensed
-    # Noto fallback only for measurement and report the resolved file.
-    candidates.extend([
-        here.parents[1] / "assets" / "fonts" / ("NotoSansSC-Bold.ttf" if bold else "NotoSansSC-Regular.ttf"),
-        here.parents[2] / "assets" / "fonts" / ("NotoSansSC-Bold.ttf" if bold else "NotoSansSC-Regular.ttf"),
-    ])
-    for path in candidates:
-        if path.is_file():
-            return path
-    raise FileNotFoundError(f"no usable font file found for {font_name!r}")
 
 
 def _width(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str) -> float:
@@ -108,6 +86,7 @@ def measure(text: str, pt: float, font_path: Path, px_per_pt: float, width_px: f
     widths = [max(0, box[2] - box[0]) for box in boxes]
     glyph_heights = [max(0, box[3] - box[1]) for box in boxes]
     line_height = max(max(glyph_heights, default=0), font_px * 0.82) * line_spacing
+    occupied = sum(widths) * max(max(glyph_heights, default=0), 1)
     return {
         "pt": pt,
         "font_px": font_px,
@@ -116,41 +95,83 @@ def measure(text: str, pt: float, font_path: Path, px_per_pt: float, width_px: f
         "width_px": max(widths, default=0),
         "height_px": line_height * len(lines),
         "line_height_px": line_height,
+        "occupied_glyph_proxy_px2": occupied,
     }
 
 
 def best_fit(args: argparse.Namespace) -> dict:
+    # Internal callers created before exact line-topology support do not yet
+    # populate these fields. Keep them valid while the new capability remains
+    # opt-in through layout evidence or the CLI.
+    if not hasattr(args, "target_lines"):
+        args.target_lines = 0
+    if not hasattr(args, "scan_step"):
+        args.scan_step = 0.25
+
     box_w, box_h = _pair(args.box)
     slide_w_px, _ = _pair(args.slide_px)
     slide_w_in, _ = _pair(args.slide_in)
     px_per_pt = (slide_w_px / slide_w_in) / 72.0
     font_path = find_font(args.font, args.bold, args.font_file)
 
-    def fits(row: dict) -> bool:
+    def geometry_fits(row: dict) -> bool:
         return (
             row["width_px"] <= box_w * args.width_safety
             and row["height_px"] <= box_h * args.height_safety
             and (args.max_lines <= 0 or row["line_count"] <= args.max_lines)
         )
 
-    low, high, best = args.min_pt, args.max_pt, None
-    for _ in range(18):
-        point = (low + high) / 2.0
-        row = measure(args.text, point, font_path, px_per_pt, box_w,
-                      args.line_spacing, args.width_safety, args.render_fudge)
-        if fits(row):
-            best, low = row, point
+    def topology_matches(row: dict) -> bool:
+        return args.target_lines <= 0 or row["line_count"] == args.target_lines
+
+    def full_fit(row: dict) -> bool:
+        return geometry_fits(row) and topology_matches(row)
+
+    # Exact line topology is not monotonic under the old binary-search predicate:
+    # when the candidate has too few lines we often need a larger font/narrower
+    # slot, not a smaller font. Scan from largest to smallest when topology is
+    # known, then fall back to the closest topology for diagnosis.
+    if args.target_lines > 0:
+        step = max(0.10, args.scan_step)
+        count = max(1, int(math.ceil((args.max_pt - args.min_pt) / step)))
+        candidates = []
+        for index in range(count + 1):
+            point = max(args.min_pt, args.max_pt - index * step)
+            row = measure(args.text, point, font_path, px_per_pt, box_w,
+                          args.line_spacing, args.width_safety, args.render_fudge)
+            candidates.append(row)
+        exact = [row for row in candidates if full_fit(row)]
+        if exact:
+            best = exact[0]
         else:
-            high = point
-    if best is None:
-        best = measure(args.text, args.min_pt, font_path, px_per_pt, box_w,
-                       args.line_spacing, args.width_safety, args.render_fudge)
+            geometrically_valid = [row for row in candidates if geometry_fits(row)] or candidates
+            best = min(
+                geometrically_valid,
+                key=lambda row: (abs(row["line_count"] - args.target_lines), -row["pt"]),
+            )
+    else:
+        low, high, best = args.min_pt, args.max_pt, None
+        for _ in range(18):
+            point = (low + high) / 2.0
+            row = measure(args.text, point, font_path, px_per_pt, box_w,
+                          args.line_spacing, args.width_safety, args.render_fudge)
+            if geometry_fits(row):
+                best, low = row, point
+            else:
+                high = point
+        if best is None:
+            best = measure(args.text, args.min_pt, font_path, px_per_pt, box_w,
+                           args.line_spacing, args.width_safety, args.render_fudge)
+
     best.update({
         "recommended_pt": round(best["pt"], 2),
         "font_path": str(font_path),
         "px_per_pt": px_per_pt,
         "box_px": [box_w, box_h],
-        "fits": fits(best),
+        "fits": full_fit(best),
+        "geometry_fits": geometry_fits(best),
+        "line_topology_preserved": topology_matches(best),
+        "line_count_delta": (best["line_count"] - args.target_lines) if args.target_lines > 0 else 0,
         "utilization": {
             "width": round(best["width_px"] / box_w, 4) if box_w else 0.0,
             "height": round(best["height_px"] / box_h, 4) if box_h else 0.0,
@@ -159,7 +180,9 @@ def best_fit(args: argparse.Namespace) -> dict:
     if args.target_pt is not None:
         target = measure(args.text, args.target_pt, font_path, px_per_pt, box_w,
                          args.line_spacing, args.width_safety, args.render_fudge)
-        target["fits"] = fits(target)
+        target["fits"] = full_fit(target)
+        target["geometry_fits"] = geometry_fits(target)
+        target["line_topology_preserved"] = topology_matches(target)
         target["required_box_px"] = [
             math.ceil(target["width_px"] / args.width_safety),
             math.ceil(target["height_px"] / args.height_safety),
@@ -174,10 +197,13 @@ def best_fit(args: argparse.Namespace) -> dict:
         "font": args.font,
         "bold": args.bold,
         "max_lines": args.max_lines,
+        "target_lines": args.target_lines,
         "line_spacing": args.line_spacing,
         "width_safety": args.width_safety,
         "height_safety": args.height_safety,
         "render_fudge": args.render_fudge,
+        "scan_step": args.scan_step,
+        "runtime_font_required": True,
     }
     return best
 
@@ -196,12 +222,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--text", required=True)
     parser.add_argument("--box", required=True, help="exported pixel box, e.g. 980x42")
-    parser.add_argument("--font", default="Microsoft YaHei")
+    parser.add_argument("--font", default="Noto Sans CJK SC")
     parser.add_argument("--font-file")
     parser.add_argument("--bold", action="store_true")
     parser.add_argument("--min-pt", type=float, default=8)
     parser.add_argument("--max-pt", type=float, default=36)
     parser.add_argument("--max-lines", type=int, default=0)
+    parser.add_argument("--target-lines", type=int, default=0, help="exact observable reference line count; 0 disables exact topology matching")
+    parser.add_argument("--scan-step", type=float, default=0.25, help="point-size scan step when --target-lines is used")
     parser.add_argument("--line-spacing", type=float, default=1.06)
     parser.add_argument("--width-safety", type=float, default=0.92)
     parser.add_argument("--height-safety", type=float, default=0.95)

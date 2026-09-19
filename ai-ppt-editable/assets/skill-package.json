@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.19.02",
+  "package_revision": "2026.09.19.04",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -23,7 +23,7 @@
     "scripts/curate_icon_assets.py", "scripts/validate_transparent_assets.py", "scripts/audit_pptx_layers.py", "scripts/artifact_tool_authoring.mjs",
     "scripts/render_pptx.py", "scripts/inspect_pptx.py", "scripts/validate_backend_binding.py", "scripts/validate_visual_generation_plan.py",
     "scripts/validate_workflow_state.py", "scripts/validate_handoff.py", "scripts/run_tests.py",
-    "references/reconstruction-contract.md", "references/knight-fidelity-port.md", "references/editability-levels.md", "references/icon-asset-protocol.md",
+    "references/reconstruction-contract.md", "references/knight-fidelity-port.md", "references/editability-levels.md", "references/icon-asset-protocol.md", "references/visual-repair-patterns.md",
     "examples/component-library/standard-components.deck.json", "tests/test_semantic_layout.py"
   ],
   "runtime_sync": {"required": true, "comparison": "sha256", "operator": "refresh this complete skill directory from the same git revision before use"}

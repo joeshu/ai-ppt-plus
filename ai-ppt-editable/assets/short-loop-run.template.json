@@ -1,0 +1,61 @@
+{
+  "contract": "knight-short-loop/v1",
+  "source": {
+    "path": "reference.png",
+    "sha256": "",
+    "width_px": 0,
+    "height_px": 0,
+    "aspect_ratio": 0
+  },
+  "phases": {
+    "reference": {"status": "pending"},
+    "visual_inventory": {"status": "pending"},
+    "classification": {"status": "pending"},
+    "text_slot_preflight": {"status": "pending"},
+    "asset_generation": {"status": "pending"},
+    "artifact_tool_build": {"status": "pending"},
+    "fresh_powerpoint_render": {"status": "pending"},
+    "full_page_compare": {"status": "pending"},
+    "local_crop_qa": {"status": "pending"},
+    "responsible_object_repair": {"status": "pending"},
+    "rerender": {"status": "pending"},
+    "hard_correctness_check": {"status": "pending"},
+    "final_pptx": {"status": "pending"}
+  },
+  "pages": [
+    {
+      "page_id": "slide-1",
+      "material_region_count": 5,
+      "local_crops": [
+        {
+          "crop_id": "crop-01",
+          "object_ids": [],
+          "reference_path": "qa/crops/reference/crop-01.png",
+          "candidate_path": "qa/crops/candidate/crop-01.png",
+          "same_coordinates": true,
+          "diagnostics": {}
+        }
+      ]
+    }
+  ],
+  "repair_trace": [],
+  "hard_blockers": [],
+  "blocking_metrics": {},
+  "diagnostics": {
+    "ssim": null,
+    "regional_ssim": null,
+    "pixel_score": null,
+    "five_dim_score": null,
+    "bbox_iou": null,
+    "centroid_drift": null,
+    "scale_drift": null,
+    "icon_similarity": null,
+    "text_fit_utilization": null
+  },
+  "final": {
+    "pptx_path": "final.pptx",
+    "pptx_sha256": "",
+    "render_path": "qa/final-render.png",
+    "render_sha256": ""
+  }
+}
