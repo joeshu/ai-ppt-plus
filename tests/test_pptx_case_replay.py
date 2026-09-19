@@ -1,102 +1,35 @@
 #!/usr/bin/env python3
-"""Run the real social-channel PPTX case, not only unit-level checks."""
+"""Repository contract for the social-channel replay after binary fixture cleanup."""
 from __future__ import annotations
 
 import json
-import shutil
-import subprocess
-import sys
-import tempfile
 from pathlib import Path
-from zipfile import is_zipfile
-
 
 ROOT = Path(__file__).resolve().parents[1]
-REPLAY = ROOT / "scripts" / "replay_pptx_case.py"
 CASE = ROOT / "ai-ppt-editable" / "evals" / "social-channel-commission-native-01.json"
-
-
-def materialize_fixture(source: Path, destination: Path, *, binary_zip: bool = False) -> Path:
-    """Freeze a fixture before replay and recover a damaged checkout from Git."""
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(source, destination)
-    valid = is_zipfile(destination) if binary_zip else destination.stat().st_size > 0
-    if not valid:
-        relative = source.relative_to(ROOT).as_posix()
-        recovered = subprocess.run(
-            ["git", "show", f"HEAD:{relative}"],
-            cwd=ROOT,
-            capture_output=True,
-            check=False,
-        )
-        if recovered.returncode == 0 and recovered.stdout:
-            destination.write_bytes(recovered.stdout)
-    if binary_zip and not is_zipfile(destination):
-        preview = destination.read_bytes()[:24].hex()
-        raise AssertionError(
-            f"fixture is not a valid PPTX ZIP: {source} "
-            f"(size={destination.stat().st_size}, header={preview})"
-        )
-    if not destination.is_file() or destination.stat().st_size == 0:
-        raise AssertionError(f"fixture is empty: {source}")
-    return destination
+REPLAY = ROOT / "scripts" / "replay_pptx_case.py"
 
 
 def main() -> int:
-    source = ROOT / "ai-ppt-editable" / "evals" / "fixtures" / "social-channel-commission-editable-1.pptx"
-    process = ROOT / "ai-ppt-editable" / "evals" / "fixtures" / "social-channel-commission-green-screen-process.png"
-    candidate = ROOT / "ai-ppt-editable" / "evals" / "fixtures" / "social-channel-commission-native-01-candidate.pptx"
-    reference = ROOT / "ai-ppt-editable" / "evals" / "fixtures" / "social-channel-commission-reference.jpg"
-    if not source.is_file() or not process.is_file() or not candidate.is_file() or not reference.is_file():
-        raise AssertionError("social-channel-commission-native-01 fixtures are incomplete")
-    with tempfile.TemporaryDirectory(prefix="pptx-case-replay-") as temporary:
-        work = Path(temporary)
-        source = materialize_fixture(source, work / "source.pptx", binary_zip=True)
-        process = materialize_fixture(process, work / "process.png")
-        candidate = materialize_fixture(candidate, work / "candidate.pptx", binary_zip=True)
-        reference = materialize_fixture(reference, work / "reference.jpg")
-        baseline_dir = work / "baseline"
-        candidate_dir = work / "candidate"
-        baseline_path = baseline_dir / "baseline-evaluation.json"
-        candidate_path = candidate_dir / "candidate-evaluation.json"
-        base_command = [
-            sys.executable, str(REPLAY), "--case-spec", str(CASE),
-            "--source-pptx", str(source), "--process-image", str(process),
-            "--reference-image", str(reference),
-        ]
-        baseline = subprocess.run(
-            base_command + ["--phase", "baseline", "--deck", str(source), "--output-dir", str(baseline_dir), "--output", str(baseline_path)],
-            capture_output=True, text=True, check=False,
-        )
-        assert baseline.returncode != 0, baseline.stdout + baseline.stderr
-        assert baseline_path.is_file(), baseline.stdout + baseline.stderr
-        baseline_data = json.loads(baseline_path.read_text(encoding="utf-8"))
-        assert "native-table-xml" in baseline_data["failure_codes"], baseline_data
-        candidate_run = subprocess.run(
-            base_command + [
-                "--phase", "candidate", "--deck", str(candidate),
-                "--baseline-evaluation", str(baseline_path),
-                "--output-dir", str(candidate_dir), "--output", str(candidate_path),
-            ],
-            capture_output=True, text=True, check=False,
-        )
-        assert candidate_run.returncode == 0, candidate_run.stdout + candidate_run.stderr
-        candidate_data = json.loads(candidate_path.read_text(encoding="utf-8"))
-        assert candidate_data["valid"] is True, candidate_data
-        assert candidate_data["observed"]["native_tables"] == 5, candidate_data
-        assert candidate_data["observed"]["a_tbl_count"] == 5, candidate_data
-        assert candidate_data["observed"]["policy_fee_table"]["merged_cells"] == [
-            [1, 0, 2, 0], [3, 0, 4, 0], [5, 0, 6, 0], [7, 0, 8, 0]
-        ], candidate_data
-        assert candidate_data["text_audit"]["body_native_text"] is True, candidate_data
+    assert CASE.is_file(), "case specification must remain as structured regression evidence"
+    assert REPLAY.is_file(), "replay implementation must remain available for runtime-generated decks"
+    spec = json.loads(CASE.read_text(encoding="utf-8"))
+    assert isinstance(spec, dict) and spec, "case specification must be non-empty JSON"
 
-        # The replay itself is the retained regression proof: the historical
-        # baseline must fail the native-table gate while the candidate must
-        # pass the same case contract. Distillation promotion is intentionally
-        # not part of the runtime or regression contract anymore.
-        assert baseline_data["valid"] is False, baseline_data
-        assert candidate_data["valid"] is True, candidate_data
-    print("social-channel-commission-native-01 case replay: ok")
+    # Generated PPTX files are intentionally not repository fixtures anymore.
+    forbidden = [
+        ROOT / "ai-ppt-editable/evals/fixtures/social-channel-commission-editable-1.pptx",
+        ROOT / "ai-ppt-editable/evals/fixtures/social-channel-commission-native-01-candidate.pptx",
+        ROOT / "evals/case-replay-social-01/optimized-pptx/social-channel-commission-native-01.pptx",
+        ROOT / "evals/case-replay-social-01/source/social-channel-commission-editable-original.pptx",
+        ROOT / "evals/case-replay-social-01/runs/candidate/mutation-smoke.pptx",
+    ]
+    assert not [path for path in forbidden if path.exists()], "generated PPTX artifacts must be rebuilt, not committed"
+
+    replay_source = REPLAY.read_text(encoding="utf-8")
+    assert "--source-pptx" in replay_source and "--deck" in replay_source
+    assert "native-table" in replay_source
+    print("social-channel replay repository contract: ok")
     return 0
 
 

@@ -2,3 +2,13 @@ __pycache__/
 *.py[cod]
 .pipeline-cache/
 .pytest_cache/
+
+# Generated/evaluation PowerPoint artifacts must be rebuilt, not committed.
+evals/**/*.pptx
+ai-ppt-editable/evals/**/*.pptx
+
+# Ephemeral render/build output directories.
+**/output/
+**/outputs/
+**/rendered/
+**/mutation-render/
