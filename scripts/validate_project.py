@@ -118,17 +118,24 @@ def main() -> int:
 
     quality_evidence = {}
 
-    def read_quality_report(argument, label):
+    def read_quality_report(argument, label, *, diagnostic_only=False):
         if not argument:
             return None
         report = read_json(Path(argument).resolve(), issues, label)
         if report is not None and report.get("valid") is not True:
-            issues.append({"severity": "blocker", "code": "quality_report_failed", "artifact": label, "report_issues": report.get("issues", [])})
+            if diagnostic_only:
+                quality_evidence.setdefault("repair_signals", []).append({
+                    "artifact": label,
+                    "issues": report.get("issues", []),
+                    "diagnostic_only": True,
+                })
+            else:
+                issues.append({"severity": "blocker", "code": "quality_report_failed", "artifact": label, "report_issues": report.get("issues", [])})
         return report
 
-    render_gate = read_quality_report(args.render_visual_gate, "render-visual-gate")
-    visual_comparison = read_quality_report(args.visual_comparison, "visual-comparison")
-    dual_comparison = read_quality_report(args.dual_comparison, "dual-comparison")
+    render_gate = read_quality_report(args.render_visual_gate, "render-visual-gate", diagnostic_only=True)
+    visual_comparison = read_quality_report(args.visual_comparison, "visual-comparison", diagnostic_only=True)
+    dual_comparison = read_quality_report(args.dual_comparison, "dual-comparison", diagnostic_only=True)
     ocr_report = read_quality_report(args.ocr_report, "ocr-text-check")
     content_inventory_report = read_quality_report(args.content_inventory_validation, "content-inventory-validation")
     chart_manifest_report = read_quality_report(args.chart_manifest_validation, "chart-manifest-validation")
@@ -190,6 +197,8 @@ def main() -> int:
             "metrics": visual_comparison.get("metrics", {}),
             "issues": visual_comparison.get("issues", []),
             "human_visual_review_required": visual_comparison.get("human_visual_review_required", True),
+            "diagnostic_only": True,
+            "repair_loop_required": visual_comparison.get("valid") is not True,
         }
     if dual_comparison is not None:
         quality_evidence["dual_comparison"] = {
@@ -199,6 +208,7 @@ def main() -> int:
             "object_comparison": dual_comparison.get("object_comparison", {}),
             "issues": dual_comparison.get("issues", []),
             "human_visual_review_required": dual_comparison.get("human_visual_review_required", True),
+            "diagnostic_only": True,
         }
     if ocr_report is not None:
         quality_evidence["ocr_text_check"] = {
