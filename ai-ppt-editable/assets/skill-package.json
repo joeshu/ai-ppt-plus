@@ -1,35 +1,17 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.19.02",
+  "package_revision": "2026.09.19.03",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
     "policy": "self-contained",
-    "required_dirs": [
-      "agents",
-      "scripts",
-      "references",
-      "assets",
-      "evals",
-      "examples",
-      "tests"
-    ]
+    "required_dirs": ["agents", "scripts", "references", "assets", "evals", "examples", "tests"]
   },
   "managed_globs": [
-    "SKILL.md",
-    "agents/*.yaml",
-    "assets/*",
-    "assets/schemas/*.json",
-    "assets/fonts/*",
-    "requirements-ci.txt",
-    "references/*.md",
-    "scripts/*.py",
-    "scripts/*.mjs",
-    "evals/*.yaml",
-    "examples/**/*.json",
-    "tests/**/*.py",
-    "tests/**/*.json"
+    "SKILL.md", "agents/*.yaml", "assets/*", "assets/schemas/*.json", "assets/fonts/*",
+    "requirements-ci.txt", "references/*.md", "scripts/*.py", "scripts/*.mjs",
+    "evals/*.yaml", "examples/**/*.json", "tests/**/*.py", "tests/**/*.json"
   ],
   "required_files": [
     "scripts/validate_native_editability.py",
@@ -39,12 +21,11 @@
     "requirements-ci.txt",
     "assets/skill-routing.template.json",
     "assets/schemas/skill-routing.schema.json",
-    "assets/fonts/NotoSansSC-Regular.ttf",
-    "assets/fonts/NotoSansSC-Medium.ttf",
-    "assets/fonts/NotoSansSC-SemiBold.ttf",
-    "assets/fonts/NotoSansSC-Bold.ttf",
     "assets/fonts/font-manifest.json",
     "assets/fonts/OFL.txt",
+    "assets/fonts/README.md",
+    "scripts/runtime_fonts.py",
+    "scripts/prepare_runtime_fonts.py",
     "scripts/validate_skill_package.py",
     "scripts/validate_routing_contract.py",
     "scripts/run_pipeline.py",
