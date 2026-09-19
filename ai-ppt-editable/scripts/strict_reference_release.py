@@ -71,12 +71,7 @@ def region_manifest(layout: Path, output: Path) -> dict:
                 if box is None or box[2] * box[3] < 0.0005:
                     continue
                 object_id = str(spec.get("object_id") or spec.get("name") or f"{kind}-{index}")
-                regions.append({
-                    "region_id": f"s{slide_no}:{kind}:{object_id}",
-                    "role": "foreground",
-                    "weight": 1.0,
-                    "bbox": box,
-                })
+                regions.append({"region_id": f"s{slide_no}:{kind}:{object_id}", "role": "foreground", "weight": 1.0, "bbox": box})
     payload = {"schema": "ai-ppt-plus/auto-layout-regions/v1", "regions": regions}
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return payload
@@ -98,65 +93,32 @@ def main() -> int:
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--dpi", type=int, default=144)
     args = parser.parse_args()
-
-    project = Path(args.project).resolve()
-    source = Path(args.source).resolve()
-    layout = Path(args.layout).resolve()
-    out = Path(args.out).resolve()
-
+    project = Path(args.project).resolve(); source = Path(args.source).resolve(); layout = Path(args.layout).resolve(); out = Path(args.out).resolve()
     command = [sys.executable, str(SCRIPT_DIR / "strict_reference_rerun.py"), str(project), "--source", str(source), "--layout", str(layout), "--out", str(out), "--authoring-backend", args.authoring_backend]
     for flag, value in (("--request-id", args.request_id), ("--font-dir", args.font_dir), ("--font-manifest", args.font_manifest), ("--preview-dir", args.preview_dir), ("--node", args.node), ("--node-modules", args.node_modules)):
-        if value:
-            command += [flag, value]
-    if args.overwrite:
-        command.append("--overwrite")
+        if value: command += [flag, value]
+    if args.overwrite: command.append("--overwrite")
     run(command, "strict authoring transaction")
-
-    current_path = project / "current-rerun.json"
-    current = load(current_path)
-    run_dir = Path(current["authoring_provenance"]).resolve().parent
-    render_dir = run_dir / "final-render"
-    render_report = run_dir / "final-render.json"
+    current_path = project / "current-rerun.json"; current = load(current_path); run_dir = Path(current["authoring_provenance"]).resolve().parent
+    render_dir = run_dir / "final-render"; render_report = run_dir / "final-render.json"
     render_cmd = [sys.executable, str(SCRIPT_DIR / "render_pptx.py"), str(out), "--output-dir", str(render_dir), "--dpi", str(args.dpi), "--report", str(render_report)]
-    if args.font_dir:
-        render_cmd += ["--font-dir", str(Path(args.font_dir).resolve())]
+    if args.font_dir: render_cmd += ["--font-dir", str(Path(args.font_dir).resolve())]
     run(render_cmd, "fresh PPTX render")
-
     rendered = render_dir / "slide-1.png"
-    if not rendered.is_file():
-        raise SystemExit("fresh render did not produce slide-1.png")
-
+    if not rendered.is_file(): raise SystemExit("fresh render did not produce slide-1.png")
     visual_report = run_dir / "strict-reference-visual.json"
     visual_cmd = [sys.executable, str(SCRIPT_DIR / "compare_visual.py"), str(rendered), str(source), "--raw-slide", "--strict", "--report", str(visual_report)]
     visual = subprocess.run(visual_cmd, text=True, capture_output=True, check=False)
-    if visual.stdout:
-        print(visual.stdout, end="")
-
-    regions_path = run_dir / "auto-layout-regions.json"
-    region_manifest(layout, regions_path)
-    region_report = run_dir / "auto-region-visual.json"
-    region_cmd = [sys.executable, str(SCRIPT_DIR / "compare_visual_regions.py"), str(rendered), str(source), str(regions_path), "--report", str(region_report)]
-    region_run = subprocess.run(region_cmd, text=True, capture_output=True, check=False)
-    if region_run.stdout:
-        print(region_run.stdout, end="")
-
-    current["render"] = str(rendered)
-    current["render_report"] = str(render_report)
-    current["strict_reference_visual"] = str(visual_report)
-    current["auto_region_visual"] = str(region_report)
-    current["visual_gate_required"] = True
-    current["visual_gate_passed"] = visual.returncode == 0
-    current["status"] = "rendered-and-visual-gated" if visual.returncode == 0 else "blocked-by-rendered-reference-fidelity"
+    if visual.stdout: print(visual.stdout, end="")
+    regions_path = run_dir / "auto-layout-regions.json"; region_manifest(layout, regions_path); region_report = run_dir / "auto-region-visual.json"
+    region_run = subprocess.run([sys.executable, str(SCRIPT_DIR / "compare_visual_regions.py"), str(rendered), str(source), str(regions_path), "--report", str(region_report)], text=True, capture_output=True, check=False)
+    if region_run.stdout: print(region_run.stdout, end="")
+    current.update({"render": str(rendered), "render_report": str(render_report), "strict_reference_visual": str(visual_report), "auto_region_visual": str(region_report), "visual_gate_required": True, "visual_gate_passed": visual.returncode == 0, "status": "rendered-and-visual-gated" if visual.returncode == 0 else "blocked-by-rendered-reference-fidelity"})
     current_path.write_text(json.dumps(current, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
     if visual.returncode != 0:
-        if visual.stderr:
-            print(visual.stderr, file=sys.stderr)
+        if visual.stderr: print(visual.stderr, file=sys.stderr)
         raise SystemExit("fresh authored PPTX failed strict rendered reference fidelity; repair responsible layers and rerun")
-
-    print(json.dumps({"status": "ok", "deck": str(out), "render": str(rendered), "visual_report": str(visual_report), "region_report": str(region_report)}, ensure_ascii=False, indent=2))
-    return 0
+    print(json.dumps({"status": "ok", "deck": str(out), "render": str(rendered), "visual_report": str(visual_report), "region_report": str(region_report)}, ensure_ascii=False, indent=2)); return 0
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
+if __name__ == "__main__": raise SystemExit(main())
