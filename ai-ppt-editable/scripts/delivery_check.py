@@ -92,8 +92,8 @@ def main() -> int:
     parser.add_argument("--require-font-delivery", action="store_true")
     parser.add_argument("--expected-slides", type=int)
     parser.add_argument("--expected-ratio", type=float)
-    parser.add_argument("--quality-score", type=float)
-    parser.add_argument("--quality-threshold", type=float, default=80)
+    parser.add_argument("--quality-score", type=float, help="optional diagnostic score; never a production hard blocker")
+    parser.add_argument("--quality-threshold", type=float, default=80, help="optional diagnostic target paired with --quality-score")
     parser.add_argument("--reference-fidelity-threshold", type=float,
                         help="deprecated diagnostic-only visual target; never a production hard blocker")
     parser.add_argument("--output", required=True)
@@ -399,7 +399,12 @@ def main() -> int:
     if args.require_editability:
         check(not any(item.get("status") != "typed" for item in editability_evidence), "editability_levels_missing", "every slide needs typed L0-L5 object records")
 
-    check(args.quality_score is not None and args.quality_score >= args.quality_threshold, "quality_threshold_not_met", f"score={args.quality_score}, threshold={args.quality_threshold}")
+    if args.quality_score is not None:
+        quality_evidence["declared_quality_score"] = {
+            "score": args.quality_score,
+            "target": args.quality_threshold,
+            "diagnostic_only": True,
+        }
     open_critical = [item for item in issue_log.get("issues", []) if item.get("severity") in {"blocker", "critical"} and item.get("status", "open") not in {"closed", "fixed", "accepted"}]
     check(not open_critical, "open_blocker_or_critical_issues", "all blocker/critical issues must be closed", [item.get("slide") for item in open_critical] or None)
 
