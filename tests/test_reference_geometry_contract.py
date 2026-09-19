@@ -22,48 +22,48 @@ def write(path:Path,value:dict)->None:
 
 def main()->int:
     with tempfile.TemporaryDirectory(prefix="reference-geometry-contract-") as raw:
-        root=Path(raw)
-        write(root/"route-decision.json",{"route":"reference-reconstruction"})
-        write(root/"page-graph.json",{
+        root=Path(raw);write(root/"route-decision.json",{"route":"reference-reconstruction"})
+        graph={
             "version":"1",
             "page":{"slide_width_in":13.333333,"slide_height_in":7.5,"reference_width":1000,"reference_height":500,"coordinate_units":"fraction"},
             "metadata":{"geometry_tolerance":{"min_iou":0.80,"max_center_error":0.02,"max_size_error":0.04}},
-            "nodes":[{"id":"title","type":"text","bbox":[0.10,0.08,0.50,0.08],"confidence":0.99}]
-        })
-        deck={
-            "units":"fraction",
-            "require_measured_line_boxes":True,
-            "slides":[{"texts":[{
-                "object_id":"title","text":"Reference title","x":0.10,"y":0.08,"w":0.50,"h":0.08,
-                "reference_line_count":1,
-                "source_bbox":[100,40,500,40],
-                "reference_line_boxes":[[100,40,500,40]]
-            }]}]
+            "nodes":[{"id":"title","type":"text","bbox":[0.10,0.08,0.50,0.08],"confidence":0.99,"text_evidence":{
+                "reference_line_count":1,"reference_line_boxes":[[100,40,500,40]],"source_bbox":[100,40,500,40],
+                "font_size_pt":24,"bold":True,"color":"#111111","line_spacing":1.0
+            }}]
         }
+        write(root/"page-graph.json",graph)
+        deck={"units":"fraction","require_measured_line_boxes":True,"slides":[{"texts":[{
+            "object_id":"title","text":"Reference title","x":0.10,"y":0.08,"w":0.50,"h":0.08,
+            "font_size_pt":18,"bold":False
+        }]}]}
         layout=root/"layout.json";write(layout,deck)
-        geometry=audit_page_geometry(layout,deck)
-        lines=audit_measured_line_boxes(layout,deck)
+
+        calibrated,calibration=apply_page_graph_geometry(deck,graph)
+        title=calibrated["slides"][0]["texts"][0]
+        assert title["x"]==0.10 and title["w"]==0.50,title
+        assert title["reference_line_count"]==1 and title["max_lines"]==1,title
+        assert title["reference_line_boxes"]==[[100,40,500,40]],title
+        assert title["source_bbox"]==[100,40,500,40],title
+        assert title["font_size_pt"]==24 and title["bold"] is True,title
+        assert title["reference_text_evidence_locked"] is True,title
+        assert calibration["applied_count"]==1 and calibration["text_evidence_applied_count"]==1,calibration
+
+        calibrated_layout=root/"calibrated.json";write(calibrated_layout,calibrated)
+        geometry=audit_page_geometry(calibrated_layout,calibrated)
+        lines=audit_measured_line_boxes(calibrated_layout,calibrated)
         assert geometry["valid"] and geometry["checked"]==1,geometry
         assert lines["valid"] and lines["required"] and lines["checked"]==1,lines
 
-        # Authoring geometry must be deterministically projected from PageGraph
-        # before text-fit. This repairs layout drift without touching content.
-        drift=json.loads(json.dumps(deck));drift["slides"][0]["texts"][0]["x"]=0.20
-        calibrated,calibration=apply_page_graph_geometry(drift,_load_graph:=json.loads((root/"page-graph.json").read_text(encoding="utf-8")))
-        calibrated_title=calibrated["slides"][0]["texts"][0]
-        assert calibrated_title["x"]==0.10 and calibrated_title["w"]==0.50,calibrated_title
-        assert calibration["applied_count"]==1 and calibration["valid"],calibration
-        assert audit_page_geometry(layout,calibrated)["valid"]
-
-        missing=json.loads(json.dumps(deck));del missing["slides"][0]["texts"][0]["reference_line_boxes"]
-        assert not audit_measured_line_boxes(layout,missing)["valid"]
+        missing=json.loads(json.dumps(calibrated));del missing["slides"][0]["texts"][0]["reference_line_boxes"]
+        missing_layout=root/"missing.json";write(missing_layout,missing)
+        assert not audit_measured_line_boxes(missing_layout,missing)["valid"]
 
     gate=(EDITABLE/"text_fit_authoring_gate.py").read_text(encoding="utf-8")
     for token in ("audit_page_geometry","audit_measured_line_boxes","page_geometry_defect_count","measured_line_box_defect_count"):
         assert token in gate,token
-    print("reference geometry + measured line-box contract: ok")
+    print("reference geometry + text evidence + measured line-box contract: ok")
     return 0
 
 
-if __name__=="__main__":
-    raise SystemExit(main())
+if __name__=="__main__": raise SystemExit(main())
