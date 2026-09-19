@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -11,28 +10,32 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "ai-ppt-editable" / "scripts"))
+from prepare_runtime_fonts import materialize_runtime_face  # noqa:E402
 from runtime_fonts import resolve_font_file  # noqa: E402
 
 
 def main() -> int:
-    bundled = resolve_font_file("Noto Sans CJK SC", bold=False)
-    assert bundled is not None and bundled.is_file(), "runtime CJK regular font unresolved"
+    runtime_font = resolve_font_file("Noto Sans CJK SC", bold=False)
+    assert runtime_font is not None and runtime_font.is_file(), "runtime CJK regular font unresolved"
     with tempfile.TemporaryDirectory(prefix="font-weight-set-") as temp:
         work = Path(temp)
         for weight in (400, 500, 600, 700):
             target = work / f"NotoSansSC-{weight}.ttf"
-            shutil.copyfile(bundled, target)
+            record = materialize_runtime_face(runtime_font, target, "Noto Sans CJK SC", bold=False)
+            assert record["standalone_sfnt"] is True
+            assert target.read_bytes()[:4] != b"ttcf", "runtime cache must not disguise TTC bytes as TTF"
             if weight != 400:
                 from fontTools.ttLib import TTFont
 
                 font = TTFont(str(target))
                 font["OS/2"].usWeightClass = weight
                 font.save(str(target))
+                font.close()
         regular = work / "NotoSansSC-400.ttf"
         manifest = {
             "file": regular.name,
             "family": "Noto Sans CJK SC",
-            "source_family": "Noto Sans SC",
+            "source_family": "Noto Sans CJK SC",
             "registration_family": "Noto Sans CJK SC",
             "sha256": hashlib.sha256(regular.read_bytes()).hexdigest(),
             "license": "fixture",
