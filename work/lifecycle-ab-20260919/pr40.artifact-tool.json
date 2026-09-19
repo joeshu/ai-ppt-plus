@@ -1,0 +1,697 @@
+{
+  "schema": "ai-ppt-plus/artifact-tool-authoring/v1",
+  "valid": true,
+  "status": "passed",
+  "backend": "@oai/artifact-tool",
+  "package_version": "2.8.59",
+  "layout": {
+    "path": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/work/lifecycle-ab-20260919/.pr40-artifact-tool-cb0ekho4/layout.json",
+    "sha256": "0a9f2e7a040f109fd08abf9f5a73522b0d243a493f23b6083fbe84e3c49fa497",
+    "slides": 1,
+    "slide_size_px": {
+      "width": 1536,
+      "height": 864
+    }
+  },
+  "output": {
+    "path": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/work/lifecycle-ab-20260919/pr40.pptx",
+    "sha256": "5bc0158b1e79ec6a6b3ba07630449fc02da5edd2b86fbe68bb59227df0d12c9d",
+    "bytes": 1389207
+  },
+  "inspect": {
+    "path": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/work/lifecycle-ab-20260919/pr40.artifact-tool.inspect.ndjson",
+    "sha256": "2c933917905052ccc89af270d9c3296d9855c196b80ea75efa6cab9a585fa79f",
+    "record_count": 129,
+    "counts": {
+      "slide": 1,
+      "shape": 46,
+      "textbox": 57,
+      "chart": 1,
+      "image": 23,
+      "notes": 1
+    }
+  },
+  "fonts": [
+    {
+      "family": "Noto Sans CJK SC",
+      "path": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/assets/fonts/NotoSansSC-Bold.ttf"
+    },
+    {
+      "family": "Noto Sans CJK SC",
+      "path": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/assets/fonts/NotoSansSC-Medium.ttf"
+    },
+    {
+      "family": "Noto Sans CJK SC",
+      "path": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/assets/fonts/NotoSansSC-Regular.ttf"
+    },
+    {
+      "family": "Noto Sans CJK SC",
+      "path": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/assets/fonts/NotoSansSC-SemiBold.ttf"
+    }
+  ],
+  "previews": [
+    {
+      "slide": 1,
+      "path": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/work/lifecycle-ab-20260919/pr40-artifact-preview/slide-01.png",
+      "sha256": "fefb5b86eb6e0b46cb475dcb51bbcb33dd99b11a7895c0b53801603887b2c97c"
+    }
+  ],
+  "native_object_count": 127,
+  "object_inventory": [
+    {
+      "slide": 1,
+      "object_id": "header-slash-1",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "header-slash-2",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-container",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-current",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-target",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-arrow-1",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-arrow-2",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-title-pill",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-outline",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-target-pill-outline",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-body",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-header",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-body",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-header",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-body",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-header",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-bottom-fill",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-bottom-fill",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-bottom-fill",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "management-band",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "management-divider-1",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "management-divider-2",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcomes-strip",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcomes-title",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-card-1",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-card-2",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-card-3",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-card-4",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-arrow-1",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-arrow-2",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-arrow-3",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-67-168",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-322-168",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-63-417",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-145-416",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-145-466",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-62-515",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-64-612",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-574-416",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-574-466",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-574-516",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-574-612",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-1080-416",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-1080-466",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-1080-516",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "icon-host-1080-612",
+      "kind": "shape"
+    },
+    {
+      "slide": 1,
+      "object_id": "loss-income-chart",
+      "kind": "chart"
+    },
+    {
+      "slide": 1,
+      "object_id": "unicom-knot-mark",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "bottom-ribbon-skyline",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "current-bar",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "target",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-bar",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-person",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-gear",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-group",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-trend",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-person",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-phone",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-list",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-heart",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-group",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-coins",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-bar",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-link",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "management-shield",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "management-doc",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-bar",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-shield",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-group",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-target",
+      "kind": "image"
+    },
+    {
+      "slide": 1,
+      "object_id": "title",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "subtitle",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "unicom-cn",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "unicom-en",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "unicom-slogan",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-current-label",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-current-value",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-target-label",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-target-value-main",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "status-target-value-percent",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-title",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-target-pill",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-1",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-2",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-3",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-4",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-5",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-6",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-7",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-8",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-9",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-10",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-11",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-12",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-blue-value-13",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-red-value-1",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-red-value-2",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-red-value-3",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-red-value-4",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-red-value-5",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-red-value-6",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "chart-red-value-7",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-header-text",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-header-text",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-header-text",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-goal",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-adapt",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-org",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card1-bottom",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-goal",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-scene",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-action",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card2-bottom",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-new",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-finance",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-monitor",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "card3-bottom",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "management-title",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "management-rule1",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "management-rule2",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcomes-title-text",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-1-text",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-2-text",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-3-text",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "outcome-4-text",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "footer-left",
+      "kind": "textbox"
+    },
+    {
+      "slide": 1,
+      "object_id": "footer-5g",
+      "kind": "textbox"
+    }
+  ]
+}

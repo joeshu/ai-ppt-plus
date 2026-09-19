@@ -1,0 +1,48 @@
+{
+  "schema": "ai-ppt-plus/render/v1",
+  "ok": true,
+  "source": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/work/lifecycle-ab-20260919/knight.pptx",
+  "deck_sha256": "7d390fc73aa90bd560ab31cebd3b2b3d4e85568b2d0decedafa833ea9de87b60",
+  "renderer": "LibreOffice+pdftoppm",
+  "render_attempts": [
+    {
+      "backend": "pdftoppm",
+      "page": 1,
+      "exit_code": 0,
+      "decoded": true,
+      "stderr": ""
+    }
+  ],
+  "conversion": {
+    "attempted": true,
+    "skipped": false,
+    "reason": "cache_disabled"
+  },
+  "font_dir": "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/assets/fonts",
+  "dpi": 115,
+  "selected_pages": "all",
+  "page_fingerprints": [
+    {
+      "page": 1,
+      "part": "ppt/slides/slide1.xml",
+      "fingerprint": "bdd08eb8e21493afb50697b8ef503092ce6b95edc08d072d47f45f967c529cee",
+      "selected": true,
+      "cache_hit": false
+    }
+  ],
+  "page_cache": {
+    "schema": "ai-ppt-plus/page-render-cache/v1",
+    "enabled": false,
+    "dir": null,
+    "namespace": null,
+    "requested": 1,
+    "hits": 0,
+    "misses": 0,
+    "stored": 0,
+    "warnings": []
+  },
+  "pages": [
+    "/workspace/scratch/9c4efc4ff182/ai-ppt-plus-pr40/work/lifecycle-ab-20260919/knight-render/slide-1.png"
+  ],
+  "errors": []
+}

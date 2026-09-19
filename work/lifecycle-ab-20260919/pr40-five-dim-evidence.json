@@ -1,0 +1,70 @@
+{
+  "schema": "ai-ppt-plus/five-dim-evidence/v1",
+  "variant": "pr40",
+  "comparator": "PR #40 latest-code candidate",
+  "source_sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+  "canvas_px": [
+    1536,
+    864
+  ],
+  "pixel": {
+    "global_ssim": 0.394184,
+    "layout_ssim": 0.653699,
+    "pixel_fidelity": 0.863383,
+    "blurred_pixel_fidelity": 0.909813,
+    "reference_fidelity_score": 0.781756
+  },
+  "text": {
+    "coverage": 1.0,
+    "slot_count": 71,
+    "fit_count": 71,
+    "overflow_count": 0,
+    "missing_count": 0,
+    "extra_count": 0,
+    "geometry_defect_count": 0
+  },
+  "object": {
+    "coverage": 1.0,
+    "expected_object_count": 127,
+    "observed_object_count": 127,
+    "unauthorized_drift_count": 0,
+    "blocking_count": 0,
+    "layer_audit_valid": true
+  },
+  "icon_asset": {
+    "independent_assets": true,
+    "asset_count": 22,
+    "mean_visible_bbox_iou": 0.879286,
+    "mean_centroid_error_norm": 0.008008,
+    "mean_scale_error": 0.105261,
+    "failure_count": 8,
+    "alpha_failure_count": 0
+  },
+  "local_crop": {
+    "region_count": 8,
+    "weighted_score": 0.620681,
+    "mean_layout_ssim": 0.57844,
+    "worst_layout_ssim": 0.320298,
+    "worst_pixel_fidelity": 0.813936
+  },
+  "editability": {
+    "formal_text_native": true,
+    "whole_slide_picture_count": 0,
+    "native_object_count": 127
+  },
+  "asset_provenance": {
+    "imagegen_final_assets": true,
+    "imagegen_asset_count": 18,
+    "alpha_centroid_evidence": true,
+    "contact_sheet_ancestry_count": 0,
+    "source_reuse_count": 0
+  },
+  "blocking_count": 0,
+  "artifact_checks": {
+    "artifact_tool_strict": true,
+    "native_editability": true,
+    "layer_audit": true,
+    "imagegen_manifest": true,
+    "transparent_assets": true
+  }
+}

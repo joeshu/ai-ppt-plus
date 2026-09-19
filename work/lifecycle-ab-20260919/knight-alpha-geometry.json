@@ -1,0 +1,1042 @@
+{
+  "schema": "ai-ppt-plus/alpha-geometry-qa/v1",
+  "valid": false,
+  "asset_count": 22,
+  "failure_count": 22,
+  "assets": [
+    {
+      "object_id": "unicom-knot-mark",
+      "file": "work/lifecycle-ab-20260919/assets/generated/unicom-knot-mark.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          1254,
+          1254
+        ],
+        "visible_bbox_px": [
+          161,
+          249,
+          932,
+          754
+        ],
+        "visible_centroid_px": [
+          626.4427059442672,
+          627.2531441299765
+        ],
+        "transparent_padding_px": [
+          161,
+          249,
+          161,
+          251
+        ],
+        "visible_area_ratio": 0.2143781048968659,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        1318.115629984051,
+        19.098086124401913,
+        52.76874003189793,
+        42.69059011164274
+      ],
+      "target_visible_bbox": [
+        1323.3,
+        19.3,
+        42.400000000000006,
+        42.400000000000006
+      ],
+      "visible_bbox_iou": 0.7980366383119883,
+      "centroid_error_norm": 0.000944234702992806,
+      "scale_error": 0.24454575546929047,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "current-bar",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          265,
+          265
+        ],
+        "visible_bbox_px": [
+          20,
+          29,
+          193,
+          161
+        ],
+        "visible_centroid_px": [
+          131.5343131068,
+          131.7324009029807
+        ],
+        "transparent_padding_px": [
+          20,
+          29,
+          52,
+          75
+        ],
+        "visible_area_ratio": 0.2230259878960484,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        67.41509433962264,
+        168.30188679245282,
+        61.905660377358494,
+        51.64150943396226
+      ],
+      "target_visible_bbox": [
+        75.68,
+        177.92,
+        44.64,
+        40.92
+      ],
+      "visible_bbox_iou": 0.5713872198930587,
+      "centroid_error_norm": 0.070565121920558,
+      "scale_error": 0.38677554608777975,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "target",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c2.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          249,
+          249
+        ],
+        "visible_bbox_px": [
+          33,
+          20,
+          193,
+          195
+        ],
+        "visible_centroid_px": [
+          123.51260657929872,
+          123.84720761719842
+        ],
+        "transparent_padding_px": [
+          33,
+          20,
+          23,
+          34
+        ],
+        "visible_area_ratio": 0.268140836438122,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        322.4698795180723,
+        168.3453815261044,
+        61.23293172690763,
+        61.86746987951807
+      ],
+      "target_visible_bbox": [
+        330.06,
+        176.06,
+        45.88,
+        45.88
+      ],
+      "visible_bbox_iou": 0.5556475575899841,
+      "centroid_error_norm": 0.004502903907731612,
+      "scale_error": 0.34846272623186714,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card1-bar",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          265,
+          265
+        ],
+        "visible_bbox_px": [
+          20,
+          29,
+          193,
+          161
+        ],
+        "visible_centroid_px": [
+          131.5343131068,
+          131.7324009029807
+        ],
+        "transparent_padding_px": [
+          20,
+          29,
+          52,
+          75
+        ],
+        "visible_area_ratio": 0.2230259878960484,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        63.0377358490566,
+        416.75471698113205,
+        58.264150943396224,
+        48.60377358490566
+      ],
+      "target_visible_bbox": [
+        73.44,
+        426.28,
+        37.12,
+        38.86
+      ],
+      "visible_bbox_iou": 0.5093770250699968,
+      "centroid_error_norm": 0.08664846307858444,
+      "scale_error": 0.5696161353285623,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card1-person",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c3.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          233,
+          233
+        ],
+        "visible_bbox_px": [
+          43,
+          20,
+          147,
+          157
+        ],
+        "visible_centroid_px": [
+          115.53218929464165,
+          115.81776701435359
+        ],
+        "transparent_padding_px": [
+          43,
+          20,
+          43,
+          56
+        ],
+        "visible_area_ratio": 0.26465766545709074,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        147.13304721030042,
+        416.0386266094421,
+        51.73390557939914,
+        55.25321888412017
+      ],
+      "target_visible_bbox": [
+        155.45,
+        424.25,
+        34.1,
+        38.5
+      ],
+      "visible_bbox_iou": 0.4592849966178037,
+      "centroid_error_norm": 0.010239045738273762,
+      "scale_error": 0.5171233307741683,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card1-gear",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c4.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          226,
+          226
+        ],
+        "visible_bbox_px": [
+          20,
+          21,
+          185,
+          183
+        ],
+        "visible_centroid_px": [
+          112.05412898849345,
+          112.1282072912971
+        ],
+        "transparent_padding_px": [
+          20,
+          21,
+          21,
+          22
+        ],
+        "visible_area_ratio": 0.3492051061163756,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        144.92920353982302,
+        466.22566371681415,
+        54.84513274336283,
+        54.25221238938053
+      ],
+      "target_visible_bbox": [
+        152.7,
+        473.7,
+        39.6,
+        39.6
+      ],
+      "visible_bbox_iou": 0.5270293804389454,
+      "centroid_error_norm": 0.0037431840529179817,
+      "scale_error": 0.3849780995798695,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card1-group",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r2c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          265,
+          265
+        ],
+        "visible_bbox_px": [
+          21,
+          47,
+          224,
+          146
+        ],
+        "visible_centroid_px": [
+          132.22657218115287,
+          132.05066930623352
+        ],
+        "transparent_padding_px": [
+          21,
+          47,
+          20,
+          72
+        ],
+        "visible_area_ratio": 0.28279102883588464,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        61.62641509433962,
+        522.5924528301887,
+        60.01509433962264,
+        39.11698113207547
+      ],
+      "target_visible_bbox": [
+        68.6,
+        525.2,
+        46.800000000000004,
+        34.8
+      ],
+      "visible_bbox_iou": 0.6937440531671591,
+      "centroid_error_norm": 0.00993373853165228,
+      "scale_error": 0.28237381067569745,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card1-trend",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r3c2.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          267,
+          267
+        ],
+        "visible_bbox_px": [
+          35,
+          20,
+          164,
+          176
+        ],
+        "visible_centroid_px": [
+          132.63854223104897,
+          132.78488418799316
+        ],
+        "transparent_padding_px": [
+          35,
+          20,
+          68,
+          71
+        ],
+        "visible_area_ratio": 0.19899283199371573,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        63.928838951310865,
+        611.816479400749,
+        55.89513108614232,
+        59.98501872659176
+      ],
+      "target_visible_bbox": [
+        71.2,
+        622.8,
+        45.6,
+        37.2
+      ],
+      "visible_bbox_iou": 0.5059306667602042,
+      "centroid_error_norm": 0.03674867066625463,
+      "scale_error": 0.6125005034030042,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card2-person",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c3.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          233,
+          233
+        ],
+        "visible_bbox_px": [
+          43,
+          20,
+          147,
+          157
+        ],
+        "visible_centroid_px": [
+          115.53218929464165,
+          115.81776701435359
+        ],
+        "transparent_padding_px": [
+          43,
+          20,
+          43,
+          56
+        ],
+        "visible_area_ratio": 0.26465766545709074,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        576.1330472103004,
+        416.0386266094421,
+        51.73390557939914,
+        55.25321888412017
+      ],
+      "target_visible_bbox": [
+        584.45,
+        424.25,
+        34.1,
+        38.5
+      ],
+      "visible_bbox_iou": 0.4592849966178043,
+      "centroid_error_norm": 0.010239045738273762,
+      "scale_error": 0.5171233307741683,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card2-phone",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r2c2.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          254,
+          254
+        ],
+        "visible_bbox_px": [
+          50,
+          22,
+          184,
+          183
+        ],
+        "visible_centroid_px": [
+          126.7710693601056,
+          126.0358833107081
+        ],
+        "transparent_padding_px": [
+          50,
+          22,
+          20,
+          49
+        ],
+        "visible_area_ratio": 0.20301940603881208,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        573.9606299212599,
+        465.5826771653543,
+        55.05511811023622,
+        54.75590551181102
+      ],
+      "target_visible_bbox": [
+        583.9,
+        473.7,
+        36.300000000000004,
+        39.6
+      ],
+      "visible_bbox_iou": 0.4768405134032125,
+      "centroid_error_norm": 0.014497630882742302,
+      "scale_error": 0.5166699203921823,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card2-list",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r2c3.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          216,
+          216
+        ],
+        "visible_bbox_px": [
+          20,
+          35,
+          175,
+          145
+        ],
+        "visible_centroid_px": [
+          107.29821830752067,
+          107.11971178360984
+        ],
+        "transparent_padding_px": [
+          20,
+          35,
+          21,
+          36
+        ],
+        "visible_area_ratio": 0.26260288065843623,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        574.2962962962963,
+        521.0185185185185,
+        55.092592592592595,
+        45.648148148148145
+      ],
+      "target_visible_bbox": [
+        581.15,
+        524.25,
+        40.7,
+        38.5
+      ],
+      "visible_bbox_iou": 0.6230727598138657,
+      "centroid_error_norm": 0.008647992322331243,
+      "scale_error": 0.35362635362635353,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card2-heart",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r2c4.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          219,
+          219
+        ],
+        "visible_bbox_px": [
+          23,
+          46,
+          174,
+          153
+        ],
+        "visible_centroid_px": [
+          109.41896836748369,
+          109.48135912410969
+        ],
+        "transparent_padding_px": [
+          23,
+          46,
+          22,
+          20
+        ],
+        "visible_area_ratio": 0.38279018369091555,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        573.9817351598174,
+        618.9634703196347,
+        60.38356164383562,
+        53.0958904109589
+      ],
+      "target_visible_bbox": [
+        581.2,
+        621.6,
+        45.6,
+        40.800000000000004
+      ],
+      "visible_bbox_iou": 0.5802903811252261,
+      "centroid_error_norm": 0.0574571253799363,
+      "scale_error": 0.32420091324200917,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card3-group",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r2c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          265,
+          265
+        ],
+        "visible_bbox_px": [
+          21,
+          47,
+          224,
+          146
+        ],
+        "visible_centroid_px": [
+          132.22657218115287,
+          132.05066930623352
+        ],
+        "transparent_padding_px": [
+          21,
+          47,
+          20,
+          72
+        ],
+        "visible_area_ratio": 0.28279102883588464,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        1079.6264150943396,
+        423.5924528301887,
+        60.01509433962264,
+        39.11698113207547
+      ],
+      "target_visible_bbox": [
+        1086.0,
+        426.2,
+        48.0,
+        34.8
+      ],
+      "visible_bbox_iou": 0.7115323622227291,
+      "centroid_error_norm": 0.009771669766460885,
+      "scale_error": 0.250314465408805,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card3-coins",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r3c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          286,
+          286
+        ],
+        "visible_bbox_px": [
+          26,
+          59,
+          240,
+          149
+        ],
+        "visible_centroid_px": [
+          142.63333084481403,
+          142.72177174918022
+        ],
+        "transparent_padding_px": [
+          26,
+          59,
+          20,
+          78
+        ],
+        "visible_area_ratio": 0.23550051347254145,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        1080.5454545454545,
+        474.8531468531469,
+        60.41958041958042,
+        37.51048951048951
+      ],
+      "target_visible_bbox": [
+        1086.0,
+        479.2,
+        48.0,
+        34.8
+      ],
+      "visible_bbox_iou": 0.678854273650577,
+      "centroid_error_norm": 0.052042238762786165,
+      "scale_error": 0.25874125874125875,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card3-bar",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          265,
+          265
+        ],
+        "visible_bbox_px": [
+          20,
+          29,
+          193,
+          161
+        ],
+        "visible_centroid_px": [
+          131.5343131068,
+          131.7324009029807
+        ],
+        "transparent_padding_px": [
+          20,
+          29,
+          52,
+          75
+        ],
+        "visible_area_ratio": 0.2230259878960484,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        1080.188679245283,
+        515.9735849056603,
+        59.72075471698113,
+        49.8188679245283
+      ],
+      "target_visible_bbox": [
+        1089.0,
+        525.6,
+        42.0,
+        39.0
+      ],
+      "visible_bbox_iou": 0.5505474500730974,
+      "centroid_error_norm": 0.07358060515305195,
+      "scale_error": 0.42192273135669356,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "card3-link",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r3c3.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          231,
+          231
+        ],
+        "visible_bbox_px": [
+          23,
+          21,
+          185,
+          190
+        ],
+        "visible_centroid_px": [
+          115.3635273600308,
+          115.26376935138997
+        ],
+        "transparent_padding_px": [
+          23,
+          21,
+          23,
+          20
+        ],
+        "visible_area_ratio": 0.25756638743651733,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        1081.2683982683982,
+        611.6363636363636,
+        58.46320346320346,
+        60.04329004329004
+      ],
+      "target_visible_bbox": [
+        1087.2,
+        619.8,
+        45.6,
+        44.4
+      ],
+      "visible_bbox_iou": 0.5767674235316171,
+      "centroid_error_norm": 0.009517921401373784,
+      "scale_error": 0.35232635232635245,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "management-shield",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r3c4.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          240,
+          240
+        ],
+        "visible_bbox_px": [
+          38,
+          31,
+          165,
+          189
+        ],
+        "visible_centroid_px": [
+          119.94571208907443,
+          119.83765062263517
+        ],
+        "transparent_padding_px": [
+          38,
+          31,
+          37,
+          20
+        ],
+        "visible_area_ratio": 0.3655729166666667,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        617.3916666666667,
+        683.8458333333333,
+        36.4375,
+        41.7375
+      ],
+      "target_visible_bbox": [
+        617.44,
+        688.2,
+        37.12,
+        32.76
+      ],
+      "visible_bbox_iou": 0.7717153965477471,
+      "centroid_error_norm": 0.008325293986940095,
+      "scale_error": 0.27403846153846145,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "management-doc",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r4c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          230,
+          230
+        ],
+        "visible_bbox_px": [
+          41,
+          20,
+          155,
+          184
+        ],
+        "visible_centroid_px": [
+          114.48745606463307,
+          114.12345243468842
+        ],
+        "transparent_padding_px": [
+          41,
+          20,
+          34,
+          26
+        ],
+        "visible_area_ratio": 0.43310018903591685,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        1014.2695652173913,
+        683.5217391304348,
+        35.04347826086956,
+        41.6
+      ],
+      "target_visible_bbox": [
+        1012.44,
+        688.2,
+        37.12,
+        32.76
+      ],
+      "visible_bbox_iou": 0.7523906160540794,
+      "centroid_error_norm": 0.016812858491908056,
+      "scale_error": 0.26984126984127,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "outcome-bar",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          265,
+          265
+        ],
+        "visible_bbox_px": [
+          20,
+          29,
+          193,
+          161
+        ],
+        "visible_centroid_px": [
+          131.5343131068,
+          131.7324009029807
+        ],
+        "transparent_padding_px": [
+          20,
+          29,
+          52,
+          75
+        ],
+        "visible_area_ratio": 0.2230259878960484,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        274.0377358490566,
+        747.7547169811321,
+        58.264150943396224,
+        48.60377358490566
+      ],
+      "target_visible_bbox": [
+        282.12,
+        755.0,
+        41.76,
+        35.0
+      ],
+      "visible_bbox_iou": 0.5161276469925656,
+      "centroid_error_norm": 0.008713931072138066,
+      "scale_error": 0.39521434251427756,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "outcome-shield",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r3c4.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          240,
+          240
+        ],
+        "visible_bbox_px": [
+          38,
+          31,
+          165,
+          189
+        ],
+        "visible_centroid_px": [
+          119.94571208907443,
+          119.83765062263517
+        ],
+        "transparent_padding_px": [
+          38,
+          31,
+          37,
+          20
+        ],
+        "visible_area_ratio": 0.3655729166666667,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        598.975,
+        748.1375,
+        43.3125,
+        49.6125
+      ],
+      "target_visible_bbox": [
+        602.44,
+        752.0,
+        37.12,
+        42.0
+      ],
+      "visible_bbox_iou": 0.725525855684586,
+      "centroid_error_norm": 0.006654741386957697,
+      "scale_error": 0.1812499999999999,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "outcome-group",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r2c1.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          265,
+          265
+        ],
+        "visible_bbox_px": [
+          21,
+          47,
+          224,
+          146
+        ],
+        "visible_centroid_px": [
+          132.22657218115287,
+          132.05066930623352
+        ],
+        "transparent_padding_px": [
+          21,
+          47,
+          20,
+          72
+        ],
+        "visible_area_ratio": 0.28279102883588464,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        932.4679245283019,
+        751.2377358490565,
+        58.324528301886794,
+        38.01509433962264
+      ],
+      "target_visible_bbox": [
+        937.8,
+        756.0,
+        46.400000000000006,
+        31.0
+      ],
+      "visible_bbox_iou": 0.6487425247783374,
+      "centroid_error_norm": 0.025161506560828696,
+      "scale_error": 0.25699414443721524,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    },
+    {
+      "object_id": "outcome-target",
+      "file": "work/lifecycle-ab-20260919/assets/icons/icon_r1c2.png",
+      "alpha_geometry": {
+        "canvas_px": [
+          249,
+          249
+        ],
+        "visible_bbox_px": [
+          33,
+          20,
+          193,
+          195
+        ],
+        "visible_centroid_px": [
+          123.51260657929872,
+          123.84720761719842
+        ],
+        "transparent_padding_px": [
+          33,
+          20,
+          23,
+          34
+        ],
+        "visible_area_ratio": 0.268140836438122,
+        "alpha_threshold": 8
+      },
+      "actual_visible_bbox": [
+        1267.144578313253,
+        745.5421686746988,
+        53.48192771084337,
+        54.036144578313255
+      ],
+      "target_visible_bbox": [
+        1267.8,
+        751.4,
+        49.4,
+        42.120000000000005
+      ],
+      "visible_bbox_iou": 0.7199857547234517,
+      "centroid_error_norm": 0.02139846880494631,
+      "scale_error": 0.28290941543953574,
+      "valid": false,
+      "repair_trace": [
+        "asset_geometry"
+      ]
+    }
+  ]
+}
