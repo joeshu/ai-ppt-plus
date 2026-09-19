@@ -131,7 +131,11 @@ def _priority(row: dict, kind: str, bbox: list | None) -> float:
     return round(mismatch * 0.55 + metric_gap * 0.20 + min(area / 0.30, 1.0) * 0.15 + domain_bonus + issue_bonus, 6)
 
 
-def build_trace(layout: dict, regional: dict, *, max_actions: int = 12, min_actions: int = 3) -> dict:
+def build_trace(layout: dict, regional: dict, *, max_actions: int = 12, min_actions: int = 3, target: float | None = None) -> dict:
+    # target is intentionally ignored. It remains in the Python API only so
+    # older callers/tests do not break while production repair selection stays
+    # threshold-free.
+    _ = target
     index = object_index(layout)
     actions = []
     for row in regional.get("regions") or []:
@@ -201,7 +205,7 @@ def main() -> int:
     p.add_argument("--max-actions", type=int, default=12)
     p.add_argument("--min-actions", type=int, default=3)
     a = p.parse_args()
-    result = build_trace(load(a.layout), load(a.regional_report), max_actions=a.max_actions, min_actions=a.min_actions)
+    result = build_trace(load(a.layout), load(a.regional_report), max_actions=a.max_actions, min_actions=a.min_actions, target=a.target)
     a.report.parent.mkdir(parents=True, exist_ok=True)
     a.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"schema": result["schema"], "valid": result["valid"], "pending": len(result["pending_actions"])}, ensure_ascii=False))
