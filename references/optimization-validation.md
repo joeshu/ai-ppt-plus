@@ -53,15 +53,8 @@ Pixel scores are diagnostic during reconstruction. Whole-page SSIM, balanced
 reference-fidelity, regional SSIM and crop metrics rank repair work and expose
 regressions; they are not the sole reconstruction objective.
 
-When the user supplies no other target, retain 0.90 as the default
-reference-fidelity target for **Golden promotion / release-quality assessment**.
-A draft below 0.90 may continue through responsible-layer repair and may be
-retained as a Hard Negative. It must not be labeled Golden merely because
-technical contracts pass. Human approval may accept a documented special case;
-automation must never silently lower the target.
+Do not impose a universal 0.90 visual threshold. Whole-page and regional metrics remain diagnostic and may be used to detect regressions or select a better incumbent. A numeric threshold is applied only when an explicit project/user contract supplies one.
 
 Final acceptance combines fresh full-page/local-crop visual review, exact text,
 object/editability QA, asset QA, chart/table semantics, Repair Trace and absence
-of hard blockers. For external A/B evaluation, run the corrected final
-candidate fresh on pixel/layout, text, object/editability, icon/asset and
-local-crop dimensions; historical scores are not substitutes.
+of hard blockers. External A/B evaluation is optional and separate from ordinary execution; normal delivery must not depend on another skill or external baseline.
