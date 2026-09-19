@@ -3,14 +3,16 @@
 
 The production path is visual-first: strict Artifact Tool authoring, fresh
 render, full-page diagnostics, 5-10 key same-coordinate local crops, then an
-object-level Repair Trace. Visual metrics never become production hard gates.
+object/semantic-region Repair Trace. Visual metrics never become production
+hard gates.
 """
 from __future__ import annotations
 import argparse,json,subprocess,sys
 from pathlib import Path
 SCRIPT_DIR=Path(__file__).resolve().parent
 
-KIND_PRIORITY={"texts":5,"charts":5,"tables":5,"images":4,"shapes":3}
+KIND_PRIORITY={"texts":5,"charts":5,"tables":5,"images":5,"icons":5,"semantic_regions":6,"groups":4,"panels":4,"shapes":3,"connectors":3}
+
 
 def run(command:list[str],label:str)->None:
     completed=subprocess.run(command,text=True,capture_output=True,check=False)
@@ -19,10 +21,12 @@ def run(command:list[str],label:str)->None:
         if completed.stderr: print(completed.stderr,file=sys.stderr)
         raise SystemExit(f"{label} failed with exit code {completed.returncode}")
 
+
 def load(path:Path)->dict:
     value=json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value,dict): raise ValueError(f"{path} must contain an object")
     return value
+
 
 def bbox(spec:dict,deck:dict)->list[float]|None:
     raw=spec.get("bbox")
@@ -35,37 +39,91 @@ def bbox(spec:dict,deck:dict)->list[float]|None:
     if deck.get("units","fraction")=="px":
         rw=float(deck.get("ref_width") or deck.get("reference_width") or deck.get("slide_width_px") or 1)
         rh=float(deck.get("ref_height") or deck.get("reference_height") or deck.get("slide_height_px") or 1)
-        x,y,w,h=x/rw,y/rh,w/rh if False else w/rw,h/rh
+        x,y,w,h=x/rw,y/rh,w/rw,h/rh
     if w<=0 or h<=0 or x<0 or y<0 or x+w>1.001 or y+h>1.001:return None
     return [round(x,7),round(y,7),round(w,7),round(h,7)]
 
+
+def _iou(a:list[float],b:list[float])->float:
+    ax1,ay1,aw,ah=a; bx1,by1,bw,bh=b
+    ax2,ay2=ax1+aw,ay1+ah; bx2,by2=bx1+bw,by1+bh
+    ix=max(0.0,min(ax2,bx2)-max(ax1,bx1)); iy=max(0.0,min(ay2,by2)-max(ay1,by1))
+    inter=ix*iy
+    union=aw*ah+bw*bh-inter
+    return inter/union if union>0 else 0.0
+
+
+def _candidate(slide_no:int,kind:str,oid:str,box:list[float],score:float,**extra)->tuple[float,dict]:
+    row={"region_id":f"s{slide_no}:{kind}:{oid}","role":"foreground","weight":1.0,"bbox":box,"object_id":oid,"kind":kind}
+    row.update(extra)
+    return score,row
+
+
 def key_region_manifest(layout:Path,output:Path)->dict:
-    """Select 5-10 material regions per slide instead of gating every object."""
+    """Select 5-10 diverse material regions per slide, including semantic bands.
+
+    Selection is intentionally not just the largest individual objects. Branded
+    footer/header systems and declared semantic regions receive their own crop so
+    parent geometry and child anchors can be repaired together.
+    """
     deck=load(layout);regions=[]
     for slide_no,slide in enumerate(deck.get("slides") or [],1):
-        candidates=[]
-        for kind in ("texts","charts","tables","images","shapes"):
+        candidates=[]; material_boxes=[]
+        for kind in ("texts","charts","tables","images","icons","groups","panels","shapes","connectors"):
             for index,spec in enumerate(slide.get(kind) or [],1):
                 if not isinstance(spec,dict):continue
                 box=bbox(spec,deck)
                 if box is None:continue
                 area=box[2]*box[3]
-                if area<0.001:continue
-                oid=str(spec.get("object_id") or spec.get("name") or f"{kind}-{index}")
+                if area<0.0008:continue
+                material_boxes.append(box)
+                oid=str(spec.get("object_id") or spec.get("name") or spec.get("text_id") or f"{kind}-{index}")
                 risk=0
-                if spec.get("user_flagged"):risk+=100
-                if spec.get("dense") or spec.get("high_risk"):risk+=40
-                if kind=="texts" and len(str(spec.get("text") or ""))>=18:risk+=25
-                if kind in {"charts","tables"}:risk+=20
+                if spec.get("user_flagged"):risk+=120
+                if spec.get("dense") or spec.get("high_risk"):risk+=45
+                if kind=="texts" and len(str(spec.get("text") or ""))>=18:risk+=30
+                if kind in {"charts","tables","icons","images"}:risk+=22
+                role=str(spec.get("semantic_role") or spec.get("role") or "").lower()
+                if any(token in role for token in ("footer","header","brand","hero","dense-text")):risk+=35
                 score=risk+KIND_PRIORITY[kind]*10+min(area,0.25)*100
-                candidates.append((score,{"region_id":f"s{slide_no}:{kind}:{oid}","role":"foreground","weight":1.0,"bbox":box,"object_id":oid,"kind":kind}))
+                candidates.append(_candidate(slide_no,kind,oid,box,score,semantic_role=role or None))
+        declared_regions=(slide.get("semantic_regions") or [])+(slide.get("regions") or [])
+        for index,spec in enumerate(declared_regions,1):
+            if not isinstance(spec,dict):continue
+            box=bbox(spec,deck)
+            if box is None:continue
+            oid=str(spec.get("object_id") or spec.get("name") or f"region-{index}")
+            role=str(spec.get("semantic_role") or spec.get("role") or oid).lower()
+            score=180+min(box[2]*box[3],0.35)*100
+            if any(token in role for token in ("footer","header","brand","hero")):score+=40
+            candidates.append(_candidate(slide_no,"semantic-region",oid,box,score,semantic_role=role,synthetic=False))
+        # A bottom visual system is easy to miss when it is fragmented into many
+        # thin shapes. Force one same-coordinate crop whenever slide content
+        # materially occupies the bottom band.
+        if any(box[1]+box[3]>=0.84 for box in material_boxes):
+            candidates.append(_candidate(slide_no,"semantic-region","__footer_band__",[0.0,0.82,1.0,0.18],260,semantic_role="footer-band",synthetic=True))
+        # The top title/brand system also benefits from a composed crop when it
+        # exists; it catches title scale and logo-anchor drift missed by object crops.
+        if any(box[1]<=0.14 for box in material_boxes):
+            candidates.append(_candidate(slide_no,"semantic-region","__header_band__",[0.0,0.0,1.0,0.20],220,semantic_role="header-band",synthetic=True))
         candidates.sort(key=lambda item:item[0],reverse=True)
-        target=min(10,len(candidates))
-        if target>=5: target=max(5,target)
-        selected=[item[1] for item in candidates[:target]]
+        selected=[]
+        for _,row in candidates:
+            if len(selected)>=10:break
+            # Keep semantic regions even when they overlap children; otherwise
+            # avoid near-duplicate object crops so 5-10 slots cover more causes.
+            if row["kind"]!="semantic-region" and any(_iou(row["bbox"],s["bbox"])>0.86 and s["kind"]!="semantic-region" for s in selected):
+                continue
+            selected.append(row)
+        if len(selected)<5:
+            for _,row in candidates:
+                if row in selected:continue
+                selected.append(row)
+                if len(selected)>=min(5,len(candidates)):break
         regions.extend(selected)
-    payload={"schema":"ai-ppt-plus/key-local-crops/v1","selection_policy":"5-10 material regions per page; user/high-risk/dense regions first","regions":regions}
+    payload={"schema":"ai-ppt-plus/key-local-crops/v2","selection_policy":"5-10 diverse material regions per page; semantic footer/header bands + user/high-risk/dense regions first","regions":regions}
     output.write_text(json.dumps(payload,ensure_ascii=False,indent=2)+"\n",encoding="utf-8");return payload
+
 
 def main()->int:
     p=argparse.ArgumentParser(description=__doc__)
