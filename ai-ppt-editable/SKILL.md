@@ -2,129 +2,94 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered, technically validated PowerPoint. Trigger for “图片转可编辑PPTX/截图还原PPT/复刻版式/图标分层/文字提取/现有PPT修复”, reference reconstruction, native object authoring, or PPTX rendering and technical QA. It can run standalone or as the editable worker for $ai-ppt-plus. Do not use for whole-page image generation or deck-wide narrative/release; use $ai-ppt-visual-gen or $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.18.02
+  package_revision: 2026.09.19.01
 ---
 
 # AI PPT Editable
 
 ## Boundary and runtime
 
-Create or repair editable PPTX while preserving the declared visual and text authorities. This worker owns decomposition, object planning, authoring, rendering, technical QA, and technical repair. It does not own narrative redesign, deck-wide release, or human sign-off.
+Create or repair editable PPTX while preserving declared visual/text authorities. This worker owns decomposition, object planning, authoring, rendering, technical QA and responsible repair. It does not own narrative redesign or deck-wide human sign-off.
 
-The default Chinese presentation family is Microsoft YaHei (`微软雅黑`) as declared in `assets/default-font-policy.json`. Resolve it from the licensed Windows system font directory and record the exact file hashes. Never copy or redistribute Microsoft font binaries with this skill. If the family is absent, block or obtain explicit approval before using the bundled Noto fallback.
+New strict image-to-editable work uses JavaScript ESM with `@oai/artifact-tool`. Validate the package and routing contract before work. Python is inspection/QA only, not an authoring fallback.
 
-This skill is independently installable and invokable. Run commands from this skill directory; its reconstruction scripts, references, templates, schemas, font assets, pinned `requirements-ci.txt`, route contract, and tests are all local. The route contract contains a historical compatibility binding and a separate `strict_authoring` binding. New strict image-to-editable work may use only the latter: JavaScript ESM with `@oai/artifact-tool`. Validate this package and its standalone routing contract before work:
+## Operating principle: reconstruct first, validate what matters
 
-```bash
-python3 scripts/validate_skill_package.py --skill-dir .
-python3 scripts/validate_routing_contract.py
-```
+For fixed-reference work, use the Knight-style execution order:
 
-The worker remains independently runnable; when called by `ai-ppt-plus`, it consumes the orchestrator's approved handoff and returns worker-level technical evidence. It never owns deck-wide narrative, release eligibility, or human sign-off.
+`reference -> visual inventory -> native_editable/imagegen_asset classification -> assets -> fresh editable PPTX -> fresh render -> full-page + local-crop review -> object-level repair -> re-render`.
 
-Keep image-to-PPTX decomposition, asset extraction, composition, rendering, and QA changes incremental, documented, and covered by focused regression tests. The current skill contract and quality gates are authoritative.
+The first authored PPTX is a draft. PageGraph, TextGraph, ChartGraph and manifests support reconstruction and repair; they are not a replacement for looking at the fresh render. Do not add a new blocking contract merely because a visual metric is imperfect. Deterministic correctness defects are hard blockers; visual-fidelity metrics guide the repair loop and final Golden promotion.
 
-## Authority model
+## Authority and decomposition
 
-In orchestrated mode, consume the immutable route decision, approved outline, formal-text authority, design revision, reference roster, editability target, and worker manifests supplied by `$ai-ppt-plus`. Follow the current route contract for `visual-creation`, `reference-reconstruction`, and strict native authoring.
+The supplied reference is visual authority unless the user requests redesign. User-provided copy is formal authority. OCR/vision transcription is proposed text with confidence, never invented fact.
 
-In standalone mode:
+Inventory each page before authoring: background/frame, text, cards/panels, charts, tables, arrows/connectors, icons, logos, decorations, illustrations and page furniture. Assign stable object IDs and approximate source bboxes.
 
-- the supplied reference is visual authority unless the user asks for redesign;
-- user-provided copy is formal authority;
-- OCR/vision transcription is proposed text with confidence/uncertainty, not an unquestioned fact source;
-- missing brand assets, chart data, or illegible text are blockers or explicit placeholders, never invention.
+Classify every non-text visual into exactly one practical reconstruction class:
 
-Read `references/source-intake.md`, `references/source-crop-integrity.md`, `references/reconstruction-contract.md`, `references/editability-levels.md`, `references/native-object-protocol.md`, and the asset/text/chart protocols relevant to the page. For any table-like region, also read `references/semantic-layout-classification.md`. Use its three-state decision: native table, repeated component, or blocking ambiguous. Never default insufficient semantic evidence to a native table, and preserve reference geometry, styling, layering and independent editability. Do not infer a native table from borders, aligned rows or two columns alone. Icon/title/body lists are `repeated_component_group` regions and must not emit `a:tbl`; classify them before E3 and keep their children independently editable. For last-mile viewer compatibility and preservation, also read `references/ooxml-compatibility.md`. For the mandatory final visual-asset route, also read `references/imagegen-final-asset-policy.md`. For the strict image-to-editable hardening contracts, also read `references/optimization-validation.md` and `references/knight-fidelity-port.md`; do not replace the synchronized core with a simplified reconstruction path.
+- `native_editable`: text, cards, panels, dividers, ordinary arrows/connectors, simple badges, semantic tables and charts whose data/meaning are known.
+- `imagegen_asset`: icons, pictograms, complex badges, decorative art, illustration fragments, complex ribbons/streams, artistic marks and other visuals whose faithful native reconstruction would require custom drawing logic.
 
-For every reference-led page, build and validate the current fidelity and authoring manifests. Generic symbols, missing source bboxes, unresolved object IDs, stale source/candidate hashes, silent flat-fill fallbacks, and undeclared stretching block the page. A technical pass remains `accept-for-human-review` until visual fidelity, formal text and editability are confirmed by a person.
+Keep readable formal text native. Keep independent assets independently movable. A whole-page bitmap is never an editable reconstruction.
 
-## E0 — Intake, isolation, and preflight
+## ImageGen asset route
 
-1. Preserve originals and create a unique run root. Record source hashes and page-to-reference mapping; never overwrite a baseline or input deck.
-2. Normalize only derived comparison/render copies. The original remains authoritative and keeps its own hash.
-3. Probe authoring/render/font/OCR capabilities and validate the selected backend binding. For CJK, validate the task-local font and rendering evidence. When embedding fonts, the declared run family and the font's internal family must match exactly or through an explicit, audited alias map; unknown family mismatches are blockers. Record the resolved family and alias in the font report.
-4. Persist route and formal-text authority. A blocked or undecided route cannot enter composition.
+Generate every `imagegen_asset` as an independent transparent asset. Preserve genuine RGBA alpha; validate transparent corners, non-empty alpha bbox, padding and plausible subject coverage. Source crops are reference evidence by default, not final assets. If generation is unavailable or repeatedly fails, stop and request the explicit fallback decision rather than silently substituting a crop or script-drawn icon.
 
-## E1 — Inventory and object plan
+For grids, declare C×R, equal cells, safe zones and transparent padding; detect actual row/column centers before slicing. Repack by alpha-visible bbox and visual centroid. Contact sheets are QA evidence only and never enter the final asset directory.
 
-For every page, inventory visible content independently: background, frame, panels, text boxes/runs, charts, tables, icons, logos, decorations, illustrations, artistic typography, and page furniture. Record source bbox, layer, z-order, anchor, editability level, replaceability, and provenance.
+## Text and geometry
 
-Choose the highest practical editability level without mislabeling:
+Use native PowerPoint text for readable text. Preserve reference line topology and hierarchy. Measure dense text slots before authoring. Repair slot geometry, margins, icon/divider allocation and intended wrapping before shrinking font size. For Chinese text, set East Asian typeface metadata as well as the run family.
 
-- native text, shapes, groups, tables, and charts where semantics/data are known;
-- native shapes/groups for simple cards, panels, dividers, process nodes and table grids; each semantic container has its own object ID;
-- movable raster/vector assets for icons, illustrations, logos/brand artwork, and complex artwork;
-- a whole-page bitmap only as an explicitly image-only fallback, never as an editable reconstruction.
+PageGraph/source bboxes are authoritative repair evidence for stable native panels, text slots and asset placement. Geometry calibration may project high-confidence source bboxes onto matching stable object IDs before text fit, but final correctness is determined by the fresh render and crop evidence.
 
-Repeated semantic panels remain independently movable. Simple semantic panels, cards, frames and tables are native by default. A text-free complex visual substrate may remain an independent image only when its manifest records the exception; it never replaces native text or a table object.
+## Charts and tables
 
-## E2 — Reference decomposition
+Do not infer a table from borders, repeated rows or two-column alignment. Use semantic evidence: real fields/records/cells become native tables; icon+title+description repetitions remain repeated editable components.
 
-For fixed-reference reconstruction, preserve page ratio, layout, hierarchy, spatial relationships, palette, and visible styling. Separate:
+Charts remain native/editable when the data are known. Missing future values stay blank and must never be serialized as zero. Validate the rendered plot and labels against the reference; a structurally valid chart can still be visually wrong.
 
-1. background texture/photography;
-2. native frame/skeleton shapes/groups for simple geometry, or a text-free traceable complex visual substrate when native recreation would reduce fidelity;
-3. icons, decoration, logos, brand lockups, illustrations, and artistic words;
-4. editable formal text;
-5. native charts/tables with their own data/representation authority.
+## Authoring
 
-Use `references/icon-asset-protocol.md` and `references/imagegen-sheet-slicing.md` for B4/B5 provenance, sheet slicing and cutout QA, `references/panel-asset-protocol.md` for independent panels, `references/text-style-protocol.md` for mixed color/weight/line breaks, and `references/chart-reconstruction.md` for every chart.
+Use the repository strict Artifact Tool adapter for new reference reconstruction. Preserve object IDs/names for selection-pane inspection and Repair Trace. Build in container -> icon/asset -> text order, then audit physical z-order. Do not reopen and resave a rich authored deck through `python-pptx` as a repair path.
 
-### Mandatory ImageGen asset route
+## Render-driven QA and repair
 
-Follow the Knight-style deterministic split: `native_editable` versus `imagegen_asset`. Do not add a separate automatic brand-exception classification stage.
+After every meaningful authoring pass:
 
-Formal text/data and simple native PowerPoint primitives stay native. Every other non-native visual asset is `imagegen_asset`, including icons, pictograms, logos, logo lockups, brand marks, wordmarks, calligraphic slogans, signatures/seals, decorative city/skyline art, footer/header brand bands, ribbons, 5G marks, gradients, glows, textures, complex arrows, illustrations, badges and artistic typography. Native ImageGen is the required final-asset route even when an exact source crop can be isolated.
+1. fresh-render the exact PPTX;
+2. retain full-page reference/render, side-by-side, overlay and difference evidence;
+3. crop and inspect dense cards, icon slots, chart areas, compact arrows, bottom bars and user-flagged regions at identical coordinates;
+4. identify the responsible object/layer, not merely the lowest scalar score;
+5. write an object-level Repair Trace containing accepted/rejected deltas;
+6. repair only that layer and re-render.
 
-The source crop is reference evidence only: use it for bbox, prompt guidance, palette/style lock and source-vs-render/local-crop QA. Do not insert it as the final PPT asset by default. Do not use PIL/SVG/HTML/Canvas/matplotlib/PowerPoint-shape drawing as a substitute final asset for an `imagegen_asset`.
+Protect regional wins. A challenger that regresses whole-page fidelity is rejected unless an explicit human review determines the scalar regression is a renderer artifact and the visual/object evidence is better.
 
-For B4 overlay assets, use transparent-first generation. Ask native ImageGen for genuine RGBA transparency on the first attempt and validate alpha. A valid transparent result goes directly to B5 slicing. If direct alpha fails, edit that same generated asset to transparency once. Only if the transparent edit also fails may the run request one flat chroma-key version and execute `chroma_key.py`. Record fallback level and key color; never cycle through multiple key colors.
+### Hard blockers
 
-For multi-asset generation, follow Knight's C×R/N×N discipline: generate complete assets inside safe-zone cells, detect real row/column centers before slicing, sample each cell edge independently for adaptive chroma-key, retain 20–25% padding, then repack by visible-alpha bbox and alpha visual centroid. Contact sheets are QA-only and must never enter the PPTX or canonical final asset directory.
+Fail closed for: provenance/hash mismatch; corrupt/unrenderable output; formal-text loss; whole-slide raster fallback; missing required independent assets; invalid alpha/clipping; semantic table/list error; chart blank-to-zero error; severe overflow/collision/out-of-canvas geometry; or required-editability loss.
 
-A brand lockup whose lettering is inseparable from the artwork is one `imagegen_asset`; do not OCR/re-typeset its internal artwork. This rule does not permit formal body text, ordinary labels, numeric data or chart data to be rasterized.
+### Visual metrics
 
-If generation fails, pause and ask the user to choose exactly one: continue/retry native ImageGen, or use original-image crop/cutout (`source_reuse`). Never make that choice implicitly. Record the explicit user decision, reason and timestamp in the asset manifest; an undecided asset is blocked.
+Whole-page SSIM, balanced reference-fidelity score, regional SSIM and crop metrics are diagnostic during reconstruction. They rank repairs and detect regressions. Do not optimize a page by blindly chasing one scalar score.
 
-Only when the user separately supplies an authoritative standalone asset and explicitly asks to insert that exact file may the run use it directly. This is a user-directed source operation, not an automatic brand exception. Without that explicit instruction, ImageGen remains mandatory.
+The default 0.90 reference-fidelity target is retained for final Golden promotion/release-quality assessment when the user supplies no other target. It is not a precondition for continuing the repair loop and is not sufficient by itself for acceptance. A below-target deck remains Draft/Hard Negative unless explicitly accepted as a documented special case.
 
-Each generated final asset must remain independent and movable. Its manifest record must include `asset_id`, `asset_class`, `provenance_mode: imagegen`, `generated_source`, `copied_to`, `prompt_file`, `backend`, delivered-file hash, source bbox, target bbox, and PPT object ID. Run `validate_imagegen_final_assets.py --strict` before composition and after final render.
+## Final acceptance
 
-Run the reference-fidelity asset-boundary subgate after the contact sheet and after the final render. It must check neighboring text/separators/header bands, matte rectangles, clipping, transparent padding, visible-alpha bbox, alpha centroid, and an effect-layer inventory for complex artwork. Hash/visibility/object-count passes do not waive these checks.
+A corrected final PPTX requires all of the following evidence:
 
-Do not use deck-wide visual generation to redesign an approved fixed reference. Invoke native ImageGen as a scoped element-generation event for each `imagegen_asset`; source reuse is reference evidence only unless the user explicitly approves the fallback above.
+- fresh PPTX and fresh render from the current source/candidate hashes;
+- full-page and local-crop visual review;
+- exact formal-text ledger match;
+- object/editability inspection;
+- independent asset/alpha QA and provenance;
+- chart/table semantic checks where applicable;
+- no hard blockers;
+- Repair Trace showing the last accepted changes.
 
-For every reference-led page, run the authoring contract gate before composition and again after the final render. Before issuing the Artifact Tool marker, every `reference-reconstruction` request must also run `scripts/reference_preflight.py` against its unique run root. A passing authoring-contract report alone is insufficient: it verifies the backend and native-object mechanics but cannot prove that the reference's imagegen asset inventory was covered. If PageGraph identifies any `imagegen_asset`, `reference_preflight.py` must find a strict `imagegen-assets-manifest.json` with one approved independent generated asset for every required ID. Missing coverage is a blocker; native-shape approximations are not a substitute.
-
-```bash
-python3 scripts/validate_authoring_contract.py --strict --report authoring-contract.json
-```
-
-The authoring contract is not a status note: it must identify the JS ESM builder, `@oai/artifact-tool`, exactly one artifact-operation marker, the actual final output, and each independent image exception. Missing or stale evidence blocks delivery; it is never repaired by rasterizing semantic content.
-
-Use the repository-owned adapter for the strict authoring pass. It consumes the same normalized layout contract as the compatibility composer and writes the PPTX directly through Artifact Tool:
-
-```bash
-python3 scripts/compose_pptx.py layout.json output.pptx --authoring-backend artifact-tool --node "$CODEX_PRIMARY_RUNTIME_NODE" --node-modules "$CODEX_PRIMARY_RUNTIME_NODE_MODULES" --font-dir assets/fonts --strict-input
-```
-
-The command emits an adjacent `output.artifact-tool.json` report and inspect NDJSON. Keep the historical default only for frozen compatibility fixtures; new image-to-editable runs must select `artifact-tool` and retain its report.
-
-Never assume a generated asset sheet is a uniform grid. Before B5, inspect alpha row/column spans and classify the sheet as `uniform_grid`, `variable_row`, or `artistic_row`. Fixed origin-based slicing is permitted only after uniform-grid evidence is recorded. For a declared grid, use `slice_grid.py --detect-grid` and require the expected row/column center counts; variable-row sheets require row-aware explicit crops, and complex artistic typography requires one full-row asset per visual line. Contact-sheet review must reject clipped glyphs, edge-touching circles, merged neighboring objects, or an art row split into character fragments. See `references/imagegen-sheet-slicing.md`.
-
-For image-led improvements, run the bounded protocol in `references/optimization-validation.md`: preserve the immutable baseline, create an isolated candidate, run native-object, font, text, layout and visual gates, and roll back the candidate on any real replay regression.
-
-For any post-composition compatibility repair, use only the ZIP-level `scripts/normalize_ooxml_relationships.py` adapter. Never reopen and resave the authored deck through `python-pptx` after rich text, independent assets, or gradients have been composed. Run `scripts/validate_repackaging_invariants.py` and block delivery if the slide part set, media bytes, picture count, text-run/style digest, or gradient count changes. This is a technical preservation gate; the repaired file still needs rendered visual comparison and human review.
-
-## E3 — Author editable objects
-
-Author the normalized layout through the strict backend. Keep semantic text, simple shapes, tables and verified charts native; place every approved `imagegen_asset` as an independent movable picture object with its declared bbox and z-order. Preserve object IDs/names for selection-pane inspection and repair traceability.
-
-## E4 — Render and acceptance
-
-Render the authored PPTX, then run full-page and hard-region comparison. Use the selected profile-aware visual gate; whole-page SSIM remains diagnostic outside the standard profile. Validate text, objects, generated assets, alpha geometry, local crops and source/candidate hashes. A visual pass never waives missing ImageGen provenance or editability blockers.
-
-## E5 — Responsible repair
-
-Repair only the responsible layer. For generated visual failures, regenerate/re-edit the failing asset or repair its alpha bbox/centroid/placement; do not replace it with a source crop unless the user explicitly approves that fallback. For text/layout failures, repair native text or geometry without rasterizing semantic content. Re-render and rerun the affected gates after every repair.
+For skill A/B evaluation, compare the corrected final candidate against the baseline on pixel/layout, text, object/editability, icon/asset and local-crop dimensions. Historical scores cannot substitute for a fresh run.
