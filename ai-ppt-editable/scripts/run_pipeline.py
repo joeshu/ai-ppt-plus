@@ -1380,8 +1380,6 @@ def main() -> int:
         project_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
     if content_inventory_enabled:
         project_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json")])
-        if args.quality_score is not None:
-            release_args.extend(["--quality-score", str(args.quality_score), "--quality-threshold", str(args.quality_threshold)])
         if content_inventory_required:
             project_args.append("--require-content-inventory")
     if chart_manifest_enabled:
@@ -1863,6 +1861,8 @@ def main() -> int:
             "--expected-slides", str(args.expected_pages),
             "--output", str(run_dir / "release-check.json"),
         ]
+        if args.quality_score is not None:
+            release_args.extend(["--quality-score", str(args.quality_score), "--quality-threshold", str(args.quality_threshold)])
         if content_inventory_required:
             release_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json"), "--require-content-inventory"])
         if chart_manifest_enabled:
