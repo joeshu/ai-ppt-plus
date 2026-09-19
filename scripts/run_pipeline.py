@@ -1977,6 +1977,8 @@ def main() -> int:
             "--quality-threshold", str(args.quality_threshold),
             "--output", str(run_dir / "release-check.json"),
         ]
+        if args.quality_score is not None:
+            release_args.extend(["--quality-score", str(args.quality_score), "--quality-threshold", str(args.quality_threshold)])
         if content_inventory_required:
             release_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json"), "--require-content-inventory"])
         if chart_manifest_enabled:
