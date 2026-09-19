@@ -49,8 +49,7 @@ def _write_bbox(spec:dict,box:list[float])->None:
 def _apply_text_evidence(spec:dict,node:dict)->dict|None:
     evidence=node.get("text_evidence")
     if not isinstance(evidence,dict): return None
-    before={key:copy.deepcopy(spec.get(key)) for key in TEXT_EVIDENCE_FIELDS if key in evidence}
-    applied={}
+    before={key:copy.deepcopy(spec.get(key)) for key in TEXT_EVIDENCE_FIELDS if key in evidence};applied={}
     for key in TEXT_EVIDENCE_FIELDS:
         if key in evidence and evidence[key] is not None:
             spec[key]=copy.deepcopy(evidence[key]);applied[key]=copy.deepcopy(evidence[key])
@@ -58,48 +57,32 @@ def _apply_text_evidence(spec:dict,node:dict)->dict|None:
     if lines is not None and spec.get("allow_reflow") is not True:
         try: lines=int(lines)
         except (TypeError,ValueError): lines=0
-        if lines>0:
-            spec["reference_line_count"]=lines
-            spec["max_lines"]=lines
-            applied["max_lines"]=lines
+        if lines>0: spec["reference_line_count"]=lines;spec["max_lines"]=lines;applied["max_lines"]=lines
     if not applied: return None
     spec["reference_text_evidence_locked"]=True
     return {"before":before,"after":applied}
 
 
 def apply_page_graph_geometry(deck:dict,page_graph:dict,*,min_confidence:float=0.5)->tuple[dict,dict]:
-    result=copy.deepcopy(deck);index=_authoring_index(result)
-    applied=[];text_applied=[];skipped=[];missing=[]
+    result=copy.deepcopy(deck);index=_authoring_index(result);applied=[];text_applied=[];skipped=[];missing=[]
     for node in page_graph.get("nodes") or []:
         if not isinstance(node,dict): continue
         oid=str(node.get("id","")).strip();bbox=node.get("bbox")
         if not oid: continue
         try: confidence=float(node.get("confidence",1.0) or 0)
-        except (TypeError,ValueError):
-            skipped.append({"object_id":oid,"reason":"invalid_confidence"});continue
-        if confidence<min_confidence:
-            skipped.append({"object_id":oid,"reason":"low_confidence","confidence":confidence});continue
+        except (TypeError,ValueError): skipped.append({"object_id":oid,"reason":"invalid_confidence"});continue
+        if confidence<min_confidence: skipped.append({"object_id":oid,"reason":"low_confidence","confidence":confidence});continue
         target=index.get(oid)
-        if not target:
-            missing.append({"object_id":oid,"node_type":node.get("type"),"confidence":confidence});continue
+        if not target: missing.append({"object_id":oid,"node_type":node.get("type"),"confidence":confidence});continue
         if isinstance(bbox,list) and len(bbox)==4:
             try: values=list(map(float,bbox))
-            except (TypeError,ValueError):
-                skipped.append({"object_id":oid,"reason":"invalid_geometry","confidence":confidence});continue
-            box=_convert_bbox(result,values);before=[target["spec"].get(k) for k in ("x","y","w","h")]
-            _write_bbox(target["spec"],box)
+            except (TypeError,ValueError): skipped.append({"object_id":oid,"reason":"invalid_geometry","confidence":confidence});continue
+            box=_convert_bbox(result,values);before=[target["spec"].get(k) for k in ("x","y","w","h")];_write_bbox(target["spec"],box)
             target["spec"]["page_graph_geometry_locked"]=True;target["spec"]["page_graph_confidence"]=confidence
             applied.append({"object_id":oid,"slide":target["slide"],"collection":target["collection"],"before":before,"after":box,"confidence":confidence})
         text_change=_apply_text_evidence(target["spec"],node)
-        if text_change is not None:
-            text_applied.append({"object_id":oid,"slide":target["slide"],"collection":target["collection"],"confidence":confidence,**text_change})
-    report={
-        "schema":"ai-ppt-plus/page-geometry-calibration/v3","valid":True,"min_confidence":min_confidence,
-        "applied_count":len(applied),"text_evidence_applied_count":len(text_applied),"missing_count":len(missing),"skipped_count":len(skipped),
-        "applied":applied,"text_evidence_applied":text_applied,"missing":missing,"skipped":skipped,
-        "policy":"pagegraph_bbox_and_explicit_text_evidence_are_authoritative_before_text_fit",
-    }
-    return result,report
+        if text_change is not None: text_applied.append({"object_id":oid,"slide":target["slide"],"collection":target["collection"],"confidence":confidence,**text_change})
+    return result,{"schema":"ai-ppt-plus/page-geometry-calibration/v3","valid":True,"min_confidence":min_confidence,"applied_count":len(applied),"text_evidence_applied_count":len(text_applied),"missing_count":len(missing),"skipped_count":len(skipped),"applied":applied,"text_evidence_applied":text_applied,"missing":missing,"skipped":skipped,"policy":"pagegraph_bbox_and_explicit_text_evidence_are_authoritative_before_text_fit"}
 
 
 def calibrate_reference_deck(deck:dict,layout_path:Path)->tuple[dict,dict|None]:
@@ -114,23 +97,18 @@ def calibrate_reference_deck(deck:dict,layout_path:Path)->tuple[dict,dict|None]:
 
 def write_calibration_report(output_path:Path,report:dict|None)->None:
     if report is None: return
-    path=output_path.with_name(f"{output_path.stem}.page-geometry-calibration.json");path.parent.mkdir(parents=True,exist_ok=True)
-    path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    path=output_path.with_name(f"{output_path.stem}.page-geometry-calibration.json");path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 
 
 def calibrate_layout(layout_path:Path,page_graph_path:Path,output_path:Path,report_path:Path|None=None,min_confidence:float=0.5)->dict:
-    calibrated,report=apply_page_graph_geometry(_load(layout_path),_load(page_graph_path),min_confidence=min_confidence)
-    output_path.parent.mkdir(parents=True,exist_ok=True);output_path.write_text(json.dumps(calibrated,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    if report_path:
-        report_path.parent.mkdir(parents=True,exist_ok=True);report_path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    calibrated,report=apply_page_graph_geometry(_load(layout_path),_load(page_graph_path),min_confidence=min_confidence);output_path.parent.mkdir(parents=True,exist_ok=True);output_path.write_text(json.dumps(calibrated,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    if report_path: report_path.parent.mkdir(parents=True,exist_ok=True);report_path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     return report
 
 
 def main()->int:
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument("layout",type=Path);p.add_argument("page_graph",type=Path)
-    p.add_argument("--output",type=Path,required=True);p.add_argument("--report",type=Path,required=True);p.add_argument("--min-confidence",type=float,default=0.5)
-    a=p.parse_args();r=calibrate_layout(a.layout.resolve(),a.page_graph.resolve(),a.output.resolve(),a.report.resolve(),a.min_confidence)
-    print(json.dumps({"schema":r["schema"],"valid":r["valid"],"applied_count":r["applied_count"],"text_evidence_applied_count":r["text_evidence_applied_count"],"missing_count":r["missing_count"]},ensure_ascii=False));return 0
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument("layout",type=Path);p.add_argument("page_graph",type=Path);p.add_argument("--output",type=Path,required=True);p.add_argument("--report",type=Path,required=True);p.add_argument("--min-confidence",type=float,default=0.5)
+    a=p.parse_args();r=calibrate_layout(a.layout.resolve(),a.page_graph.resolve(),a.output.resolve(),a.report.resolve(),a.min_confidence);print(json.dumps({"schema":r["schema"],"valid":r["valid"],"applied_count":r["applied_count"],"text_evidence_applied_count":r["text_evidence_applied_count"],"missing_count":r["missing_count"]},ensure_ascii=False));return 0
 
 
 if __name__=="__main__": raise SystemExit(main())
