@@ -29,83 +29,108 @@ Freeze source path/page, dimensions, aspect ratio and SHA-256. Historical PPTX, 
 
 ## 2. Visual Inventory
 
-Before authoring, inventory every visible element and classify it as `native_editable` or `imagegen_asset`.
+Inventory visible text, cards/panels, repeated components, semantic tables, charts, arrows/connectors, icons/logos, decorations and complex art. Assign stable object IDs and approximate source bboxes. The inventory exists to support authoring and responsible-object repair, not to become a separate visual gate.
 
-Use `native_editable` for text, simple geometry, lines, connectors, simple tables/charts, card surfaces, labels and other elements that can be faithfully reconstructed with native PowerPoint objects.
+## 3. native_editable / imagegen_asset
 
-Use `imagegen_asset` for logos, pictograms, icons, illustrations, decorative art, irregular gradients/textures and other complex visual assets whose identity or contour would be degraded by generic PowerPoint primitives. A reference pictogram/icon defaults to `imagegen_asset`; use native primitives only when the reference can be faithfully represented by no more than two ordinary primitives. Do not substitute a generic icon merely to increase editability.
+Classify every non-text visual into exactly one practical class before authoring:
 
-For composite badges, model the plate/background, pictogram and label separately. Preserve the plate center/diameter, pictogram alpha-visible bbox, visual centroid and inset ratio; keep the label as native editable text.
+- `native_editable`: readable text, cards/panels, dividers, ordinary arrows/connectors, simple badges, semantic tables and native charts whose data/meaning are known.
+- `imagegen_asset`: icons, pictograms, complex badges, decorative art, illustration fragments, artistic marks, complex ribbons/streams, multi-lane gradient arrow systems and visuals whose faithful native reconstruction would require brittle custom drawing.
 
-## 3. Text Slot Preflight
+Keep readable formal text native. Keep independent visual assets independently movable. Editability is semantic editability, not maximum object fragmentation.
 
-Determine the actual text slot before shrinking fonts. Preserve the reference line topology, first baseline, baseline delta/line-height, paragraph spacing, inner margins and rich-text runs. `target_lines` is an exact topology constraint, not merely a maximum-line hint.
+Do not infer a table from borders, repeated rows or two-column alignment. A table requires real field/record/cell semantics. Icon+title+description repetitions remain repeated editable components.
 
-For title systems, treat title, subtitle/tag and divider/decoration as a parent title block. Calibrate parent geometry first, then child slots, visible glyph bbox/baseline, sibling spacing, font/weight and divider anchors. Do not independently nudge title children until the parent relationship is correct.
+## 4. Text Slot Preflight
 
-Runtime font resolution used for measurement must match the font family ultimately authored into PowerPoint/OOXML. CJK family binding must be explicit at OOXML level; fonts are environment capabilities, not repository binary dependencies.
+Measure every visible native text path before authoring. Determine the true editable slot, preserve reference line count and role hierarchy, and use the same runtime-resolved font for fit and authoring. Chinese runs must set Latin/East-Asian/complex-script OOXML typeface metadata as required by the runtime contract.
 
-## 4. Asset Generation
+When text does not fit, repair in this order: text-slot bbox -> margins -> divider/icon reservation -> intended wrapping/line spacing -> role-consistent font adjustment. Do not shrink first. Repeated cards may use component-local divider positions, body widths, icon slots and font scales when the reference differs.
 
-Generate required complex assets before deck authoring. Prefer native ImageGen. If transparent generation is unavailable, use chroma-key extraction from a deliberate green/red background. Do not fake transparency with white backgrounds and do not silently replace failed assets with generic scripted icons.
+## 5. Asset Generation
 
-A failed required asset is a blocker. Stop and report it rather than degrading the reconstruction.
+Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha. Validate non-empty alpha bbox, transparent corners, safe padding, clipping and plausible subject coverage. For grids, detect actual row/column centers before slicing; repack by visible alpha bbox and visual centroid.
 
-## 5. Artifact Tool Build
+Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon.
 
-Author the PPTX through the official Artifact Tool route. Text remains native editable rich text; cards, simple geometry, lines and labels remain native shapes; complex visual assets remain independently movable images with true alpha where appropriate.
+## 6. Artifact Tool Build
 
-Do not use a whole-slide screenshot, a historical PPTX, a flattened full-page raster or a simplified Python authoring fallback.
+Build a fresh editable PPTX through the strict repository `@oai/artifact-tool` authoring path. Preserve stable object IDs/names for selection-pane inspection and Repair Trace. Build component-local layers in container -> asset/icon -> text order, then audit physical z-order. Do not reopen/resave the authored deck through `python-pptx` as a repair path.
 
-For repeated columns/cards, calibrate relationships before individual objects: column widths, gaps, header/body spacing and icon/text insets should be corrected at the parent/group level before child nudging.
+Complex visual systems may be one or a small number of semantic image assets when native fragmentation would reduce fidelity. Keep readable labels and ordinary semantic geometry native above/beside them.
 
-## 6. Fresh PowerPoint Render
+Charts remain native/editable when data are known. Missing future values stay blank and must never be serialized as zero.
 
-Render the newly built PPTX through the configured PowerPoint-compatible renderer. The render used for comparison must correspond to the current PPTX bytes, not a previous candidate.
+## 7. Fresh PowerPoint Render
 
-## 7. Full-page Compare
+Render the exact current candidate after authoring and after every meaningful repair batch. Final evidence must link to the delivered PPTX hash. An old render cannot prove a new candidate.
 
-Compare the fresh render against the frozen reference. Global SSIM/pixel scores are diagnostic evidence only. A visually repairable mismatch does not become a production blocker because a scalar score is below a threshold.
+## 8. Full-page Compare
 
-## 8. Local Crops
+Compare the fresh render with the immutable reference. Whole-page SSIM, pixel diff, balanced fidelity scores and regional metrics are diagnostic evidence only unless the user/project explicitly supplies a numeric target. A low visual metric creates repair work; it does not terminate production by itself.
 
-Inspect 5-10 material same-coordinate crops per page. Prefer semantically distinct regions and include composite systems such as header/title bands and footer bands when present. If fewer than five material regions exist, inspect all of them.
+## 9. 5-10 key Local Crops
 
-Use local crops to identify the responsible object/system, not to produce another global pass/fail number.
+For each page inspect 5-10 same-coordinate reference/candidate crops, prioritizing the most material regions: dense text/cards, icon slots, charts, compact arrow+label components, bottom bars, circular centers, right-side tool panels and user-flagged areas. If a page genuinely has fewer than five material regions, inspect all of them.
 
-## 9. Responsible Object Repair
+Asset thumbnails are insufficient. Icon visibility, clipping, centering and z-order must be proven from the final PPT render crop.
 
-Repair the object or parent visual system responsible for each mismatch, then re-render. Prioritize high-impact differences by semantic importance, affected area and relative visual discrepancy; do not use a fixed visual-score cutoff to decide whether an object deserves repair.
+## 10. Responsible Object Repair
 
-Common responsibility classes include:
+Every material mismatch must map to the responsible object/layer. Record page, crop/object IDs, mismatch, proposed delta, before evidence, after evidence, accepted/rejected state and reason. Prefer the 3-5 highest-impact defects in each iteration.
 
-- `title-block-geometry`: parent title geometry, child text slots, baselines, sibling spacing and divider anchors.
-- `typography-density`: exact line topology, baseline rhythm, paragraph spacing, margins and rich-text runs.
-- `composite-badge-identity`: badge plate geometry, pictogram alpha bbox/centroid/inset and editable label relationship.
-- `anchored-visual-system`: parent contour/bbox, skyline or decorative baseline, child anchors and z-order.
+Repair the owning object instead of compensating through neighbors or chasing one scalar score. Protect already-correct regions. Pure placement defects should not trigger unnecessary ImageGen regeneration.
 
-For footer systems, calibrate in this order: parent bbox -> normalized wave contour landmarks/curve -> skyline baseline -> asset crop -> anchored children such as `5Gⁿ` and slogans -> z-order. Children must follow the parent system rather than page-absolute guesses.
+## 11. Re-render
 
-Accepted repairs require a fresh after-render. Do not claim a repair from source-code changes alone.
+Every accepted material repair requires a fresh render. Re-check the affected crop and the full page. Reject a local repair that materially regresses a protected crop or the whole page unless explicit human review establishes that the scalar regression is a renderer artifact and the visual/object evidence is better.
 
-## 10. Hard Correctness Check
+## 12. Hard Correctness Check
 
-Machine-blocking defects are limited to deterministic correctness failures:
+Normal fixed-reference production has only these blocking categories:
 
-1. corrupt/unopenable PPTX;
-2. missing required text;
-3. whole-page screenshot/flattened-page substitution;
-4. objects required to be editable but delivered non-editably;
-5. missing required assets;
-6. fake transparency or clipped/cropped required assets;
-7. severe text overflow/collision/container violation;
-8. table/list semantic misclassification that changes the intended editable structure;
-9. chart missing/null values silently converted to zero or other source-data corruption.
+1. `corrupt_or_unrenderable` — corrupt output or output cannot be rendered.
+2. `formal_text_loss` — required readable/formal text is missing or materially altered.
+3. `whole_slide_raster_fallback` — a whole-slide bitmap impersonates editability.
+4. `required_editability_loss` — required native/editable objects are flattened or unavailable for editing.
+5. `asset_missing_or_invalid_alpha` — required independent asset is missing, fake/empty alpha, clipped, or contaminated at the edge.
+6. `severe_overflow_collision_oob` — severe overflow, collision or out-of-canvas geometry.
+7. `semantic_table_misclassification` — list/card semantics are wrongly converted to a table, or a real table loses row/column semantics.
+8. `chart_blank_serialized_as_zero` — unknown/blank chart values are fabricated as zero.
+9. `source_or_provenance_mismatch` — source hash/provenance or required generated-asset provenance does not match the run.
 
-Visual similarity metrics, IoU, centroid drift, icon similarity, typography deltas, preview scores and other non-deterministic visual measurements are diagnostic/repair signals. They must not be promoted into additional ordinary production hard blockers.
+Do not promote SSIM, regional SSIM, pixel score, bbox IoU, centroid drift, scale drift, icon similarity, text-fit utilization, five-dimensional A/B, report count or external comparator availability into production hard blockers.
 
-## 11. Final PPTX
+Runtime/package checks may still fail closed when the required authoring environment itself is unavailable; they are environment prerequisites, not visual-fidelity acceptance gates.
 
-A final PPTX is ready only after hard correctness passes and the active Responsible Object Repair loop has no unresolved material repair items. Final state is expressed as `final-pptx-ready`; unresolved visual work is `repair-required`; deterministic correctness failure is `hard-correctness-fail`.
+Validate the final short-loop report with:
 
-Do not claim completion solely because a metric threshold passed.
+```bash
+python3 scripts/validate_short_loop_run.py PROJECT/short-loop-run.json --root PROJECT --json
+```
+
+Use `assets/short-loop-run.template.json` as the compact report shape.
+
+## 13. Final PPTX
+
+Deliver only the candidate whose final PPTX/render hashes correspond to the accepted evidence and which has zero active hard blockers. Final acceptance requires current-source hash match, fresh full-page review, final local-crop review, exact formal-text ledger, object/editability inspection, independent asset alpha/provenance QA, semantic chart/table checks where applicable and Repair Trace for the last accepted material changes.
+
+## Development regression, separate from production
+
+Pixel / Text / Object / Icon-Asset / Local-Crop five-dimensional A/B remains valuable for skill development, benchmark replay and CI. It is not required for ordinary image-to-editable conversion and must not make normal delivery depend on Knight or another external comparator.
+
+## Core implementation rules retained from Knight study
+
+- Use real font metrics and CJK-aware wrapping; preserve reference line topology.
+- Treat the text box as the intended editable slot, not the dark-pixel glyph bbox.
+- Reserve explicit icon/arrow slots before fitting adjacent text.
+- Use alpha-visible bbox plus visual centroid for transparent-asset placement when needed; preserve safe padding.
+- Use content-aware grid cutting; reject declared/detected grid-count mismatch.
+- Keep contact sheets out of final asset directories.
+- Clear unintended shadow, glow, reflection and soft-edge effects when the reference is flat.
+- Inspect physical PPTX layer order when icons/text disappear; object existence is not render proof.
+- Use native filled arrows when the reference shows filled arrows; use continuous editable freeform/arc paths for compact loops/hooks when appropriate.
+- Center cards/pills by geometry and vertical anchoring, not by baseline eyeballing.
+- Preserve blank chart series as blank.
+- Allow per-component geometry overrides when repeated content differs.
