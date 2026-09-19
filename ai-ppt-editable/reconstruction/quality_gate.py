@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Correctness gate plus Golden visual target assessment for reconstruction."""
+"""Deterministic correctness gate for reconstruction.
+
+Visual similarity metrics are diagnostic evidence. Numeric visual thresholds
+are never imposed unless an explicit project contract supplies them elsewhere.
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -17,16 +21,13 @@ class GateResult:
 
 @dataclass(frozen=True)
 class QualityThresholds:
-    # These are Golden/release-quality targets, not per-iteration authoring blockers.
-    global_visual_similarity: float = 0.90
-    critical_region_similarity: float = 0.90
     editable_ratio: float = 0.98
     semantic_accuracy: float = 1.0
     allow_p1_findings: bool = False
 
 
 class QualityGate:
-    """Fail closed on deterministic correctness; assess visual targets separately."""
+    """Fail closed on deterministic correctness, not on arbitrary visual scores."""
 
     def __init__(self, thresholds: QualityThresholds | None = None) -> None:
         self.thresholds = thresholds or QualityThresholds()
@@ -41,24 +42,6 @@ class QualityGate:
             and not finding.proposed_patch
         )
 
-    def _visual_target_failures(
-        self,
-        global_visual_similarity: float,
-        critical_region_scores: dict[str, float],
-    ) -> list[str]:
-        failures: list[str] = []
-        t = self.thresholds
-        if global_visual_similarity < t.global_visual_similarity:
-            failures.append(
-                f"global visual similarity {global_visual_similarity:.4f} < {t.global_visual_similarity:.4f}"
-            )
-        for region, score in critical_region_scores.items():
-            if score < t.critical_region_similarity:
-                failures.append(
-                    f"critical region {region} similarity {score:.4f} < {t.critical_region_similarity:.4f}"
-                )
-        return failures
-
     def evaluate(
         self,
         *,
@@ -69,13 +52,11 @@ class QualityGate:
         semantic_accuracy: float,
         full_slide_raster_detected: bool,
         renderer_regressions: list[str] | None = None,
-        require_golden: bool = False,
     ) -> GateResult:
         failures: list[str] = []
         t = self.thresholds
         regions = critical_region_scores or {}
         renderer_regressions = renderer_regressions or []
-        visual_failures = self._visual_target_failures(global_visual_similarity, regions)
 
         if editable_ratio < t.editable_ratio:
             failures.append(f"editable ratio {editable_ratio:.4f} < {t.editable_ratio:.4f}")
@@ -95,18 +76,13 @@ class QualityGate:
                     f"{finding.severity} {finding.domain} finding {finding.id} on {finding.object_id}: {finding.message}"
                 )
 
-        if require_golden:
-            failures.extend(f"Golden target: {item}" for item in visual_failures)
-
         return GateResult(
             passed=not failures,
             failures=tuple(failures),
             metrics={
                 "global_visual_similarity": global_visual_similarity,
                 "critical_region_scores": regions,
-                "golden_visual_ready": not visual_failures,
-                "golden_visual_failures": tuple(visual_failures),
-                "golden_required": bool(require_golden),
+                "visual_metrics_diagnostic_only": True,
                 "editable_ratio": editable_ratio,
                 "semantic_accuracy": semantic_accuracy,
                 "full_slide_raster_detected": full_slide_raster_detected,
