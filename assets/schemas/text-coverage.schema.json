@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://joeshu.github.io/ai-ppt-plus/text-coverage.schema.json",
+  "title": "Text Coverage Audit",
+  "type": "object",
+  "required": ["schema", "source", "entries"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/text-coverage/v1"},
+    "source": {
+      "type": "object",
+      "required": ["authoring_plan_sha256"],
+      "properties": {
+        "authoring_plan_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+        "pptx_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-fA-F]{64}$"}
+      },
+      "additionalProperties": true
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target_id", "owner_object_id", "producer_kind", "expected_text", "authoring_path", "text_fit_evidence", "output_binding"],
+        "properties": {
+          "target_id": {"type": "string", "minLength": 1},
+          "owner_object_id": {"type": "string", "minLength": 1},
+          "producer_kind": {
+            "enum": ["text_box", "rich_text_runs", "table_cell", "badge_label", "chart_label", "number_unit", "other"]
+          },
+          "expected_text": {"type": "string"},
+          "authoring_path": {"type": "string", "minLength": 1},
+          "text_fit_evidence": {
+            "type": "object",
+            "required": ["measured", "fit_decision"],
+            "properties": {
+              "measured": {"const": true},
+              "fit_decision": {"type": "string", "minLength": 1},
+              "font_family": {"type": ["string", "null"]},
+              "font_size_pt": {"type": ["number", "null"], "exclusiveMinimum": 0},
+              "line_count": {"type": ["integer", "null"], "minimum": 1}
+            },
+            "additionalProperties": true
+          },
+          "output_binding": {
+            "type": "object",
+            "required": ["kind", "binding_id"],
+            "properties": {
+              "kind": {"enum": ["shape", "table_cell", "chart_text", "group_child", "other"]},
+              "binding_id": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": true
+          },
+          "formal_text_required": {"type": "boolean", "default": true}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
