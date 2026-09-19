@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression test: authored charts cannot bypass reconstruction authority."""
+"""Regression test: reference charts cannot bypass reconstruction authority."""
 from __future__ import annotations
 
 import importlib.util
@@ -31,8 +31,10 @@ def main() -> int:
     module = load_module()
     deck = {"slides": [{"charts": [{"object_id": "trend-chart", "series": [{"name": "2026", "values": [1, None]}], "categories": ["1月", "2月"]}]}]}
     with tempfile.TemporaryDirectory() as tmp:
-        layout = Path(tmp) / "layout.json"
+        root = Path(tmp)
+        layout = root / "layout.json"
         layout.write_text(json.dumps(deck, ensure_ascii=False), encoding="utf-8")
+        (root / "route-decision.json").write_text(json.dumps({"route": "reference-reconstruction"}), encoding="utf-8")
         report = module.validate_chart_authoring_contract(layout, deck)
     assert not report["valid"]
     assert report["issues"][0]["code"] == "chart_reconstruction_manifest_missing"
