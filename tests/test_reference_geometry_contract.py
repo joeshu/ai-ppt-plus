@@ -13,6 +13,7 @@ sys.path.insert(0,str(EDITABLE))
 
 from validate_page_geometry import audit_page_geometry  # noqa:E402
 from validate_measured_line_boxes import audit_measured_line_boxes  # noqa:E402
+from calibrate_page_geometry import apply_page_graph_geometry  # noqa:E402
 
 
 def write(path:Path,value:dict)->None:
@@ -45,8 +46,14 @@ def main()->int:
         assert geometry["valid"] and geometry["checked"]==1,geometry
         assert lines["valid"] and lines["required"] and lines["checked"]==1,lines
 
+        # Authoring geometry must be deterministically projected from PageGraph
+        # before text-fit. This repairs layout drift without touching content.
         drift=json.loads(json.dumps(deck));drift["slides"][0]["texts"][0]["x"]=0.20
-        assert not audit_page_geometry(layout,drift)["valid"]
+        calibrated,calibration=apply_page_graph_geometry(drift,_load_graph:=json.loads((root/"page-graph.json").read_text(encoding="utf-8")))
+        calibrated_title=calibrated["slides"][0]["texts"][0]
+        assert calibrated_title["x"]==0.10 and calibrated_title["w"]==0.50,calibrated_title
+        assert calibration["applied_count"]==1 and calibration["valid"],calibration
+        assert audit_page_geometry(layout,calibrated)["valid"]
 
         missing=json.loads(json.dumps(deck));del missing["slides"][0]["texts"][0]["reference_line_boxes"]
         assert not audit_measured_line_boxes(layout,missing)["valid"]
