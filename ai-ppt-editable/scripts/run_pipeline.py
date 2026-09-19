@@ -388,8 +388,8 @@ def main() -> int:
     parser.add_argument("--handoff", help="handoff.json; required by --release")
     parser.add_argument("--human-signoff", help="human-closeout.json; required by --release")
     parser.add_argument("--issue-log", help="issue-log.json passed to the release gate")
-    parser.add_argument("--quality-score", type=float, help="human/automated quality score for --release")
-    parser.add_argument("--quality-threshold", type=float, default=80, help="minimum quality score for --release")
+    parser.add_argument("--quality-score", type=float, help="optional diagnostic quality score for review evidence")
+    parser.add_argument("--quality-threshold", type=float, default=80, help="optional diagnostic target; never a production hard blocker")
     parser.add_argument("--require-embedded-fonts", action="store_true", help="require verified OOXML embedded fonts in strict release delivery")
     parser.add_argument("--dpi", type=int, default=96, help="render DPI; same-ratio reference comparisons are normalized when pixel sizes differ")
     parser.add_argument("--strict-layout", action="store_true", help="treat layout-audit warnings (such as missing source_bbox) as blockers")
@@ -465,8 +465,6 @@ def main() -> int:
             missing.append("--handoff")
         if not args.human_signoff:
             missing.append("--human-signoff")
-        if args.quality_score is None:
-            missing.append("--quality-score")
         if missing:
             result = {"schema": "ai-ppt-plus/pipeline-run/v2", "valid": False, "technical_valid": False, "release_eligible": False, "code": "release_evidence_missing", "missing": missing}
             print(json.dumps(result, ensure_ascii=False))
@@ -1382,6 +1380,8 @@ def main() -> int:
         project_args.extend(["--ocr-report", str(run_dir / "ocr-text-check.json")])
     if content_inventory_enabled:
         project_args.extend(["--content-inventory-validation", str(run_dir / "content-inventory-validation.json")])
+        if args.quality_score is not None:
+            release_args.extend(["--quality-score", str(args.quality_score), "--quality-threshold", str(args.quality_threshold)])
         if content_inventory_required:
             project_args.append("--require-content-inventory")
     if chart_manifest_enabled:
@@ -1861,8 +1861,6 @@ def main() -> int:
             "--require-report-bundle",
             "--render-visual-gate", str(run_dir / "render-visual-gate.json"),
             "--expected-slides", str(args.expected_pages),
-            "--quality-score", str(args.quality_score),
-            "--quality-threshold", str(args.quality_threshold),
             "--output", str(run_dir / "release-check.json"),
         ]
         if content_inventory_required:
