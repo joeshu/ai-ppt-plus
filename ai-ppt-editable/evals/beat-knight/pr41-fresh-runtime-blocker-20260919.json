@@ -1,0 +1,31 @@
+{
+  "schema": "ai-ppt-plus/pr41-fresh-runtime-blocker/v1",
+  "created_at": "2026-09-19T03:43:00Z",
+  "reference": {
+    "sha256": "75077f148156d6424c87d826d65da6403c529b5a36c519a20d37d49773b77021",
+    "size_px": [1536, 864]
+  },
+  "runtime": {
+    "artifact_tool_python": "2.8.22",
+    "daemon": "official artifact_tool RPC Bun daemon",
+    "note": "Fresh formal runtime reproduction used the official Artifact Tool runtime available in the execution environment."
+  },
+  "fresh_candidate": {
+    "pptx_sha256": "119bba3321a17f9e6c0f48fcb6648cdc1f19fc832cbf7b53ea5fa71180758e0a",
+    "generated": true,
+    "rendered": true
+  },
+  "native_chart_blank_gap_probe": {
+    "input_2026_values": [218.9, 230.3, 220.8, 248.3, 232.7, 243.2, 224.0, null, null, null, null, null, null],
+    "display_blanks_as": "gap",
+    "exported_chart_xml_zero_indices": [7, 8, 9, 10, 11, 12],
+    "exported_disp_blanks_as_gap": true,
+    "finding": "Artifact Tool 2.8.22 serializes null chart values as numeric zero points even while emitting dispBlanksAs=gap; the renderer therefore draws a false drop-to-zero line and zero markers.",
+    "gate": "FAIL_CLOSED"
+  },
+  "five_axis": {
+    "status": "not_scored",
+    "reason": "P0 native chart missing-value contract failed before competitive five-axis scoring; promotion/merge is blocked."
+  },
+  "next_fix": "Add post-authoring OOXML blank-gap repair or equivalent Artifact Tool adapter logic that removes c:pt entries for source-null indices, then rerun the fresh formal five-axis A/B."
+}
