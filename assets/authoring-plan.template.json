@@ -1,0 +1,66 @@
+{
+  "schema": "ai-ppt-plus/authoring-plan/v1",
+  "source": {
+    "path": "reference.png",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "width_px": 1536,
+    "height_px": 864,
+    "page_count": 1
+  },
+  "canvas": {"width": 1.0, "height": 1.0, "units": "normalized"},
+  "objects": [
+    {
+      "object_id": "title-1",
+      "page": 1,
+      "semantic_role": "title",
+      "implementation_type": "native_text",
+      "bbox": [0.35, 0.03, 0.30, 0.08],
+      "parent_id": null,
+      "z_role": "text",
+      "anchors": [],
+      "protected_neighbors": ["subtitle-1"],
+      "typography_contract": {
+        "target_lines": 1,
+        "alignment": "center",
+        "font_role": "display",
+        "slot_reservations": []
+      }
+    },
+    {
+      "object_id": "subtitle-1",
+      "page": 1,
+      "semantic_role": "subtitle",
+      "implementation_type": "native_text",
+      "bbox": [0.27, 0.11, 0.46, 0.04],
+      "parent_id": null,
+      "z_role": "text",
+      "anchors": [],
+      "protected_neighbors": ["title-1"],
+      "typography_contract": {
+        "target_lines": 1,
+        "alignment": "center",
+        "font_role": "subtitle",
+        "slot_reservations": []
+      }
+    },
+    {
+      "object_id": "icon-1",
+      "page": 1,
+      "semantic_role": "pictogram",
+      "implementation_type": "imagegen_asset",
+      "bbox": [0.05, 0.35, 0.06, 0.10],
+      "parent_id": null,
+      "z_role": "asset",
+      "anchors": [],
+      "protected_neighbors": [],
+      "asset_contract": {
+        "semantic_identity": "reference pictogram",
+        "color_roles": {"foreground": "reference-primary", "host": "transparent"},
+        "contour_traits": ["preserve silhouette"],
+        "alpha_required": true,
+        "safe_zone": "preserve reference visible padding",
+        "provenance_mode": "imagegen"
+      }
+    }
+  ]
+}
