@@ -11,6 +11,7 @@
       "producer_kind": "rich_text_runs",
       "expected_text": "示例标题",
       "authoring_path": "artifact_tool:textbox",
+      "text_fit_evidence_id": "text:title",
       "text_fit_evidence": {
         "measured": true,
         "fit_decision": "slot-preserved",
