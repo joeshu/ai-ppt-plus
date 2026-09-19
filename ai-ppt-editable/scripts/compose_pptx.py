@@ -22,6 +22,7 @@ import tempfile
 from pathlib import Path
 
 from asset_placement import replace_svg_media as _replace_svg_media
+from chart_blank_gap_repair import repair_chart_blank_gaps
 from asset_placement import svg_to_png as _svg_to_png
 from component_expander import _choose_slide_layout, _expand_components, _frac, _load_deck, _promote_native_structures, _resolve
 from preview_renderer import find_cjk_font as _find_cjk_font
@@ -181,6 +182,10 @@ def main() -> None:
                 if completed.stderr:
                     print(completed.stderr, file=sys.stderr, end="")
                 _die(f"Artifact Tool strict authoring failed with exit code {completed.returncode}")
+        chart_gap_report = output_path.with_name(f"{output_path.stem}.chart-blank-gap-repair.json")
+        gap_result = repair_chart_blank_gaps(output_path, deck, chart_gap_report)
+        if not gap_result.get("valid", False):
+            _die("Artifact Tool chart blank-gap OOXML repair failed")
         e4 = write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
         if require_text_fit and e4 is None:
             _die("E4 text-fit receipt cannot bind missing authored PPTX")
