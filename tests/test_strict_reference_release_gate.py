@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Contract test: fixed-reference release must render/review fresh output and gate Golden promotion."""
+"""Contract test: fixed-reference release always renders/reviews without a universal visual threshold."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,18 +15,15 @@ def main() -> int:
     assert "strict_reference_rerun.py" in worker
     assert "render_pptx.py" in worker
     assert "compare_visual.py" in worker
-    assert '"--raw-slide","--strict"' in compact
+    assert '"--raw-slide","--report"' in compact
+    assert '"--raw-slide","--strict"' not in compact
     assert "compare_visual_regions.py" in worker
     assert "build_render_repair_trace.py" in worker
-    assert "--require-golden" in worker
-    assert "draft-needs-render-repair" in worker
-    assert "golden-ready" in worker
-    assert "strict_visual_target_passed" in worker
-    # Fresh visual comparison is always recorded; only explicit Golden promotion
-    # fails closed on a below-target render.
-    assert "visual.returncode==0" in compact
-    assert "ifa.require_goldenandnotvisual_passed:" in compact
-    print("strict reference release render-driven gate: ok")
+    assert "--require-golden" not in worker
+    assert "visual_metrics_diagnostic_only" in worker
+    assert 'status="review-ready"' in compact
+    assert "fresh render comparison failed structural validation" in worker
+    print("strict reference release render-review contract: ok")
     return 0
 
 
