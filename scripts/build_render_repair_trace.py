@@ -4,8 +4,8 @@
 The planner is deliberately threshold-free. Visual scores rank inspection and
 repair work; they never decide whether a visually repairable page may proceed.
 The planner maps weak regions to stable objects/semantic regions and emits
-pattern-specific checks for typography density, asset identity and anchored
-visual systems such as branded footer bands.
+pattern-specific checks for typography density, title-block geometry, composite
+badge identity and anchored visual systems such as branded footer bands.
 """
 from __future__ import annotations
 
@@ -47,9 +47,17 @@ def object_index(deck: dict) -> dict[str, dict]:
     return out
 
 
-def _is_footer_region(kind: str, oid: str, bbox: list | None, spec: dict | None) -> bool:
-    role = str((spec or {}).get("semantic_role") or (spec or {}).get("role") or "").lower()
-    token = f"{kind} {oid} {role}".lower()
+def _role(row: dict | None, spec: dict | None) -> str:
+    values = []
+    for source in (row or {}, spec or {}):
+        for key in ("semantic_role", "role", "component_role", "visual_role"):
+            if source.get(key):
+                values.append(str(source[key]))
+    return " ".join(values).lower()
+
+
+def _is_footer_region(kind: str, oid: str, bbox: list | None, spec: dict | None, row: dict | None = None) -> bool:
+    token = f"{kind} {oid} {_role(row, spec)}".lower()
     if any(word in token for word in ("footer", "bottom-band", "bottom_bar", "brand-band", "skyline")):
         return True
     if isinstance(bbox, list) and len(bbox) >= 4:
@@ -60,23 +68,64 @@ def _is_footer_region(kind: str, oid: str, bbox: list | None, spec: dict | None)
     return False
 
 
-def responsibility(kind: str, metrics: dict, *, oid: str = "", bbox: list | None = None, spec: dict | None = None) -> tuple[str, list[str]]:
+def _is_title_region(kind: str, oid: str, bbox: list | None, spec: dict | None, row: dict | None = None) -> bool:
+    if kind != "texts":
+        return False
+    token = f"{oid} {_role(row, spec)}".lower()
+    explicit = ("title", "subtitle", "section-header", "column-header", "header-title", "title-block", "kicker")
+    if any(word in token for word in explicit):
+        return True
+    if isinstance(bbox, list) and len(bbox) >= 4:
+        try:
+            return float(bbox[1]) <= 0.18 and float(bbox[2]) >= 0.25
+        except (TypeError, ValueError):
+            return False
+    return False
+
+
+def _is_composite_badge(kind: str, oid: str, spec: dict | None, row: dict | None = None) -> bool:
+    if kind not in {"images", "icons", "groups", "shapes"}:
+        return False
+    token = f"{oid} {_role(row, spec)}".lower()
+    return any(word in token for word in ("badge", "pictogram", "mini-icon", "icon-badge", "roundel", "medallion"))
+
+
+def responsibility(kind: str, metrics: dict, *, oid: str = "", bbox: list | None = None, spec: dict | None = None, row: dict | None = None) -> tuple[str, list[str]]:
     layout = float(metrics.get("layout_ssim", 0.0) or 0.0)
     pixel = float(metrics.get("pixel_fidelity", 0.0) or 0.0)
-    if _is_footer_region(kind, oid, bbox, spec):
+    if _is_footer_region(kind, oid, bbox, spec, row):
         return "anchored-visual-system", [
             "treat the footer wave/skyline/background as one semantic visual system when native fragmentation reduces fidelity",
-            "compare the footer band's visible top edge, height and skyline baseline before moving foreground labels",
-            "anchor 5G/brand marks to the footer semantic-region bbox, not to page center or an unrelated text baseline",
-            "after footer geometry changes, re-check every child anchor and z-order in the same crop",
+            "record the footer parent bbox plus normalized contour landmarks at several x positions; compare wave height/curvature, not only the rectangular bbox",
+            "compare skyline baseline and visible top-edge profile before moving foreground labels",
+            "anchor 5G/brand marks to the footer semantic-region bbox using normalized child anchors, not page coordinates or an unrelated text baseline",
+            "repair order is parent bbox -> contour/asset crop -> skyline baseline -> child anchors -> z-order",
+            "after footer geometry changes, re-check every child anchor and the whole footer crop",
+        ]
+    if _is_title_region(kind, oid, bbox, spec, row):
+        return "title-block-geometry", [
+            "treat title, subtitle, kicker/tag and divider as a title-block system instead of unrelated text boxes",
+            "compare each slot x/y/w/h, first-baseline position, cap-height/visible glyph bbox and sibling gaps against the reference",
+            "preserve reference line topology and run emphasis before changing font size",
+            "do not compensate a wrong title slot by shrinking text or changing character spacing",
+            "repair parent title-block geometry first, then child text slots, then typography and divider anchors",
+        ]
+    if _is_composite_badge(kind, oid, spec, row):
+        return "composite-badge-identity", [
+            "decompose the badge into background plate/roundel and foreground pictogram when both are visually meaningful",
+            "compare plate diameter/radius, center and fill separately from the pictogram contour",
+            "fit the pictogram by alpha-visible bbox and visual centroid, then anchor it to the plate center with explicit inset ratios",
+            "keep nearby label text native; never bake readable label text into the badge asset",
+            "re-render the complete badge plus label crop after repair",
         ]
     if kind == "texts":
         return "typography-density", [
-            "compare reference and candidate line count, line breaks, occupied glyph area and whitespace ratio",
+            "compare reference and candidate line count, exact line breaks, occupied glyph area, baseline spacing and whitespace ratio",
             "repair the true text-slot bbox, inner margins and reserved icon/divider space before changing font size",
             "preserve reference line topology; a max-lines cap is insufficient when the reference uses an exact line count",
+            "record target line-height/baseline delta and paragraph spacing as evidence, not only target_lines",
             "use the same runtime-resolved font face for measurement and PowerPoint authoring; verify CJK OOXML binding",
-            "check paragraph spacing, line spacing, weight and emphasis runs after geometry is correct",
+            "check weight, color and emphasis runs after geometry is correct",
         ]
     if kind in {"images", "icons"}:
         return "asset-identity", [
@@ -88,6 +137,7 @@ def responsibility(kind: str, metrics: dict, *, oid: str = "", bbox: list | None
     if kind in {"semantic-region", "semantic_regions"}:
         return "semantic-region", [
             "inspect the region as a composed visual system rather than optimizing one child object in isolation",
+            "record parent bbox, child normalized anchors and relationship constraints before repair",
             "identify the responsible child layer(s), preserve already-correct neighbors, then re-render the whole region",
         ]
     if kind == "charts":
@@ -113,7 +163,7 @@ def responsibility(kind: str, metrics: dict, *, oid: str = "", bbox: list | None
     return "visual", ["inspect the crop and bind the finding to a stable authoring object before repair"]
 
 
-def _priority(row: dict, kind: str, bbox: list | None) -> float:
+def _priority(row: dict, kind: str, bbox: list | None, domain: str) -> float:
     score = float(row.get("score", 1.0) or 0.0)
     mismatch = max(0.0, 1.0 - min(score, 1.0))
     metrics = row.get("metrics") or {}
@@ -126,15 +176,12 @@ def _priority(row: dict, kind: str, bbox: list | None) -> float:
             area = max(0.0, min(float(bbox[2]) * float(bbox[3]), 0.30))
         except (TypeError, ValueError):
             pass
-    domain_bonus = 0.12 if kind in {"texts", "icons", "images", "semantic-region", "semantic_regions"} else 0.06
+    domain_bonus = 0.14 if domain in {"title-block-geometry", "composite-badge-identity", "anchored-visual-system"} else 0.12 if kind in {"texts", "icons", "images", "semantic-region", "semantic_regions"} else 0.06
     issue_bonus = 0.10 if row.get("issues") else 0.0
     return round(mismatch * 0.55 + metric_gap * 0.20 + min(area / 0.30, 1.0) * 0.15 + domain_bonus + issue_bonus, 6)
 
 
 def build_trace(layout: dict, regional: dict, *, max_actions: int = 12, min_actions: int = 3, target: float | None = None) -> dict:
-    # target is intentionally ignored. It remains in the Python API only so
-    # older callers/tests do not break while production repair selection stays
-    # threshold-free.
     _ = target
     index = object_index(layout)
     actions = []
@@ -146,19 +193,21 @@ def build_trace(layout: dict, regional: dict, *, max_actions: int = 12, min_acti
         kind = located["kind"] if located else declared_kind
         spec = located.get("spec") if located else None
         box = row.get("bbox")
-        domain, checks = responsibility(kind, row.get("metrics") or {}, oid=oid, bbox=box, spec=spec)
+        domain, checks = responsibility(kind, row.get("metrics") or {}, oid=oid, bbox=box, spec=spec, row=row)
         actions.append({
-            "priority": _priority(row, kind, box),
+            "priority": _priority(row, kind, box, domain),
             "slide": located["slide"] if located else slide,
             "region_id": row.get("region_id"),
             "object_id": oid,
             "object_kind": kind,
+            "semantic_role": _role(row, spec),
             "responsibility": domain,
             "region_score": row.get("score"),
             "metrics": row.get("metrics") or {},
             "bbox": box,
             "bbox_px": row.get("bbox_px"),
             "crop_evidence": row.get("crop_evidence"),
+            "relationship_evidence": row.get("relationship_evidence") or {},
             "status": "pending-render-review",
             "recommended_checks": checks,
             "proposed_patch": {},
@@ -186,9 +235,10 @@ def build_trace(layout: dict, regional: dict, *, max_actions: int = 12, min_acti
             "local crop evidence before scalar optimization",
             "no fixed SSIM/fidelity target for production repair selection",
             "map every repair to a stable object id or semantic region and responsible layer",
-            "text-slot geometry and line topology before font shrink",
-            "reference pictograms use faithful independent assets instead of generic native approximations",
-            "anchored visual systems repair parent geometry before child anchors",
+            "text-slot geometry, exact line topology and baseline spacing before font shrink",
+            "title/subtitle/header geometry is repaired as a title-block system before typography compensation",
+            "reference pictograms use faithful independent assets; composite badges separate plate geometry from pictogram identity",
+            "anchored visual systems record parent contour landmarks and repair parent geometry before child anchors",
             "protect already-correct neighboring objects",
             "no blind numeric patch from scalar similarity alone",
             "re-render after each accepted repair batch",
