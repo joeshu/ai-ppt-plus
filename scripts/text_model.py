@@ -22,9 +22,11 @@ VALIDATION_SCHEMA = "ai-ppt-plus/text-layout-validation/v1"
 HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?$")
 ALIGNMENTS = {"left", "center", "right", "justify"}
 VALIGNS = {"top", "middle", "center", "bottom"}
+MEASUREMENT_SCOPES = {"whole_phrase", "sub_box"}
 STYLE_KEYS = (
     "font", "font_family", "size", "size_pt", "size_px", "size_ratio", "size_pct",
-    "color", "bold", "italic", "opacity", "line_spacing", "align", "valign",
+    "font_size", "font_size_pt", "color", "bold", "italic", "underline", "strike",
+    "opacity", "line_spacing", "letter_spacing", "baseline", "align", "valign",
     "margin_left", "margin_right", "margin_top", "margin_bottom",
 )
 
@@ -56,6 +58,8 @@ def _source_bbox(item: dict[str, Any]) -> list[float] | None:
 
 def _style(item: dict[str, Any], *, run: bool = False) -> dict[str, Any]:
     result: dict[str, Any] = {}
+    nested = item.get("style") if isinstance(item.get("style"), dict) else {}
+    result.update(nested)
     for key in STYLE_KEYS:
         if key in item and item[key] is not None:
             result[key] = item[key]
@@ -64,8 +68,117 @@ def _style(item: dict[str, Any], *, run: bool = False) -> dict[str, Any]:
     if "font_family" in result and "font" not in result:
         result["font"] = result["font_family"]
     if run:
+        # A run carries style overrides. Keep one canonical font key so the
+        # trace is stable whether the author used ``font`` or ``font_family``.
         result.pop("font_family", None)
-        result.pop("font", None) if "font" not in item else None
+    return result
+
+
+def _sha256_text(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _sha256_json(value: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
+def text_content(value: Any) -> str:
+    """Return formal text with rich runs taking precedence over plain text."""
+    if isinstance(value, str):
+        return value
+    if not isinstance(value, dict):
+        return "" if value is None else str(value)
+    runs = value.get("runs")
+    if isinstance(runs, list) and runs:
+        return "".join(text_content(run.get("text", "")) if isinstance(run, dict) else text_content(run) for run in runs)
+    if value.get("content") is not None:
+        return str(value.get("content"))
+    if value.get("text") is not None:
+        return str(value.get("text"))
+    if isinstance(value.get("paragraphs"), list):
+        return "\n".join(text_content(paragraph) for paragraph in value["paragraphs"])
+    if value.get("run") is not None:
+        return str(value.get("run"))
+    return ""
+
+
+def _run_record(raw: Any, *, run_index: int, fallback_id: str) -> dict[str, Any]:
+    if not isinstance(raw, dict):
+        return {"run_id": f"{fallback_id}.r{run_index:02d}", "text": text_content(raw), "style": {}}
+    run_id = str(raw.get("run_id") or f"{fallback_id}.r{run_index:02d}")
+    record: dict[str, Any] = {
+        "run_id": run_id,
+        "text": text_content(raw.get("text", "")),
+        "style": _style(raw, run=True),
+    }
+    if raw.get("literal_redaction") is True:
+        record["literal_redaction"] = True
+    return record
+
+
+def text_trace(value: Any, *, fallback_id: str = "text") -> dict[str, Any]:
+    """Build deterministic content/style provenance for one text producer."""
+    if isinstance(value, dict):
+        raw_runs = value.get("runs")
+        base_id = str(value.get("text_id") or value.get("text_spec_id") or value.get("object_id") or value.get("name") or fallback_id)
+        base_style = _style(value)
+    else:
+        raw_runs = None
+        base_id = fallback_id
+        base_style = {}
+    runs = [_run_record(raw, run_index=index, fallback_id=base_id) for index, raw in enumerate(raw_runs, 1)] if isinstance(raw_runs, list) else []
+    content = text_content(value)
+    run_text = "".join(run["text"] for run in runs)
+    run_style_payload = [{"run_id": run["run_id"], "style": run.get("style", {})} for run in runs]
+    return {
+        "text_spec_id": base_id,
+        "content": content,
+        "content_sha256": _sha256_text(content),
+        "content_matches_runs": (content == run_text) if isinstance(raw_runs, list) and raw_runs else None,
+        "run_count": len(runs),
+        "run_ids": [run["run_id"] for run in runs],
+        "run_trace": runs,
+        "run_style_sha256": _sha256_json(run_style_payload),
+        "base_style": base_style,
+        "base_style_sha256": _sha256_json(base_style),
+    }
+
+
+def measurement_scope(value: Any, *, fallback_id: str) -> dict[str, str]:
+    """Normalize the declared phrase/sub-box measurement scope."""
+    raw = value.get("measurement_scope", value.get("fit_scope")) if isinstance(value, dict) else None
+    if isinstance(raw, str):
+        kind, scope_id = raw, fallback_id
+    elif isinstance(raw, dict):
+        kind = str(raw.get("kind") or raw.get("type") or "whole_phrase")
+        scope_id = str(raw.get("scope_id") or raw.get("box_id") or raw.get("id") or fallback_id)
+    else:
+        kind, scope_id = "whole_phrase", fallback_id
+    return {"kind": kind, "scope_id": scope_id}
+
+
+def number_unit_trace(value: Any, *, content: str | None = None, fallback_id: str = "text") -> dict[str, str] | None:
+    """Normalize an explicit number+unit group without guessing from digits."""
+    raw = value.get("number_unit") if isinstance(value, dict) else None
+    if not isinstance(raw, dict):
+        return None
+    number = str(raw.get("number_text", raw.get("number", "")))
+    unit = str(raw.get("unit_text", raw.get("unit", "")))
+    prefix = str(raw.get("prefix", ""))
+    separator = str(raw.get("separator", ""))
+    suffix = str(raw.get("suffix", ""))
+    combined = str(raw.get("combined_text") or f"{prefix}{number}{separator}{unit}{suffix}")
+    result: dict[str, str] = {
+        "group_id": str(raw.get("group_id") or raw.get("id") or f"{fallback_id}.number_unit"),
+        "number_text": number,
+        "unit_text": unit,
+        "combined_text": combined,
+    }
+    for key in ("number_run_id", "unit_run_id"):
+        if raw.get(key) is not None:
+            result[key] = str(raw[key])
     return result
 
 
@@ -77,20 +190,8 @@ def normalize_text_spec(item: dict[str, Any], slide_no: int, index: int, *, unit
     runs_input_valid = "runs" not in item or isinstance(raw_runs, list)
     if isinstance(raw_runs, list):
         for run_index, raw in enumerate(raw_runs, 1):
-            if not isinstance(raw, dict):
-                runs.append({"run_id": f"{text_id}.r{run_index:02d}", "text": raw})
-                continue
-            record = {
-                "run_id": str(raw.get("run_id") or f"{text_id}.r{run_index:02d}"),
-                "text": str(raw.get("text", "")),
-            }
-            style = _style(raw, run=True)
-            if style:
-                record["style"] = style
-            if raw.get("literal_redaction") is True:
-                record["literal_redaction"] = True
-            runs.append(record)
-    content = "".join(str(run.get("text", "")) for run in runs) if isinstance(raw_runs, list) else str(item.get("text", ""))
+            runs.append(_run_record(raw, run_index=run_index, fallback_id=text_id))
+    content = text_content(item)
     spec: dict[str, Any] = {
         "text_id": text_id,
         "slide_no": slide_no,
@@ -122,6 +223,9 @@ def normalize_text_spec(item: dict[str, Any], slide_no: int, index: int, *, unit
         spec["raw_text_present"] = True
     if "text" in item and isinstance(item.get("text"), (str, int, float)):
         spec["declared_text"] = str(item["text"])
+    for key in ("producer_kind", "semantic_role", "measurement_scope", "fit_scope", "number_unit", "text_spec_id"):
+        if key in item and item[key] is not None:
+            spec[key] = item[key]
     return spec
 
 
@@ -292,6 +396,19 @@ def validate_manifest(data: dict[str, Any], *, strict: bool = False, require_sou
                 _validate_style(run.get("style", {}), f"{label}:{run_id}", issues, warnings)
             if runs and "".join(run_text) != content:
                 issues.append({"code": "text_runs_content_mismatch", "text_id": label})
+            scope = measurement_scope(spec, fallback_id=label)
+            if scope["kind"] not in MEASUREMENT_SCOPES:
+                issues.append({"code": "text_measurement_scope_invalid", "text_id": label, "value": scope["kind"]})
+            number_unit = number_unit_trace(spec, content=content, fallback_id=label)
+            if number_unit is not None:
+                if not number_unit["number_text"] or not number_unit["unit_text"]:
+                    issues.append({"code": "text_number_unit_incomplete", "text_id": label})
+                if number_unit["combined_text"] != content:
+                    issues.append({"code": "text_number_unit_content_mismatch", "text_id": label})
+                known_run_ids = {run.get("run_id") for run in runs if isinstance(run, dict)}
+                for key in ("number_run_id", "unit_run_id"):
+                    if key in number_unit and number_unit[key] not in known_run_ids:
+                        issues.append({"code": "text_number_unit_run_unknown", "text_id": label, "run_id": number_unit[key]})
             if spec.get("emphasis_expected") is True and not runs:
                 warnings.append({"code": "emphasis_runs_missing", "text_id": label})
     result = {
