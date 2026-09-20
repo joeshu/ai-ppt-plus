@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.20.13
+  package_revision: 2026.09.20.14
 ---
 
 # AI PPT Editable
@@ -13,7 +13,7 @@ Reconstruct or repair editable PPTX with the supplied reference as visual author
 
 New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python is inspection/QA only and is not an authoring fallback. Whole-page raster fallback is forbidden.
 
-Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
+Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
 
 ## Formal production chain
 
@@ -99,7 +99,7 @@ line-count locking, target-size box deficit evidence and the
 `text_slot_first_font_shrink_last` repair policy. `reference_scale` is review
 evidence only; it is not a universal numeric release gate.
 
-## 7. Text Coverage Audit
+After `text_fit_deck.py`, do not accept a font reduction merely because it fits. Run `scripts/text_slot_repair_planner.py` so measured box deficits are converted into target-only geometry/margin/dependency/topology repairs first. Font size is the last candidate.\n\n## 7. Text Coverage Audit
 
 After Text Slot Preflight and before build/release acceptance, materialize `text-coverage.json` and audit every formal-text producer path. Every AuthoringPlan `native_text` object must have at least one coverage entry; table cells, badge labels, chart labels and number+unit compositions must be traceable through stable synthetic text targets owned by their AuthoringPlan object.
 
@@ -154,7 +154,7 @@ For each page inspect 5-10 same-coordinate reference/candidate crops, prioritizi
 
 Asset thumbnails are insufficient. Icon visibility, clipping, centering and z-order must be proven from the final PPT render crop.
 
-## 13. Responsible Object Repair
+Before Responsible Object Repair, run `scripts/text_render_feedback.py` against the immutable reference render and the fresh candidate render. Use its same-coordinate text crops to diagnose position, visible scale/weight and hierarchy drift. These tolerances are diagnostic only and never a whole-page release gate.\n\n## 13. Responsible Object Repair
 
 Every material mismatch must map to the responsible object/layer. Record page, crop/object IDs, mismatch, proposed delta, before evidence, after evidence, accepted/rejected state and reason. Prefer the 3-5 highest-impact defects in each iteration.
 
