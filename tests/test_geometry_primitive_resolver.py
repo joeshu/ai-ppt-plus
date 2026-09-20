@@ -38,7 +38,7 @@ def test_filled_arrow_is_not_connector(tmp_path):
 
 
 def test_curved_path_requires_freeform_bezier(tmp_path):
-    out, report = run(tmp_path, [obj("curve", "connector", "timeline curve", {"requires_cubic_bezier": True})])
+    out, report = run(tmp_path, [obj("curve", "connector", "timeline curve", {"requires_cubic_bezier": True, "control_points": [[0.1, 0.5], [0.2, 0.1], [0.7, 0.1], [0.9, 0.5]]})])
     assert out.returncode == 0
     r = report["resolutions"][0]
     assert r["primitive"] == "FREEFORM_BEZIER"
@@ -89,3 +89,21 @@ def test_invalid_explicit_hint_blocks(tmp_path):
     out, report = run(tmp_path, [obj("x", "native_shape", "shape", {"primitive_hint": "MAGIC"})])
     assert out.returncode == 1
     assert any(x["code"] == "geometry_primitive_unresolved" for x in report["issues"])
+
+
+def test_invalid_direction_is_not_silently_defaulted(tmp_path):
+    out, report = run(tmp_path, [obj("trap", "native_shape", "trapezoid", {"trapezoid": True, "direction": "diagonal"})])
+    assert out.returncode == 1
+    assert any(x["code"] == "geometry_direction_invalid" for x in report["issues"])
+
+
+def test_missing_cubic_control_points_blocks_before_authoring(tmp_path):
+    out, report = run(tmp_path, [obj("curve", "freeform", "timeline curve", {"requires_cubic_bezier": True})])
+    assert out.returncode == 1
+    assert any(x["code"] == "geometry_cubic_control_points_missing" for x in report["issues"])
+
+
+def test_resolution_carries_page_for_multi_page_binding(tmp_path):
+    out, report = run(tmp_path, [dict(obj("card", "native_shape", "round card", {"rounded_corners": True}), page=3)])
+    assert out.returncode == 0
+    assert report["resolutions"][0]["page"] == 3

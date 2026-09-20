@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 SCHEMA = "ai-ppt-plus/geometry-primitive-resolution/v2"
@@ -13,6 +14,7 @@ PRIMITIVES = {
     "FILLED_ARROW", "CONNECTOR", "FREEFORM_BEZIER", "TABLE", "CHART",
     "IMAGEGEN_COMPLEX",
 }
+DIRECTIONS = {"up", "down", "left", "right"}
 
 
 def load(path: Path) -> dict:
@@ -23,7 +25,9 @@ def load(path: Path) -> dict:
 
 
 def _num(value, default=None):
-    if isinstance(value, (int, float)):
+    if isinstance(value, bool):
+        return default
+    if isinstance(value, (int, float)) and math.isfinite(float(value)):
         return float(value)
     return default
 
@@ -95,8 +99,9 @@ def resolve_params(primitive: str, g: dict) -> dict:
         return {"corner_radius_norm": max(0.0, min(radius, 0.5))}
     if primitive in {"TRAPEZOID", "FUNNEL"}:
         direction = str(g.get("direction") or "").lower() or "down"
-        if direction not in {"up", "down", "left", "right"}:
-            direction = "down"
+        # Keep an invalid value visible in the report.  Parameter validation
+        # below blocks it; silently turning it into `down` loses the source
+        # intent and can produce a convincing but wrong funnel.
         taper = _num(g.get("taper_ratio"), 0.35)
         return {"direction": direction, "taper_ratio": max(0.0, min(taper, 1.0))}
     if primitive == "FILLED_ARROW":
@@ -123,6 +128,77 @@ def resolve_params(primitive: str, g: dict) -> dict:
     return {}
 
 
+def _normalised_points(raw):
+    if isinstance(raw, dict):
+        raw = [raw.get("start"), raw.get("control1"), raw.get("control2"), raw.get("end")]
+    if not isinstance(raw, list):
+        return None
+    points = []
+    for value in raw:
+        if isinstance(value, dict):
+            x, y = value.get("x"), value.get("y")
+        elif isinstance(value, (list, tuple)) and len(value) >= 2:
+            x, y = value[0], value[1]
+        else:
+            return None
+        x_num, y_num = _num(x), _num(y)
+        if x_num is None or y_num is None or not (0 <= x_num <= 1 and 0 <= y_num <= 1):
+            return None
+        points.append((x_num, y_num))
+    return points
+
+
+def _parameter_issues(primitive: str, geometry: dict, parameters: dict, object_id) -> list[dict]:
+    """Return deterministic blockers for parameters that would otherwise be guessed."""
+    issues: list[dict] = []
+
+    def add(code: str, detail: str) -> None:
+        issues.append({"severity": "blocker", "code": code, "object_id": object_id, "detail": detail})
+
+    if primitive in {"TRAPEZOID", "FUNNEL"}:
+        direction = parameters.get("direction")
+        if direction not in DIRECTIONS:
+            add("geometry_direction_invalid", "direction must be one of up/down/left/right")
+        if "direction" in geometry and not isinstance(geometry.get("direction"), str):
+            add("geometry_direction_invalid", "direction must be a string")
+        if "taper_ratio" in geometry:
+            taper = _num(geometry.get("taper_ratio"))
+            if taper is None or not 0 <= taper <= 1:
+                add("geometry_taper_ratio_invalid", "taper_ratio must be a finite number within 0..1")
+
+    if primitive == "ROUNDRECT":
+        key = "corner_radius_norm" if "corner_radius_norm" in geometry else "roundrect_adjustment" if "roundrect_adjustment" in geometry else None
+        if key:
+            radius = _num(geometry.get(key))
+            if radius is None or not 0 <= radius <= 0.5:
+                add("geometry_roundrect_adjustment_invalid", "corner radius/adjustment must be a finite number within 0..0.5")
+
+    if primitive == "FILLED_ARROW":
+        if parameters.get("direction") not in DIRECTIONS:
+            add("geometry_direction_invalid", "filled arrow direction must be one of up/down/left/right")
+        for key, lower, upper in (("head_ratio", 0.05, 0.8), ("shaft_ratio", 0.05, 0.9)):
+            if key in geometry:
+                value = _num(geometry.get(key))
+                if value is None or not lower <= value <= upper:
+                    add("geometry_arrow_ratio_invalid", f"{key} must be a finite number within {lower}..{upper}")
+        if parameters.get("head_ratio", 0) + parameters.get("shaft_ratio", 0) > 1:
+            add("geometry_arrow_ratio_sum_invalid", "head_ratio + shaft_ratio must not exceed 1")
+
+    if primitive == "CONNECTOR":
+        points = _normalised_points(parameters.get("endpoints"))
+        if points is None or len(points) != 2:
+            add("geometry_connector_endpoints_invalid", "connector requires exactly two normalized endpoints")
+
+    if primitive == "FREEFORM_BEZIER":
+        points = _normalised_points(parameters.get("control_points"))
+        if not points:
+            add("geometry_cubic_control_points_missing", "FREEFORM_BEZIER requires normalized control points")
+        elif len(points) < 4 or (len(points) - 1) % 3:
+            add("geometry_cubic_control_points_invalid", "control points must contain start plus 3n cubic points")
+
+    return issues
+
+
 def expected_impl(primitive: str) -> str | None:
     return {
         "CONNECTOR": "connector",
@@ -144,14 +220,23 @@ def resolve(plan: dict) -> dict:
     resolutions: list[dict] = []
     if plan.get("schema") != PLAN_SCHEMA:
         issues.append({"severity": "blocker", "code": "geometry_plan_schema_invalid", "detail": f"expected {PLAN_SCHEMA}"})
-    for obj in plan.get("objects") or []:
+    objects = plan.get("objects")
+    if not isinstance(objects, list) or not objects:
+        issues.append({"severity": "blocker", "code": "geometry_plan_objects_missing", "detail": "objects must be a non-empty list"})
+        objects = []
+    for obj in objects:
         if not isinstance(obj, dict):
             continue
         oid = obj.get("object_id")
+        page = obj.get("page")
         impl = obj.get("implementation_type")
         primitive, reason, evidence, params = classify(obj)
         expected = expected_impl(primitive)
         status = "resolved"
+        if not isinstance(oid, str) or not oid.strip():
+            issues.append({"severity": "blocker", "code": "geometry_object_id_missing", "detail": "geometry object_id is required"})
+        if not isinstance(page, int) or isinstance(page, bool) or page < 1:
+            issues.append({"severity": "blocker", "code": "geometry_page_invalid", "object_id": oid, "detail": "page must be a positive 1-based integer"})
         if primitive == "UNRESOLVED":
             status = "blocked"
             issues.append({"severity": "blocker", "code": "geometry_primitive_unresolved", "object_id": oid, "detail": reason})
@@ -166,11 +251,13 @@ def resolve(plan: dict) -> dict:
                 "primitive": primitive,
                 "detail": "repair AuthoringPlan implementation choice before build",
             })
-        if primitive == "FREEFORM_BEZIER" and not params.get("requires_cubic_bezier"):
+        parameter_issues = _parameter_issues(primitive, obj.get("geometry_contract") if isinstance(obj.get("geometry_contract"), dict) else {}, params, oid)
+        if parameter_issues:
             status = "blocked"
-            issues.append({"severity": "blocker", "code": "geometry_cubic_bezier_required", "object_id": oid, "detail": "curved freeform must retain cubic Bezier semantics"})
+            issues.extend(parameter_issues)
         resolutions.append({
             "object_id": oid,
+            "page": page,
             "semantic_role": obj.get("semantic_role"),
             "declared_implementation_type": impl,
             "primitive": primitive,
@@ -179,6 +266,7 @@ def resolve(plan: dict) -> dict:
             "status": status,
             "reason": reason,
             "evidence": evidence,
+            "parameter_issues": parameter_issues,
         })
     blockers = [x for x in issues if x.get("severity") == "blocker"]
     return {

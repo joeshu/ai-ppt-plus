@@ -51,6 +51,18 @@ function sha256(file) {
   return crypto.createHash("sha256").update(file).digest("hex");
 }
 
+function canonicalJson(value) {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function canonicalSha256(value) {
+  return sha256(Buffer.from(canonicalJson(value), "utf8"));
+}
+
 function normaliseColor(value, fallback = "#111111") {
   if (value === undefined || value === null || value === "") return fallback;
   if (typeof value === "object") return value;
@@ -132,6 +144,87 @@ function shapeGeometry(raw) {
     connector: "line",
   };
   return map[key] || raw || "rect";
+}
+
+const AUTHORABLE_GEOMETRY = new Set([
+  "RECT", "ROUNDRECT", "ELLIPSE", "TRAPEZOID", "FUNNEL",
+  "FILLED_ARROW", "CONNECTOR", "FREEFORM_BEZIER",
+]);
+
+function geometryBindingKey(page, objectId) {
+  return `${page}:${objectId}`;
+}
+
+function geometryBindingFor(bindings, page, spec) {
+  if (!bindings) return null;
+  const objectId = spec?.object_id || spec?.name;
+  return objectId ? bindings.get(geometryBindingKey(page, String(objectId))) || null : null;
+}
+
+function geometryFromBinding(binding, fallback) {
+  if (!binding) return fallback;
+  const primitive = String(binding.primitive || "").toUpperCase();
+  const parameters = binding.parameters && typeof binding.parameters === "object" ? binding.parameters : {};
+  if (primitive === "RECT" || primitive === "TRAPEZOID" || primitive === "FUNNEL" || primitive === "FREEFORM_BEZIER") return "rect";
+  if (primitive === "ROUNDRECT") return "roundRect";
+  if (primitive === "ELLIPSE") return "ellipse";
+  if (primitive === "CONNECTOR") return "line";
+  if (primitive === "FILLED_ARROW") {
+    const direction = String(parameters.direction || "right").toLowerCase();
+    return ({ up: "upArrow", down: "downArrow", left: "leftArrow", right: "rightArrow" })[direction] || "rightArrow";
+  }
+  return fallback;
+}
+
+function collectLayoutObjectIds(value, output) {
+  if (!value || typeof value !== "object") return;
+  const objectId = value.object_id || value.name;
+  if (objectId) output.add(String(objectId));
+  if (Array.isArray(value.children)) value.children.forEach((child) => collectLayoutObjectIds(child, output));
+}
+
+async function loadGeometryResolution(argv, deck) {
+  const rawPath = value(argv, "--geometry-resolution");
+  if (!rawPath) return { path: null, map: null, targets: [], report: null };
+  const resolutionPath = path.resolve(rawPath);
+  const bytes = await fs.readFile(resolutionPath).catch((error) => fail(`geometry resolution cannot be read: ${error.message}`));
+  let resolution;
+  try { resolution = JSON.parse(bytes.toString("utf8")); } catch (error) { fail(`geometry resolution is not valid JSON: ${error.message}`); }
+  if (resolution.schema !== "ai-ppt-plus/geometry-primitive-resolution/v2" || resolution.valid !== true || resolution.repair_required) {
+    fail("geometry resolution must be a strict-ready v2 report");
+  }
+  const map = new Map();
+  const targets = [];
+  for (const item of resolution.resolutions || []) {
+    const primitive = String(item?.primitive || "").toUpperCase();
+    if (!AUTHORABLE_GEOMETRY.has(primitive)) continue;
+    const objectId = String(item?.object_id || "").trim();
+    const page = Number(item?.page);
+    if (!objectId || !Number.isInteger(page) || page < 1 || page > deck.slides.length) fail(`geometry binding target is invalid: page ${item?.page}, object ${item?.object_id}`);
+    const key = geometryBindingKey(page, objectId);
+    if (map.has(key)) fail(`geometry binding target is duplicated: ${key}`);
+    const binding = { object_id: objectId, page, primitive, parameters: item.parameters && typeof item.parameters === "object" ? item.parameters : {} };
+    map.set(key, binding);
+    targets.push(binding);
+    const ids = new Set();
+    const slide = deck.slides[page - 1] || {};
+    for (const spec of slide.shapes || []) collectLayoutObjectIds(spec, ids);
+    for (const group of slide.groups || []) collectLayoutObjectIds(group, ids);
+    if (!ids.has(objectId)) fail(`geometry binding target is absent from layout: page ${page}, object ${objectId}`);
+  }
+  return {
+    path: resolutionPath,
+    map,
+    targets,
+    report: {
+      schema: "ai-ppt-plus/geometry-artifact-tool-binding/v1",
+      valid: true,
+      status: "passed",
+      resolution_sha256: canonicalSha256(resolution),
+      target_count: targets.length,
+      targets,
+    },
+  };
 }
 
 function slideDimensions(deck) {
@@ -306,9 +399,10 @@ function applyText(shape, spec, theme, deck, dimensions) {
   return shape;
 }
 
-function addShape(slide, spec, theme, deck, dimensions, namePrefix = "") {
+function addShape(slide, spec, theme, deck, dimensions, namePrefix = "", page = 1, geometryBindings = null) {
   const name = `${namePrefix}${spec.object_id || spec.name || "shape"}`;
-  const geometry = shapeGeometry(spec.type || spec.geometry || "rect");
+  const binding = geometryBindingFor(geometryBindings, page, spec);
+  const geometry = geometryFromBinding(binding, shapeGeometry(spec.type || spec.geometry || "rect"));
   if (geometry === "line") {
     const x1 = coordinate(spec, "x", "x", deck, dimensions);
     const y1 = coordinate(spec, "y", "y", deck, dimensions);
@@ -349,7 +443,7 @@ function addShape(slide, spec, theme, deck, dimensions, namePrefix = "") {
   return shape;
 }
 
-function addGroupChildren(slide, group, theme, deck, dimensions) {
+function addGroupChildren(slide, group, theme, deck, dimensions, page = 1, geometryBindings = null) {
   const children = Array.isArray(group.children) ? group.children : [];
   const hasBox = ["x", "y", "w", "h"].every((key) => group[key] !== undefined);
   const groupPos = hasBox ? position(group, deck, dimensions) : null;
@@ -369,7 +463,7 @@ function addGroupChildren(slide, group, theme, deck, dimensions) {
       child.children_coordinate_space = undefined;
     }
     const childDeck = local && groupPos ? { ...deck, units: "fraction" } : deck;
-    return addShape(slide, child, theme, childDeck, dimensions, `${group.object_id || group.name || `group-${index + 1}`}/`);
+    return addShape(slide, child, theme, childDeck, dimensions, `${group.object_id || group.name || `group-${index + 1}`}/`, page, geometryBindings);
   });
 }
 
@@ -522,6 +616,7 @@ async function main() {
   if (!deck || typeof deck !== "object") fail("layout must be a JSON object");
   if (!Array.isArray(deck.slides) || !deck.slides.length) fail("layout must contain at least one slide");
   deck.strict_input = Boolean(deck.strict_input || has(argv, "--strict-input"));
+  const geometryResolution = await loadGeometryResolution(argv, deck);
   const dimensions = slideDimensions(deck);
   const theme = deck.theme && typeof deck.theme === "object" ? deck.theme : {};
   const assetsDir = path.resolve(deck.assets_dir || path.dirname(layoutPath));
@@ -562,11 +657,12 @@ async function main() {
       objectInventory.push({ slide: slideIndex + 1, object_id: panel.object_id || panel.panel_id || "panel", kind: "image", image });
     }
     for (const spec of slideSpec.shapes || []) {
-      const shape = addShape(slide, spec, theme, deck, dimensions);
-      objectInventory.push({ slide: slideIndex + 1, object_id: spec.object_id || spec.name || "shape", kind: "shape", shape });
+      const binding = geometryBindingFor(geometryResolution.map, slideIndex + 1, spec);
+      const shape = addShape(slide, spec, theme, deck, dimensions, "", slideIndex + 1, geometryResolution.map);
+      objectInventory.push({ slide: slideIndex + 1, object_id: spec.object_id || spec.name || "shape", kind: "shape", shape, ...(binding ? { geometry_binding: binding } : {}) });
     }
     for (const group of slideSpec.groups || []) {
-      const children = addGroupChildren(slide, group, theme, deck, dimensions);
+      const children = addGroupChildren(slide, group, theme, deck, dimensions, slideIndex + 1, geometryResolution.map);
       objectInventory.push({ slide: slideIndex + 1, object_id: group.object_id || group.name || "group", kind: "group", children: children.length });
     }
     for (const spec of slideSpec.tables || []) {
@@ -642,7 +738,12 @@ async function main() {
     fonts: registeredFonts,
     previews,
     native_object_count: objectInventory.length,
-    object_inventory: objectInventory.map(({ slide, object_id, kind, children }) => ({ slide, object_id, kind, ...(children !== undefined ? { children } : {}) })),
+    // The binding map is consumed for both top-level shapes and group
+    // children.  Group children are intentionally not flattened into the
+    // inventory, so applied_count must come from the validated target map,
+    // not only from top-level inventory rows.
+    geometry_binding: geometryResolution.report ? { ...geometryResolution.report, applied_count: geometryResolution.targets.length } : null,
+    object_inventory: objectInventory.map(({ slide, object_id, kind, children, geometry_binding }) => ({ slide, object_id, kind, ...(children !== undefined ? { children } : {}), ...(geometry_binding ? { geometry_binding } : {}) })),
   };
   await fs.mkdir(path.dirname(reportPath), { recursive: true });
   await fs.writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");

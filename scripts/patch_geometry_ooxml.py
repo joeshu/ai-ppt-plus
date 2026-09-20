@@ -136,6 +136,11 @@ def _slide_name(page: int) -> str:
     return f"ppt/slides/slide{page}.xml"
 
 
+def _object_name_matches(name: str | None, object_id: str) -> bool:
+    """Match top-level ids and Artifact Tool's group/child stable names."""
+    return bool(name) and (name == object_id or name.endswith(f"/{object_id}"))
+
+
 def _replace_geometry(shape: ET.Element, geometry: ET.Element) -> None:
     sppr = shape.find(_q("p", "spPr"))
     if sppr is None:
@@ -163,24 +168,41 @@ def patch(input_path: Path, output_path: Path, resolution: dict) -> dict:
         return {"schema": SCHEMA, "valid": True, "status": "passed", "patched": []}
     by_slide: dict[str, bytes] = {}
     patched: list[str] = []
+    bindings: list[dict] = []
+    seen: set[tuple[int, str]] = set()
     with zipfile.ZipFile(input_path, "r") as source:
         parts = {info.filename: source.read(info.filename) for info in source.infolist()}
         infos = {info.filename: info for info in source.infolist()}
     for item in targets:
         oid = str(item.get("object_id") or "").strip()
-        page = int(item.get("page") or 1)
+        if not oid:
+            raise ValueError("geometry target object_id is required")
+        raw_page = item.get("page")
+        if raw_page is None:
+            raw_page = 1
+        if isinstance(raw_page, bool) or not isinstance(raw_page, int) or raw_page < 1:
+            raise ValueError(f"geometry target page is invalid for {oid}: {raw_page!r}")
+        page = raw_page
+        key = (page, oid)
+        if key in seen:
+            raise ValueError(f"geometry target is duplicated: page {page}, object {oid}")
+        seen.add(key)
         name = _slide_name(page)
         if name not in parts:
             raise ValueError(f"slide not found for {oid}: page {page}")
         root = ET.fromstring(parts[name])
         shapes = [node for node in root.findall(".//p:sp", NS) if node.find("p:nvSpPr/p:cNvPr", NS) is not None]
-        matches = [node for node in shapes if node.find("p:nvSpPr/p:cNvPr", NS).get("name") == oid]
+        matches = [
+            node for node in shapes
+            if _object_name_matches(node.find("p:nvSpPr/p:cNvPr", NS).get("name"), oid)
+        ]
         if len(matches) != 1:
             raise ValueError(f"geometry target {oid!r} on page {page} matched {len(matches)} shapes")
         geometry = _geometry(item)
         _replace_geometry(matches[0], geometry)
         parts[name] = ET.tostring(root, encoding="utf-8", xml_declaration=True)
         patched.append(oid)
+        bindings.append({"object_id": oid, "page": page, "primitive": str(item.get("primitive") or "").upper()})
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(prefix=f".{output_path.stem}-", suffix=".pptx", dir=output_path.parent, delete=False) as temp:
         temporary = Path(temp.name)
@@ -191,7 +213,7 @@ def patch(input_path: Path, output_path: Path, resolution: dict) -> dict:
         os.replace(temporary, output_path)
     finally:
         temporary.unlink(missing_ok=True)
-    return {"schema": SCHEMA, "valid": True, "status": "passed", "patched": patched}
+    return {"schema": SCHEMA, "valid": True, "status": "passed", "patched": patched, "bindings": bindings}
 
 
 def main() -> int:
