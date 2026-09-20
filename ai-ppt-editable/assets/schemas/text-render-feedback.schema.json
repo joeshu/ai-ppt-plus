@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ai-ppt-plus/text-render-feedback.schema.json",
+  "title": "AI PPT Text Render Feedback",
+  "type": "object",
+  "required": ["schema", "valid", "diagnostic_only", "thresholds", "summary", "records", "issues"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/text-render-feedback/v1"},
+    "valid": {"type": "boolean"},
+    "diagnostic_only": {"const": true},
+    "thresholds": {
+      "type": "object",
+      "required": ["position_tolerance_px", "scale_tolerance", "coverage_tolerance", "release_gate"],
+      "properties": {
+        "position_tolerance_px": {"type": "number", "minimum": 0},
+        "scale_tolerance": {"type": "number", "minimum": 0},
+        "coverage_tolerance": {"type": "number", "minimum": 0},
+        "release_gate": {"const": false}
+      },
+      "additionalProperties": true
+    },
+    "summary": {"type": "object"},
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["object_id", "text_slot_id", "page", "reference", "candidate", "metrics", "classification", "repair_required", "repair"],
+        "properties": {
+          "object_id": {"type": "string", "minLength": 1},
+          "text_slot_id": {"type": ["string", "null"]},
+          "page": {"type": "integer", "minimum": 1},
+          "classification": {"enum": ["aligned", "position_drift", "scale_or_weight_drift", "hierarchy_drift"]},
+          "repair_required": {"type": "boolean"},
+          "reference": {"type": "object"},
+          "candidate": {"type": "object"},
+          "metrics": {"type": "object"},
+          "repair": {"type": "object"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "issues": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": true
+}
