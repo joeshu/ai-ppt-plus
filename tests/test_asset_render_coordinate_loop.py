@@ -48,8 +48,10 @@ def test_projection_and_translation_delta() -> None:
         assert completed.returncode == 0, completed.stderr
         result = report["records"][0]
         assert result["repair"]["classification"] == "placement_only"
-        assert result["centroid_delta_px"] == [10.0, -5.0]
+        assert result["centroid_delta_px"] is None
+        assert result["bbox_center_delta_px"] == [10.0, -5.0]
         assert result["repair"]["translate_px"] == [-10.0, 5.0]
+        assert result["repair"]["translation_basis"] == "visible_bbox_center"
         assert result["repair"]["regenerate_asset"] is False
         assert report["repair_loop_required"] is True
 
@@ -98,6 +100,18 @@ def test_invalid_record_fails_closed() -> None:
         assert completed.returncode == 1
         assert report["valid"] is False
         assert report["records"][0]["issues"][-1]["code"] == "coordinate_record_invalid"
+
+
+def test_explicit_observed_centroid_is_not_confused_with_bbox_center() -> None:
+    with tempfile.TemporaryDirectory(prefix="b5-coordinate-centroid-") as folder:
+        record = _record([140, 140, 260, 260])
+        record["render"]["observed_visual_centroid_px"] = [215, 185]
+        completed, report = _run(Path(folder), record)
+        assert completed.returncode == 0, completed.stderr
+        result = report["records"][0]
+        assert result["bbox_center_delta_px"] == [0.0, 0.0]
+        assert result["centroid_delta_px"] == [15.0, -15.0]
+        assert result["repair"]["translation_basis"] == "observed_visual_centroid"
 
 
 def test_missing_explicit_render_path_fails_closed_when_required() -> None:
