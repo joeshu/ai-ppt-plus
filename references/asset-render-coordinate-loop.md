@@ -1,51 +1,41 @@
 # Asset-to-Render Coordinate Loop
 
-## Purpose
+The B5 loop closes the coordinate gap between an independent transparent asset,
+its normalized PowerPoint slot and the fresh final render. Asset QA alone cannot
+detect a correctly generated icon that is shifted, too small or clipped after
+placement.
 
-Close the coordinate gap between an independent transparent asset and what is actually visible in the final fresh PowerPoint render.
+Each record declares `object_id`, page, asset canvas/alpha geometry, normalized
+slot bbox, render canvas and the observed visible bbox from the fresh render.
+When `--auto-bind-asset-qa` is enabled, the runner reads the real RGBA file and
+binds alpha bbox, alpha-weighted centroid, safe padding and coverage. It can
+also bind a `transparent-asset-qa` report by asset id or path.
 
-Asset QA alone is insufficient: an icon can have correct alpha, contour and color yet still be too small, shifted, clipped or visually off-center after placement. B5 therefore records the transform from asset alpha-space -> PPT slot-space -> final render-space.
+The report contains the projected visible bbox and centroid, per-edge deltas,
+scale delta, a placement-only translation/scale proposal and
+`regenerate_asset=false`. If a fresh render directory is supplied, the runner
+resolves `slide-N.png` and captures an object crop with the final page hash.
+Those values are evidence for Responsible Object Repair, not a universal visual
+score or release threshold.
 
-## Required record
+Policy:
 
-For each independently placed visual asset record:
+1. Identity, contour and color defects stay in the Asset Color/Identity
+   Contract and may request an asset regeneration.
+2. Placement-only defects repair slot/transform parameters first and do not
+   consume ImageGen regeneration attempts.
+3. Clipping is diagnosed from a fresh render and its crop, not a contact sheet.
+4. Any repair must preserve protected neighbors and z-order.
+5. A valid B5 report may still set `repair_loop_required=true` when it emits a
+   non-zero placement delta; the pipeline remains in a repair state until B6
+   or human review resolves it.
 
-- stable `object_id` and page;
-- asset canvas size;
-- alpha-visible bbox and alpha-weighted visual centroid;
-- safe transparent padding;
-- normalized PPT slot bbox;
-- final render canvas size;
-- observed visible bbox from the fresh render crop.
-
-## Output
-
-`scripts/asset_render_coordinate_loop.py` projects the alpha-visible geometry into render coordinates and emits:
-
-- expected visible bbox;
-- expected visual centroid;
-- observed visible bbox;
-- centroid delta in pixels;
-- scale delta ratio;
-- per-edge visible-bbox delta;
-- proposed translation/scale repair;
-- `regenerate_asset=false` for placement-only defects.
-
-These numeric deltas are repair instructions, not visual release scores.
-
-## Policy
-
-1. Identity/color/contour defects belong to Asset Color/Identity Contract and may regenerate the asset.
-2. Placement-only defects must repair slot/transform parameters first and must not consume ImageGen regeneration attempts.
-3. Clipping must be diagnosed from the fresh final render, not only from the source PNG/contact sheet.
-4. Repair must preserve protected neighbors and z-order.
-5. No SSIM/IoU/0.90 threshold is introduced here.
-
-## Usage
+Example:
 
 ```bash
-python3 scripts/asset_render_coordinate_loop.py PROJECT/asset-render-records.json \
-  --report PROJECT/asset-render-coordinate-report.json --json
+python3 scripts/asset_render_coordinate_loop.py project/asset-render-records.json \
+  --base-dir project --render-dir run/rendered \
+  --capture-crops run/asset-render-crops \
+  --auto-bind-asset-qa \
+  --report run/asset-render-coordinate-report.json
 ```
-
-The report is then consumed by Responsible Object Repair / Protected Repair Planner.

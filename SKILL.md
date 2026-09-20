@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.17.01
+  package_revision: 2026.09.20.08
 ---
 
 # AI PPT Plus Orchestrator
@@ -199,6 +199,14 @@ canonical assets. Multi-icon retries must target only failed asset IDs, and
 accepted assets must be reused from a hash-bound cache. Require separate counts
 for billable generation/edit calls, local derivatives, QA previews, full-sheet
 retries, and single-asset retries in the worker manifest.
+
+For B5/B6 short-loop closeout, require the editable worker to bind each
+independent asset from alpha-space through slot-space to a fresh render crop,
+then route non-zero placement/clipping deltas into the protected repair planner.
+B6 must name the owner, editable parameters and protected neighbors, capture
+owner/neighbor/full-page evidence, and close the B5 signal only after an
+accepted or explicitly reviewed repair; asset regeneration is not a substitute
+for placement repair.
 
 After A's generated images/evidence and B's reviewed editable layout plan exist,
 the deterministic handoff can be executed in one command:

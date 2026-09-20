@@ -3,7 +3,7 @@
   "family": "Noto Sans CJK SC",
   "role": "runtime_cjk_preferred",
   "repository_font_binary_required": false,
-  "required_runtime_faces": ["regular", "bold"],
+  "required_runtime_faces": ["regular", "medium", "semibold", "bold"],
   "fallback_families": ["Noto Sans SC", "Microsoft YaHei", "PingFang SC", "HarmonyOS Sans SC", "WenQuanYi Zen Hei"],
   "resolution": {
     "linux": "fontconfig/fc-match",

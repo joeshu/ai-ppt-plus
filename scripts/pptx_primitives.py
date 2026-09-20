@@ -36,12 +36,18 @@ def text_size_pt(item: dict, slide_height_pt: float, reference_height: float, de
 
 
 def _set_run_fonts(run, name: str):
-    """Set latin, east-asian and complex-script typefaces."""
+    """Set latin, east-asian and complex-script typefaces.
+
+    ``run.font.name`` is not sufficient for CJK text: depending on the
+    producer and the consuming application it may only populate the latin
+    slot.  Bind all three DrawingML typeface slots explicitly so the face
+    used by text-fit and the face selected by PowerPoint remain the same.
+    """
     from pptx.oxml.ns import qn
 
     run.font.name = name
     run_properties = run._r.get_or_add_rPr()
-    for tag in ("a:ea", "a:cs"):
+    for tag in ("a:latin", "a:ea", "a:cs"):
         element = run_properties.find(qn(tag))
         if element is None:
             element = run_properties.makeelement(qn(tag), {})

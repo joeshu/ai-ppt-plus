@@ -50,7 +50,15 @@ Do not use unrelated shapes to visually compensate. Update AuthoringPlan, rerun 
 
 ## Build binding
 
-Artifact Tool Build consumes the resolution report alongside AuthoringPlan. For `FREEFORM_BEZIER`, the post-authoring structural check must verify `a:cubicBezTo` exists for the responsible object/path. Direction-sensitive primitives must use the emitted parameter set rather than renderer defaults.
+Artifact Tool Build consumes the resolution report alongside AuthoringPlan. The composer accepts either `--authoring-plan` or a precomputed `--geometry-resolution`, then applies the resolved geometry after export through `scripts/geometry_authoring.py` and `scripts/patch_geometry_ooxml.py`.
+
+- `ROUNDRECT` writes `a:prstGeom prst="roundRect"` with an explicit `adj` value.
+- `TRAPEZOID` and `FUNNEL` write an editable `a:custGeom` polygon with the emitted direction and taper; they do not trust PowerPoint's default orientation.
+- `FREEFORM_BEZIER` writes real `a:cubicBezTo` segments from the emitted control points.
+- The geometry is inserted after `a:xfrm` so the shape-property OOXML order remains valid.
+- `scripts/validate_geometry_authoring.py` checks the actual target object, direction/taper points, round-rect adjustment and cubic segment count; missing or ambiguous targets fail closed.
+
+The font side of the same binding follows Knight's native-text rule: runtime fonts are resolved/materialized separately, while authored text is bound to `a:latin`, `a:ea` and `a:cs`. `scripts/enforce_ooxml_font_faces.py` normalizes exporter output without embedding font binaries.
 
 ## Usage
 
