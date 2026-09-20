@@ -15,7 +15,7 @@ This case exposed several recurring failure modes that are easy to miss when the
 2. **Brand logo fidelity**
    - Bad pattern: approximate the China Unicom logo using generic symbols or reconstructed text.
    - Failure: logo identity and symbol geometry drift immediately, even if the rest of the slide looks acceptable.
-   - Required pattern: treat brand logos as independent source-bound assets unless an approved vector logo is provided. Preserve as a separate movable asset with source crop/hash/provenance, not as invented text or icon geometry. Brand marks are the authorized-source exception to native imagegen.
+   - Required pattern: treat brand logos as independent native-ImageGen assets. Preserve the complete mark/wordmark as one movable generated asset with source crop/hash/provenance used only as reference evidence, not as invented native text or icon geometry.
 
 3. **Icon semantics vs visual fidelity**
    - Bad pattern: rebuild icons from generic Unicode symbols, icon fonts, hand-drawn primitives, or source crops and accept the slide because card text is editable.
@@ -44,7 +44,7 @@ For similar `corporate-card-grid` slides, `ai-ppt-editable` applies the followin
 ```text
 corporate-card-grid policy
   1. Detect header, logo, top strategy banner and card grid as separate regions.
-  2. Brand logo: source-bound independent asset unless an approved vector brand asset exists.
+  2. Brand logo: one independent native-ImageGen asset; source crops are reference evidence only.
   3. Every non-brand icon/illustration/complex visual: native imagegen final asset.
   4. Source crop for those visual classes: reference evidence only unless user explicitly approves fallback after imagegen failure.
   5. Card grid: lock geometry before text fitting.
@@ -68,7 +68,7 @@ Before accepting a generated PPTX for this case type:
 
 - [ ] All card body text is native editable text.
 - [ ] Emphasized numbers are runs inside the same text object as the surrounding sentence.
-- [ ] Logo is source-bound or approved vector; not approximated from a generic symbol.
+- [ ] Logo is a native-ImageGen independent asset; not source-reused, cut out or approximated from a generic symbol.
 - [ ] Every non-brand icon is a native-imagegen final asset with prompt/backend/hash provenance.
 - [ ] No generic Unicode/icon-font substitute is present.
 - [ ] No source-crop icon is delivered unless the user explicitly approved fallback after an imagegen failure.

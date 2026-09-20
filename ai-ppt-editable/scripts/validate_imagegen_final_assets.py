@@ -12,6 +12,10 @@ REQUIRED = {
     "brand_lockup","wordmark","calligraphic_slogan","signature","seal",
     "brand_band","skyline","ribbon","5g_mark","locked_brand_art"
 }
+BRAND_CLASSES = {
+    "logo", "brand", "brand_lockup", "wordmark", "calligraphic_slogan",
+    "signature", "seal", "brand_band", "5g_mark", "locked_brand_art",
+}
 IMAGEGEN_WORD=re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])",re.I)
 SHEET_WORD=re.compile(r"(^|[-_. /])(contact[-_ ]?sheet|sprite[-_ ]?sheet|icon[-_ ]?sheet|sheet)([-_. /]|$)",re.I)
 SHA256_RE=re.compile(r"^[0-9a-f]{64}$")
@@ -46,6 +50,7 @@ def validate(path:Path,*,strict=False):
             records.append({"asset_id":asset_id,"asset_class":cls,"route":route or "unspecified"}); continue
         required=("generated_source","copied_to","prompt_file","backend"); missing=[k for k in required if not item.get(k)]
         fallback=route=="source_reuse" and item.get("fallback_decision")=="user_approved" and item.get("decision_id") and item.get("decision_reason") and item.get("decision_timestamp")
+        if cls in BRAND_CLASSES and route != "imagegen": errors.append({"code":"brand_asset_requires_native_imagegen","asset_id":asset_id,"asset_class":cls,"observed":route})
         if route!="imagegen" and not fallback: errors.append({"code":"final_asset_not_imagegen","asset_id":asset_id,"asset_class":cls,"observed":route})
         if missing and not fallback: errors.append({"code":"imagegen_evidence_missing","asset_id":asset_id,"missing":missing})
         if (item.get("source_reuse") is True or item.get("extraction_method") in {"source_reuse","exact_crop","crop"}) and not fallback: errors.append({"code":"source_reuse_final_asset_forbidden","asset_id":asset_id})

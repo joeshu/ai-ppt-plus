@@ -12,12 +12,11 @@ Editability is multidimensional and must not be inferred from the object count:
 | `content_editability` | `content_editable`, `not_applicable` | Whether formal wording/data can be changed directly. |
 | `movement_editability` | `moveable`, `group_moveable`, `locked` | Whether the object can be independently moved, cropped or replaced. |
 | `component_editability` | `component_editable`, `static_asset` | Whether internal geometry/pixels can be edited as native parts. |
-| `asset_policy` | `normal_asset`, `brand_lockup`, `user_supplied_asset` | Whether OCR/reconstruction is allowed for the visible asset. |
+| `asset_policy` | `normal_asset`, `brand_lockup`, `user_supplied_asset` | Whether the visible asset is a complete lockup or user-supplied asset; this field does not waive the ImageGen route for brand visuals. |
 
-Use `asset_policy: brand_lockup` for a complete logo mark and wordmark. Keep it
-as one authoritative movable asset and do not recreate its Chinese or English
-lettering as ordinary text unless the user explicitly requests a redesigned
-or component-editable logo. A panel count is a page fact, not a schema field:
+Use `asset_policy: brand_lockup` for a complete logo mark and wordmark. Generate
+it as one independent ImageGen asset and do not recreate its Chinese or English
+lettering as ordinary text. A panel count is a page fact, not a schema field:
 store repeated regions in `regions[]`/`objects[]` and validate any positive N.
 
 | Level | Meaning | Typical object types | Machine rule | Delivery rule |

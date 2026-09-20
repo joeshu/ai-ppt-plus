@@ -56,7 +56,7 @@ def main() -> int:
         assert "imagegen_final_asset_manifest_missing" in codes
         assert "reference_cjk_requires_embedded_fonts" in codes
         assert "reference_cjk_font_evidence_missing" in codes
-        assert missing["visual_asset_ids"] == ["icon-1"]
+        assert missing["visual_asset_ids"] == ["icon-1", "logo-1"]
         assert missing["imagegen_required"] is True
 
         write(root / "slide-object-manifest.json", {
@@ -73,7 +73,10 @@ def main() -> int:
 
         write(root / "imagegen-assets-manifest.json", {
             "provenance_policy": "imagegen_final_assets",
-            "assets": [{"asset_id": "icon-1", "asset_class": "icon", "provenance_mode": "source_reuse", "source_reuse": True}],
+            "assets": [
+                {"asset_id": "icon-1", "asset_class": "icon", "provenance_mode": "source_reuse", "source_reuse": True},
+                {"asset_id": "logo-1", "asset_class": "logo", "provenance_mode": "source_reuse", "source_reuse": True},
+            ],
         })
         bad_route = validate_reference_preflight(layout, json.loads(layout.read_text(encoding="utf-8")), embed_fonts=True, font_manifest="font-manifest.json")
         bad_codes = {item["code"] for item in bad_route["issues"]}
@@ -94,6 +97,11 @@ def main() -> int:
             "provenance_policy": "imagegen_final_assets",
             "assets": [{
                 "asset_id": "icon-1", "asset_class": "icon", "provenance_mode": "imagegen",
+                "generated_source": "generated/icon-1.png", "copied_to": "assets/icon-1.png",
+                "prompt_file": "prompts/icon-1.txt", "backend": "native-imagegen", "sha256": digest,
+                **imagegen_geometry(),
+            }, {
+                "asset_id": "logo-1", "asset_class": "logo", "provenance_mode": "imagegen",
                 "generated_source": "generated/icon-1.png", "copied_to": "assets/icon-1.png",
                 "prompt_file": "prompts/icon-1.txt", "backend": "native-imagegen", "sha256": digest,
                 **imagegen_geometry(),
@@ -133,15 +141,16 @@ def main() -> int:
         assert no_visual_assets["valid"], no_visual_assets
         assert no_visual_assets["imagegen_required"] is False
 
-        # Brand-only PageGraph remains outside the preflight visual inventory; the final-asset
-        # validator separately enforces ImageGen when a logo/brand is present in its manifest.
+        # Brand-only PageGraph is itself an ImageGen-required visual inventory.
         write(root / "page-graph.json", page_graph([
             {"id": "logo-1", "type": "image", "role": "logo", "bbox": [0.8, 0.02, 0.15, 0.08]},
         ]))
         write(root / "slide-object-manifest.json", {"slides": [{"objects": [{"object_id": "logo-1", "object_type": "independent_image", "role": "logo"}]}]})
         brand_only = validate_reference_preflight(layout, {"text": "English only"}, embed_fonts=False)
-        assert brand_only["valid"], brand_only
-        assert brand_only["imagegen_required"] is False
+        assert not brand_only["valid"], brand_only
+        assert brand_only["imagegen_required"] is True
+        assert brand_only["visual_asset_ids"] == ["logo-1"]
+        assert any(item["code"] == "imagegen_final_asset_manifest_missing" for item in brand_only["issues"])
 
         (root / "page-graph.json").unlink()
         missing_graph = validate_reference_preflight(layout, {"text": "English only"}, embed_fonts=False)

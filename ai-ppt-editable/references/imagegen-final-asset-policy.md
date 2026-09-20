@@ -64,10 +64,11 @@ A brand lockup whose lettering is inseparable from its artwork is generated as
 one visual asset; do not OCR/re-typeset its internal artwork. This does not
 permit normal presentation copy to become raster text.
 
-Only when the user explicitly supplies an authoritative standalone brand file
-and explicitly asks to insert that exact file may the run use it directly.
-That is a user-directed source operation, not an automatic skill exception.
-Without that explicit instruction, ImageGen remains mandatory.
+An explicitly supplied standalone file may be inserted directly only for a
+non-brand asset when the user asks for exact-pixel use. That is a user-directed
+source operation, not an automatic skill exception. Brand visuals do not use
+this path: ImageGen remains mandatory even when a source logo or slogan crop is
+available.
 
 ## Required evidence
 

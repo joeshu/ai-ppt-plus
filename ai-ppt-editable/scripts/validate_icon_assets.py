@@ -15,8 +15,19 @@ try:
 except ImportError:  # pragma: no cover
     Image = None
 
-ROLES = {"icon", "decoration", "badge", "logo", "illustration", "decorative_word_art", "frame_exclusion"}
-METHODS = {"approved-source-asset", "image-generation", "native-vector", "alpha-sheet-split", "chroma-cutout", "contact-sheet-split", "placeholder"}
+ROLES = {
+    "icon", "decoration", "badge", "logo", "illustration", "decorative_word_art", "frame_exclusion",
+    "brand", "brand_lockup", "wordmark", "calligraphic_slogan", "signature", "seal", "brand_band",
+    "5g_mark", "locked_brand_art",
+}
+METHODS = {
+    "approved-source-asset", "image-generation", "native-imagegen", "native-vector", "alpha-sheet-split",
+    "chroma-cutout", "contact-sheet-split", "placeholder",
+}
+BRAND_ROLES = {
+    "brand", "logo", "brand_lockup", "wordmark", "calligraphic_slogan", "signature", "seal", "brand_band",
+    "5g_mark", "locked_brand_art",
+}
 LEVELS = {"L1", "L2", "L4", "L5"}
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
@@ -91,6 +102,26 @@ def main() -> int:
             if field not in asset or asset[field] in (None, ""): add(issues, "blocker", "required_field_missing", index, field=field)
         if asset.get("role") not in ROLES: add(issues, "blocker", "invalid_role", index, value=asset.get("role"))
         if asset.get("extraction_method") not in METHODS: add(issues, "blocker", "invalid_extraction_method", index, value=asset.get("extraction_method"))
+        if asset.get("role") in BRAND_ROLES:
+            if asset.get("extraction_method") != "native-imagegen":
+                add(issues, "blocker", "brand_asset_requires_native_imagegen", index, role=asset.get("role"), extraction_method=asset.get("extraction_method"))
+            if asset.get("provenance_mode") != "imagegen":
+                add(issues, "blocker", "brand_asset_provenance_not_imagegen", index, provenance_mode=asset.get("provenance_mode"))
+            if not isinstance(asset.get("generated_source"), str) or not asset.get("generated_source"):
+                add(issues, "blocker", "brand_generated_source_missing", index)
+            if not isinstance(asset.get("copied_to"), str) or not asset.get("copied_to"):
+                add(issues, "blocker", "brand_copied_to_missing", index)
+            if not isinstance(asset.get("prompt_file"), str) or not asset.get("prompt_file"):
+                add(issues, "blocker", "brand_prompt_file_missing", index)
+            if not isinstance(asset.get("backend"), str) or "imagegen" not in asset.get("backend", "").lower():
+                add(issues, "blocker", "brand_imagegen_backend_missing", index, backend=asset.get("backend"))
+            if asset.get("independent_asset") is not True:
+                add(issues, "blocker", "brand_asset_not_independent", index)
+            if asset.get("role") in {"brand_lockup", "wordmark", "calligraphic_slogan", "signature", "seal", "locked_brand_art"}:
+                if asset.get("whole_asset_contract") is not True:
+                    add(issues, "blocker", "brand_whole_asset_contract_missing", index)
+                if asset.get("split_status") not in {"not-applicable", "whole-asset"}:
+                    add(issues, "blocker", "brand_whole_asset_split_forbidden", index, split_status=asset.get("split_status"))
         if asset.get("editability_level") not in LEVELS: add(issues, "blocker", "invalid_editability_level", index, value=asset.get("editability_level"))
         bbox = asset.get("source_bbox")
         valid_bbox = isinstance(bbox, dict) and all(isinstance(bbox.get(k), (int, float)) and bbox.get(k) >= 0 for k in ("x", "y", "w", "h")) and bbox.get("w", 0) > 0 and bbox.get("h", 0) > 0
@@ -100,7 +131,7 @@ def main() -> int:
         if asset.get("duplicate_guard") != "pass": add(issues, "blocker", "duplicate_guard_failed", index)
         if asset.get("editability_level") == "L2" and asset.get("replaceable") is not True: add(issues, "blocker", "l2_not_replaceable", index)
         if asset.get("editability_level") == "L5": add(issues, "blocker", "unresolved_asset", index)
-        if asset.get("extraction_method") == "image-generation" and not isinstance(asset.get("prompt_ref"), str): add(issues, "blocker", "generation_evidence_missing", index)
+        if asset.get("extraction_method") in {"image-generation", "native-imagegen"} and not isinstance(asset.get("prompt_ref"), str): add(issues, "blocker", "generation_evidence_missing", index)
         if asset.get("extraction_method") == "alpha-sheet-split":
             if not isinstance(asset.get("prompt_ref"), str): add(issues, "blocker", "generation_evidence_missing", index)
             if not isinstance(asset.get("split_method"), str): add(issues, "blocker", "split_evidence_missing", index)

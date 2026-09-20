@@ -3,9 +3,9 @@
 
 The historical filename is retained for compatibility. Background/frame source
 reuse remains supported where authoritative source pixels are appropriate, but
-final icons, badges, gradient visuals, illustrations and other complex art are
-native-imagegen assets by default. A source-reuse fallback for those classes is
-valid only after an explicit user decision is recorded.
+final icons, badges, gradient visuals, illustrations, brand visuals and other
+complex art are native-imagegen assets by default. A source-reuse fallback for
+non-brand classes is valid only after an explicit user decision is recorded.
 """
 
 from __future__ import annotations
@@ -36,6 +36,8 @@ ACCOUNTING_FIELDS = (
     "single_asset_retries",
 )
 MANDATORY_IMAGEGEN_CLASSES = {"icon", "icons", "badge", "gradient", "gradient_visual", "complex_art", "illustration", "artistic_typography", "decorative_art"}
+BRAND_IMAGEGEN_CLASSES = {"logo", "brand", "brand_lockup", "wordmark", "calligraphic_slogan", "signature", "seal", "brand_band", "5g_mark", "locked_brand_art"}
+MANDATORY_IMAGEGEN_CLASSES |= BRAND_IMAGEGEN_CLASSES
 
 
 def normalized_asset_class(asset: dict) -> str:
@@ -136,6 +138,15 @@ def main() -> int:
             mode = "imagegen"
         asset_class = normalized_asset_class(asset)
         approved_fallback = approved_source_reuse_fallback(asset)
+        if asset_class in BRAND_IMAGEGEN_CLASSES and mode != "imagegen":
+            add(
+                issues,
+                "brand_asset_requires_native_imagegen",
+                asset_index=index,
+                asset_id=asset.get("asset_id") or asset.get("id"),
+                asset_class=asset_class,
+                provenance_mode=mode,
+            )
         if asset_class in MANDATORY_IMAGEGEN_CLASSES and mode != "imagegen" and not approved_fallback:
             add(
                 issues,
@@ -246,6 +257,7 @@ def main() -> int:
         "hashed_asset_count": hashed_asset_count,
         "provenance_modes": provenance_modes,
         "mandatory_imagegen_classes": sorted(MANDATORY_IMAGEGEN_CLASSES),
+        "brand_imagegen_classes": sorted(BRAND_IMAGEGEN_CLASSES),
         "hashes_required": args.require_hashes,
         "asset_generation_policy": data.get("asset_generation_policy"),
         "generation_accounting": accounting,
