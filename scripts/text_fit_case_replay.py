@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Aggregate B1-B4 text-fit evidence across frozen real replay cases.
 
-A case may PASS only when every acceptance requirement has materialized evidence.
-Missing evidence is NOT_RUN; invalid evidence is FAIL. Synthetic substitutes are
-never accepted for a real-case release decision.
+A case may PASS only when its real source is resolved and every acceptance
+requirement has materialized evidence. Missing source/evidence is NOT_RUN;
+invalid evidence is FAIL. Synthetic substitutes are never accepted.
 """
 from __future__ import annotations
 import argparse,json
@@ -49,11 +49,14 @@ def _provenance(r:dict)->list[dict]:
 def evaluate(manifest:dict,*,root:Path)->dict:
     a=manifest.get("acceptance") or {};required=_required(a);rows=[]
     for case in manifest.get("cases") or []:
-        ev=case.get("evidence") or {};paths={k:_resolve(root,ev.get(k)) for k in required};missing=[k for k,p in paths.items() if p is None or not p.is_file()];checks=[]
+        ev=case.get("evidence") or {};paths={k:_resolve(root,ev.get(k)) for k in required};missing=[k for k,p in paths.items() if p is None or not p.is_file()]
+        source_status=str(case.get("status") or "")
+        if source_status!="source_resolved":missing.insert(0,"source_reference")
+        checks=[]
         if not missing:
             checks+=_fit(_load(paths["text_fit_report"]),a);checks+=_feedback(_load(paths["text_render_feedback"]));checks+=_coverage(_load(paths["text_coverage_audit"]));checks+=_editable(_load(paths["editability_audit"]),a);checks+=_provenance(_load(paths["render_provenance"]))
         status="NOT_RUN" if missing else ("PASS" if all(x["passed"] for x in checks) else "FAIL")
-        rows.append({"id":str(case.get("id") or ""),"name":case.get("name"),"source_status":case.get("status"),"focus":case.get("focus") or [],"status":status,"required_evidence":required,"missing_evidence":missing,"checks":checks})
+        rows.append({"id":str(case.get("id") or ""),"name":case.get("name"),"source_status":source_status,"source":case.get("source"),"focus":case.get("focus") or [],"status":status,"required_evidence":required,"missing_evidence":missing,"checks":checks})
     summary={"case_count":len(rows),"pass_count":sum(x["status"]=="PASS" for x in rows),"fail_count":sum(x["status"]=="FAIL" for x in rows),"not_run_count":sum(x["status"]=="NOT_RUN" for x in rows)}
     return {"schema":SCHEMA,"batch":manifest.get("batch"),"release_ready":bool(rows) and summary["pass_count"]==len(rows),"acceptance":a,"required_evidence":required,"summary":summary,"cases":rows}
 def main()->int:
