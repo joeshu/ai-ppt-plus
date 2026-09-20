@@ -5,7 +5,10 @@ The repository intentionally does not carry large TTF/TTC binaries. Runtime
 font discovery may resolve a TTC collection (common for Noto CJK and Windows
 CJK fonts), while downstream text-fit/font QA expects a standalone SFNT face.
 This helper therefore extracts the requested family/weight from a collection
-instead of merely renaming TTC bytes to ``.ttf``.
+instead of merely renaming TTC bytes to ``.ttf``. Some Linux runners expose
+only regular and bold CJK faces; in that case the two intermediate logical
+slots (500/600) are materialized from the nearest available face and their
+OS/2 weight metadata is retagged. The report preserves that provenance.
 """
 from __future__ import annotations
 
@@ -18,6 +21,7 @@ from pathlib import Path
 from runtime_fonts import resolve_font_file
 
 FONT_WEIGHTS = (400, 500, 600, 700)
+FALLBACK_WEIGHTS = {500, 600}
 FONT_NAMES = {400: "NotoSansSC-Regular.ttf", 500: "NotoSansSC-Medium.ttf", 600: "NotoSansSC-SemiBold.ttf", 700: "NotoSansSC-Bold.ttf"}
 FONT_ROLES = {400: "regular", 500: "medium", 600: "semibold", 700: "bold"}
 
@@ -91,10 +95,17 @@ def _select_collection_face(source: Path, family: str, *, target_weight: int):
     if best[0] == 0 and len(collection.fonts) > 1:
         collection.close()
         raise RuntimeError(f"requested family {family!r} not found in collection {source}")
-    if best[6] != target_weight:
+    if best[6] != target_weight and target_weight not in FALLBACK_WEIGHTS:
         collection.close()
         raise RuntimeError(f"requested weight {target_weight} not found in collection {source}; observed {best[6]}")
-    return collection, best[3], best[4], best[5], best[6]
+    return collection, best[3], best[4], best[5], best[6], best[6] == target_weight
+
+
+def _retag_weight(face, target_weight: int) -> None:
+    os2 = face.get("OS/2")
+    if os2 is None:
+        raise RuntimeError("font has no OS/2 weight metadata")
+    os2.usWeightClass = target_weight
 
 
 def materialize_runtime_face(source: Path, target: Path, family: str, *, bold: bool | None = None, weight: int | None = None) -> dict:
@@ -105,21 +116,37 @@ def materialize_runtime_face(source: Path, target: Path, family: str, *, bold: b
     target.parent.mkdir(parents=True, exist_ok=True)
     if not _is_collection(source):
         source_weight = _font_weight(source)
-        if source_weight != target_weight:
+        weight_exact = source_weight == target_weight
+        if not weight_exact and target_weight not in FALLBACK_WEIGHTS:
             raise RuntimeError(f"resolved standalone font has weight {source_weight}, requested {target_weight}: {source}")
-        shutil.copyfile(source, target)
-        mode = "copied-standalone-sfnt"
+        if weight_exact:
+            shutil.copyfile(source, target)
+            mode = "copied-standalone-sfnt"
+        else:
+            from fontTools.ttLib import TTFont
+
+            font = TTFont(str(source))
+            try:
+                _retag_weight(font, target_weight)
+                font.save(str(target))
+            finally:
+                font.close()
+            mode = "copied-standalone-sfnt-weight-fallback"
         face_index = None
         names = []
         source_face_weight = source_weight
+        weight_fallback = None if weight_exact else "nearest-available"
     else:
-        collection, face_index, face, face_names, source_face_weight = _select_collection_face(source, family, target_weight=target_weight)
+        collection, face_index, face, face_names, source_face_weight, weight_exact = _select_collection_face(source, family, target_weight=target_weight)
         try:
+            if not weight_exact:
+                _retag_weight(face, target_weight)
             face.save(str(target))
         finally:
             collection.close()
-        mode = "extracted-standalone-face-from-collection"
+        mode = "extracted-standalone-face-from-collection" if weight_exact else "extracted-standalone-face-weight-fallback"
         names = sorted(face_names)
+        weight_fallback = None if weight_exact else "nearest-available"
     if _is_collection(target):
         raise RuntimeError(f"runtime cache must be standalone SFNT, got collection bytes: {target}")
     # Prove the materialized output opens as a standalone face.
@@ -139,6 +166,7 @@ def materialize_runtime_face(source: Path, target: Path, family: str, *, bold: b
         "source_face_names": names,
         "source_weight": source_face_weight,
         "output_weight": output_weight,
+        "weight_fallback": weight_fallback,
         "sha256": sha256(target),
         "standalone_sfnt": True,
     }
