@@ -22,7 +22,7 @@ Exit criteria:
 
 ## Batch 2 — P0 Text Coverage Auditor
 
-Status: **in implementation**.
+Status: **merged / complete**.
 
 Goal: every visible formal-text-producing path is traceable to TextGraph/TextFit evidence.
 
@@ -40,6 +40,8 @@ Exit criteria:
 
 ## Batch 3 — P0 Asset Color/Identity Contract
 
+Status: **merged / complete**.
+
 Goal: make asset identity and color correctness first-pass generation inputs rather than late visual fixes.
 
 Scope:
@@ -56,6 +58,8 @@ Exit criteria:
 - icon regression demonstrates improved first-pass identity without new score gates.
 
 ## Batch 4 — P1 Geometry Primitive Resolver
+
+Status: **in implementation**.
 
 Goal: choose the best native PowerPoint geometry before authoring.
 
