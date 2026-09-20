@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.20.10
+  package_revision: 2026.09.20.11
 ---
 
 # AI PPT Editable
@@ -90,6 +90,13 @@ Do not infer a table from borders, repeated rows or two-column alignment. A tabl
 Measure every visible native text path before authoring. Determine the true editable slot, preserve reference line count and role hierarchy, and use the same runtime-resolved font for fit and authoring. Chinese runs must set Latin/East-Asian/complex-script OOXML typeface metadata as required by the runtime contract.
 
 When text does not fit, repair in this order: text-slot bbox -> margins -> divider/icon reservation -> intended wrapping/line spacing -> role-consistent font adjustment. Do not shrink first. Repeated cards may use component-local divider positions, body widths, icon slots and font scales when the reference differs.
+
+The TextFit Core contract in `references/knight-fidelity-port.md` defines the
+measurement/report details: CJK character wrapping, intact Latin/number/unit
+runs (including symbol-leading values such as `-12.5%`), explicit reference
+line-count locking, target-size box deficit evidence and the
+`text_slot_first_font_shrink_last` repair policy. `reference_scale` is review
+evidence only; it is not a universal numeric release gate.
 
 ## 7. Text Coverage Audit
 

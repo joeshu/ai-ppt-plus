@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from argparse import Namespace
 from pathlib import Path
 
@@ -60,6 +61,27 @@ def _target_pt(spec: dict, default: float = 18.0) -> float:
             except (TypeError, ValueError):
                 pass
     return default
+
+
+def _target_lines(spec: dict, text: str) -> int:
+    """Resolve an observable reference line count for the fitter.
+
+    Explicit producer evidence wins.  Otherwise explicit line breaks are
+    treated as topology evidence unless the producer deliberately opts into
+    reflow.  ``max_lines`` remains a capacity constraint, not a reference
+    topology declaration.
+    """
+    for key in ("target_lines", "reference_line_count"):
+        value = spec.get(key)
+        if value is not None:
+            try:
+                number = int(value)
+            except (TypeError, ValueError):
+                return 0
+            return max(0, number)
+    if spec.get("allow_reflow") is not True and re.search(r"\r\n?|\n", text):
+        return max(1, len(re.split(r"\r\n?|\n", text)))
+    return 0
 
 
 def _box_px(deck: dict, spec: dict, *, fraction: tuple[float, float] | None = None) -> tuple[float, float]:
@@ -173,7 +195,24 @@ def _make_args(deck: dict, spec: dict, text: str, box: tuple[float, float], font
     slide_h = float(deck.get("ref_height") or deck.get("reference_height") or deck.get("slide_height_px") or 941)
     slide_in_w = float(deck.get("slide_width_in") or 13.333333)
     slide_in_h = float(deck.get("slide_height_in") or slide_in_w * slide_h / slide_w)
-    return Namespace(text=text, box=f"{max(1.0, box[0])}x{max(1.0, box[1])}", font=str(spec.get("font") or spec.get("font_family") or deck.get("font_family") or "Noto Sans CJK SC"), font_file=font_file, bold=bool(spec.get("bold")), min_pt=max(4.0, min(8.0, target)), max_pt=max(target, 8.0), max_lines=int(spec.get("max_lines") or 0), line_spacing=float(spec.get("line_spacing") or 1.06), width_safety=float(spec.get("width_safety") or 0.92), height_safety=float(spec.get("height_safety") or 0.95), render_fudge=float(spec.get("render_fudge") or 1.01), target_pt=target, slide_px=f"{slide_w}x{slide_h}", slide_in=f"{slide_in_w}x{slide_in_h}")
+    return Namespace(
+        text=text,
+        box=f"{max(1.0, box[0])}x{max(1.0, box[1])}",
+        font=str(spec.get("font") or spec.get("font_family") or deck.get("font_family") or "Noto Sans CJK SC"),
+        font_file=font_file,
+        bold=bool(spec.get("bold")),
+        min_pt=max(4.0, min(8.0, target)),
+        max_pt=max(target, 8.0),
+        max_lines=int(spec.get("max_lines") or 0),
+        target_lines=_target_lines(spec, text),
+        line_spacing=float(spec.get("line_spacing") or 1.06),
+        width_safety=float(spec.get("width_safety") or 0.92),
+        height_safety=float(spec.get("height_safety") or 0.95),
+        render_fudge=float(spec.get("render_fudge") or 1.01),
+        target_pt=target,
+        slide_px=f"{slide_w}x{slide_h}",
+        slide_in=f"{slide_in_w}x{slide_in_h}",
+    )
 
 
 def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
@@ -186,8 +225,16 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
         result = best_fit(_make_args(deck, spec, text, box, font_file))
         target = result.get("target") or {}
         reference_scale = result.get("reference_scale")
-        target_fits = bool(target.get("fits"))
-        geometry_defect = (not target_fits) or (reference_scale is not None and float(reference_scale) < 0.90)
+        target_fits = bool(target.get("fits", result.get("fits")))
+        geometry_fits = bool(target.get("geometry_fits", result.get("geometry_fits")))
+        topology_preserved = bool(target.get("line_topology_preserved", result.get("line_topology_preserved", True)))
+        # Reference scale is evidence for review, not a universal numeric
+        # release gate.  A slot is a geometry defect only when its measured
+        # target geometry fails; topology is reported separately below.
+        geometry_defect = not geometry_fits
+        topology_defect = not topology_preserved
+        required_box = target.get("required_box_px", result.get("required_box_px"))
+        box_deficit = target.get("box_deficit_px", result.get("box_deficit_px"))
         slots.append({
             "slide": slide_no,
             "kind": kind,
@@ -195,18 +242,25 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
             "text": text,
             "box_px": [round(box[0], 2), round(box[1], 2)],
             "target_pt": _target_pt(spec),
+            "target_lines": result.get("target_lines", 0),
             "target_fits": target_fits,
+            "geometry_fits": geometry_fits,
+            "line_topology_preserved": topology_preserved,
+            "topology_defect": topology_defect,
             "recommended_pt": result.get("recommended_pt"),
             "reference_scale": reference_scale,
-            "required_box_px": target.get("required_box_px"),
-            "box_deficit_px": target.get("box_deficit_px"),
+            "required_box_px": required_box,
+            "box_deficit_px": box_deficit,
             "geometry_defect": geometry_defect,
-            "repair_priority": "geometry_first" if geometry_defect else "none",
+            "repair_hint": result.get("repair_hint"),
+            "repair_priority": "geometry_first" if geometry_defect else ("line-topology" if topology_defect else "none"),
             "line_count": target.get("line_count", result.get("line_count")),
+            "recommended_line_count": result.get("line_count"),
             "font_path": result.get("font_path"),
         })
     not_fit = [slot for slot in slots if not slot["target_fits"]]
     geometry_defects = [slot for slot in slots if slot["geometry_defect"]]
+    topology_defects = [slot for slot in slots if slot["topology_defect"]]
     measured_ids = [slot["object_id"] for slot in slots]
     duplicate_ids = sorted({item for item in measured_ids if measured_ids.count(item) > 1})
     return {
@@ -217,11 +271,13 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
         "fit_count": len(slots) - len(not_fit),
         "target_not_fit_count": len(not_fit),
         "geometry_defect_count": len(geometry_defects),
+        "topology_defect_count": len(topology_defects),
         "all_slots_measured": True,
         "coverage_by_kind": coverage,
         "measured_object_ids": measured_ids,
         "duplicate_object_ids": duplicate_ids,
         "repair_policy": "geometry_first_font_shrink_last",
+        "text_fit_schema": "ai-ppt-plus/text-fit/v2",
         "slots": slots,
     }
 

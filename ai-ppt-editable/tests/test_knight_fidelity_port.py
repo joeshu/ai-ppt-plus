@@ -22,7 +22,7 @@ sys.path.insert(0, str(SCRIPTS))
 from asset_placement import alpha_centroid_fit
 from audit_pptx_layers import audit
 from patch_chart_blank_series import patch_chart
-from ppt_text_fit import best_fit
+from ppt_text_fit import _tokens, best_fit
 from slice_grid import _detect_grid, _square_repack
 from validate_transparent_assets import validate
 
@@ -45,6 +45,47 @@ def test_text_fit_reports_reference_box_deficit_and_uses_bundled_font():
     assert result["target"]["required_box_px"][0] > 0
     assert Path(result["font_path"]).is_file()
     assert result["reference_scale"] <= 1.1
+    assert result["target_pt"] == 24.0
+    assert result["required_box_px"] == result["target"]["required_box_px"]
+    assert result["box_deficit_px"] == result["target"]["box_deficit_px"]
+    assert result["repair_hint"] != "none"
+
+
+def test_text_fit_keeps_symbol_prefixed_number_and_unit_runs_together():
+    tokens = _tokens("-12.5% +3.2% (2025) 5G A/B")
+    assert "-12.5%" in tokens
+    assert "+3.2%" in tokens
+    assert "(2025)" in tokens
+    assert "5G" in tokens
+    assert "A/B" in tokens
+
+
+def test_text_fit_preserves_explicit_reference_line_topology():
+    args = argparse.Namespace(
+        text="第一行\n第二行", box="600x160", font="Microsoft YaHei", font_file=None,
+        bold=False, min_pt=8.0, max_pt=26.0, max_lines=2, target_lines=2,
+        scan_step=0.25, line_spacing=1.06, width_safety=0.92,
+        height_safety=0.95, render_fudge=1.01, target_pt=24.0,
+        slide_px="1672x941", slide_in="13.333333x7.505",
+    )
+    result = best_fit(args)
+    assert result["target_lines"] == 2
+    assert result["line_topology_preserved"]
+    assert result["target"]["line_topology_preserved"]
+    assert result["target"]["line_count"] == 2
+
+
+def test_text_fit_accepts_leading_symbol_text_without_cli_rewrite():
+    args = argparse.Namespace(
+        text="-12.5%", box="220x50", font="Microsoft YaHei", font_file=None,
+        bold=False, min_pt=8.0, max_pt=26.0, max_lines=1, target_lines=1,
+        scan_step=0.25, line_spacing=1.06, width_safety=0.92,
+        height_safety=0.95, render_fudge=1.01, target_pt=20.0,
+        slide_px="1672x941", slide_in="13.333333x7.505",
+    )
+    result = best_fit(args)
+    assert result["target"]["lines"] == ["-12.5%"]
+    assert result["target"]["fits"]
 
 
 def test_detected_grid_handles_outer_margins_and_records_expected_centers():
