@@ -20,6 +20,18 @@ from PIL import Image, ImageDraw, ImageFont
 from runtime_fonts import resolve_font_file
 
 
+TEXT_FIT_SCHEMA = "ai-ppt-plus/text-fit/v2"
+_LINE_BREAK_RE = re.compile(r"\r\n?|\n")
+# Keep Latin/number/symbol runs together whenever possible.  This is
+# deliberately broader than ``\w`` so leading signs, percentages, units,
+# dates, ratios, parenthesized values and common currency/degree symbols do
+# not become accidental wrap points in a narrow CJK text slot.
+_TOKEN_RE = re.compile(
+    r"[A-Za-z0-9_./:+#%°$€¥£‰&@()\[\]{}<>–—-]+|\s+|.",
+    flags=re.DOTALL,
+)
+
+
 def _pair(value: str, separator: str = "x") -> tuple[float, float]:
     left, right = value.lower().split(separator, 1)
     return float(left), float(right)
@@ -48,7 +60,33 @@ def _width(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str) -
 
 
 def _tokens(text: str) -> list[str]:
-    return re.findall(r"[A-Za-z0-9_./:+#-]+|\s+|.", text, flags=re.DOTALL)
+    return _TOKEN_RE.findall(str(text))
+
+
+def _paragraphs(text: str) -> list[str]:
+    """Split explicit line breaks without leaving a CR glyph in the text."""
+    return _LINE_BREAK_RE.split(str(text))
+
+
+def _split_overwide(text: str, draw: ImageDraw.ImageDraw,
+                    font: ImageFont.FreeTypeFont, max_width: float) -> list[str]:
+    """Split only when a token cannot fit as a whole.
+
+    CJK is already tokenized one character at a time.  This fallback is for a
+    single long Latin/number run (for example a URL or identifier) that is
+    wider than the slot; normal mixed-language runs remain intact.
+    """
+    fragments: list[str] = []
+    current = ""
+    for char in text:
+        if current and _width(draw, font, current + char) > max_width:
+            fragments.append(current)
+            current = char
+        else:
+            current += char
+    if current:
+        fragments.append(current)
+    return fragments or [""]
 
 
 def wrap(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str, max_width: float) -> list[str]:
@@ -59,17 +97,16 @@ def wrap(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str, max
         if current and _width(draw, font, candidate) > max_width:
             lines.append(current.rstrip())
             current = token.lstrip()
-            if _width(draw, font, current) > max_width and len(current) > 1:
-                fragment = ""
-                for char in current:
-                    if fragment and _width(draw, font, fragment + char) > max_width:
-                        lines.append(fragment)
-                        fragment = char
-                    else:
-                        fragment += char
-                current = fragment
         else:
             current = candidate
+
+        # The previous implementation only split an over-wide token after a
+        # line had already been started.  A leading URL, number+unit or
+        # symbol-prefixed metric could therefore escape the wrapping logic.
+        if current and _width(draw, font, current) > max_width:
+            fragments = _split_overwide(current, draw, font, max_width)
+            lines.extend(fragment.rstrip() for fragment in fragments[:-1] if fragment.rstrip())
+            current = fragments[-1]
     lines.append(current.rstrip())
     return [line for line in lines if line] or [""]
 
@@ -80,7 +117,7 @@ def measure(text: str, pt: float, font_path: Path, px_per_pt: float, width_px: f
     font = ImageFont.truetype(str(font_path), font_px)
     draw = ImageDraw.Draw(Image.new("RGB", (max(4, int(width_px * 2)), 4096), "white"))
     lines: list[str] = []
-    for paragraph in text.split("\n"):
+    for paragraph in _paragraphs(text):
         lines.extend(wrap(draw, font, paragraph, width_px * width_safety))
     boxes = [draw.textbbox((0, 0), line or "口", font=font) for line in lines]
     widths = [max(0, box[2] - box[0]) for box in boxes]
@@ -99,14 +136,53 @@ def measure(text: str, pt: float, font_path: Path, px_per_pt: float, width_px: f
     }
 
 
+def _required_box(row: dict, width_safety: float, height_safety: float) -> list[int]:
+    return [
+        math.ceil(row["width_px"] / max(width_safety, 0.01)),
+        math.ceil(row["height_px"] / max(height_safety, 0.01)),
+    ]
+
+
+def _box_deficit(required_box: list[int], box_w: float, box_h: float) -> list[int]:
+    return [
+        max(0, required_box[0] - math.floor(box_w)),
+        max(0, required_box[1] - math.floor(box_h)),
+    ]
+
+
+def _repair_hint(row: dict, deficit: list[int], *, topology_preserved: bool) -> str:
+    """Return an actionable diagnostic without turning it into a release gate."""
+    if not topology_preserved:
+        return "preserve_reference_line_topology"
+    if deficit[0] and deficit[1]:
+        return "expand_text_slot_width_and_height"
+    if deficit[0]:
+        return "expand_text_slot_width"
+    if deficit[1]:
+        return "expand_text_slot_height"
+    if not row.get("geometry_fits", False):
+        return "expand_text_slot_or_relax_line_limit"
+    return "none"
+
+
 def best_fit(args: argparse.Namespace) -> dict:
     # Internal callers created before exact line-topology support do not yet
     # populate these fields. Keep them valid while the new capability remains
     # opt-in through layout evidence or the CLI.
-    if not hasattr(args, "target_lines"):
+    if not hasattr(args, "target_lines") or args.target_lines is None:
         args.target_lines = 0
-    if not hasattr(args, "scan_step"):
+    args.target_lines = max(0, int(args.target_lines or 0))
+    if not hasattr(args, "scan_step") or args.scan_step is None:
         args.scan_step = 0.25
+    args.scan_step = max(0.10, float(args.scan_step))
+    args.max_lines = max(0, int(getattr(args, "max_lines", 0) or 0))
+    args.width_safety = max(0.01, float(getattr(args, "width_safety", 0.92) or 0.92))
+    args.height_safety = max(0.01, float(getattr(args, "height_safety", 0.95) or 0.95))
+    args.line_spacing = max(0.01, float(getattr(args, "line_spacing", 1.06) or 1.06))
+    args.render_fudge = max(0.01, float(getattr(args, "render_fudge", 1.01) or 1.01))
+    target_pt = getattr(args, "target_pt", None)
+    if target_pt is not None:
+        target_pt = float(target_pt)
 
     box_w, box_h = _pair(args.box)
     slide_w_px, _ = _pair(args.slide_px)
@@ -177,22 +253,46 @@ def best_fit(args: argparse.Namespace) -> dict:
             "height": round(best["height_px"] / box_h, 4) if box_h else 0.0,
         },
     })
-    if args.target_pt is not None:
-        target = measure(args.text, args.target_pt, font_path, px_per_pt, box_w,
+    best_required_box = _required_box(best, args.width_safety, args.height_safety)
+    best_box_deficit = _box_deficit(best_required_box, box_w, box_h)
+    best.update({
+        "schema": TEXT_FIT_SCHEMA,
+        "target_pt": target_pt,
+        "target_lines": args.target_lines,
+        "required_box_px": best_required_box,
+        "box_deficit_px": best_box_deficit,
+        "recommended_required_box_px": best_required_box,
+        "recommended_box_deficit_px": best_box_deficit,
+    })
+
+    if target_pt is not None:
+        target = measure(args.text, target_pt, font_path, px_per_pt, box_w,
                          args.line_spacing, args.width_safety, args.render_fudge)
         target["fits"] = full_fit(target)
         target["geometry_fits"] = geometry_fits(target)
         target["line_topology_preserved"] = topology_matches(target)
-        target["required_box_px"] = [
-            math.ceil(target["width_px"] / args.width_safety),
-            math.ceil(target["height_px"] / args.height_safety),
-        ]
-        target["box_deficit_px"] = [
-            max(0, target["required_box_px"][0] - box_w),
-            max(0, target["required_box_px"][1] - box_h),
-        ]
+        target["required_box_px"] = _required_box(target, args.width_safety, args.height_safety)
+        target["box_deficit_px"] = _box_deficit(target["required_box_px"], box_w, box_h)
         best["target"] = target
-        best["reference_scale"] = round(best["recommended_pt"] / args.target_pt, 4) if args.target_pt else 1.0
+        # Top-level geometry evidence is always about the requested/reference
+        # typography when it exists.  Recommended-size evidence remains
+        # available under the explicitly named fields above.
+        best["required_box_px"] = target["required_box_px"]
+        best["box_deficit_px"] = target["box_deficit_px"]
+        best["reference_scale"] = round(best["recommended_pt"] / target_pt, 4) if target_pt else 1.0
+
+    diagnostic_row = best.get("target") or best
+    diagnostic_deficit = diagnostic_row.get("box_deficit_px", best_box_deficit)
+    diagnostic_topology = bool(diagnostic_row.get("line_topology_preserved", True))
+    best.update({
+        "target_fits": bool(diagnostic_row.get("fits", best.get("fits"))),
+        "repair_policy": "text_slot_first_font_shrink_last",
+        "repair_hint": _repair_hint(
+            diagnostic_row,
+            diagnostic_deficit,
+            topology_preserved=diagnostic_topology,
+        ),
+    })
     best["settings"] = {
         "font": args.font,
         "bold": args.bold,
@@ -203,7 +303,9 @@ def best_fit(args: argparse.Namespace) -> dict:
         "height_safety": args.height_safety,
         "render_fudge": args.render_fudge,
         "scan_step": args.scan_step,
+        "target_pt": target_pt,
         "runtime_font_required": True,
+        "tokenization": "cjk-character-latin-number-symbol-run-v2",
     }
     return best
 
@@ -228,7 +330,7 @@ def main() -> int:
     parser.add_argument("--min-pt", type=float, default=8)
     parser.add_argument("--max-pt", type=float, default=36)
     parser.add_argument("--max-lines", type=int, default=0)
-    parser.add_argument("--target-lines", type=int, default=0, help="exact observable reference line count; 0 disables exact topology matching")
+    parser.add_argument("--target-lines", "--reference-line-count", dest="target_lines", type=int, default=0, help="exact observable reference line count; 0 disables exact topology matching")
     parser.add_argument("--scan-step", type=float, default=0.25, help="point-size scan step when --target-lines is used")
     parser.add_argument("--line-spacing", type=float, default=1.06)
     parser.add_argument("--width-safety", type=float, default=0.92)
