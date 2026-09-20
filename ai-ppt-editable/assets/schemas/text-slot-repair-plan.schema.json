@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ai-ppt-plus/text-slot-repair-plan.schema.json",
+  "title": "AI PPT Text Slot Repair Plan",
+  "type": "object",
+  "required": ["schema", "valid", "source", "policy", "summary", "actions", "issues"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/text-slot-repair-plan/v1"},
+    "valid": {"type": "boolean"},
+    "source": {"type": "object"},
+    "policy": {
+      "type": "object",
+      "required": ["repair_order", "font_shrink_last", "move_unrelated_objects", "require_render_replay"],
+      "properties": {
+        "repair_order": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "slot_bbox"}, {"const": "text_margins"}, {"const": "reserved_icon_divider_space"},
+            {"const": "component_layout"}, {"const": "reference_line_topology"}, {"const": "line_spacing"}, {"const": "font_size_last"}
+          ],
+          "minItems": 7, "maxItems": 7
+        },
+        "font_shrink_last": {"const": true},
+        "move_unrelated_objects": {"const": false},
+        "require_render_replay": {"const": true}
+      },
+      "additionalProperties": true
+    },
+    "summary": {"type": "object"},
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["object_id", "text_slot_id", "page", "defect", "repair_order", "candidates", "selected_step", "responsible_parameters", "proposed_patch", "protected_neighbors", "font_shrink_last", "requires_render_replay"],
+        "properties": {
+          "object_id": {"type": "string", "minLength": 1},
+          "text_slot_id": {"type": ["string", "null"]},
+          "page": {"type": "integer", "minimum": 1},
+          "defect": {"type": "object"},
+          "repair_order": {"type": "array", "items": {"type": "string"}},
+          "candidates": {"type": "array", "items": {"type": "object"}},
+          "selected_step": {"type": "string"},
+          "responsible_parameters": {"type": "array", "items": {"type": "string"}},
+          "proposed_patch": {"type": "object"},
+          "protected_neighbors": {"type": "array", "items": {"type": "string"}},
+          "font_shrink_last": {"const": true},
+          "requires_render_replay": {"const": true}
+        },
+        "additionalProperties": true
+      }
+    },
+    "issues": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": true
+}

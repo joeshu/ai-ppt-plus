@@ -1,0 +1,14 @@
+{
+  "schema": "ai-ppt-plus/text-slot-repair-plan/v1",
+  "valid": true,
+  "source": {"text_fit_schema": "ai-ppt-plus/text-fit-deck/v3", "authoring_plan_schema": "ai-ppt-plus/authoring-plan/v1"},
+  "policy": {
+    "repair_order": ["slot_bbox", "text_margins", "reserved_icon_divider_space", "component_layout", "reference_line_topology", "line_spacing", "font_size_last"],
+    "font_shrink_last": true,
+    "move_unrelated_objects": false,
+    "require_render_replay": true
+  },
+  "summary": {"action_count": 0, "unresolved_count": 0, "bbox_first_count": 0, "font_last_count": 0},
+  "actions": [],
+  "issues": []
+}
