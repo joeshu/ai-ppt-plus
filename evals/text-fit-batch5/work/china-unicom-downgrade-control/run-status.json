@@ -1,0 +1,45 @@
+{
+  "schema": "ai-ppt-plus/text-fit-case-run-status/v1",
+  "case_id": "china-unicom-downgrade-control",
+  "branch": "eval/b5-fresh-replay-20260920",
+  "base_main_sha": "27c8e8de4cffffb52348c43bad4ae262b9e33da4",
+  "attempted_at": "2026-09-20T15:47:56Z",
+  "source": {
+    "ref": "WecomSave_a796a229d41950dfd301669d8858a906(8).jpeg",
+    "sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99",
+    "pixel_size": [1536, 864],
+    "bytes": 516123,
+    "aspect_ratio": "16:9",
+    "identity_match": true
+  },
+  "status": "NOT_RUN",
+  "hard_blocker": {
+    "code": "authoring_runtime_unavailable",
+    "stage": "Artifact Tool Build",
+    "details": [
+      "The active execution container does not have @oai/artifact-tool installed/resolvable.",
+      "Repository clone/fetch from the container is unavailable because github.com DNS resolution fails; repository state was therefore inspected through the GitHub connector instead.",
+      "python-pptx is present but is explicitly forbidden as an authoring fallback by ai-ppt-editable SKILL.md, so no substitute PPTX was fabricated."
+    ]
+  },
+  "environment": {
+    "node": "v22.16.0",
+    "artifact_tool": "missing",
+    "libreoffice": "available",
+    "python_pptx": "available_but_forbidden_for_authoring_fallback"
+  },
+  "evidence": {
+    "text_fit_report": "NOT_RUN",
+    "text_render_feedback": "NOT_RUN",
+    "text_coverage_audit": "NOT_RUN",
+    "editability_audit": "NOT_RUN",
+    "render_provenance": "NOT_RUN"
+  },
+  "integrity": {
+    "historical_pptx_used_as_candidate": false,
+    "synthetic_evidence_used": false,
+    "thresholds_lowered": false,
+    "fallback_authoring_used": false
+  },
+  "next_required_action": "Run the case in a runtime that contains the repository @oai/artifact-tool authoring dependency, then generate a fresh candidate and all five evidence classes before PASS/FAIL classification."
+}
