@@ -1,0 +1,47 @@
+{
+  "schema": "ai-ppt-plus/text-fit-case-replay-manifest/v1",
+  "batch": "knight-textfit-b5",
+  "purpose": "Real-case replay for the Knight-derived text-fit rules after B1-B4 integration. Cases are frozen by semantic failure mode; missing source/evidence is reported, never silently replaced by synthetic content.",
+  "acceptance": {
+    "text_loss_allowed": 0,
+    "overflow_allowed": 0,
+    "whole_slide_raster_allowed": 0,
+    "native_text_required": true,
+    "fresh_render_required_after_repair": true,
+    "font_shrink_last": true
+  },
+  "cases": [
+    {
+      "id": "china-unicom-downgrade-control",
+      "name": "中国联通降套管控",
+      "focus": ["dense_chinese", "hierarchy", "brand_asset_boundary"],
+      "source": {"kind": "file_library", "ref": "file_00000000d008720d9f147c7f1306b056"},
+      "status": "source_resolved",
+      "notes": "Real one-page source image resolved from File Library on 2026-09-20; replay evidence must be produced by the current ai-ppt-editable chain."
+    },
+    {
+      "id": "social-channel-commission-table",
+      "name": "社交渠道佣金表格",
+      "focus": ["table_native_authoring", "dense_chinese", "cell_text_fit"],
+      "source": {"kind": "repository", "ref": "evals/case-replay-social-01/source/social-channel-commission.png"},
+      "status": "source_resolved",
+      "notes": "Existing real-case source in the repository; prior replay proved visual quality but Batch 5 replays it specifically through the new text-fit evidence chain."
+    },
+    {
+      "id": "mixed-cjk-latin-flow",
+      "name": "中英混排流程页",
+      "focus": ["mixed_cjk_latin", "line_break", "punctuation", "flow_hierarchy"],
+      "source": {"kind": "pending_real_case", "ref": null},
+      "status": "source_required",
+      "notes": "Do not substitute a synthetic fixture. Bind the next qualifying real mixed CJK/Latin flow page before release-gating this case."
+    },
+    {
+      "id": "kpi-metric-card",
+      "name": "KPI 指标卡",
+      "focus": ["numeric_emphasis", "unit_binding", "hierarchy", "small_box_fit"],
+      "source": {"kind": "pending_real_case", "ref": null},
+      "status": "source_required",
+      "notes": "Do not substitute a synthetic fixture. Bind the next qualifying real KPI card page before release-gating this case."
+    }
+  ]
+}
