@@ -8,6 +8,10 @@ from pathlib import Path
 
 SCHEMA = "ai-ppt-plus/text-coverage/v1"
 
+
+def sha256_text(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -31,9 +35,16 @@ def owner_from_slot(slot_id: str, kind: str) -> str:
         return parts[1]
     return parts[-1]
 
-def producer(kind: str) -> str:
+def producer(kind: str, slot: dict | None = None) -> str:
+    slot = slot or {}
+    explicit = slot.get("producer_kind") or slot.get("text_producer_kind")
+    if isinstance(explicit, str) and explicit.strip():
+        return explicit.strip()
+    if isinstance(slot.get("number_unit"), dict):
+        return "number_unit"
+    if kind == "text":
+        return "rich_text_runs" if int(slot.get("run_count") or 0) > 0 else "text_box"
     return {
-        "text": "rich_text_runs",
         "shape_text": "badge_label",
         "table_cell": "table_cell",
         "chart_title": "chart_label",
@@ -48,6 +59,36 @@ def binding(kind: str, slot_id: str, owner_id: str) -> dict:
     if kind.startswith("chart_"):
         return {"kind": "chart_text", "binding_id": slot_id}
     return {"kind": "shape", "binding_id": owner_id}
+
+def _slot_trace(slot: dict, slot_id: str, text: str) -> dict:
+    raw_ids = slot.get("run_ids")
+    run_ids = [str(value) for value in raw_ids] if isinstance(raw_ids, list) else []
+    raw_trace = slot.get("run_trace")
+    run_trace = [value for value in raw_trace if isinstance(value, dict)] if isinstance(raw_trace, list) else []
+    run_count = int(slot.get("run_count") if slot.get("run_count") is not None else len(run_ids))
+    if run_count < 0:
+        run_count = 0
+    if not run_ids and run_trace:
+        run_ids = [str(value.get("run_id")) for value in run_trace if value.get("run_id") is not None]
+    content_matches = slot.get("content_matches_runs")
+    if content_matches is not None:
+        content_matches = bool(content_matches)
+    scope = slot.get("measurement_scope")
+    if not isinstance(scope, dict):
+        scope = {"kind": "whole_phrase", "scope_id": slot_id}
+    return {
+        "text_spec_id": str(slot.get("text_spec_id") or slot_id),
+        "content_sha256": str(slot.get("content_sha256") or sha256_text(text)),
+        "content_matches_runs": content_matches,
+        "run_count": run_count,
+        "run_ids": run_ids,
+        "run_trace": run_trace,
+        "run_style_sha256": slot.get("run_style_sha256"),
+        "base_style_sha256": slot.get("base_style_sha256"),
+        "measurement_scope": scope,
+        "number_unit": slot.get("number_unit") if isinstance(slot.get("number_unit"), dict) else None,
+    }
+
 
 def build(plan: dict, fit: dict, *, plan_sha: str) -> dict:
     objects = [o for o in (plan.get("objects") or []) if isinstance(o, dict)]
@@ -64,6 +105,7 @@ def build(plan: dict, fit: dict, *, plan_sha: str) -> dict:
         owner_id = owner_from_slot(slot_id, kind)
         if owner_id not in by_id:
             continue
+        trace = _slot_trace(slot, slot_id, text)
         fit_decision = "slot-preserved"
         if slot.get("geometry_defect"):
             fit_decision = "geometry-repair-required"
@@ -72,8 +114,15 @@ def build(plan: dict, fit: dict, *, plan_sha: str) -> dict:
         entries.append({
             "target_id": slot_id,
             "owner_object_id": owner_id,
-            "producer_kind": producer(kind),
+            "producer_kind": producer(kind, slot),
             "expected_text": text,
+            "text_spec_id": trace["text_spec_id"],
+            "content_sha256": trace["content_sha256"],
+            "run_count": trace["run_count"],
+            "run_ids": trace["run_ids"],
+            "run_trace": trace["run_trace"],
+            "measurement_scope": trace["measurement_scope"],
+            "number_unit": trace["number_unit"],
             "authoring_path": f"artifact_tool:{kind}",
             "text_fit_evidence_id": slot_id,
             "text_fit_evidence": {
@@ -81,7 +130,17 @@ def build(plan: dict, fit: dict, *, plan_sha: str) -> dict:
                 "fit_decision": fit_decision,
                 "font_family": None,
                 "font_size_pt": slot.get("target_pt"),
-                "line_count": slot.get("line_count")
+                "line_count": slot.get("line_count"),
+                "text_spec_id": trace["text_spec_id"],
+                "content_sha256": trace["content_sha256"],
+                "content_matches_runs": trace["content_matches_runs"],
+                "run_count": trace["run_count"],
+                "run_ids": trace["run_ids"],
+                "run_trace": trace["run_trace"],
+                "run_style_sha256": trace["run_style_sha256"],
+                "base_style_sha256": trace["base_style_sha256"],
+                "measurement_scope": trace["measurement_scope"],
+                "number_unit": trace["number_unit"],
             },
             "output_binding": binding(kind, slot_id, owner_id),
             "formal_text_required": True

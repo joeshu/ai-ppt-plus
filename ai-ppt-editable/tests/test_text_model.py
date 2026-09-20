@@ -30,7 +30,8 @@ def main() -> int:
             "project_id": "text-fixture", "units": "fraction", "ref_width": 2000, "ref_height": 1000,
             "slides": [{"slide_no": 1, "texts": [
                 {"name": "title", "text": "标题", "x": .1, "y": .1, "w": .5, "h": .1, "size": 24, "font": "Noto Sans CJK SC", "color": "#FFFFFF", "source_bbox": [200, 100, 1000, 100]},
-                {"name": "price", "x": .1, "y": .3, "w": .4, "h": .1, "source_bbox": [200, 300, 800, 100], "font": "Noto Sans CJK SC", "size": 20, "runs": [{"text": "优惠", "color": "#FFFFFF"}, {"text": "**元", "color": "#FF0000", "literal_redaction": True}], "literal_redaction": True, "emphasis_expected": True}
+                {"name": "price", "x": .1, "y": .3, "w": .4, "h": .1, "source_bbox": [200, 300, 800, 100], "font": "Noto Sans CJK SC", "size": 20, "runs": [{"text": "优惠", "color": "#FFFFFF"}, {"text": "**元", "color": "#FF0000", "literal_redaction": True}], "literal_redaction": True, "emphasis_expected": True},
+                {"name": "delta", "x": .1, "y": .5, "w": .4, "h": .1, "source_bbox": [200, 500, 800, 100], "font": "Noto Sans CJK SC", "size": 20, "runs": [{"run_id": "delta.number", "text": "-12.5", "font_size_pt": 20}, {"run_id": "delta.unit", "text": "%", "font_size_pt": 14}], "number_unit": {"group_id": "delta", "number_text": "-12.5", "unit_text": "%", "number_run_id": "delta.number", "unit_run_id": "delta.unit"}}
             ]}]
         })
         built = run("build", layout, "--output", manifest)
@@ -38,6 +39,8 @@ def main() -> int:
         data = json.loads(manifest.read_text(encoding="utf-8"))
         assert data["schema"] == "ai-ppt-plus/text-layout-manifest/v1"
         assert data["slides"][0]["text_specs"][1]["content"] == "优惠**元"
+        assert data["slides"][0]["text_specs"][2]["content"] == "-12.5%"
+        assert data["slides"][0]["text_specs"][2]["runs"][0]["style"]["font_size_pt"] == 20
         checked = run("validate", manifest, "--require-source-bbox", "--report", report)
         assert checked.returncode == 0, checked.stdout
 
@@ -52,6 +55,11 @@ def main() -> int:
         write(manifest, bad)
         failed = run("validate", manifest)
         assert failed.returncode == 2 and "text_color_invalid" in failed.stdout
+
+        bad["slides"][0]["text_specs"][2]["number_unit"]["unit_text"] = "元"
+        write(manifest, bad)
+        failed = run("validate", manifest)
+        assert failed.returncode == 2 and "text_number_unit_content_mismatch" in failed.stdout
     print("text model contract: ok")
     return 0
 

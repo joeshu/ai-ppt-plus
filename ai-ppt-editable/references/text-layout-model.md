@@ -1,8 +1,14 @@
 # Text layout model
 
-`text-layout-manifest.json` is the canonical text and typography contract for a page. It uses `TextSpec` records for text boxes and `TextRunSpec` records for mixed styling. The formal string is `content`; when `runs[]` exists, concatenating their `text` values must reproduce it exactly, including line breaks and literal redaction tokens.
+`text-layout-manifest.json` is the canonical text and typography contract for a page. It uses `TextSpec` records for text boxes and `TextRunSpec` records for mixed styling. The formal string is `content`; when `runs[]` exists, concatenating their `text` values must reproduce it exactly, including line breaks and literal redaction tokens. TextFit uses the same precedence rule: a declared rich-run sequence is the measured authority, never a stale parallel `text` field.
 
-Each `TextSpec` records a stable `text_id`, source reference, source-coordinate `source_bbox`, final `bbox`, coordinate space, base typography, wrapping behavior and optional `emphasis_expected`. `style` may use `font_family`/`font`, `size_pt`, `size_px`, `size_ratio` or `size_pct`, color, weight, alignment, line spacing and margins. A Run contains only its text and style overrides.
+Each `TextSpec` records a stable `text_id`, source reference, source-coordinate `source_bbox`, final `bbox`, coordinate space, base typography, wrapping behavior and optional `emphasis_expected`. `style` may use `font_family`/`font`, `size_pt`, `size_px`, `size_ratio` or `size_pct`, color, weight, alignment, line spacing and margins. A Run contains only its text and style overrides. Each run has a stable `run_id`; the coverage ledger preserves ordered run text, style and hashes so the authoring path can be audited back to the TextSpec. An explicit `number_unit` group may bind number/unit run IDs, but digit-like strings are never guessed into that producer class.
+
+Text measurement evidence declares `measurement_scope.kind` as `whole_phrase`
+or `sub_box`. Whole-phrase measurement is the default for mixed-size or
+mixed-color runs; a sub-box is a separately named text target, not an implicit
+manual `add_run` escape hatch. `content_sha256` and `run_style_sha256` make
+the measured content/style trace reproducible.
 
 Create and validate it with the standard-library tool:
 

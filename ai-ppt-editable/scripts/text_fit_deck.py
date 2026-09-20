@@ -9,6 +9,7 @@ from argparse import Namespace
 from pathlib import Path
 
 from ppt_text_fit import best_fit
+from text_model import measurement_scope, number_unit_trace, text_content, text_trace
 
 
 TEXT_SLOT_KINDS = (
@@ -23,30 +24,31 @@ TEXT_SLOT_KINDS = (
 
 
 def _text(spec: object) -> str:
-    if isinstance(spec, str):
-        return spec
-    if not isinstance(spec, dict):
-        return "" if spec is None else str(spec)
-    if spec.get("text") is not None:
-        return str(spec.get("text"))
-    if isinstance(spec.get("runs"), list):
-        return "".join(_text(run) for run in spec["runs"])
-    if isinstance(spec.get("paragraphs"), list):
-        return "\n".join(_text(paragraph) for paragraph in spec["paragraphs"])
-    if spec.get("run") is not None:
-        return str(spec.get("run"))
-    return ""
+    return text_content(spec)
+
+
+def _style_value(spec: dict, key: str):
+    value = spec.get(key)
+    if value is not None:
+        return value
+    style = spec.get("style")
+    if isinstance(style, dict):
+        return style.get(key)
+    return None
 
 
 def _target_pt(spec: dict, default: float = 18.0) -> float:
-    candidates = [spec.get("font_size_pt"), spec.get("size_pt"), spec.get("size"), spec.get("font_size")]
+    candidates = [_style_value(spec, key) for key in ("font_size_pt", "size_pt", "size", "font_size")]
     run_sizes = []
     for run in spec.get("runs") or []:
         if isinstance(run, dict):
             for key in ("font_size_pt", "size_pt", "size", "font_size"):
-                if run.get(key) is not None:
+                value = run.get(key)
+                if value is None and isinstance(run.get("style"), dict):
+                    value = run["style"].get(key)
+                if value is not None:
                     try:
-                        run_sizes.append(float(run[key]))
+                        run_sizes.append(float(value))
                     except (TypeError, ValueError):
                         pass
                     break
@@ -61,6 +63,28 @@ def _target_pt(spec: dict, default: float = 18.0) -> float:
             except (TypeError, ValueError):
                 pass
     return default
+
+
+PRODUCER_KINDS = {
+    "text_box", "rich_text_runs", "table_cell", "badge_label", "chart_label", "number_unit", "other",
+}
+
+
+def _producer_kind(kind: str, spec: dict, trace: dict) -> str:
+    explicit = spec.get("producer_kind") or spec.get("text_producer_kind")
+    if isinstance(explicit, str) and explicit.strip():
+        return explicit.strip()
+    if number_unit_trace(spec, content=trace["content"], fallback_id=trace["text_spec_id"]) is not None:
+        return "number_unit"
+    if kind == "text":
+        return "rich_text_runs" if trace["run_count"] else "text_box"
+    if kind == "shape_text":
+        return "badge_label"
+    if kind == "table_cell":
+        return "table_cell"
+    if kind.startswith("chart_"):
+        return "chart_label"
+    return "other"
 
 
 def _target_lines(spec: dict, text: str) -> int:
@@ -191,6 +215,9 @@ def _slots(deck: dict):
 
 def _make_args(deck: dict, spec: dict, text: str, box: tuple[float, float], font_file: str | None) -> Namespace:
     target = _target_pt(spec)
+    font = _style_value(spec, "font") or _style_value(spec, "font_family")
+    bold = _style_value(spec, "bold")
+    line_spacing = _style_value(spec, "line_spacing")
     slide_w = float(deck.get("ref_width") or deck.get("reference_width") or deck.get("slide_width_px") or 1672)
     slide_h = float(deck.get("ref_height") or deck.get("reference_height") or deck.get("slide_height_px") or 941)
     slide_in_w = float(deck.get("slide_width_in") or 13.333333)
@@ -198,14 +225,14 @@ def _make_args(deck: dict, spec: dict, text: str, box: tuple[float, float], font
     return Namespace(
         text=text,
         box=f"{max(1.0, box[0])}x{max(1.0, box[1])}",
-        font=str(spec.get("font") or spec.get("font_family") or deck.get("font_family") or "Noto Sans CJK SC"),
+        font=str(font or deck.get("font_family") or "Noto Sans CJK SC"),
         font_file=font_file,
-        bold=bool(spec.get("bold")),
+        bold=bool(bold),
         min_pt=max(4.0, min(8.0, target)),
         max_pt=max(target, 8.0),
         max_lines=int(spec.get("max_lines") or 0),
         target_lines=_target_lines(spec, text),
-        line_spacing=float(spec.get("line_spacing") or 1.06),
+        line_spacing=float(line_spacing or 1.06),
         width_safety=float(spec.get("width_safety") or 0.92),
         height_safety=float(spec.get("height_safety") or 0.95),
         render_fudge=float(spec.get("render_fudge") or 1.01),
@@ -219,9 +246,25 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
     deck = json.loads(layout.read_text(encoding="utf-8"))
     slots = []
     coverage: dict[str, int] = {kind: 0 for kind in TEXT_SLOT_KINDS}
+    trace_defects = []
     for slide_no, kind, object_id, spec, box in _slots(deck):
         coverage[kind] = coverage.get(kind, 0) + 1
         text = _text(spec)
+        trace = text_trace(spec, fallback_id=object_id)
+        scope = measurement_scope(spec, fallback_id=object_id)
+        number_unit = number_unit_trace(spec, content=text, fallback_id=trace["text_spec_id"])
+        producer_kind = _producer_kind(kind, spec, trace)
+        slot_trace_defects = []
+        if trace["content_matches_runs"] is False:
+            slot_trace_defects.append("content_runs_mismatch")
+        if scope["kind"] not in {"whole_phrase", "sub_box"}:
+            slot_trace_defects.append("measurement_scope_invalid")
+        if producer_kind not in PRODUCER_KINDS:
+            slot_trace_defects.append("producer_kind_invalid")
+        if number_unit is not None and number_unit["combined_text"] != text:
+            slot_trace_defects.append("number_unit_content_mismatch")
+        if slot_trace_defects:
+            trace_defects.append({"object_id": object_id, "codes": slot_trace_defects})
         result = best_fit(_make_args(deck, spec, text, box, font_file))
         target = result.get("target") or {}
         reference_scale = result.get("reference_scale")
@@ -240,6 +283,18 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
             "kind": kind,
             "object_id": object_id,
             "text": text,
+            "text_spec_id": trace["text_spec_id"],
+            "producer_kind": producer_kind,
+            "measurement_scope": scope,
+            "content_sha256": trace["content_sha256"],
+            "content_matches_runs": trace["content_matches_runs"],
+            "run_count": trace["run_count"],
+            "run_ids": trace["run_ids"],
+            "run_trace": trace["run_trace"],
+            "run_style_sha256": trace["run_style_sha256"],
+            "base_style_sha256": trace["base_style_sha256"],
+            "number_unit": number_unit,
+            "trace_defects": slot_trace_defects,
             "box_px": [round(box[0], 2), round(box[1], 2)],
             "target_pt": _target_pt(spec),
             "target_lines": result.get("target_lines", 0),
@@ -265,7 +320,7 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
     duplicate_ids = sorted({item for item in measured_ids if measured_ids.count(item) > 1})
     return {
         "schema": "ai-ppt-plus/text-fit-deck/v3",
-        "valid": not duplicate_ids,
+        "valid": not duplicate_ids and not trace_defects,
         "layout": str(layout),
         "slot_count": len(slots),
         "fit_count": len(slots) - len(not_fit),
@@ -276,6 +331,8 @@ def audit_layout(layout: Path, *, font_file: str | None = None) -> dict:
         "coverage_by_kind": coverage,
         "measured_object_ids": measured_ids,
         "duplicate_object_ids": duplicate_ids,
+        "trace_defect_count": len(trace_defects),
+        "trace_defects": trace_defects,
         "repair_policy": "geometry_first_font_shrink_last",
         "text_fit_schema": "ai-ppt-plus/text-fit/v2",
         "slots": slots,

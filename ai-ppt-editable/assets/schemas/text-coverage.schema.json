@@ -19,25 +19,70 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["target_id", "owner_object_id", "producer_kind", "expected_text", "authoring_path", "text_fit_evidence_id", "text_fit_evidence", "output_binding"],
+        "required": ["target_id", "owner_object_id", "producer_kind", "expected_text", "text_spec_id", "authoring_path", "text_fit_evidence_id", "text_fit_evidence", "output_binding"],
         "properties": {
           "target_id": {"type": "string", "minLength": 1},
           "owner_object_id": {"type": "string", "minLength": 1},
+          "text_spec_id": {"type": "string", "minLength": 1},
           "producer_kind": {
             "enum": ["text_box", "rich_text_runs", "table_cell", "badge_label", "chart_label", "number_unit", "other"]
           },
           "expected_text": {"type": "string"},
+          "content_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+          "run_count": {"type": "integer", "minimum": 0},
+          "run_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "run_trace": {"type": "array"},
+          "measurement_scope": {
+            "type": "object",
+            "required": ["kind", "scope_id"],
+            "properties": {
+              "kind": {"enum": ["whole_phrase", "sub_box"]},
+              "scope_id": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": true
+          },
+          "number_unit": {"type": ["object", "null"]},
           "authoring_path": {"type": "string", "minLength": 1},
           "text_fit_evidence_id": {"type": "string", "minLength": 1},
           "text_fit_evidence": {
             "type": "object",
-            "required": ["measured", "fit_decision"],
+            "required": ["measured", "fit_decision", "text_spec_id", "content_sha256", "content_matches_runs", "run_count", "run_ids", "run_trace", "measurement_scope"],
             "properties": {
               "measured": {"const": true},
               "fit_decision": {"type": "string", "minLength": 1},
               "font_family": {"type": ["string", "null"]},
               "font_size_pt": {"type": ["number", "null"], "exclusiveMinimum": 0},
-              "line_count": {"type": ["integer", "null"], "minimum": 1}
+              "line_count": {"type": ["integer", "null"], "minimum": 1},
+              "text_spec_id": {"type": "string", "minLength": 1},
+              "content_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+              "content_matches_runs": {"type": ["boolean", "null"]},
+              "run_count": {"type": "integer", "minimum": 0},
+              "run_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+              "run_trace": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["run_id", "text", "style"],
+                  "properties": {
+                    "run_id": {"type": "string", "minLength": 1},
+                    "text": {"type": "string"},
+                    "style": {"type": "object"}
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "run_style_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-fA-F]{64}$"},
+              "base_style_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-fA-F]{64}$"},
+              "measurement_scope": {
+                "type": "object",
+                "required": ["kind", "scope_id"],
+                "properties": {
+                  "kind": {"enum": ["whole_phrase", "sub_box"]},
+                  "scope_id": {"type": "string", "minLength": 1}
+                },
+                "additionalProperties": true
+              },
+              "number_unit": {"type": ["object", "null"]}
             },
             "additionalProperties": true
           },

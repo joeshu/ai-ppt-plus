@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.20.11
+  package_revision: 2026.09.20.12
 ---
 
 # AI PPT Editable
@@ -102,12 +102,19 @@ evidence only; it is not a universal numeric release gate.
 
 After Text Slot Preflight and before build/release acceptance, materialize `text-coverage.json` and audit every formal-text producer path. Every AuthoringPlan `native_text` object must have at least one coverage entry; table cells, badge labels, chart labels and number+unit compositions must be traceable through stable synthetic text targets owned by their AuthoringPlan object.
 
-Each entry records the formal text, concrete authoring helper/path, TextFit measurement evidence and final output binding. A helper must not write formal text directly to the deck without recording this evidence.
+Each entry records the formal text, canonical `text_spec_id`, concrete authoring
+helper/path, TextFit measurement evidence and final output binding. Rich text
+is measured as one phrase by default and carries ordered `run_ids`, per-run
+text/style trace, content hashes and an explicit `measurement_scope`; an
+explicit number+unit group must bind its number/unit runs. A helper must not
+write formal text directly to the deck or manually add runs without this
+content-bound measurement evidence.
 
 Validate with:
 
 ```bash
-python3 scripts/audit_text_coverage.py PROJECT/authoring-plan.json PROJECT/text-coverage.json --json
+python3 scripts/audit_text_coverage.py PROJECT/authoring-plan.json PROJECT/text-coverage.json \
+  --text-fit-report PROJECT/text-fit-deck.json --json
 ```
 
 Missing native-text coverage, missing measurement evidence, duplicate output binding, unknown owner or AuthoringPlan SHA mismatch are deterministic formal-text/provenance blockers. This auditor does not create SSIM, pixel or typography-similarity thresholds.

@@ -10,6 +10,16 @@
       "owner_object_id": "title",
       "producer_kind": "rich_text_runs",
       "expected_text": "示例标题",
+      "text_spec_id": "title",
+      "content_sha256": "7bcb60020d757ee04d230f4c50eb23734444559df5330cc780d733ed6852097c",
+      "run_count": 2,
+      "run_ids": ["title.r01", "title.r02"],
+      "run_trace": [
+        {"run_id": "title.r01", "text": "示例", "style": {"bold": true}},
+        {"run_id": "title.r02", "text": "标题", "style": {"color": "#FFFFFF"}}
+      ],
+      "measurement_scope": {"kind": "whole_phrase", "scope_id": "title"},
+      "number_unit": null,
       "authoring_path": "artifact_tool:textbox",
       "text_fit_evidence_id": "text:title",
       "text_fit_evidence": {
@@ -17,7 +27,19 @@
         "fit_decision": "slot-preserved",
         "font_family": "Noto Sans CJK SC",
         "font_size_pt": 28,
-        "line_count": 1
+        "line_count": 1,
+        "text_spec_id": "title",
+        "content_sha256": "7bcb60020d757ee04d230f4c50eb23734444559df5330cc780d733ed6852097c",
+        "content_matches_runs": true,
+        "run_count": 2,
+        "run_ids": ["title.r01", "title.r02"],
+        "run_trace": [
+          {"run_id": "title.r01", "text": "示例", "style": {"bold": true}},
+          {"run_id": "title.r02", "text": "标题", "style": {"color": "#FFFFFF"}}
+        ],
+        "run_style_sha256": "31414fd311a10f839c45b5d18c144166758efe05844e843dd5a36f80951c9157",
+        "measurement_scope": {"kind": "whole_phrase", "scope_id": "title"},
+        "number_unit": null
       },
       "output_binding": {
         "kind": "shape",
