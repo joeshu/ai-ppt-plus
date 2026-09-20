@@ -158,10 +158,12 @@ def _classification(position_delta: float, scale_delta: float, coverage_delta: f
                     position_tol: float, scale_tol: float, coverage_tol: float) -> str:
     if hierarchy_drift:
         return "hierarchy_drift"
-    if position_delta > position_tol:
-        return "position_drift"
+    # Visible scale/weight changes can move the foreground centroid even when the
+    # text anchor itself did not move. Classify those before pure position drift.
     if abs(scale_delta) > scale_tol or abs(coverage_delta) > coverage_tol:
         return "scale_or_weight_drift"
+    if position_delta > position_tol:
+        return "position_drift"
     return "aligned"
 
 
