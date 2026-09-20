@@ -17,6 +17,10 @@ from pathlib import Path
 
 from runtime_fonts import resolve_font_file
 
+FONT_WEIGHTS = (400, 500, 600, 700)
+FONT_NAMES = {400: "NotoSansSC-Regular.ttf", 500: "NotoSansSC-Medium.ttf", 600: "NotoSansSC-SemiBold.ttf", 700: "NotoSansSC-Bold.ttf"}
+FONT_ROLES = {400: "regular", 500: "medium", 600: "semibold", 700: "bold"}
+
 
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
@@ -51,12 +55,22 @@ def _name_values(face) -> set[str]:
     return values
 
 
-def _select_collection_face(source: Path, family: str, *, bold: bool):
+def _font_weight(path: Path) -> int | None:
+    from fontTools.ttLib import TTFont
+
+    font = TTFont(str(path))
+    try:
+        os2 = font.get("OS/2")
+        return int(os2.usWeightClass) if os2 is not None else None
+    finally:
+        font.close()
+
+
+def _select_collection_face(source: Path, family: str, *, target_weight: int):
     from fontTools.ttLib import TTCollection
 
     collection = TTCollection(str(source))
     wanted = family.casefold().strip()
-    target_weight = 700 if bold else 400
     ranked = []
     for index, face in enumerate(collection.fonts):
         names = _name_values(face)
@@ -77,22 +91,29 @@ def _select_collection_face(source: Path, family: str, *, bold: bool):
     if best[0] == 0 and len(collection.fonts) > 1:
         collection.close()
         raise RuntimeError(f"requested family {family!r} not found in collection {source}")
+    if best[6] != target_weight:
+        collection.close()
+        raise RuntimeError(f"requested weight {target_weight} not found in collection {source}; observed {best[6]}")
     return collection, best[3], best[4], best[5], best[6]
 
 
-def materialize_runtime_face(source: Path, target: Path, family: str, *, bold: bool) -> dict:
+def materialize_runtime_face(source: Path, target: Path, family: str, *, bold: bool | None = None, weight: int | None = None) -> dict:
     """Copy a standalone font or extract one family/weight face from a TTC."""
+    target_weight = int(weight) if weight is not None else (700 if bold else 400)
     source = Path(source).resolve()
     target = Path(target).resolve()
     target.parent.mkdir(parents=True, exist_ok=True)
     if not _is_collection(source):
+        source_weight = _font_weight(source)
+        if source_weight != target_weight:
+            raise RuntimeError(f"resolved standalone font has weight {source_weight}, requested {target_weight}: {source}")
         shutil.copyfile(source, target)
         mode = "copied-standalone-sfnt"
         face_index = None
-        names: list[str] = []
-        weight = None
+        names = []
+        source_face_weight = source_weight
     else:
-        collection, face_index, face, face_names, weight = _select_collection_face(source, family, bold=bold)
+        collection, face_index, face, face_names, source_face_weight = _select_collection_face(source, family, target_weight=target_weight)
         try:
             face.save(str(target))
         finally:
@@ -116,7 +137,7 @@ def materialize_runtime_face(source: Path, target: Path, family: str, *, bold: b
         "mode": mode,
         "source_face_index": face_index,
         "source_face_names": names,
-        "source_weight": weight,
+        "source_weight": source_face_weight,
         "output_weight": output_weight,
         "sha256": sha256(target),
         "standalone_sfnt": True,
@@ -128,22 +149,33 @@ def main() -> int:
     p.add_argument("--family", default="Noto Sans CJK SC")
     p.add_argument("--output-dir", default=".runtime/fonts")
     p.add_argument("--report", default=".runtime/font-runtime.json")
+    p.add_argument("--weights", default="400,500,600,700", help="comma-separated real font weights to materialize")
     a = p.parse_args()
+    try:
+        weights = tuple(dict.fromkeys(int(value.strip()) for value in a.weights.split(",") if value.strip()))
+    except ValueError as exc:
+        print(json.dumps({"valid": False, "code": "runtime_font_weights_invalid", "message": str(exc)}, ensure_ascii=False))
+        return 2
+    if not weights or any(weight not in FONT_WEIGHTS for weight in weights):
+        print(json.dumps({"valid": False, "code": "runtime_font_weights_unsupported", "allowed": list(FONT_WEIGHTS), "requested": list(weights)}, ensure_ascii=False))
+        return 2
     out = Path(a.output_dir).resolve()
     out.mkdir(parents=True, exist_ok=True)
     records = []
-    for bold, name in ((False, "NotoSansSC-Regular.ttf"), (True, "NotoSansSC-Bold.ttf")):
-        source = resolve_font_file(a.family, bold=bold)
+    for weight in weights:
+        name = FONT_NAMES[weight]
+        source = resolve_font_file(a.family, weight=weight)
         if source is None:
-            print(json.dumps({"valid": False, "code": "runtime_cjk_font_unresolved", "family": a.family}, ensure_ascii=False))
+            print(json.dumps({"valid": False, "code": "runtime_cjk_font_unresolved", "family": a.family, "weight": weight}, ensure_ascii=False))
             return 2
         target = out / name
         try:
-            record = materialize_runtime_face(source, target, a.family, bold=bold)
+            record = materialize_runtime_face(source, target, a.family, weight=weight)
         except Exception as exc:
-            print(json.dumps({"valid": False, "code": "runtime_cjk_font_materialization_failed", "family": a.family, "source": str(source), "message": f"{type(exc).__name__}: {exc}"}, ensure_ascii=False))
+            print(json.dumps({"valid": False, "code": "runtime_cjk_font_materialization_failed", "family": a.family, "weight": weight, "source": str(source), "message": f"{type(exc).__name__}: {exc}"}, ensure_ascii=False))
             return 2
-        record["role"] = "bold" if bold else "regular"
+        record["role"] = FONT_ROLES[weight]
+        record["weight"] = weight
         records.append(record)
     report = {
         "schema": "ai-ppt-plus/runtime-font-materialization/v2",
@@ -151,6 +183,7 @@ def main() -> int:
         "family": a.family,
         "repository_font_binary_required": False,
         "runtime_cache": str(out),
+        "weights": list(weights),
         "files": records,
     }
     report_path = Path(a.report).resolve()

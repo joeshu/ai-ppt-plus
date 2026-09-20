@@ -32,6 +32,7 @@ def test_cjk_run_binds_east_asian_and_complex_script_typefaces():
     _set_run_fonts(run, "Noto Sans CJK SC")
     rpr = run._r.get_or_add_rPr()
     assert run.font.name == "Noto Sans CJK SC"
+    assert rpr.find(qn("a:latin")).get("typeface") == "Noto Sans CJK SC"
     assert rpr.find(qn("a:ea")).get("typeface") == "Noto Sans CJK SC"
     assert rpr.find(qn("a:cs")).get("typeface") == "Noto Sans CJK SC"
 

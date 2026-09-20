@@ -17,9 +17,10 @@ from atomic_output import atomic_replace  # noqa: E402
 
 def main() -> int:
     compose_lines = len((ROOT / "scripts/compose_pptx.py").read_text(encoding="utf-8").splitlines())
-    # Keep the entrypoint bounded while allowing the strict PageGraph calibration
-    # orchestration hook. Geometry implementation remains in its own module.
-    assert compose_lines < 260, compose_lines
+    # Keep the entrypoint bounded while allowing strict PageGraph calibration,
+    # manifest-only font binding, and geometry orchestration hooks. Geometry
+    # implementation remains in its own module.
+    assert compose_lines < 300, compose_lines
 
     with tempfile.TemporaryDirectory(prefix="authoring-modules-") as temp:
         work = Path(temp)

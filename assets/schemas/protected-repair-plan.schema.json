@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://joeshu.github.io/ai-ppt-plus/protected-repair-plan.schema.json",
+  "title": "Protected Repair Plan",
+  "type": "object",
+  "required": ["schema", "valid", "status", "decision", "actions"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/protected-repair-plan/v1"},
+    "valid": {"type": "boolean"},
+    "status": {"type": "string"},
+    "decision": {"enum": ["pending", "accept", "reject", "rollback"]},
+    "action_count": {"type": "integer", "minimum": 0},
+    "owner_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "protection_set": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action_id", "owner", "responsible_parameters", "parameter_delta", "protected_neighbors", "decision"],
+        "properties": {
+          "action_id": {"type": "string", "minLength": 1},
+          "owner": {"type": "object", "required": ["object_id"], "properties": {"object_id": {"type": "string", "minLength": 1}}, "additionalProperties": true},
+          "responsible_parameters": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+          "parameter_delta": {"type": "object"},
+          "protected_neighbors": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "forbidden_compensation": {"type": "array", "items": {"type": "object"}},
+          "decision": {"enum": ["pending", "accept", "reject", "rollback"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "issues": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": true
+}

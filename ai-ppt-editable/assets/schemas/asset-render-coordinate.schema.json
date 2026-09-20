@@ -10,26 +10,41 @@
     "object_id": {"type": "string", "minLength": 1},
     "asset": {
       "type": "object",
-      "required": ["canvas_px", "alpha_bbox_px", "alpha_centroid_px"],
+      "anyOf": [
+        {"required": ["path"]},
+        {"required": ["canvas_px", "alpha_bbox_px", "alpha_centroid_px"]}
+      ],
       "properties": {
-        "canvas_px": {"type": "array", "prefixItems": [{"type":"number","exclusiveMinimum":0},{"type":"number","exclusiveMinimum":0}], "minItems":2, "maxItems":2},
-        "alpha_bbox_px": {"type":"array", "items":{"type":"number"}, "minItems":4, "maxItems":4},
-        "alpha_centroid_px": {"type":"array", "items":{"type":"number"}, "minItems":2, "maxItems":2},
-        "safe_padding_px": {"type":"array", "items":{"type":"number"}, "minItems":4, "maxItems":4}
-      }
+        "asset_id": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "canvas_px": {"type": "array", "prefixItems": [{"type": "number", "exclusiveMinimum": 0}, {"type": "number", "exclusiveMinimum": 0}], "minItems": 2, "maxItems": 2},
+        "aspect_ratio": {"type": "number", "exclusiveMinimum": 0},
+        "visible_aspect_ratio": {"type": "number", "exclusiveMinimum": 0},
+        "alpha_bbox_px": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+        "alpha_centroid_px": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "safe_padding_px": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+        "qa_binding": {"type": "object"}
+      },
+      "additionalProperties": true
     },
     "slot": {
-      "type":"object",
-      "required":["bbox_norm"],
-      "properties":{"bbox_norm":{"type":"array","items":{"type":"number"},"minItems":4,"maxItems":4}}
+      "type": "object",
+      "required": ["bbox_norm"],
+      "properties": {"bbox_norm": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4}},
+      "additionalProperties": true
     },
     "render": {
-      "type":"object",
-      "required":["canvas_px", "observed_visible_bbox_px"],
+      "type": "object",
+      "required": ["canvas_px", "observed_visible_bbox_px"],
       "properties": {
-        "canvas_px":{"type":"array","prefixItems":[{"type":"number","exclusiveMinimum":0},{"type":"number","exclusiveMinimum":0}],"minItems":2,"maxItems":2},
-        "observed_visible_bbox_px":{"type":"array","items":{"type":"number"},"minItems":4,"maxItems":4}
-      }
+        "canvas_px": {"type": "array", "prefixItems": [{"type": "number", "exclusiveMinimum": 0}, {"type": "number", "exclusiveMinimum": 0}], "minItems": 2, "maxItems": 2},
+        "observed_visible_bbox_px": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+        "crop_path": {"type": "string", "minLength": 1},
+        "crop_bbox_px": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4}
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": true

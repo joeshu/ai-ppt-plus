@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import shutil
 import subprocess
@@ -14,6 +15,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "artifact_tool_authoring.mjs"
 FONT_DIR = ROOT / "assets" / "fonts"
+
+
+def json_digest(value) -> str:
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def main() -> int:
@@ -33,7 +39,7 @@ def main() -> int:
                 "texts": [{"object_id": "title", "runs": [{"text": "原生", "size": 20}, {"text": "可编辑", "size": 20, "bold": True, "color": "#C00000"}], "x": 0.08, "y": 0.08, "w": 0.84, "h": 0.18, "size": 20}],
                 "shapes": [{"object_id": "rule", "type": "line", "x": 0.08, "y": 0.3, "w": 0.84, "h": 0, "line": "#C00000", "line_width": 2}],
                 "tables": [{"object_id": "table", "x": 0.08, "y": 0.4, "w": 0.4, "h": 0.35, "rows": [["指标", "值"], ["得分", "90"]], "header_fill": "#FDE9D9", "header_bold": True}],
-                "charts": [{"object_id": "chart", "type": "column", "x": 0.54, "y": 0.4, "w": 0.38, "h": 0.35, "categories": ["A", "B"], "series": [{"name": "分数", "values": [90, None]}], "legend": False, "display_blanks_as": "gap", "y_axis": {"min": 50, "max": 100, "majorUnit": 10}}],
+                "charts": [{"object_id": "chart", "type": "column", "x": 0.54, "y": 0.4, "w": 0.38, "h": 0.5, "categories": ["A", "B"], "series": [{"name": "分数", "values": [90, None]}], "legend": False, "display_blanks_as": "gap", "y_axis": {"min": 50, "max": 100, "majorUnit": 10}}],
                 "speaker_notes": "strict adapter smoke",
             }
         ],
@@ -85,6 +91,33 @@ def main() -> int:
         (route_root / "route-decision.json").write_text(json.dumps({"route": "reference-reconstruction"}), encoding="utf-8")
         (route_root / "page-graph.json").write_text(json.dumps({"nodes": [{"id": "title", "type": "text", "role": "text"}]}), encoding="utf-8")
         (route_root / "slide-object-manifest.json").write_text(json.dumps({"slides": [{"slide_no": 1, "objects": [{"object_id": "title", "object_type": "editable_text"}]}]}), encoding="utf-8")
+        chart_snapshot = {
+            "kind": "category_chart",
+            "categories": ["A", "B"],
+            "series": [{"series_id": "score", "name": "分数", "values": [90, None]}],
+        }
+        (route_root / "chart-reconstruction.json").write_text(json.dumps({
+            "schema": "ai-ppt-plus/chart-reconstruction/v1",
+            "project_id": "artifact-tool-smoke",
+            "coordinate_space": "reference_pixels",
+            "canvas": [100, 80],
+            "charts": [{
+                "chart_id": "chart",
+                "slide_no": 1,
+                "representation": "native_chart",
+                "editability_level": "L1",
+                "source_data_status": "verified",
+                "data_source": {"kind": "inline_fixture", "authority": "test", "method": "deterministic_smoke"},
+                "categories": ["A", "B"],
+                "series": [{"series_id": "score", "name": "分数", "values": [90, None]}],
+                "missing_value_policy": "blank_not_zero",
+                "data_snapshot_sha256": json_digest(chart_snapshot),
+                "required_elements": ["category_labels"],
+                "visible_elements": {"category_labels": [{"object_id": "category-a", "content": "A"}, {"object_id": "category-b", "content": "B"}]},
+                "geometry": {"source_bbox": [0, 0, 100, 80], "plot_bbox": [10, 20, 80, 50], "point_anchor_tolerance": 0.02},
+                "qa": {"reference_region": [0, 0, 100, 80]},
+            }],
+        }, ensure_ascii=False), encoding="utf-8")
         route_output = route_root / "route-output.pptx"
         route_command = [
             os.environ.get("PYTHON", os.sys.executable), str(ROOT / "scripts" / "compose_pptx.py"),

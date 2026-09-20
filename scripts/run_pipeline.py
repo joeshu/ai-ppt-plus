@@ -63,6 +63,8 @@ VISUAL_DIAGNOSTIC_EVIDENCE = {
     "visual_compare_qa",
     "preview_consistency",
     "gradient_visual_validation",
+    "asset_render_coordinate",
+    "protected_repair_plan",
 }
 
 
@@ -323,6 +325,25 @@ def summarize_report(name: str, path: Path, report: dict):
         summary.update({"chart_count": report.get("chart_count"), "charts": report.get("charts", []), "warnings": report.get("warnings", []), "human_visual_review_required": report.get("human_visual_review_required", True)})
     elif name == "dual_comparison":
         summary.update({"pixel": report.get("pixel_comparison", {}), "object": report.get("object_comparison", {}), "human_visual_review_required": report.get("human_visual_review_required", True)})
+    elif name == "asset_render_coordinate":
+        summary.update({
+            "record_count": report.get("record_count"),
+            "repair_required_count": report.get("repair_required_count"),
+            "placement_only_count": report.get("placement_only_count"),
+            "clipping_count": report.get("clipping_count"),
+            "render_crop_evidence_count": report.get("render_crop_evidence_count"),
+            "asset_qa_bound_count": report.get("asset_qa_bound_count"),
+            "repair_loop_required": report.get("repair_loop_required", False),
+        })
+    elif name == "protected_repair_plan":
+        summary.update({
+            "decision": report.get("decision"),
+            "action_count": report.get("action_count"),
+            "owner_ids": report.get("owner_ids", []),
+            "protection_set": report.get("protection_set", []),
+            "repair_loop_required": report.get("repair_loop_required", False),
+            "human_override": report.get("human_override", False),
+        })
     return summary
 
 
@@ -382,6 +403,16 @@ def main() -> int:
     parser.add_argument("--text-manifest", help="canonical text-layout-manifest.json")
     parser.add_argument("--require-text-model", action="store_true", help="require and validate the canonical text layout manifest")
     parser.add_argument("--asset-manifest", action="append", default=[], help="asset manifest used for semantic object provenance checks")
+    parser.add_argument("--asset-render-records", help="B5 asset-to-render coordinate records; defaults to project/asset-render-records.json")
+    parser.add_argument("--require-asset-render-coordinate-loop", action="store_true", help="require B5 coordinate records, fresh render evidence and final crops")
+    parser.add_argument("--asset-qa-report", help="transparent-asset QA report to bind into B5 coordinate records")
+    parser.add_argument("--authoring-plan", help="AuthoringPlan used by the B6 protected repair planner")
+    parser.add_argument("--protected-repair-source", help="B6 mismatch source; defaults to the B5 coordinate report")
+    parser.add_argument("--require-protected-repair-planner", action="store_true", help="run and require the B6 protected repair planner")
+    parser.add_argument("--protected-repair-decision", choices=("pending", "accept", "reject", "rollback"), default="pending")
+    parser.add_argument("--protected-repair-before-render-dir", help="previous passing render directory for B6 evidence")
+    parser.add_argument("--protected-repair-evidence-dir", help="B6 owner/protected-neighbor/full-page crop output directory")
+    parser.add_argument("--protected-repair-human-override", action="store_true", help="explicitly override a material protected-neighbor regression")
     parser.add_argument("--manifest-registry", help="canonical cross-manifest registry.json")
     parser.add_argument("--require-manifest-registry", action="store_true", help="require and validate the cross-manifest registry")
     parser.add_argument("--require-source-hashes", action="store_true", help="require declared source hashes for raster/data assets")
@@ -674,6 +705,11 @@ def main() -> int:
     run_dir.parent.mkdir(parents=True, exist_ok=True)
     run_dir.mkdir(exist_ok=args.resume)
     render_dir = run_dir / "rendered"
+    asset_render_records = Path(args.asset_render_records).resolve() if args.asset_render_records else project / "asset-render-records.json"
+    asset_render_enabled = bool(args.require_asset_render_coordinate_loop or args.asset_render_records or asset_render_records.is_file())
+    authoring_plan_path = Path(args.authoring_plan).resolve() if args.authoring_plan else project / "authoring-plan.json"
+    protected_repair_source = Path(args.protected_repair_source).resolve() if args.protected_repair_source else run_dir / "asset-render-coordinate-report.json"
+    protected_repair_enabled = bool(args.require_protected_repair_planner or args.protected_repair_source)
     cache_dir = None
     if args.execution_mode == "dag" and not args.no_cache:
         cache_dir = Path(args.cache_dir).resolve() if args.cache_dir else project / ".pipeline-cache"
@@ -1327,6 +1363,85 @@ def main() -> int:
     for region in list(args.region) + list(args.affected_region):
         visual_args.extend(["--region", region])
     add_step("render-visual-gate", visual_args, deps=["render"], outputs=[run_dir / "render-visual-gate.json"], inputs=[render_dir], metadata={"affected_pages": affected_pages or "all", "affected_regions": list(args.affected_region)})
+    if asset_render_enabled:
+        coordinate_report_path = run_dir / "asset-render-coordinate-report.json"
+        if not asset_render_records.is_file():
+            add_step(
+                "asset-render-coordinate",
+                static_result={"name": "asset-render-coordinate", "command": [], "exit_code": 2, "ok": False, "failure": "asset_render_records_missing", "stdout": "", "stderr": ""},
+                cacheable=False,
+                deps=["render-visual-gate"],
+                outputs=[coordinate_report_path],
+                metadata={"required": args.require_asset_render_coordinate_loop},
+            )
+        else:
+            coordinate_args = [
+                str(SCRIPT_DIR / "asset_render_coordinate_loop.py"), str(asset_render_records),
+                "--base-dir", str(project), "--render-dir", str(render_dir),
+                "--capture-crops", str(run_dir / "asset-render-crops"),
+                "--auto-bind-asset-qa", "--require-render-evidence",
+                "--report", str(coordinate_report_path),
+            ]
+            if args.require_asset_render_coordinate_loop:
+                coordinate_args.extend(["--require-crop-evidence", "--require-records"])
+            qa_path = Path(args.asset_qa_report).resolve() if args.asset_qa_report else project / "transparent-asset-qa.json"
+            if qa_path.is_file():
+                coordinate_args.extend(["--asset-qa-report", str(qa_path)])
+            add_step(
+                "asset-render-coordinate", coordinate_args,
+                deps=["render-visual-gate"],
+                outputs=[coordinate_report_path, run_dir / "asset-render-crops"],
+                inputs=[asset_render_records, render_dir] + ([qa_path] if qa_path.is_file() else []),
+                metadata={"required": args.require_asset_render_coordinate_loop, "capture_crops": True},
+            )
+    if protected_repair_enabled:
+        protected_plan_path = run_dir / "protected-repair-plan.json"
+        repair_deps = ["render-visual-gate"]
+        if asset_render_enabled:
+            repair_deps.append("asset-render-coordinate")
+        if not authoring_plan_path.is_file():
+            add_step(
+                "protected-repair-plan",
+                static_result={"name": "protected-repair-plan", "command": [], "exit_code": 2, "ok": False, "failure": "authoring_plan_missing", "stdout": "", "stderr": ""},
+                cacheable=False,
+                deps=repair_deps,
+                outputs=[protected_plan_path],
+                metadata={"required": args.require_protected_repair_planner},
+            )
+        else:
+            repair_args = [
+                str(SCRIPT_DIR / "protected_repair_planner.py"),
+                "--authoring-plan", str(authoring_plan_path),
+                "--mismatches", str(protected_repair_source),
+                "--report", str(protected_plan_path),
+                "--decision", args.protected_repair_decision,
+            ]
+            if args.protected_repair_before_render_dir:
+                repair_args.extend(["--before-render-dir", str(Path(args.protected_repair_before_render_dir).resolve())])
+            repair_args.extend(["--after-render-dir", str(render_dir)])
+            repair_evidence_dir = Path(args.protected_repair_evidence_dir).resolve() if args.protected_repair_evidence_dir else run_dir / "protected-repair-evidence"
+            repair_args.extend(["--evidence-dir", str(repair_evidence_dir)])
+            if args.protected_repair_human_override:
+                repair_args.append("--human-override")
+            repair_inputs = [authoring_plan_path, render_dir]
+            if protected_repair_source.is_file() or asset_render_enabled:
+                repair_inputs.append(protected_repair_source)
+            if args.protected_repair_before_render_dir:
+                repair_inputs.append(Path(args.protected_repair_before_render_dir).resolve())
+            repair_outputs = [protected_plan_path]
+            try:
+                repair_evidence_dir.relative_to(run_dir)
+            except ValueError:
+                pass
+            else:
+                repair_outputs.append(repair_evidence_dir)
+            add_step(
+                "protected-repair-plan", repair_args,
+                deps=repair_deps,
+                outputs=repair_outputs,
+                inputs=repair_inputs,
+                metadata={"required": args.require_protected_repair_planner, "decision": args.protected_repair_decision, "evidence_dir": str(repair_evidence_dir)},
+            )
     if args.font_dir or args.require_cjk:
         font_delivery_args = [str(SCRIPT_DIR / "validate_font_delivery.py"), "--font-report", str(run_dir / "font-report.json"), "--inspection", str(inspection_path), "--render-report", str(render_report_path), "--render-visual-gate", str(run_dir / "render-visual-gate.json"), "--profile", "portable", "--report", str(run_dir / "font-delivery-validation.json")]
         if args.font_dir and (font_manifest.is_file() or args.require_cjk):
@@ -1527,7 +1642,7 @@ def main() -> int:
     project_deps = ["inspection", "render", "render-visual-gate", "manifest", "backend-binding"]
     if args.require_object_manifest or object_manifest.is_file():
         project_deps.append("semantic-object-audit")
-    for candidate in ("route", "engine-route", "visual-generation", "visual-comparison", "dual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest", "native-editability"):
+    for candidate in ("route", "engine-route", "visual-generation", "visual-comparison", "dual-comparison", "ocr-text-check", "multipage-layout-guard", "preview-consistency", "typography-calibration", "chart-manifest", "native-editability", "asset-render-coordinate", "protected-repair-plan"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
     if content_inventory_enabled:
@@ -1611,6 +1726,12 @@ def main() -> int:
         [run_dir / "typography-calibration-validation.json"] if typography_enabled else []
     )
     project_inputs.extend(
+        [run_dir / "asset-render-coordinate-report.json"] if any(task.name == "asset-render-coordinate" for task in executor.tasks) else []
+    )
+    project_inputs.extend(
+        [run_dir / "protected-repair-plan.json"] if any(task.name == "protected-repair-plan" for task in executor.tasks) else []
+    )
+    project_inputs.extend(
         [run_dir / "outline-contract-validation.json"] if outline_contract_path else []
     )
     project_inputs.extend(
@@ -1642,6 +1763,8 @@ def main() -> int:
             ("typography_calibration", run_dir / "typography-calibration-validation.json"),
             ("render", run_dir / "render-report.json"),
             ("render_visual_gate", run_dir / "render-visual-gate.json"),
+            ("asset_render_coordinate", run_dir / "asset-render-coordinate-report.json"),
+            ("protected_repair_plan", run_dir / "protected-repair-plan.json"),
             ("visual_comparison", run_dir / "visual-comparison.json"),
             ("dual_comparison", run_dir / "dual-comparison.json"),
             ("ocr_text_check", run_dir / "ocr-text-check.json"),
@@ -1701,9 +1824,22 @@ def main() -> int:
         ]
         technical_valid = not technical_failed
         repair_signals = []
+        protected_repair_closed = (
+            isinstance(evidence.get("protected_repair_plan"), dict)
+            and evidence["protected_repair_plan"].get("valid") is True
+            and evidence["protected_repair_plan"].get("decision") in {"accept", "no-repair-required"}
+            and evidence["protected_repair_plan"].get("repair_loop_required") is not True
+            and evidence["protected_repair_plan"].get("native_status") in {"accepted", "no-repair-required"}
+        )
         for name in sorted(VISUAL_DIAGNOSTIC_EVIDENCE):
             item = evidence.get(name)
             if not isinstance(item, dict):
+                continue
+            # B5 is the detection side of the short loop.  Once B6 has
+            # accepted the owner-only repair with protected-neighbor evidence,
+            # close only that B5 signal; unrelated visual diagnostics remain
+            # visible and continue to block closeout.
+            if name == "asset_render_coordinate" and protected_repair_closed:
                 continue
             if item.get("valid") is False or item.get("repair_loop_required") is True:
                 repair_signals.append({
@@ -1863,6 +1999,10 @@ def main() -> int:
         report_entries.append({"report_type": "preview-consistency", "path": "preview-consistency-validation.json", "required": bool(args.require_preview_consistency or args.release), "stage": "validated"})
     if typography_enabled:
         report_entries.append({"report_type": "typography-calibration-validation", "path": "typography-calibration-validation.json", "required": True, "stage": "validated"})
+    if any(task.name == "asset-render-coordinate" for task in executor.tasks):
+        report_entries.append({"report_type": "asset-render-coordinate-validation", "path": "asset-render-coordinate-report.json", "required": args.require_asset_render_coordinate_loop, "stage": "validated"})
+    if any(task.name == "protected-repair-plan" for task in executor.tasks):
+        report_entries.append({"report_type": "protected-repair-plan", "path": "protected-repair-plan.json", "required": args.require_protected_repair_planner, "stage": "validated"})
     if unique_reference_sources:
         report_entries.append({"report_type": "source-image-validation", "path": "source-image-validation.json", "required": True, "stage": "source-analyzed"})
     if gradient_required:
@@ -1910,7 +2050,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "engine-route-validation": "engine-route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "native-object-validation": "native-editability", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "asset-render-coordinate-validation": "asset-render-coordinate", "protected-repair-plan": "protected-repair-plan", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "engine-route-validation": "engine-route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "native-object-validation": "native-editability", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     failed_step_names = {step.get("name") for step in steps if not step.get("ok") and isinstance(step.get("name"), str)}

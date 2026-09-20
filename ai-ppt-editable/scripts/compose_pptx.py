@@ -26,6 +26,7 @@ from calibrate_page_geometry import apply_page_graph_geometry
 from chart_blank_gap_repair import repair_chart_blank_gaps
 from asset_placement import svg_to_png as _svg_to_png
 from component_expander import _choose_slide_layout, _expand_components, _frac, _load_deck, _promote_native_structures, _resolve
+from geometry_authoring import postprocess_authoring_output, prepare_cli as prepare_geometry_resolution
 from preview_renderer import find_cjk_font as _find_cjk_font
 from preview_renderer import render_previews
 from reference_preflight import validate_reference_preflight
@@ -48,7 +49,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 
 
 def _manifest_font_paths(manifest_path: str | Path | None) -> list[Path]:
-    """Resolve existing font files declared by a task-local manifest."""
+    """Resolve manifest-declared or adjacent runtime-managed font files."""
     if not manifest_path:
         return []
     path = Path(manifest_path).resolve()
@@ -63,12 +64,23 @@ def _manifest_font_paths(manifest_path: str | Path | None) -> list[Path]:
     files = manifest.get("files") if isinstance(manifest, dict) else None
     if isinstance(files, list):
         candidates.extend(item.get("file") for item in files if isinstance(item, dict) and isinstance(item.get("file"), str))
+    fonts = manifest.get("fonts") if isinstance(manifest, dict) else None
+    if isinstance(fonts, list):
+        candidates.extend(
+            item.get("file") or item.get("path")
+            for item in fonts
+            if isinstance(item, dict) and isinstance(item.get("file") or item.get("path"), str)
+        )
     result = []
     for item in candidates:
         candidate = Path(item)
         resolved = (candidate if candidate.is_absolute() else path.parent / candidate).resolve()
         if resolved.is_file() and resolved not in result:
             result.append(resolved)
+    if not result and path.is_file():
+        for resolved in sorted(path.parent.iterdir()):
+            if resolved.is_file() and resolved.suffix.lower() in {".ttf", ".otf", ".ttc"}:
+                result.append(resolved.resolve())
     return result
 
 
@@ -99,6 +111,7 @@ def main() -> None:
     parser.add_argument("--require-text-fit", action="store_true", help="block authoring unless every formal text slot fits at its target typography")
     parser.add_argument("--text-fit-report", help="E3 full-slot text-fit report; defaults next to output PPTX")
     parser.add_argument("--text-fit-e4-receipt", help="E4 receipt binding the E3 audit to the exact authored PPTX")
+    parser.add_argument("--authoring-plan", help="AuthoringPlan used to resolve and bind native geometry after export"); parser.add_argument("--geometry-resolution", help="Precomputed geometry-primitive-resolution/v2 report")
     args = parser.parse_args()
 
     layout_path = Path(args.layout)
@@ -136,6 +149,7 @@ def main() -> None:
     deck["strict_input"] = bool(args.strict_input)
     deck["require_native_structure"] = bool(args.require_native_structure or (args.strict_input and deck.get("editable_object_policy") == "native-semantic-objects"))
     output_path = Path(args.out).resolve()
+    geometry_resolution = prepare_geometry_resolution(args.authoring_plan, args.geometry_resolution)
     if page_geometry_calibration is not None:
         calibration_report = output_path.with_name(f"{output_path.stem}.page-geometry-calibration.json")
         calibration_report.parent.mkdir(parents=True, exist_ok=True)
@@ -163,7 +177,6 @@ def main() -> None:
     e3_report = run_text_fit_e3(deck, layout_path, text_fit_report, required=require_text_fit)
     if require_text_fit and not e3_report.get("gate_passed"):
         _die(text_fit_failure_message(e3_report))
-
     if args.authoring_backend == "artifact-tool":
         if args.embed_fonts:
             _die("--embed-fonts is only supported by the historical compatibility backend; use the Artifact Tool's registered fonts for strict authoring")
@@ -210,6 +223,7 @@ def main() -> None:
                 if completed.stderr:
                     print(completed.stderr, file=sys.stderr, end="")
                 _die(f"Artifact Tool strict authoring failed with exit code {completed.returncode}")
+        postprocess_authoring_output(output_path, deck, geometry_resolution)
         chart_gap_report = output_path.with_name(f"{output_path.stem}.chart-blank-gap-repair.json")
         gap_result = repair_chart_blank_gaps(output_path, deck, chart_gap_report)
         if not gap_result.get("valid", False):
@@ -243,13 +257,13 @@ def main() -> None:
             build_pptx(deck, output_path)
         except (KeyError, OSError, TypeError, ValueError) as exc:
             _die(f"authoring failed: {type(exc).__name__}: {exc}")
+    postprocess_authoring_output(output_path, deck, geometry_resolution)
     e4 = write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
     if require_text_fit and e4 is None:
         _die("E4 text-fit receipt cannot bind missing authored PPTX")
     if require_text_fit and not e4.get("valid"):
         _die("E4 text-fit receipt blocked because E3 did not pass")
-    if args.preview_dir:
-        render_previews(deck, Path(args.preview_dir))
+    if args.preview_dir: render_previews(deck, Path(args.preview_dir))
 
 
 if __name__ == "__main__":

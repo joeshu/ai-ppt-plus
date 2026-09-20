@@ -17,6 +17,7 @@ DEFAULT_CJK_FAMILIES = (
     "HarmonyOS Sans SC",
     "WenQuanYi Zen Hei",
 )
+FONT_WEIGHT_STYLES = {400: "Regular", 500: "Medium", 600: "SemiBold", 700: "Bold"}
 
 
 def _fc_match_file(pattern: str) -> Path | None:
@@ -33,18 +34,21 @@ def _fc_match_file(pattern: str) -> Path | None:
     return None
 
 
-def resolve_font_file(family: str, *, bold: bool = False) -> Path | None:
+def resolve_font_file(family: str, *, bold: bool = False, weight: int | None = None) -> Path | None:
     """Resolve one real runtime font file for measurement/registration."""
     family = str(family or "").strip() or DEFAULT_CJK_FAMILIES[0]
-    style = "Bold" if bold else "Regular"
+    target_weight = int(weight) if weight is not None else (700 if bold else 400)
+    style = FONT_WEIGHT_STYLES.get(target_weight, "Bold" if target_weight >= 700 else "Regular")
     resolved = _fc_match_file(f"{family}:style={style}") or _fc_match_file(family)
     if resolved:
         return resolved
     windows = Path("C:/Windows/Fonts")
-    aliases = {
-        "microsoft yahei": ("msyhbd.ttc" if bold else "msyh.ttc"),
-        "微软雅黑": ("msyhbd.ttc" if bold else "msyh.ttc"),
-    }
+    aliases = {}
+    if target_weight in {400, 700}:
+        aliases = {
+            "microsoft yahei": ("msyhbd.ttc" if target_weight == 700 else "msyh.ttc"),
+            "微软雅黑": ("msyhbd.ttc" if target_weight == 700 else "msyh.ttc"),
+        }
     filename = aliases.get(family.lower())
     candidate = windows / filename if filename else None
     return candidate.resolve() if candidate and candidate.is_file() else None
@@ -52,8 +56,8 @@ def resolve_font_file(family: str, *, bold: bool = False) -> Path | None:
 
 def resolve_family_files(family: str) -> list[Path]:
     result: list[Path] = []
-    for bold in (False, True):
-        path = resolve_font_file(family, bold=bold)
+    for weight in (400, 500, 600, 700):
+        path = resolve_font_file(family, weight=weight)
         if path and path not in result:
             result.append(path)
     return result
