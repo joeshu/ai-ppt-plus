@@ -15,7 +15,7 @@
       "id": "china-unicom-downgrade-control",
       "name": "中国联通降套管控",
       "focus": ["dense_chinese", "hierarchy", "brand_asset_boundary"],
-      "source": {"kind": "file_library", "ref": "file_00000000d008720d9f147c7f1306b056"},
+      "source": {"kind": "file_library", "ref": "中国联通降套管控.png"},
       "status": "source_resolved",
       "notes": "Real one-page source image resolved from File Library on 2026-09-20; replay evidence must be produced by the current ai-ppt-editable chain."
     },
