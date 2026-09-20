@@ -6,9 +6,9 @@
   "cases": [
     {
       "id": "china-unicom-downgrade-control", "name": "中国联通降套管控", "focus": ["dense_chinese", "hierarchy", "brand_asset_boundary"],
-      "source": {"kind": "file_library", "ref": "中国联通降套管控.png"}, "status": "source_reference_missing",
+      "source": {"kind": "conversation_attachment", "ref": "WecomSave_a796a229d41950dfd301669d8858a906(8).jpeg", "baseline_mode": "source_image", "sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99", "pixel_size": [1536, 864], "aspect_ratio": "16:9", "source_lock": "source-locks/china-unicom-downgrade-control.json"}, "status": "source_resolved",
       "evidence": {"text_fit_report": "work/china-unicom-downgrade-control/text-fit-report.json", "text_render_feedback": "work/china-unicom-downgrade-control/text-render-feedback.json", "text_coverage_audit": "work/china-unicom-downgrade-control/text-coverage-audit.json", "editability_audit": "work/china-unicom-downgrade-control/editability-audit.json", "render_provenance": "work/china-unicom-downgrade-control/render-provenance.json"},
-      "notes": "The exact visual source was not returned by the 2026-09-20 File Library source search. Existing editable outputs are not accepted as a substitute because this case specifically audits current brand-asset routing. Keep NOT_RUN until the original image is materialized."
+      "notes": "Exact visual source supplied again in the active conversation on 2026-09-20 and locked by SHA-256 + pixel dimensions. Historical editable PPTX outputs remain diagnostic-only and cannot satisfy current fresh-evidence requirements."
     },
     {
       "id": "social-channel-commission-table", "name": "社交渠道佣金表格", "focus": ["table_native_authoring", "dense_chinese", "cell_text_fit"],
