@@ -25,7 +25,12 @@ from pathlib import Path
 from asset_placement import replace_svg_media as _replace_svg_media
 from asset_placement import svg_to_png as _svg_to_png
 from component_expander import _choose_slide_layout, _expand_components, _frac, _load_deck, _resolve
-from geometry_authoring import postprocess_authoring_output, prepare_cli as prepare_geometry_resolution
+from geometry_authoring import (
+    postprocess_authoring_output,
+    prepare_cli as prepare_geometry_resolution,
+    validate_artifact_tool_binding,
+    write_resolution_report,
+)
 from preview_renderer import find_cjk_font as _find_cjk_font
 from preview_renderer import render_previews
 from pptx_primitives import (
@@ -118,6 +123,15 @@ def main() -> None:
     deck["strict_input"] = bool(args.strict_input)
     output_path = Path(args.out).resolve()
     geometry_resolution = prepare_geometry_resolution(args.authoring_plan, args.geometry_resolution)
+    geometry_resolution_path = None
+    if geometry_resolution is not None:
+        geometry_resolution_path = write_resolution_report(output_path, geometry_resolution)
+        binding_report = validate_artifact_tool_binding(deck, geometry_resolution)
+        binding_report_path = output_path.with_name(f"{output_path.stem}.geometry-binding.json")
+        binding_report_path.write_text(json.dumps(binding_report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        if not binding_report.get("valid"):
+            issue_codes = ", ".join(str(item.get("code")) for item in binding_report.get("issues", []))
+            _die(f"geometry Artifact Tool binding preflight failed: {issue_codes}")
     if args.font_dir:
         deck["font_dir"] = str(Path(args.font_dir).resolve())
     effective_font_dir = str(Path(args.font_dir).resolve()) if args.font_dir else deck.get("font_dir")
@@ -145,6 +159,8 @@ def main() -> None:
                 str(node_path), str(builder), "--layout", str(normalized_layout), "--output", str(output_path),
                 "--report", str(report_path), "--inspect", str(inspect_path),
             ]
+            if geometry_resolution_path:
+                command.extend(["--geometry-resolution", str(geometry_resolution_path)])
             if args.node_modules:
                 command.extend(["--node-modules", str(Path(args.node_modules).resolve())])
             if effective_font_dir:

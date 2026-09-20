@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.20.12
+  package_revision: 2026.09.20.13
 ---
 
 # AI PPT Editable
@@ -64,6 +64,7 @@ python3 scripts/validate_geometry_authoring.py \
 ```
 
 When `FREEFORM_BEZIER` is required, the final OOXML must contain true `a:cubicBezTo` geometry rather than segmented straight-line approximations.
+The build must also produce `*.geometry-binding.json`; it is invalid if a resolved page/object target was not present in the Artifact Tool layout.
 
 ## 5. native_editable / imagegen_asset
 

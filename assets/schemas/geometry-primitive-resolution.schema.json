@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ai-ppt-plus/geometry-primitive-resolution.schema.json",
+  "title": "AI PPT Geometry Primitive Resolution",
+  "type": "object",
+  "required": ["schema", "valid", "status", "repair_required", "resolutions", "issues"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/geometry-primitive-resolution/v2"},
+    "valid": {"type": "boolean"},
+    "status": {"enum": ["passed", "failed"]},
+    "repair_required": {"type": "boolean"},
+    "resolutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["object_id", "page", "primitive", "parameters", "status", "reason", "evidence"],
+        "properties": {
+          "object_id": {"type": "string", "minLength": 1},
+          "page": {"type": "integer", "minimum": 1},
+          "semantic_role": {"type": ["string", "null"]},
+          "declared_implementation_type": {"type": ["string", "null"]},
+          "primitive": {"enum": ["RECT", "ROUNDRECT", "ELLIPSE", "TRAPEZOID", "FUNNEL", "FILLED_ARROW", "CONNECTOR", "FREEFORM_BEZIER", "TABLE", "CHART", "IMAGEGEN_COMPLEX", "UNRESOLVED"]},
+          "expected_implementation_type": {"type": ["string", "null"]},
+          "parameters": {"type": "object"},
+          "parameter_issues": {"type": "array", "items": {"type": "object"}},
+          "status": {"enum": ["resolved", "repair-required", "blocked"]},
+          "reason": {"type": "string"},
+          "evidence": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "issues": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": true
+}

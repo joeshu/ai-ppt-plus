@@ -46,15 +46,62 @@ def _path_points(path: ET.Element) -> list[tuple[int, int]]:
     return result
 
 
+def _control_points(parameters: dict) -> list[tuple[float, float]] | None:
+    raw = parameters.get("control_points") if isinstance(parameters, dict) else None
+    if isinstance(raw, dict):
+        raw = [raw.get("start"), raw.get("control1"), raw.get("control2"), raw.get("end")]
+    if not isinstance(raw, list):
+        return None
+    points = []
+    for value in raw:
+        if isinstance(value, dict):
+            x, y = value.get("x"), value.get("y")
+        elif isinstance(value, (list, tuple)) and len(value) >= 2:
+            x, y = value[0], value[1]
+        else:
+            return None
+        try:
+            x, y = float(x), float(y)
+        except (TypeError, ValueError):
+            return None
+        if not (0 <= x <= 1 and 0 <= y <= 1):
+            return None
+        points.append((x, y))
+    return points
+
+
+def _emu_points(points: list[tuple[float, float]]) -> list[tuple[int, int]]:
+    return [(round(x * 100000), round(y * 100000)) for x, y in points]
+
+
+def _ooxml_path_control_points(path: ET.Element) -> tuple[list[tuple[int, int]], list[dict]]:
+    points: list[tuple[int, int]] = []
+    malformed: list[dict] = []
+    for index, cubic in enumerate(path.findall("a:cubicBezTo", NS)):
+        raw = cubic.findall("a:pt", NS)
+        if len(raw) != 3:
+            malformed.append({"segment": index, "point_count": len(raw)})
+            continue
+        for point in raw:
+            try:
+                points.append((int(point.get("x", "-1")), int(point.get("y", "-1"))))
+            except (TypeError, ValueError):
+                malformed.append({"segment": index, "point": point.attrib})
+    return points, malformed
+
+
+def _object_name_matches(name: str | None, object_id: str) -> bool:
+    """Match top-level ids and Artifact Tool's group/child stable names."""
+    return bool(name) and (name == object_id or name.endswith(f"/{object_id}"))
+
+
 def audit(resolution: dict, pptx: Path) -> dict:
     issues: list[dict] = []
     resolutions = [item for item in resolution.get("resolutions", []) if isinstance(item, dict)]
     expected_cubic = 0
     for item in resolutions:
         if item.get("primitive") == "FREEFORM_BEZIER":
-            controls = (item.get("parameters") or {}).get("control_points") or []
-            if isinstance(controls, dict):
-                controls = [controls.get("start"), controls.get("control1"), controls.get("control2"), controls.get("end")]
+            controls = _control_points(item.get("parameters") or {})
             expected_cubic += max(1, (len(controls) - 1) // 3) if controls else 1
     with zipfile.ZipFile(pptx, "r") as archive:
         slide_payloads = {
@@ -84,7 +131,13 @@ def audit(resolution: dict, pptx: Path) -> dict:
             if root is None:
                 issues.append({"severity": "blocker", "code": "geometry_slide_missing", "object_id": oid, "page": page})
                 continue
-            matches = [node for node in root.findall(".//p:sp", NS) if (node.find("p:nvSpPr/p:cNvPr", NS) is not None and node.find("p:nvSpPr/p:cNvPr", NS).get("name") == oid)]
+            matches = [
+                node for node in root.findall(".//p:sp", NS)
+                if (
+                    node.find("p:nvSpPr/p:cNvPr", NS) is not None
+                    and _object_name_matches(node.find("p:nvSpPr/p:cNvPr", NS).get("name"), oid)
+                )
+            ]
             if len(matches) != 1:
                 issues.append({"severity": "blocker", "code": "geometry_target_ambiguous", "object_id": oid, "page": page, "matches": len(matches)})
                 continue
@@ -107,14 +160,37 @@ def audit(resolution: dict, pptx: Path) -> dict:
                     issues.append({"severity": "blocker", "code": "geometry_directional_path_missing", "object_id": oid})
                 elif actual[:4] != expected:
                     issues.append({"severity": "blocker", "code": "geometry_directional_path_mismatch", "object_id": oid, "expected": expected, "actual": actual[:4]})
+                if path is not None and path.find("a:close", NS) is None:
+                    issues.append({"severity": "blocker", "code": "geometry_directional_path_not_closed", "object_id": oid})
             elif primitive == "FREEFORM_BEZIER":
-                count = len(cust.findall(".//a:cubicBezTo", NS)) if cust is not None else 0
-                controls = (item.get("parameters") or {}).get("control_points") or []
-                if isinstance(controls, dict):
-                    controls = [controls.get("start"), controls.get("control1"), controls.get("control2"), controls.get("end")]
+                parameters = item.get("parameters") or {}
+                controls = _control_points(parameters)
                 expected_count = max(1, (len(controls) - 1) // 3) if controls else 1
-                if cust is None or count != expected_count:
+                path = cust.find("a:pathLst/a:path", NS) if cust is not None else None
+                cubic_nodes = path.findall("a:cubicBezTo", NS) if path is not None else []
+                count = len(cubic_nodes)
+                if path is None or count != expected_count:
                     issues.append({"severity": "blocker", "code": "geometry_cubic_bezier_missing_in_ooxml", "object_id": oid, "expected": expected_count, "actual": count})
+                if controls is None or len(controls) < 4 or (len(controls) - 1) % 3:
+                    issues.append({"severity": "blocker", "code": "geometry_cubic_control_points_invalid", "object_id": oid, "detail": "resolution must provide start plus 3n normalized points"})
+                if path is not None and path.findall("a:lnTo", NS):
+                    issues.append({"severity": "blocker", "code": "geometry_cubic_segmented_line_fallback", "object_id": oid, "detail": "FREEFORM_BEZIER cannot contain line-segment approximations"})
+                actual_controls, malformed = _ooxml_path_control_points(path) if path is not None else ([], [])
+                if malformed:
+                    issues.append({"severity": "blocker", "code": "geometry_cubic_control_point_count_invalid", "object_id": oid, "segments": malformed})
+                expected_start = _emu_points(controls[:1]) if controls else []
+                actual_start = []
+                if path is not None:
+                    start = path.find("a:moveTo/a:pt", NS)
+                    if start is not None:
+                        try:
+                            actual_start = [(int(start.get("x", "-1")), int(start.get("y", "-1")))]
+                        except (TypeError, ValueError):
+                            actual_start = []
+                if controls is not None and actual_start != expected_start:
+                    issues.append({"severity": "blocker", "code": "geometry_cubic_start_point_mismatch", "object_id": oid, "expected": expected_start, "actual": actual_start})
+                if controls is not None and actual_controls != _emu_points(controls[1:]):
+                    issues.append({"severity": "blocker", "code": "geometry_cubic_control_points_mismatch", "object_id": oid, "expected": _emu_points(controls[1:]), "actual": actual_controls})
     if has_shape_tree and expected_cubic and actual_cubic < expected_cubic:
         issues.append({"severity": "blocker", "code": "geometry_cubic_bezier_total_missing_in_ooxml", "detail": f"expected at least {expected_cubic}, found {actual_cubic}"})
     return {"schema": SCHEMA, "valid": not issues, "status": "passed" if not issues else "failed", "expected_cubic_bezier_count": expected_cubic, "actual_cubic_bezier_count": actual_cubic, "issues": issues}

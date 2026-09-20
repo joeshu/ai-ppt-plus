@@ -59,7 +59,7 @@ Exit criteria:
 
 ## Batch 4 — P1 Geometry Primitive Resolver
 
-Status: **in implementation**.
+Status: **merged / complete**.
 
 Goal: choose the best native PowerPoint geometry before authoring.
 
@@ -74,8 +74,13 @@ Exit criteria:
 - resolver produces deterministic primitive choice and parameters;
 - geometry choice is written into AuthoringPlan;
 - regressions cover filled arrow vs connector, curved path, rounded card and complex-art fallback.
+- page/object binding is passed into Artifact Tool and recorded in a binding receipt;
+- invalid direction, adjustment, endpoint or cubic control-point input fails before authoring;
+- final OOXML rejects segmented-line substitutes for cubic paths.
 
 ## Batch 5 — P1 Asset-to-Render Coordinate Loop
+
+Status: **merged / complete**.
 
 Goal: close the coordinate gap between transparent asset canvas and final PPT render.
 
@@ -92,6 +97,8 @@ Exit criteria:
 - crop replay shows repair convergence without neighbor movement.
 
 ## Batch 6 — P1 Protected Repair Planner
+
+Status: **merged / complete**.
 
 Goal: turn Responsible Object Repair into constrained, regression-safe patch planning.
 

@@ -50,13 +50,20 @@ def main() -> int:
         output = folder / "output.pptx"
         report_path = folder / "report.json"
         inspect_path = folder / "inspect.ndjson"
+        geometry_path = folder / "geometry-resolution.json"
+        geometry_path.write_text(json.dumps({
+            "schema": "ai-ppt-plus/geometry-primitive-resolution/v2",
+            "valid": True,
+            "repair_required": False,
+            "resolutions": [{"object_id": "rule", "page": 1, "primitive": "CONNECTOR", "parameters": {"endpoints": [[0.08, 0.3], [0.92, 0.3]]}}],
+        }), encoding="utf-8")
         layout_path.write_text(json.dumps(layout, ensure_ascii=False), encoding="utf-8")
         command = [
             str(Path(runtime_node).resolve()), str(SCRIPT),
             "--layout", str(layout_path), "--output", str(output),
             "--node-modules", str(Path(runtime_modules).resolve()),
             "--font-dir", str(FONT_DIR.resolve()), "--font-family", "Noto Sans CJK SC",
-            "--strict-input", "--report", str(report_path), "--inspect", str(inspect_path),
+            "--strict-input", "--geometry-resolution", str(geometry_path), "--report", str(report_path), "--inspect", str(inspect_path),
         ]
         completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
         assert completed.returncode == 0, completed.stdout + completed.stderr
@@ -68,6 +75,10 @@ def main() -> int:
         assert report["inspect"]["counts"].get("textbox", 0) >= 1
         assert report["inspect"]["counts"].get("table", 0) >= 1
         assert report["inspect"]["counts"].get("chart", 0) >= 1
+        assert report["geometry_binding"]["valid"] is True
+        assert report["geometry_binding"]["target_count"] == 1
+        assert report["geometry_binding"]["applied_count"] == 1
+        assert report["geometry_binding"]["resolution_sha256"] == json_digest(json.loads(geometry_path.read_text(encoding="utf-8")))
         assert len(report["fonts"]) == 4
         with zipfile.ZipFile(output) as package:
             xml = package.read("ppt/slides/slide1.xml")
