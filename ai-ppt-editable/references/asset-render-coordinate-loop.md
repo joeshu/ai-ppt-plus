@@ -29,6 +29,15 @@ Policy:
 5. A valid B5 report may still set `repair_loop_required=true` when it emits a
    non-zero placement delta; the pipeline remains in a repair state until B6
    or human review resolves it.
+6. The center of an observed visible bbox is not an observed alpha-weighted
+   visual centroid. Supply `render.observed_visual_centroid_px` when measured;
+   otherwise the report keeps `centroid_delta_px=null` and uses bbox-center
+   translation only. Never interpret the false centroid drift of an asymmetric
+   ribbon or skyline as placement evidence.
+7. A continuous footer/header/ribbon system requires contour evidence in
+   addition to this rectangular coordinate record. Sample the final composed
+   band with `scripts/audit_continuous_band.py`. A matching bbox cannot close a
+   mismatched wave profile, skyline baseline or child-anchor relationship.
 
 Example:
 
@@ -38,4 +47,8 @@ python3 scripts/asset_render_coordinate_loop.py project/asset-render-records.jso
   --capture-crops run/asset-render-crops \
   --auto-bind-asset-qa \
   --report run/asset-render-coordinate-report.json
+
+python3 scripts/audit_continuous_band.py project/reference.png run/rendered/slide-1.png \
+  --region 0 0.78 1 0.22 --samples 13 \
+  --report run/footer-contour-report.json --json
 ```

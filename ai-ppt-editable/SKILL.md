@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.20.08
+  package_revision: 2026.09.20.09
 ---
 
 # AI PPT Editable
@@ -13,7 +13,7 @@ Reconstruct or repair editable PPTX with the supplied reference as visual author
 
 New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python is inspection/QA only and is not an authoring fallback. Whole-page raster fallback is forbidden.
 
-Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
+Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
 
 ## Formal production chain
 
@@ -101,6 +101,8 @@ See `references/text-coverage-auditor.md` and `assets/text-coverage.template.jso
 ## 8. Asset Generation
 
 Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha. Validate non-empty alpha bbox, transparent corners, safe padding, clipping and plausible subject coverage. For grids, detect actual row/column centers before slicing; repack by visible alpha bbox and visual centroid.
+
+For continuous low-frequency systems such as footer ribbons, skyline bands and header waves, rectangular alpha geometry is necessary but insufficient. Record a semantic parent bbox, sampled contour landmarks and child anchors. Compare the final composed region against the reference with `scripts/audit_continuous_band.py`; zero bbox delta must not close a visible contour mismatch. Keep readable footer/header text native and repair in this order: parent bbox -> contour profile -> asset scale/crop -> child anchors -> z-order.
 
 Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon.
 
