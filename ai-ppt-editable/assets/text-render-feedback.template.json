@@ -1,0 +1,20 @@
+{
+  "schema": "ai-ppt-plus/text-render-feedback/v1",
+  "valid": true,
+  "diagnostic_only": true,
+  "thresholds": {
+    "position_tolerance_px": 3.0,
+    "scale_tolerance": 0.1,
+    "coverage_tolerance": 0.1,
+    "release_gate": false
+  },
+  "summary": {
+    "record_count": 0,
+    "repair_required_count": 0,
+    "hierarchy_drift_count": 0,
+    "position_drift_count": 0,
+    "scale_or_weight_drift_count": 0
+  },
+  "records": [],
+  "issues": []
+}
