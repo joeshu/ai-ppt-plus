@@ -1,0 +1,16 @@
+{
+  "schema": "ai-ppt-plus/source-lock/v1",
+  "case_id": "china-unicom-downgrade-control",
+  "source_kind": "conversation_attachment",
+  "source_name": "WecomSave_a796a229d41950dfd301669d8858a906(8).jpeg",
+  "received_at": "2026-09-20T15:16:02Z",
+  "sha256": "036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99",
+  "byte_size": 516123,
+  "pixel_width": 1536,
+  "pixel_height": 864,
+  "aspect_ratio": "16:9",
+  "format": "JPEG",
+  "visual_baseline": true,
+  "historical_outputs_allowed_as_visual_baseline": false,
+  "notes": "Exact source image re-supplied by the user for Batch 5. The binary remains a conversation attachment; this lock prevents historical editable PPTX files from being substituted as the visual source."
+}
