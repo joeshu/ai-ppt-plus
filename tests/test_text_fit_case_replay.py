@@ -2,8 +2,8 @@ import importlib.util,json,tempfile,unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];SCRIPT=ROOT/"scripts"/"text_fit_case_replay.py";spec=importlib.util.spec_from_file_location("text_fit_case_replay",SCRIPT);mod=importlib.util.module_from_spec(spec);assert spec.loader;spec.loader.exec_module(mod)
 class TextFitCaseReplayTests(unittest.TestCase):
-    def _manifest(self,evidence=None):
-        return {"batch":"knight-textfit-b5","acceptance":{"text_loss_allowed":0,"overflow_allowed":0,"whole_slide_raster_allowed":0,"native_text_required":True,"font_shrink_last":True,"fresh_render_required_after_repair":True},"cases":[{"id":"real-case","name":"real case","status":"source_resolved","focus":["dense_chinese"],"evidence":evidence or {}}]}
+    def _manifest(self,evidence=None,status="source_resolved"):
+        return {"batch":"knight-textfit-b5","acceptance":{"text_loss_allowed":0,"overflow_allowed":0,"whole_slide_raster_allowed":0,"native_text_required":True,"font_shrink_last":True,"fresh_render_required_after_repair":True},"cases":[{"id":"real-case","name":"real case","status":status,"source":{"kind":"file_library","ref":"real-source.pptx"},"focus":["dense_chinese"],"evidence":evidence or {}}]}
     def _write_complete(self,root:Path,*,overflow=False,fresh=True,native=1):
         (root/"fit.json").write_text(json.dumps({"valid":True,"all_slots_measured":True,"slots":[{"object_id":"title","target_fits":not overflow,"repair":{"font_shrink_last":True}}]}),encoding="utf-8")
         (root/"feedback.json").write_text(json.dumps({"valid":True,"records":[{"object_id":"title","repair_required":True,"repair":{"requires_fresh_render":True},"reference":{"render_sha256":"a"*64},"candidate":{"render_sha256":"b"*64}}]}),encoding="utf-8")
@@ -14,6 +14,10 @@ class TextFitCaseReplayTests(unittest.TestCase):
     def test_missing_real_evidence_is_not_run_not_fake_pass(self):
         with tempfile.TemporaryDirectory() as tmp:report=mod.evaluate(self._manifest(),root=Path(tmp))
         self.assertFalse(report["release_ready"]);self.assertEqual(report["cases"][0]["status"],"NOT_RUN");self.assertEqual(set(report["cases"][0]["missing_evidence"]),{"text_fit_report","text_render_feedback","text_coverage_audit","editability_audit","render_provenance"})
+    def test_unresolved_real_source_is_not_run_even_with_complete_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);evidence=self._write_complete(root);report=mod.evaluate(self._manifest(evidence,status="source_reference_missing"),root=root)
+        self.assertEqual(report["cases"][0]["status"],"NOT_RUN");self.assertEqual(report["cases"][0]["missing_evidence"],["source_reference"]);self.assertFalse(report["release_ready"])
     def test_complete_b1_b4_evidence_can_pass(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);evidence=self._write_complete(root);report=mod.evaluate(self._manifest(evidence),root=root)
@@ -31,4 +35,5 @@ class TextFitCaseReplayTests(unittest.TestCase):
     def test_frozen_manifest_has_four_real_cases_and_complete_evidence_contract(self):
         manifest=json.loads((ROOT/"evals"/"text-fit-batch5"/"cases.json").read_text(encoding="utf-8"));self.assertEqual(len(manifest["cases"]),4);required={"text_fit_report","text_render_feedback","text_coverage_audit","editability_audit","render_provenance"}
         for row in manifest["cases"]:self.assertEqual(set(row["evidence"]),required)
+        status={row["id"]:row["status"] for row in manifest["cases"]};self.assertEqual(status["china-unicom-downgrade-control"],"source_reference_missing");self.assertEqual(sum(v=="source_resolved" for v in status.values()),3)
 if __name__=="__main__":unittest.main()
