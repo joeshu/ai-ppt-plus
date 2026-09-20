@@ -59,6 +59,15 @@ def main() -> int:
         assert not report["valid"]
         assert any(item["code"] == "final_asset_not_imagegen" for item in report["errors"])
 
+        brand_fallback = root / "brand-fallback.json"
+        brand_fallback.write_text(json.dumps({
+            "provenance_policy": "imagegen_final_assets",
+            "assets": [{"asset_id": "logo", "asset_class": "brand_lockup", "provenance_mode": "source_reuse", "fallback_decision": "user_approved", "decision_id": "decision-1", "decision_reason": "temporary test fallback", "decision_timestamp": "2026-09-01T00:00:00Z", "source_ref": "source.png", "source_bbox": [1, 2, 3, 4], "source_sha256": "0" * 64, "copied_to": "editable/i1.png", "prompt_file": "not-used", "backend": "source-crop"}],
+        }), encoding="utf-8")
+        report = validate(brand_fallback, strict=True)
+        assert not report["valid"]
+        assert any(item["code"] == "brand_asset_requires_native_imagegen" for item in report["errors"])
+
         bad = root / "bad.json"
         bad.write_text(json.dumps({"provenance_policy": "imagegen_final_assets", "assets": [{"asset_id": "g1", "asset_class": "gradient_visual", "provenance_mode": "source_reuse", "source_reuse": True}]}), encoding="utf-8")
         report = validate(bad, strict=True)

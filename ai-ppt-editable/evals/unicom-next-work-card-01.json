@@ -22,7 +22,7 @@
     "native_imagegen_for_non_brand_icons": true,
     "generic_icon_substitution_forbidden": true,
     "source_crop_icon_requires_explicit_user_fallback": true,
-    "brand_logo_source_exception": true,
+    "brand_assets_require_native_imagegen": true,
     "no_visual_asset_nodes_means_no_imagegen_requirement": true,
     "cjk_embedded_font_required": true,
     "typography_calibration_required": true,

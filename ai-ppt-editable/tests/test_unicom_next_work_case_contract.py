@@ -21,7 +21,7 @@ def main() -> int:
     assert gates["native_imagegen_for_non_brand_icons"] is True
     assert gates["generic_icon_substitution_forbidden"] is True
     assert gates["source_crop_icon_requires_explicit_user_fallback"] is True
-    assert gates["brand_logo_source_exception"] is True
+    assert gates["brand_assets_require_native_imagegen"] is True
     assert gates["no_visual_asset_nodes_means_no_imagegen_requirement"] is True
     assert gates["cjk_embedded_font_required"] is True
     assert gates["typography_calibration_required"] is True

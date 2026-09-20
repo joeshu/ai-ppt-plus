@@ -28,23 +28,25 @@ intermediate, never the delivered PPT object. See
 `references/imagegen-sheet-slicing.md` for the required classification and
 reject conditions.
 
-Original icon files may be supplied as the authoritative source for a
-deterministic `source_reuse` asset when the pixels are already complete and
-only crop/alpha treatment is required. Missing, ambiguous or reconstructive
-assets use the imagegen asset-sheet route. Both routes require source-vs-frame
-evidence, B5 cutout/split QA where applicable, an independent delivered asset
-and provenance hashes. A screenshot crop is not an original asset unless its
-source bbox and source hash are recorded; a phone/viewer letterbox crop is
-never a slide asset. If neither route can preserve fidelity, block the object
-and request the source instead of inventing a substitute.
+Original non-brand files may be supplied as authoritative source evidence for a
+deterministic `source_reuse` fallback only when the user explicitly requests
+the exact supplied pixels or explicitly approves the fallback after ImageGen
+failure. Missing, ambiguous or reconstructive assets use the ImageGen route.
+Both routes require source-vs-frame evidence, B5 cutout/split QA where
+applicable, an independent delivered asset and provenance hashes. A screenshot
+crop is not an original asset unless its source bbox and source hash are
+recorded; a phone/viewer letterbox crop is never a slide asset.
 
-Complete brand lockups are an exception to grid splitting: keep the logo mark
-and wordmark together as one `brand_lockup`/`role: logo` asset. Do not pass a
-complete lockup to `slice_grid.py --auto`, because automatic segmentation can
-split the mark from its wordmark. Alpha-trim or crop the generated lockup
-output without splitting it, and record `whole_asset_contract` in the object
-manifest. Only independently replaceable non-brand icons may be split into
-separate delivered assets.
+Brand visuals never use this fallback. Logos, wordmarks, calligraphic slogans,
+brand bands, 5G marks and other brand-class assets must be generated natively
+by ImageGen as independent assets. Their source crops are reference evidence
+only.
+
+Complete brand lockups remain one generated `brand_lockup`/`role: logo` asset.
+Do not pass a complete lockup to `slice_grid.py --auto`, because automatic
+segmentation can split the mark from its wordmark. Validate the generated
+transparent asset as a whole and record `whole_asset_contract` in the object
+manifest. This is a whole-asset generation rule, not a source-reuse exception.
 
 ## Imagegen extraction evidence gate
 

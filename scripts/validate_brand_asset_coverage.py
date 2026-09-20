@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Enforce brand/logo coverage from PageGraph into final generated assets.
 
-Brand is not an exception to the imagegen final-asset route. Complete lockups
-must remain a single independent asset so a logo mark and its wordmark cannot be
+Brand uses the native ImageGen final-asset route. Complete lockups must remain
+a single independent generated asset so a logo mark and its wordmark cannot be
 silently re-typeset as unrelated native text.
 """
 from __future__ import annotations
@@ -63,6 +63,13 @@ def validate_brand_coverage(run_root: Path) -> dict:
             continue
         if asset.get("independent_asset") is not True:
             result["issues"].append({"severity": "blocker", "code": "brand_asset_not_independent", "asset_id": node["id"]})
+        if str(asset.get("provenance_mode") or "").lower() != "imagegen":
+            result["issues"].append({"severity": "blocker", "code": "brand_asset_requires_native_imagegen", "asset_id": node["id"], "observed": asset.get("provenance_mode")})
+        for field in ("generated_source", "copied_to", "prompt_file", "backend"):
+            if not isinstance(asset.get(field), str) or not asset[field].strip():
+                result["issues"].append({"severity": "blocker", "code": "brand_imagegen_evidence_missing", "asset_id": node["id"], "field": field})
+        if "imagegen" not in str(asset.get("backend") or "").lower():
+            result["issues"].append({"severity": "blocker", "code": "brand_non_imagegen_backend", "asset_id": node["id"], "backend": asset.get("backend")})
         if node["role"] in LOCKUP_ROLES:
             if asset.get("whole_asset_contract") is not True:
                 result["issues"].append({"severity": "blocker", "code": "brand_lockup_whole_asset_contract_missing", "asset_id": node["id"]})

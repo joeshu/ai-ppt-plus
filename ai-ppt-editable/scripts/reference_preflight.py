@@ -21,8 +21,9 @@ MANDATORY_ROLES = {
     "icon", "badge", "illustration", "decorative_art", "decorative-art",
     "decoration", "complex_art", "complex-art", "artistic_typography",
     "artistic-typography", "gradient_visual", "gradient-visual",
+    "logo", "brand", "brand_lockup", "brand-lockup", "wordmark", "brand-logo",
+    "calligraphic_slogan", "signature", "seal", "brand_band", "5g_mark", "locked_brand_art",
 }
-BRAND_ROLES = {"logo", "brand", "brand_lockup", "brand-lockup", "wordmark", "brand-logo"}
 FONT_SUFFIXES = {".ttf", ".otf", ".ttc", ".woff", ".woff2"}
 
 
@@ -58,8 +59,6 @@ def _page_graph_assets(data: dict) -> list[dict]:
         node_id = str(item.get("id", "")).strip()
         node_type = str(item.get("type", "")).strip().lower()
         role = _norm_role(item.get("role"))
-        if role in BRAND_ROLES:
-            continue
         if node_type in MANDATORY_GRAPH_TYPES or role in MANDATORY_ROLES:
             if not node_id:
                 raise ValueError("visual asset node is missing id")

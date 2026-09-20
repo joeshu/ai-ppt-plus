@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.20.09
+  package_revision: 2026.09.20.10
 ---
 
 # AI PPT Editable
@@ -70,7 +70,16 @@ When `FREEFORM_BEZIER` is required, the final OOXML must contain true `a:cubicBe
 Classify every non-text visual into exactly one practical class before authoring:
 
 - `native_editable`: readable text, cards/panels, dividers, ordinary arrows/connectors, simple badges, semantic tables and native charts whose data/meaning are known.
-- `imagegen_asset`: icons, pictograms, complex badges, decorative art, illustration fragments, artistic marks, complex ribbons/streams, multi-lane gradient arrow systems and visuals whose faithful native reconstruction would require brittle custom drawing.
+- `imagegen_asset`: icons, pictograms, complex badges, logos, wordmarks, calligraphic brand marks, decorative art, illustration fragments, artistic marks, complex ribbons/streams, multi-lane gradient arrow systems and visuals whose faithful native reconstruction would require brittle custom drawing.
+
+All brand-class visuals use the native ImageGen route. This includes `logo`,
+`brand`, `brand_lockup`, `wordmark`, `calligraphic_slogan`, `signature`,
+`seal`, `brand_band`, `5g_mark` and `locked_brand_art`. A source crop may guide
+the prompt and provide geometry/color evidence, but it is never a final brand
+asset and it is never silently cut out or reused. Generate each brand visual as
+one independent transparent asset when it overlays the slide; preserve a
+complete lockup as one generated asset rather than OCR/retypesetting its
+internal lettering. The resulting PPT picture remains movable and replaceable.
 
 Keep readable formal text native. Keep independent visual assets independently movable. Editability is semantic editability, not maximum object fragmentation.
 
@@ -104,7 +113,7 @@ Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha.
 
 For continuous low-frequency systems such as footer ribbons, skyline bands and header waves, rectangular alpha geometry is necessary but insufficient. Record a semantic parent bbox, sampled contour landmarks and child anchors. Compare the final composed region against the reference with `scripts/audit_continuous_band.py`; zero bbox delta must not close a visible contour mismatch. Keep readable footer/header text native and repair in this order: parent bbox -> contour profile -> asset scale/crop -> child anchors -> z-order.
 
-Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon.
+Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon. An explicitly approved source-reuse fallback remains available for non-brand assets only; brand assets remain blocked until native ImageGen succeeds.
 
 ## 9. Artifact Tool Build
 
