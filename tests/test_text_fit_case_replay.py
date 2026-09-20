@@ -35,5 +35,5 @@ class TextFitCaseReplayTests(unittest.TestCase):
     def test_frozen_manifest_has_four_real_cases_and_complete_evidence_contract(self):
         manifest=json.loads((ROOT/"evals"/"text-fit-batch5"/"cases.json").read_text(encoding="utf-8"));self.assertEqual(len(manifest["cases"]),4);required={"text_fit_report","text_render_feedback","text_coverage_audit","editability_audit","render_provenance"}
         for row in manifest["cases"]:self.assertEqual(set(row["evidence"]),required)
-        status={row["id"]:row["status"] for row in manifest["cases"]};self.assertEqual(status["china-unicom-downgrade-control"],"source_reference_missing");self.assertEqual(sum(v=="source_resolved" for v in status.values()),3)
+        status={row["id"]:row["status"] for row in manifest["cases"]};self.assertEqual(status["china-unicom-downgrade-control"],"source_resolved");self.assertEqual(sum(v=="source_resolved" for v in status.values()),4);unicom=next(row for row in manifest["cases"] if row["id"]=="china-unicom-downgrade-control");self.assertEqual(unicom["source"]["sha256"],"036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99");self.assertEqual(unicom["source"]["width_px"],1536);self.assertEqual(unicom["source"]["height_px"],864)
 if __name__=="__main__":unittest.main()
