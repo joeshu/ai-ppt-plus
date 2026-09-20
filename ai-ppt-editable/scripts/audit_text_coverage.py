@@ -54,6 +54,9 @@ def _validate_trace(entry: dict, evidence: dict, *, expected: str, producer: str
     text_spec_id = entry.get("text_spec_id")
     if not isinstance(text_spec_id, str) or not text_spec_id.strip():
         issues.append(problem("text_coverage_text_spec_id_missing", "text_spec_id is required", **context))
+    evidence_spec_id = evidence.get("text_spec_id")
+    if isinstance(text_spec_id, str) and text_spec_id.strip() and evidence_spec_id != text_spec_id:
+        issues.append(problem("text_coverage_text_spec_binding_mismatch", "text_fit_evidence.text_spec_id must equal entry.text_spec_id", **context))
 
     content_sha = evidence.get("content_sha256")
     if not isinstance(content_sha, str) or not SHA256_RE.match(content_sha):
@@ -224,6 +227,8 @@ def audit(plan: dict, coverage: dict, *, plan_sha256: str, text_fit_report: dict
             issues.append(problem("text_coverage_evidence_id_missing", "text_fit_evidence_id is required", target_id=target_id, owner_object_id=owner_id if isinstance(owner_id, str) else None))
         elif measured_ids is not None and evidence_id not in measured_ids:
             issues.append(problem("text_coverage_evidence_id_unmeasured", "text_fit_evidence_id is absent from measured_object_ids", target_id=target_id, owner_object_id=owner_id if isinstance(owner_id, str) else None))
+        if isinstance(evidence_id, str) and evidence_id not in fit_slots:
+            issues.append(problem("text_coverage_evidence_slot_missing", "text_fit_evidence_id has no materialized slot in the supplied text-fit report", target_id=target_id, owner_object_id=owner_id if isinstance(owner_id, str) else None))
 
         evidence = entry.get("text_fit_evidence")
         if not isinstance(evidence, dict) or evidence.get("measured") is not True:

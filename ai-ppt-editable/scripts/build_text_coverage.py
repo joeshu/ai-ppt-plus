@@ -35,7 +35,8 @@ def owner_from_slot(slot_id: str, kind: str) -> str:
         return parts[1]
     return parts[-1]
 
-def producer(kind: str, slot: dict) -> str:
+def producer(kind: str, slot: dict | None = None) -> str:
+    slot = slot or {}
     explicit = slot.get("producer_kind") or slot.get("text_producer_kind")
     if isinstance(explicit, str) and explicit.strip():
         return explicit.strip()
