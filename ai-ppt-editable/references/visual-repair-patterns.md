@@ -100,6 +100,12 @@ Landmarks are normalized to the parent bbox. Complex wave/skyline art may be one
 5. Repair z-order.
 6. Re-render the whole semantic-region crop and then the full page.
 
+For red continuous bands, `scripts/audit_continuous_band.py` can materialize
+the sampled top-edge profile. Treat the result as repair evidence, not a
+universal scalar release gate. If the bbox agrees but landmark deltas remain
+material, classify the defect as `identity_or_contour`, regenerate/rebuild the
+responsible band asset, and do not let B6 accept it as `aligned`.
+
 ## 4. Crop-selection blind spot
 
 Object-only crop selection misses failures that emerge from relationships between objects. Every fixed-reference page should therefore include semantic-region crops in addition to object crops. When content occupies the bottom/top bands, include composed footer/header crops even if no single object spans the band.

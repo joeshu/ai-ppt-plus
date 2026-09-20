@@ -264,9 +264,24 @@ def analyze(
     expected = [origin[0] + ab[0] * scale, origin[1] + ab[1] * scale, origin[0] + ab[2] * scale, origin[1] + ab[3] * scale]
     expected_centroid = [origin[0] + ac[0] * scale, origin[1] + ac[1] * scale]
     observed_center = _center(ob)
+    observed_centroid = None
+    if render.get("observed_visual_centroid_px") is not None:
+        try:
+            observed_centroid = _numbers(render.get("observed_visual_centroid_px"), 2)
+        except Exception as exc:
+            issues.append({"code": "observed_visual_centroid_invalid", "detail": str(exc)})
     expected_w, expected_h = _bbox_width_height(expected)
     scale_delta = [observed_w / expected_w - 1.0, observed_h / expected_h - 1.0]
-    centroid_delta = [observed_center[0] - expected_centroid[0], observed_center[1] - expected_centroid[1]]
+    # A visible-bbox center is not an alpha-weighted visual centroid.  The two
+    # coincide for symmetric icons but diverge badly for ribbons, skylines and
+    # other low-frequency asymmetric art.  Keep bbox translation and centroid
+    # evidence separate so a complex asset is not "repaired" from a false
+    # centroid signal.
+    bbox_center_delta = [observed_center[0] - _center(expected)[0], observed_center[1] - _center(expected)[1]]
+    centroid_delta = (
+        [observed_centroid[0] - expected_centroid[0], observed_centroid[1] - expected_centroid[1]]
+        if observed_centroid is not None else None
+    )
     bbox_delta = [ob[i] - expected[i] for i in range(4)]
     clipping = ob[0] < -0.5 or ob[1] < -0.5 or ob[2] > rw + 0.5 or ob[3] > rh + 0.5
     if clipping:
@@ -289,7 +304,8 @@ def analyze(
             issues.append({"code": "render_crop_capture_failed", "detail": str(exc)})
     elif require_crop_evidence:
         issues.append({"code": "render_crop_evidence_missing", "object_id": oid})
-    delta = max([abs(value) for value in centroid_delta + bbox_delta] + [abs(value) * max(expected_w, expected_h) for value in scale_delta])
+    centroid_terms = centroid_delta or []
+    delta = max([abs(value) for value in centroid_terms + bbox_center_delta + bbox_delta] + [abs(value) * max(expected_w, expected_h) for value in scale_delta])
     repair_required = clipping or delta > delta_epsilon_px
     if repair_required and not clipping:
         classification = "placement_only"
@@ -308,13 +324,16 @@ def analyze(
         "expected_visible_bbox_px": [round(value, 3) for value in expected],
         "expected_visual_centroid_px": [round(value, 3) for value in expected_centroid],
         "observed_visible_bbox_px": [round(value, 3) for value in ob],
-        "centroid_delta_px": [round(value, 3) for value in centroid_delta],
+        "observed_visual_centroid_px": [round(value, 3) for value in observed_centroid] if observed_centroid is not None else None,
+        "centroid_delta_px": [round(value, 3) for value in centroid_delta] if centroid_delta is not None else None,
+        "bbox_center_delta_px": [round(value, 3) for value in bbox_center_delta],
         "scale_delta_ratio": [round(value, 6) for value in scale_delta],
         "visible_bbox_delta_px": [round(value, 3) for value in bbox_delta],
         "repair_required": repair_required,
         "repair": {
             "classification": classification,
-            "translate_px": [round(-value, 3) for value in centroid_delta],
+            "translate_px": [round(-value, 3) for value in (centroid_delta or bbox_center_delta)],
+            "translation_basis": "observed_visual_centroid" if centroid_delta is not None else "visible_bbox_center",
             "scale_ratio": [round(1.0 / (1.0 + value), 6) if abs(1.0 + value) > 1e-9 else None for value in scale_delta],
             "regenerate_asset": False,
         },
