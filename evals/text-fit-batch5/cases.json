@@ -1,47 +1,32 @@
 {
-  "schema": "ai-ppt-plus/text-fit-case-replay-manifest/v1",
+  "schema": "ai-ppt-plus/text-fit-case-replay-manifest/v2",
   "batch": "knight-textfit-b5",
-  "purpose": "Real-case replay for the Knight-derived text-fit rules after B1-B4 integration. Cases are frozen by semantic failure mode; missing source/evidence is reported, never silently replaced by synthetic content.",
-  "acceptance": {
-    "text_loss_allowed": 0,
-    "overflow_allowed": 0,
-    "whole_slide_raster_allowed": 0,
-    "native_text_required": true,
-    "fresh_render_required_after_repair": true,
-    "font_shrink_last": true
-  },
+  "purpose": "Real-case replay after B1-B4 integration. PASS requires text-fit, render feedback, zero-loss text coverage, editability audit, and fresh-render provenance; missing evidence remains NOT_RUN.",
+  "acceptance": {"text_loss_allowed": 0, "overflow_allowed": 0, "whole_slide_raster_allowed": 0, "native_text_required": true, "fresh_render_required_after_repair": true, "font_shrink_last": true},
   "cases": [
     {
-      "id": "china-unicom-downgrade-control",
-      "name": "中国联通降套管控",
-      "focus": ["dense_chinese", "hierarchy", "brand_asset_boundary"],
-      "source": {"kind": "file_library", "ref": "中国联通降套管控.png"},
-      "status": "source_resolved",
-      "notes": "Real one-page source image resolved from File Library on 2026-09-20; replay evidence must be produced by the current ai-ppt-editable chain."
+      "id": "china-unicom-downgrade-control", "name": "中国联通降套管控", "focus": ["dense_chinese", "hierarchy", "brand_asset_boundary"],
+      "source": {"kind": "file_library", "ref": "中国联通降套管控.png"}, "status": "source_resolved",
+      "evidence": {"text_fit_report": "work/china-unicom-downgrade-control/text-fit-report.json", "text_render_feedback": "work/china-unicom-downgrade-control/text-render-feedback.json", "text_coverage_audit": "work/china-unicom-downgrade-control/text-coverage-audit.json", "editability_audit": "work/china-unicom-downgrade-control/editability-audit.json", "render_provenance": "work/china-unicom-downgrade-control/render-provenance.json"},
+      "notes": "Real File Library source. Materialize into the replay workspace before execution; never replace it with a synthetic fixture."
     },
     {
-      "id": "social-channel-commission-table",
-      "name": "社交渠道佣金表格",
-      "focus": ["table_native_authoring", "dense_chinese", "cell_text_fit"],
-      "source": {"kind": "repository", "ref": "evals/case-replay-social-01/source/social-channel-commission.png"},
-      "status": "source_resolved",
-      "notes": "Existing real-case source in the repository; Batch 5 replays it specifically through the current text-fit evidence chain."
+      "id": "social-channel-commission-table", "name": "社交渠道佣金表格", "focus": ["table_native_authoring", "dense_chinese", "cell_text_fit"],
+      "source": {"kind": "repository", "ref": "evals/case-replay-social-01/source/social-channel-commission.png"}, "status": "source_resolved",
+      "evidence": {"text_fit_report": "work/social-channel-commission-table/text-fit-report.json", "text_render_feedback": "work/social-channel-commission-table/text-render-feedback.json", "text_coverage_audit": "work/social-channel-commission-table/text-coverage-audit.json", "editability_audit": "work/social-channel-commission-table/editability-audit.json", "render_provenance": "work/social-channel-commission-table/render-provenance.json"},
+      "notes": "Repository real source; replay through the current ai-ppt-editable chain."
     },
     {
-      "id": "mixed-cjk-latin-flow",
-      "name": "中英混排流程页",
-      "focus": ["mixed_cjk_latin", "line_break", "punctuation", "flow_hierarchy"],
-      "source": {"kind": "file_library", "ref": "存量双终端优秀案例_R13_可编辑_交付.pptx"},
-      "status": "source_resolved",
-      "notes": "Real editable delivery deck resolved from File Library on 2026-09-20. It contains dense Chinese plus Latin/number/product tokens (for example FTTR/WiFi/model/metric strings) and multi-section process hierarchy; use its native text as semantic ground truth and a fresh render as visual ground truth."
+      "id": "mixed-cjk-latin-flow", "name": "中英混排流程页", "focus": ["mixed_cjk_latin", "line_break", "punctuation", "flow_hierarchy"],
+      "source": {"kind": "file_library", "ref": "存量双终端优秀案例_R13_可编辑_交付.pptx"}, "status": "source_resolved",
+      "evidence": {"text_fit_report": "work/mixed-cjk-latin-flow/text-fit-report.json", "text_render_feedback": "work/mixed-cjk-latin-flow/text-render-feedback.json", "text_coverage_audit": "work/mixed-cjk-latin-flow/text-coverage-audit.json", "editability_audit": "work/mixed-cjk-latin-flow/editability-audit.json", "render_provenance": "work/mixed-cjk-latin-flow/render-provenance.json"},
+      "notes": "Use native text as semantic ground truth and a fresh render as visual ground truth."
     },
     {
-      "id": "kpi-metric-card",
-      "name": "KPI 指标卡",
-      "focus": ["numeric_emphasis", "unit_binding", "hierarchy", "small_box_fit"],
-      "source": {"kind": "file_library", "ref": "存量双终端优秀案例_46比9_final.png"},
-      "status": "source_resolved",
-      "notes": "Real File Library source resolved on 2026-09-20. The page contains prominent KPI/metric values and compact card-like content suitable for numeric emphasis, unit binding and small-box text-fit regression."
+      "id": "kpi-metric-card", "name": "KPI 指标卡", "focus": ["numeric_emphasis", "unit_binding", "hierarchy", "small_box_fit"],
+      "source": {"kind": "file_library", "ref": "存量双终端优秀案例_46比9_final.png"}, "status": "source_resolved",
+      "evidence": {"text_fit_report": "work/kpi-metric-card/text-fit-report.json", "text_render_feedback": "work/kpi-metric-card/text-render-feedback.json", "text_coverage_audit": "work/kpi-metric-card/text-coverage-audit.json", "editability_audit": "work/kpi-metric-card/editability-audit.json", "render_provenance": "work/kpi-metric-card/render-provenance.json"},
+      "notes": "Numeric emphasis, unit binding and small-box fit regression."
     }
   ]
 }
