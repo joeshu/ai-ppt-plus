@@ -30,11 +30,31 @@ def _sha256(path):
 def _resolve(manifest,value):
     if not isinstance(value,str) or not value.strip(): return None
     p=Path(value); return (p if p.is_absolute() else manifest.parent/p).resolve()
+def _validated_sheet_derivative(item):
+    """Allow only explicitly documented, independent slices of a generated sheet."""
+    transform = item.get("derived_transform")
+    bbox = transform.get("bbox_px") if isinstance(transform, dict) else None
+    return (
+        item.get("derived_from_sheet") is True
+        and item.get("independent_asset") is True
+        and isinstance(transform, dict)
+        and bool(transform.get("mode"))
+        and isinstance(bbox, (list, tuple))
+        and len(bbox) == 4
+        and all(isinstance(value, (int, float)) and value >= 0 for value in bbox)
+    )
+
 def _sheet_ancestry(item):
     if item.get("sprite_sheet") is True or item.get("contact_sheet") is True: return True
+    allow_source_sheet = _validated_sheet_derivative(item)
     for field in ("generated_source","copied_to","source_ref","parent_asset","generation_parent"):
         value=item.get(field)
-        if isinstance(value,str) and SHEET_WORD.search(value.replace("\\","/")): return True
+        if isinstance(value,str) and SHEET_WORD.search(value.replace("\\","/")):
+            # Source/generation-parent sheet references are valid only for an
+            # explicitly recorded independent slice; copied_to remains strict.
+            if allow_source_sheet and field in {"generated_source", "source_ref", "parent_asset", "generation_parent"}:
+                continue
+            return True
     return False
 
 def validate(path:Path,*,strict=False):

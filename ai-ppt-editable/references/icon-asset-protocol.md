@@ -28,6 +28,14 @@ intermediate, never the delivered PPT object. See
 `references/imagegen-sheet-slicing.md` for the required classification and
 reject conditions.
 
+An individual alpha-trimmed cell derived from a generated sheet may be a
+delivered independent asset. Record `derived_from_sheet: true`, a non-empty
+`derived_transform` with the source-sheet bbox and slice mode, the delivered
+file hash, `independent_asset: true`, and `contact_sheet: false`. The final
+`copied_to` path must name the individual asset, never the sheet or contact
+sheet. Validators must reject sheet delivery but accept this explicit
+source-sheet-to-independent-slice contract.
+
 Original non-brand files may be supplied as authoritative source evidence for a
 deterministic `source_reuse` fallback only when the user explicitly requests
 the exact supplied pixels or explicitly approves the fallback after ImageGen

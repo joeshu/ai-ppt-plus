@@ -45,8 +45,11 @@ The following quality rules are hard gates:
 - MUST attach a hash-bound visual comparison before K can pass and before O can
   deliver a reference reconstruction. The balanced
   `reference_fidelity_score` combines blurred layout SSIM and blurred color
-  fidelity, and must meet the requested threshold, defaulting to 0.90. Keep
-  raw pixel fidelity as a diagnostic because font antialiasing is viewer-sensitive.
+  fidelity, but remains diagnostic unless the user explicitly supplied a
+  numeric acceptance target. Rank material regions and close observable
+  mismatches; do not keep generating candidates to chase a default threshold.
+  Keep raw pixel fidelity as a diagnostic because font antialiasing is
+  viewer-sensitive.
 - MUST report missing Artifact Tool, renderer, font evidence or human review as
   an upstream limitation rather than claiming success.
 - MUST NOT use `python-pptx` to create, rewrite or repair a PPTX.

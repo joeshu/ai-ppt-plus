@@ -6,6 +6,10 @@ Resolve every geometry-bearing AuthoringPlan object to the smallest faithful Pow
 
 ## Primitive set
 
+`native_text` is also carried through the resolution ledger as
+`NATIVE_TEXT`. It is a semantic slot rather than a PowerPoint geometry
+primitive, so it must resolve without a guessed shape.
+
 - `RECT`
 - `ROUNDRECT`
 - `ELLIPSE`

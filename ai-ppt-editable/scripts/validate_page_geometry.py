@@ -49,7 +49,11 @@ def _layout_objects(deck):
     out={}
     for slide_no,slide in enumerate(deck.get("slides") or [],1):
         if not isinstance(slide,dict):continue
-        for kind in ("texts","shapes","tables","charts","images","connectors"):
+        # Icons are first-class authored objects in the reference route. They
+        # must participate in PageGraph geometry calibration just like images
+        # and decorations; omitting this collection makes every valid icon
+        # appear missing at the strict E3 gate.
+        for kind in ("texts","shapes","tables","charts","images","icons","connectors"):
             for index,spec in enumerate(slide.get(kind) or [],1):
                 if not isinstance(spec,dict):continue
                 oid=str(spec.get("object_id") or spec.get("text_id") or spec.get("name") or "").strip()

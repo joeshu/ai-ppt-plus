@@ -1,4 +1,5 @@
 import importlib.util
+import tempfile
 from pathlib import Path
 
 
@@ -29,6 +30,18 @@ def _report(tmp_path: Path):
     return {
         "source": {"path": source.name, "sha256": short_loop.sha256(source)},
         "phases": phases,
+        "preflight": {
+            "valid": True,
+            "checks": {name: "passed" for name in ("package", "source", "runtime", "font", "finalizer")},
+        },
+        "performance": {
+            "max_repair_rounds": 2,
+            "repair_rounds": 1,
+            "candidate_build_count": 2,
+            "full_render_count": 3,
+            "authoritative_visual_renderer": "libreoffice+poppler",
+            "artifact_tool_preview_used_for_visual_closeout": False,
+        },
         "pages": [{"page_id": "slide-1", "material_region_count": 5, "local_crops": crops}],
         "repair_trace": [],
         "visual_closeout_validation": {"valid": True, "status": "passed", "open_text_repair_count": 0},
@@ -94,3 +107,48 @@ def test_failed_visual_closeout_blocks_acceptance(tmp_path):
     }
     errors, _ = short_loop.validate(report, tmp_path)
     assert any("visual closeout consistency failed" in error for error in errors)
+
+
+def test_repair_budget_requires_explicit_exception(tmp_path):
+    report = _report(tmp_path)
+    report["performance"]["repair_rounds"] = 3
+    errors, _ = short_loop.validate(report, tmp_path)
+    assert any("repair-round budget exceeded" in error for error in errors)
+    report["performance"]["budget_exception_reason"] = "active formal_text_loss blocker"
+    errors, _ = short_loop.validate(report, tmp_path)
+    assert not any("repair-round budget exceeded" in error for error in errors)
+
+
+def test_artifact_preview_cannot_close_visual_review(tmp_path):
+    report = _report(tmp_path)
+    report["performance"]["artifact_tool_preview_used_for_visual_closeout"] = True
+    errors, _ = short_loop.validate(report, tmp_path)
+    assert any("cannot be visual-closeout authority" in error for error in errors)
+
+
+def test_duplicate_build_and_render_counts_are_visible(tmp_path):
+    report = _report(tmp_path)
+    report["performance"]["candidate_build_count"] = 5
+    report["performance"]["full_render_count"] = 6
+    _, warnings = short_loop.validate(report, tmp_path)
+    assert any("duplicate candidate builds" in warning for warning in warnings)
+    assert any("duplicate full renders" in warning for warning in warnings)
+
+
+if __name__ == "__main__":
+    tests = (
+        test_low_visual_metric_is_diagnostic_not_blocker,
+        test_visual_metric_cannot_be_promoted_to_production_blocker,
+        test_only_declared_hard_blocker_categories_are_accepted,
+        test_active_real_hard_blocker_fails,
+        test_five_local_crops_required_when_five_material_regions_exist,
+        test_accepted_repair_requires_fresh_after_render,
+        test_failed_visual_closeout_blocks_acceptance,
+        test_repair_budget_requires_explicit_exception,
+        test_artifact_preview_cannot_close_visual_review,
+        test_duplicate_build_and_render_counts_are_visible,
+    )
+    for index, test in enumerate(tests):
+        with tempfile.TemporaryDirectory(prefix=f"short-loop-{index}-") as folder:
+            test(Path(folder))
+    print("short-loop validation tests: ok")

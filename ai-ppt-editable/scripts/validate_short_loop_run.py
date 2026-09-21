@@ -15,6 +15,7 @@ from typing import Any
 
 PHASES = [
     "reference",
+    "execution_preflight",
     "visual_inventory",
     "classification",
     "text_slot_preflight",
@@ -83,6 +84,39 @@ def validate(report: dict[str, Any], root: Path) -> tuple[list[str], list[str]]:
     for phase in PHASES:
         if not phase_done(report, phase):
             fail(errors, f"required phase incomplete: {phase}")
+
+    preflight = report.get("preflight")
+    if not isinstance(preflight, dict) or preflight.get("valid") is not True:
+        fail(errors, "execution preflight missing or blocked")
+    else:
+        required_checks = ("package", "source", "runtime", "font", "finalizer")
+        checks = preflight.get("checks") if isinstance(preflight.get("checks"), dict) else {}
+        for name in required_checks:
+            if checks.get(name) != "passed":
+                fail(errors, f"execution preflight check not passed: {name}")
+
+    performance = report.get("performance")
+    if not isinstance(performance, dict):
+        fail(errors, "performance budget missing")
+    else:
+        try:
+            repair_rounds = max(0, int(performance.get("repair_rounds", 0)))
+            max_repair_rounds = max(0, int(performance.get("max_repair_rounds", 2)))
+            candidate_builds = max(0, int(performance.get("candidate_build_count", 0)))
+            full_renders = max(0, int(performance.get("full_render_count", 0)))
+        except (TypeError, ValueError):
+            fail(errors, "performance counts must be integers")
+            repair_rounds = max_repair_rounds = candidate_builds = full_renders = 0
+        if repair_rounds > max_repair_rounds and not performance.get("budget_exception_reason"):
+            fail(errors, f"repair-round budget exceeded: {repair_rounds} > {max_repair_rounds}")
+        if candidate_builds > repair_rounds + 1:
+            warnings.append(f"duplicate candidate builds detected: {candidate_builds} for {repair_rounds} repair rounds")
+        if full_renders > repair_rounds + 2:
+            warnings.append(f"duplicate full renders detected: {full_renders} for {repair_rounds} repair rounds")
+        if performance.get("authoritative_visual_renderer") != "libreoffice+poppler":
+            fail(errors, "authoritative visual renderer must be libreoffice+poppler")
+        if performance.get("artifact_tool_preview_used_for_visual_closeout") is True:
+            fail(errors, "Artifact Tool preview cannot be visual-closeout authority")
 
     source = report.get("source", {})
     source_path = root / source.get("path", "")

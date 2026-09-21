@@ -72,6 +72,21 @@ calibration gate. This saves a full render on an incomplete repair and makes
 the WPS/PowerPoint typography regression explicit instead of hiding it in a
 global similarity score.
 
+### One-page convergence budget
+
+For a single fixed-reference page, the normal budget is one initial candidate,
+at most two coherent repair candidates, and one exact-final render. Run package,
+source, font, runtime and finalizer-path preflights before the first expensive
+asset generation/build. After each candidate, compare once, rank the three
+highest-impact material regions and repair them as a batch. Similarity scores
+do not authorize an extra round; only an active hard correctness defect or an
+explicit budget exception does.
+
+Treat the fresh LibreOffice+Poppler output as visual authority. Artifact Tool
+preview/import is a structural check and must not cause a second visual repair
+loop when its CJK rendering differs. Track candidate build count, full-render
+count, repair rounds and external generation calls in the short-loop report.
+
 ## Chart fast path
 
 Charts are a frequent source of long, low-value repair loops. First create one

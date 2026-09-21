@@ -39,6 +39,12 @@ def classify(obj: dict) -> tuple[str, str, list[str], dict]:
     evidence: list[str] = []
     params: dict = {}
 
+    # Native text is an editable semantic object, not a geometry-bearing
+    # primitive.  Keep it in the same resolution ledger so the build binding
+    # can account for it without inventing a shape primitive.
+    if impl == "native_text":
+        return "NATIVE_TEXT", "native text slot has no geometry primitive", ["implementation_type=native_text"], {}
+
     explicit = str(g.get("primitive_hint") or "").upper()
     if explicit:
         evidence.append("explicit primitive_hint")
@@ -201,6 +207,7 @@ def _parameter_issues(primitive: str, geometry: dict, parameters: dict, object_i
 
 def expected_impl(primitive: str) -> str | None:
     return {
+        "NATIVE_TEXT": "native_text",
         "CONNECTOR": "connector",
         "FREEFORM_BEZIER": "freeform",
         "IMAGEGEN_COMPLEX": "imagegen_asset",

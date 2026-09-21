@@ -106,6 +106,25 @@ def main() -> int:
         assert not report["valid"]
         assert "sheet_not_independent_asset" in {item["code"] for item in report["errors"]}
 
+        # A documented alpha-trimmed cell may inherit its source from a sheet,
+        # while the delivered PPT asset remains an independent slice.
+        sliced_copy = root / "editable" / "sliced-icon.png"
+        sliced_copy.write_bytes(b"independent-slice")
+        sliced = root / "sliced.json"
+        sliced.write_text(json.dumps({
+            "provenance_policy": "imagegen_final_assets",
+            "assets": [{
+                "asset_id": "sheet-child-valid", "asset_class": "icon", "provenance_mode": "imagegen",
+                "generated_source": "gen/contact-sheet/icons.png", "copied_to": "editable/sliced-icon.png",
+                "prompt_file": "prompts/sheet.txt", "backend": "native-imagegen", "sha256": sha(sliced_copy),
+                "derived_from_sheet": True, "generation_parent": "gen/contact-sheet/icons.png",
+                "derived_transform": {"mode": "alpha-trimmed-grid-slice", "bbox_px": [0, 0, 32, 32]},
+                **geometry(),
+            }],
+        }), encoding="utf-8")
+        report = validate(sliced, strict=True)
+        assert report["valid"], report
+
         source = root / "source.png"
         source.write_bytes(b"authoritative-source")
         fallback = root / "fallback.json"

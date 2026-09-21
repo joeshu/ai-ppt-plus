@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.21.04
+  package_revision: 2026.09.21.07
 ---
 
 # AI PPT Plus Orchestrator
@@ -109,12 +109,23 @@ checked-in routing and backend contracts.
    `scripts/validate_backend_binding.py`, and `scripts/probe_fonts.py` before
    selecting adapters. For Chinese delivery, follow
    `references/font-portability.md` and validate the task-local CJK font.
-3. Inventory every input under `references/source-intake.md`. Record authority,
-   readability, conflicts, missing facts, OCR requirements, and sensitive data.
+3. Inventory every input under `references/source-intake.md`. Before any
+   visual inspection or authoring, run
+   `scripts/reference_input_preflight.py` against the declared paths with a
+   bounded `--search-root` when the runtime upload path may have changed. It
+   records the resolved filename, dimensions and SHA-256; missing paths may be
+   recovered only from that bounded workspace/upload/name-variant search, and
+   different candidate hashes block instead of being guessed. Record
+   authority, readability, conflicts, missing facts, OCR requirements, and
+   sensitive data.
 4. Create or restore `workflow-state.json`. Validate it with
    `scripts/validate_workflow_state.py`; use `--strict` when it is a required
    handoff or release prerequisite. This file is the durable control plane,
    not a replacement for page/object manifests.
+
+Finish these cheap checks before any ImageGen call or PPTX build. Do not defer
+package revision, source recovery, runtime/font or renderer failures into the
+visual repair loop.
 
 ### O1 — Brief, story, and approval
 
@@ -208,6 +219,15 @@ B6 must name the owner, editable parameters and protected neighbors, capture
 owner/neighbor/full-page evidence, and close the B5 signal only after an
 accepted or explicitly reviewed repair; asset regeneration is not a substitute
 for placement repair.
+
+Immediately after the first editable candidate exists, require
+`scripts/validate_finalization_preflight.py` before producing a
+second candidate. It must prove runtime Node/modules, private receipt parent,
+non-colliding final path, task-local fonts and LibreOffice+Poppler. A one-page
+run defaults to two repair rounds maximum. Similarity scores rank the top three
+material regions; they do not authorize additional candidates. Artifact Tool
+preview/import is structural evidence, while LibreOffice+Poppler is the visual
+comparison authority.
 
 For every fixed-reference page, require the worker's source-visual coverage
 contract before visual closeout. It must map every source icon, brand mark,

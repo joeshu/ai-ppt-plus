@@ -107,3 +107,11 @@ def test_resolution_carries_page_for_multi_page_binding(tmp_path):
     out, report = run(tmp_path, [dict(obj("card", "native_shape", "round card", {"rounded_corners": True}), page=3)])
     assert out.returncode == 0
     assert report["resolutions"][0]["page"] == 3
+
+
+def test_native_text_is_resolved_as_semantic_slot_without_shape_primitive(tmp_path):
+    out, report = run(tmp_path, [obj("copy", "native_text", "body text", {})])
+    assert out.returncode == 0
+    assert report["valid"] is True
+    assert report["resolutions"][0]["primitive"] == "NATIVE_TEXT"
+    assert report["resolutions"][0]["expected_implementation_type"] == "native_text"

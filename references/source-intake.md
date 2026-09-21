@@ -6,6 +6,29 @@ Read at `intake`, on added sources, and before resuming a project. Supported inp
 
 Create `source-inventory.json` with one record per source: `id`, `path_or_url`, `kind`, `size`, `sha256`, `readable`, `extractor`, `pages_or_sheets`, `language`, `topics`, `fact_ids`, `data_ids`, `conflicts`, `gaps`, and `notes`. Preserve originals and never overwrite them.
 
+### Attachment path recovery
+
+The path shown by an attachment transport is not always the path available to
+the runtime. Before opening the image or starting layout work, run the checked-
+in `scripts/reference_input_preflight.py` for every declared reference. Pass a
+bounded upload/workspace directory with `--search-root` when needed. The
+preflight may resolve a missing old path by exact basename, known upload name
+variants, or a controlled basename prefix search, then binds the selected file
+to its SHA-256, dimensions and decode result. It must stop on no candidates,
+decode failure, aspect-ratio mismatch, duplicate pages, or candidates with
+different hashes. Never select a visually similar file or search the whole
+machine to make the run proceed.
+
+Example:
+
+```bash
+python3 scripts/reference_input_preflight.py \
+  --input /declared/upload/reference.jpeg \
+  --search-root /workspace/project/upload \
+  --expected-count 1 --expected-ratio 1.7777778 --strict \
+  --output PROJECT/reference-input-preflight.json
+```
+
 Create `deck-brief.md` with purpose, audience, setting, desired decision, duration/page target, language, output format, editability, deadline, brand constraints, authoritative-source order, known risks, and open questions.
 
 - Confirm purpose, audience, use setting, delivery format, language, and editability.

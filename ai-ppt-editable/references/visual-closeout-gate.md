@@ -4,6 +4,12 @@ Use this gate after the final fresh render and same-coordinate crop review. It
 does not define an SSIM or pixel threshold. It prevents a human closeout from
 contradicting its own evidence.
 
+The visual authority is the fresh LibreOffice+Poppler render produced with the
+same task-local fonts used for fitting. Artifact Tool preview/import output is
+structural diagnostic evidence only and cannot close visual review. A preview
+font-rendering discrepancy must be recorded once and must not trigger a PPTX
+repair when the authoritative render and object audit are complete.
+
 Start from `assets/visual-closeout.template.json`. Cover these semantic roles,
 using multiple regions when needed: `brand`, `title_typography`,
 `primary_structure`, `icons_or_complex_assets`, `dense_or_repeated_content`,

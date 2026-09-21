@@ -1,5 +1,5 @@
 {
-  "contract": "fixed-reference-short-loop/v2",
+  "contract": "fixed-reference-short-loop/v3",
   "source": {
     "path": "reference.png",
     "sha256": "",
@@ -9,6 +9,7 @@
   },
   "phases": {
     "reference": {"status": "pending"},
+    "execution_preflight": {"status": "pending"},
     "visual_inventory": {"status": "pending"},
     "classification": {"status": "pending"},
     "text_slot_preflight": {"status": "pending"},
@@ -22,6 +23,25 @@
     "visual_closeout_consistency": {"status": "pending"},
     "hard_correctness_check": {"status": "pending"},
     "final_pptx": {"status": "pending"}
+  },
+  "preflight": {
+    "valid": false,
+    "checks": {
+      "package": "pending",
+      "source": "pending",
+      "runtime": "pending",
+      "font": "pending",
+      "finalizer": "pending"
+    }
+  },
+  "performance": {
+    "max_repair_rounds": 2,
+    "repair_rounds": 0,
+    "candidate_build_count": 0,
+    "full_render_count": 0,
+    "authoritative_visual_renderer": "libreoffice+poppler",
+    "artifact_tool_preview_used_for_visual_closeout": false,
+    "budget_exception_reason": null
   },
   "pages": [
     {

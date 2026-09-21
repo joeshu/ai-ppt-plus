@@ -6,13 +6,18 @@ This is the normative execution contract for fixed-reference image-to-editable-P
 
 Run exactly this visual reconstruction chain for normal fixed-reference work:
 
-`Reference -> Visual Inventory -> AuthoringPlan -> native_editable/imagegen_asset -> Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> 5-10 key Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
+`Reference -> Execution Preflight -> Visual Inventory -> AuthoringPlan -> native_editable/imagegen_asset -> Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> 5-10 key Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
 
 The chain is intentionally visual-first. PageGraph, TextGraph, manifests, metrics and reports support reconstruction and repair; they do not become independent visual release gates.
 
 ## Phase contract
 
 1. **Reference** — freeze source page, dimensions, aspect ratio and SHA-256. The current source image is the immutable visual authority.
+1A. **Execution Preflight** — before ImageGen or authoring, validate package
+revision parity, resolved source, runtime Node/modules, CJK font evidence and
+LibreOffice+Poppler. Immediately after the first candidate exists, run
+`scripts/validate_finalization_preflight.py` so missing runtime exports,
+receipt directories or final-path conflicts fail before visual repair rounds.
 2. **Visual Inventory** — inventory visible text, panels/cards, charts, semantic tables, repeated components, arrows/connectors, icons/logos, complex art and composed semantic regions such as header/footer systems. Assign stable object IDs and approximate source bboxes and relationships.
 3. **AuthoringPlan** — convert inventory into explicit authoring decisions before build: implementation type, semantic role, bbox, parent, z-role, anchors, protected neighbors and type-specific contract. Validate `authoring-plan.json` before authoring. This is a structural pre-build contract, not a visual score gate.
 4. **Classification** — classify every non-text visual as exactly `native_editable` or `imagegen_asset`. Readable formal text stays native. Semantic tables/charts stay native when their meaning/data are known. Reference pictograms/icons are `imagegen_asset` by default unless their visible identity can be faithfully expressed by at most two ordinary native primitives. Complex footer waves, skylines, ribbons/streams and artistic systems may be one or a small number of independent semantic assets.
@@ -60,6 +65,28 @@ Each repair item records: page, crop/object IDs, mismatch description, responsib
 Repeated components may use component-local geometry. Do not force identical divider positions, icon slots, text widths or font scales when the reference visibly differs. Semantic consistency does not require geometric uniformity.
 
 Complex visual systems may be a single or small number of independent semantic assets when native fragmentation would reduce fidelity. Keep readable text and ordinary semantic geometry native above/beside those assets. Parent geometry must be repaired before child anchors such as `5Gⁿ`, logos or footer slogans.
+
+## Bounded convergence and render authority
+
+For a one-page reconstruction, default to one initial candidate plus at most
+two coherent repair batches. A third repair round requires an active hard
+correctness defect or an explicit budget-exception reason in the short-loop
+report. Batch the 3 highest-impact material regions; do not create a new PPTX
+variant for each text box, icon or metric change. Run cheap text-fit, geometry,
+asset-path and finalization preflights before each expensive build.
+
+Use LibreOffice+Poppler as the authoritative visual renderer for reference
+comparison and closeout. Artifact Tool import/preview evidence proves package
+structure and compatibility only. If its preview omits CJK glyphs while the
+authoritative render is complete, record a renderer limitation instead of
+rebuilding the deck. Whole-page and regional similarity scores rank repair
+work; they never force another round by themselves.
+
+Inspect header/brand, footer/edge system and other composed parent regions
+before child anchors. Validate generated asset aspect ratio against its target
+slot before authoring; create one documented layout-normalized derivative when
+the source aspect ratio cannot satisfy the slot, rather than discovering the
+problem after a full build.
 
 ## Acceptance
 

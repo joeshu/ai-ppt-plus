@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.21.05
+  package_revision: 2026.09.21.07
 ---
 
 # AI PPT Editable
@@ -20,7 +20,15 @@ Read `references/image-to-editable-regressions.md` when a fresh image-to-editabl
 
 For normal fixed-reference reconstruction run this chain and no additional visual release-gate chain:
 
-`Reference -> Visual Inventory -> AuthoringPlan -> Geometry Primitive Resolution -> native_editable/imagegen_asset -> Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> 5-10 key Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
+`Reference -> Execution Preflight -> Visual Inventory -> AuthoringPlan -> Geometry Primitive Resolution -> native_editable/imagegen_asset -> Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> 5-10 key Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
+
+Before ImageGen or authoring, pass package/source/runtime/font preflights. After
+the first candidate is built—and before any visual repair variant—run
+`scripts/validate_finalization_preflight.py`. Bind its reported
+`RUNTIME_NODE`/`RUNTIME_NODE_MODULES`, create the private receipt directory,
+and resolve output conflicts immediately. For one page, budget one initial
+candidate plus at most two coherent repair candidates; require an explicit
+hard-defect/budget exception for another round.
 
 PageGraph, TextGraph, ChartGraph, manifests, SSIM, pixel diff, five-dimensional A/B and other metrics may support diagnosis, traceability and regression analysis. They do not replace looking at the fresh render and do not independently block a visually repairable page.
 
@@ -193,6 +201,11 @@ python3 scripts/validate_table_layout.py PROJECT/layout.json \
 Charts remain native/editable when data are known. Missing future values stay blank and must never be serialized as zero.
 
 ## 10. Fresh PowerPoint Render
+
+Use LibreOffice+Poppler with the task-local authoring fonts as the visual
+authority. Artifact Tool preview/import is structural evidence only. Do not
+repair or rebuild a deck solely because that preview omits CJK glyphs when the
+authoritative render and object audit are complete.
 
 Render the exact current candidate after authoring and after every meaningful repair batch. Final evidence must link to the delivered PPTX hash. An old render cannot prove a new candidate.
 
