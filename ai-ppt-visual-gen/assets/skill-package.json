@@ -1,12 +1,17 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-visual-gen",
-  "package_revision": "2026.09.17.01",
+  "package_revision": "2026.09.21.04",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
     "policy": "self-contained",
-    "required_dirs": ["agents", "scripts", "references", "assets"]
+    "required_dirs": [
+      "agents",
+      "scripts",
+      "references",
+      "assets"
+    ]
   },
   "managed_globs": [
     "SKILL.md",
@@ -14,7 +19,6 @@
     "assets/*",
     "assets/reference-images/**/*",
     "assets/schemas/*.json",
-    "assets/fonts/*",
     "requirements-ci.txt",
     "references/*.md",
     "scripts/*.py",
@@ -31,12 +35,6 @@
     "assets/visual-generation-manifest.template.json",
     "assets/schemas/visual-generation-plan.schema.json",
     "assets/schemas/visual-generation-manifest.schema.json",
-    "assets/fonts/NotoSansSC-Regular.ttf",
-    "assets/fonts/NotoSansSC-Medium.ttf",
-    "assets/fonts/NotoSansSC-SemiBold.ttf",
-    "assets/fonts/NotoSansSC-Bold.ttf",
-    "assets/fonts/font-manifest.json",
-    "assets/fonts/OFL.txt",
     "scripts/validate_skill_package.py",
     "scripts/validate_visual_generation_plan.py",
     "scripts/validate_outline_table.py",
@@ -56,5 +54,18 @@
     "required": true,
     "comparison": "sha256",
     "operator": "refresh this complete skill directory from the same git revision before use"
+  },
+  "font_policy": {
+    "bundled_binary_assets": false,
+    "resolution": "runtime",
+    "preferred_family": "Noto Sans CJK SC",
+    "fallback_order": [
+      "Microsoft YaHei",
+      "PingFang SC",
+      "HarmonyOS Sans SC"
+    ],
+    "cache_dir": ".runtime/fonts",
+    "require_same_face_for_text_fit_and_authoring": true,
+    "fail_closed_when_unresolved": true
   }
 }
