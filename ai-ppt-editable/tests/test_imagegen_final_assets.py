@@ -49,7 +49,7 @@ def main() -> int:
         assert report["valid"], report
         assert report["schema"].endswith("/v3")
 
-        # Brand/logo is intentionally not an exception in the strict two-route policy.
+        # An unspecified "official" route is not enough evidence.
         official = root / "official.json"
         official.write_text(json.dumps({
             "provenance_policy": "imagegen_final_assets",
@@ -66,7 +66,23 @@ def main() -> int:
         }), encoding="utf-8")
         report = validate(brand_fallback, strict=True)
         assert not report["valid"]
-        assert any(item["code"] == "brand_asset_requires_native_imagegen" for item in report["errors"])
+        assert any(item["code"] == "brand_asset_requires_imagegen_or_exact_asset" for item in report["errors"])
+
+        exact_source = root / "official-logo.png"
+        exact_source.write_bytes(b"official-logo")
+        exact_copy = root / "editable" / "official-logo.png"
+        exact_copy.write_bytes(exact_source.read_bytes())
+        exact = root / "exact-brand.json"
+        exact.write_text(json.dumps({
+            "provenance_policy": "imagegen_final_assets",
+            "assets": [{"asset_id": "logo", "asset_class": "logo",
+                "provenance_mode": "provided_exact_brand_asset",
+                "extraction_method": "approved-source-asset", "exact_brand_asset": True,
+                "user_supplied": True, "source_kind": "official_asset", "independent_asset": True,
+                "source_ref": "official-logo.png", "source_sha256": sha(exact_source),
+                "copied_to": "editable/official-logo.png"}],
+        }), encoding="utf-8")
+        assert validate(exact, strict=True)["valid"]
 
         bad = root / "bad.json"
         bad.write_text(json.dumps({"provenance_policy": "imagegen_final_assets", "assets": [{"asset_id": "g1", "asset_class": "gradient_visual", "provenance_mode": "source_reuse", "source_reuse": True}]}), encoding="utf-8")

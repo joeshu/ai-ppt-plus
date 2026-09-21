@@ -19,7 +19,8 @@ def test_beat_knight_asset_jobs_are_reproducible_and_independent():
     repeated = plan(copy.deepcopy(source))
 
     assert generated == repeated
-    assert generated["schema"] == "ai-ppt-plus/imagegen-asset-jobs/v3"
+    assert generated["schema"] == "ai-ppt-plus/imagegen-asset-jobs/v4"
+    assert generated["execution_profile"] == "fast"
     assert generated["job_count"] == 3
     assert [job["asset_id"] for job in generated["jobs"]] == [
         "brand-logo-lockup",
@@ -44,6 +45,7 @@ def test_beat_knight_asset_jobs_are_reproducible_and_independent():
         assert job["retry"]["automatic_source_reuse"] is False
         assert job["retry"]["placement_only_consumes_generation_attempt"] is False
         assert job["retry"]["identity_or_color_requires_regeneration"] is True
+        assert job["retry"]["max_retries"] == 1
         assert "asset_identity_color_pass" in job["cache"]["reuse_requires"]
         assert job["source_reuse"] == "forbidden_without_user_approved_fallback"
 

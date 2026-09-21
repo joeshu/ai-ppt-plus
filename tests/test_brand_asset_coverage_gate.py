@@ -50,7 +50,19 @@ def main() -> int:
     assert not report["valid"]
     assert "brand_lockup_whole_asset_contract_missing" in codes
     assert "brand_lockup_illegally_split" in codes
-    assert "brand_asset_requires_native_imagegen" in codes
+    assert "brand_asset_requires_imagegen_or_exact_asset" in codes
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        (root / "page-graph.json").write_text(json.dumps({"nodes": [{"id": "logo", "type": "logo", "role": "logo"}]}), encoding="utf-8")
+        (root / "imagegen-assets-manifest.json").write_text(json.dumps({"assets": [{
+            "asset_id": "logo", "asset_class": "logo", "independent_asset": True,
+            "provenance_mode": "provided_exact_brand_asset", "extraction_method": "approved-source-asset",
+            "exact_brand_asset": True, "user_supplied": True, "source_kind": "official_asset",
+            "source_ref": "official-logo.png", "source_sha256": "0" * 64, "copied_to": "logo.png"
+        }]}), encoding="utf-8")
+        exact_report = module.validate_brand_coverage(root)
+        assert exact_report["valid"], exact_report
 
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)

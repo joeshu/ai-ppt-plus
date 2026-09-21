@@ -6,7 +6,7 @@ This is the normative execution contract for fixed-reference image-to-editable-P
 
 Run exactly this visual reconstruction chain for normal fixed-reference work:
 
-`Reference -> Execution Preflight -> Visual Inventory -> AuthoringPlan -> native_editable/imagegen_asset -> Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> 5-10 key Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
+`Reference -> Execution Profile -> Prebuild Execution Preflight -> Visual Inventory -> AuthoringPlan -> native_editable/imagegen_asset -> Risk-tier Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> Adaptive Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
 
 The chain is intentionally visual-first. PageGraph, TextGraph, manifests, metrics and reports support reconstruction and repair; they do not become independent visual release gates.
 
@@ -15,7 +15,7 @@ The chain is intentionally visual-first. PageGraph, TextGraph, manifests, metric
 1. **Reference** — freeze source page, dimensions, aspect ratio and SHA-256. The current source image is the immutable visual authority.
 1A. **Execution Preflight** — before ImageGen or authoring, validate package
 revision parity, resolved source, runtime Node/modules, CJK font evidence and
-LibreOffice+Poppler. Immediately after the first candidate exists, run
+LibreOffice+Poppler. Before ImageGen or the first candidate build, run
 `scripts/validate_finalization_preflight.py` so missing runtime exports,
 receipt directories or final-path conflicts fail before visual repair rounds.
 2. **Visual Inventory** — inventory visible text, panels/cards, charts, semantic tables, repeated components, arrows/connectors, icons/logos, complex art and composed semantic regions such as header/footer systems. Assign stable object IDs and approximate source bboxes and relationships.
@@ -27,7 +27,7 @@ receipt directories or final-path conflicts fail before visual repair rounds.
 8. **Artifact Tool Build** — build a fresh editable PPTX through the strict `@oai/artifact-tool` authoring path. Preserve AuthoringPlan object IDs and independent asset mobility. Never use a whole-page screenshot as the editable reconstruction. Where parent/child relationships matter, author children relative to the semantic-region geometry rather than unrelated page coordinates. Material deviations from AuthoringPlan must be written back to evidence and revalidated.
 9. **Fresh PowerPoint Render** — render the exact current PPTX. Historical renders cannot satisfy this phase.
 10. **Full-page Compare** — compare the fresh render to the immutable reference. Scalar metrics are diagnostic only unless a project explicitly supplies a numeric target.
-11. **5-10 key Local Crops** — select 5-10 diverse material regions per page, prioritizing dense text/cards, icon slots, charts, compact arrow+label components, bottom bars and user-flagged areas. Include composed header/footer semantic-region crops when present; object-only crops are insufficient for anchor/system defects. Use same-coordinate reference/candidate crops.
+11. **Adaptive Local Crops** — cut same-coordinate crops from the same full-page render. Select 3-5 high-risk regions in `fast` or 5-10 in `strict`, prioritizing dense text/cards, icon slots, charts, compact arrow+label components, bottom bars and user-flagged areas. Include composed header/footer semantic-region crops when present.
 12. **Responsible Object Repair** — every material mismatch is assigned to the owning object/layer or semantic region. Repair that owner rather than compensating through unrelated neighbors or chasing a scalar score. Protect already-correct regions. Use AuthoringPlan `protected_neighbors` and the pattern-specific repair order in `visual-repair-patterns.md`.
 13. **Re-render** — every accepted material repair must be followed by a fresh render and re-check of the affected crop plus the full page.
 14. **Visual Closeout Consistency** — write structured reference/candidate observations for the required material region roles and validate them with `scripts/validate_visual_closeout.py`. An unresolved visual finding is unfinished repair work, not a score threshold. Contradictory closeout evidence blocks PASS and returns to the repair loop.
@@ -90,4 +90,4 @@ problem after a full build.
 
 ## Acceptance
 
-Final acceptance requires: current-source hash match; fresh PPTX/render hash linkage; full-page review; 5-10 final same-coordinate crops per page unless fewer than five material regions exist; structured visual-closeout validation with no unresolved material findings; no unclosed text-render repair records; exact formal-text ledger; editability/object inspection; independent asset alpha/provenance QA; semantic chart/table checks where applicable; zero hard blockers; and a Repair Trace for the last accepted material changes.
+Final acceptance requires: current-source hash match; fresh PPTX/render hash linkage; full-page review; profile-compliant same-coordinate crops cut from that render; structured visual-closeout validation with no unresolved material findings; no unclosed text-render repair records; exact formal-text ledger; editability/object inspection; independent asset alpha/provenance QA; semantic chart/table checks where applicable; zero hard blockers; and a Repair Trace for the last accepted material changes.

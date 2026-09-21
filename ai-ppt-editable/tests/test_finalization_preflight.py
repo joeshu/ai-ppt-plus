@@ -70,11 +70,21 @@ def test_artifact_preview_is_not_visual_authority(tmp_path):
     assert result["artifact_tool_preview_policy"] == "structural_diagnostic_only"
 
 
+def test_prebuild_allows_reserved_candidate_path(tmp_path):
+    values = _fixture(tmp_path)
+    values["candidate"].unlink()
+    values["stage"] = "prebuild"
+    result = _validate(values)
+    assert result["valid"] is True
+    assert result["stage"] == "prebuild"
+
+
 if __name__ == "__main__":
     tests = (
         test_preflight_binds_runtime_and_paths,
         test_missing_receipt_parent_fails_before_finalizer,
         test_artifact_preview_is_not_visual_authority,
+        test_prebuild_allows_reserved_candidate_path,
     )
     for index, test in enumerate(tests):
         with tempfile.TemporaryDirectory(prefix=f"finalization-preflight-{index}-") as folder:

@@ -10,8 +10,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from execution_profiles import PROFILES
 
 PHASES = [
     "reference",
@@ -80,6 +83,11 @@ def phase_done(report: dict[str, Any], phase: str) -> bool:
 def validate(report: dict[str, Any], root: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
+    profile_name = str(report.get("execution_profile") or "fast").lower()
+    policy = PROFILES.get(profile_name)
+    if policy is None or not policy["delivery_allowed"]:
+        fail(errors, f"invalid delivery execution profile: {profile_name}")
+        policy = PROFILES["fast"]
 
     for phase in PHASES:
         if not phase_done(report, phase):
@@ -101,22 +109,57 @@ def validate(report: dict[str, Any], root: Path) -> tuple[list[str], list[str]]:
     else:
         try:
             repair_rounds = max(0, int(performance.get("repair_rounds", 0)))
-            max_repair_rounds = max(0, int(performance.get("max_repair_rounds", 2)))
+            max_repair_rounds = max(0, int(performance.get("max_repair_rounds", policy["repair_round_limit"])))
             candidate_builds = max(0, int(performance.get("candidate_build_count", 0)))
             full_renders = max(0, int(performance.get("full_render_count", 0)))
         except (TypeError, ValueError):
             fail(errors, "performance counts must be integers")
             repair_rounds = max_repair_rounds = candidate_builds = full_renders = 0
+        if max_repair_rounds != policy["repair_round_limit"]:
+            fail(errors, "declared repair budget differs from execution profile")
         if repair_rounds > max_repair_rounds and not performance.get("budget_exception_reason"):
             fail(errors, f"repair-round budget exceeded: {repair_rounds} > {max_repair_rounds}")
-        if candidate_builds > repair_rounds + 1:
-            warnings.append(f"duplicate candidate builds detected: {candidate_builds} for {repair_rounds} repair rounds")
-        if full_renders > repair_rounds + 2:
-            warnings.append(f"duplicate full renders detected: {full_renders} for {repair_rounds} repair rounds")
+        if candidate_builds > policy["candidate_limit"]:
+            fail(errors, f"candidate-build budget exceeded: {candidate_builds} > {policy['candidate_limit']}")
+        if full_renders > policy["full_render_limit"]:
+            fail(errors, f"full-render budget exceeded: {full_renders} > {policy['full_render_limit']}")
+        for asset_id, count in (performance.get("imagegen_retry_counts") or {}).items():
+            if int(count) > policy["imagegen_retry_limit_per_asset"]:
+                fail(errors, f"ImageGen retry budget exceeded for {asset_id}: {count} > {policy['imagegen_retry_limit_per_asset']}")
+        if performance.get("text_fit_scope") != policy["text_fit_scope"]:
+            fail(errors, "text-fit scope differs from execution profile")
         if performance.get("authoritative_visual_renderer") != "libreoffice+poppler":
             fail(errors, "authoritative visual renderer must be libreoffice+poppler")
         if performance.get("artifact_tool_preview_used_for_visual_closeout") is True:
             fail(errors, "Artifact Tool preview cannot be visual-closeout authority")
+
+    benchmark = report.get("benchmark")
+    required_benchmark = (
+        "ttfvr_seconds", "wall_time_seconds", "candidate_count", "full_render_count",
+        "imagegen_call_count", "native_text_coverage", "required_native_coverage",
+        "whole_slide_raster_count", "material_mismatch_count",
+        "protected_regression_count", "reproducible",
+    )
+    if not isinstance(benchmark, dict):
+        fail(errors, "benchmark evidence missing")
+    else:
+        for key in required_benchmark:
+            if key not in benchmark:
+                fail(errors, f"benchmark metric missing: {key}")
+        for key in ("ttfvr_seconds", "wall_time_seconds", "candidate_count", "full_render_count", "imagegen_call_count", "whole_slide_raster_count", "material_mismatch_count", "protected_regression_count"):
+            if key in benchmark and (not isinstance(benchmark[key], (int, float)) or benchmark[key] < 0):
+                fail(errors, f"benchmark metric invalid: {key}")
+        for key in ("native_text_coverage", "required_native_coverage"):
+            if key in benchmark and (not isinstance(benchmark[key], (int, float)) or not 0 <= benchmark[key] <= 1):
+                fail(errors, f"benchmark ratio invalid: {key}")
+        if benchmark.get("required_native_coverage") != 1:
+            fail(errors, "required native coverage must equal 1.0")
+        if benchmark.get("whole_slide_raster_count") != 0:
+            fail(errors, "whole-slide raster count must equal zero")
+        if benchmark.get("protected_regression_count") != 0:
+            fail(errors, "protected regression count must equal zero")
+        if benchmark.get("reproducible") is not True:
+            fail(errors, "run is not reproducible")
 
     source = report.get("source", {})
     source_path = root / source.get("path", "")
@@ -159,16 +202,19 @@ def validate(report: dict[str, Any], root: Path) -> tuple[list[str], list[str]]:
         page_id = page.get("page_id", "?")
         crops = page.get("local_crops", [])
         material_regions = int(page.get("material_region_count", len(crops)))
-        minimum = min(5, material_regions) if material_regions > 0 else 0
+        minimum = min(policy["local_crop_min"], material_regions) if material_regions > 0 else 0
         if len(crops) < minimum:
             fail(errors, f"page {page_id}: only {len(crops)} local crops; need >= {minimum}")
-        if len(crops) > 10:
-            warnings.append(f"page {page_id}: {len(crops)} final crops; contract targets 5-10")
+        if len(crops) > policy["local_crop_max"]:
+            fail(errors, f"page {page_id}: {len(crops)} local crops exceed profile maximum {policy['local_crop_max']}")
+        render_sha = final.get("render_sha256")
         for crop in crops:
             if not crop.get("reference_path") or not crop.get("candidate_path"):
                 fail(errors, f"page {page_id}: crop missing same-coordinate evidence")
             if crop.get("same_coordinates") is not True:
                 fail(errors, f"page {page_id}: crop is not marked same_coordinates=true")
+            if crop.get("source_render_sha256") != render_sha:
+                fail(errors, f"page {page_id}: crop was not cut from the final full-page render")
 
     repairs = report.get("repair_trace", [])
     for item in repairs:

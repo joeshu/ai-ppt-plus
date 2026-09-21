@@ -1,5 +1,6 @@
 {
-  "contract": "fixed-reference-short-loop/v3",
+  "contract": "fixed-reference-short-loop/v4",
+  "execution_profile": "fast",
   "source": {
     "path": "reference.png",
     "sha256": "",
@@ -35,13 +36,28 @@
     }
   },
   "performance": {
-    "max_repair_rounds": 2,
+    "max_repair_rounds": 1,
     "repair_rounds": 0,
     "candidate_build_count": 0,
     "full_render_count": 0,
+    "imagegen_retry_counts": {},
+    "text_fit_scope": "high_risk",
     "authoritative_visual_renderer": "libreoffice+poppler",
     "artifact_tool_preview_used_for_visual_closeout": false,
     "budget_exception_reason": null
+  },
+  "benchmark": {
+    "ttfvr_seconds": 0,
+    "wall_time_seconds": 0,
+    "candidate_count": 0,
+    "full_render_count": 0,
+    "imagegen_call_count": 0,
+    "native_text_coverage": 1.0,
+    "required_native_coverage": 1.0,
+    "whole_slide_raster_count": 0,
+    "material_mismatch_count": 0,
+    "protected_regression_count": 0,
+    "reproducible": true
   },
   "pages": [
     {
@@ -54,6 +70,7 @@
           "reference_path": "qa/crops/reference/crop-01.png",
           "candidate_path": "qa/crops/candidate/crop-01.png",
           "same_coordinates": true,
+          "source_render_sha256": "",
           "diagnostics": {}
         }
       ]

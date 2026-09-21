@@ -103,17 +103,18 @@ def main() -> int:
         if asset.get("role") not in ROLES: add(issues, "blocker", "invalid_role", index, value=asset.get("role"))
         if asset.get("extraction_method") not in METHODS: add(issues, "blocker", "invalid_extraction_method", index, value=asset.get("extraction_method"))
         if asset.get("role") in BRAND_ROLES:
-            if asset.get("extraction_method") != "native-imagegen":
+            exact_brand = (asset.get("extraction_method") == "approved-source-asset" and asset.get("provenance_mode") == "provided_exact_brand_asset" and asset.get("exact_brand_asset") is True and asset.get("user_supplied") is True and asset.get("source_kind") in {"standalone_file", "official_asset"} and asset.get("independent_asset") is True)
+            if asset.get("extraction_method") != "native-imagegen" and not exact_brand:
                 add(issues, "blocker", "brand_asset_requires_native_imagegen", index, role=asset.get("role"), extraction_method=asset.get("extraction_method"))
-            if asset.get("provenance_mode") != "imagegen":
+            if asset.get("provenance_mode") != "imagegen" and not exact_brand:
                 add(issues, "blocker", "brand_asset_provenance_not_imagegen", index, provenance_mode=asset.get("provenance_mode"))
-            if not isinstance(asset.get("generated_source"), str) or not asset.get("generated_source"):
+            if not exact_brand and (not isinstance(asset.get("generated_source"), str) or not asset.get("generated_source")):
                 add(issues, "blocker", "brand_generated_source_missing", index)
-            if not isinstance(asset.get("copied_to"), str) or not asset.get("copied_to"):
+            if not exact_brand and (not isinstance(asset.get("copied_to"), str) or not asset.get("copied_to")):
                 add(issues, "blocker", "brand_copied_to_missing", index)
-            if not isinstance(asset.get("prompt_file"), str) or not asset.get("prompt_file"):
+            if not exact_brand and (not isinstance(asset.get("prompt_file"), str) or not asset.get("prompt_file")):
                 add(issues, "blocker", "brand_prompt_file_missing", index)
-            if not isinstance(asset.get("backend"), str) or "imagegen" not in asset.get("backend", "").lower():
+            if not exact_brand and (not isinstance(asset.get("backend"), str) or "imagegen" not in asset.get("backend", "").lower()):
                 add(issues, "blocker", "brand_imagegen_backend_missing", index, backend=asset.get("backend"))
             if asset.get("independent_asset") is not True:
                 add(issues, "blocker", "brand_asset_not_independent", index)

@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.21.07
+  package_revision: 2026.09.21.08
 ---
 
 # AI PPT Editable
@@ -20,7 +20,9 @@ Read `references/image-to-editable-regressions.md` when a fresh image-to-editabl
 
 For normal fixed-reference reconstruction run this chain and no additional visual release-gate chain:
 
-`Reference -> Execution Preflight -> Visual Inventory -> AuthoringPlan -> Geometry Primitive Resolution -> native_editable/imagegen_asset -> Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> 5-10 key Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
+`Reference -> Execution Profile -> Prebuild Execution Preflight -> Visual Inventory -> AuthoringPlan -> Geometry Primitive Resolution -> native_editable/imagegen_asset -> Risk-tier Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> Adaptive Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
+
+Default to the machine-validated `fast` profile in [references/execution-profiles.md](references/execution-profiles.md). Use `strict` only when requested or justified by page risk; use `ci` only for package regression. Profile candidate, render, crop and per-asset retry budgets are hard runtime limits.
 
 Before ImageGen or authoring, pass package/source/runtime/font preflights. After
 the first candidate is built—and before any visual repair variant—run
@@ -113,7 +115,7 @@ Classify every non-text visual into exactly one practical class before authoring
 - `native_editable`: readable text, cards/panels, dividers, ordinary arrows/connectors, simple badges, semantic tables and native charts whose data/meaning are known.
 - `imagegen_asset`: icons, pictograms, complex badges, logos, wordmarks, calligraphic brand marks, decorative art, illustration fragments, artistic marks, complex ribbons/streams, multi-lane gradient arrow systems and visuals whose faithful native reconstruction would require brittle custom drawing.
 
-All brand-class visuals use the native ImageGen route. This includes `logo`,
+Brand-class visuals use native ImageGen unless the user separately supplies an exact official/standalone brand file. Such a file may use `provided_exact_brand_asset` only with independent-file, hash and provenance evidence and no source bounding box. A crop from the reference slide is never an exact brand file. Brand classes include `logo`,
 `brand`, `brand_lockup`, `wordmark`, `calligraphic_slogan`, `signature`,
 `seal`, `brand_band`, `5g_mark` and `locked_brand_art`. A source crop may guide
 the prompt and provide geometry/color evidence, but it is never a final brand
@@ -168,7 +170,7 @@ Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha.
 
 For continuous low-frequency systems such as footer ribbons, skyline bands and header waves, rectangular alpha geometry is necessary but insufficient. Record a semantic parent bbox, sampled contour landmarks and child anchors. Compare the final composed region against the reference with `scripts/audit_continuous_band.py`; zero bbox delta must not close a visible contour mismatch. Keep readable footer/header text native and repair in this order: parent bbox -> contour profile -> asset scale/crop -> child anchors -> z-order.
 
-Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon. An explicitly approved source-reuse fallback remains available for non-brand assets only; brand assets remain blocked until native ImageGen succeeds.
+Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon. An explicitly approved source-reuse fallback remains available for non-brand assets only. A brand asset may bypass generation only when it is a separately supplied exact official/standalone file satisfying the exact-brand contract.
 
 The source-visual coverage gate is upstream of visual closeout; a human crop
 review cannot turn an omitted complex asset into a covered asset. Keep the
@@ -213,9 +215,9 @@ Render the exact current candidate after authoring and after every meaningful re
 
 Compare the fresh render with the immutable reference. Whole-page SSIM, pixel diff, balanced fidelity scores and regional metrics are diagnostic evidence only unless the user/project explicitly supplies a numeric target. A low visual metric creates repair work; it does not terminate production by itself.
 
-## 12. 5-10 key Local Crops
+## 12. Adaptive key Local Crops
 
-For each page inspect 5-10 same-coordinate reference/candidate crops, prioritizing the most material regions: dense text/cards, icon slots, charts, compact arrow+label components, bottom bars, circular centers, right-side tool panels and user-flagged areas. If a page genuinely has fewer than five material regions, inspect all of them.
+Cut every candidate crop from the same final full-page render; never rerender per crop. In `fast`, inspect 3-5 highest-risk regions. In `strict`, inspect 5-10. If fewer material regions exist, inspect all of them. Prioritize dense text/cards, icon slots, charts, compact arrow+label components, bottom bars, circular centers, right-side tool panels and user-flagged areas.
 
 Asset thumbnails are insufficient. Icon visibility, clipping, centering and z-order must be proven from the final PPT render crop.
 

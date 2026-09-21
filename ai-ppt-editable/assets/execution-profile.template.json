@@ -1,0 +1,16 @@
+{
+  "schema": "ai-ppt-plus/execution-profile/v1",
+  "profile": "fast",
+  "budgets": {
+    "delivery_allowed": true,
+    "candidate_limit": 2,
+    "repair_round_limit": 1,
+    "full_render_limit": 2,
+    "imagegen_retry_limit_per_asset": 1,
+    "local_crop_min": 3,
+    "local_crop_max": 5,
+    "text_fit_scope": "high_risk",
+    "full_regression": false
+  }
+}
+

@@ -12,7 +12,7 @@ Editability is multidimensional and must not be inferred from the object count:
 | `content_editability` | `content_editable`, `not_applicable` | Whether formal wording/data can be changed directly. |
 | `movement_editability` | `moveable`, `group_moveable`, `locked` | Whether the object can be independently moved, cropped or replaced. |
 | `component_editability` | `component_editable`, `static_asset` | Whether internal geometry/pixels can be edited as native parts. |
-| `asset_policy` | `normal_asset`, `brand_lockup`, `user_supplied_asset` | Whether the visible asset is a complete lockup or user-supplied asset; this field does not waive the ImageGen route for brand visuals. |
+| `asset_policy` | `normal_asset`, `brand_lockup`, `user_supplied_asset` | A separately supplied exact official/standalone brand file may use the exact-brand route; a reference crop cannot. |
 
 Use `asset_policy: brand_lockup` for a complete logo mark and wordmark. Generate
 it as one independent ImageGen asset and do not recreate its Chinese or English

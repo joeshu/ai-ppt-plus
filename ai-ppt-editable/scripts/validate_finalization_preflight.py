@@ -36,6 +36,7 @@ def validate(
     node: Path | None,
     node_modules: Path | None,
     font_dir: Path | None,
+    stage: str = "postbuild",
 ) -> dict:
     issues: list[dict] = []
     workspace = workspace.resolve()
@@ -45,8 +46,12 @@ def validate(
 
     if not workspace.is_dir():
         issues.append({"severity": "blocker", "code": "workspace_missing", "path": str(workspace)})
-    if not candidate.is_file():
+    if stage not in {"prebuild", "postbuild"}:
+        issues.append({"severity": "blocker", "code": "preflight_stage_invalid", "stage": stage})
+    if stage == "postbuild" and not candidate.is_file():
         issues.append({"severity": "blocker", "code": "candidate_missing", "path": str(candidate)})
+    if stage == "prebuild" and not candidate.parent.is_dir():
+        issues.append({"severity": "blocker", "code": "candidate_parent_missing", "path": str(candidate.parent)})
     if candidate == final:
         issues.append({"severity": "blocker", "code": "candidate_final_path_collision", "path": str(final)})
     if not _inside(workspace, final):
@@ -90,6 +95,7 @@ def validate(
         "schema": SCHEMA,
         "valid": not issues,
         "status": "passed" if not issues else "blocked",
+        "stage": stage,
         "workspace": str(workspace),
         "candidate": str(candidate),
         "final": str(final),
@@ -115,6 +121,7 @@ def main() -> int:
     parser.add_argument("--node-modules")
     parser.add_argument("--font-dir", required=True, type=Path)
     parser.add_argument("--report", required=True, type=Path)
+    parser.add_argument("--stage", choices=("prebuild", "postbuild"), default="prebuild")
     args = parser.parse_args()
     result = validate(
         workspace=args.workspace,
@@ -124,6 +131,7 @@ def main() -> int:
         node=_runtime_path(args.node, "RUNTIME_NODE", "CODEX_PRIMARY_RUNTIME_NODE"),
         node_modules=_runtime_path(args.node_modules, "RUNTIME_NODE_MODULES", "CODEX_PRIMARY_RUNTIME_NODE_MODULES"),
         font_dir=args.font_dir.resolve(),
+        stage=args.stage,
     )
     atomic_write_json(args.report.resolve(), result)
     print(json.dumps(result, ensure_ascii=False))

@@ -169,23 +169,25 @@ def _asset_id(asset: dict[str, Any]) -> str:
 def _asset_issues(asset: dict[str, Any], visual: dict[str, Any], manifest_root: Path, issues: list[dict[str, Any]]) -> None:
     asset_id = visual["asset_id"]
     route = str(asset.get("provenance_mode") or "").strip().lower()
-    if route != "imagegen":
+    visual_role = _role(visual.get("semantic_role"))
+    exact_brand = (visual_role in BRAND_ROLES and route == "provided_exact_brand_asset" and asset.get("extraction_method") == "approved-source-asset" and asset.get("exact_brand_asset") is True and asset.get("user_supplied") is True and asset.get("source_kind") in {"standalone_file", "official_asset"} and asset.get("independent_asset") is True and not asset.get("source_bbox") and asset.get("source_reuse") is not True)
+    if route != "imagegen" and not exact_brand:
         issues.append({"severity": "blocker", "code": "source_visual_asset_requires_imagegen", "visual_id": visual["visual_id"], "asset_id": asset_id, "observed": route or None})
     if asset.get("independent_asset") is not True:
         issues.append({"severity": "blocker", "code": "source_visual_asset_not_independent", "visual_id": visual["visual_id"], "asset_id": asset_id})
     asset_class = _role(asset.get("asset_class") or asset.get("category") or asset.get("role"))
     if not asset_class:
         issues.append({"severity": "blocker", "code": "source_visual_asset_class_missing", "visual_id": visual["visual_id"], "asset_id": asset_id})
-    visual_role = _role(visual.get("semantic_role"))
     if visual_role in BRAND_ROLES and asset_class and asset_class not in BRAND_ROLES:
         issues.append({"severity": "blocker", "code": "source_visual_brand_class_mismatch", "visual_id": visual["visual_id"], "asset_id": asset_id, "asset_class": asset_class})
     forbidden_crop = asset.get("source_reuse") is True or str(asset.get("extraction_method") or "").lower() in {"crop", "exact_crop", "source_reuse", "source-crop"}
     if forbidden_crop or route == "source_reuse":
         issues.append({"severity": "blocker", "code": "source_visual_asset_crop_fallback_forbidden", "visual_id": visual["visual_id"], "asset_id": asset_id})
-    for field in ("generated_source", "copied_to", "prompt_file", "backend"):
+    evidence_fields = ("source_ref", "copied_to", "source_sha256") if exact_brand else ("generated_source", "copied_to", "prompt_file", "backend")
+    for field in evidence_fields:
         if not isinstance(asset.get(field), str) or not asset[field].strip():
             issues.append({"severity": "blocker", "code": "source_visual_asset_evidence_missing", "visual_id": visual["visual_id"], "asset_id": asset_id, "field": field})
-    for field in ("generated_source", "prompt_file"):
+    for field in (("source_ref",) if exact_brand else ("generated_source", "prompt_file")):
         evidence_path = _resolve(manifest_root, asset.get(field))
         if evidence_path is None or not evidence_path.is_file():
             issues.append({"severity": "blocker", "code": "source_visual_asset_evidence_file_missing", "visual_id": visual["visual_id"], "asset_id": asset_id, "field": field, "path": str(evidence_path) if evidence_path else None})
@@ -194,7 +196,7 @@ def _asset_issues(asset: dict[str, Any], visual: dict[str, Any], manifest_root: 
     copied = _resolve(manifest_root, asset.get("copied_to"))
     if copied is None or not copied.is_file():
         issues.append({"severity": "blocker", "code": "source_visual_asset_final_file_missing", "visual_id": visual["visual_id"], "asset_id": asset_id, "path": str(copied) if copied else None})
-    declared = asset.get("sha256")
+    declared = asset.get("sha256") or (asset.get("source_sha256") if exact_brand else None)
     if not isinstance(declared, str) or not declared.strip():
         issues.append({"severity": "blocker", "code": "source_visual_asset_hash_missing", "visual_id": visual["visual_id"], "asset_id": asset_id})
     elif not SHA256_RE.fullmatch(declared):
