@@ -25,3 +25,16 @@ For exploratory layouts, missing boxes or typography are warnings. Strict refere
 Reference-reconstruction should carry `reference_line_count` and measured `reference_line_boxes` for authoritative text slots, in the same source-coordinate space as `source_bbox`. When `require_measured_line_boxes: true`, the editable worker fails closed if a declared reference line topology lacks measured line boxes. Visual-creation does not require this source-only evidence.
 
 PageGraph object geometry is validated separately before typography repair, so font shrinking cannot hide upstream x/y/w/h drift. The final fresh rendered-reference gate remains authoritative for release.
+
+## Language-aware wrapping and hierarchy protection
+
+Run `scripts/ppt_text_fit.py` with the slot's semantic role. The fitter keeps
+Latin/number/unit runs together, applies conservative Chinese line-start and
+line-end punctuation rules, preserves explicit breaks and reports the
+target-size box deficit. It also protects visual hierarchy with role-aware
+minimum readable sizes and shrink ratios. A recommendation below either
+threshold is evidence for geometry repair, not permission to shrink text.
+
+Use `--semantic-role hero_title|title|section_title|body|caption`; override
+`--min-readable-pt` or `--min-hierarchy-scale` only from an explicit design or
+reference contract. Acceptance still depends on a fresh PowerPoint render.

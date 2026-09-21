@@ -27,3 +27,16 @@ Fixed-reference reconstruction may not infer line topology only from whether tex
 When the authoring layout sets `require_measured_line_boxes: true`, E3 becomes fail-closed for a reference-reconstruction route: every slot that declares `reference_line_count` must also provide measured line boxes. Repair order is source geometry / line boxes first, font shrink last. Final rendered-reference validation remains mandatory because measured source geometry does not guarantee identical viewer typography.
 
 PageGraph geometry is independently checked against authored object boxes by `validate_page_geometry.py`; this prevents typography tuning from masking upstream object-placement drift.
+
+## Language-aware wrapping and hierarchy protection
+
+Run `scripts/ppt_text_fit.py` with the slot's semantic role. The fitter keeps
+Latin/number/unit runs together, applies conservative Chinese line-start and
+line-end punctuation rules, preserves explicit breaks and reports the
+target-size box deficit. It also protects visual hierarchy with role-aware
+minimum readable sizes and shrink ratios. A recommendation below either
+threshold is evidence for geometry repair, not permission to shrink text.
+
+Use `--semantic-role hero_title|title|section_title|body|caption`; override
+`--min-readable-pt` or `--min-hierarchy-scale` only from an explicit design or
+reference contract. Acceptance still depends on a fresh PowerPoint render.

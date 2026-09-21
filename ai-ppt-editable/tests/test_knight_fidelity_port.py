@@ -60,6 +60,30 @@ def test_text_fit_keeps_symbol_prefixed_number_and_unit_runs_together():
     assert "A/B" in tokens
 
 
+def test_text_fit_applies_chinese_line_break_punctuation_rules():
+    tokens = _tokens("强化管控，防患未然（每日提醒）")
+    assert "，" not in tokens
+    assert all(not token.startswith(tuple("，。！？；：、）》】")) for token in tokens)
+    assert all(not token.endswith(tuple("《【〈「（(")) for token in tokens)
+
+
+def test_text_fit_blocks_shrink_that_destroys_title_hierarchy():
+    args = argparse.Namespace(
+        text="这是一个必须保持醒目层级的超长主标题", box="150x30",
+        font="Microsoft YaHei", font_file=None, bold=True, min_pt=8.0,
+        max_pt=32.0, max_lines=1, target_lines=1, scan_step=0.25,
+        line_spacing=1.06, width_safety=0.92, height_safety=0.95,
+        render_fudge=1.01, target_pt=32.0, semantic_role="hero_title",
+        min_readable_pt=None, min_hierarchy_scale=None,
+        slide_px="1672x941", slide_in="13.333333x7.505",
+    )
+    result = best_fit(args)
+    assert not result["hierarchy_preserved"]
+    assert not result["font_shrink_allowed"]
+    assert result["fit_decision"] == "geometry_repair_required"
+    assert result["hierarchy_constraints"]["min_readable_pt"] == 24.0
+
+
 def test_text_fit_preserves_explicit_reference_line_topology():
     args = argparse.Namespace(
         text="第一行\n第二行", box="600x160", font="Microsoft YaHei", font_file=None,

@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.21.11
+  package_revision: 2026.09.21.12
 ---
 
 # AI PPT Editable
@@ -133,6 +133,13 @@ Keep readable formal text native. Keep independent visual assets independently m
 Do not infer a table from borders, repeated rows or two-column alignment. A table requires real field/record/cell semantics. Icon+title+description repetitions remain repeated editable components.
 
 ## 6. Text Slot Preflight
+
+For Chinese or mixed Chinese/Latin text, run the fitter with the slot's
+semantic role. Treat legal Chinese punctuation wrapping, preserved
+Latin/number/unit runs, explicit/reference line topology, target-size box
+deficits and hierarchy thresholds as fit evidence. When
+`hierarchy_preserved=false`, repair geometry; do not accept the smaller
+recommended size as an automatic fix. See `references/text-layout-model.md`.
 
 Measure every visible native text path before authoring. Determine the true editable slot, preserve reference line count and role hierarchy, and use the same runtime-resolved font for fit and authoring. Chinese runs must set Latin/East-Asian/complex-script OOXML typeface metadata as required by the runtime contract.
 

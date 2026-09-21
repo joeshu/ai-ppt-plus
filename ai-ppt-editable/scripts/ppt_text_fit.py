@@ -31,6 +31,20 @@ _TOKEN_RE = re.compile(
     flags=re.DOTALL,
 )
 
+# Conservative Chinese line-breaking rules. A box can technically fit while
+# still looking wrong if closing punctuation starts a line or opening
+# punctuation ends one.
+_NO_LINE_START = set("，。！？；：、）》】〕〉」』”’…—％%℃°")
+_NO_LINE_END = set("《【〔〈「『“‘（(")
+
+_ROLE_DEFAULTS = {
+    "hero_title": {"min_pt": 24.0, "min_scale": 0.90},
+    "title": {"min_pt": 20.0, "min_scale": 0.90},
+    "section_title": {"min_pt": 15.0, "min_scale": 0.88},
+    "body": {"min_pt": 10.0, "min_scale": 0.82},
+    "caption": {"min_pt": 8.0, "min_scale": 0.78},
+}
+
 
 def _pair(value: str, separator: str = "x") -> tuple[float, float]:
     left, right = value.lower().split(separator, 1)
@@ -60,7 +74,19 @@ def _width(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str) -
 
 
 def _tokens(text: str) -> list[str]:
-    return _TOKEN_RE.findall(str(text))
+    raw = _TOKEN_RE.findall(str(text))
+    tokens: list[str] = []
+    index = 0
+    while index < len(raw):
+        token = raw[index]
+        if token in _NO_LINE_START and tokens:
+            tokens[-1] += token
+        elif token in _NO_LINE_END and index + 1 < len(raw):
+            raw[index + 1] = token + raw[index + 1]
+        else:
+            tokens.append(token)
+        index += 1
+    return tokens
 
 
 def _paragraphs(text: str) -> list[str]:
@@ -183,6 +209,10 @@ def best_fit(args: argparse.Namespace) -> dict:
     target_pt = getattr(args, "target_pt", None)
     if target_pt is not None:
         target_pt = float(target_pt)
+    semantic_role = str(getattr(args, "semantic_role", "body") or "body").strip().lower()
+    role_defaults = _ROLE_DEFAULTS.get(semantic_role, _ROLE_DEFAULTS["body"])
+    min_readable_pt = float(getattr(args, "min_readable_pt", None) or role_defaults["min_pt"])
+    min_hierarchy_scale = float(getattr(args, "min_hierarchy_scale", None) or role_defaults["min_scale"])
 
     box_w, box_h = _pair(args.box)
     slide_w_px, _ = _pair(args.slide_px)
@@ -284,6 +314,12 @@ def best_fit(args: argparse.Namespace) -> dict:
     diagnostic_row = best.get("target") or best
     diagnostic_deficit = diagnostic_row.get("box_deficit_px", best_box_deficit)
     diagnostic_topology = bool(diagnostic_row.get("line_topology_preserved", True))
+    reference_pt = target_pt or float(args.max_pt)
+    hierarchy_scale = (best["recommended_pt"] / reference_pt) if reference_pt else 1.0
+    hierarchy_preserved = (
+        best["recommended_pt"] >= min_readable_pt
+        and hierarchy_scale >= min_hierarchy_scale
+    )
     best.update({
         "target_fits": bool(diagnostic_row.get("fits", best.get("fits"))),
         "repair_policy": "text_slot_first_font_shrink_last",
@@ -292,6 +328,19 @@ def best_fit(args: argparse.Namespace) -> dict:
             diagnostic_deficit,
             topology_preserved=diagnostic_topology,
         ),
+        "semantic_role": semantic_role,
+        "hierarchy_scale": round(hierarchy_scale, 4),
+        "hierarchy_preserved": hierarchy_preserved,
+        "font_shrink_allowed": hierarchy_preserved,
+        "fit_decision": (
+            "slot_preserved" if bool(diagnostic_row.get("fits", best.get("fits")))
+            else "geometry_repair_required" if not hierarchy_preserved
+            else "font_adjustment_candidate"
+        ),
+        "hierarchy_constraints": {
+            "min_readable_pt": min_readable_pt,
+            "min_hierarchy_scale": min_hierarchy_scale,
+        },
     })
     best["settings"] = {
         "font": args.font,
@@ -305,7 +354,7 @@ def best_fit(args: argparse.Namespace) -> dict:
         "scan_step": args.scan_step,
         "target_pt": target_pt,
         "runtime_font_required": True,
-        "tokenization": "cjk-character-latin-number-symbol-run-v2",
+        "tokenization": "cjk-kinsoku-latin-number-symbol-run-v3",
     }
     return best
 
@@ -337,6 +386,9 @@ def main() -> int:
     parser.add_argument("--height-safety", type=float, default=0.95)
     parser.add_argument("--render-fudge", type=float, default=1.01)
     parser.add_argument("--target-pt", type=float)
+    parser.add_argument("--semantic-role", default="body", choices=sorted(_ROLE_DEFAULTS))
+    parser.add_argument("--min-readable-pt", type=float)
+    parser.add_argument("--min-hierarchy-scale", type=float)
     parser.add_argument("--slide-px", default="1672x941")
     parser.add_argument("--slide-in", default="13.333333x7.505")
     args = parser.parse_args(argv)
