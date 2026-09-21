@@ -25,6 +25,7 @@ PHASES = [
     "local_crop_qa",
     "responsible_object_repair",
     "rerender",
+    "visual_closeout_consistency",
     "hard_correctness_check",
     "final_pptx",
 ]
@@ -141,6 +142,14 @@ def validate(report: dict[str, Any], root: Path) -> tuple[list[str], list[str]]:
             fail(errors, "repair item missing responsible object/layer")
         if item.get("accepted") is True and not item.get("after_render_path"):
             fail(errors, "accepted repair missing fresh after-render evidence")
+
+    closeout = report.get("visual_closeout_validation")
+    if not isinstance(closeout, dict):
+        fail(errors, "visual closeout validation missing")
+    elif closeout.get("valid") is not True or closeout.get("status") != "passed":
+        fail(errors, "visual closeout consistency failed")
+    elif int(closeout.get("open_text_repair_count", 0)) != 0:
+        fail(errors, "visual closeout has open text-render repairs")
 
     metrics = report.get("diagnostics", {})
     for key in metrics:

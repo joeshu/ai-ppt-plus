@@ -19,6 +19,7 @@
     "local_crop_qa": {"status": "pending"},
     "responsible_object_repair": {"status": "pending"},
     "rerender": {"status": "pending"},
+    "visual_closeout_consistency": {"status": "pending"},
     "hard_correctness_check": {"status": "pending"},
     "final_pptx": {"status": "pending"}
   },
@@ -39,6 +40,12 @@
     }
   ],
   "repair_trace": [],
+  "visual_closeout_validation": {
+    "valid": false,
+    "status": "pending",
+    "open_text_repair_count": 0,
+    "issues": []
+  },
   "hard_blockers": [],
   "blocking_metrics": {},
   "diagnostics": {

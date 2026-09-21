@@ -25,8 +25,9 @@ The chain is intentionally visual-first. PageGraph, TextGraph, manifests, metric
 11. **5-10 key Local Crops** — select 5-10 diverse material regions per page, prioritizing dense text/cards, icon slots, charts, compact arrow+label components, bottom bars and user-flagged areas. Include composed header/footer semantic-region crops when present; object-only crops are insufficient for anchor/system defects. Use same-coordinate reference/candidate crops.
 12. **Responsible Object Repair** — every material mismatch is assigned to the owning object/layer or semantic region. Repair that owner rather than compensating through unrelated neighbors or chasing a scalar score. Protect already-correct regions. Use AuthoringPlan `protected_neighbors` and the pattern-specific repair order in `visual-repair-patterns.md`.
 13. **Re-render** — every accepted material repair must be followed by a fresh render and re-check of the affected crop plus the full page.
-14. **Hard Correctness Check** — only deterministic correctness defects block delivery. Visual mismatch without a hard correctness defect returns to the repair loop; it does not create a new gate.
-15. **Final PPTX** — deliver only the fresh candidate that passed the hard correctness check and whose final full-page/local-crop evidence corresponds to the delivered hash.
+14. **Visual Closeout Consistency** — write structured reference/candidate observations for the required material region roles and validate them with `scripts/validate_visual_closeout.py`. An unresolved visual finding is unfinished repair work, not a score threshold. Contradictory closeout evidence blocks PASS and returns to the repair loop.
+15. **Hard Correctness Check** — only deterministic correctness defects and unresolved evidence-consistency defects block delivery. Visual metrics remain diagnostic.
+16. **Final PPTX** — deliver only the fresh candidate that passed the hard correctness and visual-closeout consistency checks and whose final full-page/local-crop evidence corresponds to the delivered hash.
 
 ## The only production hard blockers
 
@@ -62,4 +63,4 @@ Complex visual systems may be a single or small number of independent semantic a
 
 ## Acceptance
 
-Final acceptance requires: current-source hash match; fresh PPTX/render hash linkage; full-page review; 5-10 final same-coordinate crops per page unless fewer than five material regions exist; exact formal-text ledger; editability/object inspection; independent asset alpha/provenance QA; semantic chart/table checks where applicable; zero hard blockers; and a Repair Trace for the last accepted material changes.
+Final acceptance requires: current-source hash match; fresh PPTX/render hash linkage; full-page review; 5-10 final same-coordinate crops per page unless fewer than five material regions exist; structured visual-closeout validation with no unresolved material findings; no unclosed text-render repair records; exact formal-text ledger; editability/object inspection; independent asset alpha/provenance QA; semantic chart/table checks where applicable; zero hard blockers; and a Repair Trace for the last accepted material changes.

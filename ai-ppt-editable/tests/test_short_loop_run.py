@@ -31,6 +31,7 @@ def _report(tmp_path: Path):
         "phases": phases,
         "pages": [{"page_id": "slide-1", "material_region_count": 5, "local_crops": crops}],
         "repair_trace": [],
+        "visual_closeout_validation": {"valid": True, "status": "passed", "open_text_repair_count": 0},
         "hard_blockers": [],
         "blocking_metrics": {},
         "diagnostics": {"ssim": 0.12, "regional_ssim": 0.2},
@@ -82,3 +83,14 @@ def test_accepted_repair_requires_fresh_after_render(tmp_path):
     report["repair_trace"] = [{"responsible_object_id": "card-1", "accepted": True}]
     errors, _ = short_loop.validate(report, tmp_path)
     assert any("after-render" in error for error in errors)
+
+
+def test_failed_visual_closeout_blocks_acceptance(tmp_path):
+    report = _report(tmp_path)
+    report["visual_closeout_validation"] = {
+        "valid": False,
+        "status": "failed",
+        "open_text_repair_count": 49,
+    }
+    errors, _ = short_loop.validate(report, tmp_path)
+    assert any("visual closeout consistency failed" in error for error in errors)
