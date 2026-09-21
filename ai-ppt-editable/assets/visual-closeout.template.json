@@ -1,0 +1,22 @@
+{
+  "schema": "ai-ppt-plus/visual-closeout/v2",
+  "status": "pending",
+  "human_visual_review_status": "pending",
+  "reference_sha256": "",
+  "candidate_render_sha256": "",
+  "regions": [
+    {
+      "region_id": "header-brand-title",
+      "role": "brand",
+      "status": "pending",
+      "owner_layer": "",
+      "observation": {
+        "reference_features": [],
+        "candidate_features": [],
+        "mismatches": []
+      }
+    }
+  ],
+  "text_repair_dispositions": [],
+  "unresolved_material_mismatches": []
+}

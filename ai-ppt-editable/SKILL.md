@@ -13,7 +13,7 @@ Reconstruct or repair editable PPTX with the supplied reference as visual author
 
 New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python is inspection/QA only and is not an authoring fallback. Whole-page raster fallback is forbidden.
 
-Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
+Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/visual-closeout-gate.md` before declaring visual PASS. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
 Read `references/image-to-editable-regressions.md` when a fresh image-to-editable replay exposes an inventory, alpha-geometry, physical-aspect, text-to-container or composite-anchor defect; apply its stable repair codes and re-render the owning region.
 
 ## Formal production chain
@@ -208,6 +208,8 @@ Asset thumbnails are insufficient. Icon visibility, clipping, centering and z-or
 
 Before Responsible Object Repair, run `scripts/text_render_feedback.py` against the immutable reference render and the fresh candidate render. Use its same-coordinate text crops to diagnose position, visible scale/weight and hierarchy drift. These tolerances are diagnostic only and never a whole-page release gate.\n\n## 13. Responsible Object Repair
 
+Do not manually override contradictory evidence. A `repair_required=true` text-render record remains open until a fresh render clears it or an object-specific disposition records `resolved`/`false_positive_verified`, after-render evidence and a concrete review note. Generic prose such as “aligned” or “preserved” is not closeout evidence.
+
 Every material mismatch must map to the responsible object/layer. Record page, crop/object IDs, mismatch, proposed delta, before evidence, after evidence, accepted/rejected state and reason. Prefer the 3-5 highest-impact defects in each iteration.
 
 Repair the owning object instead of compensating through neighbors or chasing one scalar score. Protect already-correct regions. Pure placement defects should not trigger unnecessary ImageGen regeneration.
@@ -215,6 +217,8 @@ Repair the owning object instead of compensating through neighbors or chasing on
 ## 14. Re-render
 
 Every accepted material repair requires a fresh render. Re-check the affected crop and the full page. Reject a local repair that materially regresses a protected crop or the whole page unless explicit human review establishes that the scalar regression is a renderer artifact and the visual/object evidence is better.
+
+Before PASS, materialize `visual-closeout.json` from `assets/visual-closeout.template.json` and run `scripts/validate_visual_closeout.py` as specified in `references/visual-closeout-gate.md`. This is an evidence-consistency gate, not a scalar similarity threshold. Any unresolved material crop finding, unclosed text-render repair, missing structured region observation, or stale/mismatched final-render binding blocks PASS and returns to Responsible Object Repair.
 
 ## 15. Hard Correctness Check
 
