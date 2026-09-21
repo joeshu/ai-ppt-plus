@@ -1,6 +1,6 @@
 # Text Render Feedback Loop
 
-Knight text-fit Batch 4 closes the gap between pre-authoring fit evidence and the fresh final render.
+Render feedback closes the gap between pre-authoring fit evidence and the fresh final render.
 
 The loop is intentionally diagnostic. It does **not** create a whole-page scalar release gate. It binds each TextFit slot to its AuthoringPlan owner, captures the same normalized bbox from the immutable reference render and the fresh candidate render, and records object-scoped text-region evidence.
 

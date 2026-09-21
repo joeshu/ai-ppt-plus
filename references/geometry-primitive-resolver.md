@@ -63,7 +63,7 @@ Artifact Tool Build consumes the resolution report alongside AuthoringPlan. The 
 - The geometry is inserted after `a:xfrm` so the shape-property OOXML order remains valid.
 - `scripts/validate_geometry_authoring.py` checks the actual page/object target, direction/taper points, round-rect adjustment and exact cubic control-point topology; missing or ambiguous targets fail closed.
 
-The font side of the same binding follows Knight's native-text rule: runtime fonts are resolved/materialized separately, while authored text is bound to `a:latin`, `a:ea` and `a:cs`. `scripts/enforce_ooxml_font_faces.py` normalizes exporter output without embedding font binaries.
+For font binding, resolve/materialize runtime fonts separately while binding authored text to `a:latin`, `a:ea` and `a:cs`. `scripts/enforce_ooxml_font_faces.py` normalizes exporter output without embedding font binaries.
 
 ## Usage
 

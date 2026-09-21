@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Knight-style fixed-reference reconstruction entrypoint.
+"""Self-contained fixed-reference reconstruction entrypoint.
 
 The production path is visual-first: strict Artifact Tool authoring, fresh
 render, full-page diagnostics, 5-10 key same-coordinate local crops, then an
@@ -158,7 +158,7 @@ def main()->int:
     repair_trace=run_dir/"render-repair-trace.json"
     run([sys.executable,str(SCRIPT_DIR/"build_render_repair_trace.py"),str(layout),str(region_report),"--report",str(repair_trace)],"responsible-object Repair Trace")
     status="repair-ready"
-    current.update({"render":str(rendered),"render_report":str(render_report),"reference_visual":str(visual_report),"key_local_crop_manifest":str(regions_path),"key_local_crop_count":len(manifest["regions"]),"local_crop_visual":str(region_report),"local_crop_qa":str(crop_dir),"repair_trace":str(repair_trace),"visual_review_required":True,"visual_metrics_diagnostic_only":True,"production_hard_blockers":"references/knight-short-loop.md","status":status})
+    current.update({"render":str(rendered),"render_report":str(render_report),"reference_visual":str(visual_report),"key_local_crop_manifest":str(regions_path),"key_local_crop_count":len(manifest["regions"]),"local_crop_visual":str(region_report),"local_crop_qa":str(crop_dir),"repair_trace":str(repair_trace),"visual_review_required":True,"visual_metrics_diagnostic_only":True,"production_hard_blockers":"references/fixed-reference-short-loop.md","status":status})
     current_path.write_text(json.dumps(current,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"status":status,"deck":str(out),"render":str(rendered),"visual_report":str(visual_report),"key_local_crop_manifest":str(regions_path),"local_crop_count":len(manifest["regions"]),"region_report":str(region_report),"repair_trace":str(repair_trace),"visual_metrics_diagnostic_only":True},ensure_ascii=False,indent=2));return 0
 

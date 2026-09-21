@@ -1,12 +1,26 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": ["schema", "skill", "owns", "forbids", "bindings"],
+  "required": ["schema", "skill", "owns", "forbids", "failure_policy", "bindings"],
   "properties": {
     "schema": {"const": "ai-ppt-editable/skill-routing/v1"},
     "skill": {"const": "ai-ppt-editable"},
     "owns": {"type": "array", "minItems": 1, "items": {"type": "string"}},
     "forbids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "failure_policy": {
+      "type": "object",
+      "required": ["authoring_backend", "image_asset_backend", "on_authoring_unavailable", "on_imagegen_unavailable", "automatic_backend_substitution", "source_crop_fallback", "external_skill_fallback"],
+      "properties": {
+        "authoring_backend": {"const": "@oai/artifact-tool"},
+        "image_asset_backend": {"const": "imagegen"},
+        "on_authoring_unavailable": {"const": "blocked"},
+        "on_imagegen_unavailable": {"const": "blocked"},
+        "automatic_backend_substitution": {"const": false},
+        "source_crop_fallback": {"const": false},
+        "external_skill_fallback": {"const": false}
+      },
+      "additionalProperties": false
+    },
     "bindings": {
       "type": "object",
       "required": ["authoring", "qa_inspection", "strict_authoring"],

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the Knight-style short reconstruction loop.
+"""Validate the self-contained fixed-reference reconstruction loop.
 
 This validator deliberately blocks only deterministic correctness failures.
 Visual metrics are retained as diagnostics and can create repair work, but they

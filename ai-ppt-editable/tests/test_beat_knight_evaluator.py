@@ -3,8 +3,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+DEV_EVALUATORS = Path(__file__).resolve().parents[1] / "evals" / "competitive"
+sys.path.insert(0, str(DEV_EVALUATORS))
 
 from beat_knight_evaluator import _absolute_floor
 

@@ -17,7 +17,7 @@ REQUIRED_OWNS = {
     "pptx-rendering",
     "technical-qa",
 }
-REQUIRED_FORBIDS = {"narrative-redesign", "release-eligibility", "human-signoff"}
+REQUIRED_FORBIDS = {"narrative-redesign", "release-eligibility", "human-signoff", "external-comparator-runtime"}
 
 
 def main() -> int:
@@ -37,6 +37,9 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "routing_schema_invalid", "observed": data.get("schema")})
     if data.get("skill") != "ai-ppt-editable":
         issues.append({"severity": "blocker", "code": "routing_skill_invalid", "observed": data.get("skill")})
+    serialized = json.dumps(data, ensure_ascii=False).lower()
+    if "knight" in serialized or "knight-imagetopptx" in serialized:
+        issues.append({"severity": "blocker", "code": "external_comparator_in_production_route", "message": "production routing must not reference the development-only comparator"})
     owns = set(data.get("owns") or [])
     forbids = set(data.get("forbids") or [])
     for value in sorted(REQUIRED_OWNS - owns):

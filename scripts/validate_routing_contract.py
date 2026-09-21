@@ -17,9 +17,9 @@ REQUIRED_OWNS = {
     "ai-ppt-editable": {"reference-decomposition", "editable-layer-plan", "image-to-pptx-object-mapping", "pptx-authoring", "pptx-rendering", "technical-qa"},
 }
 REQUIRED_FORBIDS = {
-    "ai-ppt-plus": {"silent-backend-substitution", "human-signoff-claim"},
+    "ai-ppt-plus": {"silent-backend-substitution", "human-signoff-claim", "external-comparator-runtime"},
     "ai-ppt-visual-gen": {"narrative-authority", "formal-text-authority", "image-to-editable-pptx", "release-eligibility", "human-signoff"},
-    "ai-ppt-editable": {"narrative-redesign", "release-eligibility", "human-signoff"},
+    "ai-ppt-editable": {"narrative-redesign", "release-eligibility", "human-signoff", "external-comparator-runtime"},
 }
 
 
@@ -40,6 +40,9 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "routing_schema_invalid", "observed": data.get("schema")})
     if data.get("orchestrator") != "ai-ppt-plus":
         issues.append({"severity": "blocker", "code": "routing_orchestrator_invalid", "observed": data.get("orchestrator")})
+    serialized = json.dumps(data, ensure_ascii=False).lower()
+    if "knight" in serialized or "knight-imagetopptx" in serialized:
+        issues.append({"severity": "blocker", "code": "external_comparator_in_production_route", "message": "production routing must not reference the development-only comparator"})
     skills = data.get("skills")
     if not isinstance(skills, list):
         skills = []
@@ -65,28 +68,24 @@ def main() -> int:
     if set(by_name) != EXPECTED_NAMES:
         issues.append({"severity": "blocker", "code": "routing_skill_set_invalid", "expected": sorted(EXPECTED_NAMES), "observed": sorted(by_name)})
 
-    fallback_policy = data.get("fallback_policy")
-    expected_fallback_policy = {
-        "schema": "ai-ppt-plus/fallback-policy/v1",
-        "primary_engine": "ai-ppt-editable",
-        "fallback_engine": "GordenImage2PPTX",
-        "fallback_scope": "region-only",
-        "allow_full_page": False,
-        "requires_explicit_reason": True,
-        "requires_asset_record": True,
-        "requires_user_decision_on_generation_failure": True,
-        "forbidden_roles": {"formal-text", "semantic-panel", "panel-frame", "table", "chart", "card-frame", "whole-slide", "whole-page", "framework"},
+    failure_policy = data.get("failure_policy")
+    expected_failure_policy = {
+        "schema": "ai-ppt-plus/failure-policy/v1",
+        "authoring_backend": "@oai/artifact-tool",
+        "image_asset_backend": "imagegen",
+        "on_authoring_unavailable": "blocked",
+        "on_imagegen_unavailable": "blocked",
+        "automatic_backend_substitution": False,
+        "source_crop_fallback": False,
+        "external_skill_fallback": False,
     }
-    if not isinstance(fallback_policy, dict):
-        issues.append({"severity": "blocker", "code": "fallback_policy_missing"})
-        fallback_policy = {}
-    for key, expected in expected_fallback_policy.items():
-        observed = fallback_policy.get(key)
-        if key == "forbidden_roles":
-            if set(observed or []) != expected:
-                issues.append({"severity": "blocker", "code": "fallback_policy_mismatch", "field": key, "expected": sorted(expected), "observed": observed})
-        elif observed != expected:
-            issues.append({"severity": "blocker", "code": "fallback_policy_mismatch", "field": key, "expected": expected, "observed": observed})
+    if not isinstance(failure_policy, dict):
+        issues.append({"severity": "blocker", "code": "failure_policy_missing"})
+        failure_policy = {}
+    for key, expected in expected_failure_policy.items():
+        observed = failure_policy.get(key)
+        if observed != expected:
+            issues.append({"severity": "blocker", "code": "failure_policy_mismatch", "field": key, "expected": expected, "observed": observed})
 
     bindings = data.get("bindings")
     if not isinstance(bindings, dict):
@@ -163,7 +162,7 @@ def main() -> int:
         "contract": str(path),
         "issues": issues,
         "bindings": bindings,
-        "fallback_policy": fallback_policy,
+        "failure_policy": failure_policy,
     }
     if args.report:
         atomic_write_json(Path(args.report).resolve(), result)

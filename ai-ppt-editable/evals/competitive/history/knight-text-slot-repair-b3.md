@@ -1,6 +1,6 @@
-# Knight text-fit absorption — Batch 3
+# Development history: Knight text-fit absorption — Batch 3
 
-This batch turns TextFit deficit evidence into a deterministic text-slot/layout repair decision. It is additive to the existing `knight-fidelity-port.md` contract and does not replace the Protected Repair Planner.
+This historical development note describes the Batch 3 origin. Production behavior is governed by `fixed-reference-fidelity.md` and does not depend on an external comparator.
 
 Run after `text_fit_deck.py` and before accepting a font-size reduction:
 

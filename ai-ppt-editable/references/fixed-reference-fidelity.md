@@ -1,9 +1,8 @@
-# Knight fidelity port
+# Fixed-reference fidelity contract
 
-This contract incorporates the strongest execution patterns studied from
-`knight6669/knight-imagetopptx-skill` at commit
-`9265818222fdbdd326410793956ad23a950d72a7`. The upstream project is MIT
-licensed. These rules are part of normal standalone execution; they do not require running Knight side-by-side or any A/B comparator.
+This is the self-contained production fidelity contract for `ai-ppt-editable`.
+Production execution must not discover, invoke, import, or depend on any
+external comparison skill, repository, binary, route, prompt, or output.
 
 ## Mandatory execution rules
 
@@ -22,10 +21,9 @@ licensed. These rules are part of normal standalone execution; they do not requi
 
 ## TextFit Core Conformance
 
-The project absorbs Knight's useful text-fit rules into the canonical
-`ai-ppt-editable/scripts/ppt_text_fit.py` and the full-slot
-`text_fit_deck.py` audit. The implementation remains runtime-font based and
-does not import Knight's Windows-only font path assumptions.
+The canonical implementation is `ai-ppt-editable/scripts/ppt_text_fit.py`
+plus the full-slot `text_fit_deck.py` audit. The implementation remains
+runtime-font based and carries no external comparator assumptions.
 
 ### Tokenization and wrapping
 
@@ -108,4 +106,4 @@ The compact run report must list runtime font evidence, full text-fit coverage, 
 
 ## Self-contained acceptance rule
 
-Normal skill execution must succeed without any external comparator. Completion is based on visual inventory, asset classification, ImageGen asset completion, runtime font resolution, text-fit coverage, editable authoring, physical z-order pass, fresh render QA, same-coordinate local-crop QA, responsible-object repair, and final validation. Whole-page SSIM or any other scalar score is diagnostic only unless the user explicitly requests a numeric target. External Knight A/B remains an evaluation harness for skill development, not a runtime dependency.
+Normal skill execution must succeed without any external comparator. Completion is based on visual inventory, asset classification, ImageGen asset completion, runtime font resolution, text-fit coverage, editable authoring, physical z-order pass, fresh render QA, same-coordinate local-crop QA, responsible-object repair, and final validation. Whole-page SSIM or any other scalar score is diagnostic only unless the user explicitly requests a numeric target. External competitive A/B may exist only under `evals/`; it is never a runtime dependency or production route.

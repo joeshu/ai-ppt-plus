@@ -56,7 +56,7 @@ def validate(path:Path,*,strict=False):
         if (item.get("source_reuse") is True or item.get("extraction_method") in {"source_reuse","exact_crop","crop"}) and not fallback: errors.append({"code":"source_reuse_final_asset_forbidden","asset_id":asset_id})
         if fallback and not (item.get("source_ref") and item.get("source_bbox") and item.get("source_sha256")): errors.append({"code":"approved_fallback_missing_source_evidence","asset_id":asset_id})
         if _sheet_ancestry(item): errors.append({"code":"sheet_not_independent_asset","asset_id":asset_id})
-        # Knight-style deterministic geometry evidence is mandatory for final generated visuals.
+        # Deterministic geometry evidence is mandatory for final generated visuals.
         if route=="imagegen":
             for key in ("visible_alpha_bbox","alpha_centroid","placement_bbox"):
                 if key not in item: errors.append({"code":"alpha_geometry_evidence_missing","asset_id":asset_id,"field":key})

@@ -11,33 +11,9 @@
     "formal_content_authority": {"type": "string", "enum": ["approved_outline", "user_transcription", "transcription_pending_confirmation"]},
     "requires_image_generation": {"type": "boolean"},
     "primary_engine": {"type": "string", "enum": ["ai-ppt-editable", "ai-ppt-visual-gen"]},
-    "fallback_policy": {"type": "string", "enum": ["none", "scoped-visual-only"]},
+    "fallback_policy": {"const": "none"},
     "fallback_used": {"type": "boolean"},
-    "fallback_events": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["engine", "scope", "role", "region", "contains_formal_content", "whole_page", "reason", "asset_record", "user_decision"],
-        "properties": {
-          "engine": {"const": "GordenImage2PPTX"},
-          "scope": {"const": "region"},
-          "role": {"type": "string"},
-          "region": {
-            "oneOf": [
-              {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}},
-              {"type": "object", "required": ["x", "y", "w", "h"], "properties": {"x": {"type": "number"}, "y": {"type": "number"}, "w": {"type": "number"}, "h": {"type": "number"}}}
-            ]
-          },
-          "contains_formal_content": {"const": false},
-          "whole_page": {"const": false},
-          "full_page": {"type": "boolean"},
-          "object_type": {"type": "string"},
-          "reason": {"type": "string", "minLength": 1},
-          "asset_record": {"type": "object", "required": ["manifest", "asset_id"], "properties": {"manifest": {"type": "string", "minLength": 1}, "asset_id": {"type": "string", "minLength": 1}}},
-          "user_decision": {"type": "object", "required": ["status", "by", "at"], "properties": {"status": {"const": "approved"}, "by": {"type": "string", "minLength": 1}, "at": {"type": "string", "minLength": 1}}}
-        }
-      }
-    },
+    "fallback_events": {"type": "array", "maxItems": 0},
     "editable_object_policy": {"type": "string", "enum": ["native-semantic-objects", "image-slide"]},
     "outline_contract": {
       "type": "object",
@@ -89,7 +65,7 @@
           "visual_authority": {"const": "approved_reference_image"},
           "requires_image_generation": {"const": false},
           "primary_engine": {"const": "ai-ppt-editable"},
-          "fallback_policy": {"const": "scoped-visual-only"},
+          "fallback_policy": {"const": "none"},
           "editable_object_policy": {"const": "native-semantic-objects"}
         }
       }

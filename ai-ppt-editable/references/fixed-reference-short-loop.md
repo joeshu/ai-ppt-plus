@@ -1,4 +1,4 @@
-# Knight-style short reconstruction loop
+# Fixed-reference short reconstruction loop
 
 This is the normative execution contract for fixed-reference image-to-editable-PPTX reconstruction. Read `visual-repair-patterns.md` for the reusable defect patterns discovered from fresh-render repair. Read `authoring-plan.md` for the pre-build execution-plan contract. Read `text-coverage-auditor.md` for formal-text producer coverage.
 
@@ -51,7 +51,7 @@ Use whole-page SSIM, regional SSIM, pixel diff, bbox IoU, centroid drift, scale 
 
 Do not use a fixed `score < 0.90` rule to decide whether a repair item exists. Rank by relative mismatch, material area, semantic importance and explicit visual findings. Inspect the 3-5 highest-impact regions per iteration even when scalar scores are high enough to hide obvious contour, typography-density or anchor defects.
 
-External Knight A/B belongs to skill-development regression evaluation, not normal user conversion.
+External comparator A/B belongs exclusively to development regression evaluation. Production execution must not discover, invoke, import, or depend on an external comparator.
 
 ## Repair-loop policy
 

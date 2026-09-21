@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
-"""Enforce the engine-selection contract before editable PPTX work starts.
-
-The repository has three business skills. GordenImage2PPTX is not a fourth
-skill and is never the primary route. It is an explicitly recorded,
-region-only visual-asset fallback for the editable route.
-"""
+"""Enforce the singular, fail-closed production engine route."""
 from __future__ import annotations
 
 import argparse
 import json
-import math
 from pathlib import Path
 
 from atomic_output import atomic_write_json
@@ -22,45 +16,12 @@ PRIMARY_BY_ROUTE = {
     "native-authoring": "ai-ppt-editable",
     "visual-creation": "ai-ppt-visual-gen",
 }
-FALLBACK_POLICY_BY_ROUTE = {
-    "reference-reconstruction": "scoped-visual-only",
-    "editable-pptx": "scoped-visual-only",
-    "native-authoring": "none",
-    "visual-creation": "none",
-}
+FALLBACK_POLICY_BY_ROUTE = {route: "none" for route in PRIMARY_BY_ROUTE}
 EDITABILITY_POLICY_BY_ROUTE = {
     "reference-reconstruction": "native-semantic-objects",
     "editable-pptx": "native-semantic-objects",
     "native-authoring": "native-semantic-objects",
     "visual-creation": "image-slide",
-}
-FALLBACK_ENGINE = "GordenImage2PPTX"
-ALLOWED_FALLBACK_ROLES = {
-    "icon",
-    "decoration",
-    "artistic-typography",
-    "complex-gradient",
-    "illustration",
-    "background-texture",
-    "decorative-art",
-}
-FORBIDDEN_FALLBACK_ROLES = {
-    "formal-text",
-    "semantic-panel",
-    "panel-frame",
-    "table",
-    "chart",
-    "card-frame",
-    "whole-slide",
-    "whole-page",
-    "framework",
-}
-FORBIDDEN_FALLBACK_TYPES = {
-    "editable_text",
-    "editable_table",
-    "editable_chart",
-    "native_shape",
-    "native_group",
 }
 
 
@@ -70,23 +31,6 @@ def _issue(code: str, **details) -> dict:
 
 def _nonempty(value) -> bool:
     return isinstance(value, str) and bool(value.strip())
-
-
-def _valid_region(value) -> bool:
-    if isinstance(value, dict):
-        values = [value.get(key) for key in ("x", "y", "w", "h")]
-    elif isinstance(value, (list, tuple)) and len(value) == 4:
-        values = list(value)
-    else:
-        return False
-    try:
-        numbers = [float(item) for item in values]
-    except (TypeError, ValueError):
-        return False
-    if not all(math.isfinite(item) for item in numbers):
-        return False
-    x, y, width, height = numbers
-    return x >= 0 and y >= 0 and width > 0 and height > 0 and x + width <= 1 and y + height <= 1
 
 
 def validate_engine_route_data(data: dict, *, strict: bool = True) -> tuple[list[dict], dict]:
@@ -106,8 +50,6 @@ def validate_engine_route_data(data: dict, *, strict: bool = True) -> tuple[list
     if strict or "primary_engine" in data:
         if not _nonempty(primary):
             issues.append(_issue("primary_engine_missing"))
-        elif primary == FALLBACK_ENGINE:
-            issues.append(_issue("primary_engine_forbidden", engine=primary))
         elif expected_primary and primary != expected_primary:
             issues.append(_issue("primary_engine_mismatch", expected=expected_primary, observed=primary))
 
@@ -136,39 +78,8 @@ def validate_engine_route_data(data: dict, *, strict: bool = True) -> tuple[list
     if fallback_used != bool(events):
         issues.append(_issue("fallback_used_event_mismatch", fallback_used=fallback_used, event_count=len(events)))
 
-    if expected_fallback_policy == "none" and events:
-        issues.append(_issue("fallback_not_allowed_for_route", route=route))
-
-    for index, event in enumerate(events):
-        if not isinstance(event, dict):
-            issues.append(_issue("fallback_event_invalid", index=index))
-            continue
-        engine = event.get("engine")
-        if engine != FALLBACK_ENGINE:
-            issues.append(_issue("fallback_engine_invalid", index=index, expected=FALLBACK_ENGINE, observed=engine))
-        if event.get("scope") != "region":
-            issues.append(_issue("fallback_scope_invalid", index=index, observed=event.get("scope")))
-        role = event.get("role")
-        if role in FORBIDDEN_FALLBACK_ROLES or role not in ALLOWED_FALLBACK_ROLES:
-            issues.append(_issue("fallback_role_forbidden", index=index, role=role))
-        if event.get("object_type") in FORBIDDEN_FALLBACK_TYPES:
-            issues.append(_issue("fallback_object_type_forbidden", index=index, object_type=event.get("object_type")))
-        if event.get("contains_formal_content") is not False:
-            issues.append(_issue("fallback_formal_content_declaration_missing", index=index))
-        if event.get("whole_page") is not False:
-            issues.append(_issue("fallback_full_page_declaration_missing", index=index))
-        if event.get("full_page") is True or event.get("allow_full_page") is True:
-            issues.append(_issue("fallback_full_page_forbidden", index=index))
-        if not _valid_region(event.get("region") or event.get("source_bbox")):
-            issues.append(_issue("fallback_region_missing", index=index))
-        if not _nonempty(event.get("reason")):
-            issues.append(_issue("fallback_reason_missing", index=index))
-        asset_record = event.get("asset_record")
-        if not isinstance(asset_record, dict) or not _nonempty(asset_record.get("manifest")) or not _nonempty(asset_record.get("asset_id")):
-            issues.append(_issue("fallback_asset_record_missing", index=index))
-        decision = event.get("user_decision")
-        if not isinstance(decision, dict) or decision.get("status") != "approved" or not _nonempty(decision.get("by")) or not _nonempty(decision.get("at")):
-            issues.append(_issue("fallback_user_decision_missing", index=index))
+    if events:
+        issues.append(_issue("fallback_not_allowed_for_route", route=route, event_count=len(events)))
 
     evidence = {
         "route": route,

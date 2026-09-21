@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Python-pptx authoring backend for the editable deck contract."""
+"""Legacy python-pptx fixture adapter; forbidden for production authoring."""
 from __future__ import annotations
 
 import sys

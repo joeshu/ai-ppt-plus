@@ -36,7 +36,7 @@ def editable_route() -> dict:
         "formal_content_authority": "approved_outline",
         "requires_image_generation": False,
         "primary_engine": "ai-ppt-editable",
-        "fallback_policy": "scoped-visual-only",
+        "fallback_policy": "none",
         "fallback_used": False,
         "fallback_events": [],
         "editable_object_policy": "native-semantic-objects",
@@ -61,15 +61,15 @@ def main() -> int:
         assert_blocked(missing, "primary_engine_missing")
 
         wrong_primary = editable_route()
-        wrong_primary["primary_engine"] = "GordenImage2PPTX"
+        wrong_primary["primary_engine"] = "external-authoring-engine"
         write(route_path, wrong_primary)
         blocked_primary = run("scripts/validate_engine_route.py", str(route_path), "--strict")
-        assert_blocked(blocked_primary, "primary_engine_forbidden")
+        assert_blocked(blocked_primary, "primary_engine_mismatch")
 
         with_fallback = editable_route()
         with_fallback["fallback_used"] = True
         with_fallback["fallback_events"] = [{
-            "engine": "GordenImage2PPTX",
+            "engine": "external-authoring-engine",
             "scope": "region",
             "role": "complex-gradient",
             "object_type": "independent_image",
@@ -81,26 +81,8 @@ def main() -> int:
             "user_decision": {"status": "approved", "by": "owner", "at": "2026-09-02T00:00:00Z"},
         }]
         write(route_path, with_fallback)
-        scoped = run("scripts/validate_engine_route.py", str(route_path), "--strict")
-        assert scoped.returncode == 0, scoped.stdout + scoped.stderr
-
-        missing_declaration = copy.deepcopy(with_fallback)
-        missing_declaration["fallback_events"][0].pop("contains_formal_content")
-        write(route_path, missing_declaration)
-        blocked_declaration = run("scripts/validate_engine_route.py", str(route_path), "--strict")
-        assert_blocked(blocked_declaration, "fallback_formal_content_declaration_missing")
-
-        forbidden_role = copy.deepcopy(with_fallback)
-        forbidden_role["fallback_events"][0]["role"] = "table"
-        write(route_path, forbidden_role)
-        blocked_role = run("scripts/validate_engine_route.py", str(route_path), "--strict")
-        assert_blocked(blocked_role, "fallback_role_forbidden")
-
-        full_page = copy.deepcopy(with_fallback)
-        full_page["fallback_events"][0]["full_page"] = True
-        write(route_path, full_page)
-        blocked_full_page = run("scripts/validate_engine_route.py", str(route_path), "--strict")
-        assert_blocked(blocked_full_page, "fallback_full_page_forbidden")
+        blocked_fallback = run("scripts/validate_engine_route.py", str(route_path), "--strict")
+        assert_blocked(blocked_fallback, "fallback_not_allowed_for_route")
 
         visual_route = {
             "schema": "ai-ppt-plus/route-decision/v2",

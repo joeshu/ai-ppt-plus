@@ -9,7 +9,16 @@
     "pptx-rendering",
     "technical-qa"
   ],
-  "forbids": ["narrative-redesign", "release-eligibility", "human-signoff"],
+  "forbids": ["narrative-redesign", "release-eligibility", "human-signoff", "external-comparator-runtime"],
+  "failure_policy": {
+    "authoring_backend": "@oai/artifact-tool",
+    "image_asset_backend": "imagegen",
+    "on_authoring_unavailable": "blocked",
+    "on_imagegen_unavailable": "blocked",
+    "automatic_backend_substitution": false,
+    "source_crop_fallback": false,
+    "external_skill_fallback": false
+  },
   "bindings": {
     "authoring": {
       "kind": "adapter",

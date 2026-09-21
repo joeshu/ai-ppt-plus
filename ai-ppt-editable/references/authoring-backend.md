@@ -13,7 +13,7 @@ The implementation is split into focused modules:
 | `asset_placement.py` | background/frame/panel/icon placement and SVG package replacement |
 | `preview_renderer.py` | optional Pillow preview rendering and preview font selection |
 | `atomic_output.py` | sibling temporary files, atomic replacement and ZIP rewrites |
-| `authoring_backend.py` | `python-pptx` backend orchestration and optional font embedding |
+| `authoring_backend.py` | legacy guard/provenance module; not a production authoring backend |
 | `artifact_tool_authoring.mjs` | strict native ESM authoring through `@oai/artifact-tool` |
 | `artifact_tool_runtime.mjs` | absolute runtime/module resolution and font registration |
 | `embed_fonts.py` | licensed PresentationML font post-processing |
@@ -79,9 +79,8 @@ python3 scripts/compose_pptx.py layout.json output.pptx \
   --font-dir assets/fonts --strict-input
 ```
 
-The compatibility `python-pptx` backend remains the default solely for frozen
-historical fixtures and existing callers. It is not used by the strict route,
-and no Python process reopens or resaves a strict output.
+`python-pptx` is read-only test/inspection compatibility only. It must not
+create, rewrite, repair, reopen, or resave a production output.
 
 The transaction entrypoint for a fixed reference follows the same rule. Its
 default is now the strict Artifact Tool route and it accepts either a task
@@ -95,5 +94,5 @@ python3 scripts/strict_reference_rerun.py PROJECT \
   --node-modules "$CODEX_PRIMARY_RUNTIME_NODE_MODULES"
 ```
 
-Use `--authoring-backend python-pptx` only when replaying a frozen legacy
-transaction that explicitly requires OOXML font embedding.
+Frozen legacy fixtures may be inspected by dedicated regression adapters, but
+their authoring path is not a supported production route.
