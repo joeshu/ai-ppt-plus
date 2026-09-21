@@ -97,6 +97,8 @@ def test_text_fit_preserves_explicit_reference_line_topology():
     assert result["line_topology_preserved"]
     assert result["target"]["line_topology_preserved"]
     assert result["target"]["line_count"] == 2
+    assert result["settings"]["measurement_count"] <= 24
+    assert result["settings"]["search_strategy"] == "monotonic-boundary-local-refine-v1"
 
 
 def test_text_fit_accepts_leading_symbol_text_without_cli_rewrite():

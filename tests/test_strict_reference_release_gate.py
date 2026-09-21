@@ -13,7 +13,7 @@ def main() -> int:
     compact = "".join(worker.split())
     assert worker == mirror, "strict release gate must stay runtime-mirrored"
     assert "strict_reference_rerun.py" in worker
-    assert "render_pptx.py" in worker
+    assert "render_authoritative.py" in worker
     assert "compare_visual.py" in worker
     assert '"--raw-slide","--report"' in compact
     assert '"--raw-slide","--strict"' not in compact

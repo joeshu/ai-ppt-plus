@@ -87,9 +87,20 @@ def validate(
     if not font_files:
         issues.append({"severity": "blocker", "code": "font_directory_empty", "path": str(font_dir) if font_dir else None})
 
-    for command in ("soffice", "pdftoppm"):
-        if not shutil.which(command):
-            issues.append({"severity": "blocker", "code": "renderer_command_missing", "command": command})
+    powerpoint_available = False
+    if os.name == "nt":
+        try:
+            import win32com.client  # type: ignore  # noqa: F401
+            powerpoint_available = True
+        except Exception:
+            powerpoint_available = False
+    libreoffice_available = bool(shutil.which("soffice") or shutil.which("libreoffice"))
+    poppler_available = bool(shutil.which("pdftoppm") or shutil.which("pdftocairo"))
+    if not powerpoint_available:
+        if not libreoffice_available:
+            issues.append({"severity": "blocker", "code": "renderer_command_missing", "command": "soffice|libreoffice"})
+        if not poppler_available:
+            issues.append({"severity": "blocker", "code": "renderer_command_missing", "command": "pdftoppm|pdftocairo"})
 
     return {
         "schema": SCHEMA,
@@ -105,7 +116,8 @@ def validate(
             "RUNTIME_NODE_MODULES": str(node_modules) if node_modules else None,
         },
         "font_files": font_files,
-        "visual_renderer": "libreoffice+poppler",
+        "visual_renderer": "powerpoint-export" if powerpoint_available else "libreoffice+poppler",
+        "renderer_policy": "powerpoint-first-libreoffice-fallback",
         "artifact_tool_preview_policy": "structural_diagnostic_only",
         "issues": issues,
     }

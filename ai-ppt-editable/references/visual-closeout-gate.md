@@ -4,7 +4,8 @@ Use this gate after the final fresh render and same-coordinate crop review. It
 does not define an SSIM or pixel threshold. It prevents a human closeout from
 contradicting its own evidence.
 
-The visual authority is the fresh LibreOffice+Poppler render produced with the
+The visual authority is the fresh Microsoft PowerPoint export when available,
+otherwise the verified LibreOffice+Poppler render produced with the
 same task-local fonts used for fitting. Artifact Tool preview/import output is
 structural diagnostic evidence only and cannot close visual review. A preview
 font-rendering discrepancy must be recorded once and must not trigger a PPTX

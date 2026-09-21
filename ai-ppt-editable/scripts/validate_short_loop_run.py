@@ -128,8 +128,9 @@ def validate(report: dict[str, Any], root: Path) -> tuple[list[str], list[str]]:
                 fail(errors, f"ImageGen retry budget exceeded for {asset_id}: {count} > {policy['imagegen_retry_limit_per_asset']}")
         if performance.get("text_fit_scope") != policy["text_fit_scope"]:
             fail(errors, "text-fit scope differs from execution profile")
-        if performance.get("authoritative_visual_renderer") != "libreoffice+poppler":
-            fail(errors, "authoritative visual renderer must be libreoffice+poppler")
+        renderer = str(performance.get("authoritative_visual_renderer") or "").lower()
+        if renderer not in {"powerpoint-export", "libreoffice+poppler", "libreoffice+pdftoppm", "libreoffice+pdftocairo"}:
+            fail(errors, "authoritative visual renderer must be PowerPoint export or verified LibreOffice fallback")
         if performance.get("artifact_tool_preview_used_for_visual_closeout") is True:
             fail(errors, "Artifact Tool preview cannot be visual-closeout authority")
 

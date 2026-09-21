@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.21.12",
+  "package_revision": "2026.09.21.13",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -87,6 +87,8 @@
     "scripts/run_pipeline.py",
     "scripts/compose_pptx.py",
     "scripts/ppt_text_fit.py",
+    "scripts/compact_acceptance_report.py",
+    "scripts/ppt_practical_lint.py",
     "scripts/text_fit_deck.py",
     "scripts/normalize_layout_fidelity.py",
     "scripts/patch_chart_blank_series.py",
@@ -95,6 +97,8 @@
     "scripts/audit_pptx_layers.py",
     "scripts/artifact_tool_authoring.mjs",
     "scripts/render_pptx.py",
+    "scripts/render_powerpoint.py",
+    "scripts/render_authoritative.py",
     "scripts/inspect_pptx.py",
     "scripts/validate_backend_binding.py",
     "scripts/validate_visual_generation_plan.py",

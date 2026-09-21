@@ -137,9 +137,10 @@ def main()->int:
         if value:command += [flag,value]
     if a.overwrite:command.append("--overwrite")
     run(command,"Artifact Tool build")
+    run([sys.executable,str(SCRIPT_DIR/"ppt_practical_lint.py"),str(out),"--report",str(project/"ppt-practical-lint.json")],"PowerPoint practical lint")
     current_path=project/"current-rerun.json";current=load(current_path);run_dir=Path(current["authoring_provenance"]).resolve().parent
     render_dir=run_dir/"final-render";render_report=run_dir/"final-render.json"
-    render_cmd=[sys.executable,str(SCRIPT_DIR/"render_pptx.py"),str(out),"--output-dir",str(render_dir),"--dpi",str(a.dpi),"--report",str(render_report)]
+    render_cmd=[sys.executable,str(SCRIPT_DIR/"render_authoritative.py"),str(out),"--output-dir",str(render_dir),"--dpi",str(a.dpi),"--report",str(render_report)]
     if a.font_dir:render_cmd += ["--font-dir",str(Path(a.font_dir).resolve())]
     run(render_cmd,"fresh PowerPoint render");rendered=render_dir/"slide-1.png"
     if not rendered.is_file():raise SystemExit("fresh render did not produce slide-1.png")

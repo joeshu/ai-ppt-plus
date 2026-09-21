@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.21.12
+  package_revision: 2026.09.21.13
 ---
 
 # AI PPT Editable
@@ -215,8 +215,11 @@ Charts remain native/editable when data are known. Missing future values stay bl
 
 ## 10. Fresh PowerPoint Render
 
-Use LibreOffice+Poppler with the task-local authoring fonts as the visual
-authority. Artifact Tool preview/import is structural evidence only. Do not
+Use `scripts/render_authoritative.py`. Prefer Microsoft PowerPoint export when
+it is installed and usable; otherwise use the verified LibreOffice+Poppler
+fallback with the task-local authoring fonts. Record the actual renderer and
+the `powerpoint-first-libreoffice-fallback` policy. Artifact Tool
+preview/import is structural evidence only. Do not
 repair or rebuild a deck solely because that preview omits CJK glyphs when the
 authoritative render and object audit are complete.
 
@@ -245,6 +248,13 @@ Repair the owning object instead of compensating through neighbors or chasing on
 Every accepted material repair requires a fresh render. Re-check the affected crop and the full page. Reject a local repair that materially regresses a protected crop or the whole page unless explicit human review establishes that the scalar regression is a renderer artifact and the visual/object evidence is better.
 
 Before PASS, materialize `visual-closeout.json` from `assets/visual-closeout.template.json` and run `scripts/validate_visual_closeout.py` as specified in `references/visual-closeout-gate.md`. This is an evidence-consistency gate, not a scalar similarity threshold. Any unresolved material crop finding, unclosed text-render repair, missing structured region observation, or stale/mismatched final-render binding blocks PASS and returns to Responsible Object Repair.
+
+In `fast`, retain the complete machine evidence but publish a compact summary
+with `scripts/compact_acceptance_report.py`. Run
+`scripts/ppt_practical_lint.py` before delivery to report recurring PowerPoint
+defects such as full-slide background shapes, unconfigured wide rounded
+rectangles, unexpected effects and missing observed CJK typeface metadata.
+Lint warnings create focused review work; they do not replace the final render.
 
 ## 15. Hard Correctness Check
 

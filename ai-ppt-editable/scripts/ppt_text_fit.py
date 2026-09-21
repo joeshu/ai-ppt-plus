@@ -220,6 +220,17 @@ def best_fit(args: argparse.Namespace) -> dict:
     px_per_pt = (slide_w_px / slide_w_in) / 72.0
     font_path = find_font(args.font, args.bold, args.font_file)
 
+    measurement_cache: dict[float, dict] = {}
+
+    def evaluate(point: float) -> dict:
+        key = round(float(point), 4)
+        if key not in measurement_cache:
+            measurement_cache[key] = measure(
+                args.text, key, font_path, px_per_pt, box_w,
+                args.line_spacing, args.width_safety, args.render_fudge,
+            )
+        return measurement_cache[key]
+
     def geometry_fits(row: dict) -> bool:
         return (
             row["width_px"] <= box_w * args.width_safety
@@ -233,41 +244,50 @@ def best_fit(args: argparse.Namespace) -> dict:
     def full_fit(row: dict) -> bool:
         return geometry_fits(row) and topology_matches(row)
 
-    # Exact line topology is not monotonic under the old binary-search predicate:
-    # when the candidate has too few lines we often need a larger font/narrower
-    # slot, not a smaller font. Scan from largest to smallest when topology is
-    # known, then fall back to the closest topology for diagnosis.
+    # Find the largest point size whose geometry fits and whose line count does
+    # not exceed the reference. This predicate is monotonic for ordinary PPT
+    # text flow, unlike equality with an exact line count. Refine only around
+    # the discovered boundary instead of scanning the complete font range.
     if args.target_lines > 0:
+        low, high = args.min_pt, args.max_pt
+        boundary = None
+        for _ in range(12):
+            point = (low + high) / 2.0
+            row = evaluate(point)
+            if geometry_fits(row) and row["line_count"] <= args.target_lines:
+                boundary, low = row, point
+            else:
+                high = point
+
         step = max(0.10, args.scan_step)
-        count = max(1, int(math.ceil((args.max_pt - args.min_pt) / step)))
-        candidates = []
-        for index in range(count + 1):
-            point = max(args.min_pt, args.max_pt - index * step)
-            row = measure(args.text, point, font_path, px_per_pt, box_w,
-                          args.line_spacing, args.width_safety, args.render_fudge)
-            candidates.append(row)
+        center = boundary["pt"] if boundary is not None else args.min_pt
+        local_points = {
+            args.min_pt, args.max_pt, center,
+            *(
+                min(args.max_pt, max(args.min_pt, center + offset * step))
+                for offset in range(-4, 5)
+            ),
+        }
+        candidates = [evaluate(point) for point in sorted(local_points, reverse=True)]
         exact = [row for row in candidates if full_fit(row)]
         if exact:
-            best = exact[0]
+            best = max(exact, key=lambda row: row["pt"])
         else:
             geometrically_valid = [row for row in candidates if geometry_fits(row)] or candidates
-            best = min(
-                geometrically_valid,
-                key=lambda row: (abs(row["line_count"] - args.target_lines), -row["pt"]),
-            )
+            best = min(geometrically_valid, key=lambda row: (
+                abs(row["line_count"] - args.target_lines), -row["pt"],
+            ))
     else:
         low, high, best = args.min_pt, args.max_pt, None
         for _ in range(18):
             point = (low + high) / 2.0
-            row = measure(args.text, point, font_path, px_per_pt, box_w,
-                          args.line_spacing, args.width_safety, args.render_fudge)
+            row = evaluate(point)
             if geometry_fits(row):
                 best, low = row, point
             else:
                 high = point
         if best is None:
-            best = measure(args.text, args.min_pt, font_path, px_per_pt, box_w,
-                           args.line_spacing, args.width_safety, args.render_fudge)
+            best = evaluate(args.min_pt)
 
     best.update({
         "recommended_pt": round(best["pt"], 2),
@@ -296,8 +316,7 @@ def best_fit(args: argparse.Namespace) -> dict:
     })
 
     if target_pt is not None:
-        target = measure(args.text, target_pt, font_path, px_per_pt, box_w,
-                         args.line_spacing, args.width_safety, args.render_fudge)
+        target = evaluate(target_pt)
         target["fits"] = full_fit(target)
         target["geometry_fits"] = geometry_fits(target)
         target["line_topology_preserved"] = topology_matches(target)
@@ -355,6 +374,8 @@ def best_fit(args: argparse.Namespace) -> dict:
         "target_pt": target_pt,
         "runtime_font_required": True,
         "tokenization": "cjk-kinsoku-latin-number-symbol-run-v3",
+        "measurement_count": len(measurement_cache),
+        "search_strategy": "monotonic-boundary-local-refine-v1",
     }
     return best
 

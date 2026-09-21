@@ -128,7 +128,9 @@ def discover_runtime(*, skill_dir: str | Path | None = None, env: Mapping[str, s
                 break
     render_helper = _env_path(environment, "RUNTIME_RENDER_HELPER")
     if render_helper is None:
-        candidate = root / "scripts" / "render_pptx.py"
+        candidate = root / "scripts" / "render_authoritative.py"
+        if not candidate.is_file():
+            candidate = root / "scripts" / "render_pptx.py"
         render_helper = candidate.resolve() if candidate.is_file() else None
     skia = _env_path(environment, "RUNTIME_SKIA", directory=True)
     font_library = _env_path(environment, "RUNTIME_FONT_LIBRARY", directory=True)

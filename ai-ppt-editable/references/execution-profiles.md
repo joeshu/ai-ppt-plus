@@ -2,6 +2,11 @@
 
 Use `fast` by default for a normal single-page image-to-editable-PPTX job. It permits one initial candidate and one batched repair, at most two full renders, one ImageGen retry per failed asset, and 3–5 high-risk same-coordinate crops cut from the final full-page render.
 
+`fast` keeps complete internal evidence but emits a compact acceptance summary
+containing blockers, exceptions, high-risk text, render/crop counts, renderer,
+coverage and final artifact hashes. Do not serialize repeated successful
+per-object details into the user-facing report.
+
 Use `strict` when the user requests strict release evidence or the page is unusually dense. It permits one initial candidate plus two repair candidates, at most four full renders including exact-final confirmation, two ImageGen retries per failed asset, and 5–10 crops.
 
 Use `ci` only for package regression and developer checks; it is not a delivery profile.

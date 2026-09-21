@@ -43,6 +43,7 @@
     "imagegen_retry_counts": {},
     "text_fit_scope": "high_risk",
     "authoritative_visual_renderer": "libreoffice+poppler",
+    "renderer_policy": "powerpoint-first-libreoffice-fallback",
     "artifact_tool_preview_used_for_visual_closeout": false,
     "budget_exception_reason": null
   },
