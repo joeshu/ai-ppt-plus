@@ -49,6 +49,27 @@ def main() -> int:
         assert report["valid"], report
         assert report["schema"].endswith("/v3")
 
+        receipt_good = json.loads(good.read_text(encoding="utf-8"))
+        receipt_good.update({"native_tool": "image_gen.imagegen", "native_tool_receipt_required": True})
+        receipt_good["assets"][0]["native_imagegen_receipt"] = {
+            "tool": "image_gen.imagegen", "mode": "new", "source_reference": "source.png",
+            "prompt_sha256": sha(prompt), "output_path": "gen/i1.png",
+            "generation_request_id": "request-i1", "recorded_at": "2026-09-21T00:00:00Z",
+        }
+        receipt_manifest = root / "receipt-good.json"
+        receipt_manifest.write_text(json.dumps(receipt_good), encoding="utf-8")
+        report = validate(receipt_manifest, strict=True)
+        assert report["valid"], report
+        assert report["schema"].endswith("/v4")
+
+        missing_receipt = json.loads(receipt_manifest.read_text(encoding="utf-8"))
+        missing_receipt["assets"][0].pop("native_imagegen_receipt")
+        missing_receipt_manifest = root / "receipt-missing.json"
+        missing_receipt_manifest.write_text(json.dumps(missing_receipt), encoding="utf-8")
+        report = validate(missing_receipt_manifest, strict=True)
+        assert not report["valid"]
+        assert any(item["code"] == "native_imagegen_receipt_missing" for item in report["errors"])
+
         # An unspecified "official" route is not enough evidence.
         official = root / "official.json"
         official.write_text(json.dumps({

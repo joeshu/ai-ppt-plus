@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.21.09
+  package_revision: 2026.09.21.11
 ---
 
 # AI PPT Editable
@@ -13,7 +13,7 @@ Reconstruct or repair editable PPTX with the supplied reference as visual author
 
 New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python is inspection/QA only and is not an authoring fallback. Whole-page raster fallback is forbidden.
 
-Read `references/fixed-reference-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/visual-closeout-gate.md` before declaring visual PASS. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/fixed-reference-fidelity.md` remains implementation guidance. Production execution must not discover, invoke, import, route to, or depend on any external comparison skill. Competitive comparators are development-only artifacts under `evals/`.
+Read `references/fixed-reference-short-loop.md` for the normative production contract. Read `references/native-imagegen-runbook.md` for the mandatory native ImageGen call/receipt route, asset provenance and time-bounded recovery rules. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/visual-closeout-gate.md` before declaring visual PASS. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/fixed-reference-fidelity.md` remains implementation guidance. Production execution must not discover, invoke, import, route to, or depend on any external comparison skill. Competitive comparators are development-only artifacts under `evals/`.
 Read `references/image-to-editable-regressions.md` when a fresh image-to-editable replay exposes an inventory, alpha-geometry, physical-aspect, text-to-container or composite-anchor defect; apply its stable repair codes and re-render the owning region.
 
 ## Formal production chain
@@ -25,6 +25,8 @@ For normal fixed-reference reconstruction run this chain and no additional visua
 Default to the machine-validated `fast` profile in [references/execution-profiles.md](references/execution-profiles.md). Use `strict` only when requested or justified by page risk; use `ci` only for package regression. Profile candidate, render, crop and per-asset retry budgets are hard runtime limits.
 
 When invoked by the orchestrator, require `--execution-profile` propagation into editable QA. The execution-budget preflight must pass before composition; performance evidence must report the profile, TTFVR, candidate builds, full renders and uncached ImageGen calls.
+
+Use `scripts/build_imagegen_asset_jobs.py` to batch only compatible simple alpha icons. A batch sheet is a non-deliverable intermediate: slice it into independent transparent assets and run identity, contour, color, alpha and local-crop QA per asset. Never batch logos, brand lockups, calligraphy, wide brand bands or complex illustration. Honor `independent_generation_per_asset: true`. Count one shared generation request once in execution budgets even though every delivered slice retains its own retry and QA record. For every new fixed-reference run, require the native ImageGen tool receipt (`image_gen.imagegen`) in the asset manifest before Artifact Tool composition; a manifest that merely says `native-imagegen` is not sufficient evidence.
 
 Before ImageGen or authoring, pass package/source/runtime/font preflights. After
 the first candidate is built—and before any visual repair variant—run
@@ -168,7 +170,7 @@ See `references/text-coverage-auditor.md` and `assets/text-coverage.template.jso
 
 ## 8. Asset Generation
 
-Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha. Validate non-empty alpha bbox, transparent corners, safe padding, clipping and plausible subject coverage. For grids, detect actual row/column centers before slicing; repack by visible alpha bbox and visual centroid. For explicitly full-bleed ribbons/skyline bands, distinguish alpha-noise trim from bounded-asset QA, preserve the raw asset, record the derived transform and fit the derivative to the target physical aspect before using `contain`/`cover`.
+Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha by calling the built-in native ImageGen tool. Record the prompt, reference, output and `native_imagegen_receipt` before authoring; if the receipt is missing, stop at the asset gate. Validate non-empty alpha bbox, transparent corners, safe padding, clipping and plausible subject coverage. For grids, detect actual row/column centers before slicing; repack by visible alpha bbox and visual centroid. For explicitly full-bleed ribbons/skyline bands, distinguish alpha-noise trim from bounded-asset QA, preserve the raw asset, record the derived transform and fit the derivative to the target physical aspect before using `contain`/`cover`.
 
 For continuous low-frequency systems such as footer ribbons, skyline bands and header waves, rectangular alpha geometry is necessary but insufficient. Record a semantic parent bbox, sampled contour landmarks and child anchors. Compare the final composed region against the reference with `scripts/audit_continuous_band.py`; zero bbox delta must not close a visible contour mismatch. Keep readable footer/header text native and repair in this order: parent bbox -> contour profile -> asset scale/crop -> child anchors -> z-order.
 

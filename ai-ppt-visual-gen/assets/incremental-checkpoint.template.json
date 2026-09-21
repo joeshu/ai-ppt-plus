@@ -4,7 +4,7 @@
   "run_id": "run-20260913-example",
   "project_root": "C:/work/reconstruction",
   "repository_sha": "8e070acb5e1b94b5aff743b47ebb675735904f0f",
-  "package_revision": "2026.09.21.09",
+  "package_revision": "2026.09.21.10",
   "inputs": [
     {
       "path": "upload/page-1.png",

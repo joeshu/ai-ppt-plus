@@ -2,7 +2,7 @@
 
 ## Purpose and entry gate
 
-Read before turning an approved visual intermediate, reference slide image or screenshot into PowerPoint. This is an engineering-reconstruction contract: reproduce the reference's layout, hierarchy and visual relationships as a genuinely editable PPTX. It is not permission to redesign the page. The route must first be recorded in `route-decision.json`: `reference-reconstruction` uses an approved reference as visual authority and may skip image generation; `visual-creation` uses a generated visual intermediate and must retain its generation evidence. These routes are mutually exclusive per page/batch.
+Read before turning an approved visual intermediate, reference slide image or screenshot into PowerPoint. This is an engineering-reconstruction contract: reproduce the reference's layout, hierarchy and visual relationships as a genuinely editable PPTX. It is not permission to redesign the page. The route must first be recorded in `route-decision.json`: `reference-reconstruction` uses an approved reference as visual authority and may skip whole-page visual generation, but it still must generate every routed non-native visual asset through native ImageGen; `visual-creation` uses a generated visual intermediate and must retain its generation evidence. These routes are mutually exclusive per page/batch.
 
 If the user says “先讨论任务，不要立即生成”, acknowledge this contract, confirm inputs and wait. Do not create the PPTX until the user begins page execution or confirms the reference page. Required inputs are the page reference, formal-text authority (`approved_outline`, `user_transcription`, or `transcription_pending_confirmation`), available original assets and any ratio/font/brand constraints.
 

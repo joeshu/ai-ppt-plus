@@ -19,9 +19,11 @@ def test_beat_knight_asset_jobs_are_reproducible_and_independent():
     repeated = plan(copy.deepcopy(source))
 
     assert generated == repeated
-    assert generated["schema"] == "ai-ppt-plus/imagegen-asset-jobs/v4"
+    assert generated["schema"] == "ai-ppt-plus/imagegen-asset-jobs/v6"
     assert generated["execution_profile"] == "fast"
     assert generated["job_count"] == 3
+    assert generated["batch_count"] == 0
+    assert generated["estimated_uncached_imagegen_calls"] == 3
     assert [job["asset_id"] for job in generated["jobs"]] == [
         "brand-logo-lockup",
         "service-calligraphy-lockup",

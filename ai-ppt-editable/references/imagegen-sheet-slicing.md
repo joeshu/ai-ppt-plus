@@ -4,6 +4,21 @@ This B4/B5 adapter prevents a plausible imagegen prompt from becoming an
 incorrect sprite sheet because the workflow assumed a grid the model did not
 produce.
 
+## Safe generation batches
+
+The job planner may create one non-deliverable sheet for two to four compatible
+simple alpha icons. Compatibility requires a complete identity contract, the
+same source/style family, a moderate aspect ratio, and no formal text or brand
+identity. Logos, brand lockups, calligraphy, wide bands, illustrations and any
+asset explicitly opting out remain dedicated requests. A batch reduces one
+external call only; it never changes the independent final-asset contract.
+
+Record `generation_batch_id` and `batch_cell_index` on every participating
+asset. Preserve the raw sheet as evidence, set `deliver_intermediate: false`,
+slice every cell to its declared final path, and run identity/color, contour,
+alpha geometry and local-crop QA independently. A failed cell retries only its
+asset ID; accepted siblings remain cached.
+
 ## Classify before slicing
 
 Read the alpha channel of the direct transparent sheet, or of the chroma-keyed

@@ -18,6 +18,7 @@ BRAND_CLASSES = {
     "signature", "seal", "brand_band", "5g_mark", "locked_brand_art",
 }
 IMAGEGEN_WORD=re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])",re.I)
+NATIVE_IMAGEGEN_TOOL="image_gen.imagegen"
 SHEET_WORD=re.compile(r"(^|[-_. /])(contact[-_ ]?sheet|sprite[-_ ]?sheet|icon[-_ ]?sheet|sheet)([-_. /]|$)",re.I)
 SHA256_RE=re.compile(r"^[0-9a-f]{64}$")
 
@@ -66,9 +67,41 @@ def _sheet_ancestry(item):
             return True
     return False
 
+def _native_receipt_issues(manifest: Path, item: dict, asset_id: str, receipt_required: bool) -> list[dict]:
+    if not receipt_required:
+        return []
+    receipt = item.get("native_imagegen_receipt")
+    if not isinstance(receipt, dict):
+        return [{"code":"native_imagegen_receipt_missing","asset_id":asset_id}]
+    issues=[]
+    if receipt.get("tool") != NATIVE_IMAGEGEN_TOOL:
+        issues.append({"code":"native_imagegen_receipt_tool_invalid","asset_id":asset_id,"observed":receipt.get("tool")})
+    if receipt.get("mode") not in {"new","edit"}:
+        issues.append({"code":"native_imagegen_receipt_mode_invalid","asset_id":asset_id,"observed":receipt.get("mode")})
+    if not isinstance(receipt.get("source_reference"), str) or not receipt["source_reference"].strip():
+        issues.append({"code":"native_imagegen_receipt_source_missing","asset_id":asset_id})
+    prompt_path=_resolve(manifest, item.get("prompt_file"))
+    prompt_hash=receipt.get("prompt_sha256")
+    if not isinstance(prompt_hash,str) or not SHA256_RE.fullmatch(prompt_hash):
+        issues.append({"code":"native_imagegen_receipt_prompt_hash_invalid","asset_id":asset_id,"observed":prompt_hash})
+    elif prompt_path is not None and prompt_path.is_file() and _sha256(prompt_path) != prompt_hash:
+        issues.append({"code":"native_imagegen_receipt_prompt_hash_mismatch","asset_id":asset_id})
+    output_path=_resolve(manifest, receipt.get("output_path"))
+    generated_path=_resolve(manifest, item.get("generated_source"))
+    if output_path is None or generated_path is None or output_path != generated_path:
+        issues.append({"code":"native_imagegen_receipt_output_mismatch","asset_id":asset_id,"output_path":str(output_path) if output_path else None,"generated_source":str(generated_path) if generated_path else None})
+    if not isinstance(receipt.get("generation_request_id"),str) or not receipt["generation_request_id"].strip():
+        issues.append({"code":"native_imagegen_receipt_request_id_missing","asset_id":asset_id})
+    if not isinstance(receipt.get("recorded_at"),str) or not receipt["recorded_at"].strip():
+        issues.append({"code":"native_imagegen_receipt_timestamp_missing","asset_id":asset_id})
+    return issues
+
 def validate(path:Path,*,strict=False):
     data=json.loads(path.read_text(encoding="utf-8")); errors=[]
     if strict and data.get("provenance_policy")!="imagegen_final_assets": errors.append({"code":"wrong_provenance_policy","observed":data.get("provenance_policy")})
+    receipt_required=bool(data.get("native_tool_receipt_required"))
+    if strict and receipt_required and data.get("native_tool")!=NATIVE_IMAGEGEN_TOOL:
+        errors.append({"code":"native_imagegen_tool_declaration_invalid","observed":data.get("native_tool")})
     assets=data.get("assets");
     if not isinstance(assets,list): errors.append({"code":"assets_not_list"}); assets=[]
     records=[]
@@ -93,6 +126,8 @@ def validate(path:Path,*,strict=False):
             if item.get("independent_asset") is not True: errors.append({"code":"asset_not_independent","asset_id":asset_id})
             backend=str(item.get("backend",""))
             if strict and not IMAGEGEN_WORD.search(backend): errors.append({"code":"non_native_imagegen_backend","asset_id":asset_id,"backend":backend})
+            if strict and receipt_required:
+                errors.extend(_native_receipt_issues(path, item, asset_id, True))
             for field in ("generated_source","copied_to","prompt_file"):
                 p=_resolve(path,item.get(field))
                 if strict and (p is None or not p.is_file()): errors.append({"code":"imagegen_evidence_file_missing","asset_id":asset_id,"field":field,"path":str(p) if p else None})
@@ -112,7 +147,7 @@ def validate(path:Path,*,strict=False):
             elif source and source.is_file() and _sha256(source)!=declared: errors.append({"code":"exact_brand_source_hash_mismatch","asset_id":asset_id})
             elif copied and copied.is_file() and _sha256(copied)!=declared: errors.append({"code":"exact_brand_copy_hash_mismatch","asset_id":asset_id})
         records.append({"asset_id":asset_id,"asset_class":cls,"route":route,"generated_source":item.get("generated_source"),"copied_to":item.get("copied_to")})
-    return {"schema":"ai-ppt-plus/imagegen-final-assets/v3","valid":not errors,"strict":strict,"required_classes":sorted(REQUIRED),"asset_count":len(assets),"records":records,"errors":errors,"human_visual_review_required":True}
+    return {"schema":"ai-ppt-plus/imagegen-final-assets/v4" if receipt_required else "ai-ppt-plus/imagegen-final-assets/v3","valid":not errors,"strict":strict,"native_tool_receipt_required":receipt_required,"required_classes":sorted(REQUIRED),"asset_count":len(assets),"records":records,"errors":errors,"human_visual_review_required":True}
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument("manifest",type=Path); p.add_argument("--strict",action="store_true"); p.add_argument("--report",type=Path); a=p.parse_args()

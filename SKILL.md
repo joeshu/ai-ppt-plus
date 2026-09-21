@@ -2,10 +2,10 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.21.09
+  package_revision: 2026.09.21.11
 ---
 
-For fixed-reference image-to-editable-PPTX work, default to the editable worker's machine-validated `fast` execution profile. Use `strict` only when requested or justified by page risk; reserve `ci` for regression. Run finalization preflight before ImageGen or candidate construction, batch uncached asset generation, retry only failed asset IDs, and cut adaptive local QA crops from one full-page render.
+For fixed-reference image-to-editable-PPTX work, default to the editable worker's machine-validated `fast` execution profile. Use `strict` only when requested or justified by page risk; reserve `ci` for regression. Run finalization preflight before ImageGen or candidate construction. Batch only compatible simple alpha icons, slice them into independent final assets, and validate every slice; keep logos, brand lockups, calligraphy, wide bands and complex art in dedicated requests. Retry only failed asset IDs and cut adaptive local QA crops from one full-page render.
 
 Invoke `scripts/run_super_pipeline.py --execution-profile fast|strict` so profile validation and execution-budget preflight run before composition. The orchestrator passes observed candidate and ImageGen counts into editable QA; the performance report derives TTFVR from the render dependency path. `ci` cannot produce a delivery.
 
@@ -173,12 +173,13 @@ before delegation. These compatibility fields never authorize a second
 authoring engine.
 
 The production chain is singular: `ai-ppt-plus` -> `ai-ppt-editable` ->
-`@oai/artifact-tool`. ImageGen is a tool adapter for independently movable
-visual assets inside the owning worker; it is not a PPTX authoring backend or
-a fourth business skill. If Artifact Tool or required ImageGen capability is
-unavailable, mark the affected route/object `blocked` or `needs_user`. Never
-substitute another skill/backend or crop the reference image as a silent
-replacement.
+`@oai/artifact-tool`. ImageGen is the required native tool adapter for
+independently movable visual assets inside the owning worker; it is not a PPTX
+authoring backend or a fourth business skill. For every fixed-reference visual
+asset, require a recorded `image_gen.imagegen` receipt before composition. If
+Artifact Tool or required ImageGen capability is unavailable, mark the
+affected route/object `blocked` or `needs_user`. Never substitute another
+skill/backend or crop the reference image as a silent replacement.
 
 ### O3 — Delegate visual generation
 
