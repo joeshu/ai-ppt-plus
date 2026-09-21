@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def run_validator(template: dict) -> tuple[int, dict]:
-    path = ROOT / ".tmp-strict-routing-test.json"
+    path = ROOT / "assets" / ".tmp-strict-routing-test.json"
     path.write_text(json.dumps(template, ensure_ascii=False), encoding="utf-8")
     try:
         proc = subprocess.run(

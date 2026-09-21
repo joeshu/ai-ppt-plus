@@ -21,16 +21,15 @@
       "forbids": ["narrative-redesign", "release-eligibility", "human-signoff", "external-comparator-runtime"]
     }
   ],
-  "fallback_policy": {
-    "schema": "ai-ppt-plus/fallback-policy/v1",
-    "primary_engine": "ai-ppt-editable",
-    "fallback_engine": "GordenImage2PPTX",
-    "fallback_scope": "region-only",
-    "allow_full_page": false,
-    "requires_explicit_reason": true,
-    "requires_asset_record": true,
-    "requires_user_decision_on_generation_failure": true,
-    "forbidden_roles": ["formal-text", "semantic-panel", "panel-frame", "table", "chart", "card-frame", "whole-slide", "whole-page", "framework"]
+  "failure_policy": {
+    "schema": "ai-ppt-plus/failure-policy/v1",
+    "authoring_backend": "@oai/artifact-tool",
+    "image_asset_backend": "imagegen",
+    "on_authoring_unavailable": "blocked",
+    "on_imagegen_unavailable": "blocked",
+    "automatic_backend_substitution": false,
+    "source_crop_fallback": false,
+    "external_skill_fallback": false
   },
   "shared_contracts": ["L0-L5/v1", "ai-ppt-plus/report-envelope/v1", "font-evidence/v1", "ai-ppt-plus/chart-reconstruction/v1", "ai-ppt-plus/visual-generation-plan/v1", "ai-ppt-plus/visual-generation-tool/v1", "ai-ppt-plus/route-decision/v2", "ai-ppt-plus/handoff/v2", "ai-ppt-plus/workflow-state/v1"],
   "bindings": {

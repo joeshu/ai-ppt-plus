@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.21.02
+  package_revision: 2026.09.21.04
 ---
 
 # AI PPT Plus Orchestrator
@@ -152,17 +152,18 @@ For `reference-reconstruction`, `editable-pptx`, and `native-authoring`,
 also bind `references/fixed-reference-fidelity.md`: text-slot preflight,
 content-aware grid cutting, alpha-centroid placement, physical z-order audit
 and local crop QA are mandatory last-mile evidence.
-The route decision must persist `primary_engine`, `fallback_policy`,
-`fallback_used`, `fallback_events`, and `editable_object_policy` before
-delegation.
+The route decision must persist `primary_engine`, `fallback_policy=none`,
+`fallback_used=false`, `fallback_events=[]`, and `editable_object_policy`
+before delegation. These compatibility fields never authorize a second
+authoring engine.
 
-`GordenImage2PPTX` is not a fourth business skill and is never selected as the
-primary engine. It is an explicitly approved, region-only fallback for visual
-assets such as icons, decorative art, artistic typography, complex gradients,
-illustrations or background texture. It is forbidden for formal text, simple
-semantic panels/cards/frames, tables, charts and whole-page composition. Every
-fallback event must record the affected region, reason, generated/recovered
-asset record and explicit user decision; otherwise the route is blocked.
+The production chain is singular: `ai-ppt-plus` -> `ai-ppt-editable` ->
+`@oai/artifact-tool`. ImageGen is a tool adapter for independently movable
+visual assets inside the owning worker; it is not a PPTX authoring backend or
+a fourth business skill. If Artifact Tool or required ImageGen capability is
+unavailable, mark the affected route/object `blocked` or `needs_user`. Never
+substitute another skill/backend or crop the reference image as a silent
+replacement.
 
 ### O3 — Delegate visual generation
 
@@ -316,7 +317,8 @@ diagnostic unless the corresponding strict gate is requested.
 ## Non-negotiable gates
 
 - No silent route or backend substitution.
-- No `GordenImage2PPTX` primary selection or unrecorded/full-page fallback.
+- No alternate PPTX authoring backend, external-skill fallback, or source-crop
+  fallback in a production route.
 - Editable routes default to `ai-ppt-editable`; semantic panels, cards and
   tables must remain native objects unless an explicit contract records a
   text-free complex-visual exception.

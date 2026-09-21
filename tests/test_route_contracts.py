@@ -47,7 +47,7 @@ def main() -> int:
             "formal_content_authority": "approved_outline",
             "requires_image_generation": False,
             "primary_engine": "ai-ppt-editable",
-            "fallback_policy": "scoped-visual-only",
+            "fallback_policy": "none",
             "fallback_used": False,
             "fallback_events": [],
             "editable_object_policy": "native-semantic-objects",

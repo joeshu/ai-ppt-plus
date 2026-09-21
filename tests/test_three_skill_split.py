@@ -71,10 +71,12 @@ def main() -> int:
     assert {item["name"] for item in routing["skills"]} == set(PACKAGES)
     assert routing["bindings"]["visual_generation"]["runtime_entrypoint"].startswith("ai-ppt-visual-gen/")
     assert routing["bindings"]["reconstruction"]["runtime_entrypoint"].startswith("ai-ppt-editable/")
-    assert routing["bindings"]["authoring"]["entrypoint"].startswith("ai-ppt-editable/")
-    # The fallback engine is a policy adapter, not a fourth skill.
+    assert routing["bindings"]["authoring"]["builder"].startswith("ai-ppt-editable/")
+    assert routing["bindings"]["authoring"]["backend"] == "@oai/artifact-tool"
+    # Production has no fourth skill or alternate authoring engine.
     assert "GordenImage" not in json.dumps(routing["skills"], ensure_ascii=False)
-    assert routing["fallback_policy"]["fallback_engine"] == "GordenImage2PPTX"
+    assert routing["failure_policy"]["automatic_backend_substitution"] is False
+    assert routing["failure_policy"]["external_skill_fallback"] is False
 
     editable_scripts = ROOT / "ai-ppt-editable" / "scripts"
     # Shared route/handoff validators stay source-identical. The worker

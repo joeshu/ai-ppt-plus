@@ -7,9 +7,8 @@ for every future change to routing, reconstruction, authoring or manifests.
 ## Automated coverage
 
 - tests/test_engine_route.py checks the editable-first default, missing route
-  fields, forbidden GordenImage2PPTX primary use, approved region-only complex
-  visual fallback, semantic fallback rejection and visual-creation fallback
-  rejection.
+  fields, forbidden alternate engines, fail-closed behavior, and rejection of
+  every fallback event.
 - ai-ppt-editable/tests/test_native_structure.py composes a real PPTX and
   verifies a native group, a native PowerPoint table and native formal text.
   It also proves that semantic frame/panel raster inputs are blocked.

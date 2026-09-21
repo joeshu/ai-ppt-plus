@@ -1,8 +1,8 @@
 # Icon, decoration and word-art asset protocol
 
 Apply this protocol to every reference-led page containing icons, badges,
-decorations, logos, illustrations, or artistic typography. It adapts the
-GordenImage2PPTX B4/B5 chain while preserving AI PPT Plus routing.
+decorations, logos, illustrations, or artistic typography. It defines the
+native AI PPT Plus B4/B5 asset-isolation chain.
 
 ## B4: extract and exclude
 
