@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://joeshu.github.io/ai-ppt-plus/source-visual-inventory.schema.json",
+  "title": "AI PPT Plus Source Visual Inventory",
+  "type": "object",
+  "required": ["schema", "source", "visuals"],
+  "properties": {
+    "schema": {"const": "ai-ppt-plus/source-visual-inventory/v1"},
+    "source": {
+      "type": "object",
+      "required": ["sha256", "width_px", "height_px"],
+      "properties": {
+        "path": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+        "width_px": {"type": "integer", "minimum": 1},
+        "height_px": {"type": "integer", "minimum": 1},
+        "page_count": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": true
+    },
+    "visuals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["visual_id", "page", "semantic_role", "bbox_norm", "required_route", "asset_id"],
+        "properties": {
+          "visual_id": {"type": "string", "minLength": 1},
+          "page": {"type": "integer", "minimum": 1},
+          "semantic_role": {"type": "string", "minLength": 1},
+          "bbox_norm": {
+            "type": "array",
+            "prefixItems": [
+              {"type": "number", "minimum": 0, "maximum": 1},
+              {"type": "number", "minimum": 0, "maximum": 1},
+              {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+              {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+            ],
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "required_route": {"const": "imagegen"},
+          "asset_id": {"type": "string", "minLength": 1},
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

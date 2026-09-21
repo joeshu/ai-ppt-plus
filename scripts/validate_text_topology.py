@@ -39,7 +39,10 @@ def expected_lines(spec: dict, text: str) -> int | None:
 
 def audit_text_topology(layout: Path) -> dict:
     deck = json.loads(layout.read_text(encoding="utf-8"))
-    fit = audit_layout(layout)
+    # Keep topology measurement on the same task-local font as the strict E3
+    # fit gate. A host fallback font can invent extra CJK lines and create a
+    # false topology failure after the explicit preflight has passed.
+    fit = audit_layout(layout, font_file=deck.get("text_fit_font_file"))
     fit_rows = {(row["slide"], row["kind"], row["object_id"]): row for row in fit.get("slots", [])}
     rows, issues = [], []
     for slide_no, kind, object_id, spec, _box in _slots(deck):

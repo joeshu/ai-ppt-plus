@@ -375,6 +375,11 @@ def main() -> int:
     parser.add_argument("--require-editability", action="store_true", help="require typed L0-L5 object records in the slide manifest")
     parser.add_argument("--require-icon-assets", action="store_true", help="require B4/B5 icon asset and layer audits")
     parser.add_argument("--require-imagegen-assets", action="store_true", help="require per-page imagegen asset provenance")
+    parser.add_argument("--source-visual-inventory", help="source-visual-inventory/v1; defaults to project/source-visual-inventory.json")
+    parser.add_argument("--page-graph", help="PageGraph used to cross-check source complex-visual coverage; defaults to project/page-graph.json")
+    parser.add_argument("--require-source-visual-assets", action="store_true", help="fail closed when source complex visuals are not mapped to independent ImageGen finals")
+    parser.add_argument("--require-table-layout", action="store_true", help="require native table cell geometry/capacity validation")
+    parser.add_argument("--require-coordinate-contract", action="store_true", help="require one explicit coordinate space for every layout object")
     parser.add_argument("--require-source-crop-integrity", action="store_true", help="verify source_reuse crops against their declared source bbox pixels")
     parser.add_argument("--object-manifest", help="canonical slide-object-manifest.json")
     parser.add_argument("--require-object-manifest", action="store_true", help="require and validate the canonical object inventory")
@@ -468,6 +473,9 @@ def main() -> int:
         args.require_source_hashes = True
         args.require_asset_hashes = True
         args.require_formal_content = True
+        args.require_coordinate_contract = True
+        if args.reference or args.reference_dir:
+            args.require_source_visual_assets = True
         # External/pixel-object dual comparison is development evidence only;
         # release never auto-requires it.
         if args.reference_dir:
@@ -646,6 +654,8 @@ def main() -> int:
     asset_render_records = Path(args.asset_render_records).resolve() if args.asset_render_records else project / "asset-render-records.json"
     asset_render_enabled = bool(args.require_asset_render_coordinate_loop or args.asset_render_records or asset_render_records.is_file())
     authoring_plan_path = Path(args.authoring_plan).resolve() if args.authoring_plan else project / "authoring-plan.json"
+    source_visual_inventory_path = Path(args.source_visual_inventory).resolve() if args.source_visual_inventory else project / "source-visual-inventory.json"
+    page_graph_path = Path(args.page_graph).resolve() if args.page_graph else project / "page-graph.json"
     protected_repair_source = Path(args.protected_repair_source).resolve() if args.protected_repair_source else run_dir / "asset-render-coordinate-report.json"
     protected_repair_enabled = bool(args.require_protected_repair_planner or args.protected_repair_source)
     cache_dir = None
@@ -1015,6 +1025,16 @@ def main() -> int:
                 font_asset_args.append("--require-weights")
             add_step("font-asset", font_asset_args, deps=["fonts"], outputs=[run_dir / "font-asset-validation.json"], inputs=[Path(args.font_dir).resolve()])
     layout_path = project / "layout.json"
+    table_layout_required = args.require_table_layout
+    coordinate_contract_required = args.require_coordinate_contract
+    if layout_path.is_file():
+        try:
+            layout_data = json.loads(layout_path.read_text(encoding="utf-8"))
+            layout_slides = layout_data.get("slides") if isinstance(layout_data, dict) else []
+            if any(isinstance(slide, dict) and slide.get("tables") for slide in (layout_slides or [])):
+                table_layout_required = True
+        except (OSError, json.JSONDecodeError):
+            pass
     typography_enabled = args.require_typography_calibration or typography_calibration.is_file()
     object_manifest = Path(args.object_manifest).resolve() if args.object_manifest else project / "slide-object-manifest.json"
     content_inventory = Path(args.content_inventory).resolve() if args.content_inventory else project / "content-inventory.json"
@@ -1172,6 +1192,57 @@ def main() -> int:
                 outputs=[run_dir / "source-crop-integrity.json"],
                 inputs=[project / "imagegen-assets-manifest.json"],
             )
+    if args.require_source_visual_assets:
+        source_visual_inputs = [source_visual_inventory_path]
+        if (project / "imagegen-assets-manifest.json").is_file():
+            source_visual_inputs.append(project / "imagegen-assets-manifest.json")
+        if page_graph_path.is_file():
+            source_visual_inputs.append(page_graph_path)
+        if layout_path.is_file():
+            source_visual_inputs.append(layout_path)
+        if not source_visual_inventory_path.is_file():
+            add_step(
+                "source-visual-assets",
+                static_result={"name": "source-visual-assets", "command": [], "exit_code": 2, "ok": False, "failure": "source_visual_inventory_missing", "stdout": "", "stderr": ""},
+                cacheable=False,
+                deps=route_deps,
+                outputs=[run_dir / "source-visual-assets-validation.json"],
+            )
+        else:
+            source_visual_args = [
+                str(SCRIPT_DIR / "validate_source_visual_assets.py"),
+                "--inventory", str(source_visual_inventory_path),
+                "--report", str(run_dir / "source-visual-assets-validation.json"),
+            ]
+            if (project / "imagegen-assets-manifest.json").is_file():
+                source_visual_args.extend(["--imagegen-manifest", str(project / "imagegen-assets-manifest.json")])
+            if page_graph_path.is_file():
+                source_visual_args.extend(["--page-graph", str(page_graph_path)])
+            if layout_path.is_file():
+                source_visual_args.extend(["--layout", str(layout_path)])
+            add_step("source-visual-assets", source_visual_args, deps=route_deps, outputs=[run_dir / "source-visual-assets-validation.json"], inputs=source_visual_inputs)
+    if coordinate_contract_required:
+        if not layout_path.is_file():
+            add_step(
+                "coordinate-contract",
+                static_result={"name": "coordinate-contract", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""},
+                cacheable=False,
+                deps=route_deps,
+                outputs=[run_dir / "coordinate-space-validation.json"],
+            )
+        else:
+            add_step("coordinate-contract", [str(SCRIPT_DIR / "validate_coordinate_space.py"), str(layout_path), "--report", str(run_dir / "coordinate-space-validation.json")], deps=route_deps, outputs=[run_dir / "coordinate-space-validation.json"], inputs=[layout_path])
+    if table_layout_required:
+        if not layout_path.is_file():
+            add_step(
+                "table-layout",
+                static_result={"name": "table-layout", "command": [], "exit_code": 2, "ok": False, "failure": "layout_json_missing", "stdout": "", "stderr": ""},
+                cacheable=False,
+                deps=route_deps,
+                outputs=[run_dir / "table-layout-validation.json"],
+            )
+        else:
+            add_step("table-layout", [str(SCRIPT_DIR / "validate_table_layout.py"), str(layout_path), "--report", str(run_dir / "table-layout-validation.json")], deps=route_deps, outputs=[run_dir / "table-layout-validation.json"], inputs=[layout_path])
     if icon_required:
         icon_args = [str(SCRIPT_DIR / "validate_icon_assets.py"), str(project / "icon-asset-manifest.json"), "--report", str(run_dir / "icon-assets-validation.json")]
         if args.require_asset_hashes:
@@ -1490,6 +1561,12 @@ def main() -> int:
         project_args.extend(["--asset-hash-validation", str(run_dir / "asset-hash-validation.json")])
         if args.require_asset_hashes:
             project_args.append("--require-asset-hashes")
+    if args.require_source_visual_assets:
+        project_args.extend(["--source-visual-assets-validation", str(run_dir / "source-visual-assets-validation.json"), "--require-source-visual-assets"])
+    if coordinate_contract_required:
+        project_args.extend(["--coordinate-space-validation", str(run_dir / "coordinate-space-validation.json"), "--require-coordinate-contract"])
+    if table_layout_required:
+        project_args.extend(["--table-layout-validation", str(run_dir / "table-layout-validation.json"), "--require-table-layout"])
     if any(task.name == "multipage-layout-guard" for task in executor.tasks):
         project_args.extend(["--multipage-layout-validation", str(run_dir / "multipage-layout-guard.json")])
         if args.require_multipage_layout:
@@ -1531,6 +1608,9 @@ def main() -> int:
         project_deps.append("chart-manifest")
     if asset_hashes_enabled:
         project_deps.append("asset-hashes")
+    for candidate in ("source-visual-assets", "coordinate-contract", "table-layout"):
+        if any(task.name == candidate for task in executor.tasks):
+            project_deps.append(candidate)
     for candidate in ("outline-contract", "content-authority", "orchestration-gates", "quality-gates", "design-system", "issue-log"):
         if any(task.name == candidate for task in executor.tasks):
             project_deps.append(candidate)
@@ -1550,6 +1630,8 @@ def main() -> int:
         "panel-asset-manifest.json",
         "icon-asset-manifest.json",
         "imagegen-assets-manifest.json",
+        "source-visual-inventory.json",
+        "page-graph.json",
         "text-layout-manifest.json",
         "handoff.json",
         "design-system.yaml",
@@ -1592,6 +1674,15 @@ def main() -> int:
     )
     project_inputs.extend(
         [run_dir / "asset-hash-validation.json"] if asset_hashes_enabled else []
+    )
+    project_inputs.extend(
+        [run_dir / "source-visual-assets-validation.json"] if args.require_source_visual_assets else []
+    )
+    project_inputs.extend(
+        [run_dir / "coordinate-space-validation.json"] if coordinate_contract_required else []
+    )
+    project_inputs.extend(
+        [run_dir / "table-layout-validation.json"] if table_layout_required else []
     )
     project_inputs.extend(
         [run_dir / "multipage-layout-guard.json"] if any(task.name == "multipage-layout-guard" for task in executor.tasks) else []
@@ -1855,6 +1946,12 @@ def main() -> int:
         report_entries.append({"report_type": "text-layout-validation", "path": "text-layout-validation.json", "required": args.require_text_model, "stage": "validated"})
     if imagegen_required:
         report_entries.append({"report_type": "imagegen-assets-validation", "path": "imagegen-assets-validation.json", "required": True, "stage": "validated"})
+    if args.require_source_visual_assets:
+        report_entries.append({"report_type": "source-visual-assets-validation", "path": "source-visual-assets-validation.json", "required": True, "stage": "validated"})
+    if coordinate_contract_required:
+        report_entries.append({"report_type": "coordinate-space-validation", "path": "coordinate-space-validation.json", "required": True, "stage": "validated"})
+    if table_layout_required:
+        report_entries.append({"report_type": "table-layout-validation", "path": "table-layout-validation.json", "required": True, "stage": "validated"})
     if any(task.name == "source-crop-integrity" for task in executor.tasks):
         report_entries.append({"report_type": "source-crop-integrity", "path": "source-crop-integrity.json", "required": True, "stage": "validated"})
     if icon_required:
@@ -1921,7 +2018,7 @@ def main() -> int:
         report_entries.append({"report_type": "ocr-text-check", "path": "ocr-text-check.json", "required": args.require_ocr, "stage": "validated"})
     step_status = {step["name"]: step["ok"] for step in steps}
     for entry in report_entries:
-        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "asset-render-coordinate-validation": "asset-render-coordinate", "protected-repair-plan": "protected-repair-plan", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "source-crop-integrity": "source-crop-integrity", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
+        step_name = {"skill-package-validation": "skill-package", "routing-contract-validation": "routing-contract", "backend-binding-validation": "backend-binding", "asset-hash-validation": "asset-hashes", "render-visual-gate": "render-visual-gate", "asset-render-coordinate-validation": "asset-render-coordinate", "protected-repair-plan": "protected-repair-plan", "manifest-validation": "manifest", "manifest-registry-validation": "manifest-registry", "text-layout-validation": "text-model", "project-validation": "project", "project-report-aggregate": "project-report-aggregate", "visual-comparison": "visual-comparison", "dual-comparison": "dual-comparison", "visual-compare-qa": "visual-compare-qa", "layout-guard": "layout-guard", "multipage-layout-guard": "multipage-layout-guard", "preview-consistency": "preview-consistency", "typography-calibration-validation": "typography-calibration", "imagegen-assets-validation": "imagegen-assets", "source-visual-assets-validation": "source-visual-assets", "coordinate-space-validation": "coordinate-contract", "table-layout-validation": "table-layout", "source-crop-integrity": "source-crop-integrity", "icon-assets-validation": "icon-assets", "icon-layer-audit": "icon-layers", "ocr-text-check": "ocr-text-check", "route-validation": "route", "workflow-state-validation": "workflow-state", "visual-generation-validation": "visual-generation", "handoff-validation": "handoff", "outline-contract-validation": "outline-contract", "content-authority-validation": "content-authority", "orchestration-gates-validation": "orchestration-gates", "quality-gates-validation": "quality-gates", "design-system-validation": "design-system", "issue-log-validation": "issue-log", "font": "fonts", "font-asset-validation": "font-asset", "font-delivery-validation": "font-delivery", "environment": "environment", "inspection": "inspection", "render": "render", "object-manifest-validation": "object-manifest", "editable-object-audit": "editable-object-audit", "semantic-object-audit": "semantic-object-audit", "panel-assets-validation": "panel-assets", "text-style-map-validation": "text-style-map", "source-image-validation": "source-images", "gradient-visual-validation": "gradient-visual", "reference-audit": "reference-audit", "content-inventory-validation": "content-inventory", "chart-manifest-validation": "chart-manifest"}.get(entry["report_type"])
         if step_name in step_status:
             entry["step_ok"] = step_status[step_name]
     failed_step_names = {step.get("name") for step in steps if not step.get("ok") and isinstance(step.get("name"), str)}

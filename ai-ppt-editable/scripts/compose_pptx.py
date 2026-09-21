@@ -13,6 +13,7 @@ PPTX bytes are authored. The gate implementation lives in
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -22,6 +23,7 @@ import tempfile
 from pathlib import Path
 
 from asset_placement import replace_svg_media as _replace_svg_media
+from atomic_output import atomic_write_json
 from calibrate_page_geometry import apply_page_graph_geometry
 from chart_blank_gap_repair import repair_chart_blank_gaps
 from asset_placement import svg_to_png as _svg_to_png
@@ -92,6 +94,38 @@ def _manifest_font_paths(manifest_path: str | Path | None) -> list[Path]:
 def _die(message: str, code: int = 2):
     print(f"Error: {message}", file=sys.stderr)
     raise SystemExit(code)
+
+
+def _refresh_artifact_tool_output_report(report_path: Path, output_path: Path) -> None:
+    """Bind the strict authoring receipt to the post-processed final PPTX.
+
+    Artifact Tool writes its receipt before the repository-owned OOXML font
+    face and chart-gap passes.  Those passes are part of the formal output,
+    so leaving the pre-postprocess digest in the receipt creates a false
+    provenance chain even when the deck itself is valid.
+    """
+    if not report_path.is_file() or not output_path.is_file():
+        _die("Artifact Tool output receipt cannot bind the final PPTX")
+    digest = hashlib.sha256()
+    with output_path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    if not isinstance(report, dict) or report.get("backend") != "@oai/artifact-tool":
+        _die("Artifact Tool output receipt is invalid before final binding")
+    output = report.get("output") if isinstance(report.get("output"), dict) else {}
+    output.update({
+        "path": str(output_path.resolve()),
+        "sha256": digest.hexdigest(),
+        "bytes": output_path.stat().st_size,
+    })
+    report["output"] = output
+    report["final_output_binding"] = {
+        "status": "bound",
+        "postprocess_complete": True,
+        "passes": ["ooxml-font-faces", "chart-blank-gap-repair"],
+    }
+    atomic_write_json(report_path, report)
 
 
 def main() -> None:
@@ -170,6 +204,16 @@ def main() -> None:
         calibration_report.write_text(json.dumps(page_geometry_calibration, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if args.font_dir:
         deck["font_dir"] = str(Path(args.font_dir).resolve())
+        # Bind the strict E3 measurement to a deterministic task-local font.
+        # Artifact Tool still registers the complete font directory for
+        # authoring; this single file is the shared measurement baseline.
+        font_files = sorted(
+            path for path in Path(args.font_dir).resolve().iterdir()
+            if path.is_file() and path.suffix.lower() in {".ttf", ".otf", ".ttc"}
+        )
+        if font_files:
+            preferred = next((path for path in font_files if "regular" in path.stem.lower()), font_files[0])
+            deck["text_fit_font_file"] = str(preferred)
 
     effective_font_dir = str(Path(args.font_dir).resolve()) if args.font_dir else deck.get("font_dir")
     effective_font_manifest = str(Path(args.font_manifest).resolve()) if args.font_manifest else deck.get("font_manifest")
@@ -211,7 +255,7 @@ def main() -> None:
             normalized_layout.write_text(json.dumps(deck, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             command = [
                 str(node_path), str(builder), "--layout", str(normalized_layout), "--output", str(output_path),
-                "--report", str(report_path), "--inspect", str(inspect_path),
+                "--report", str(report_path), "--inspect", str(inspect_path), "--overwrite",
             ]
             if geometry_resolution_path:
                 command.extend(["--geometry-resolution", str(geometry_resolution_path)])
@@ -244,6 +288,7 @@ def main() -> None:
         gap_result = repair_chart_blank_gaps(output_path, deck, chart_gap_report)
         if not gap_result.get("valid", False):
             _die("Artifact Tool chart blank-gap OOXML repair failed")
+        _refresh_artifact_tool_output_report(report_path, output_path)
         e4 = write_text_fit_e4_receipt(text_fit_e4, output_path, e3_report, required=require_text_fit)
         if require_text_fit and e4 is None:
             _die("E4 text-fit receipt cannot bind missing authored PPTX")

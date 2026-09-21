@@ -21,7 +21,11 @@ def run_text_fit_e3(deck: dict, layout_path: Path, report_path: Path, *, require
     with tempfile.TemporaryDirectory(prefix=".text-fit-e3-", dir=str(report_path.parent)) as raw:
         normalized = Path(raw) / "normalized-layout.json"
         normalized.write_text(json.dumps(deck, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        report = audit_layout(normalized)
+        # The strict authoring gate must measure with the same task-local font
+        # selected by compose_pptx.  Falling back to the host's default font
+        # here can disagree with the explicit E3 preflight and falsely block
+        # otherwise fitting CJK layouts.
+        report = audit_layout(normalized, font_file=deck.get("text_fit_font_file"))
         topology = audit_text_topology(normalized)
     brand = validate_brand_coverage(layout_path.resolve().parent)
     chart = validate_chart_authoring_contract(layout_path.resolve(), deck)

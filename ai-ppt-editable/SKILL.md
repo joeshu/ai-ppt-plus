@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.20.14
+  package_revision: 2026.09.21.03
 ---
 
 # AI PPT Editable
@@ -14,6 +14,7 @@ Reconstruct or repair editable PPTX with the supplied reference as visual author
 New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python is inspection/QA only and is not an authoring fallback. Whole-page raster fallback is forbidden.
 
 Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
+Read `references/image-to-editable-regressions.md` when a fresh image-to-editable replay exposes an inventory, alpha-geometry, physical-aspect, text-to-container or composite-anchor defect; apply its stable repair codes and re-render the owning region.
 
 ## Formal production chain
 
@@ -29,7 +30,38 @@ Freeze source path/page, dimensions, aspect ratio and SHA-256. Historical PPTX, 
 
 ## 2. Visual Inventory
 
-Inventory visible text, cards/panels, repeated components, semantic tables, charts, arrows/connectors, icons/logos, decorations and complex art. Assign stable object IDs and approximate source bboxes. The inventory exists to support authoring and responsible-object repair, not to become a separate visual gate.
+Inventory visible text, cards/panels, repeated components, semantic tables, charts, arrows/connectors, icons/logos, decorations and complex art. Assign stable object IDs and approximate source bboxes. The inventory is not a similarity score; its upstream-to-final coverage validation is a correctness gate for fixed-reference source-image work.
+
+For fixed-reference reconstruction, complex visual inventory is also a
+coverage contract. Include embedded footer/header calligraphy and decorative
+marks, not only standalone icons and logos. Materialize `source-visual-inventory.json` with the locked
+source hash, one `visual_id`/`asset_id` per source icon, brand mark,
+illustration, decorative art or other complex visual, normalized bbox and
+`required_route: imagegen`. An ImageGen manifest that merely lists the assets
+it happened to produce is insufficient: run the upstream-to-final coverage
+gate and, when a PageGraph exists, cross-check every visual PageGraph node:
+
+```bash
+python3 scripts/validate_source_visual_assets.py \
+  --inventory PROJECT/source-visual-inventory.json \
+  --imagegen-manifest PROJECT/imagegen-assets-manifest.json \
+  --page-graph PROJECT/page-graph.json \
+  --layout PROJECT/layout.json \
+  --report PROJECT/source-visual-assets-validation.json
+```
+
+An omitted source visual, missing independent final asset, source-crop
+fallback, provenance mismatch or missing final bytes is a blocker. An empty
+inventory is valid only when it is explicit and the PageGraph confirms that
+the source has no complex visual assets.
+
+When a replay manifest declares a `source_image` baseline, require the
+`source_visual_assets_validation.json` result before reporting technical
+completion. A missing validation artifact is `NOT_RUN`; a present but blocked
+validation is `FAIL`. This keeps a text-fit-complete, card-only approximation
+from being mistaken for a faithful image-to-editable-PPTX reconstruction.
+Rows explicitly marked `active: false`/`lifecycle: retired` remain available as
+diagnostic history and are excluded from the active release denominator.
 
 ## 3. AuthoringPlan
 
@@ -124,11 +156,16 @@ See `references/text-coverage-auditor.md` and `assets/text-coverage.template.jso
 
 ## 8. Asset Generation
 
-Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha. Validate non-empty alpha bbox, transparent corners, safe padding, clipping and plausible subject coverage. For grids, detect actual row/column centers before slicing; repack by visible alpha bbox and visual centroid.
+Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha. Validate non-empty alpha bbox, transparent corners, safe padding, clipping and plausible subject coverage. For grids, detect actual row/column centers before slicing; repack by visible alpha bbox and visual centroid. For explicitly full-bleed ribbons/skyline bands, distinguish alpha-noise trim from bounded-asset QA, preserve the raw asset, record the derived transform and fit the derivative to the target physical aspect before using `contain`/`cover`.
 
 For continuous low-frequency systems such as footer ribbons, skyline bands and header waves, rectangular alpha geometry is necessary but insufficient. Record a semantic parent bbox, sampled contour landmarks and child anchors. Compare the final composed region against the reference with `scripts/audit_continuous_band.py`; zero bbox delta must not close a visible contour mismatch. Keep readable footer/header text native and repair in this order: parent bbox -> contour profile -> asset scale/crop -> child anchors -> z-order.
 
 Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon. An explicitly approved source-reuse fallback remains available for non-brand assets only; brand assets remain blocked until native ImageGen succeeds.
+
+The source-visual coverage gate is upstream of visual closeout; a human crop
+review cannot turn an omitted complex asset into a covered asset. Keep the
+gate report beside the ImageGen manifest and bind both to the current source
+hash.
 
 ## 9. Artifact Tool Build
 
@@ -137,6 +174,21 @@ Build a fresh editable PPTX through the strict repository `@oai/artifact-tool` a
 Artifact Tool Build must consume AuthoringPlan object IDs and implementation decisions. If a helper needs to deviate materially from the plan, record the deviation and revalidate the updated plan rather than silently changing the deck.
 
 Complex visual systems may be one or a small number of semantic image assets when native fragmentation would reduce fidelity. Keep readable labels and ordinary semantic geometry native above/beside them.
+
+Declare one coordinate space for the layout and keep it consistent across
+`bbox` and `x/y/w/h` records. Validate it before build. Native tables also run
+the cell-capacity/overlay-asset gate; a table that only passes aggregate
+TextFit slots but has an invalid bbox, empty usable cell, unbreakable run or
+text capacity overflow is not build-ready. The gate accepts the same
+`fraction`/`normalized`/`px`/`pt`/`in` coordinate spaces as the layout
+contract and reports density in physical points:
+
+```bash
+python3 scripts/validate_coordinate_space.py PROJECT/layout.json \
+  --report PROJECT/coordinate-space-validation.json
+python3 scripts/validate_table_layout.py PROJECT/layout.json \
+  --report PROJECT/table-layout-validation.json
+```
 
 Charts remain native/editable when data are known. Missing future values stay blank and must never be serialized as zero.
 
@@ -177,6 +229,12 @@ Normal fixed-reference production has only these blocking categories:
 7. `semantic_table_misclassification` — list/card semantics are wrongly converted to a table, or a real table loses row/column semantics.
 8. `chart_blank_serialized_as_zero` — unknown/blank chart values are fabricated as zero.
 9. `source_or_provenance_mismatch` — source hash/provenance or required generated-asset provenance does not match the run.
+10. `source_visual_asset_coverage_missing` — a source complex visual is not
+    mapped to an independent final ImageGen asset.
+11. `coordinate_space_mismatch` — layout units and object bboxes use different
+    coordinate spaces or leave the declared canvas.
+12. `table_cell_capacity_exceeded` — native table text cannot fit its actual
+    usable cell after margins, overlays and declared row/column geometry.
 
 Do not promote SSIM, regional SSIM, pixel score, bbox IoU, centroid drift, scale drift, icon similarity, text-fit utilization, five-dimensional A/B, report count or external comparator availability into production hard blockers.
 

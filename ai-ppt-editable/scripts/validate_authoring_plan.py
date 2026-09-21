@@ -35,17 +35,22 @@ def issue(code: str, detail: str, *, object_id: str | None = None) -> dict:
     return item
 
 
-def validate_bbox(value) -> bool:
+def validate_bbox(value, canvas: dict | None = None) -> bool:
     if not isinstance(value, list) or len(value) != 4:
         return False
-    if not all(isinstance(v, (int, float)) for v in value):
+    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in value):
         return False
     x, y, w, h = value
     if w <= 0 or h <= 0:
         return False
-    if min(x, y, w, h) < 0 or max(x, y, w, h) > 1:
+    units = str((canvas or {}).get("units") or "normalized")
+    max_width = 1.0 if units == "normalized" else float((canvas or {}).get("width") or 0)
+    max_height = 1.0 if units == "normalized" else float((canvas or {}).get("height") or 0)
+    if max_width <= 0 or max_height <= 0:
         return False
-    if x + w > 1.000001 or y + h > 1.000001:
+    if min(x, y, w, h) < 0 or w > max_width or h > max_height:
+        return False
+    if x + w > max_width + 1e-6 or y + h > max_height + 1e-6:
         return False
     return True
 
@@ -67,10 +72,16 @@ def validate(plan: dict) -> dict:
             issues.append(issue("authoring_plan_source_dimensions_invalid", "source.height_px must be positive"))
 
     canvas = plan.get("canvas")
-    if not isinstance(canvas, dict) or canvas.get("units") not in {"normalized", "px", "pt", "in"}:
+    canvas_units = canvas.get("units") if isinstance(canvas, dict) else None
+    if not isinstance(canvas, dict) or canvas_units not in {"normalized", "px", "pt", "in"}:
         issues.append(issue("authoring_plan_canvas_invalid", "canvas width/height/units are required"))
     elif not all(isinstance(canvas.get(k), (int, float)) and canvas.get(k) > 0 for k in ("width", "height")):
         issues.append(issue("authoring_plan_canvas_invalid", "canvas width and height must be positive"))
+    coordinate_space = plan.get("coordinate_space")
+    expected_space = {"normalized": "normalized", "px": "reference_pixels", "pt": "slide_points", "in": "slide_inches"}.get(canvas_units)
+    if coordinate_space is not None:
+        if not isinstance(coordinate_space, str) or coordinate_space != expected_space:
+            issues.append(issue("authoring_plan_coordinate_space_mismatch", f"coordinate_space must be {expected_space!r} for canvas.units={canvas_units!r}"))
 
     objects = plan.get("objects")
     if not isinstance(objects, list) or not objects:
@@ -97,8 +108,12 @@ def validate(plan: dict) -> dict:
         impl = obj.get("implementation_type")
         if impl not in ALLOWED_TYPES:
             issues.append(issue("authoring_plan_implementation_invalid", f"implementation_type must be one of {sorted(ALLOWED_TYPES)}", object_id=object_id))
-        if not validate_bbox(obj.get("bbox")):
-            issues.append(issue("authoring_plan_bbox_invalid", "bbox must be normalized [x,y,w,h] within the source canvas", object_id=object_id))
+        bbox_units = obj.get("bbox_units")
+        if bbox_units is not None and bbox_units != expected_space:
+            issues.append(issue("authoring_plan_object_coordinate_space_mismatch", f"bbox_units must be {expected_space!r}", object_id=object_id))
+        if not validate_bbox(obj.get("bbox"), canvas if isinstance(canvas, dict) else None):
+            detail = "bbox must be [x,y,w,h] within the declared canvas coordinate space"
+            issues.append(issue("authoring_plan_bbox_invalid", detail, object_id=object_id))
         if not isinstance(obj.get("z_role"), str) or not obj.get("z_role", "").strip():
             issues.append(issue("authoring_plan_z_role_missing", "z_role is required", object_id=object_id))
         contract = TYPE_CONTRACT.get(impl)

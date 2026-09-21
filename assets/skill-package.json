@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.09.20.10",
+  "package_revision": "2026.09.21.02",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -22,7 +22,7 @@
     {
       "name": "ai-ppt-editable",
       "root": "ai-ppt-editable",
-      "package_revision": "2026.09.20.14"
+      "package_revision": "2026.09.21.03"
     }
   ],
   "managed_globs": [
@@ -113,6 +113,9 @@
     "scripts/build_imagegen_asset_jobs.py",
     "scripts/validate_incremental_checkpoint.py",
     "scripts/validate_stage_protocol.py",
+    "scripts/validate_source_visual_assets.py",
+    "scripts/validate_coordinate_space.py",
+    "scripts/validate_table_layout.py",
     "assets/route-decision-native-authoring.template.json",
     "assets/route-decision.template.json",
     "assets/route-decision-visual-creation.template.json",
