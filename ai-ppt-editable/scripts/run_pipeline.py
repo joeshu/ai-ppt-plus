@@ -1005,7 +1005,7 @@ def main() -> int:
         ],
         deps=["environment", "routing-contract"],
         outputs=[run_dir / "backend-binding-validation.json"],
-        inputs=[run_dir / "environment-report.json", routing_contract, SCRIPT_DIR / "authoring_backend.py", SCRIPT_DIR / "embed_fonts.py"],
+        inputs=[run_dir / "environment-report.json", routing_contract, SCRIPT_DIR / "artifact_tool_authoring.mjs", SCRIPT_DIR / "artifact_tool_runtime.mjs"],
     )
     if args.font_dir or args.require_cjk:
         font_args = [str(SCRIPT_DIR / "probe_fonts.py"), "--output", str(run_dir / "font-report.json")]

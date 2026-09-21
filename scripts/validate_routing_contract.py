@@ -113,7 +113,8 @@ def main() -> int:
             "source_retention": "generated-source-and-project-copy",
             "prompt_contract": "ai-ppt-plus/visual-generation-plan/v1",
         },
-        "authoring": {"kind": "adapter", "backend": "python-pptx", "entrypoint": "ai-ppt-editable/scripts/authoring_backend.py", "font_postprocessor": "ai-ppt-editable/scripts/embed_fonts.py"},
+        "authoring": {"kind": "adapter", "backend": "@oai/artifact-tool", "language": "javascript", "module_format": "ESM", "builder": "ai-ppt-editable/scripts/artifact_tool_authoring.mjs", "runtime_entrypoint": "ai-ppt-editable/scripts/artifact_tool_runtime.mjs", "contract": "ai-ppt-plus/authoring-contract/v1", "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"]},
+        "qa_inspection": {"kind": "read-only-adapter", "backend": "OOXML", "optional_python_pptx": True, "purpose": "inspection-and-regression-tests-only"},
         "strict_authoring": {
             "kind": "adapter",
             "backend": "@oai/artifact-tool",
@@ -141,7 +142,7 @@ def main() -> int:
         "orchestrator": ("entrypoint",),
         "visual_generation": ("skill_entrypoint", "runtime_entrypoint"),
         "reconstruction": ("skill_entrypoint", "runtime_entrypoint"),
-        "authoring": ("entrypoint", "font_postprocessor"),
+        "authoring": ("builder", "runtime_entrypoint"),
         "strict_authoring": ("builder", "runtime_entrypoint"),
     }.items():
         binding = bindings.get(section) if isinstance(bindings, dict) else None

@@ -13,9 +13,19 @@
   "bindings": {
     "authoring": {
       "kind": "adapter",
-      "backend": "python-pptx",
-      "entrypoint": "scripts/authoring_backend.py",
-      "font_postprocessor": "scripts/embed_fonts.py"
+      "backend": "@oai/artifact-tool",
+      "language": "javascript",
+      "module_format": "ESM",
+      "builder": "scripts/artifact_tool_authoring.mjs",
+      "runtime_entrypoint": "scripts/artifact_tool_runtime.mjs",
+      "contract": "ai-ppt-plus/authoring-contract/v1",
+      "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"]
+    },
+    "qa_inspection": {
+      "kind": "read-only-adapter",
+      "backend": "OOXML",
+      "optional_python_pptx": true,
+      "purpose": "inspection-and-regression-tests-only"
     },
     "strict_authoring": {
       "kind": "adapter",
