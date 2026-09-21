@@ -120,7 +120,7 @@ def validate_reference_preflight(
     deck: dict,
     *,
     embed_fonts: bool,
-    authoring_backend: str = "python-pptx",
+    authoring_backend: str = "artifact-tool",
     font_dir: str | None = None,
     font_manifest: str | None = None,
 ) -> dict:

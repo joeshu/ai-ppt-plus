@@ -48,9 +48,13 @@ def main() -> int:
     authoring = ((data.get("bindings") or {}).get("authoring"))
     expected = {
         "kind": "adapter",
-        "backend": "python-pptx",
-        "entrypoint": "scripts/authoring_backend.py",
-        "font_postprocessor": "scripts/embed_fonts.py",
+        "backend": "@oai/artifact-tool",
+        "language": "javascript",
+        "module_format": "ESM",
+        "builder": "scripts/artifact_tool_authoring.mjs",
+        "runtime_entrypoint": "scripts/artifact_tool_runtime.mjs",
+        "contract": "ai-ppt-plus/authoring-contract/v1",
+        "required_for": ["reference-reconstruction", "editable-pptx", "native-authoring"],
     }
     if not isinstance(authoring, dict):
         issues.append({"severity": "blocker", "code": "authoring_binding_missing"})
@@ -58,10 +62,10 @@ def main() -> int:
     for field, value in expected.items():
         if authoring.get(field) != value:
             issues.append({"severity": "blocker", "code": "authoring_binding_mismatch", "field": field, "expected": value, "observed": authoring.get(field)})
-    for field in ("entrypoint", "font_postprocessor"):
+    for field, code in (("builder", "authoring_builder_missing"), ("runtime_entrypoint", "authoring_runtime_missing")):
         value = authoring.get(field)
         if isinstance(value, str) and not (root / value).is_file():
-            issues.append({"severity": "blocker", "code": "authoring_entrypoint_missing", "field": field, "path": value})
+            issues.append({"severity": "blocker", "code": code, "field": field, "path": value})
     strict_expected = {
         "kind": "adapter",
         "backend": "@oai/artifact-tool",

@@ -183,7 +183,7 @@ def main() -> int:
     ap.add_argument("--visual-source")
     ap.add_argument("--render-path")
     ap.add_argument("--review-status", default="pending-human-closeout")
-    ap.add_argument("--backend", default="python-pptx")
+    ap.add_argument("--backend", choices=("artifact-tool",), default="artifact-tool")
     ap.add_argument("--requires-icon-assets", action="store_true")
     ap.add_argument("--requires-imagegen-assets", action="store_true")
     ap.add_argument("--requires-panel-assets", action="store_true")

@@ -1,20 +1,28 @@
-# PPTX Authoring Backend
+# PPTX Authoring Route
 
 `scripts/compose_pptx.py` is the stable CLI entrypoint. It coordinates the
 workflow and keeps the historical command-line options; it is not the place
 for object-level implementation.
+
+Formal authoring is single-route and fail-closed:
+
+`ai-ppt-plus → ai-ppt-editable → @oai/artifact-tool (ESM) → OOXML/render QA`
+
+`python-pptx` is not an authoring backend. It may be installed as an optional
+read-only QA/test adapter for legacy inspection fixtures, but it must never
+create, rewrite, repair, or become the default route for a deliverable deck.
 
 The implementation is split into focused modules:
 
 | Module | Responsibility |
 |---|---|
 | `component_expander.py` | deck normalization, component instances and layout selection |
-| `pptx_primitives.py` | native text, shapes, groups, tables, charts and typography |
+| `artifact_tool_authoring.mjs` | native text, shapes, groups, tables, charts and typography |
 | `asset_placement.py` | background/frame/panel/icon placement and SVG package replacement |
 | `preview_renderer.py` | optional Pillow preview rendering and preview font selection |
 | `atomic_output.py` | sibling temporary files, atomic replacement and ZIP rewrites |
-| `authoring_backend.py` | `python-pptx` backend orchestration and optional font embedding |
-| `embed_fonts.py` | licensed PresentationML font post-processing |
+| `artifact_tool_runtime.mjs` | runtime discovery and deterministic Artifact Tool loading |
+| `render_pptx.py` / OOXML validators | rendering and post-authoring QA only |
 
 The backend order is fixed for reconstruction fidelity:
 
@@ -31,12 +39,13 @@ geometry remain visible and independently editable. The Pillow preview
 renderer follows the same order; a preview that disagrees with the PPTX
 layering is a QA defect, not a harmless approximation.
 
-The default family is `Noto Sans CJK SC`, matching the bundled
-`assets/fonts/NotoSansSC-Regular.ttf`, not Microsoft YaHei. A task may
-override it through the deck theme or an explicitly licensed font. Font
-availability, CJK coverage and delivery embedding remain separate gates; this
-module does not claim delivery merely because a font name was written into a
-run. A slide-level `background_color` is a native editable slide background;
+The default family is resolved at runtime from the host environment (prefer
+`Noto Sans CJK SC`, then an explicitly installed/licensed CJK family). Fonts
+are not bundled in the skill. A task may override the family through the deck
+theme or an explicitly licensed task-local font. Font availability, CJK
+coverage and delivery embedding remain separate gates; this module does not
+claim delivery merely because a font name was written into a run. A slide-level
+`background_color` is a native editable slide background;
 when `assets_dir` is set, relative `component_library`, `layout_library`, and
 `font_manifest` paths are resolved from that directory and should not repeat
 the directory prefix.
@@ -57,6 +66,7 @@ delivery-bound reconstruction, use `compose_pptx.py --strict-input`: missing
 primitive types, unsupported text alignment, clipped boxes and malformed
 coordinates fail authoring instead of being silently normalized.
 
-The backend preserves the existing `compose_pptx.py` CLI and the compatibility
-imports used by manifest builders. R13 remains a frozen regression fixture;
-this split changes ownership and testability, not the reconstruction contract.
+The route preserves the stable `compose_pptx.py` CLI while removing backend
+choice from formal execution. R13 and other historical fixtures are not active
+authoring routes; this split changes ownership and testability, not the
+reconstruction contract.

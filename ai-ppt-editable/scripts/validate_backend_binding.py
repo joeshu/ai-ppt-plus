@@ -32,7 +32,7 @@ def validate(environment_path: Path, contract_path: Path, skill_dir: Path | None
         issues.append({"severity": "blocker", "code": "authoring_backend_mismatch", "expected": expected_backend, "observed": observed_backend})
 
     checked_paths = []
-    for field in ("entrypoint", "font_postprocessor"):
+    for field in ("builder", "runtime_entrypoint"):
         value = binding.get(field)
         if not isinstance(value, str) or not value.strip():
             issues.append({"severity": "blocker", "code": "authoring_binding_path_missing", "field": field})
@@ -42,9 +42,9 @@ def validate(environment_path: Path, contract_path: Path, skill_dir: Path | None
         if not path.is_file():
             issues.append({"severity": "blocker", "code": "authoring_binding_path_missing", "field": field, "path": str(path)})
 
-    module = ((environment.get("capabilities") or {}).get("python_pptx") or {})
-    if expected_backend == "python-pptx" and module.get("available") is not True:
-        issues.append({"severity": "blocker", "code": "python_pptx_unavailable"})
+    module = ((environment.get("capabilities") or {}).get("artifact_tool_authoring") or {})
+    if expected_backend == "@oai/artifact-tool" and module.get("available") is not True:
+        issues.append({"severity": "blocker", "code": "artifact_tool_unavailable"})
 
     selection_reason = ((environment.get("selection") or {}).get("authoring_backend_reason"))
     return {

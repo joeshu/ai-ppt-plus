@@ -84,11 +84,11 @@ def main():
     # Keep the compatibility backend selection stable while exposing the
     # separately invokable strict Artifact Tool route.
     if caps['python_pptx']['available']:
-        backend='python-pptx'
-        backend_reason='compatibility authoring_backend.py uses python-pptx; pass --authoring-backend artifact-tool for strict native ESM authoring'
+        backend='artifact-tool'
+        backend_reason='formal authoring is always @oai/artifact-tool; Python is not an authoring fallback'
     elif caps['pptx_authoring_runtime']['available']:
         backend='interface_only'
-        backend_reason='artifact-tool runtime discovered, but the compatibility python-pptx backend is unavailable'
+        backend_reason='artifact-tool runtime is unavailable; block formal authoring rather than fallback'
     else:
         backend='interface_only'
         backend_reason='no verified PPTX authoring backend discovered'

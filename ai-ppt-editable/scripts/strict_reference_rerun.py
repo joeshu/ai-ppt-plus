@@ -63,9 +63,9 @@ def main() -> int:
     parser.add_argument("--preview-dir")
     parser.add_argument(
         "--authoring-backend",
-        choices=("artifact-tool", "python-pptx"),
+        choices=("artifact-tool",),
         default="artifact-tool",
-        help="strict native Artifact Tool route by default; python-pptx is retained for legacy reruns",
+        help="strict native Artifact Tool route; no Python authoring fallback",
     )
     parser.add_argument("--node", help="Node executable for the Artifact Tool route")
     parser.add_argument("--node-modules", help="bundled node_modules directory for the Artifact Tool route")
@@ -170,8 +170,6 @@ def main() -> int:
         "--authoring-backend",
         args.authoring_backend,
     ]
-    if args.authoring_backend == "python-pptx":
-        command.append("--embed-fonts")
     if args.node:
         command.extend(["--node", str(Path(args.node).resolve())])
     if args.node_modules:

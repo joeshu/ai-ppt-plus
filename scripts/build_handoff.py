@@ -118,7 +118,7 @@ def main() -> int:
     parser.add_argument("--remaining-pages")
     parser.add_argument("--blocker", action="append", default=[])
     parser.add_argument("--latest-check", action="append", default=[])
-    parser.add_argument("--backend", default="python-pptx")
+    parser.add_argument("--backend", choices=("artifact-tool",), default="artifact-tool")
     parser.add_argument("--next-action", default="continue downstream QA")
     args = parser.parse_args()
 

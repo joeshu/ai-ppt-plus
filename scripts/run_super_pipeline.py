@@ -130,8 +130,8 @@ def main() -> int:
     parser.add_argument("--font-dir")
     parser.add_argument(
         "--authoring-backend",
-        choices=("python-pptx", "artifact-tool"),
-        default="python-pptx",
+        choices=("artifact-tool",),
+        default="artifact-tool",
         help="authoring engine passed to the editable worker",
     )
     parser.add_argument("--node", help="Node executable for the strict artifact-tool authoring route")

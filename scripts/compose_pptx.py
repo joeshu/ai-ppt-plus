@@ -102,9 +102,9 @@ def main() -> None:
     parser.add_argument("--embedding-report", help="JSON report for the OOXML font embedding step.")
     parser.add_argument(
         "--authoring-backend",
-        choices=("python-pptx", "artifact-tool"),
-        default="python-pptx",
-        help="authoring engine; artifact-tool is the strict JavaScript ESM route",
+        choices=("artifact-tool",),
+        default="artifact-tool",
+        help="formal authoring engine; only @oai/artifact-tool is supported",
     )
     parser.add_argument("--node", help="Node executable for --authoring-backend artifact-tool")
     parser.add_argument("--node-modules", help="bundled node_modules directory for --authoring-backend artifact-tool")
@@ -188,34 +188,7 @@ def main() -> None:
         postprocess_authoring_output(output_path, deck, geometry_resolution)
         return
 
-    # Keep the historical backend import lazy: the strict route above should
-    # load only the ESM adapter and never create or rewrite a deck through the
-    # compatibility implementation.
-    from authoring_backend import build_pptx, build_with_embedded_fonts
-
-    if args.embed_fonts:
-        font_dir = effective_font_dir
-        font_manifest = effective_font_manifest
-        if not font_dir and not font_manifest:
-            _die("--embed-fonts requires --font-dir or --font-manifest")
-        try:
-            build_with_embedded_fonts(
-                deck,
-                output_path,
-                font_dir=font_dir,
-                font_manifest=font_manifest,
-                embedding_report=Path(args.embedding_report).resolve() if args.embedding_report else None,
-            )
-        except (KeyError, OSError, TypeError, ValueError) as exc:
-            _die(f"authoring failed: {type(exc).__name__}: {exc}")
-    else:
-        try:
-            build_pptx(deck, output_path)
-        except (KeyError, OSError, TypeError, ValueError) as exc:
-            _die(f"authoring failed: {type(exc).__name__}: {exc}")
-    postprocess_authoring_output(output_path, deck, geometry_resolution)
-    if args.preview_dir:
-        render_previews(deck, Path(args.preview_dir))
+    _die("formal authoring route did not complete through @oai/artifact-tool")
 
 
 if __name__ == "__main__":
