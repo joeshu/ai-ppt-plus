@@ -30,10 +30,27 @@ class TextFitCaseReplayTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);evidence=self._write_complete(root,overflow=True);report=mod.evaluate(self._manifest(evidence),root=root)
         failed={x["name"] for x in report["cases"][0]["checks"] if not x["passed"]};self.assertIn("no_text_overflow",failed)
+    def test_source_image_requires_source_visual_coverage_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);evidence=self._write_complete(root)
+            manifest=self._manifest(evidence);manifest["acceptance"]["source_visual_coverage_required_for_source_image"]=True;manifest["cases"][0]["source"]["baseline_mode"]="source_image"
+            report=mod.evaluate(manifest,root=root)
+        self.assertEqual(report["cases"][0]["status"],"NOT_RUN");self.assertIn("source_visual_assets_validation",report["cases"][0]["missing_evidence"])
+    def test_invalid_source_visual_coverage_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);evidence=self._write_complete(root);technical=root/"visual.json";technical.write_text(json.dumps({"valid":False,"status":"blocked","issues":[{"code":"source_visual_asset_coverage_missing"}]}),encoding="utf-8")
+            manifest=self._manifest(evidence);manifest["acceptance"]["source_visual_coverage_required_for_source_image"]=True;manifest["cases"][0]["source"]["baseline_mode"]="source_image";manifest["cases"][0]["technical_evidence"]={"source_visual_assets_validation":"visual.json"}
+            report=mod.evaluate(manifest,root=root)
+        self.assertEqual(report["cases"][0]["status"],"FAIL");failed={x["name"] for x in report["cases"][0]["checks"] if not x["passed"]};self.assertIn("source_visual_coverage_valid",failed)
+    def test_retired_case_is_reported_but_not_counted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest=self._manifest();manifest["cases"][0].update({"active":False,"lifecycle":"retired","retirement_reason":"source detail drop"});report=mod.evaluate(manifest,root=Path(tmp))
+        self.assertEqual(report["summary"]["case_count"],0);self.assertEqual(report["summary"]["retired_count"],1);self.assertEqual(report["retired_cases"][0]["status"],"RETIRED");self.assertFalse(report["release_ready"])
     def test_root_and_editable_replay_scripts_are_identical(self):
         self.assertEqual(SCRIPT.read_bytes(),(ROOT/"ai-ppt-editable"/"scripts"/"text_fit_case_replay.py").read_bytes())
-    def test_frozen_manifest_has_four_real_cases_and_complete_evidence_contract(self):
+    def test_frozen_manifest_has_active_cases_and_retained_retired_record(self):
         manifest=json.loads((ROOT/"evals"/"text-fit-batch5"/"cases.json").read_text(encoding="utf-8"));self.assertEqual(len(manifest["cases"]),4);required={"text_fit_report","text_render_feedback","text_coverage_audit","editability_audit","render_provenance"}
         for row in manifest["cases"]:self.assertEqual(set(row["evidence"]),required)
-        status={row["id"]:row["status"] for row in manifest["cases"]};self.assertEqual(status["china-unicom-downgrade-control"],"source_resolved");self.assertEqual(sum(v=="source_resolved" for v in status.values()),4);unicom=next(row for row in manifest["cases"] if row["id"]=="china-unicom-downgrade-control");self.assertEqual(unicom["source"]["sha256"],"036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99");self.assertEqual(unicom["source"]["pixel_size"],[1536,864]);self.assertEqual(unicom["source"]["aspect_ratio"],"16:9")
+        active=[row for row in manifest["cases"] if row.get("active",True)];self.assertEqual(len(active),3);retired=next(row for row in manifest["cases"] if row["id"]=="kpi-metric-card");self.assertFalse(retired["active"]);self.assertEqual(retired["lifecycle"],"retired")
+        status={row["id"]:row["status"] for row in manifest["cases"]};self.assertEqual(status["china-unicom-downgrade-control"],"source_resolved");self.assertEqual(status["kpi-metric-card"],"retired");unicom=next(row for row in manifest["cases"] if row["id"]=="china-unicom-downgrade-control");self.assertEqual(unicom["source"]["sha256"],"036a0c6877bd9fd25541fcb38313a67d2bfef14c911f673f0e5c1a8d9be8ec99");self.assertEqual(unicom["source"]["pixel_size"],[1536,864]);self.assertEqual(unicom["source"]["aspect_ratio"],"16:9");self.assertIn("source_visual_assets_validation",unicom["technical_evidence"])
 if __name__=="__main__":unittest.main()

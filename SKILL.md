@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.20.10
+  package_revision: 2026.09.21.02
 ---
 
 # AI PPT Plus Orchestrator
@@ -207,6 +207,33 @@ B6 must name the owner, editable parameters and protected neighbors, capture
 owner/neighbor/full-page evidence, and close the B5 signal only after an
 accepted or explicitly reviewed repair; asset regeneration is not a substitute
 for placement repair.
+
+For every fixed-reference page, require the worker's source-visual coverage
+contract before visual closeout. It must map every source icon, brand mark,
+illustration, decorative art or other complex visual to an independent native
+ImageGen final; listing only the assets that were generated does not prove
+coverage. Run the worker gate with the locked source inventory and optional
+PageGraph:
+
+```bash
+python3 ai-ppt-editable/scripts/validate_source_visual_assets.py \
+  --inventory PROJECT/source-visual-inventory.json \
+  --imagegen-manifest PROJECT/imagegen-assets-manifest.json \
+  --page-graph PROJECT/page-graph.json \
+  --layout PROJECT/layout.json \
+  --report PROJECT/source-visual-assets-validation.json
+```
+
+Also require the coordinate-space contract and native-table density gate on
+layouts that use those objects. These are deterministic technical blockers;
+they do not replace the required fresh render and human visual closeout.
+
+For source-image replay manifests, bind the coverage report into the case
+record before technical completion: missing coverage evidence is `NOT_RUN`, a
+blocked coverage report is `FAIL`, and an explicitly retired case is retained
+only as historical diagnostics. Do not count native text and generic cards as
+proof that source-specific decoration, icons, gradients or background art were
+reconstructed.
 
 After A's generated images/evidence and B's reviewed editable layout plan exist,
 the deterministic handoff can be executed in one command:

@@ -1,0 +1,21 @@
+{
+  "schema": "ai-ppt-plus/source-visual-inventory/v1",
+  "source": {
+    "path": "reference.png",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "width_px": 1536,
+    "height_px": 864,
+    "page_count": 1
+  },
+  "visuals": [
+    {
+      "visual_id": "brand-lockup-1",
+      "page": 1,
+      "semantic_role": "brand_lockup",
+      "bbox_norm": [0.03, 0.02, 0.14, 0.08],
+      "required_route": "imagegen",
+      "asset_id": "brand-lockup-1",
+      "notes": "Source visual inventory only; source crop is reference evidence, never the final asset."
+    }
+  ]
+}

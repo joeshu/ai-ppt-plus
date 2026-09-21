@@ -57,12 +57,30 @@ def main() -> int:
             "repair_required": False,
             "resolutions": [{"object_id": "rule", "page": 1, "primitive": "CONNECTOR", "parameters": {"endpoints": [[0.08, 0.3], [0.92, 0.3]]}}],
         }), encoding="utf-8")
+        # The editable worker intentionally does not check large font binaries
+        # into its package. Materialize the four runtime faces through the
+        # supported resolver so this smoke test exercises the same strict
+        # registration contract as production without depending on a dirty
+        # workspace cache.
+        runtime_font_dir = folder / "runtime-fonts"
+        runtime_font_report = folder / "runtime-fonts.json"
+        prepare_fonts = subprocess.run(
+            [
+                os.sys.executable, str(ROOT / "scripts" / "prepare_runtime_fonts.py"),
+                "--output-dir", str(runtime_font_dir), "--report", str(runtime_font_report),
+            ], cwd=ROOT, capture_output=True, text=True, check=False,
+        )
+        assert prepare_fonts.returncode == 0, prepare_fonts.stdout + prepare_fonts.stderr
+        runtime_font_data = json.loads(runtime_font_report.read_text(encoding="utf-8"))
+        assert runtime_font_data["valid"] is True
+        assert len(list(runtime_font_dir.glob("*.ttf"))) == 4
         layout_path.write_text(json.dumps(layout, ensure_ascii=False), encoding="utf-8")
+        font_dir = runtime_font_dir
         command = [
             str(Path(runtime_node).resolve()), str(SCRIPT),
             "--layout", str(layout_path), "--output", str(output),
             "--node-modules", str(Path(runtime_modules).resolve()),
-            "--font-dir", str(FONT_DIR.resolve()), "--font-family", "Noto Sans CJK SC",
+            "--font-dir", str(font_dir.resolve()), "--font-family", "Noto Sans CJK SC",
             "--strict-input", "--geometry-resolution", str(geometry_path), "--report", str(report_path), "--inspect", str(inspect_path),
         ]
         completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
@@ -96,7 +114,10 @@ def main() -> int:
         route_root = folder / "reference-route"
         route_root.mkdir()
         route_layout = dict(layout)
-        route_layout["font_manifest"] = str((FONT_DIR / "font-manifest.json").resolve())
+        route_layout["font_manifest"] = str((font_dir / "font-manifest.json").resolve())
+        (font_dir / "font-manifest.json").write_text(
+            (FONT_DIR / "font-manifest.json").read_text(encoding="utf-8"), encoding="utf-8",
+        )
         route_layout_path = route_root / "layout.json"
         route_layout_path.write_text(json.dumps(route_layout, ensure_ascii=False), encoding="utf-8")
         (route_root / "route-decision.json").write_text(json.dumps({"route": "reference-reconstruction"}), encoding="utf-8")
@@ -134,13 +155,16 @@ def main() -> int:
             os.environ.get("PYTHON", os.sys.executable), str(ROOT / "scripts" / "compose_pptx.py"),
             str(route_layout_path), str(route_output), "--authoring-backend", "artifact-tool",
             "--node", str(Path(runtime_node).resolve()), "--node-modules", str(Path(runtime_modules).resolve()),
-            "--font-manifest", str((FONT_DIR / "font-manifest.json").resolve()), "--strict-input",
+            "--font-manifest", str((font_dir / "font-manifest.json").resolve()), "--strict-input",
         ]
         route_result = subprocess.run(route_command, cwd=ROOT, capture_output=True, text=True, check=False)
         assert route_result.returncode == 0, route_result.stdout + route_result.stderr
         route_report = json.loads(route_output.with_name("route-output.artifact-tool.json").read_text(encoding="utf-8"))
         assert route_report["backend"] == "@oai/artifact-tool"
         assert len(route_report["fonts"]) == 4
+        assert route_report["final_output_binding"]["postprocess_complete"] is True
+        assert route_report["output"]["sha256"] == hashlib.sha256(route_output.read_bytes()).hexdigest()
+        assert route_report["output"]["bytes"] == route_output.stat().st_size
     print("strict Artifact Tool adapter: smoke ok")
     return 0
 

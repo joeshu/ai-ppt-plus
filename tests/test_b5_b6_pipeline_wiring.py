@@ -24,7 +24,15 @@ def main() -> int:
             "project_id": "b5-b6-pipeline-fixture",
             "slide_width_in": 4,
             "slide_height_in": 2.25,
-            "slides": [{"texts": [{"object_id": "title", "text": "B5 B6 fixture", "x": 0.1, "y": 0.1, "w": 0.8, "h": 0.2, "size": 18}]}],
+            "slides": [{
+                "texts": [{"object_id": "title", "text": "B5 B6 fixture", "x": 0.1, "y": 0.1, "w": 0.8, "h": 0.2, "size": 18}],
+                "tables": [{
+                    "object_id": "fixture-table", "x": 0.1, "y": 0.45, "w": 0.8, "h": 0.25,
+                    "columns": 2, "rows": [["渠道", "结果"], ["A", "通过"]],
+                    "column_widths": [0.4, 0.4], "row_heights": [0.125, 0.125], "font_size_pt": 10,
+                    "semantic_type": "native_table", "header_bold": True, "representation": "native",
+                }],
+            }],
         }), encoding="utf-8")
         deck = project / "deck.pptx"
         preview_dir = project / "preview"
@@ -84,11 +92,19 @@ def main() -> int:
             "--authoring-plan", str(project / "authoring-plan.json"),
             "--require-protected-repair-planner", "--protected-repair-decision", "accept",
             "--protected-repair-before-render-dir", str(before),
+            "--require-coordinate-contract",
         ]
         completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
         assert completed.returncode == 0, completed.stdout + completed.stderr
         data = json.loads(completed.stdout.strip().splitlines()[-1])
         assert data["valid"] is True and data["technical_valid"] is True
+        coordinate = json.loads((run_dir / "coordinate-space-validation.json").read_text(encoding="utf-8"))
+        table_layout = json.loads((run_dir / "table-layout-validation.json").read_text(encoding="utf-8"))
+        assert coordinate["valid"] is True and coordinate["object_count"] >= 2
+        assert table_layout["valid"] is True and table_layout["density_metrics"]
+        report_index = json.loads((run_dir / "report-index.json").read_text(encoding="utf-8"))
+        report_types = {entry["report_type"] for entry in report_index["reports"]}
+        assert {"coordinate-space-validation", "table-layout-validation"} <= report_types
         coordinate = json.loads((run_dir / "asset-render-coordinate-report.json").read_text(encoding="utf-8"))
         assert coordinate["valid"] is True and coordinate["render_crop_evidence_count"] == 1
         repair = json.loads((run_dir / "protected-repair-plan.json").read_text(encoding="utf-8"))

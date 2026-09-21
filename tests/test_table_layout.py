@@ -31,6 +31,21 @@ def main() -> int:
     result = validate(dense)
     assert result["valid"] is False
     assert any(item["code"] == "table_cell_capacity_exceeded" for item in result["issues"])
+
+    px_table = {**base["slides"][0]["tables"][0], "x": 153.6, "y": 432.0, "w": 1228.8, "h": 259.2, "column_widths": [307.2, 921.6], "row_heights": [129.6, 129.6]}
+    px = {**base, "units": "px", "ref_width": 1536, "ref_height": 864, "slides": [{
+        "tables": [px_table],
+        "icons": [{"object_id": "action-icon", "x": 176.64, "y": 466.56, "w": 61.44, "h": 34.56}],
+    }]}
+    result = validate(px)
+    assert result["valid"] is True, result
+    assert result["coordinate_space"] == "px"
+    assert result["density_metrics"]
+
+    empty = {**base, "slides": [{"tables": [{"object_id": "empty", "bbox": [0.1, 0.1, 0.4, 0.2], "rows": []}]}]}
+    result = validate(empty)
+    assert result["valid"] is False
+    assert "table_rows_missing" in {item["code"] for item in result["issues"]}
     print("table layout safety: ok")
     return 0
 

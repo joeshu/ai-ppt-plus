@@ -61,6 +61,12 @@ def main() -> int:
     parser.add_argument("--require-chart-manifest", action="store_true")
     parser.add_argument("--asset-hash-validation")
     parser.add_argument("--require-asset-hashes", action="store_true")
+    parser.add_argument("--source-visual-assets-validation")
+    parser.add_argument("--require-source-visual-assets", action="store_true")
+    parser.add_argument("--coordinate-space-validation")
+    parser.add_argument("--require-coordinate-contract", action="store_true")
+    parser.add_argument("--table-layout-validation")
+    parser.add_argument("--require-table-layout", action="store_true")
     parser.add_argument("--multipage-layout-validation")
     parser.add_argument("--require-multipage-layout", action="store_true")
     parser.add_argument("--preview-consistency-validation")
@@ -140,6 +146,9 @@ def main() -> int:
     content_inventory_report = read_quality_report(args.content_inventory_validation, "content-inventory-validation")
     chart_manifest_report = read_quality_report(args.chart_manifest_validation, "chart-manifest-validation")
     asset_hash_report = read_quality_report(args.asset_hash_validation, "asset-hash-validation")
+    source_visual_assets_report = read_quality_report(args.source_visual_assets_validation, "source-visual-assets-validation")
+    coordinate_space_report = read_quality_report(args.coordinate_space_validation, "coordinate-space-validation")
+    table_layout_report = read_quality_report(args.table_layout_validation, "table-layout-validation")
     multipage_layout_report = read_quality_report(args.multipage_layout_validation, "multipage-layout-validation")
     preview_consistency_report = read_quality_report(args.preview_consistency_validation, "preview-consistency-validation")
     route_report = read_quality_report(args.route_validation, "route-validation")
@@ -159,6 +168,12 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "chart_manifest_missing", "artifact": "chart-manifest-validation"})
     if args.require_asset_hashes and asset_hash_report is None:
         issues.append({"severity": "blocker", "code": "asset_hash_validation_missing", "artifact": "asset-hash-validation"})
+    if args.require_source_visual_assets and source_visual_assets_report is None:
+        issues.append({"severity": "blocker", "code": "source_visual_assets_validation_missing", "artifact": "source-visual-assets-validation"})
+    if args.require_coordinate_contract and coordinate_space_report is None:
+        issues.append({"severity": "blocker", "code": "coordinate_space_validation_missing", "artifact": "coordinate-space-validation"})
+    if args.require_table_layout and table_layout_report is None:
+        issues.append({"severity": "blocker", "code": "table_layout_validation_missing", "artifact": "table-layout-validation"})
     if args.require_multipage_layout and multipage_layout_report is None:
         issues.append({"severity": "blocker", "code": "multipage_layout_validation_missing", "artifact": "multipage-layout-validation"})
     if args.require_preview_consistency and preview_consistency_report is None:
@@ -245,6 +260,30 @@ def main() -> int:
             "checked_count": asset_hash_report.get("checked_count"),
             "issues": asset_hash_report.get("issues", []),
             "warnings": asset_hash_report.get("warnings", []),
+        }
+    if source_visual_assets_report is not None:
+        quality_evidence["source_visual_assets_validation"] = {
+            "valid": source_visual_assets_report.get("valid"),
+            "status": source_visual_assets_report.get("status"),
+            "visual_count": source_visual_assets_report.get("visual_count"),
+            "covered_count": source_visual_assets_report.get("covered_count"),
+            "issues": source_visual_assets_report.get("issues", []),
+        }
+    if coordinate_space_report is not None:
+        quality_evidence["coordinate_space_validation"] = {
+            "valid": coordinate_space_report.get("valid"),
+            "status": coordinate_space_report.get("status"),
+            "coordinate_space": coordinate_space_report.get("coordinate_space"),
+            "object_count": coordinate_space_report.get("object_count"),
+            "issues": coordinate_space_report.get("issues", []),
+        }
+    if table_layout_report is not None:
+        quality_evidence["table_layout_validation"] = {
+            "valid": table_layout_report.get("valid"),
+            "status": table_layout_report.get("status"),
+            "coordinate_space": table_layout_report.get("coordinate_space"),
+            "density_metrics": table_layout_report.get("density_metrics", []),
+            "issues": table_layout_report.get("issues", []),
         }
     if multipage_layout_report is not None:
         quality_evidence["multipage_layout_validation"] = {

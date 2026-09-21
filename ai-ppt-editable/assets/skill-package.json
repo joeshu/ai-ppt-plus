@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.20.14",
+  "package_revision": "2026.09.21.03",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -41,8 +41,13 @@
     "assets/schemas/skill-routing.schema.json",
     "assets/authoring-plan.template.json",
     "assets/schemas/authoring-plan.schema.json",
+    "assets/source-visual-inventory.template.json",
+    "assets/schemas/source-visual-inventory.schema.json",
     "references/authoring-plan.md",
     "scripts/validate_authoring_plan.py",
+    "scripts/validate_source_visual_assets.py",
+    "scripts/validate_coordinate_space.py",
+    "scripts/validate_table_layout.py",
     "assets/text-coverage.template.json",
     "assets/schemas/text-coverage.schema.json",
     "references/text-coverage-auditor.md",
@@ -101,6 +106,7 @@
     "references/editability-levels.md",
     "references/icon-asset-protocol.md",
     "references/visual-repair-patterns.md",
+    "references/image-to-editable-regressions.md",
     "examples/component-library/standard-components.deck.json",
     "tests/test_semantic_layout.py"
   ],

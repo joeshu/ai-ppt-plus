@@ -3,7 +3,9 @@
 
 A case may PASS only when its real source is resolved and every acceptance
 requirement has materialized evidence. Missing source/evidence is NOT_RUN;
-invalid evidence is FAIL. Synthetic substitutes are never accepted.
+invalid evidence is FAIL. Synthetic substitutes are never accepted. Cases
+marked ``active: false`` are historical/retired records: they remain visible
+in the report, but are not part of the current release denominator.
 """
 from __future__ import annotations
 import argparse,json
@@ -46,19 +48,43 @@ def _editable(r:dict,a:dict)->list[dict]:
 def _provenance(r:dict)->list[dict]:
     cand=r.get("candidate_artifact_sha256");rendered=r.get("rendered_from_candidate_sha256")
     return [_c("render_provenance_valid",r.get("valid") is True),_c("fresh_candidate_render",r.get("fresh_candidate_render") is True),_c("render_bound_to_candidate",bool(cand) and cand==rendered,candidate_artifact_sha256=cand,rendered_from_candidate_sha256=rendered)]
+def _source_visual_coverage(r:dict)->list[dict]:
+    return [_c("source_visual_coverage_valid",r.get("valid") is True and r.get("status")=="passed",observed_status=r.get("status"),issues=r.get("issues") or [])]
+def _visual(r:dict)->list[dict]:
+    regions=r.get("regions") if isinstance(r.get("regions"),dict) else {}
+    failed=[name for name,item in regions.items() if not isinstance(item,dict) or item.get("status") not in {"passed","pass","aligned"}]
+    human=r.get("human_visual_review_status") or r.get("status")
+    return [_c("visual_closeout_valid",r.get("valid") is True and r.get("status")=="passed"),_c("human_visual_review_passed",human in {"passed","approved"},observed=human),_c("visual_regions_passed",not failed,failed_regions=failed)]
 def evaluate(manifest:dict,*,root:Path)->dict:
-    a=manifest.get("acceptance") or {};required=_required(a);rows=[]
+    a=manifest.get("acceptance") or {};required=_required(a);rows=[];retired=[]
     for case in manifest.get("cases") or []:
+        if case.get("active",True) is False or str(case.get("lifecycle") or "").lower()=="retired":
+            retired.append({"id":str(case.get("id") or ""),"name":case.get("name"),"status":"RETIRED","reason":case.get("retirement_reason") or case.get("notes"),"source":case.get("source"),"historical_evidence":case.get("evidence") or {},"visual_closeout":case.get("visual_closeout")})
+            continue
         ev=case.get("evidence") or {};paths={k:_resolve(root,ev.get(k)) for k in required};missing=[k for k,p in paths.items() if p is None or not p.is_file()]
+        technical=[]
+        source=case.get("source") if isinstance(case.get("source"),dict) else {}
+        if a.get("source_visual_coverage_required_for_source_image") and source.get("baseline_mode")=="source_image":
+            technical_key="source_visual_assets_validation"
+            technical_path=_resolve(root,(case.get("technical_evidence") or {}).get(technical_key))
+            if technical_path is None or not technical_path.is_file():
+                missing.append(technical_key)
+            else:
+                technical.append((technical_key,_load(technical_path)))
+        visual_path=_resolve(root,case.get("visual_closeout")) if a.get("visual_closeout_required") else None
+        if a.get("visual_closeout_required") and (visual_path is None or not visual_path.is_file()):missing.append("visual_closeout")
         source_status=str(case.get("status") or "")
         if source_status!="source_resolved":missing.insert(0,"source_reference")
         checks=[]
         if not missing:
             checks+=_fit(_load(paths["text_fit_report"]),a);checks+=_feedback(_load(paths["text_render_feedback"]));checks+=_coverage(_load(paths["text_coverage_audit"]));checks+=_editable(_load(paths["editability_audit"]),a);checks+=_provenance(_load(paths["render_provenance"]))
+            for key,report in technical:
+                if key=="source_visual_assets_validation": checks+=_source_visual_coverage(report)
+            if visual_path is not None:checks+=_visual(_load(visual_path))
         status="NOT_RUN" if missing else ("PASS" if all(x["passed"] for x in checks) else "FAIL")
         rows.append({"id":str(case.get("id") or ""),"name":case.get("name"),"source_status":source_status,"source":case.get("source"),"focus":case.get("focus") or [],"status":status,"required_evidence":required,"missing_evidence":missing,"checks":checks})
-    summary={"case_count":len(rows),"pass_count":sum(x["status"]=="PASS" for x in rows),"fail_count":sum(x["status"]=="FAIL" for x in rows),"not_run_count":sum(x["status"]=="NOT_RUN" for x in rows)}
-    return {"schema":SCHEMA,"batch":manifest.get("batch"),"release_ready":bool(rows) and summary["pass_count"]==len(rows),"acceptance":a,"required_evidence":required,"summary":summary,"cases":rows}
+    summary={"case_count":len(rows),"pass_count":sum(x["status"]=="PASS" for x in rows),"fail_count":sum(x["status"]=="FAIL" for x in rows),"not_run_count":sum(x["status"]=="NOT_RUN" for x in rows),"retired_count":len(retired)}
+    return {"schema":SCHEMA,"batch":manifest.get("batch"),"release_ready":bool(rows) and summary["pass_count"]==len(rows),"acceptance":a,"required_evidence":required,"summary":summary,"cases":rows,"retired_cases":retired}
 def main()->int:
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--manifest",required=True,type=Path);p.add_argument("--root",type=Path);p.add_argument("--report",required=True,type=Path);p.add_argument("--require-complete",action="store_true");args=p.parse_args();mp=args.manifest.resolve();root=args.root.resolve() if args.root else mp.parent;report=evaluate(_load(mp),root=root);args.report.parent.mkdir(parents=True,exist_ok=True);args.report.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8");print(json.dumps({**report["summary"],"release_ready":report["release_ready"],"report":str(args.report)},ensure_ascii=False));return 2 if report["summary"]["fail_count"] else (3 if args.require_complete and not report["release_ready"] else 0)
 if __name__=="__main__":raise SystemExit(main())
