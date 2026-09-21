@@ -29,6 +29,7 @@ def _load_deck(path: Path) -> dict:
     data.setdefault("slide_width_in", 13.333)
     data.setdefault("slide_height_in", 7.5)
     data.setdefault("units", "fraction")
+    data["_assets_dir_explicit"] = isinstance(data.get("assets_dir"), str) and bool(data.get("assets_dir", "").strip())
     data.setdefault("assets_dir", str(path.parent))
     if data["units"] not in {"fraction", "px"}:
         _die(f"unsupported coordinate units: {data['units']}")

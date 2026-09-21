@@ -55,6 +55,9 @@ def main() -> int:
             assert data["performance_report"] == str((run_dir / "performance-report.json").resolve())
             performance = json.loads((run_dir / "performance-report.json").read_text(encoding="utf-8"))
             assert performance["schema"] == "ai-ppt-plus/performance-report/v1"
+            assert performance["execution"]["execution_profile"] == "fast"
+            assert performance["execution"]["time_to_first_visual_render_ms"] is not None
+            assert performance["execution"]["full_render_count"] in {0, 1}
             assert performance["execution"]["cache_hit_rate"] is not None
             assert data["source_references"]
             assert not validate(data, json.loads((ROOT / "assets/schemas/pipeline-run.schema.json").read_text(encoding="utf-8")))

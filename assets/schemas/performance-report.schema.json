@@ -8,8 +8,13 @@
     "run_id": {"type": ["string", "null"]},
     "execution": {
       "type": "object",
-      "required": ["cache_hits", "cache_misses", "cache_hit_rate", "wall_duration_ms", "task_duration_ms_sum", "critical_path_ms", "retry_count", "repair_rounds", "page_cache"],
+      "required": ["execution_profile", "time_to_first_visual_render_ms", "candidate_build_count", "full_render_count", "imagegen_call_count", "cache_hits", "cache_misses", "cache_hit_rate", "wall_duration_ms", "task_duration_ms_sum", "critical_path_ms", "retry_count", "repair_rounds", "page_cache"],
       "properties": {
+        "execution_profile": {"enum": ["fast", "strict", "ci"]},
+        "time_to_first_visual_render_ms": {"type": ["number", "null"], "minimum": 0},
+        "candidate_build_count": {"type": "integer", "minimum": 0},
+        "full_render_count": {"type": "integer", "minimum": 0},
+        "imagegen_call_count": {"type": "integer", "minimum": 0},
         "cache_hits": {"type": "integer", "minimum": 0},
         "cache_misses": {"type": "integer", "minimum": 0},
         "cache_hit_rate": {"type": ["number", "null"], "minimum": 0, "maximum": 1},

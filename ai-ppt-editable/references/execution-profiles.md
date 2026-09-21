@@ -11,3 +11,5 @@ Run finalization preflight in `prebuild` stage before ImageGen or candidate cons
 Targets of 8–12 minutes to first visual render and 15–20 minutes total are benchmark goals, not acceptance gates. Correctness blockers remain separate from diagnostics.
 
 Every production run records: time to first visual render (TTFVR), total wall time, candidate/render/ImageGen counts, native-text coverage, required-native coverage, whole-slide raster count, unresolved material mismatches, protected regressions, and reproducibility. Time targets remain diagnostic; required-native coverage, zero whole-slide rasters, zero protected regressions, and reproducibility are correctness gates.
+
+`run_super_pipeline.py` owns profile selection. It validates the canonical profile and runs an execution-budget preflight before visual validation or candidate construction. The preflight reads `imagegen-assets-manifest.json`, excludes verified cache hits, derives retries from `retry_count` or generation attempts, and blocks over-budget work. It passes the observed generation count and candidate count into editable QA; the performance report derives TTFVR from the render node's dependency path.

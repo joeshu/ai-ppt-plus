@@ -9,6 +9,8 @@ from pathlib import Path
 
 from atomic_output import atomic_write_json
 
+BACKEND_ALIASES = {"artifact-tool": "@oai/artifact-tool", "@oai/artifact-tool": "@oai/artifact-tool"}
+
 
 def _read(path: Path) -> dict:
     value = json.loads(path.read_text(encoding="utf-8"))
@@ -28,7 +30,9 @@ def validate(environment_path: Path, contract_path: Path, skill_dir: Path | None
         binding = {}
     expected_backend = binding.get("backend")
     observed_backend = ((environment.get("selection") or {}).get("authoring_backend"))
-    if expected_backend != observed_backend:
+    expected_canonical = BACKEND_ALIASES.get(str(expected_backend), expected_backend)
+    observed_canonical = BACKEND_ALIASES.get(str(observed_backend), observed_backend)
+    if expected_canonical != observed_canonical:
         issues.append({"severity": "blocker", "code": "authoring_backend_mismatch", "expected": expected_backend, "observed": observed_backend})
 
     checked_paths = []
@@ -56,6 +60,7 @@ def validate(environment_path: Path, contract_path: Path, skill_dir: Path | None
         "contract": str(contract_path.resolve()),
         "binding": binding,
         "observed_backend": observed_backend,
+        "canonical_backend": observed_canonical,
         "selection_reason": selection_reason,
         "checked_paths": checked_paths,
         "issues": issues,

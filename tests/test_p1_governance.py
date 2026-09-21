@@ -54,6 +54,8 @@ def main() -> int:
         assert performance_data["schema"] == "ai-ppt-plus/performance-report/v1"
         assert performance_data["execution"]["repair_rounds"] == 2
         assert performance_data["execution"]["critical_path_ms"] == 400
+        assert performance_data["execution"]["time_to_first_visual_render_ms"] == 400
+        assert performance_data["execution"]["execution_profile"] == "fast"
         assert performance_data["execution"]["resource_usage"]["available"] is False
         assert performance_data["execution"]["resume_hits"] == 0
 

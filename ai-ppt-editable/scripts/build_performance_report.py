@@ -61,6 +61,18 @@ def _critical_path_ms(execution: dict[str, Any], steps: list[Any]) -> float:
     return round(max((path_duration(name) for name in tasks), default=0.0), 3)
 
 
+def _time_to_step_ms(steps: list[Any], target: str) -> float | None:
+    tasks = {str(step.get("name")): step for step in steps if isinstance(step, dict) and step.get("name")}
+    if target not in tasks: return None
+    memo: dict[str, float] = {}
+    def visit(name: str) -> float:
+        if name in memo: return memo[name]
+        step=tasks[name]; deps=step.get("deps") if isinstance(step.get("deps"),list) else []
+        before=max((visit(str(dep)) for dep in deps if str(dep) in tasks),default=0.0)
+        memo[name]=before+max(0.0,float(step.get("duration_ms",0) or 0)); return memo[name]
+    return round(visit(target),3)
+
+
 def _repair_rounds(data: dict[str, Any], issue_log: dict[str, Any] | None, explicit: int | None) -> int:
     values = []
     if explicit is not None:
@@ -115,6 +127,11 @@ def build(pipeline_result: Path, output: Path, *, issue_log: Path | None = None,
         "deck_sha256": data.get("deck_sha256"),
         "validation_scope": data.get("validation_scope", "full"),
         "execution": {
+            "execution_profile": execution.get("execution_profile", "fast"),
+            "time_to_first_visual_render_ms": _time_to_step_ms(steps, "render"),
+            "candidate_build_count": _integer(execution.get("candidate_build_count")),
+            "full_render_count": _integer(execution.get("full_render_count"), sum(1 for step in steps if isinstance(step, dict) and step.get("name") == "render" and step.get("ok") is True)),
+            "imagegen_call_count": _integer(execution.get("imagegen_call_count")),
             "mode": execution.get("mode"),
             "parallel_workers": _integer(execution.get("parallel_workers"), 1),
             "tasks_total": _integer(execution.get("tasks_total"), len(steps)),

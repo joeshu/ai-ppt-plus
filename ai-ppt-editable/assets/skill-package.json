@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.21.08",
+  "package_revision": "2026.09.21.09",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -103,7 +103,9 @@
     "scripts/run_tests.py",
     "scripts/validate_finalization_preflight.py",
     "scripts/execution_profiles.py",
+    "scripts/execution_budget.py",
     "scripts/validate_execution_profile.py",
+    "scripts/validate_execution_budget.py",
     "scripts/validate_short_loop_run.py",
     "scripts/select_visual_incumbent.py",
     "assets/short-loop-run.template.json",

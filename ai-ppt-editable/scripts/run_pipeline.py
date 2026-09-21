@@ -360,6 +360,9 @@ def main() -> int:
     parser.add_argument("--require-p1", action="store_true", help="require P0 plus the P1 design-system, issue-log and review-package gates")
     parser.add_argument("--require-dual-comparison", action="store_true", help="require both pixel and semantic object comparison when a reference is supplied")
     parser.add_argument("--repair-round", type=int, default=0, help="current fix-render-validate repair round for performance telemetry")
+    parser.add_argument("--execution-profile", choices=("fast", "strict", "ci"), default="fast", help="reconstruction execution profile used by the parent orchestrator")
+    parser.add_argument("--candidate-build-count", type=int, default=0, help="candidate builds already performed by the parent orchestrator")
+    parser.add_argument("--imagegen-call-count", type=int, default=0, help="recorded uncached ImageGen calls before QA")
     parser.add_argument("--review-package-dir", help="portable review-package output directory")
     parser.add_argument("--workflow-state", help="workflow-state/v1 contract produced by the orchestrator")
     parser.add_argument("--require-workflow-state", action="store_true", help="require PROJECT_DIR/workflow-state.json or the path passed to --workflow-state")
@@ -1863,6 +1866,10 @@ def main() -> int:
             "report_index": str(run_dir / "report-index.json"),
             "project_report": str(run_dir / "project-report.json"),
             "execution": {
+                "execution_profile": args.execution_profile,
+                "candidate_build_count": max(0, args.candidate_build_count),
+                "full_render_count": 0 if conversion_evidence.get("skipped", False) else 1,
+                "imagegen_call_count": max(0, args.imagegen_call_count),
                 "mode": args.execution_mode,
                 "cache_dir": str(cache_dir) if cache_dir else None,
                 "parallel_workers": executor.max_workers,

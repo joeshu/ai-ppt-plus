@@ -185,10 +185,12 @@ def main() -> int:
         result = json.loads(completed.stdout.strip().splitlines()[-1])
         assert result["valid"] is True, result
         assert [item["name"] for item in result["steps"]] == [
-            "bundle", "environment", "environment-contract", "route", "workflow-state", "A-visual", "B-editable-compose",
+            "bundle", "execution-profile", "execution-budget-preflight", "environment", "environment-contract", "route", "workflow-state", "A-visual", "B-editable-compose",
             "B-editable-inspect", "handoff-build", "B-editable-qa",
             "handoff-finalize", "handoff-validate",
         ], result["steps"]
+        assert result["execution_profile"] == "fast"
+        assert result["execution_budget"]["usage"]["candidate_build_count"] == 1
         handoff = project / "handoff.json"
         handoff_data = json.loads(handoff.read_text(encoding="utf-8"))
         assert handoff_data["schema"] == "ai-ppt-plus/handoff/v2", handoff_data

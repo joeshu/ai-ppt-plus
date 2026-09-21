@@ -86,7 +86,10 @@ def _referenced_assets(deck: dict[str, Any], assets_dir: Path) -> list[dict[str,
 def validate_deck_asset_isolation(deck: dict[str, Any], layout_path: Path, *, scan_tree: bool = True) -> dict[str, Any]:
     layout_path = layout_path.resolve()
     raw_assets_dir = deck.get("assets_dir")
-    assets_dir = _normalise_path(raw_assets_dir) if isinstance(raw_assets_dir, str) and raw_assets_dir.strip() else layout_path.parent.resolve()
+    explicit_assets_dir = deck.get("_assets_dir_explicit") is True or (
+        "_assets_dir_explicit" not in deck and isinstance(raw_assets_dir, str) and bool(raw_assets_dir.strip())
+    )
+    assets_dir = _normalise_path(raw_assets_dir) if explicit_assets_dir else layout_path.parent.resolve()
     errors: list[dict[str, Any]] = []
     references = _referenced_assets(deck, assets_dir)
 
@@ -107,7 +110,11 @@ def validate_deck_asset_isolation(deck: dict[str, Any], layout_path: Path, *, sc
 
     scanned = 0
     forbidden_inventory: list[dict[str, str]] = []
-    if scan_tree and assets_dir.is_dir():
+    # Inventory scans are safe only for a declared final-asset root. When a
+    # legacy layout omits assets_dir, its project root may legitimately also
+    # contain QA evidence; explicit referenced QA paths are still blocked.
+    effective_tree_scan = bool(scan_tree and explicit_assets_dir)
+    if effective_tree_scan and assets_dir.is_dir():
         for path in sorted(assets_dir.rglob("*")):
             if not path.is_file() or path.suffix.lower() not in IMAGE_SUFFIXES:
                 continue
@@ -128,7 +135,8 @@ def validate_deck_asset_isolation(deck: dict[str, Any], layout_path: Path, *, sc
         "valid": not errors,
         "layout": str(layout_path),
         "assets_dir": str(assets_dir),
-        "scan_tree": bool(scan_tree),
+        "scan_tree": effective_tree_scan,
+        "assets_dir_explicit": explicit_assets_dir,
         "referenced_asset_count": len(references),
         "scanned_image_count": scanned,
         "references": references,

@@ -96,8 +96,10 @@ def main() -> int:
         result = json.loads(completed.stdout)
         assert result["valid"] is True
         assert [item["name"] for item in result["steps"]] == [
-            "bundle", "A-visual", "B-editable-compose", "B-editable-inspect"
+            "bundle", "execution-profile", "execution-budget-preflight", "A-visual", "B-editable-compose", "B-editable-inspect"
         ]
+        assert result["execution_profile"] == "fast"
+        assert result["execution_budget"]["valid"] is True
         assert deck.is_file()
         assert (project / "qa" / "visual-deck-strip.png").is_file()
         assert (project / "qa" / "editable-inspection.json").is_file()

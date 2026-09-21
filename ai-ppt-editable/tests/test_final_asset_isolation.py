@@ -68,6 +68,19 @@ class FinalAssetIsolationTests(unittest.TestCase):
             self.assertFalse(report["valid"])
             self.assertIn("final_asset_root_is_qa_directory", {item["code"] for item in report["errors"]})
 
+    def test_legacy_project_root_does_not_scan_unreferenced_qa(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            qa = root / "qa"
+            qa.mkdir()
+            (qa / "comparison.png").write_bytes(b"png")
+            deck = {"assets_dir": str(root), "_assets_dir_explicit": False, "slides": [{"texts": [{"text": "native"}]}]}
+            layout = root / "layout.json"
+            layout.write_text(json.dumps(deck), encoding="utf-8")
+            report = validate_deck_asset_isolation(deck, layout)
+            self.assertTrue(report["valid"], report)
+            self.assertFalse(report["scan_tree"])
+
 
 if __name__ == "__main__":
     unittest.main()

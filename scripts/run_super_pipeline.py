@@ -80,6 +80,8 @@ def execute(name: str, command: list[str], cwd: Path, log_dir: Path, timeout: in
     }
     if failure:
         result["failure"] = failure
+    if returncode != 0:
+        result["stderr_tail"] = "\n".join(stderr.strip().splitlines()[-10:])
     return result
 
 
@@ -140,6 +142,7 @@ def main() -> int:
     parser.add_argument("--human-signoff")
     parser.add_argument("--quality-score", type=float)
     parser.add_argument("--release", action="store_true", help="pass the strict release profile to the editable worker")
+    parser.add_argument("--execution-profile", choices=("fast", "strict", "ci"), default="fast", help="machine-enforced reconstruction budget; ci is non-delivery only")
     parser.add_argument("--strict-qa", action="store_true", help="require typed editable manifests in the full worker QA")
     parser.add_argument("--execution-mode", choices=("dag", "linear"), default="dag")
     parser.add_argument("--parallel-workers", type=int, default=4)
@@ -164,6 +167,14 @@ def main() -> int:
     visual_assertions = log_dir / "visual-assertions.json"
     report_path = Path(args.report).resolve() if args.report else project / "qa" / "super-pipeline.json"
     steps: list[dict] = []
+    profile_path = log_dir / "execution-profile.json"
+    profile_source = EDITABLE / "assets" / "execution-profile.template.json"
+    profile_data = read_json(profile_source)
+    if args.execution_profile != "fast":
+        sys.path.insert(0, str(EDITABLE / "scripts"))
+        from execution_profiles import PROFILES
+        profile_data = {"schema": "ai-ppt-plus/execution-profile/v1", "profile": args.execution_profile, "budgets": PROFILES[args.execution_profile]}
+    atomic_write_json(profile_path, profile_data)
 
     def finish(result: dict, code: int) -> int:
         atomic_write_json(report_path, result)
@@ -184,13 +195,15 @@ def main() -> int:
     visual_route = route == "visual-creation" or (args.mode == "handoff" and not route_path and bool(visual_plan or visual_manifest))
 
     add_step(steps, "bundle", [sys.executable, str(ROOT / "scripts" / "validate_skill_package.py"), "--skill-dir", str(ROOT)], ROOT, log_dir)
+    add_step(steps, "execution-profile", [sys.executable, str(ROOT / "scripts" / "validate_execution_profile.py"), str(profile_path)], ROOT, log_dir, deps=["bundle"])
+    add_step(steps, "execution-budget-preflight", [sys.executable, str(ROOT / "scripts" / "validate_execution_budget.py"), "--profile", args.execution_profile, "--project", str(project), "--candidate-build-count", "1", "--full-render-count", "1" if args.mode == "full" else "0", "--report", str(log_dir / "execution-budget.json")], ROOT, log_dir, deps=["execution-profile"])
     if args.mode == "full":
         environment_report = log_dir / "environment-report.json"
         environment_validation = log_dir / "environment-validation.json"
         add_step(steps, "environment", [
             sys.executable, str(ROOT / "scripts" / "probe_environment.py"),
             "--output", str(environment_report),
-        ], ROOT, log_dir, deps=["bundle"])
+        ], ROOT, log_dir, deps=["execution-budget-preflight"])
         add_step(steps, "environment-contract", [
             sys.executable, str(ROOT / "scripts" / "validate_environment_contract.py"),
             "--report", str(environment_report), "--output", str(environment_validation),
@@ -215,7 +228,7 @@ def main() -> int:
             workflow_deps.extend(["environment-contract", "route"])
         add_step(steps, "workflow-state", workflow_command, ROOT, log_dir, deps=workflow_deps)
 
-    visual_deps = ["bundle"] + (["route"] if args.mode == "full" else [])
+    visual_deps = ["execution-budget-preflight"] + (["route"] if args.mode == "full" else [])
     if workflow_state_enabled:
         visual_deps.append("workflow-state")
     if visual_route and visual_plan and visual_manifest:
@@ -229,7 +242,7 @@ def main() -> int:
     else:
         add_not_used(steps, "A-visual", VISUAL)
 
-    compose_deps = ["bundle"] + (["route"] if args.mode == "full" else []) + (["workflow-state"] if workflow_state_enabled else []) + ["A-visual"]
+    compose_deps = ["execution-budget-preflight"] + (["route"] if args.mode == "full" else []) + (["workflow-state"] if workflow_state_enabled else []) + ["A-visual"]
     compose_command = [
         sys.executable,
         str(EDITABLE / "scripts" / "compose_pptx.py"),
@@ -273,7 +286,10 @@ def main() -> int:
             "--execution-mode", args.execution_mode, "--parallel-workers", str(args.parallel_workers),
             "--output-dir", str(log_dir / "editable-qa"), "--route-decision", str(route_path),
             "--require-route", "--require-formal-content", "--handoff", str(handoff),
+            "--execution-profile", args.execution_profile, "--candidate-build-count", "1",
         ]
+        budget_usage = (read_json(log_dir / "execution-budget.json").get("usage") or {})
+        qa_command.extend(["--imagegen-call-count", str(int(budget_usage.get("imagegen_call_count", 0) or 0))])
         if visual_route and visual_plan and visual_manifest:
             qa_command.extend(["--visual-generation-plan", str(visual_plan), "--visual-generation-manifest", str(visual_manifest), "--require-visual-generation"])
         if args.font_dir:
@@ -334,6 +350,8 @@ def main() -> int:
         "visual_skill": str(VISUAL),
         "editable_skill": str(EDITABLE),
         "output_deck": str(output_deck),
+        "execution_profile": args.execution_profile,
+        "execution_budget": read_json(log_dir / "execution-budget.json"),
         "steps": steps,
         "failed_steps": [step["name"] for step in steps if not step.get("ok")],
         "external_events": {"native_image_generation": "required-before-A-visual-run; not invoked by this Python coordinator"},

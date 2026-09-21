@@ -2,10 +2,12 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.21.08
+  package_revision: 2026.09.21.09
 ---
 
 For fixed-reference image-to-editable-PPTX work, default to the editable worker's machine-validated `fast` execution profile. Use `strict` only when requested or justified by page risk; reserve `ci` for regression. Run finalization preflight before ImageGen or candidate construction, batch uncached asset generation, retry only failed asset IDs, and cut adaptive local QA crops from one full-page render.
+
+Invoke `scripts/run_super_pipeline.py --execution-profile fast|strict` so profile validation and execution-budget preflight run before composition. The orchestrator passes observed candidate and ImageGen counts into editable QA; the performance report derives TTFVR from the render dependency path. `ci` cannot produce a delivery.
 
 # AI PPT Plus Orchestrator
 

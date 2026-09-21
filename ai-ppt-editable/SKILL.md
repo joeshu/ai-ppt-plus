@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.21.08
+  package_revision: 2026.09.21.09
 ---
 
 # AI PPT Editable
@@ -23,6 +23,8 @@ For normal fixed-reference reconstruction run this chain and no additional visua
 `Reference -> Execution Profile -> Prebuild Execution Preflight -> Visual Inventory -> AuthoringPlan -> Geometry Primitive Resolution -> native_editable/imagegen_asset -> Risk-tier Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> Adaptive Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
 
 Default to the machine-validated `fast` profile in [references/execution-profiles.md](references/execution-profiles.md). Use `strict` only when requested or justified by page risk; use `ci` only for package regression. Profile candidate, render, crop and per-asset retry budgets are hard runtime limits.
+
+When invoked by the orchestrator, require `--execution-profile` propagation into editable QA. The execution-budget preflight must pass before composition; performance evidence must report the profile, TTFVR, candidate builds, full renders and uncached ImageGen calls.
 
 Before ImageGen or authoring, pass package/source/runtime/font preflights. After
 the first candidate is built—and before any visual repair variant—run
