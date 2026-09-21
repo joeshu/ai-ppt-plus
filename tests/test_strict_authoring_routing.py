@@ -35,3 +35,11 @@ def test_python_backend_cannot_satisfy_strict_authoring_route():
     code, report = run_validator(template)
     assert code != 0
     assert any(item["code"] == "routing_binding_mismatch" for item in report["issues"])
+
+
+def test_external_comparator_cannot_enter_production_route():
+    template = json.loads((ROOT / "assets/skill-routing.template.json").read_text(encoding="utf-8"))
+    template["bindings"]["reconstruction"]["runtime_entrypoint"] = "knight-imagetopptx-skill/run.py"
+    code, report = run_validator(template)
+    assert code != 0
+    assert any(item["code"] == "external_comparator_in_production_route" for item in report["issues"])

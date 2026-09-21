@@ -17,9 +17,9 @@ REQUIRED_OWNS = {
     "ai-ppt-editable": {"reference-decomposition", "editable-layer-plan", "image-to-pptx-object-mapping", "pptx-authoring", "pptx-rendering", "technical-qa"},
 }
 REQUIRED_FORBIDS = {
-    "ai-ppt-plus": {"silent-backend-substitution", "human-signoff-claim"},
+    "ai-ppt-plus": {"silent-backend-substitution", "human-signoff-claim", "external-comparator-runtime"},
     "ai-ppt-visual-gen": {"narrative-authority", "formal-text-authority", "image-to-editable-pptx", "release-eligibility", "human-signoff"},
-    "ai-ppt-editable": {"narrative-redesign", "release-eligibility", "human-signoff"},
+    "ai-ppt-editable": {"narrative-redesign", "release-eligibility", "human-signoff", "external-comparator-runtime"},
 }
 
 
@@ -40,6 +40,9 @@ def main() -> int:
         issues.append({"severity": "blocker", "code": "routing_schema_invalid", "observed": data.get("schema")})
     if data.get("orchestrator") != "ai-ppt-plus":
         issues.append({"severity": "blocker", "code": "routing_orchestrator_invalid", "observed": data.get("orchestrator")})
+    serialized = json.dumps(data, ensure_ascii=False).lower()
+    if "knight" in serialized or "knight-imagetopptx" in serialized:
+        issues.append({"severity": "blocker", "code": "external_comparator_in_production_route", "message": "production routing must not reference the development-only comparator"})
     skills = data.get("skills")
     if not isinstance(skills, list):
         skills = []

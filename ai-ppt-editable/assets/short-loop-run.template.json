@@ -1,5 +1,5 @@
 {
-  "contract": "knight-short-loop/v1",
+  "contract": "fixed-reference-short-loop/v2",
   "source": {
     "path": "reference.png",
     "sha256": "",

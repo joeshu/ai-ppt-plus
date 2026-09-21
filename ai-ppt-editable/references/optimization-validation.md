@@ -20,7 +20,7 @@ ledger and compare it to final `a:t` text. Validate table rich-text child order;
 use a bound text-box overlay only as an explicit upstream-compatibility
 fallback, with the table still native and movement/reimport tests recorded.
 
-## Knight-style render-driven repair loop
+## Render-driven repair loop
 
 For fixed-reference reconstruction, the first successfully authored PPTX is a
 **draft**, not a release candidate. The primary optimization loop is:

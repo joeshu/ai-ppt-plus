@@ -1,6 +1,6 @@
 # Next-stage fidelity roadmap
 
-This roadmap sequences the next six improvements after the Knight-style short-loop merge. The objective is not more release gates; it is fewer first-pass authoring mistakes and more precise object-level repair.
+This roadmap sequences the next six improvements after the fixed-reference short-loop merge. The objective is not more release gates; it is fewer first-pass authoring mistakes and more precise object-level repair.
 
 ## Batch 1 — P0 AuthoringPlan
 

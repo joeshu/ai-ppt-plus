@@ -149,7 +149,7 @@ replacement authority.
 
 For `reference-reconstruction`, `editable-pptx`, and `native-authoring`,
 `ai-ppt-editable` is the primary execution engine. The route decision must
-also bind `references/knight-fidelity-port.md`: text-slot preflight,
+also bind `references/fixed-reference-fidelity.md`: text-slot preflight,
 content-aware grid cutting, alpha-centroid placement, physical z-order audit
 and local crop QA are mandatory last-mile evidence.
 The route decision must persist `primary_engine`, `fallback_policy`,

@@ -9,7 +9,7 @@
     "pptx-rendering",
     "technical-qa"
   ],
-  "forbids": ["narrative-redesign", "release-eligibility", "human-signoff"],
+  "forbids": ["narrative-redesign", "release-eligibility", "human-signoff", "external-comparator-runtime"],
   "bindings": {
     "authoring": {
       "kind": "adapter",

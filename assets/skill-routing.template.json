@@ -6,7 +6,7 @@
       "name": "ai-ppt-plus",
       "role": "orchestrator",
       "owns": ["intake", "source-authority", "narrative", "approved-outline", "route", "design-system", "manifest-reconciliation", "qa-aggregation", "reports", "human-closeout", "release-gates"],
-      "forbids": ["silent-backend-substitution", "human-signoff-claim"]
+      "forbids": ["silent-backend-substitution", "human-signoff-claim", "external-comparator-runtime"]
     },
     {
       "name": "ai-ppt-visual-gen",
@@ -18,7 +18,7 @@
       "name": "ai-ppt-editable",
       "role": "editable-worker",
       "owns": ["reference-decomposition", "editable-layer-plan", "image-to-pptx-object-mapping", "pptx-authoring", "pptx-rendering", "technical-qa"],
-      "forbids": ["narrative-redesign", "release-eligibility", "human-signoff"]
+      "forbids": ["narrative-redesign", "release-eligibility", "human-signoff", "external-comparator-runtime"]
     }
   ],
   "fallback_policy": {

@@ -1,4 +1,4 @@
-# Knight text-fit absorption batches
+# Development history: Knight text-fit absorption batches
 
 This file records the staged port into `ai-ppt-editable` so the Knight text-fit work is not confused with the separate B1–B6 fidelity roadmap.
 

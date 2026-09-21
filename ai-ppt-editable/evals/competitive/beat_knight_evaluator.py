@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare Knight and candidate evidence with profile-aware visual quality gates."""
+"""Development-only comparison of Knight and candidate evidence."""
 from __future__ import annotations
 import argparse, json
 from pathlib import Path

@@ -1,4 +1,4 @@
-# Beat-Knight competitive benchmark
+# Development-only Beat-Knight competitive benchmark
 
 ## Purpose
 

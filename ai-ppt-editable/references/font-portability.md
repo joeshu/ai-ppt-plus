@@ -7,7 +7,7 @@ repository. Keep font policy, resolution logic, provenance and OOXML binding in
 Git; keep TTF/TTC/OTF files in the operating system, user project, or ignored
 runtime cache.
 
-This follows the useful Knight reconstruction pattern: use a real font for text
+Use a real runtime-resolved font for text
 measurement, bind the East Asian typeface in PowerPoint OOXML, render the PPTX,
 and inspect the result. Do not make repository size the mechanism for font
 correctness.

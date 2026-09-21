@@ -13,7 +13,7 @@ Reconstruct or repair editable PPTX with the supplied reference as visual author
 
 New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python is inspection/QA only and is not an authoring fallback. Whole-page raster fallback is forbidden.
 
-Read `references/knight-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/visual-closeout-gate.md` before declaring visual PASS. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/knight-fidelity-port.md` remains implementation guidance. External Knight A/B is a development/evaluation workflow, not a runtime dependency.
+Read `references/fixed-reference-short-loop.md` for the normative production contract. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/visual-closeout-gate.md` before declaring visual PASS. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/fixed-reference-fidelity.md` remains implementation guidance. Production execution must not discover, invoke, import, route to, or depend on any external comparison skill. Competitive comparators are development-only artifacts under `evals/`.
 Read `references/image-to-editable-regressions.md` when a fresh image-to-editable replay exposes an inventory, alpha-geometry, physical-aspect, text-to-container or composite-anchor defect; apply its stable repair codes and re-render the owning region.
 
 ## Formal production chain
@@ -124,7 +124,7 @@ Measure every visible native text path before authoring. Determine the true edit
 
 When text does not fit, repair in this order: text-slot bbox -> margins -> divider/icon reservation -> intended wrapping/line spacing -> role-consistent font adjustment. Do not shrink first. Repeated cards may use component-local divider positions, body widths, icon slots and font scales when the reference differs.
 
-The TextFit Core contract in `references/knight-fidelity-port.md` defines the
+The TextFit Core contract in `references/fixed-reference-fidelity.md` defines the
 measurement/report details: CJK character wrapping, intact Latin/number/unit
 runs (including symbol-leading values such as `-12.5%`), explicit reference
 line-count locking, target-size box deficit evidence and the
@@ -258,9 +258,9 @@ Deliver only the candidate whose final PPTX/render hashes correspond to the acce
 
 ## Development regression, separate from production
 
-Pixel / Text / Object / Icon-Asset / Local-Crop five-dimensional A/B remains valuable for skill development, benchmark replay and CI. It is not required for ordinary image-to-editable conversion and must not make normal delivery depend on Knight or another external comparator.
+Pixel / Text / Object / Icon-Asset / Local-Crop five-dimensional A/B remains valuable for skill development, benchmark replay and CI. It is not required for ordinary image-to-editable conversion and must not make normal delivery depend on any external comparator.
 
-## Core implementation rules retained from Knight study
+## Core fixed-reference implementation rules
 
 - Use real font metrics and CJK-aware wrapping; preserve reference line topology.
 - Treat the text box as the intended editable slot, not the dark-pixel glyph bbox.

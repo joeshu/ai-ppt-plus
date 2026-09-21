@@ -1,6 +1,6 @@
 # Text Slot Repair Planner
 
-Batch 3 of the Knight text-fit port turns measured `box_deficit_px` and line-topology evidence into a smallest-scope repair decision. It does not add a new visual score gate and it never repairs a text defect by moving an unrelated object.
+The text-slot repair stage turns measured `box_deficit_px` and line-topology evidence into a smallest-scope repair decision. It does not add a new visual score gate and it never repairs a text defect by moving an unrelated object.
 
 ## Repair order
 
