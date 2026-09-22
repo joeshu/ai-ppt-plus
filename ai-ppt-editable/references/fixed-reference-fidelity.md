@@ -36,6 +36,12 @@ runtime-font based and carries no external comparator assumptions.
   way as a later run.
 - CRLF, LF and CR explicit breaks are normalized before measuring. Explicit
   breaks are not silently discarded.
+- Mixed rich-text runs use each run's actual font family, weight and relative
+  size. Superscript/subscript runs use reduced glyph size plus baseline extent.
+- Chinese paired punctuation cannot be orphaned at a line boundary. Title-like
+  roles avoid a one-character final line when the preceding line can rebalance.
+- Reuse loaded FreeType font objects across deck slots; run exact topology
+  search only where reference line evidence exists.
 
 ### Reference topology and report contract
 

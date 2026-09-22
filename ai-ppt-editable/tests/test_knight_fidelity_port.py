@@ -7,6 +7,27 @@ import tempfile
 import zipfile
 from pathlib import Path
 
+
+def test_rich_runs_use_real_mixed_style_measurement():
+    from argparse import Namespace
+    from ppt_text_fit import best_fit, find_font
+    font = find_font("Noto Sans CJK SC", False)
+    args = Namespace(
+        text="增长12.5%", box="360x80", font="Noto Sans CJK SC", font_file=str(font), bold=False,
+        min_pt=8, max_pt=24, max_lines=1, target_lines=1, scan_step=.25,
+        line_spacing=1.0, width_safety=.95, height_safety=.95, render_fudge=1.0,
+        target_pt=24, semantic_role="title", min_readable_pt=None, min_hierarchy_scale=None,
+        slide_px="1672x941", slide_in="13.333333x7.505",
+        rich_runs=[
+            {"text": "增长", "size": 18, "font": "Noto Sans CJK SC"},
+            {"text": "12.5", "size": 24, "font": "Arial", "bold": True},
+            {"text": "%", "size": 13, "font": "Arial", "baseline": "superscript"},
+        ],
+    )
+    result = best_fit(args)
+    assert result["settings"]["measurement_mode"] == "rich-runs"
+    assert result["run_count"] == 3 and result["rich_text_measured"] is True
+
 import numpy as np
 from openpyxl import load_workbook
 from PIL import Image, ImageDraw

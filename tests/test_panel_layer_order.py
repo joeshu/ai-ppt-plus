@@ -41,8 +41,16 @@ def main() -> int:
             slide_xml = package.read("ppt/slides/slide1.xml").decode("utf-8")
         assert slide_xml.index("panel-substrate") < slide_xml.index("native-overlay"), slide_xml
 
-        with Image.open(preview_dir / "slide_01.png") as image:
-            center = image.getpixel((800, 450))
+        rendered = subprocess.run(
+            [sys.executable, "scripts/render_pptx.py", str(deck), "--output-dir", str(preview_dir)],
+            cwd=ROOT, capture_output=True, text=True, check=False,
+        )
+        assert rendered.returncode == 0, rendered.stdout + rendered.stderr
+        preview = preview_dir / "slide_01.png"
+        if not preview.is_file():
+            preview = preview_dir / "slide-1.png"
+        with Image.open(preview) as image:
+            center = image.getpixel((image.width // 2, image.height // 2))
         assert center[:3] == (229, 57, 53), center
     print("panel substrate/native overlay layer order: ok")
     return 0

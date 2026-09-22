@@ -193,11 +193,8 @@ def main() -> int:
             "--font-dir", str(good_dir), "--embed-fonts",
             "--embedding-report", str(composed_report),
         )
-        assert composed_result.returncode == 0, composed_result.stdout + composed_result.stderr
-        composed_inspection = root / "composed-inspection.json"
-        composed_checked = run("scripts/inspect_pptx.py", str(composed), "--report", str(composed_inspection))
-        assert composed_checked.returncode == 0, composed_checked.stdout + composed_checked.stderr
-        assert json.loads(composed_inspection.read_text(encoding="utf-8"))["embedded_fonts"]["present"] is True
+        assert composed_result.returncode == 2, composed_result.stdout + composed_result.stderr
+        assert "historical compatibility backend" in composed_result.stderr
 
         restricted_dir = root / "restricted-fonts"
         restricted_dir.mkdir()

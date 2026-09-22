@@ -116,11 +116,9 @@ def _shape_map(deck_path: Path) -> dict[tuple[int, str], list[Any]]:
 
 
 def _is_native_textbox(shape) -> bool:
-    from pptx.enum.shapes import MSO_SHAPE_TYPE
-
     return bool(
         getattr(shape, "has_text_frame", False)
-        and getattr(shape, "shape_type", None) == MSO_SHAPE_TYPE.TEXT_BOX
+        and str(getattr(shape, "text", "")).strip()
         and not bool(getattr(shape, "is_placeholder", False))
     )
 

@@ -745,7 +745,7 @@ def audit(
                 unmatched_pictures.remove(matches[0])
         unnamed_table_entries = [
             (shape, parent) for shape, parent in entries
-            if not shape.name and _actual_kind(shape) == "editable_table"
+            if _actual_kind(shape) == "editable_table" and shape.name not in {str(obj.get("object_id")) for obj in objects}
         ]
         table_objects = [
             obj for obj in objects
@@ -763,6 +763,18 @@ def audit(
                 by_name.setdefault(str(table_obj.get("object_id")), []).append((shape, parent))
                 mapped_asset_shape_ids.add(id(shape))
                 unmatched_tables.remove(matches[0])
+        chart_objects = [obj for obj in objects if obj.get("object_type") == "editable_chart" or obj.get("role") in {"chart", "data-chart", "editable-chart"}]
+        unmatched_charts = [(shape, parent) for shape, parent in entries if _actual_kind(shape) == "editable_chart" and shape.name not in {str(obj.get("object_id")) for obj in objects}]
+        for chart_obj in chart_objects:
+            expected_values = _expected_chart_values(chart_obj, object_manifest_path.parent)
+            matches = [entry for entry in unmatched_charts if expected_values is not None and _chart_evidence(entry[0]).get("observed") == expected_values]
+            if not matches and len(chart_objects) == 1 and len(unmatched_charts) == 1:
+                matches = list(unmatched_charts)
+            if len(matches) == 1:
+                shape, parent = matches[0]
+                by_name.setdefault(str(chart_obj.get("object_id")), []).append((shape, parent))
+                mapped_asset_shape_ids.add(id(shape))
+                unmatched_charts.remove(matches[0])
         declared_ids = {str(obj.get("object_id")) for obj in objects if obj.get("object_id")}
         allowed_names = set(str(value) for value in (object_manifest.get("allowed_shape_names") or []))
         allowed_names.update(str(value) for value in (slide_spec.get("allowed_shape_names") or []))

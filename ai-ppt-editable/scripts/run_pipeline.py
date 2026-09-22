@@ -40,6 +40,7 @@ from pathlib import Path
 
 from atomic_output import atomic_write_json, atomic_write_text
 from build_performance_report import build as build_performance_report
+from compact_acceptance_report import compact as compact_acceptance
 from pipeline_engine import PipelineExecutor, PipelineTask
 from report_envelope import normalize_child
 from render_review_html import write_review
@@ -2277,6 +2278,7 @@ def main() -> int:
                     write_review(result, review_path)
                 final_bundle_step, final_bundle_report = run_final_bundle()
                 final_bundle_passed = bool(final_bundle_step.get("ok") and final_bundle_report and final_bundle_report.get("valid") is True)
+    atomic_write_json(run_dir / "compact-acceptance.json", compact_acceptance(result))
     print(json.dumps(result, ensure_ascii=False))
     release_blocked = args.release and not result["release_eligible"]
     review_package_blocked = args.require_p1 and review_package_step is not None and not review_package_step.get("ok")

@@ -643,7 +643,8 @@ async function main() {
   for (let slideIndex = 0; slideIndex < deck.slides.length; slideIndex += 1) {
     const slideSpec = deck.slides[slideIndex] || {};
     const slide = presentation.slides.add();
-    if (slideSpec.background_fill || deck.background_fill) slide.background.fill = slideSpec.background_fill || deck.background_fill;
+    const backgroundFill = slideSpec.background_fill || slideSpec.background_color || deck.background_fill || deck.background_color;
+    if (backgroundFill) slide.background.fill = backgroundFill;
     if (slideSpec.background) {
       const image = await addImage(slide, { file: slideSpec.background, alt_text: slideSpec.background_alt_text }, assetsDir, deck, dimensions, slideSpec.background_object_id || "background", true);
       objectInventory.push({ slide: slideIndex + 1, object_id: slideSpec.background_object_id || "background", kind: "image", image });

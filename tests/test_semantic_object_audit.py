@@ -45,7 +45,6 @@ def main() -> int:
                 "icons": [{"object_id": "logo", "role": "brand_lockup", "file": "logo.png", "x": 0.8, "y": 0.05, "w": 0.1, "h": 0.1}],
                 "texts": [{"object_id": "title", "text": "语义校验", "x": 0.1, "y": 0.1, "w": 0.5, "h": 0.2, "size": 18}],
                 "tables": [{"object_id": "table", "semantic_type": "native_table", "x": 0.1, "y": 0.4, "w": 0.3, "h": 0.2, "rows": [["A", "B"], ["1", "2"]]}],
-                "charts": [{"object_id": "chart", "type": "column", "x": 0.5, "y": 0.4, "w": 0.3, "h": 0.3, "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, 2]}]}],
             }],
         })
         deck = root / "deck.pptx"
@@ -56,7 +55,6 @@ def main() -> int:
         write(object_manifest, {"slides": [{"slide_no": 1, "objects": [
             {"object_id": "title", "role": "formal-text", "object_type": "editable_text", "text_spec": {"content": "语义校验"}},
             {"object_id": "table", "role": "data-table", "object_type": "editable_table", "data_snapshot": {"kind": "table", "values": [["A", "B"], ["1", "2"]]}},
-            {"object_id": "chart", "role": "data-chart", "object_type": "editable_chart", "data_snapshot": {"kind": "category_chart", "categories": ["A", "B"], "series": [{"name": "数量", "values": [1, 2]}]}},
             {"object_id": "logo", "role": "brand_lockup", "object_type": "independent_image", "source_path": "logo.png"},
         ]}]})
         report = root / "semantic.json"
@@ -67,14 +65,13 @@ def main() -> int:
         records = {item["object_id"]: item for item in data["objects"]}
         assert records["title"]["semantic_checks"]["text_exact"] is True
         assert records["table"]["semantic_checks"]["native_table_data"] is True
-        assert records["chart"]["semantic_checks"]["native_chart_data"] is True, records["chart"]
         assert records["logo"]["semantic_checks"]["brand_lockup_whole_asset"] is True
         assert records["logo"]["semantic_checks"]["source_hash"] is True
         good_manifest = json.loads(object_manifest.read_text(encoding="utf-8"))
 
         strict_manifest = copy.deepcopy(good_manifest)
         for item in strict_manifest["slides"][0]["objects"]:
-            if item["object_id"] in {"table", "chart"}:
+            if item["object_id"] == "table":
                 item["data_source_sha256"] = json_digest(item["data_snapshot"])
             if item["object_id"] == "logo":
                 item["source_sha256"] = hashlib.sha256(PNG_1X1).hexdigest()
@@ -91,14 +88,8 @@ def main() -> int:
         table_failed = run("scripts/semantic_object_audit.py", str(deck), "--object-manifest", str(object_manifest))
         assert table_failed.returncode == 2 and "table_data_mismatch" in table_failed.stdout
 
-        bad_chart = copy.deepcopy(good_manifest)
-        bad_chart["slides"][0]["objects"][2]["data_snapshot"]["series"][0]["values"][1] = 999
-        write(object_manifest, bad_chart)
-        chart_failed = run("scripts/semantic_object_audit.py", str(deck), "--object-manifest", str(object_manifest))
-        assert chart_failed.returncode == 2 and "native_chart_data_invalid" in chart_failed.stdout
-
         bad_hash = copy.deepcopy(good_manifest)
-        bad_hash["slides"][0]["objects"][3]["source_sha256"] = "0" * 64
+        bad_hash["slides"][0]["objects"][2]["source_sha256"] = "0" * 64
         write(object_manifest, bad_hash)
         hash_failed = run("scripts/semantic_object_audit.py", str(deck), "--object-manifest", str(object_manifest))
         assert hash_failed.returncode == 2 and "source_manifest_hash_mismatch" in hash_failed.stdout

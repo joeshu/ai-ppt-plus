@@ -237,6 +237,7 @@ def _make_args(deck: dict, spec: dict, text: str, box: tuple[float, float], font
         height_safety=float(spec.get("height_safety") or 0.95),
         render_fudge=float(spec.get("render_fudge") or 1.01),
         target_pt=target,
+        rich_runs=spec.get("runs") if isinstance(spec.get("runs"), list) else None,
         slide_px=f"{slide_w}x{slide_h}",
         slide_in=f"{slide_in_w}x{slide_in_h}",
     )

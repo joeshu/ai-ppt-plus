@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.21.13
+  package_revision: 2026.09.21.14
 ---
 
 # AI PPT Editable
@@ -249,8 +249,10 @@ Every accepted material repair requires a fresh render. Re-check the affected cr
 
 Before PASS, materialize `visual-closeout.json` from `assets/visual-closeout.template.json` and run `scripts/validate_visual_closeout.py` as specified in `references/visual-closeout-gate.md`. This is an evidence-consistency gate, not a scalar similarity threshold. Any unresolved material crop finding, unclosed text-render repair, missing structured region observation, or stale/mismatched final-render binding blocks PASS and returns to Responsible Object Repair.
 
-In `fast`, retain the complete machine evidence but publish a compact summary
-with `scripts/compact_acceptance_report.py`. Run
+In `fast`, retain the complete machine evidence and publish a compact summary
+with `scripts/compact_acceptance_report.py`. Production `run_pipeline.py` and
+`strict_reference_release.py` generate `compact-acceptance.json` automatically.
+Run
 `scripts/ppt_practical_lint.py` before delivery to report recurring PowerPoint
 defects such as full-slide background shapes, unconfigured wide rounded
 rectangles, unexpected effects and missing observed CJK typeface metadata.

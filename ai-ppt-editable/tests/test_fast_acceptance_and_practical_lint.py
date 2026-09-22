@@ -63,6 +63,15 @@ def test_powerpoint_only_renderer_fails_cleanly_off_windows():
         assert payload["backend_attempts"][0]["reason"] == "not_windows"
 
 
+def test_compact_acceptance_understands_pipeline_results():
+    sys.path.insert(0, str(SCRIPTS))
+    from compact_acceptance_report import compact
+    passed = compact({"technical_valid": True, "steps": [{"name": "render", "ok": True}]})
+    blocked = compact({"technical_valid": False, "steps": [{"name": "render", "ok": False}]})
+    assert passed["status"] == "passed" and passed["source_report_kind"] == "pipeline-result"
+    assert blocked["status"] == "blocked" and blocked["incomplete_phases"] == ["render"]
+
+
 if __name__ == "__main__":
     for name, function in sorted(globals().items()):
         if name.startswith("test_") and callable(function):

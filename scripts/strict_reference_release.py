@@ -9,6 +9,8 @@ hard gates.
 from __future__ import annotations
 import argparse,json,subprocess,sys
 from pathlib import Path
+from atomic_output import atomic_write_json
+from compact_acceptance_report import compact as compact_acceptance
 SCRIPT_DIR=Path(__file__).resolve().parent
 
 KIND_PRIORITY={"texts":5,"charts":5,"tables":5,"images":5,"icons":5,"semantic_regions":6,"groups":4,"panels":4,"shapes":3,"connectors":3}
@@ -161,6 +163,7 @@ def main()->int:
     status="repair-ready"
     current.update({"render":str(rendered),"render_report":str(render_report),"reference_visual":str(visual_report),"key_local_crop_manifest":str(regions_path),"key_local_crop_count":len(manifest["regions"]),"local_crop_visual":str(region_report),"local_crop_qa":str(crop_dir),"repair_trace":str(repair_trace),"visual_review_required":True,"visual_metrics_diagnostic_only":True,"production_hard_blockers":"references/fixed-reference-short-loop.md","status":status})
     current_path.write_text(json.dumps(current,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    print(json.dumps({"status":status,"deck":str(out),"render":str(rendered),"visual_report":str(visual_report),"key_local_crop_manifest":str(regions_path),"local_crop_count":len(manifest["regions"]),"region_report":str(region_report),"repair_trace":str(repair_trace),"visual_metrics_diagnostic_only":True},ensure_ascii=False,indent=2));return 0
+    atomic_write_json(run_dir/"compact-acceptance.json",compact_acceptance(current))
+    print(json.dumps({"status":status,"deck":str(out),"render":str(rendered),"visual_report":str(visual_report),"key_local_crop_manifest":str(regions_path),"local_crop_count":len(manifest["regions"]),"region_report":str(region_report),"repair_trace":str(repair_trace),"compact_acceptance":str(run_dir/"compact-acceptance.json"),"visual_metrics_diagnostic_only":True},ensure_ascii=False,indent=2));return 0
 
 if __name__=="__main__":raise SystemExit(main())

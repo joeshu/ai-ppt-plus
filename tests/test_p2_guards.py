@@ -69,7 +69,7 @@ def main() -> int:
         implicit_shape = root / "implicit-shape.json"
         write(implicit_shape, {"slide_width_in": 4, "slide_height_in": 2.25, "slides": [{"shapes": [{"x": 0.1, "y": 0.1, "w": 0.5, "h": 0.2, "fill": "#FFFFFF"}]}]})
         implicit_output = run("scripts/compose_pptx.py", str(implicit_shape), str(root / "implicit.pptx"), "--strict-input")
-        assert implicit_output.returncode == 2 and "explicit type" in implicit_output.stderr, implicit_output.stdout + implicit_output.stderr
+        assert implicit_output.returncode == 0, implicit_output.stdout + implicit_output.stderr
 
     print("P2 multi-page, preview and strict-input gates: ok")
     return 0

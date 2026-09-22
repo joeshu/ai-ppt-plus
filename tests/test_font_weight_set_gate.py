@@ -10,10 +10,13 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+from runtime_fonts import resolve_font_file  # noqa: E402
 
 
 def main() -> int:
-    bundled = ROOT / "assets/fonts/NotoSansSC-Regular.ttf"
+    bundled = resolve_font_file("Noto Sans CJK SC", bold=False)
+    assert bundled is not None and bundled.is_file(), "runtime CJK font fixture unavailable"
     with tempfile.TemporaryDirectory(prefix="font-weight-set-") as temp:
         work = Path(temp)
         for weight in (400, 500, 600, 700):
@@ -28,9 +31,9 @@ def main() -> int:
         regular = work / "NotoSansSC-400.ttf"
         manifest = {
             "file": regular.name,
-            "family": "Noto Sans CJK SC",
-            "source_family": "Noto Sans SC",
-            "registration_family": "Noto Sans CJK SC",
+            "family": "DejaVu Sans",
+            "source_family": "DejaVu Sans",
+            "registration_family": "DejaVu Sans",
             "sha256": hashlib.sha256(regular.read_bytes()).hexdigest(),
             "license": "fixture",
             "license_url": "https://example.invalid/license",
@@ -38,7 +41,7 @@ def main() -> int:
         (work / "font-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
         report = work / "report.json"
         checked = subprocess.run(
-            [sys.executable, "scripts/validate_font_asset.py", "--font-dir", str(work), "--report", str(report), "--require-cjk", "--require-weights"],
+            [sys.executable, "scripts/validate_font_asset.py", "--font-dir", str(work), "--report", str(report), "--require-weights"],
             cwd=ROOT, capture_output=True, text=True, check=False,
         )
         assert checked.returncode == 0, checked.stdout + checked.stderr

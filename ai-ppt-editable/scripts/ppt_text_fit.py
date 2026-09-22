@@ -9,6 +9,7 @@ text slot.
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import math
 import re
@@ -34,8 +35,8 @@ _TOKEN_RE = re.compile(
 # Conservative Chinese line-breaking rules. A box can technically fit while
 # still looking wrong if closing punctuation starts a line or opening
 # punctuation ends one.
-_NO_LINE_START = set("，。！？；：、）》】〕〉」』”’…—％%℃°")
-_NO_LINE_END = set("《【〔〈「『“‘（(")
+_NO_LINE_START = set("，。！？；：、）》】〕〉」』”’…—％%℃°)]}")
+_NO_LINE_END = set("《【〔〈「『“‘（([{<")
 
 _ROLE_DEFAULTS = {
     "hero_title": {"min_pt": 24.0, "min_scale": 0.90},
@@ -71,6 +72,12 @@ def _width(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str) -
         return 0.0
     box = draw.textbbox((0, 0), text, font=font)
     return float(max(0, box[2] - box[0]))
+
+
+@functools.lru_cache(maxsize=512)
+def _font(path: str, pixels: int) -> ImageFont.FreeTypeFont:
+    """Reuse FreeType objects across slots in a deck-level audit."""
+    return ImageFont.truetype(path, max(1, pixels))
 
 
 def _tokens(text: str) -> list[str]:
@@ -115,7 +122,20 @@ def _split_overwide(text: str, draw: ImageDraw.ImageDraw,
     return fragments or [""]
 
 
-def wrap(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str, max_width: float) -> list[str]:
+def _rebalance_title_orphan(lines: list[str], draw: ImageDraw.ImageDraw,
+                            font: ImageFont.FreeTypeFont, max_width: float) -> list[str]:
+    """Avoid a single CJK glyph on the last title line when geometry permits."""
+    if len(lines) < 2 or len(lines[-1].strip()) != 1 or len(lines[-2].strip()) < 3:
+        return lines
+    moved = lines[-2][-1] + lines[-1]
+    previous = lines[-2][:-1].rstrip()
+    if previous and _width(draw, font, moved) <= max_width:
+        return [*lines[:-2], previous, moved]
+    return lines
+
+
+def wrap(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str,
+         max_width: float, *, avoid_single_cjk_orphan: bool = False) -> list[str]:
     lines: list[str] = []
     current = ""
     for token in _tokens(text):
@@ -134,17 +154,22 @@ def wrap(draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str, max
             lines.extend(fragment.rstrip() for fragment in fragments[:-1] if fragment.rstrip())
             current = fragments[-1]
     lines.append(current.rstrip())
-    return [line for line in lines if line] or [""]
+    result = [line for line in lines if line] or [""]
+    if avoid_single_cjk_orphan:
+        result = _rebalance_title_orphan(result, draw, font, max_width)
+    return result
 
 
 def measure(text: str, pt: float, font_path: Path, px_per_pt: float, width_px: float,
-            line_spacing: float, width_safety: float, render_fudge: float) -> dict:
+            line_spacing: float, width_safety: float, render_fudge: float,
+            *, avoid_single_cjk_orphan: bool = False) -> dict:
     font_px = max(1, int(round(pt * px_per_pt * render_fudge)))
-    font = ImageFont.truetype(str(font_path), font_px)
+    font = _font(str(font_path), font_px)
     draw = ImageDraw.Draw(Image.new("RGB", (max(4, int(width_px * 2)), 4096), "white"))
     lines: list[str] = []
     for paragraph in _paragraphs(text):
-        lines.extend(wrap(draw, font, paragraph, width_px * width_safety))
+        lines.extend(wrap(draw, font, paragraph, width_px * width_safety,
+                          avoid_single_cjk_orphan=avoid_single_cjk_orphan))
     boxes = [draw.textbbox((0, 0), line or "口", font=font) for line in lines]
     widths = [max(0, box[2] - box[0]) for box in boxes]
     glyph_heights = [max(0, box[3] - box[1]) for box in boxes]
@@ -159,6 +184,77 @@ def measure(text: str, pt: float, font_path: Path, px_per_pt: float, width_px: f
         "height_px": line_height * len(lines),
         "line_height_px": line_height,
         "occupied_glyph_proxy_px2": occupied,
+    }
+
+
+def measure_rich(runs: list[dict], pt: float, font_path: Path, px_per_pt: float,
+                 width_px: float, line_spacing: float, width_safety: float,
+                 render_fudge: float, *, target_pt: float | None = None) -> dict:
+    """Measure mixed CJK/Latin rich text using each run's actual face and size.
+
+    The run size scales with the candidate point size, so binary fitting keeps
+    relative hierarchy (for example a large number plus a smaller unit).
+    Superscript/subscript uses PowerPoint-like reduced glyphs while increasing
+    line extent for the baseline shift.
+    """
+    draw = ImageDraw.Draw(Image.new("RGB", (max(4, int(width_px * 2)), 4096), "white"))
+    scale = pt / target_pt if target_pt and target_pt > 0 else 1.0
+    styled_tokens: list[tuple[str, ImageFont.FreeTypeFont, float]] = []
+    for run in runs:
+        content = str(run.get("text", run.get("content", "")))
+        style = run.get("style") if isinstance(run.get("style"), dict) else {}
+        size = float(run.get("font_size_pt") or run.get("size_pt") or run.get("size") or
+                     style.get("font_size_pt") or style.get("size_pt") or style.get("size") or pt)
+        baseline = str(run.get("baseline") or style.get("baseline") or "normal").lower()
+        if baseline in {"superscript", "subscript", "super", "sub"}:
+            size *= 0.65
+        run_font_name = str(run.get("font") or run.get("font_family") or style.get("font") or style.get("font_family") or "")
+        run_bold = bool(run.get("bold", style.get("bold", False)))
+        run_path = find_font(run_font_name, run_bold) if run_font_name else font_path
+        pixels = max(1, int(round(size * scale * px_per_pt * render_fudge)))
+        run_font = _font(str(run_path), pixels)
+        extent_factor = 1.22 if baseline in {"superscript", "subscript", "super", "sub"} else 1.0
+        for paragraph_index, paragraph in enumerate(_paragraphs(content)):
+            if paragraph_index:
+                styled_tokens.append(("\n", run_font, extent_factor))
+            styled_tokens.extend((token, run_font, extent_factor) for token in _tokens(paragraph))
+
+    max_width = width_px * width_safety
+    lines: list[list[tuple[str, ImageFont.FreeTypeFont, float]]] = [[]]
+    line_widths = [0.0]
+    for token, token_font, extent in styled_tokens:
+        if token == "\n":
+            lines.append([]); line_widths.append(0.0); continue
+        token_width = _width(draw, token_font, token)
+        if lines[-1] and line_widths[-1] + token_width > max_width:
+            lines.append([]); line_widths.append(0.0)
+        if token_width > max_width:
+            for char in token:
+                char_width = _width(draw, token_font, char)
+                if lines[-1] and line_widths[-1] + char_width > max_width:
+                    lines.append([]); line_widths.append(0.0)
+                lines[-1].append((char, token_font, extent)); line_widths[-1] += char_width
+        else:
+            lines[-1].append((token, token_font, extent)); line_widths[-1] += token_width
+    line_heights = []
+    for line in lines:
+        heights = []
+        for token, token_font, extent in line:
+            box = draw.textbbox((0, 0), token or "口", font=token_font)
+            heights.append(max(box[3] - box[1], token_font.size * 0.82) * extent)
+        line_heights.append(max(heights, default=max(1, int(pt * px_per_pt * 0.82))))
+    plain_lines = ["".join(token for token, _, _ in line).rstrip() for line in lines]
+    return {
+        "pt": pt,
+        "font_px": max((font.size for line in lines for _, font, _ in line), default=1),
+        "lines": plain_lines or [""],
+        "line_count": len(plain_lines) or 1,
+        "width_px": max(line_widths, default=0.0),
+        "height_px": sum(line_heights) * line_spacing,
+        "line_height_px": max(line_heights, default=0.0) * line_spacing,
+        "occupied_glyph_proxy_px2": sum(line_widths) * max(line_heights, default=1.0),
+        "rich_text_measured": True,
+        "run_count": len(runs),
     }
 
 
@@ -221,14 +317,23 @@ def best_fit(args: argparse.Namespace) -> dict:
     font_path = find_font(args.font, args.bold, args.font_file)
 
     measurement_cache: dict[float, dict] = {}
+    rich_runs = getattr(args, "rich_runs", None)
 
     def evaluate(point: float) -> dict:
         key = round(float(point), 4)
         if key not in measurement_cache:
-            measurement_cache[key] = measure(
-                args.text, key, font_path, px_per_pt, box_w,
-                args.line_spacing, args.width_safety, args.render_fudge,
-            )
+            if isinstance(rich_runs, list) and rich_runs:
+                measurement_cache[key] = measure_rich(
+                    rich_runs, key, font_path, px_per_pt, box_w,
+                    args.line_spacing, args.width_safety, args.render_fudge,
+                    target_pt=target_pt,
+                )
+            else:
+                measurement_cache[key] = measure(
+                    args.text, key, font_path, px_per_pt, box_w,
+                    args.line_spacing, args.width_safety, args.render_fudge,
+                    avoid_single_cjk_orphan=semantic_role in {"hero_title", "title", "section_title"},
+                )
         return measurement_cache[key]
 
     def geometry_fits(row: dict) -> bool:
@@ -373,9 +478,10 @@ def best_fit(args: argparse.Namespace) -> dict:
         "scan_step": args.scan_step,
         "target_pt": target_pt,
         "runtime_font_required": True,
-        "tokenization": "cjk-kinsoku-latin-number-symbol-run-v3",
+        "tokenization": "cjk-kinsoku-paired-punctuation-number-unit-title-orphan-v4",
         "measurement_count": len(measurement_cache),
         "search_strategy": "monotonic-boundary-local-refine-v1",
+        "measurement_mode": "rich-runs" if rich_runs else "single-style",
     }
     return best
 
