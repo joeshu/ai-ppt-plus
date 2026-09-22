@@ -43,7 +43,7 @@ sys.path.insert(0, str(SCRIPTS))
 from asset_placement import alpha_centroid_fit
 from audit_pptx_layers import audit
 from patch_chart_blank_series import patch_chart
-from ppt_text_fit import _tokens, best_fit
+from ppt_text_fit import _tokens, best_fit, clear_measurement_cache
 from slice_grid import _detect_grid, _square_repack
 from validate_transparent_assets import validate
 
@@ -79,6 +79,23 @@ def test_text_fit_keeps_symbol_prefixed_number_and_unit_runs_together():
     assert "(2025)" in tokens
     assert "5G" in tokens
     assert "A/B" in tokens
+
+
+def test_text_fit_short_label_uses_one_probe_and_deck_cache():
+    clear_measurement_cache()
+    args = argparse.Namespace(
+        text="每日提醒", box="600x120", font="Microsoft YaHei", font_file=None,
+        bold=True, min_pt=8.0, max_pt=24.0, max_lines=1, target_lines=0,
+        scan_step=0.25, line_spacing=1.06, width_safety=0.92,
+        height_safety=0.95, render_fudge=1.01, target_pt=None,
+        semantic_role="section_title", min_readable_pt=None, min_hierarchy_scale=None,
+        slide_px="1672x941", slide_in="13.333333x7.505",
+    )
+    first = best_fit(args)
+    second = best_fit(args)
+    assert first["settings"]["search_strategy"] == "single-probe-max-fit-v1"
+    assert first["settings"]["measurement_count"] == 1
+    assert second["settings"]["deck_measurement_cache"]["hits"] >= 1
 
 
 def test_text_fit_applies_chinese_line_break_punctuation_rules():

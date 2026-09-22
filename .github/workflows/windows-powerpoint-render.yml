@@ -1,0 +1,25 @@
+name: PowerPoint COM rendering smoke test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  powerpoint-com:
+    # Desktop PowerPoint is not installed on GitHub-hosted windows runners.
+    # Register a controlled runner with all three labels and Office activated.
+    runs-on: [self-hosted, Windows, powerpoint]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install smoke-test dependencies
+        run: python -m pip install pillow python-pptx pywin32
+      - name: Verify COM renderer with Chinese and transparent PNG fixture
+        run: python ai-ppt-editable/tests/windows_powerpoint_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: powerpoint-com-smoke
+          path: powerpoint-smoke-output/

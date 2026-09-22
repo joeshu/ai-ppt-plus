@@ -9,6 +9,7 @@ from pathlib import Path
 from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.util import Inches
+from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -45,6 +46,26 @@ def test_practical_lint_flags_full_slide_shape_background():
         deck.save(path)
         result = lint(path)
         assert "full_slide_shape_background" in {item["code"] for item in result["issues"]}
+
+
+def test_practical_lint_flags_text_arrow_and_tight_alpha_asset():
+    sys.path.insert(0, str(SCRIPTS))
+    from ppt_practical_lint import lint
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp = Path(temp_dir)
+        asset = temp / "tight.png"
+        image = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+        ImageDraw.Draw(image).rectangle((0, 8, 20, 24), fill=(255, 0, 0, 255))
+        image.save(asset)
+        path = temp / "deck.pptx"
+        deck = Presentation()
+        slide = deck.slides.add_slide(deck.slide_layouts[6])
+        slide.shapes.add_textbox(Inches(1), Inches(1), Inches(1), Inches(1)).text = "→"
+        slide.shapes.add_picture(str(asset), Inches(2), Inches(2))
+        deck.save(path)
+        codes = {item["code"] for item in lint(path)["issues"]}
+        assert "text_glyph_used_as_arrow" in codes
+        assert "transparent_subject_touches_edge" in codes
 
 
 def test_powerpoint_only_renderer_fails_cleanly_off_windows():

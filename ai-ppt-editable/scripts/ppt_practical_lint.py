@@ -7,9 +7,12 @@ import json
 import re
 import zipfile
 import xml.etree.ElementTree as ET
+from io import BytesIO
 from pathlib import Path
 
-NS = {"a": "http://schemas.openxmlformats.org/drawingml/2006/main", "p": "http://schemas.openxmlformats.org/presentationml/2006/main"}
+from PIL import Image
+
+NS = {"a": "http://schemas.openxmlformats.org/drawingml/2006/main", "p": "http://schemas.openxmlformats.org/presentationml/2006/main", "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships"}
 EFFECT_TAGS = (b"<a:outerShdw", b"<a:glow", b"<a:softEdge", b"<a:reflection")
 
 
@@ -32,6 +35,7 @@ def lint(path: Path) -> dict:
             if not re.fullmatch(r"ppt/slides/slide\d+\.xml", name):
                 continue
             root = ET.fromstring(raw)
+            full_slide_shapes = 0
             for shape in root.findall(".//p:sp", NS):
                 props = shape.find("p:spPr", NS)
                 transform = props.find("a:xfrm", NS) if props is not None else None
@@ -42,15 +46,39 @@ def lint(path: Path) -> dict:
                     continue
                 x, y, cx, cy = (int(off.get("x", 0)), int(off.get("y", 0)), int(ext.get("cx", 0)), int(ext.get("cy", 0)))
                 if x == 0 and y == 0 and cx == slide_cx and cy == slide_cy and preset is not None and preset.get("prst") in {"rect", "roundRect"}:
+                    full_slide_shapes += 1
                     issues.append({"severity": "warning", "code": "full_slide_shape_background", "part": name})
                 if preset is not None and preset.get("prst") == "roundRect" and cx > cy * 4:
                     adjust = props.find(".//a:gd[@name='adj']", NS)
                     if adjust is None:
                         issues.append({"severity": "warning", "code": "rounded_rectangle_default_adjustment", "part": name})
+                text = "".join(node.text or "" for node in shape.findall(".//a:t", NS)).strip()
+                if text and (cx <= 0 or cy <= 0):
+                    issues.append({"severity": "warning", "code": "text_box_not_visible", "part": name, "text": text[:80]})
+                if text in {"→", "⇒", "➜", "➔", "➡"}:
+                    issues.append({"severity": "warning", "code": "text_glyph_used_as_arrow", "part": name, "text": text})
+            if full_slide_shapes > 1:
+                issues.append({"severity": "warning", "code": "duplicate_full_slide_background", "part": name, "count": full_slide_shapes})
+
+        # Transparent assets whose visible subject touches an edge are likely
+        # to clip after placement/shadowing. This is package-level and cheap.
+        for name in names:
+            if not re.fullmatch(r"ppt/media/.*\.(png|PNG)", name):
+                continue
+            try:
+                with Image.open(BytesIO(package.read(name))) as image:
+                    if image.mode not in {"RGBA", "LA"} and "transparency" not in image.info:
+                        continue
+                    alpha = image.convert("RGBA").getchannel("A")
+                    bbox = alpha.getbbox()
+                    if bbox and (bbox[0] == 0 or bbox[1] == 0 or bbox[2] == image.width or bbox[3] == image.height):
+                        issues.append({"severity": "warning", "code": "transparent_subject_touches_edge", "part": name, "bbox": list(bbox), "size": [image.width, image.height]})
+            except OSError:
+                continue
         slide_xml = b"".join(package.read(name) for name in names if re.fullmatch(r"ppt/slides/slide\d+\.xml", name))
         if b"<a:ea" not in slide_xml and any(byte >= 0xE4 for byte in slide_xml):
             issues.append({"severity": "warning", "code": "cjk_east_asian_typeface_not_observed"})
-    return {"schema": "ai-ppt-plus/ppt-practical-lint/v1", "valid": not any(item["severity"] == "error" for item in issues), "issue_count": len(issues), "issues": issues}
+    return {"schema": "ai-ppt-plus/ppt-practical-lint/v2", "valid": not any(item["severity"] == "error" for item in issues), "issue_count": len(issues), "issues": issues}
 
 
 def main() -> int:

@@ -9,6 +9,7 @@ text slot.
 from __future__ import annotations
 
 import argparse
+import copy
 import functools
 import json
 import math
@@ -45,6 +46,23 @@ _ROLE_DEFAULTS = {
     "body": {"min_pt": 10.0, "min_scale": 0.82},
     "caption": {"min_pt": 8.0, "min_scale": 0.78},
 }
+
+_DECK_MEASUREMENT_CACHE: dict[tuple, dict] = {}
+_DECK_MEASUREMENT_CACHE_MAX = 4096
+_DECK_CACHE_HITS = 0
+_DECK_CACHE_MISSES = 0
+
+
+def clear_measurement_cache() -> None:
+    """Clear process-wide deck measurement state (mainly for tests/benchmarks)."""
+    global _DECK_CACHE_HITS, _DECK_CACHE_MISSES
+    _DECK_MEASUREMENT_CACHE.clear()
+    _DECK_CACHE_HITS = 0
+    _DECK_CACHE_MISSES = 0
+
+
+def measurement_cache_info() -> dict:
+    return {"size": len(_DECK_MEASUREMENT_CACHE), "hits": _DECK_CACHE_HITS, "misses": _DECK_CACHE_MISSES}
 
 
 def _pair(value: str, separator: str = "x") -> tuple[float, float]:
@@ -318,22 +336,40 @@ def best_fit(args: argparse.Namespace) -> dict:
 
     measurement_cache: dict[float, dict] = {}
     rich_runs = getattr(args, "rich_runs", None)
+    run_signature = json.dumps(rich_runs, ensure_ascii=False, sort_keys=True, default=str) if rich_runs else None
+    cache_hits_before = _DECK_CACHE_HITS
+    cache_misses_before = _DECK_CACHE_MISSES
 
     def evaluate(point: float) -> dict:
+        global _DECK_CACHE_HITS, _DECK_CACHE_MISSES
         key = round(float(point), 4)
         if key not in measurement_cache:
+            deck_key = (
+                str(args.text), run_signature, key, str(font_path), round(px_per_pt, 6),
+                round(box_w, 3), round(args.line_spacing, 4), round(args.width_safety, 4),
+                round(args.render_fudge, 4), semantic_role, round(target_pt or 0.0, 3),
+            )
+            if deck_key in _DECK_MEASUREMENT_CACHE:
+                _DECK_CACHE_HITS += 1
+                measurement_cache[key] = copy.deepcopy(_DECK_MEASUREMENT_CACHE[deck_key])
+                return measurement_cache[key]
+            _DECK_CACHE_MISSES += 1
             if isinstance(rich_runs, list) and rich_runs:
-                measurement_cache[key] = measure_rich(
+                row = measure_rich(
                     rich_runs, key, font_path, px_per_pt, box_w,
                     args.line_spacing, args.width_safety, args.render_fudge,
                     target_pt=target_pt,
                 )
             else:
-                measurement_cache[key] = measure(
+                row = measure(
                     args.text, key, font_path, px_per_pt, box_w,
                     args.line_spacing, args.width_safety, args.render_fudge,
                     avoid_single_cjk_orphan=semantic_role in {"hero_title", "title", "section_title"},
                 )
+            if len(_DECK_MEASUREMENT_CACHE) >= _DECK_MEASUREMENT_CACHE_MAX:
+                _DECK_MEASUREMENT_CACHE.pop(next(iter(_DECK_MEASUREMENT_CACHE)))
+            _DECK_MEASUREMENT_CACHE[deck_key] = copy.deepcopy(row)
+            measurement_cache[key] = row
         return measurement_cache[key]
 
     def geometry_fits(row: dict) -> bool:
@@ -383,16 +419,25 @@ def best_fit(args: argparse.Namespace) -> dict:
                 abs(row["line_count"] - args.target_lines), -row["pt"],
             ))
     else:
-        low, high, best = args.min_pt, args.max_pt, None
-        for _ in range(18):
-            point = (low + high) / 2.0
-            row = evaluate(point)
-            if geometry_fits(row):
-                best, low = row, point
-            else:
-                high = point
+        # Most labels and headings already fit at their requested maximum.
+        # One exact probe avoids 18 redundant measurements while preserving
+        # the old binary search for genuinely constrained text.
+        best = evaluate(args.max_pt)
+        search_strategy = "single-probe-max-fit-v1"
+        if not geometry_fits(best):
+            low, high, best = args.min_pt, args.max_pt, None
+            search_strategy = "single-probe-then-binary-v1"
+            for _ in range(18):
+                point = (low + high) / 2.0
+                row = evaluate(point)
+                if geometry_fits(row):
+                    best, low = row, point
+                else:
+                    high = point
         if best is None:
             best = evaluate(args.min_pt)
+    if args.target_lines > 0:
+        search_strategy = "monotonic-boundary-local-refine-v1"
 
     best.update({
         "recommended_pt": round(best["pt"], 2),
@@ -480,8 +525,13 @@ def best_fit(args: argparse.Namespace) -> dict:
         "runtime_font_required": True,
         "tokenization": "cjk-kinsoku-paired-punctuation-number-unit-title-orphan-v4",
         "measurement_count": len(measurement_cache),
-        "search_strategy": "monotonic-boundary-local-refine-v1",
+        "search_strategy": search_strategy,
         "measurement_mode": "rich-runs" if rich_runs else "single-style",
+        "deck_measurement_cache": {
+            "hits": _DECK_CACHE_HITS - cache_hits_before,
+            "misses": _DECK_CACHE_MISSES - cache_misses_before,
+            "entries": len(_DECK_MEASUREMENT_CACHE),
+        },
     }
     return best
 

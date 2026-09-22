@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.21.14
+  package_revision: 2026.09.22.15
 ---
 
 # AI PPT Editable
@@ -22,7 +22,7 @@ For normal fixed-reference reconstruction run this chain and no additional visua
 
 `Reference -> Execution Profile -> Prebuild Execution Preflight -> Visual Inventory -> AuthoringPlan -> Geometry Primitive Resolution -> native_editable/imagegen_asset -> Risk-tier Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> Adaptive Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
 
-Default to the machine-validated `fast` profile in [references/execution-profiles.md](references/execution-profiles.md). Use `strict` only when requested or justified by page risk; use `ci` only for package regression. Profile candidate, render, crop and per-asset retry budgets are hard runtime limits.
+Default to the machine-validated `fast` profile in [references/execution-profiles.md](references/execution-profiles.md). Use `strict` only when requested or justified by page risk; use `ci` only for package regression. Profile candidate, render, crop and per-asset retry budgets are hard runtime limits. For a repeatable reference-case replay, write `reference-performance-ledger.json` with `scripts/build_reference_performance_ledger.py`; record total and first-visual time, TextFit time, ImageGen calls, candidate builds, full renders, editable-object counts and visual metrics. Baseline deltas are diagnostic and require rendered-page review, not automatic production rejection.
 
 When invoked by the orchestrator, require `--execution-profile` propagation into editable QA. The execution-budget preflight must pass before composition; performance evidence must report the profile, TTFVR, candidate builds, full renders and uncached ImageGen calls.
 
@@ -300,7 +300,7 @@ Pixel / Text / Object / Icon-Asset / Local-Crop five-dimensional A/B remains val
 
 ## Core fixed-reference implementation rules
 
-- Use real font metrics and CJK-aware wrapping; preserve reference line topology.
+- Use real font metrics and CJK-aware wrapping; preserve reference line topology. Reuse process-wide measurements across equal text/style/geometry slots; probe the maximum once for low-risk text and run binary or exact-topology search only when needed.
 - Treat the text box as the intended editable slot, not the dark-pixel glyph bbox.
 - Reserve explicit icon/arrow slots before fitting adjacent text.
 - Use alpha-visible bbox plus visual centroid for transparent-asset placement when needed; preserve safe padding.
