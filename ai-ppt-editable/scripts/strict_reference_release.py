@@ -132,18 +132,19 @@ def main()->int:
     p.add_argument("project");p.add_argument("--source",required=True);p.add_argument("--layout",required=True);p.add_argument("--out",required=True)
     p.add_argument("--request-id");p.add_argument("--font-dir");p.add_argument("--font-manifest");p.add_argument("--preview-dir")
     p.add_argument("--authoring-backend",choices=("artifact-tool",),default="artifact-tool");p.add_argument("--node");p.add_argument("--node-modules")
-    p.add_argument("--overwrite",action="store_true");p.add_argument("--dpi",type=int,default=144)
+    p.add_argument("--overwrite",action="store_true");p.add_argument("--dpi",type=int,default=144);p.add_argument("--require-powerpoint",action="store_true",help="forbid provisional LibreOffice evidence for this run")
     a=p.parse_args();project=Path(a.project).resolve();source=Path(a.source).resolve();layout=Path(a.layout).resolve();out=Path(a.out).resolve()
     command=[sys.executable,str(SCRIPT_DIR/"strict_reference_rerun.py"),str(project),"--source",str(source),"--layout",str(layout),"--out",str(out),"--authoring-backend","artifact-tool"]
     for flag,value in (("--request-id",a.request_id),("--font-dir",a.font_dir),("--font-manifest",a.font_manifest),("--preview-dir",a.preview_dir),("--node",a.node),("--node-modules",a.node_modules)):
         if value:command += [flag,value]
     if a.overwrite:command.append("--overwrite")
     run(command,"Artifact Tool build")
-    run([sys.executable,str(SCRIPT_DIR/"ppt_practical_lint.py"),str(out),"--report",str(project/"ppt-practical-lint.json")],"PowerPoint practical lint")
     current_path=project/"current-rerun.json";current=load(current_path);run_dir=Path(current["authoring_provenance"]).resolve().parent
+    lint_report=run_dir/"ppt-practical-lint.json";run([sys.executable,str(SCRIPT_DIR/"ppt_practical_lint.py"),str(out),"--report",str(lint_report)],"PowerPoint practical lint")
     render_dir=run_dir/"final-render";render_report=run_dir/"final-render.json"
     render_cmd=[sys.executable,str(SCRIPT_DIR/"render_authoritative.py"),str(out),"--output-dir",str(render_dir),"--dpi",str(a.dpi),"--report",str(render_report)]
     if a.font_dir:render_cmd += ["--font-dir",str(Path(a.font_dir).resolve())]
+    if a.require_powerpoint:render_cmd.append("--require-powerpoint")
     run(render_cmd,"fresh PowerPoint render");rendered=render_dir/"slide-1.png"
     if not rendered.is_file():raise SystemExit("fresh render did not produce slide-1.png")
     visual_report=run_dir/"reference-visual.json";visual_cmd=[sys.executable,str(SCRIPT_DIR/"compare_visual.py"),str(rendered),str(source),"--raw-slide","--report",str(visual_report)]
@@ -161,7 +162,7 @@ def main()->int:
     repair_trace=run_dir/"render-repair-trace.json"
     run([sys.executable,str(SCRIPT_DIR/"build_render_repair_trace.py"),str(layout),str(region_report),"--report",str(repair_trace)],"responsible-object Repair Trace")
     status="repair-ready"
-    current.update({"render":str(rendered),"render_report":str(render_report),"reference_visual":str(visual_report),"key_local_crop_manifest":str(regions_path),"key_local_crop_count":len(manifest["regions"]),"local_crop_visual":str(region_report),"local_crop_qa":str(crop_dir),"repair_trace":str(repair_trace),"visual_review_required":True,"visual_metrics_diagnostic_only":True,"production_hard_blockers":"references/fixed-reference-short-loop.md","status":status})
+    current.update({"render":str(rendered),"render_report":str(render_report),"render_report_path":str(render_report),"render_evidence":load(render_report),"ppt_practical_lint":str(lint_report),"reference_visual":str(visual_report),"key_local_crop_manifest":str(regions_path),"key_local_crop_count":len(manifest["regions"]),"local_crop_visual":str(region_report),"local_crop_qa":str(crop_dir),"repair_trace":str(repair_trace),"visual_review_required":True,"visual_metrics_diagnostic_only":True,"production_hard_blockers":"references/fixed-reference-short-loop.md","status":status})
     current_path.write_text(json.dumps(current,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     atomic_write_json(run_dir/"compact-acceptance.json",compact_acceptance(current))
     print(json.dumps({"status":status,"deck":str(out),"render":str(rendered),"visual_report":str(visual_report),"key_local_crop_manifest":str(regions_path),"local_crop_count":len(manifest["regions"]),"region_report":str(region_report),"repair_trace":str(repair_trace),"compact_acceptance":str(run_dir/"compact-acceptance.json"),"visual_metrics_diagnostic_only":True},ensure_ascii=False,indent=2));return 0

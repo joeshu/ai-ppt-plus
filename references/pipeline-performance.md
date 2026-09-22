@@ -82,10 +82,10 @@ highest-impact material regions and repair them as a batch. Similarity scores
 do not authorize an extra round; only an active hard correctness defect or an
 explicit budget exception does.
 
-Treat the fresh LibreOffice+Poppler output as visual authority. Artifact Tool
-preview/import is a structural check and must not cause a second visual repair
-loop when its CJK rendering differs. Track candidate build count, full-render
-count, repair rounds and external generation calls in the short-loop report.
+Treat Microsoft PowerPoint export as final visual authority. LibreOffice+Poppler
+is a provisional diagnostic preview and cannot complete final signoff. Track
+candidate build count, full-render count, render attempts, TextFit total time,
+renderer identity, visual regression status, repair rounds and external calls.
 
 ## Chart fast path
 

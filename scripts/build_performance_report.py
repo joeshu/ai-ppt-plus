@@ -118,6 +118,8 @@ def build(pipeline_result: Path, output: Path, *, issue_log: Path | None = None,
         if isinstance(step, dict) and step.get("name")
     ]
     durations.sort(key=lambda item: (-item["duration_ms"], item["name"]))
+    text_fit_total_ms = round(sum(float(step.get("duration_ms", 0) or 0) for step in steps if isinstance(step, dict) and "text" in str(step.get("name") or "").lower() and "fit" in str(step.get("name") or "").lower()), 3)
+    render_attempt_count = sum(1 for step in steps if isinstance(step, dict) and str(step.get("name") or "").lower() in {"render", "full-render", "powerpoint-render"})
     report = {
         "schema": SCHEMA,
         "status": "passed",
@@ -132,6 +134,10 @@ def build(pipeline_result: Path, output: Path, *, issue_log: Path | None = None,
             "candidate_build_count": _integer(execution.get("candidate_build_count")),
             "full_render_count": _integer(execution.get("full_render_count"), sum(1 for step in steps if isinstance(step, dict) and step.get("name") == "render" and step.get("ok") is True)),
             "imagegen_call_count": _integer(execution.get("imagegen_call_count")),
+            "text_fit_total_ms": text_fit_total_ms,
+            "render_attempt_count": _integer(execution.get("render_attempt_count"), render_attempt_count),
+            "authoritative_visual_renderer": execution.get("authoritative_visual_renderer"),
+            "visual_regression_status": execution.get("visual_regression_status", "not_evaluated"),
             "mode": execution.get("mode"),
             "parallel_workers": _integer(execution.get("parallel_workers"), 1),
             "tasks_total": _integer(execution.get("tasks_total"), len(steps)),
@@ -171,6 +177,8 @@ def build(pipeline_result: Path, output: Path, *, issue_log: Path | None = None,
             "repair_rounds": "issue fix followed by re-render and re-validation; retries are excluded",
             "duration_sum_is_diagnostic": True,
             "resource_unavailable_is_null_not_zero": True,
+            "text_fit_total_ms": "sum of recorded step durations whose task name contains both text and fit",
+            "visual_regression_status": "pipeline-provided comparison against the declared incumbent; not_evaluated is explicit",
         },
     }
     atomic_write_json(output.resolve(), report)

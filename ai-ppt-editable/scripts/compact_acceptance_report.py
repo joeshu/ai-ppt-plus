@@ -17,6 +17,10 @@ def compact(report: dict) -> dict:
         {"done", "passed", "complete", "completed"}
     )]
     performance = report.get("performance") if isinstance(report.get("performance"), dict) else {}
+    quality = report.get("quality_evidence") if isinstance(report.get("quality_evidence"), dict) else {}
+    performance_evidence = quality.get("performance") if isinstance(quality.get("performance"), dict) else {}
+    if not performance and isinstance(performance_evidence.get("execution"), dict):
+        performance = performance_evidence["execution"]
     benchmark = report.get("benchmark") if isinstance(report.get("benchmark"), dict) else {}
     final = report.get("final") if isinstance(report.get("final"), dict) else {}
     pages = report.get("pages") if isinstance(report.get("pages"), list) else []
@@ -30,6 +34,11 @@ def compact(report: dict) -> dict:
                 step.get("ok") is True or step.get("status") in {"passed", "done", "cached"}
             )
         ]
+    render = report.get("render_evidence") if isinstance(report.get("render_evidence"), dict) else {}
+    if not render and isinstance(report.get("render_report"), dict):
+        render = report["render_report"]
+    authoritative = render.get("authoritative_visual_evidence")
+    acceptance = render.get("visual_acceptance_status")
     blocked = bool(report.get("hard_blockers")) or bool(incomplete)
     if pipeline_mode:
         blocked = blocked or report.get("technical_valid") is not True
@@ -49,6 +58,13 @@ def compact(report: dict) -> dict:
             "native_text_coverage": benchmark.get("native_text_coverage"),
             "material_mismatch_count": benchmark.get("material_mismatch_count"),
             "authoritative_visual_renderer": performance.get("authoritative_visual_renderer"),
+            "text_fit_total_ms": performance.get("text_fit_total_ms"),
+            "render_attempt_count": performance.get("render_attempt_count"),
+            "visual_regression_status": performance.get("visual_regression_status"),
+            "renderer": render.get("renderer") or performance.get("authoritative_visual_renderer"),
+            "renderer_role": render.get("renderer_role"),
+            "authoritative_visual_evidence": authoritative,
+            "visual_acceptance_status": acceptance,
         },
         "deliverable": {
             "pptx_path": final.get("pptx_path"),
@@ -58,6 +74,7 @@ def compact(report: dict) -> dict:
         },
         "full_report_retained": True,
         "source_report_kind": "pipeline-result" if pipeline_mode else "short-loop-run",
+        "final_visual_signoff_eligible": authoritative is True,
     }
 
 
