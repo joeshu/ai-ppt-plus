@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.22.15
+  package_revision: 2026.09.22.16
 ---
 
 # AI PPT Editable
@@ -15,6 +15,7 @@ New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python 
 
 Read `references/fixed-reference-short-loop.md` for the normative production contract. Read `references/native-imagegen-runbook.md` for the mandatory native ImageGen call/receipt route, asset provenance and time-bounded recovery rules. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/visual-closeout-gate.md` before declaring visual PASS. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/fixed-reference-fidelity.md` remains implementation guidance. Production execution must not discover, invoke, import, route to, or depend on any external comparison skill. Competitive comparators are development-only artifacts under `evals/`.
 Read `references/image-to-editable-regressions.md` when a fresh image-to-editable replay exposes an inventory, alpha-geometry, physical-aspect, text-to-container or composite-anchor defect; apply its stable repair codes and re-render the owning region.
+Read `references/top-brand-title-fidelity.md` when the weakest region is a header, brand lockup or large display title; its object-specific crop and PowerPoint-render rules take precedence over whole-slide metric tuning.
 
 ## Formal production chain
 
@@ -215,10 +216,12 @@ Charts remain native/editable when data are known. Missing future values stay bl
 
 ## 10. Fresh PowerPoint Render
 
-Use `scripts/render_authoritative.py`. Prefer Microsoft PowerPoint export when
-it is installed and usable; otherwise use the verified LibreOffice+Poppler
-fallback with the task-local authoring fonts. Record the actual renderer and
-the `powerpoint-first-libreoffice-fallback` policy. Artifact Tool
+Use `scripts/render_authoritative.py`. Microsoft PowerPoint export is the final
+visual authority. A verified LibreOffice+Poppler render with the task-local
+authoring fonts is provisional diagnostic evidence only and cannot complete
+final visual signoff. Record the actual renderer and the
+`powerpoint-final-libreoffice-provisional` policy; use `--require-powerpoint`
+for final acceptance. Artifact Tool
 preview/import is structural evidence only. Do not
 repair or rebuild a deck solely because that preview omits CJK glyphs when the
 authoritative render and object audit are complete.

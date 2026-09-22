@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Select PowerPoint export when available, otherwise verified LibreOffice."""
+"""Prefer PowerPoint export; label LibreOffice output as provisional evidence."""
 from __future__ import annotations
 
 import argparse
@@ -24,12 +24,16 @@ def main() -> int:
     parser.add_argument("pptx", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--backend", choices=("auto", "powerpoint", "libreoffice"), default="auto")
+    parser.add_argument("--fallback-policy", choices=("provisional", "forbid"), default=os.environ.get("AI_PPT_POWERPOINT_FALLBACK", "provisional"))
+    parser.add_argument("--require-powerpoint", action="store_true", help="forbid LibreOffice fallback")
     parser.add_argument("--dpi", type=int, default=144)
     parser.add_argument("--pages")
     parser.add_argument("--font-dir")
     parser.add_argument("--page-cache-dir")
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
+    if args.require_powerpoint:
+        args.fallback_policy = "forbid"
     scripts = Path(__file__).resolve().parent
     attempts = []
     result = None
@@ -41,7 +45,7 @@ def main() -> int:
                 result = payload
         elif args.backend == "powerpoint":
             attempts.append({"backend": "powerpoint", "exit_code": 2, "ok": False, "reason": "not_windows"})
-    if result is None and args.backend in {"auto", "libreoffice"}:
+    if result is None and args.backend in {"auto", "libreoffice"} and not (args.backend == "auto" and args.fallback_policy == "forbid"):
         command = [sys.executable, str(scripts / "render_pptx.py"), str(args.pptx), "--output-dir", str(args.output_dir), "--dpi", str(args.dpi)]
         if args.font_dir:
             command += ["--font-dir", args.font_dir]
@@ -54,7 +58,12 @@ def main() -> int:
         result = payload
     if result is None:
         result = {"schema": "ai-ppt-plus/render/v1", "ok": False, "renderer": None, "pages": [], "errors": ["requested authoritative renderer unavailable"]}
-    result["renderer_policy"] = "powerpoint-first-libreoffice-fallback"
+    is_powerpoint = str(result.get("renderer") or "").lower() == "powerpoint-export"
+    result["renderer_policy"] = "powerpoint-final-libreoffice-provisional"
+    result["authoritative_visual_evidence"] = is_powerpoint
+    result["visual_acceptance_status"] = "final" if is_powerpoint else ("provisional" if result.get("ok") else "blocked")
+    result["renderer_role"] = "final_acceptance" if is_powerpoint else ("diagnostic_preview" if result.get("ok") else "unavailable")
+    result["powerpoint_required_for_final_signoff"] = True
     result["backend_attempts"] = attempts
     if args.report:
         args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

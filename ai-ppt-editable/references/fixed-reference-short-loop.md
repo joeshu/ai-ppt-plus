@@ -75,12 +75,13 @@ report. Batch the 3 highest-impact material regions; do not create a new PPTX
 variant for each text box, icon or metric change. Run cheap text-fit, geometry,
 asset-path and finalization preflights before each expensive build.
 
-Use LibreOffice+Poppler as the authoritative visual renderer for reference
-comparison and closeout. Artifact Tool import/preview evidence proves package
-structure and compatibility only. If its preview omits CJK glyphs while the
-authoritative render is complete, record a renderer limitation instead of
-rebuilding the deck. Whole-page and regional similarity scores rank repair
-work; they never force another round by themselves.
+Use Microsoft PowerPoint export as the final visual renderer for reference
+comparison and closeout. LibreOffice+Poppler is a provisional iteration render
+when PowerPoint is unavailable; Artifact Tool import/preview evidence proves
+package structure and compatibility only. Do not repair large title typography
+solely around LibreOffice-specific kerning or line wrapping. Whole-page and
+regional similarity scores rank repair work; they never force another round by
+themselves.
 
 Inspect header/brand, footer/edge system and other composed parent regions
 before child anchors. Validate generated asset aspect ratio against its target

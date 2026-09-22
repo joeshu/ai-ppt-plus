@@ -4,12 +4,18 @@ Use this gate after the final fresh render and same-coordinate crop review. It
 does not define an SSIM or pixel threshold. It prevents a human closeout from
 contradicting its own evidence.
 
-The visual authority is the fresh Microsoft PowerPoint export when available,
-otherwise the verified LibreOffice+Poppler render produced with the
-same task-local fonts used for fitting. Artifact Tool preview/import output is
-structural diagnostic evidence only and cannot close visual review. A preview
+The final visual authority is a fresh Microsoft PowerPoint export. A verified
+LibreOffice+Poppler render produced with the same task-local fonts may be used
+for fast iteration only and must remain `provisional`; it cannot close final
+visual review. Artifact Tool preview/import output is structural diagnostic
+evidence only and cannot close visual review. A preview
 font-rendering discrepancy must be recorded once and must not trigger a PPTX
 repair when the authoritative render and object audit are complete.
+
+Run `render_authoritative.py --require-powerpoint` for final signoff. On a
+non-Windows host, retain the provisional render and hand the exact PPTX hash to
+the labelled Windows PowerPoint runner; do not tune title typography or brand
+geometry solely against LibreOffice rasterization.
 
 Start from `assets/visual-closeout.template.json`. Cover these semantic roles,
 using multiple regions when needed: `brand`, `title_typography`,

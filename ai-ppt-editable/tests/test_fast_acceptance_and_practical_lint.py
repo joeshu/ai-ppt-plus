@@ -80,8 +80,26 @@ def test_powerpoint_only_renderer_fails_cleanly_off_windows():
         ], capture_output=True, text=True, check=False)
         assert result.returncode == 2
         payload = json.loads(result.stdout)
-        assert payload["renderer_policy"] == "powerpoint-first-libreoffice-fallback"
+        assert payload["renderer_policy"] == "powerpoint-final-libreoffice-provisional"
+        assert payload["authoritative_visual_evidence"] is False
+        assert payload["visual_acceptance_status"] == "blocked"
         assert payload["backend_attempts"][0]["reason"] == "not_windows"
+
+
+def test_auto_renderer_can_forbid_libreoffice_fallback_off_windows():
+    if sys.platform.startswith("win"):
+        return
+    with tempfile.TemporaryDirectory() as temp:
+        deck = Path(temp) / "empty.pptx"
+        Presentation().save(deck)
+        result = subprocess.run([
+            sys.executable, str(SCRIPTS / "render_authoritative.py"), str(deck),
+            "--output-dir", str(Path(temp) / "render"), "--require-powerpoint",
+        ], capture_output=True, text=True, check=False)
+        payload = json.loads(result.stdout)
+        assert result.returncode == 2
+        assert payload["renderer"] is None
+        assert payload["powerpoint_required_for_final_signoff"] is True
 
 
 def test_compact_acceptance_understands_pipeline_results():
