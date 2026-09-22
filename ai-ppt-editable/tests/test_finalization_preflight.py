@@ -70,6 +70,17 @@ def test_artifact_preview_is_not_visual_authority(tmp_path):
     assert result["artifact_tool_preview_policy"] == "structural_diagnostic_only"
 
 
+def test_libreoffice_render_binds_task_local_fonts(tmp_path):
+    values = _fixture(tmp_path)
+    result = _validate(values)
+    binding = result["renderer_font_binding"]
+    assert binding["required"] is True
+    assert binding["mode"] == "task-local-fontconfig"
+    assert binding["font_dir"] == str(values["font_dir"])
+    assert binding["font_file_count"] == 1
+    assert binding["render_command_requirement"] == "render_pptx.py --font-dir"
+
+
 def test_prebuild_allows_reserved_candidate_path(tmp_path):
     values = _fixture(tmp_path)
     values["candidate"].unlink()
@@ -84,6 +95,7 @@ if __name__ == "__main__":
         test_preflight_binds_runtime_and_paths,
         test_missing_receipt_parent_fails_before_finalizer,
         test_artifact_preview_is_not_visual_authority,
+        test_libreoffice_render_binds_task_local_fonts,
         test_prebuild_allows_reserved_candidate_path,
     )
     for index, test in enumerate(tests):

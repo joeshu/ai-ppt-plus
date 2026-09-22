@@ -116,6 +116,13 @@ def validate(
             "RUNTIME_NODE_MODULES": str(node_modules) if node_modules else None,
         },
         "font_files": font_files,
+        "renderer_font_binding": {
+            "required": not powerpoint_available,
+            "mode": "task-local-fontconfig" if not powerpoint_available else "powerpoint-native",
+            "font_dir": str(font_dir) if font_dir else None,
+            "font_file_count": len(font_files),
+            "render_command_requirement": "render_pptx.py --font-dir" if not powerpoint_available else None,
+        },
         "visual_renderer": "powerpoint-export" if powerpoint_available else "libreoffice+poppler",
         "renderer_policy": "powerpoint-first-libreoffice-fallback",
         "artifact_tool_preview_policy": "structural_diagnostic_only",

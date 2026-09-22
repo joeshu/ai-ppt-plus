@@ -43,6 +43,13 @@ Do not trust a fontconfig family match by name. Inspect the resolved font
 file's cmap and require actual Chinese glyph coverage. A readable manifest or
 an existing Latin fallback file is not font evidence.
 
+Bind the same task-local font directory to the final visual renderer. Artifact
+Tool/Skia font registration proves authoring-side glyph availability only; it
+does not make the family visible to LibreOffice. For LibreOffice closeout, run
+`render_pptx.py --font-dir ...` and require the render receipt's
+`fontconfig_bound=true` plus a non-empty `font_dir_sha256`. A blank-CJK render
+is a renderer-font binding defect, not a layout-repair signal.
+
 Do not use Unicode dingbats or emoji as production icons. Their glyphs and
 metrics vary by platform. Use native-shape icon groups or independently
 replaceable vector/raster assets with explicit provenance.

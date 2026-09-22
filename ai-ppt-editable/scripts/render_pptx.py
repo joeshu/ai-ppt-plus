@@ -18,6 +18,7 @@ import subprocess
 import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
+from xml.sax.saxutils import escape as xml_escape
 from pathlib import Path
 
 from atomic_output import atomic_write_json, atomic_write_text
@@ -387,6 +388,13 @@ def main():
         errors.append("PPTX not found")
     if not errors:
         try:
+            # Compute this even when the page cache is disabled.  The render
+            # receipt must prove which task-local font set LibreOffice saw;
+            # authoring-side registration alone does not prevent blank CJK.
+            font_digest = _font_directory_digest(font_dir)
+        except (OSError, ValueError) as exc:
+            errors.append(f"could not fingerprint render fonts: {type(exc).__name__}: {exc}")
+        try:
             fingerprints = slide_fingerprints(src)
         except (OSError, ValueError, zipfile.BadZipFile) as exc:
             errors.append(f"could not fingerprint PPTX pages: {type(exc).__name__}: {exc}")
@@ -398,7 +406,6 @@ def main():
                 requested_pages = set()
         if page_cache_dir:
             try:
-                font_digest = _font_directory_digest(font_dir)
                 namespace = _page_cache_namespace(a.dpi, font_digest)
             except (OSError, ValueError) as exc:
                 errors.append(f"could not prepare page cache: {type(exc).__name__}: {exc}")
@@ -439,7 +446,7 @@ def main():
                         conf = Path(td) / "fonts.conf"
                         atomic_write_text(
                             conf,
-                            f'<?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "fonts.dtd"><fontconfig><dir>{font_dir}</dir><include ignore_missing="yes">/etc/fonts/fonts.conf</include></fontconfig>',
+                            f'<?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "fonts.dtd"><fontconfig><dir>{xml_escape(str(font_dir))}</dir><include ignore_missing="yes">/etc/fonts/fonts.conf</include></fontconfig>',
                         )
                         env["FONTCONFIG_FILE"] = str(conf)
                     cp = subprocess.run(
@@ -507,6 +514,8 @@ def main():
         "render_attempts": attempts,
         "conversion": {"attempted": conversion_attempted, "skipped": conversion_skipped, "reason": "all_requested_pages_cached" if conversion_skipped else "page_cache_miss" if page_cache_dir and missing_pages else "cache_disabled" if missing_pages else "not_run"},
         "font_dir": str(font_dir) if font_dir else None,
+        "font_dir_sha256": font_digest,
+        "fontconfig_bound": bool(font_dir and conversion_attempted),
         "dpi": a.dpi,
         "selected_pages": sorted(selected) if selected is not None else "all",
         "page_fingerprints": page_report,
