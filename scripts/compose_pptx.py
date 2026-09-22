@@ -46,6 +46,7 @@ from pptx_primitives import (
     text_size_pt as _text_size_pt,
 )
 from validate_semantic_layout import validate as validate_semantic_layout
+from strict_layout_preflight import enforce_reference as enforce_strict_reference_layout
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
@@ -116,6 +117,9 @@ def main() -> None:
     if not layout_path.exists():
         _die(f"layout file not found: {layout_path}")
     deck = _expand_components(_load_deck(layout_path))
+    if args.strict_input:
+        try: enforce_strict_reference_layout(layout_path, deck, Path(args.out).resolve(), font_dir=args.font_dir, font_manifest=args.font_manifest)
+        except ValueError as exc: _die(str(exc))
     semantic_report = validate_semantic_layout(deck)
     if not semantic_report.get("valid", False):
         issue_codes = ", ".join(str(item.get("code")) for item in semantic_report.get("issues", []))

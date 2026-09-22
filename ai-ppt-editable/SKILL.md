@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.22.17
+  package_revision: 2026.09.22.19
 ---
 
 # AI PPT Editable
@@ -13,9 +13,17 @@ Reconstruct or repair editable PPTX with the supplied reference as visual author
 
 New strict reconstruction uses JavaScript ESM with `@oai/artifact-tool`. Python is inspection/QA only and is not an authoring fallback. Whole-page raster fallback is forbidden.
 
+Never deliver a fixed-reference deck from a direct composer invocation. Bind the
+layout with `route-decision.json` and use the strict reference release path so
+font coverage, generated assets, full-page render and local-crop closeout cannot
+be bypassed. Strict layout preflight reads real font cmap coverage; a
+fontconfig substitute or readable manifest without usable Chinese glyphs is a
+blocker. Symbol/emoji text boxes are not production icons.
+
 Read `references/fixed-reference-short-loop.md` for the normative production contract. Read `references/native-imagegen-runbook.md` for the mandatory native ImageGen call/receipt route, asset provenance and time-bounded recovery rules. Read `references/authoring-plan.md` for the pre-build execution contract. Read `references/text-coverage-auditor.md` for formal-text producer coverage. Read `references/text-slot-repair-planner.md` for TextFit deficit-to-layout repair and `references/text-render-feedback.md` for fresh-render text-region feedback. Read `references/visual-closeout-gate.md` before declaring visual PASS. Read `references/geometry-primitive-resolver.md` for pre-build geometry selection and parameter binding. Read `references/asset-render-coordinate-loop.md` for B5 alpha-space/slot/render-space evidence and continuous-band contour evidence, and `references/protected-repair-planner.md` for B6 constrained repair batches. `references/fixed-reference-fidelity.md` remains implementation guidance. Production execution must not discover, invoke, import, route to, or depend on any external comparison skill. Competitive comparators are development-only artifacts under `evals/`.
 Read `references/image-to-editable-regressions.md` when a fresh image-to-editable replay exposes an inventory, alpha-geometry, physical-aspect, text-to-container or composite-anchor defect; apply its stable repair codes and re-render the owning region.
 Read `references/top-brand-title-fidelity.md` when the weakest region is a header, brand lockup or large display title; its object-specific crop and PowerPoint-render rules take precedence over whole-slide metric tuning.
+Read `references/dense-single-slide-reconstruction.md` for dense 16:9 dashboard/strategy pages with charts, repeated cards and footer bands. It defines the one-pass region inventory, pixel-coordinate normalization, chart uncertainty rule, symbol-font prohibition and CJK render stop condition added after the China Unicom lifecycle-page replay.
 
 ## Formal production chain
 

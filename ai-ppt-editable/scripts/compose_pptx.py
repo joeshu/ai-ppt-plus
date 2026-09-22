@@ -37,6 +37,7 @@ from geometry_authoring import (
 from preview_renderer import find_cjk_font as _find_cjk_font
 from preview_renderer import render_previews
 from reference_preflight import validate_reference_preflight
+from strict_layout_preflight import enforce_reference as enforce_strict_reference_layout
 from text_fit_authoring_gate import run_text_fit_e3, text_fit_failure_message, write_text_fit_e4_receipt
 from validate_semantic_layout import validate as validate_semantic_layout
 from pptx_primitives import (
@@ -158,6 +159,9 @@ def main() -> None:
         _die(f"layout file not found: {layout_path}")
     deck = _promote_native_structures(_load_deck(layout_path))
     deck = _expand_components(deck)
+    if args.strict_input:
+        try: enforce_strict_reference_layout(layout_path, deck, Path(args.out).resolve(), font_dir=args.font_dir, font_manifest=args.font_manifest)
+        except ValueError as exc: _die(str(exc))
 
     # Fixed-reference authoring uses PageGraph geometry as the authoritative
     # object-placement source before typography fitting.  This is deterministic

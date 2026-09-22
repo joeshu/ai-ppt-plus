@@ -1,0 +1,72 @@
+# Dense single-slide reconstruction
+
+Use this short loop for dense 16:9 dashboard, strategy-map and operating-model
+slides whose reference combines a chart, repeated cards, management bands and
+footer decoration.
+
+## Fast decomposition
+
+1. Freeze the source dimensions and author in one pixel coordinate space using
+   `ref_width` and `ref_height`. Convert to slide units only in the authoring
+   backend.
+2. Inventory large regions first: header/brand, status block, chart, repeated
+   modules, guarantee band, results band and footer. Then assign stable IDs to
+   their children. This prevents repeated OCR/layout passes.
+3. Classify repeated icon-title-body modules as component groups, not tables.
+   A visible grid is not table semantics.
+4. Keep formal text in native text boxes. Keep cards, dividers, chart lines,
+   markers, arrows and simple ribbons as native geometry. A full-slide raster
+   is forbidden.
+
+## Chart uncertainty
+
+Use a native chart only when every category and value is verified. When a
+reference image has missing, occluded, duplicated or contradictory labels,
+author the visible trend as editable static line/marker primitives and record
+`visual_transcription_unverified` in notes/evidence. Never invent authoritative
+values to satisfy a native chart schema. Preserve visibly duplicated labels
+until the user confirms a correction.
+
+## Fonts and icons
+
+Run CJK font discovery before text fitting or visual preview. If no licensed
+CJK font with the required glyph coverage is available:
+
+- do not interpret blank glyphs, tofu or inflated TextFit deficits as layout
+  defects;
+- do not bypass the condition and claim authoritative visual PASS;
+- author native text with the declared delivery family, record the font
+  blocker and restrict local QA to geometry/object inventory until a CJK-capable
+  PowerPoint render is available.
+
+Do not trust a fontconfig family match by name. Inspect the resolved font
+file's cmap and require actual Chinese glyph coverage. A readable manifest or
+an existing Latin fallback file is not font evidence.
+
+Do not use Unicode dingbats or emoji as production icons. Their glyphs and
+metrics vary by platform. Use native-shape icon groups or independently
+replaceable vector/raster assets with explicit provenance.
+
+## Brand and decorative regions
+
+Treat a supplied official standalone logo as one replaceable asset. A logo
+inside a screenshot is reference evidence, not an official standalone file.
+If an exact approved asset is unavailable, leave a named replaceable brand
+slot and disclose the substitution instead of tracing an inaccurate logo.
+
+Build decorative footer waves and skylines after content geometry. Use a small
+number of semantic native shapes when they remain faithful; otherwise use one
+independent decorative asset below native text.
+
+## Efficient QA
+
+The first candidate must emit an object inventory and one full-slide render.
+Check in this order: canvas/aspect, large-region bounds, text presence, chart
+topology, repeated-component alignment, brand/footer. Repair only the failing
+region and re-render one adaptive crop plus the full slide once. Record object
+counts by kind; a dense slide with zero native text or one full-frame image is
+an immediate failure.
+
+A direct composer result is a diagnostic candidate, not a delivery. Require a
+bound reference route, full-page render, representative local crops and closed
+material mismatches before release.

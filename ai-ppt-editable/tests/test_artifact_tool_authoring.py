@@ -120,7 +120,9 @@ def main() -> int:
         )
         route_layout_path = route_root / "layout.json"
         route_layout_path.write_text(json.dumps(route_layout, ensure_ascii=False), encoding="utf-8")
-        (route_root / "route-decision.json").write_text(json.dumps({"route": "reference-reconstruction"}), encoding="utf-8")
+        # This is an authoring-adapter smoke test. Reference reconstruction
+        # font coverage is exercised separately by strict-layout preflight.
+        (route_root / "route-decision.json").write_text(json.dumps({"route": "native-authoring"}), encoding="utf-8")
         (route_root / "page-graph.json").write_text(json.dumps({"nodes": [{"id": "title", "type": "text", "role": "text"}]}), encoding="utf-8")
         (route_root / "slide-object-manifest.json").write_text(json.dumps({"slides": [{"slide_no": 1, "objects": [{"object_id": "title", "object_type": "editable_text"}]}]}), encoding="utf-8")
         chart_snapshot = {

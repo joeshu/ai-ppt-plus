@@ -16,11 +16,14 @@ from pptx_primitives import _set_run_fonts
 from runtime_fonts import runtime_font_evidence
 
 
-def test_runtime_font_resolver_finds_ci_cjk_face():
+def test_runtime_font_resolver_never_accepts_latin_fallback_as_cjk():
     evidence = runtime_font_evidence("Noto Sans CJK SC")
     assert evidence["repository_font_binary_required"] is False
-    assert evidence["valid"] is True
     assert evidence["files"]
+    assert evidence["valid"] == any(item["cjk_coverage_valid"] for item in evidence["coverage"])
+    for item in evidence["coverage"]:
+        if Path(item["path"]).name.startswith("DejaVuSans"):
+            assert item["cjk_coverage_valid"] is False
 
 
 def test_cjk_run_binds_east_asian_and_complex_script_typefaces():

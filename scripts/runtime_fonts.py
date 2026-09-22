@@ -7,6 +7,7 @@ import json
 import shutil
 import subprocess
 from pathlib import Path
+from strict_layout_preflight import _font_has_cjk
 
 FONT_SUFFIXES = {".ttf", ".otf", ".ttc"}
 DEFAULT_CJK_FAMILIES = (
@@ -66,7 +67,7 @@ def resolve_family_files(family: str) -> list[Path]:
 def resolve_cjk_family(preferred: list[str] | tuple[str, ...] | None = None) -> tuple[str | None, list[Path]]:
     for family in preferred or DEFAULT_CJK_FAMILIES:
         files = resolve_family_files(family)
-        if files:
+        if files and any(_font_has_cjk(path)[0] for path in files):
             return family, files
     return None, []
 
@@ -74,17 +75,22 @@ def resolve_cjk_family(preferred: list[str] | tuple[str, ...] | None = None) -> 
 def runtime_font_evidence(family: str | None = None) -> dict:
     requested = family or DEFAULT_CJK_FAMILIES[0]
     files = resolve_family_files(requested)
-    resolved_family = requested if files else None
-    if not files and family is None:
+    coverage = [{"path": str(path), "cjk_coverage_valid": _font_has_cjk(path)[0], "matched_probes": _font_has_cjk(path)[1]} for path in files]
+    coverage_valid = any(item["cjk_coverage_valid"] for item in coverage)
+    resolved_family = requested if coverage_valid else None
+    if not coverage_valid and family is None:
         resolved_family, files = resolve_cjk_family()
+        coverage = [{"path": str(path), "cjk_coverage_valid": _font_has_cjk(path)[0], "matched_probes": _font_has_cjk(path)[1]} for path in files]
+        coverage_valid = any(item["cjk_coverage_valid"] for item in coverage)
     return {
         "schema": "ai-ppt-plus/runtime-font-evidence/v1",
         "requested_family": requested,
         "resolved_family": resolved_family,
         "files": [str(path) for path in files],
+        "coverage": coverage,
         "runtime_managed": True,
         "repository_font_binary_required": False,
-        "valid": bool(files),
+        "valid": coverage_valid,
     }
 
 

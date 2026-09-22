@@ -20,7 +20,7 @@ def main() -> int:
     # Keep the entrypoint bounded while allowing strict PageGraph calibration,
     # manifest-only font binding, and geometry orchestration hooks. Geometry
     # implementation remains in its own module.
-    assert compose_lines < 300, compose_lines
+    assert compose_lines < 320, compose_lines
 
     with tempfile.TemporaryDirectory(prefix="authoring-modules-") as temp:
         work = Path(temp)

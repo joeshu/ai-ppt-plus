@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.22.17
+  package_revision: 2026.09.22.19
 ---
 
 For fixed-reference image-to-editable-PPTX work, default to the editable worker's machine-validated `fast` execution profile. Use `strict` only when requested or justified by page risk; reserve `ci` for regression. Run finalization preflight before ImageGen or candidate construction. Batch only compatible simple alpha icons, slice them into independent final assets, and validate every slice; keep logos, brand lockups, calligraphy, wide bands and complex art in dedicated requests. Retry only failed asset IDs and cut adaptive local QA crops from one full-page render.
@@ -41,6 +41,15 @@ Before choosing native tables, remember that visual grid evidence is not table
 semantics; ambiguous icon/title/body lists must be classified as repeated
 component groups and must pass both the object-type gate and unchanged visual
 gates.
+For dense one-page dashboard/strategy references, require the editable worker's
+`references/dense-single-slide-reconstruction.md` loop. In particular, keep
+unverified chart transcription out of native data claims, prohibit symbol-font
+icons, and stop authoritative CJK visual closeout when the runtime lacks a
+glyph-capable licensed font.
+Direct `compose_pptx.py` output is never a finished fixed-reference delivery.
+Fixed-reference work must carry `route-decision.json` and finish through the
+editable worker's strict release/visual-closeout path; otherwise report only a
+blocked or diagnostic candidate.
 
 ```bash
 python3 scripts/validate_skill_package.py --skill-dir .
