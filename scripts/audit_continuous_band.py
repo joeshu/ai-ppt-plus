@@ -70,10 +70,12 @@ def _profile(path: Path, region: list[float], samples: int, mode: str) -> dict:
             "top_y_px": y,
             "top_y_region_norm": round((y - top) / (bottom - top), 6) if y is not None else None,
         })
-    return {"path": str(path.resolve()), "size_px": list(image.size), "region_px": [left, top, right, bottom], "landmarks": points}
+    return {"path": str(path.resolve()), "size_px": list(image.size), "region_px": [left, top, right, bottom], "landmarks": points,
+            "bottom_edge_color_coverage": round(float(mask[-1, :].mean()), 6)}
 
 
-def audit(reference: Path, candidate: Path, region: list[float], samples: int, mode: str) -> dict:
+def audit(reference: Path, candidate: Path, region: list[float], samples: int, mode: str,
+          require_bottom_edge_continuity: bool = False) -> dict:
     ref = _profile(reference, region, samples, mode)
     cand = _profile(candidate, region, samples, mode)
     deltas = []
@@ -89,9 +91,13 @@ def audit(reference: Path, candidate: Path, region: list[float], samples: int, m
             "delta_region_norm": round(c["top_y_region_norm"] - r["top_y_region_norm"], 6),
         })
     absolute = [abs(row["delta_region_norm"]) for row in deltas]
+    ref_edge = ref["bottom_edge_color_coverage"]
+    cand_edge = cand["bottom_edge_color_coverage"]
+    edge_applicable = ref_edge >= 0.75
+    edge_passed = not edge_applicable or cand_edge >= max(0.6, ref_edge - 0.15)
     return {
         "schema": "ai-ppt-plus/continuous-band-contour/v1",
-        "valid": bool(deltas) and not unresolved,
+        "valid": bool(deltas) and not unresolved and (not require_bottom_edge_continuity or edge_passed),
         "mask_mode": mode,
         "region_norm": region,
         "reference": ref,
@@ -103,6 +109,9 @@ def audit(reference: Path, candidate: Path, region: list[float], samples: int, m
             "mean_absolute_delta_region_norm": round(sum(absolute) / len(absolute), 6) if absolute else None,
             "max_absolute_delta_region_norm": round(max(absolute), 6) if absolute else None,
             "landmark_deltas": deltas,
+            "bottom_edge_continuity": {"required": require_bottom_edge_continuity,
+                "applicable": edge_applicable, "passed": edge_passed,
+                "reference_color_coverage": ref_edge, "candidate_color_coverage": cand_edge},
         },
         "review": "diagnostic: inspect material contour differences in the composed local crop; no universal numeric release threshold",
     }
@@ -115,12 +124,15 @@ def main() -> int:
     parser.add_argument("--region", nargs=4, type=float, default=[0.0, 0.78, 1.0, 0.22], metavar=("X", "Y", "W", "H"))
     parser.add_argument("--samples", type=int, default=13)
     parser.add_argument("--mask-mode", choices=["red"], default="red")
+    parser.add_argument("--require-bottom-edge-continuity", action="store_true",
+                        help="fail when a source full-bleed color band becomes an uncovered bottom edge")
     parser.add_argument("--report", type=Path)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     if args.samples < 5:
         raise SystemExit("--samples must be at least 5")
-    report = audit(args.reference.resolve(), args.candidate.resolve(), list(args.region), args.samples, args.mask_mode)
+    report = audit(args.reference.resolve(), args.candidate.resolve(), list(args.region), args.samples, args.mask_mode,
+                   args.require_bottom_edge_continuity)
     payload = json.dumps(report, ensure_ascii=False, indent=2)
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)

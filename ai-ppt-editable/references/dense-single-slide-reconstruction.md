@@ -21,6 +21,10 @@ footer decoration.
 4. Keep formal text in native text boxes. Keep cards, dividers, chart lines,
    markers, arrows and simple ribbons as native geometry. A full-slide raster
    is forbidden.
+5. For narrow gradient headers, assign the main heading and compact qualifier
+   separate nonoverlapping slots with a visible gap. Measure both with the
+   delivery font before export and inspect the whole header crop after render;
+   auto-shrink alone cannot repair overlapping slots.
 
 ## Chart uncertainty
 
@@ -72,6 +76,11 @@ receipt and post-export embedded-byte check.
 Build decorative footer waves and skylines after content geometry. Use a small
 number of semantic native shapes when they remain faithful; otherwise use one
 independent decorative asset below native text.
+If the source footer bleeds to the slide edge, add a matching native color
+underlay across the final edge before placing a translucent decorative band.
+Run `scripts/audit_continuous_band.py` with
+`--require-bottom-edge-continuity` on the final render. Keep white footer
+lettering above the band and verify its local crop for contrast and clipping.
 
 ## Efficient QA
 
