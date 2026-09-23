@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-editable",
-  "package_revision": "2026.09.23.02",
+  "package_revision": "2026.09.23.03",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -121,6 +121,7 @@
     "scripts/validate_imagegen_final_assets.py",
     "assets/imagegen-assets-manifest.template.json",
     "references/fixed-reference-fidelity.md",
+    "references/multi-image-reference-deck.md",
     "references/editability-levels.md",
     "references/icon-asset-protocol.md",
     "references/visual-repair-patterns.md",

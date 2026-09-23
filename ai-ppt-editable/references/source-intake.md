@@ -4,6 +4,40 @@
 
 Read at `intake`, on added sources, and before resuming a project. Supported inputs are PDF, DOCX, Markdown/text, CSV/XLSX, PPT/PPTX, images and project/meeting files that available extractors can read.
 
+## User-attached image paths and ordered page mapping
+
+For image-to-slide requests, take the attachment order in the current user turn
+as the page order. Do not alphabetize filenames, infer order from timestamps,
+merge adjacent references, or add a cover: `N` supplied images produce exactly
+`N` slides unless the user explicitly requests a different mapping. Record the
+mapping before OCR or ImageGen in `reference-page-map.json` with one row per
+slide: `slide_no`, `requested_path`, `resolved_path`, `sha256`, `width`,
+`height`, `aspect_ratio`, `resolution_notes`, and `reuse_source` (if any).
+
+Resolve the paths actually supplied for this turn; never substitute a path
+remembered from an earlier turn. If a staged path is missing, use only the
+bounded workspace/upload/name-variant resolver and inspect its complete
+candidate/hash evidence. A recovered path is acceptable only when it maps to
+the current attachment and the different candidates have identical bytes; if
+identity is ambiguous, block before transcription, generation, or authoring.
+Do not search Library for bytes when the current attachment is already local.
+Freeze dimensions and SHA-256 before creating derivatives. Keep a copy or
+manifest row for every original; never overwrite it.
+
+Run `scripts/reference_input_preflight.py` once for the complete ordered list,
+with `--expected-count N`. When all sources are intended for the same slide
+ratio, also pass the expected ratio and tolerance. Preserve the resolver's
+candidate evidence beside the page map. A missing page, reordered path, or
+unresolved hash is a source-mapping defect, not permission to silently skip a
+slide.
+
+Do not OCR low-resolution text as certain merely because a recognizer returns
+characters. Keep confirmed text, uncertain readings, and image-only visual
+details separate. Mark unreadable formal copy as `待确认`/low confidence and
+request clarification only when it materially changes the message; otherwise
+retain the visible facts without inventing exact wording and disclose the
+transcription limit in notes or handoff.
+
 Create `source-inventory.json` with one record per source: `id`, `path_or_url`, `kind`, `size`, `sha256`, `readable`, `extractor`, `pages_or_sheets`, `language`, `topics`, `fact_ids`, `data_ids`, `conflicts`, `gaps`, and `notes`. Preserve originals and never overwrite them.
 
 Create `deck-brief.md` with purpose, audience, setting, desired decision, duration/page target, language, output format, editability, deadline, brand constraints, authoritative-source order, known risks, and open questions.

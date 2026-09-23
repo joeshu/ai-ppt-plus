@@ -27,7 +27,11 @@ ribbons, skyline bands or other non-native visual assets.
 
 Brand lockups, calligraphy, wide bands and complex art always use dedicated
 ImageGen calls. Compatible simple alpha icons may use an explicitly declared
-batch to reduce latency, but the batch is an intermediate only: every cell must
+deck-wide planned batch to reduce latency, but the batch is an intermediate
+only. Keep each call within the active planner cap (`fast`: 4 icons maximum;
+`strict`: 3 maximum); do not override that limit with an oversized manual
+prompt. Recalculate uncached calls once for the complete deck before invoking
+ImageGen. Every cell must
 be sliced into an independent final asset and receive its own alpha, identity,
 color, placement and local-crop QA record. Set
 `independent_generation_per_asset: true` when the user explicitly requires one
@@ -105,6 +109,10 @@ do not let transparent padding make a visual asset appear inexplicably small.
 - Build once, render once, inspect full page plus 3–10 risk crops, then repair
   only the owning object. A one-page run should normally stay within one
   candidate plus the profile's bounded repair candidates.
+- For a deck, render the complete final PPTX once per accepted build/repair
+  batch, compare every slide to its mapped source, and take the required risk
+  crops per page. Do not promote a one-slide render or first-page-only check to
+  deck-level evidence.
 - Propagate `RUNTIME_NODE`, `RUNTIME_NODE_MODULES` and task-local font paths to
   finalizer child processes. A missing child-process runtime variable is an
   environment failure; fix it before interpreting the deck as failed.

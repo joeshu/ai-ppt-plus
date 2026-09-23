@@ -76,16 +76,32 @@ def test_strict_uses_smaller_batch_for_safer_comparison():
     data = {
         "execution_profile": "strict",
         "source": {"sha256": "d" * 64},
-        "assets": [asset(f"strict-{index}") for index in range(4)],
+        "assets": [asset(f"strict-{index}") for index in range(8)],
     }
     result = plan(data)
-    assert result["batch_count"] == 1
-    assert len(result["generation_batches"][0]["cells"]) == 3
-    assert result["estimated_uncached_imagegen_calls"] == 2
+    assert result["batch_count"] == 3
+    assert [len(batch["cells"]) for batch in result["generation_batches"]] == [3, 3, 2]
+    assert result["estimated_uncached_imagegen_calls"] == 3
+    assert all(batch["max_assets"] == 3 for batch in result["generation_batches"])
+
+
+def test_fast_caps_large_deck_batches_and_keeps_remainder_independent():
+    data = {
+        "execution_profile": "fast",
+        "source": {"sha256": "e" * 64},
+        "assets": [asset(f"fast-{index}") for index in range(9)],
+    }
+    result = plan(data)
+    assert [len(batch["cells"]) for batch in result["generation_batches"]] == [4, 4]
+    assert all(batch["max_assets"] == 4 for batch in result["generation_batches"])
+    assert result["estimated_uncached_imagegen_calls"] == 3
+    assert sum(len(batch["cells"]) for batch in result["generation_batches"]) == 8
+    assert sum("generation_batch_id" not in job for job in result["jobs"]) == 1
 
 
 if __name__ == "__main__":
     test_fast_batches_only_compatible_simple_icons()
     test_explicit_independent_policy_disables_batching()
     test_strict_uses_smaller_batch_for_safer_comparison()
+    test_fast_caps_large_deck_batches_and_keeps_remainder_independent()
     print("ImageGen safe batch planning: ok")

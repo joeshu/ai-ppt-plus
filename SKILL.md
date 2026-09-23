@@ -2,10 +2,10 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.23.02
+  package_revision: 2026.09.23.03
 ---
 
-For fixed-reference image-to-editable-PPTX work, default to the editable worker's machine-validated `fast` execution profile. Use `strict` only when requested or justified by page risk; reserve `ci` for regression. Run finalization preflight before ImageGen or candidate construction. Batch only compatible simple alpha icons, slice them into independent final assets, and validate every slice; keep logos, brand lockups, calligraphy, wide bands and complex art in dedicated requests. Retry only failed asset IDs and cut adaptive local QA crops from one full-page render.
+For fixed-reference image-to-editable-PPTX work, default to the editable worker's machine-validated `fast` execution profile. Use `strict` only when requested or justified by page risk; reserve `ci` for regression. For N attached reference images, freeze the current-turn attachment order and bind source N to slide N before OCR; produce exactly N slides unless the user requests another mapping. Run the complete ordered-input and finalization preflights before ImageGen or candidate construction. Plan compatible simple alpha-icon batches across the deck once (`fast` maximum 4 icons, `strict` maximum 3); never exceed those caps in a manual prompt. Slice accepted batches into independent final assets and validate every slice. Brand marks/lockups—including official-brand visuals—calligraphy, wide bands and complex art use dedicated native ImageGen requests. Retry only failed asset IDs and cut per-page adaptive local QA crops from fresh renders of the complete deck.
 
 Invoke `scripts/run_super_pipeline.py --execution-profile fast|strict` so profile validation and execution-budget preflight run before composition. The orchestrator passes observed candidate and ImageGen counts into editable QA; the performance report derives TTFVR from the render dependency path. `ci` cannot produce a delivery.
 
@@ -215,6 +215,12 @@ editability target, fonts, and worker manifests. Require editable-object
 evidence, rendered previews, technical QA, and a worker handoff. The worker may
 repair its own technical defects but may not change the story or redesign an
 approved reference.
+
+When the current turn supplies multiple reference images, require the editable
+worker's multi-image page-map workflow: preserve exact attachment order and
+page count, do not deduplicate identical pages, compare each final slide only
+with its mapped source, and validate the merged deck as a whole after any
+editable-slide reuse.
 
 For B4 overlay assets, require a transparent-first generation transaction from
 the editable worker: direct RGBA generation, one edit-to-transparent retry if

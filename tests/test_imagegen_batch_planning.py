@@ -22,13 +22,14 @@ def main() -> int:
                 "alpha": {"required": True},
             },
         }
-    result = plan({"source": {"sha256": "c" * 64}, "assets": [item("one"), item("two"), item("three")]})
+    result = plan({"execution_profile": "strict", "source": {"sha256": "c" * 64}, "assets": [item(f"icon-{index}") for index in range(8)]})
     assert result["schema"] == "ai-ppt-plus/imagegen-asset-jobs/v6"
     assert result["native_tool"] == "image_gen.imagegen"
     assert result["native_tool_receipt_required"] is True
-    assert result["batch_count"] == 1
-    assert result["estimated_uncached_imagegen_calls"] == 1
-    assert len(result["generation_batches"][0]["cells"]) == 3
+    assert result["batch_count"] == 3
+    assert result["estimated_uncached_imagegen_calls"] == 3
+    assert [len(batch["cells"]) for batch in result["generation_batches"]] == [3, 3, 2]
+    assert all(batch["max_assets"] == 3 for batch in result["generation_batches"])
     print("root ImageGen batch planning: ok")
     return 0
 

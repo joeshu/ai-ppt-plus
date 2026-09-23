@@ -6,14 +6,20 @@ This is the normative execution contract for fixed-reference image-to-editable-P
 
 Run exactly this visual reconstruction chain for normal fixed-reference work:
 
-`Reference -> Execution Profile -> Prebuild Execution Preflight -> Visual Inventory -> AuthoringPlan -> native_editable/imagegen_asset -> Risk-tier Text Slot Preflight -> Text Coverage Audit -> Asset Generation -> Artifact Tool Build -> Fresh PowerPoint Render -> Full-page Compare -> Adaptive Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
+`Ordered Reference/Page Map -> Execution Profile -> Prebuild Execution Preflight -> Visual Inventory -> AuthoringPlan -> native_editable/imagegen_asset -> Risk-tier Text Slot Preflight -> Text Coverage Audit -> Planned Asset Batches -> Asset Generation -> Artifact Tool Build -> Fresh Deck Render -> Per-page Full-page Compare -> Per-page Adaptive Local Crops -> Responsible Object Repair -> Re-render -> Hard Correctness Check -> Final PPTX`
 
 The chain is intentionally visual-first. PageGraph, TextGraph, manifests, metrics and reports support reconstruction and repair; they do not become independent visual release gates.
 
 ## Phase contract
 
-1. **Reference** — freeze source page, dimensions, aspect ratio and SHA-256. The current source image is the immutable visual authority.
-1A. **Execution Preflight** — before ImageGen or authoring, validate package
+1. **Ordered Reference/Page Map** — resolve every current-turn image in the
+user's attachment order; freeze one row per intended slide with resolved path,
+dimensions, aspect ratio and SHA-256. For N images, bind image N to slide N and
+make exactly N slides unless explicitly requested otherwise. Do not sort,
+silently skip missing pages, deduplicate identical images or insert a cover.
+For multi-image execution, follow `multi-image-reference-deck.md`.
+1A. **Execution Preflight** — run reference-input resolution once for the
+complete ordered roster. Before ImageGen or authoring, validate package
 revision parity, resolved source, runtime Node/modules, CJK font evidence and
 LibreOffice+Poppler. Before ImageGen or the first candidate build, run
 `scripts/validate_finalization_preflight.py` so missing runtime exports,
@@ -23,16 +29,28 @@ receipt directories or final-path conflicts fail before visual repair rounds.
 4. **Classification** — classify every non-text visual as exactly `native_editable` or `imagegen_asset`. Readable formal text stays native. Semantic tables/charts stay native when their meaning/data are known. Reference pictograms/icons are `imagegen_asset` by default unless their visible identity can be faithfully expressed by at most two ordinary native primitives. Complex footer waves, skylines, ribbons/streams and artistic systems may be one or a small number of independent semantic assets.
 5. **Text Slot Preflight** — measure every visible native text slot before authoring. Preserve the reference's exact line topology when observable, not merely a maximum line count. Repair bbox, margins, divider/icon reservations and wrapping before shrinking type. Use the same runtime-resolved font face for measurement and authoring.
 6. **Text Coverage Audit** — require every formal-text producer to bind to an AuthoringPlan owner, TextFit measurement evidence, concrete authoring path and final output binding. Native-text owners may not bypass this audit. Missing coverage is a formal-text/provenance correctness defect, not a visual score failure.
-7. **Asset Generation** — generate every `imagegen_asset` independently with genuine RGBA alpha. Validate artwork identity/contour, alpha bbox, safe padding, clipping and visual centroid. Source crops are evidence, not silent final-asset fallback.
-8. **Artifact Tool Build** — build a fresh editable PPTX through the strict `@oai/artifact-tool` authoring path. Preserve AuthoringPlan object IDs and independent asset mobility. Never use a whole-page screenshot as the editable reconstruction. Where parent/child relationships matter, author children relative to the semantic-region geometry rather than unrelated page coordinates. Material deviations from AuthoringPlan must be written back to evidence and revalidated.
-9. **Fresh PowerPoint Render** — render the exact current PPTX. Historical renders cannot satisfy this phase.
-10. **Full-page Compare** — compare the fresh render to the immutable reference. Scalar metrics are diagnostic only unless a project explicitly supplies a numeric target.
-11. **Adaptive Local Crops** — cut same-coordinate crops from the same full-page render. Select 3-5 high-risk regions in `fast` or 5-10 in `strict`, prioritizing dense text/cards, icon slots, charts, compact arrow+label components, bottom bars and user-flagged areas. Include composed header/footer semantic-region crops when present.
-12. **Responsible Object Repair** — every material mismatch is assigned to the owning object/layer or semantic region. Repair that owner rather than compensating through unrelated neighbors or chasing a scalar score. Protect already-correct regions. Use AuthoringPlan `protected_neighbors` and the pattern-specific repair order in `visual-repair-patterns.md`.
-13. **Re-render** — every accepted material repair must be followed by a fresh render and re-check of the affected crop plus the full page.
-14. **Visual Closeout Consistency** — write structured reference/candidate observations for the required material region roles and validate them with `scripts/validate_visual_closeout.py`. An unresolved visual finding is unfinished repair work, not a score threshold. Contradictory closeout evidence blocks PASS and returns to the repair loop.
-15. **Hard Correctness Check** — only deterministic correctness defects and unresolved evidence-consistency defects block delivery. Visual metrics remain diagnostic.
-16. **Final PPTX** — deliver only the fresh candidate that passed the hard correctness and visual-closeout consistency checks and whose final full-page/local-crop evidence corresponds to the delivered hash.
+7. **Planned Asset Batches** — inventory all pages before the first expensive
+generation call and plan compatible simple icons across the deck. Respect the
+machine limits (`fast`: at most 4 cells per call; `strict`: at most 3); a
+manual prompt must never bypass the planner's cap. Brand/wordmark/calligraphy,
+wide bands and complex art use dedicated native ImageGen calls. Retain rejected
+candidates only in a separate generation log.
+8. **Asset Generation** — generate every approved `imagegen_asset` with
+genuine RGBA alpha. Slice accepted icon batches into independent pictures and
+give each final asset its own stable ID, ImageGen receipt linkage, byte hash,
+identity/contour, alpha bbox, safe-padding, clipping and placement QA. The
+delivered-asset manifest lists only final bytes actually embedded in the PPTX;
+unused attempts belong in the generation log. Source crops are evidence, not
+silent final-asset fallback.
+9. **Artifact Tool Build** — build a fresh editable PPTX through the strict `@oai/artifact-tool` authoring path. Preserve AuthoringPlan object IDs and independent asset mobility. Never use a whole-page screenshot as the editable reconstruction. Where parent/child relationships matter, author children relative to the semantic-region geometry rather than unrelated page coordinates. Material deviations from AuthoringPlan must be written back to evidence and revalidated.
+10. **Fresh Deck Render** — render every page from the exact current PPTX. Historical per-page renders cannot satisfy this phase after a merge or rebuild.
+11. **Per-page Full-page Compare** — compare slide N only to the source mapped to N. Scalar metrics are diagnostic only unless a project explicitly supplies a numeric target.
+12. **Per-page Adaptive Local Crops** — cut same-coordinate crops from each page render. Select 3-5 high-risk regions per page in `fast` or 5-10 per page in `strict`, prioritizing dense text/cards, icon slots, charts, compact arrow+label components, bottom bars and user-flagged areas. Include composed header/footer semantic-region crops when present.
+13. **Responsible Object Repair** — every material mismatch is assigned to the owning object/layer or semantic region. Repair that owner rather than compensating through unrelated neighbors or chasing a scalar score. Protect already-correct regions. Use AuthoringPlan `protected_neighbors` and the pattern-specific repair order in `visual-repair-patterns.md`.
+14. **Re-render** — every accepted material repair must be followed by a fresh full-deck render and re-check of affected crops plus every page.
+15. **Visual Closeout Consistency** — write structured reference/candidate observations for required material region roles and validate them with `scripts/validate_visual_closeout.py`. An unresolved visual finding is unfinished repair work, not a score threshold. Contradictory closeout evidence blocks PASS and returns to repair.
+16. **Hard Correctness Check** — only deterministic correctness defects and unresolved evidence-consistency defects block delivery. Visual metrics remain diagnostic.
+17. **Final PPTX** — deliver only the fresh candidate that passed hard correctness and visual-closeout consistency checks and whose final per-page/crop evidence corresponds to the delivered hash.
 
 ## The only production hard blockers
 
