@@ -8,7 +8,9 @@ ribbons, skyline bands or other non-native visual assets.
 
 1. Freeze the reference path, dimensions and SHA-256.
 2. Inventory every visible non-text visual and assign an `asset_id` and source
-   bbox. Do not inventory only the easiest icons; include brand marks,
+   bbox. Record each icon's foreground, internal-detail and host colors,
+   including whether it is white on a colored header. Do not inventory only
+   the easiest icons; include brand marks,
    calligraphy, footer art and background decoration.
 3. Keep formal text, numbers, ordinary cards, dividers and simple reliable
    geometry native. Route every other visual to `imagegen_asset`.
@@ -36,6 +38,16 @@ be sliced into an independent final asset and receive its own alpha, identity,
 color, placement and local-crop QA record. Set
 `independent_generation_per_asset: true` when the user explicitly requires one
 native generation transaction per visual asset.
+
+Treat foreground color as part of icon identity. The first generation prompt
+must state the source's color roles and approximate hex values per cell. A
+white-on-red icon and a dark-red-on-white icon require different generated
+assets even when their silhouettes match. Do not tint a wrong-color image in
+PowerPoint as a substitute. Validate the final PNG with
+`scripts/validate_icon_color_roles.py` against a per-asset foreground manifest;
+then inspect the icon inside its actual colored PPT header at slide size.
+The pixel validator verifies a declared color, not whether the declaration
+matches the screenshot; compare the source crop first.
 
 ## Required manifest evidence
 

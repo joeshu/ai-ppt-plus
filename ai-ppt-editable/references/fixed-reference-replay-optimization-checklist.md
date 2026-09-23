@@ -18,6 +18,9 @@ it is not a visual score threshold.
 - [ ] For compatible icon sheets, record the generation batch, slice roster,
       alpha-trim transform and independent final paths. Never deliver the
       contact sheet itself.
+- [ ] Record icon foreground, internal detail and host colors from each source
+      crop before the first ImageGen prompt; white-on-red and red-on-white are
+      different assets, even when their pictograms share one silhouette.
 
 ## Asset QA
 
@@ -31,6 +34,8 @@ it is not a visual score threshold.
       shapes or use the source crop as the final asset.
 - [ ] Keep formal copy that sits beside/over the art native and keep every
       generated visual independently movable and replaceable.
+- [ ] Run `scripts/validate_icon_color_roles.py` on the final icon PNGs, then
+      review each icon inside its actual slide background at presentation size.
 
 ## Authoring and closeout
 
@@ -52,6 +57,8 @@ it is not a visual score threshold.
       A matching source hash does not waive this final visual review.
 - [ ] Compare dense copy with source transcription; flag unreadable source
       spans and remove unsupported explanatory copy.
+- [ ] Mark every colored/bold run inside dense source copy, rebuild those as
+      editable PowerPoint character runs, and inspect the rendered line breaks.
 - [ ] Run source-visual coverage, object/editability, package integrity and
       no-whole-slide-raster gates.
 - [ ] Run the post-export embedded-media byte gate. Every manifest `asset_id`

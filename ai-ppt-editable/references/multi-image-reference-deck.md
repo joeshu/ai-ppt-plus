@@ -67,6 +67,13 @@ speaker notes or a transcription manifest. Never silently replace the source
 with plausible new sales copy or an expanded summary. Check every claim in
 new text against the visible source before final delivery.
 
+For source text with mixed emphasis, inventory each colored/bold span within
+its original line before writing text. Use native character runs (or adjacent
+native text fields when line geometry demands them) to preserve the exact
+highlight boundaries. A visually similar all-black paragraph fails the text
+fidelity review even if its words survive. Inspect the rendered tight crop at
+slide size and ensure colored spans do not shift to a neighboring line.
+
 For an existing multi-page deck, use the deck-level pipeline route with
 `--reference-dir` and `--require-multipage-layout`; a single-reference
 first-page comparison is never evidence for the whole deck. If the authoring
