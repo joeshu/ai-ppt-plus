@@ -44,6 +44,16 @@ it is not a visual score threshold.
 - [ ] For charts with unverified workbook data, preserve visible topology and
       labels with editable line/marker primitives; do not invent a native chart
       or add values that are absent from the reference.
+- [ ] Transcribe every visible series into a point ledger before drawing. Record
+      the month, displayed label and exact endpoint; a current-year partial
+      series ends at its last visible month. Name the point, segment and label
+      primitives, then run `scripts/validate_reference_chart_series.py` against
+      the final PPTX. Inspect overlapping labels in a chart-only render crop.
+- [ ] For rounded panels, use a bounded corner size. Some authoring libraries
+      interpret `rectRadius` in slide units rather than source pixels, turning
+      broad cards into near-ellipses. Prefer a plain rectangle when that option
+      cannot be calibrated; check every broad card silhouette in the first
+      rendered draft.
 - [ ] Bind the task-local CJK fonts to the actual renderer and require a fresh
       render receipt with `fontconfig_bound=true` and a non-empty font hash.
 - [ ] Render once, inspect the full page plus 5–10 diverse risk crops, then
@@ -57,6 +67,9 @@ it is not a visual score threshold.
       A matching source hash does not waive this final visual review.
 - [ ] Compare dense copy with source transcription; flag unreadable source
       spans and remove unsupported explanatory copy.
+- [ ] Preserve numbered clauses and secondary prompts in dense measure rows;
+      compare the source row crop and final row crop after text fitting, rather
+      than simplifying the copy merely to clear an overflow warning.
 - [ ] Mark every colored/bold run inside dense source copy, rebuild those as
       editable PowerPoint character runs, and inspect the rendered line breaks.
 - [ ] Run source-visual coverage, object/editability, package integrity and
