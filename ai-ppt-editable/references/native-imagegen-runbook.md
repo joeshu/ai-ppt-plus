@@ -18,6 +18,12 @@ ribbons, skyline bands or other non-native visual assets.
 5. Record the prompt, source reference, generated output and native-tool
    receipt before composing the PPTX. Missing receipt means `blocked`; do not
    fabricate a backend name or continue with a scripted icon.
+6. After Artifact Tool export, verify that every approved final byte hash is
+   actually present in `ppt/media/` with
+   `scripts/validate_embedded_imagegen_assets.py`. A coverage/layout manifest
+   can pass while a custom composer silently drops the pictures; that is a
+   blocker, even when the fresh render otherwise looks plausible. Bind checks
+   by stable `asset_id` and current `request_id`, not positional asset order.
 
 Brand lockups, calligraphy, wide bands and complex art always use dedicated
 ImageGen calls. Compatible simple alpha icons may use an explicitly declared
@@ -71,6 +77,10 @@ python3 scripts/validate_imagegen_final_assets.py \
 The strict validator must reject a missing receipt, a non-native tool name, a
 missing prompt/output file, a source crop, a missing delivered hash or a final
 asset that is not independently movable.
+
+The post-export embedded-media validator is a separate hard gate. It must
+report at least one matching `ppt/media/*` part for each final `asset_id`; the
+same ImageGen asset may legitimately appear in multiple picture placements.
 
 ## Alpha and placement
 

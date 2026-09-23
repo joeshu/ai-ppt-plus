@@ -54,6 +54,7 @@ def main() -> int:
             "assets": [{
                 "id": "icon-1",
                 "node_id": "icon-1",
+                "asset_id": "icon-1",
                 "request_id": request_id,
                 "path": str(asset),
                 "actual_sha256": sha(asset),
@@ -69,6 +70,7 @@ def main() -> int:
             archive.writestr("ppt/media/image1.png", asset.read_bytes())
         embedded = validate_embedded(deck, manifest, request_id)
         assert embedded["valid"], embedded
+        assert embedded["approved_assets"][0]["asset_id"] == "icon-1"
         assert embedded["approved_assets"][0]["embedded_parts"] == ["ppt/media/image1.png"]
 
         # A transformed/replaced copy is not the approved final asset bytes.

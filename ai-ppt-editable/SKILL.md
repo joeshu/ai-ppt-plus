@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.22.20
+  package_revision: 2026.09.22.21
 ---
 
 # AI PPT Editable
@@ -190,7 +190,7 @@ Generate every `imagegen_asset` as an independent asset with genuine RGBA alpha 
 
 For continuous low-frequency systems such as footer ribbons, skyline bands and header waves, rectangular alpha geometry is necessary but insufficient. Record a semantic parent bbox, sampled contour landmarks and child anchors. Compare the final composed region against the reference with `scripts/audit_continuous_band.py`; zero bbox delta must not close a visible contour mismatch. Keep readable footer/header text native and repair in this order: parent bbox -> contour profile -> asset scale/crop -> child anchors -> z-order.
 
-Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon. An explicitly approved source-reuse fallback remains available for non-brand assets only. A brand asset may bypass generation only when it is a separately supplied exact official/standalone file satisfying the exact-brand contract.
+Source crops are evidence, not silent final-asset fallback. Contact/sprite sheets are QA evidence and never final slide assets. If generation is unavailable or repeatedly fails, report the blocker or request an explicit fallback decision rather than substituting a low-quality scripted icon. An explicitly approved source-reuse fallback remains available for non-brand assets only. A brand asset may bypass generation only when it is a separately supplied exact official/standalone file satisfying the exact-brand contract. After export, run `scripts/validate_embedded_imagegen_assets.py` with the current request ID; every manifest `asset_id` must match an actual `ppt/media/*` byte hash. This closes the failure mode where a direct composer records ImageGen evidence but emits a deck with no pictures.
 
 The source-visual coverage gate is upstream of visual closeout; a human crop
 review cannot turn an omitted complex asset into a covered asset. Keep the

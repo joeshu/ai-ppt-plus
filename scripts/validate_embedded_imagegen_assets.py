@@ -61,7 +61,9 @@ def validate(pptx_path: Path, manifest_path: Path, request_id: str) -> dict:
     for index, asset in enumerate(assets, 1):
         if not isinstance(asset, dict):
             continue
-        asset_id = asset.get("id") or asset.get("node_id") or f"asset-{index}"
+        # v4 final-asset manifests bind through stable semantic asset_id;
+        # retain legacy id/node_id compatibility for older rerun manifests.
+        asset_id = asset.get("asset_id") or asset.get("id") or asset.get("node_id") or f"asset-{index}"
         if asset.get("request_id") != request_id:
             issues.append({"code": "asset_request_id_mismatch", "asset_id": asset_id, "expected": request_id, "actual": asset.get("request_id")})
             continue

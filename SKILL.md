@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.22.20
+  package_revision: 2026.09.22.21
 ---
 
 For fixed-reference image-to-editable-PPTX work, default to the editable worker's machine-validated `fast` execution profile. Use `strict` only when requested or justified by page risk; reserve `ci` for regression. Run finalization preflight before ImageGen or candidate construction. Batch only compatible simple alpha icons, slice them into independent final assets, and validate every slice; keep logos, brand lockups, calligraphy, wide bands and complex art in dedicated requests. Retry only failed asset IDs and cut adaptive local QA crops from one full-page render.
@@ -261,7 +261,19 @@ python3 ai-ppt-editable/scripts/validate_source_visual_assets.py \
 
 Also require the coordinate-space contract and native-table density gate on
 layouts that use those objects. These are deterministic technical blockers;
-they do not replace the required fresh render and human visual closeout.
+they do not replace the required fresh render and human visual closeout. After
+the deck is exported, run the embedded-media byte gate with the same request
+ID; every final `asset_id` must match at least one `ppt/media/*` hash. This
+prevents a custom authoring path from passing source coverage while silently
+dropping all ImageGen pictures from the PPTX.
+
+```bash
+python3 ai-ppt-editable/scripts/validate_embedded_imagegen_assets.py \
+  --pptx PROJECT/final.pptx \
+  --manifest PROJECT/imagegen-assets-manifest.json \
+  --request-id REQUEST_ID \
+  --report PROJECT/embedded-imagegen-assets-validation.json
+```
 
 For source-image replay manifests, bind the coverage report into the case
 record before technical completion: missing coverage evidence is `NOT_RUN`, a
