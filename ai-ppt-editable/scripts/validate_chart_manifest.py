@@ -200,7 +200,7 @@ def validate(
         if not isinstance(categories, list) or not categories or any(not isinstance(item, str) or not item.strip() for item in categories):
             errors.append({"severity": "blocker", "code": "categories_invalid", "chart_id": chart_id})
             categories = []
-        if len(set(categories)) != len(categories):
+        if len(set(categories)) != len(categories) and not chart.get("duplicate_categories_visible_in_source"):
             errors.append({"severity": "blocker", "code": "categories_duplicate", "chart_id": chart_id})
 
         series = chart.get("series")
@@ -242,6 +242,18 @@ def validate(
                             raise ValueError
                     except (TypeError, ValueError):
                         errors.append({"severity": "blocker", "code": "value_label_category_invalid", "chart_id": chart_id, "series_id": series_id, "index": label_index})
+                    else:
+                        observed_label = _item_content(label).replace(",", "").strip()
+                        try:
+                            numeric_label = float(observed_label)
+                        except ValueError:
+                            continue  # A label may contain a unit or an editorial annotation.
+                        point_value = values[category_index] if category_index < len(values) else None
+                        if point_value is None or not isinstance(point_value, (int, float)) or isinstance(point_value, bool) or not math.isclose(float(point_value), numeric_label, rel_tol=0, abs_tol=0.051):
+                            if label.get("source_label_point_conflict") is True and str(label.get("source_evidence_note") or "").strip():
+                                warnings.append({"severity": "major", "code": "source_label_point_conflict", "chart_id": chart_id, "series_id": series_id, "category_index": category_index, "label": observed_label, "point_value": point_value})
+                            else:
+                                errors.append({"severity": "blocker", "code": "value_label_point_mismatch", "chart_id": chart_id, "series_id": series_id, "category_index": category_index, "label": observed_label, "point_value": point_value})
         if null_count and chart.get("missing_value_policy") != "blank_not_zero":
             errors.append({"severity": "blocker", "code": "missing_value_policy_invalid", "chart_id": chart_id, "null_values": null_count, "observed": chart.get("missing_value_policy")})
 

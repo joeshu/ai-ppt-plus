@@ -9,6 +9,10 @@ footer decoration.
 1. Freeze the source dimensions and author in one pixel coordinate space using
    `ref_width` and `ref_height`. Convert to slide units only in the authoring
    backend.
+   Hash every newly attached file first. If its bytes match an earlier source,
+   reuse the verified text/geometry inventory and independently validated
+   ImageGen assets by source and asset hash. Rebuild only regions affected by
+   the user's latest feedback, then render and inspect the complete final slide.
 2. Inventory large regions first: header/brand, status block, chart, repeated
    modules, guarantee band, results band and footer. Then assign stable IDs to
    their children. This prevents repeated OCR/layout passes.

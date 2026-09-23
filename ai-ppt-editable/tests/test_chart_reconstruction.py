@@ -78,6 +78,33 @@ def main() -> int:
         assert result.returncode == 0, result.stdout + result.stderr
         assert json.loads(report.read_text(encoding="utf-8"))["valid"] is True
 
+        bad_label = copy.deepcopy(good)
+        bad_label["charts"][0]["series"][0]["value_labels"][1]["text"] = "28.53"
+        manifest.write_text(json.dumps(bad_label, ensure_ascii=False), encoding="utf-8")
+        result = run(manifest, report)
+        assert result.returncode == 2 and "value_label_point_mismatch" in result.stdout, result.stdout
+
+        explained_conflict = copy.deepcopy(bad_label)
+        explained_conflict["charts"][0]["series"][0]["value_labels"][1].update({"source_label_point_conflict": True, "source_evidence_note": "原图二月标签与纵轴点位高度矛盾，保留可见值和点位。"})
+        manifest.write_text(json.dumps(explained_conflict, ensure_ascii=False), encoding="utf-8")
+        result = run(manifest, report)
+        assert result.returncode == 0 and "source_label_point_conflict" in result.stdout, result.stdout
+
+        duplicated = copy.deepcopy(good)
+        duplicated["charts"][0]["categories"][2] = "2月"
+        duplicated["charts"][0]["duplicate_categories_visible_in_source"] = True
+        duplicated["charts"][0]["data_snapshot_sha256"] = digest({
+            "kind": "category_chart",
+            "categories": duplicated["charts"][0]["categories"],
+            "series": [
+                {"series_id": item["series_id"], "name": item["name"], "values": item["values"]}
+                for item in duplicated["charts"][0]["series"]
+            ],
+        })
+        manifest.write_text(json.dumps(duplicated, ensure_ascii=False), encoding="utf-8")
+        result = run(manifest, report)
+        assert result.returncode == 0, result.stdout + result.stderr
+
         bad_native = copy.deepcopy(good)
         bad_native["charts"][0]["representation"] = "native_chart"
         manifest.write_text(json.dumps(bad_native, ensure_ascii=False), encoding="utf-8")

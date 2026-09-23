@@ -51,6 +51,13 @@ record contains:
 - `chart_id`, `slide_no`, title and `representation`;
 - `source_data_status`, `data_source` and `data_snapshot_sha256`;
 - exact `categories` and series values, allowing `null` for missing values;
+- numeric `value_labels` linked by `category_index` to the same series value;
+  the validator rejects a different number or a label on a missing point;
+  if the source itself has a label at odds with its plotted point, mark only
+  that label `source_label_point_conflict: true` with a nonempty
+  `source_evidence_note` and preserve both visible features;
+  set `duplicate_categories_visible_in_source: true` only when repeated axis
+  labels are visibly present in the screenshot;
 - `required_elements` and `visible_elements` for title, legend, months, units
   and data labels;
 - reference and plot geometry in a declared coordinate space;
@@ -69,7 +76,8 @@ hashes.
 2. Inventory plot box, title, units, months, gridlines, series, markers,
    legend, label colors and label offsets.
 3. Build and reconcile the canonical data matrix. OCR is an input to review,
-   not authority. Compare every label with its point location and trend.
+   not authority. Generate the plotted points and numeric labels from that same
+   matrix; compare every label with its point location and trend.
 4. Select the representation using the decision table. For the hybrid route,
    keep the panel substrate separate and place text overlays above it.
 5. Render only the affected chart regions during repair. Compare each chart
