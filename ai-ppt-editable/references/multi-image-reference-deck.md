@@ -61,6 +61,24 @@ when all OCR words and object counts are present. A numeric image score alone
 cannot certify these structures. Review full-slide pairs after crop fixes so
 one region's repair does not move another.
 
+For ladders, funnels and paired risk-to-action layouts, store one row per
+source relationship: number, label, count, explanatory card, arrow and
+destination block. Preserve the row count and pairings as native editable
+objects. For dense source tables, store the exact row/column headers and
+visible values before authoring; do not infer a native table requirement from
+the grid appearance. A native cell-shaped group is valid when the project's
+contract forbids native tables. Before visual review, run
+`scripts/validate_reference_structure_contract.py` with source-derived
+required terms, ordered groups, native-object minimum and picture maximum.
+The script catches absent content and screenshot slides; the source/render
+crop still decides row alignment and arrow routing.
+
+Run package integrity before signoff. Some external PPTX writers emit an
+unused content-type override for a slide master that is not in the archive;
+remove only that absent, unreferenced override after verifying relationships,
+then rerun package and render checks on the exact repaired file. Do not
+ignore validator failures just because LibreOffice opens the deck.
+
 For small or blurred source text, transcribe only legible wording. Preserve
 the source's layout with editable text fields, and mark unreadable spans in
 speaker notes or a transcription manifest. Never silently replace the source
