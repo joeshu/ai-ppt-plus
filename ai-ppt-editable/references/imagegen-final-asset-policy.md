@@ -26,13 +26,11 @@ and the crop-QA baseline. It is not the final PPT asset.
 
 `source_reuse` crops are allowed only as reference evidence, crop geometry, or
 source-vs-render comparison material. They must never be inserted as the final
-asset for these classes by default. If generation fails, pause at a user-
-decision gate and present exactly two choices: (1) retry/continue native
-`imagegen`, or (2) use deterministic original-image crop/cutout
-(`source_reuse`). Never choose either route silently. The selected route,
-approver, timestamp and reason must be recorded in the run manifest. If the
-user has not selected a route, the asset remains blocked; an unlabelled
-fallback, flat fill, generic icon, or full-slide screenshot is forbidden.
+asset for these classes. If generation fails, retry/continue native `imagegen`
+or leave the affected asset blocked. Approved source-reuse fallback is limited
+to non-brand assets and requires a recorded user decision, approver, timestamp
+and reason. An unlabelled fallback, flat fill, generic icon, or full-slide
+screenshot is forbidden.
 
 Each generated final asset is independent and movable, and its manifest record
 must include `asset_id`, `asset_class`, `provenance_mode: imagegen`,

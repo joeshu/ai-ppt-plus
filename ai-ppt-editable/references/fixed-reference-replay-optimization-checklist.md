@@ -25,10 +25,10 @@ it is not a visual score threshold.
       clipping and local-crop identity/color for every independent asset.
 - [ ] Keep generated raw output and the delivered derivative separately; record
       any wide-band crop/resize transform.
-- [ ] Treat screenshot-only logos as reference evidence. Generate a clearly
-      disclosed non-official approximation or pause for an approved standalone
-      official asset; never trace a brand logo with native shapes or silently
-      paste a screenshot crop.
+- [ ] Generate every brand-class final asset with native ImageGen, whether the
+      reference is a screenshot crop or an official standalone file. Use the
+      source only as prompt/geometry/color evidence. Never trace it with native
+      shapes or use the source crop as the final asset.
 - [ ] Keep formal copy that sits beside/over the art native and keep every
       generated visual independently movable and replaceable.
 

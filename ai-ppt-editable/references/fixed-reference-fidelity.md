@@ -7,7 +7,7 @@ external comparison skill, repository, binary, route, prompt, or output.
 ## Mandatory execution rules
 
 1. **Full text-slot preflight** — Run `scripts/text_fit_deck.py` against the approved layout before authoring. It must measure every visible text path. Repair geometry/margins first; shrink only after real render evidence confirms overflow.
-2. **ImageGen asset route** — Icons, pictograms, decorative art, complex illustrations, ribbons and multi-lane/gradient arrow systems are independent ImageGen assets with true RGBA. Source crops are reference evidence, not final assets except supplied exact brand marks or explicit user-approved fallback.
+2. **ImageGen asset route** — Icons, pictograms, decorative art, complex illustrations, ribbons, multi-lane/gradient arrow systems and every brand visual are independent ImageGen assets with true RGBA. Source crops and supplied brand files are reference evidence, not final assets; explicit user-approved source reuse applies only to non-brand assets.
 3. **Content-aware grid cutting** — Generated sheets declare `ROWSxCOLS` and use detected row/column centers. A count mismatch blocks the sheet.
 4. **Visual-centroid repacking and placement** — Repack by alpha-visible bbox and alpha-weighted visual centroid with safe transparent padding. Use source visual locks for hard-region replay.
 5. **Native chart gap preservation** — Missing future values must never be serialized as zeros. Keep charts native/editable and patch only blank-series references when required.

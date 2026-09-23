@@ -49,10 +49,12 @@ replaceable vector/raster assets with explicit provenance.
 
 ## Brand and decorative regions
 
-Treat a supplied official standalone logo as one replaceable asset. A logo
-inside a screenshot is reference evidence, not an official standalone file.
-If an exact approved asset is unavailable, leave a named replaceable brand
-slot and disclose the substitution instead of tracing an inaccurate logo.
+Generate every brand mark as an independent native ImageGen asset, using an
+official standalone logo or screenshot crop as reference evidence when
+available. A supplied official file does not bypass ImageGen for the final
+asset. Never trace a logo with native shapes or silently insert a screenshot
+crop as the final asset; retain the generated result as a movable, replaceable
+picture and validate its local render crop against the reference.
 
 Build decorative footer waves and skylines after content geometry. Use a small
 number of semantic native shapes when they remain faithful; otherwise use one

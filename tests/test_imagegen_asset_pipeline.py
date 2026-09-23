@@ -8,12 +8,16 @@ planner=load("ai-ppt-editable/scripts/build_imagegen_asset_jobs.py","planner")
 validator=load("ai-ppt-editable/scripts/validate_imagegen_final_assets.py","validator")
 
 def test_brand_routes_directly_to_imagegen():
-    data={"source":{"sha256":"a"*64},"assets":[{"asset_id":"logo","asset_class":"brand_lockup","source_bbox":[0,0,1,1]},{"asset_id":"body","asset_class":"formal_text"},{"asset_id":"footer","asset_class":"brand_band","source_bbox":[0,0,10,1]}]}
+    data={"source":{"sha256":"a"*64,"path":"reference.png"},"assets":[{"asset_id":"logo","asset_class":"brand_lockup","source_bbox":[0,0,1,1],"route":"native_editable","provenance_mode":"provided_exact_brand_asset","source_ref":"official-logo.svg"},{"asset_id":"body","asset_class":"formal_text"},{"asset_id":"footer","asset_class":"brand_band","source_bbox":[0,0,10,1]}]}
     r=planner.plan(data)
     assert [j["asset_id"] for j in r["jobs"]]==["logo","footer"]
     assert r["native_editable_assets"]==["body"]
     assert all(j["retry_scope"]=="asset_only" for j in r["jobs"])
     assert all(j["qa"]["contact_sheet_forbidden"] for j in r["jobs"])
+    logo=next(j for j in r["jobs"] if j["asset_id"]=="logo")
+    assert logo["reference"]["source_reference"]=="official-logo.svg"
+    assert logo["request"]["native_tool"]=="image_gen.imagegen"
+    assert "Preserve emblem contours, wordmark lettering and spelling" in logo["request"]["generation_prompt"]
 
 def test_cache_key_is_deterministic_and_bbox_sensitive():
     base={"source":{"sha256":"b"*64},"assets":[{"asset_id":"x","asset_class":"logo","source_bbox":[1,2,3,4]}]}

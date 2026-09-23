@@ -6,11 +6,13 @@ from pathlib import Path
 NATIVE={"formal_text","text","data","chart_data","native_shape","line","simple_shape","table"}
 ICON_CLASSES={"icon","icon_asset","glyph","pictogram","badge"}
 NEVER_BATCH_CLASSES={"brand","brand_asset","brand_lockup","logo","calligraphic_slogan","brand_band","gradient_visual","illustration"}
+BRAND_CLASSES={"brand","brand_asset","brand_lockup","brand_logo","brand_mark","logo","wordmark","calligraphic_slogan","signature","seal","brand_band","5g_mark","locked_brand_art"}
 def stable_hash(obj): return hashlib.sha256(json.dumps(obj,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()).hexdigest()
 def route(item):
     explicit=str(item.get("route","")).lower()
-    if explicit in {"native_editable","imagegen_asset"}: return explicit
     cls=str(item.get("asset_class",item.get("type",""))).lower().replace("-","_")
+    if cls in BRAND_CLASSES: return "imagegen_asset"
+    if explicit in {"native_editable","imagegen_asset"}: return explicit
     return "native_editable" if cls in NATIVE else "imagegen_asset"
 def _crop(box,pad=.25):
     if not isinstance(box,(list,tuple)) or len(box)!=4: return None
@@ -35,6 +37,12 @@ def _contract_prompt(contract):
     return "; ".join(parts)
 def _generation_prompt(item,contract):
     base=str(item.get("prompt") or "").strip(); suffix=_contract_prompt(contract)
+    cls=str(item.get("asset_class",item.get("type",""))).lower().replace("-","_")
+    if cls in BRAND_CLASSES:
+        brand_instruction=("Faithfully reconstruct the complete brand visual using the supplied reference. Preserve emblem contours, "
+                           "wordmark lettering and spelling, proportions, arrangement, and brand colors. Do not invent, simplify, "
+                           "or omit mark elements. Produce one independently movable transparent RGBA asset when it overlays the slide.")
+        base=(base+"\n"+brand_instruction).strip() if base else brand_instruction
     if base and suffix: return base+"\nAsset identity/color contract: "+suffix
     return base or suffix
 def _batch_limit(profile): return {"fast":4,"strict":3,"ci":0}.get(profile,4)
@@ -79,18 +87,17 @@ def plan(data):
     for i,item in enumerate(items,1):
         aid=item.get("asset_id") or item.get("id") or f"asset-{i}"; r=route(item)
         if r=="native_editable": native.append(aid); continue
-        if item.get("provenance_mode")=="provided_exact_brand_asset": native.append(aid); continue
         bbox=item.get("source_bbox") or item.get("placement_bbox")
         cls=str(item.get("asset_class",item.get("type",""))).lower().replace("-","_")
         ref_visible=item.get("reference_visible_bbox_norm"); contract=item.get("asset_contract")
         alpha_contract=contract.get("alpha",{}) if isinstance(contract,dict) else {}
         alpha_required=bool(alpha_contract.get("required",item.get("alpha_required",True)))
         prompt=_generation_prompt(item,contract)
-        ref={"source_sha256":source.get("sha256"),"asset_id":aid,"asset_class":item.get("asset_class"),"source_bbox":bbox,"aspect_ratio":item.get("aspect_ratio"),"prompt":prompt,"alpha_required":alpha_required,"asset_contract":contract}
+        ref={"source_sha256":source.get("sha256"),"source_reference":item.get("source_ref") or source.get("path"),"asset_id":aid,"asset_class":item.get("asset_class"),"source_bbox":bbox,"aspect_ratio":item.get("aspect_ratio"),"prompt":prompt,"alpha_required":alpha_required,"asset_contract":contract}
         if ref_visible is not None: ref["reference_visible_bbox_norm"]=list(ref_visible)
         key=stable_hash(ref)
         placement_mode="adaptive-alpha-fit" if alpha_required and cls in ICON_CLASSES else ("alpha-centroid-fit" if alpha_required else "slot-bbox")
-        request={"object_id":aid,"generation_prompt":prompt,"asset_contract":contract,"background_mode":"transparent" if alpha_required else "opaque","preserve_geometry":{"x":bbox[0],"y":bbox[1],"w":bbox[2],"h":bbox[3]} if isinstance(bbox,(list,tuple)) and len(bbox)==4 else {},"align_visible_alpha":alpha_required,"placement_mode":placement_mode,"cache_key":key,"retry_scope":"asset_only","native_tool":"image_gen.imagegen","native_tool_receipt_required":True}
+        request={"object_id":aid,"generation_prompt":prompt,"asset_contract":contract,"source_reference":ref["source_reference"],"reference_crop_bbox":bbox,"background_mode":"transparent" if alpha_required else "opaque","preserve_geometry":{"x":bbox[0],"y":bbox[1],"w":bbox[2],"h":bbox[3]} if isinstance(bbox,(list,tuple)) and len(bbox)==4 else {},"align_visible_alpha":alpha_required,"placement_mode":placement_mode,"cache_key":key,"retry_scope":"asset_only","native_tool":"image_gen.imagegen","native_tool_receipt_required":True}
         if ref_visible is not None: request["reference_visible_bbox_norm"]=list(ref_visible)
         qa={"independent_asset":True,"contact_sheet_forbidden":True,"transparent_rgba":alpha_required,"visible_alpha_bbox":True,"alpha_centroid":True,"placement_bbox":True,"local_crop_compare":True,"local_crop_bbox":_crop(bbox),"identity_contract_required":True,"semantic_identity_compare":True,"contour_identity_compare":True,"color_role_compare":True,"failure_classes":["placement_only","identity_or_color","alpha_or_clipping"]}
         if ref_visible is not None: qa["placement_geometry_compare"]=True

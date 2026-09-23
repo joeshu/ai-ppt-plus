@@ -50,7 +50,7 @@ def main() -> int:
     assert not report["valid"]
     assert "brand_lockup_whole_asset_contract_missing" in codes
     assert "brand_lockup_illegally_split" in codes
-    assert "brand_asset_requires_imagegen_or_exact_asset" in codes
+    assert "brand_asset_requires_native_imagegen" in codes
 
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
@@ -62,7 +62,21 @@ def main() -> int:
             "source_ref": "official-logo.png", "source_sha256": "0" * 64, "copied_to": "logo.png"
         }]}), encoding="utf-8")
         exact_report = module.validate_brand_coverage(root)
-        assert exact_report["valid"], exact_report
+        exact_codes = {item["code"] for item in exact_report["issues"]}
+        assert not exact_report["valid"], exact_report
+        assert "brand_asset_requires_native_imagegen" in exact_codes
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        (root / "page-graph.json").write_text(json.dumps({"nodes": [{"id": "logo", "type": "logo", "role": "logo"}]}), encoding="utf-8")
+        (root / "imagegen-assets-manifest.json").write_text(json.dumps({"assets": [{
+            "asset_id": "logo", "asset_class": "logo", "independent_asset": True,
+            "provenance_mode": "imagegen", "generated_source": "generated/logo.png",
+            "copied_to": "logo.png", "prompt_file": "logo.txt", "backend": "image_gen.imagegen",
+            "native_imagegen_receipt": {"tool": "image_gen.imagegen"}
+        }]}), encoding="utf-8")
+        generated_report = module.validate_brand_coverage(root)
+        assert generated_report["valid"], generated_report
 
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)

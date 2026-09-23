@@ -5,8 +5,8 @@ import argparse, hashlib, json, re
 from pathlib import Path
 
 # Deterministic two-route contract: formal text/data + simple PPT primitives stay
-# native. Brand may use a separately supplied exact official asset; a crop from
-# the slide/reference image is never such an asset.
+# native; all visual classes, including brand visuals, require native ImageGen
+# for the final asset. Supplied brand files remain references, not bypasses.
 REQUIRED = {
     "icon","icons","badge","gradient","gradient_visual","complex_art",
     "illustration","artistic_typography","decorative_art","logo","brand",
@@ -14,7 +14,7 @@ REQUIRED = {
     "brand_band","skyline","ribbon","5g_mark","locked_brand_art"
 }
 BRAND_CLASSES = {
-    "logo", "brand", "brand_lockup", "wordmark", "calligraphic_slogan",
+    "logo", "brand", "brand_logo", "brand_lockup", "wordmark", "calligraphic_slogan",
     "signature", "seal", "brand_band", "5g_mark", "locked_brand_art",
 }
 IMAGEGEN_WORD=re.compile(r"(^|[-_.:/ ])imagegen($|[-_.:/ ])",re.I)
@@ -45,14 +45,6 @@ def _validated_sheet_derivative(item):
         and len(bbox) == 4
         and all(isinstance(value, (int, float)) and value >= 0 for value in bbox)
     )
-
-def _exact_brand(item, cls):
-    method=str(item.get("extraction_method") or "").lower()
-    return (cls in BRAND_CLASSES and item.get("provenance_mode")=="provided_exact_brand_asset"
-            and method=="approved-source-asset" and item.get("independent_asset") is True
-            and item.get("exact_brand_asset") is True and item.get("user_supplied") is True
-            and item.get("source_kind") in {"standalone_file","official_asset"}
-            and not item.get("source_bbox") and item.get("source_reuse") is not True)
 
 def _sheet_ancestry(item):
     if item.get("sprite_sheet") is True or item.get("contact_sheet") is True: return True
@@ -110,12 +102,11 @@ def validate(path:Path,*,strict=False):
         asset_id=item.get("asset_id") or item.get("id") or f"asset-{index}"; cls=_class(item); route=str(item.get("provenance_mode","")).lower()
         if cls not in REQUIRED:
             records.append({"asset_id":asset_id,"asset_class":cls,"route":route or "unspecified"}); continue
-        exact_brand=_exact_brand(item,cls)
         required=("generated_source","copied_to","prompt_file","backend"); missing=[k for k in required if not item.get(k)]
         fallback=route=="source_reuse" and item.get("fallback_decision")=="user_approved" and item.get("decision_id") and item.get("decision_reason") and item.get("decision_timestamp")
-        if cls in BRAND_CLASSES and route != "imagegen" and not exact_brand: errors.append({"code":"brand_asset_requires_imagegen_or_exact_asset","asset_id":asset_id,"asset_class":cls,"observed":route})
-        if route!="imagegen" and not fallback and not exact_brand: errors.append({"code":"final_asset_not_imagegen","asset_id":asset_id,"asset_class":cls,"observed":route})
-        if missing and not fallback and not exact_brand: errors.append({"code":"imagegen_evidence_missing","asset_id":asset_id,"missing":missing})
+        if cls in BRAND_CLASSES and route != "imagegen": errors.append({"code":"brand_asset_requires_native_imagegen","asset_id":asset_id,"asset_class":cls,"observed":route})
+        if route!="imagegen" and not fallback: errors.append({"code":"final_asset_not_imagegen","asset_id":asset_id,"asset_class":cls,"observed":route})
+        if missing and not fallback: errors.append({"code":"imagegen_evidence_missing","asset_id":asset_id,"missing":missing})
         if (item.get("source_reuse") is True or item.get("extraction_method") in {"source_reuse","exact_crop","crop"}) and not fallback: errors.append({"code":"source_reuse_final_asset_forbidden","asset_id":asset_id})
         if fallback and not (item.get("source_ref") and item.get("source_bbox") and item.get("source_sha256")): errors.append({"code":"approved_fallback_missing_source_evidence","asset_id":asset_id})
         if _sheet_ancestry(item): errors.append({"code":"sheet_not_independent_asset","asset_id":asset_id})
@@ -139,13 +130,6 @@ def validate(path:Path,*,strict=False):
             if strict and (source is None or not source.is_file()): errors.append({"code":"approved_fallback_source_missing","asset_id":asset_id,"path":str(source) if source else None})
             if strict and (not isinstance(declared,str) or not SHA256_RE.fullmatch(declared)): errors.append({"code":"approved_fallback_source_hash_invalid","asset_id":asset_id,"declared":declared})
             elif source and source.is_file() and declared and _sha256(source)!=declared: errors.append({"code":"approved_fallback_source_hash_mismatch","asset_id":asset_id})
-        if exact_brand:
-            source=_resolve(path,item.get("source_ref")); copied=_resolve(path,item.get("copied_to")); declared=item.get("source_sha256")
-            if source is None or not source.is_file(): errors.append({"code":"exact_brand_source_missing","asset_id":asset_id})
-            if copied is None or not copied.is_file(): errors.append({"code":"exact_brand_copy_missing","asset_id":asset_id})
-            if not isinstance(declared,str) or not SHA256_RE.fullmatch(declared): errors.append({"code":"exact_brand_source_hash_invalid","asset_id":asset_id})
-            elif source and source.is_file() and _sha256(source)!=declared: errors.append({"code":"exact_brand_source_hash_mismatch","asset_id":asset_id})
-            elif copied and copied.is_file() and _sha256(copied)!=declared: errors.append({"code":"exact_brand_copy_hash_mismatch","asset_id":asset_id})
         records.append({"asset_id":asset_id,"asset_class":cls,"route":route,"generated_source":item.get("generated_source"),"copied_to":item.get("copied_to")})
     return {"schema":"ai-ppt-plus/imagegen-final-assets/v4" if receipt_required else "ai-ppt-plus/imagegen-final-assets/v3","valid":not errors,"strict":strict,"native_tool_receipt_required":receipt_required,"required_classes":sorted(REQUIRED),"asset_count":len(assets),"records":records,"errors":errors,"human_visual_review_required":True}
 

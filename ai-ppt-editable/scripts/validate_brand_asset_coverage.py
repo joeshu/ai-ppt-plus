@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Enforce brand/logo coverage from PageGraph into final generated assets.
 
-Brand uses ImageGen or a separately supplied exact official asset. Reference
-image crops remain forbidden. Complete lockups stay one independent asset.
+Every brand visual uses ImageGen for its final asset. Supplied official files
+and reference image crops may guide generation but never bypass it. Complete
+lockups stay one independent asset.
 """
 from __future__ import annotations
 
@@ -23,19 +24,6 @@ def load(path: Path) -> dict:
     if not isinstance(value, dict):
         raise ValueError(f"{path.name} must contain an object")
     return value
-
-
-def exact_brand(asset: dict) -> bool:
-    return (
-        asset.get("provenance_mode") == "provided_exact_brand_asset"
-        and asset.get("extraction_method") == "approved-source-asset"
-        and asset.get("exact_brand_asset") is True
-        and asset.get("user_supplied") is True
-        and asset.get("source_kind") in {"standalone_file", "official_asset"}
-        and asset.get("independent_asset") is True
-        and not asset.get("source_bbox")
-        and asset.get("source_reuse") is not True
-    )
 
 
 def validate_brand_coverage(run_root: Path) -> dict:
@@ -75,19 +63,15 @@ def validate_brand_coverage(run_root: Path) -> dict:
             continue
         if asset.get("independent_asset") is not True:
             result["issues"].append({"severity": "blocker", "code": "brand_asset_not_independent", "asset_id": node["id"]})
-        supplied = exact_brand(asset)
-        if str(asset.get("provenance_mode") or "").lower() != "imagegen" and not supplied:
-            result["issues"].append({"severity": "blocker", "code": "brand_asset_requires_imagegen_or_exact_asset", "asset_id": node["id"], "observed": asset.get("provenance_mode")})
-        if supplied:
-            for field in ("source_ref", "copied_to", "source_sha256"):
-                if not isinstance(asset.get(field), str) or not asset[field].strip():
-                    result["issues"].append({"severity": "blocker", "code": "brand_exact_asset_evidence_missing", "asset_id": node["id"], "field": field})
-        else:
-            for field in ("generated_source", "copied_to", "prompt_file", "backend"):
-                if not isinstance(asset.get(field), str) or not asset[field].strip():
-                    result["issues"].append({"severity": "blocker", "code": "brand_imagegen_evidence_missing", "asset_id": node["id"], "field": field})
-            if "imagegen" not in str(asset.get("backend") or "").lower():
-                result["issues"].append({"severity": "blocker", "code": "brand_non_imagegen_backend", "asset_id": node["id"], "backend": asset.get("backend")})
+        if str(asset.get("provenance_mode") or "").lower() != "imagegen":
+            result["issues"].append({"severity": "blocker", "code": "brand_asset_requires_native_imagegen", "asset_id": node["id"], "observed": asset.get("provenance_mode")})
+        for field in ("generated_source", "copied_to", "prompt_file", "backend", "native_imagegen_receipt"):
+            value = asset.get(field)
+            valid_field = isinstance(value, dict) if field == "native_imagegen_receipt" else isinstance(value, str) and bool(value.strip())
+            if not valid_field:
+                result["issues"].append({"severity": "blocker", "code": "brand_imagegen_evidence_missing", "asset_id": node["id"], "field": field})
+        if "imagegen" not in str(asset.get("backend") or "").lower():
+            result["issues"].append({"severity": "blocker", "code": "brand_non_imagegen_backend", "asset_id": node["id"], "backend": asset.get("backend")})
         if node["role"] in LOCKUP_ROLES:
             if asset.get("whole_asset_contract") is not True:
                 result["issues"].append({"severity": "blocker", "code": "brand_lockup_whole_asset_contract_missing", "asset_id": node["id"]})

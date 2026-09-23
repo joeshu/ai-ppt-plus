@@ -9,8 +9,10 @@ region instead of relying on whole-slide metrics.
 2. Keep formal titles native text. Resolve the closest installed display face,
    then calibrate font size, character spacing, width, baseline and line box.
    Do not replace a formal title with a raster image.
-3. Keep official brand artwork as an independent aspect-preserved asset. Native
-   ImageGen is for missing decorative artwork, not inventing an official logo.
+3. Generate every brand mark as an independent aspect-preserved native
+   ImageGen asset. Use official files or screenshot crops as reference evidence
+   to preserve the mark's shape, colors and lettering; they do not bypass
+   generation for the final asset.
 4. Require transparent safe padding around calligraphy and generated marks;
    visible alpha touching an edge is a repair signal before placement.
 5. Align subtitle text and thin rules by measured centerlines. A thin-rule

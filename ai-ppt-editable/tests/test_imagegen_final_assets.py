@@ -87,7 +87,7 @@ def main() -> int:
         }), encoding="utf-8")
         report = validate(brand_fallback, strict=True)
         assert not report["valid"]
-        assert any(item["code"] == "brand_asset_requires_imagegen_or_exact_asset" for item in report["errors"])
+        assert any(item["code"] == "brand_asset_requires_native_imagegen" for item in report["errors"])
 
         exact_source = root / "official-logo.png"
         exact_source.write_bytes(b"official-logo")
@@ -103,7 +103,9 @@ def main() -> int:
                 "source_ref": "official-logo.png", "source_sha256": sha(exact_source),
                 "copied_to": "editable/official-logo.png"}],
         }), encoding="utf-8")
-        assert validate(exact, strict=True)["valid"]
+        exact_report = validate(exact, strict=True)
+        assert not exact_report["valid"]
+        assert any(item["code"] == "brand_asset_requires_native_imagegen" for item in exact_report["errors"])
 
         bad = root / "bad.json"
         bad.write_text(json.dumps({"provenance_policy": "imagegen_final_assets", "assets": [{"asset_id": "g1", "asset_class": "gradient_visual", "provenance_mode": "source_reuse", "source_reuse": True}]}), encoding="utf-8")
