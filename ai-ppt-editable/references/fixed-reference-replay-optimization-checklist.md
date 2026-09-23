@@ -44,6 +44,14 @@ it is not a visual score threshold.
 - [ ] Render once, inspect the full page plus 5–10 diverse risk crops, then
       repair the owning object/relationship. Do not regenerate the whole page
       for a placement-only defect.
+- [ ] For each repeated table, compare source and render row labels, value
+      columns and highlighted results. Do not combine factor rows to save room.
+- [ ] Check small relationship marks such as plus signs between benefit cards
+      and label rails beside case text; they encode meaning beyond OCR.
+- [ ] Inspect title/subtitle and brand/footer crop after merging reused pages.
+      A matching source hash does not waive this final visual review.
+- [ ] Compare dense copy with source transcription; flag unreadable source
+      spans and remove unsupported explanatory copy.
 - [ ] Run source-visual coverage, object/editability, package integrity and
       no-whole-slide-raster gates.
 - [ ] Run the post-export embedded-media byte gate. Every manifest `asset_id`

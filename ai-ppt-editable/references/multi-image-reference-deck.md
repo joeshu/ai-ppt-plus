@@ -37,6 +37,11 @@ Regenerate only the changed page when the hash differs. The final combined
 deck still requires a fresh render, full-deck review and per-page comparison;
 historical page renders cannot serve as final-deck evidence.
 
+An identical source hash permits reuse of the editable object, but does not
+certify visual quality. In a merged deck, inspect the reused page's title,
+subtitle, brand lockup, and footer against the current attachment again.
+Correct defects in the reusable slide or in the imported editable objects.
+
 ## Deck-wide verification
 
 Use a stable reference roster (`slide-1.png`, `slide-2.png`, …) and validate
@@ -46,6 +51,21 @@ PPTX, then compare page `N` only with reference `N` and cut the profile's
 required same-coordinate high-risk crops from that same render. Include at
 least one text-dense region and one visual/asset region per page, plus composed
 header/footer bands where present.
+
+Before marking any crop as reviewed, record the source's **information
+topology**: table row labels and value columns, plus signs or arrows between
+offer components, label rails, nested panels and emphasis colors. Compare the
+rendered crop with this inventory. Reject a merged table row, a missing
+relationship mark, a displaced brand lockup, or title/subtitle collision even
+when all OCR words and object counts are present. A numeric image score alone
+cannot certify these structures. Review full-slide pairs after crop fixes so
+one region's repair does not move another.
+
+For small or blurred source text, transcribe only legible wording. Preserve
+the source's layout with editable text fields, and mark unreadable spans in
+speaker notes or a transcription manifest. Never silently replace the source
+with plausible new sales copy or an expanded summary. Check every claim in
+new text against the visible source before final delivery.
 
 For an existing multi-page deck, use the deck-level pipeline route with
 `--reference-dir` and `--require-multipage-layout`; a single-reference
