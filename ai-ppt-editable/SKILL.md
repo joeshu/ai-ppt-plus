@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.23.07
+  package_revision: 2026.09.24.09
 ---
 
 # AI PPT Editable
@@ -24,6 +24,7 @@ Read `references/fixed-reference-short-loop.md` for the normative production con
 Read `references/image-to-editable-regressions.md` when a fresh image-to-editable replay exposes an inventory, alpha-geometry, physical-aspect, text-to-container or composite-anchor defect; apply its stable repair codes and re-render the owning region.
 Read `references/top-brand-title-fidelity.md` when the weakest region is a header, brand lockup or large display title; its object-specific crop and PowerPoint-render rules take precedence over whole-slide metric tuning.
 Read `references/dense-single-slide-reconstruction.md` for dense 16:9 dashboard/strategy pages with charts, repeated cards and footer bands. It defines the one-pass region inventory, pixel-coordinate normalization, chart uncertainty rule, symbol-font prohibition and CJK render stop condition added after the China Unicom lifecycle-page replay.
+For dense red-band layouts, also apply the contrast-aware icon, native bullet geometry and decorative-image underlay rules in `references/image-to-editable-regressions.md`; these prevent invisible icons, renderer-dependent bullets and white-on-white titles when optional artwork fails to decode.
 For multi-series fixed-reference charts, keep a point ledger with exact displayed labels and partial-year endpoints; name editable segments, markers and labels, then run `scripts/validate_reference_chart_series.py` before visual acceptance. Check broad rounded-card silhouettes after rendering: uncalibrated corner-radius inputs can turn rectangles into ellipses. Preserve numbered clauses when fitting dense measure rows.
 
 ## Formal production chain
