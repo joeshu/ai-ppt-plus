@@ -80,6 +80,17 @@ text. Add a native color underlay before the decoration, then render-test the de
 with the actual office renderer. If the decoration fails to decode, the title and
 brand fields must remain legible and structurally complete.
 
+Treat every colored number, percentage, rank and unit relationship as an
+explicit run contract. Compare the rendered result, not only the authoring model.
+If mixed-run color or size is lost on export, split the number and unit into named
+native text boxes, preserve their shared baseline and keep the semantic group
+independently editable.
+
+Reserve icon geometry before text fitting. For generated transparent icons,
+measure the visible alpha bbox, normalize optical center and scale by painted
+height. A row of equal outer image boxes can still look misaligned when the
+generated assets have different transparent padding.
+
 ## 5. Close out by region and by responsibility
 
 The final visual closeout must inspect, at minimum, top brand/title, the full

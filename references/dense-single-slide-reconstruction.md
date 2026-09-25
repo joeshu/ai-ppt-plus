@@ -9,6 +9,10 @@ footer decoration.
 1. Freeze the source dimensions and author in one pixel coordinate space using
    `ref_width` and `ref_height`. Convert to slide units only in the authoring
    backend.
+   If the request says standard PowerPoint 16:9, normalize the source geometry
+   into `1280 x 720` authoring space and validate `12192000 x 6858000 EMU` at
+   finalization. Do not carry a `1536 x 864` reference directly into the slide
+   size, because that creates a non-standard `16 x 9 in` page.
 2. Inventory large regions first: header/brand, status block, chart, repeated
    modules, guarantee band, results band and footer. Then assign stable IDs to
    their children. This prevents repeated OCR/layout passes.
@@ -53,6 +57,15 @@ an existing Latin fallback file is not font evidence.
 Do not use Unicode dingbats or emoji as production icons. Their glyphs and
 metrics vary by platform. Use native-shape icon groups or independently
 replaceable vector/raster assets with explicit provenance.
+
+Define one explicit icon slot inside every repeated component before fitting
+adjacent text. Align icon slots by their visible alpha bounds and optical center,
+not by the full transparent canvas. Keep equal rendered icon heights within a
+semantic row.
+
+Capture emphasized numbers and their units separately. If run-level color or
+weight does not survive the target renderer, use adjacent native text boxes on
+one baseline rather than dropping the emphasis.
 
 ## Brand and decorative regions
 

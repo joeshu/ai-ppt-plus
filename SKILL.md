@@ -46,6 +46,9 @@ For dense one-page dashboard/strategy references, require the editable worker's
 unverified chart transcription out of native data claims, prohibit symbol-font
 icons, and stop authoritative CJK visual closeout when the runtime lacks a
 glyph-capable licensed font.
+When the user requests standard PowerPoint 16:9, require the physical widescreen
+canvas `12192000 x 6858000 EMU` (`13.333 x 7.5 in`, authoring canvas
+`1280 x 720` at 96 DPI). A different 16:9 physical size is not equivalent.
 Treat dark-band icon contrast, font-glyph bullets and decorative-image failure
 as release risks: bind icon color to its parent fill, prefer native geometry for
 reference bullets, and place a native color underlay beneath nonessential

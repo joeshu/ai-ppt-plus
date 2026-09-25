@@ -10,7 +10,11 @@ Preserve, in order: information hierarchy → page structure → spatial relatio
 
 ## Hard requirements
 
-- Default to 16:9 unless the confirmed design system says otherwise.
+- Default to PowerPoint standard widescreen unless the confirmed design system
+  says otherwise: `13.333 x 7.5 in`, `12192000 x 6858000 EMU`, or an authoring
+  canvas of `1280 x 720` at 96 DPI. Ratio equality alone is insufficient;
+  `1536 x 864` mapped one pixel to one CSS pixel produces a non-standard
+  `16 x 9 in` page and must be normalized before authoring.
 - Use real editable text boxes for every title, body paragraph, label, note and number. Never bake required text into a whole-slide image.
 - Rebuild simple cards, lines, color blocks, tags, process nodes and geometry with PowerPoint native shapes or editable vector objects whenever reliable.
 - Use `references/chart-reconstruction.md` for every chart. Use an editable

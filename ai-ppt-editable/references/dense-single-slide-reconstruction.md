@@ -9,6 +9,10 @@ footer decoration.
 1. Freeze the source dimensions and author in one pixel coordinate space using
    `ref_width` and `ref_height`. Convert to slide units only in the authoring
    backend.
+   If the request says standard PowerPoint 16:9, normalize the source geometry
+   into `1280 x 720` authoring space and validate `12192000 x 6858000 EMU` at
+   finalization. Do not carry a `1536 x 864` reference directly into the slide
+   size, because that creates a non-standard `16 x 9 in` page.
    Hash every newly attached file first. If its bytes match an earlier source,
    reuse the verified text/geometry inventory and independently validated
    ImageGen assets by source and asset hash. Rebuild only regions affected by
@@ -68,6 +72,16 @@ is a renderer-font binding defect, not a layout-repair signal.
 Do not use Unicode dingbats or emoji as production icons. Their glyphs and
 metrics vary by platform. Use native-shape icon groups or independently
 replaceable vector/raster assets with explicit provenance.
+
+Define one explicit icon slot inside every repeated component before fitting
+adjacent text. Align icon slots by their visible alpha bounds and optical center,
+not by the full transparent canvas. Keep equal rendered icon heights within a
+semantic row; never let source padding decide apparent size or baseline.
+
+Preserve numeric emphasis as a first-class text contract. Capture the source
+number, unit, color and weight separately. If run-level styling does not survive
+the target renderer, split the number and unit into adjacent native text boxes
+with a shared baseline rather than losing the emphasis or rasterizing the pair.
 
 ## Brand and decorative regions
 
