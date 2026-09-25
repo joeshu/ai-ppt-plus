@@ -2,7 +2,7 @@
 name: ai-ppt-editable
 description: Turn approved slide images, screenshots, rasterized PDF pages, image-slide intermediates, existing PPT/PPTX, or structured content into editable, rendered PowerPoint. Trigger for 图片转可编辑PPTX、截图还原PPT、复刻版式、图标分层、文字提取、现有PPT修复. It can run standalone or as the editable worker for $ai-ppt-plus.
 metadata:
-  package_revision: 2026.09.24.09
+  package_revision: 2026.09.25.10
 ---
 
 # AI PPT Editable
@@ -26,6 +26,7 @@ Read `references/top-brand-title-fidelity.md` when the weakest region is a heade
 Read `references/dense-single-slide-reconstruction.md` for dense 16:9 dashboard/strategy pages with charts, repeated cards and footer bands. It defines the one-pass region inventory, pixel-coordinate normalization, chart uncertainty rule, symbol-font prohibition and CJK render stop condition added after the China Unicom lifecycle-page replay.
 For dense red-band layouts, also apply the contrast-aware icon, native bullet geometry and decorative-image underlay rules in `references/image-to-editable-regressions.md`; these prevent invisible icons, renderer-dependent bullets and white-on-white titles when optional artwork fails to decode.
 For multi-series fixed-reference charts, keep a point ledger with exact displayed labels and partial-year endpoints; name editable segments, markers and labels, then run `scripts/validate_reference_chart_series.py` before visual acceptance. Check broad rounded-card silhouettes after rendering: uncalibrated corner-radius inputs can turn rectangles into ellipses. Preserve numbered clauses when fitting dense measure rows.
+For dense mixed-style bullets, model the colored/bold lead phrase and the body as a shared-baseline line contract. Never force the body into a narrow leftover box that silently shrinks it; measure the combined line and move only the continuation to a full-width next line when necessary. When a source hero contains distinct product families, deliver each family as its own native-ImageGen picture object. Standard widescreen fixed-reference output is exactly 13.333333 × 7.5 inches unless the confirmed source design specifies another page size.
 
 ## Formal production chain
 

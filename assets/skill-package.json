@@ -1,7 +1,7 @@
 {
   "schema": "ai-ppt-plus/skill-package/v2",
   "skill": "ai-ppt-plus",
-  "package_revision": "2026.09.24.09",
+  "package_revision": "2026.09.25.10",
   "source_of_truth": "git",
   "entrypoint": "SKILL.md",
   "self_contained": {
@@ -22,7 +22,7 @@
     {
       "name": "ai-ppt-editable",
       "root": "ai-ppt-editable",
-      "package_revision": "2026.09.24.09"
+      "package_revision": "2026.09.25.10"
     }
   ],
   "managed_globs": [

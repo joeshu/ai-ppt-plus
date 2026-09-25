@@ -72,6 +72,19 @@ it is not a visual score threshold.
       than simplifying the copy merely to clear an overflow warning.
 - [ ] Mark every colored/bold run inside dense source copy, rebuild those as
       editable PowerPoint character runs, and inspect the rendered line breaks.
+- [ ] Treat a colored/bold lead phrase plus same-line body as one line-layout
+      contract. Do not put the body in a narrow residual box and let `shrink`
+      solve it: measure both spans, keep a shared baseline, and move only the
+      continuation to a full-width next line when the combined line is too
+      wide. Reject runs whose body font becomes visibly smaller than adjacent
+      paragraphs.
+- [ ] Split composite product art into independently movable semantic assets
+      whenever the source shows distinct product families (for example, phone
+      and FTTR hardware). A combined generation sheet is an intermediate only;
+      final placements require separate picture objects and stable asset IDs.
+- [ ] For standard widescreen output, set the page to exactly 13.333333 × 7.5
+      inches and scale source pixel coordinates independently on X and Y. Do
+      not infer slide size from the reference image's pixel dimensions alone.
 - [ ] Run source-visual coverage, object/editability, package integrity and
       no-whole-slide-raster gates.
 - [ ] Run the post-export embedded-media byte gate. Every manifest `asset_id`
