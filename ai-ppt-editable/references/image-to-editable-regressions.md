@@ -91,6 +91,32 @@ measure the visible alpha bbox, normalize optical center and scale by painted
 height. A row of equal outer image boxes can still look misaligned when the
 generated assets have different transparent padding.
 
+For a source title with black/red interleaved phrases, bind each color change
+to a native text target and verify its visible color in the first office render.
+If the exporter drops rich-run styling, use adjacent native text boxes with a
+shared baseline and measured phrase widths. Do not insert fixed-width gaps or
+shrink one fragment in isolation. Record `VIS-RICH-RUN-STYLE-LOST` and close it
+only after the complete headline crop shows correct color, order and spacing.
+
+An icon contact sheet is not a final asset. Enforce the configured per-call
+cell cap before invoking ImageGen, slice only accepted batches, then inspect
+each independent slice for identity, source color role, alpha-visible size and
+in-card alignment. Record `VIS-ICON-BATCH-CELL-OVERFLOW` when a manually
+constructed batch exceeds the cap; discard it from final-asset provenance.
+
+Do not confuse renderer raster dimensions with PowerPoint page dimensions.
+Inspect `p:presentation/p:sldSz` (or the equivalent page-size API) for standard
+widescreen. If the page is exactly `12192000 x 6858000 EMU` but a diagnostic
+render is one pixel wider because of DPI rounding, record
+`VIS-RENDER-PIXEL-ROUNDING` and preserve the page geometry.
+
+For dense repeated cards, compare text density in addition to content and box
+fit. A material font-height reduction, changed line topology, wrapped header
+qualifier or excessive blank space is `VIS-TEXT-DENSITY-DRIFT`. Repair the
+role slot, padding and row allocation before font size. For repeated icons,
+compare alpha-painted height and optical center to the source; record
+`VIS-ICON-PAINTED-SCALE-DRIFT` when equal image boxes render unequal symbols.
+
 ## 5. Close out by region and by responsibility
 
 The final visual closeout must inspect, at minimum, top brand/title, the full

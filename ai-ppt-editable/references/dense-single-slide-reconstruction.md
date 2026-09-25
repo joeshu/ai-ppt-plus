@@ -83,6 +83,47 @@ number, unit, color and weight separately. If run-level styling does not survive
 the target renderer, split the number and unit into adjacent native text boxes
 with a shared baseline rather than losing the emphasis or rasterizing the pair.
 
+For every prominent mixed-color title, subtitle and callout, inspect the first
+fresh office render before accepting rich-text runs: some backends preserve the
+text but discard per-run color. If the rendered color differs from the source,
+split only at the style boundary into named native boxes. Measure the combined
+phrase first, preserve visual word spacing, align the boxes to one baseline,
+and bind each part to the same semantic parent. Re-render the whole phrase,
+not just the emphasized fragment. Do not treat an authored run color or a
+successfully extracted string as proof that the rendered emphasis survived.
+
+For compressed five-column cards, reserve icon slots before text fitting and
+derive icon size from the painted alpha bbox. Check apparent size and baseline
+across siblings in the final office render. Keep one independent picture per
+icon; batch sheets may be intermediate assets only and must obey the active
+profile's maximum cell count. If a generated icon contains the wrong accent
+color, repair or regenerate that asset before composition rather than relying
+on the default image box to conceal the mismatch.
+
+Treat a repeated column as a measured typography system, not just a shared
+outer rectangle. Record for each role: visible font-height ratio, expected line
+count, line spacing, inner padding and blank-space ratio. Allocate the densest
+card first, then ordinary and compact cards. Use the same role measurements
+across siblings, with component-local overrides only where the reference shows
+different density. If `shrinkText` makes body copy visibly smaller than the
+source or leaves disproportionate empty space, repair the text slot/card
+geometry before accepting the smaller type.
+
+Keep a one-line source column header on one line. Model the section number,
+main title and qualifier as separately measured native slots with explicit
+gaps; a narrow qualifier must not wrap under the main title merely because the
+combined header text technically fits. Compare the final header baseline and
+band height across all sibling columns.
+
+Standard widescreen acceptance is based on the PPTX page size record. Require
+`12192000 x 6858000 EMU`; do not fail or resize the deck because a renderer
+rounds a 144-DPI preview to `1921 x 1080` instead of `1920 x 1080`.
+
+For each icon row, record a visible-height ratio and optical-center offset
+relative to its host/card. Match painted size across siblings, preserve any
+source icon plate or soft host, and align row icons to the title/body anchor
+observed in the source. Equal outer image boxes are insufficient evidence.
+
 ## Brand and decorative regions
 
 Route every brand mark through native ImageGen as an independent final asset,
