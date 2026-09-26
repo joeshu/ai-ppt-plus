@@ -2,7 +2,7 @@
 name: ai-ppt-plus
 description: Orchestrate complete PowerPoint work from PDF, DOCX, Markdown, Excel/CSV, project files, meeting notes, approved outlines, images, or existing PPT/PPTX. Trigger for “做PPT/幻灯片/路演稿/汇报材料”, multi-source intake, outline-first planning, mixed visual/reconstruction routes, deck-wide QA, release, or resuming a project. Owns source authority, narrative, route, design authority, cross-skill manifests, QA aggregation, and release gates. Delegate image-slide generation to $ai-ppt-visual-gen and image/reference-to-editable-PPTX work to $ai-ppt-editable. Do not trigger when the request is only to generate image slides or only to reconstruct supplied slide images; use the narrower worker skill.
 metadata:
-  package_revision: 2026.09.25.12
+  package_revision: 2026.09.26.02
 ---
 
 For fixed-reference image-to-editable-PPTX work, default to the editable worker's machine-validated `fast` execution profile. Use `strict` only when requested or justified by page risk; reserve `ci` for regression. For N attached reference images, freeze the current-turn attachment order and bind source N to slide N before OCR; produce exactly N slides unless the user requests another mapping. Run the complete ordered-input and finalization preflights before ImageGen or candidate construction. Plan compatible simple alpha-icon batches across the deck once (`fast` maximum 4 icons, `strict` maximum 3); never exceed those caps in a manual prompt. Slice accepted batches into independent final assets and validate every slice. Brand marks/lockups—including official-brand visuals—calligraphy, wide bands and complex art use dedicated native ImageGen requests. Retry only failed asset IDs and cut per-page adaptive local QA crops from fresh renders of the complete deck.
@@ -49,7 +49,7 @@ glyph-capable licensed font.
 When the user requests standard PowerPoint 16:9, require the physical widescreen
 canvas `12192000 x 6858000 EMU` (`13.333 x 7.5 in`, authoring canvas
 `1280 x 720` at 96 DPI). A different 16:9 physical size is not equivalent.
-Treat dark-band icon contrast, font-glyph bullets and decorative-image failure
+Treat exact icon presence/semantics, host-aware icon contrast, repeated process-strip slot alignment, font-glyph bullets and decorative-image failure
 as release risks: bind icon color to its parent fill, prefer native geometry for
 reference bullets, and place a native color underlay beneath nonessential
 full-width decoration so a failed image decode cannot erase formal text.
