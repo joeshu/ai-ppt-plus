@@ -173,3 +173,50 @@ Use these additional stable repair codes:
   contains a placeholder or mismatched media bytes.
 - `VIS-CHART-LABEL-WRAP` — a verified chart label wraps, splits or collides in
   the fresh render.
+
+## 8. Select icon variants from the final host, not from semantic identity alone
+
+An icon that is correct by name can disappear after placement when its painted
+color matches the card, band or slide background. Before composition, record
+the final host fill and bind one approved icon variant for that host class:
+`light_host`, `dark_host` or `accent_host`. Do not reuse a white footer icon on
+a white action card, or a red icon on a red title band, merely because the
+semantic label matches.
+
+Run contrast QA on the rendered icon crop after the complete deck is exported.
+Object presence, an alpha channel and a valid media relationship do not prove
+that the icon is visible. If the visible painted area has insufficient contrast,
+switch to an approved variant or add the source-observed plate; do not recolor
+the whole slide or accept an invisible placeholder.
+
+For compact process chevrons, reserve the number badge, icon and two-line text
+slots before fitting any copy. Keep the five hosts equal in height, align badges
+and icon optical centers across siblings, and fit the longest step first. The
+bottom summary band is a separate parent system and must not overlap the
+chevrons even when its text uses `shrinkText`.
+
+Use these stable repair codes:
+
+- `VIS-ICON-HOST-CONTRAST` — an icon exists but its painted pixels are not
+  legible against the final host fill.
+- `VIS-PROCESS-STEP-SLOT-DRIFT` — badge, icon or text slots in a repeated
+  process strip no longer align across sibling steps.
+- `VIS-BOTTOM-BAND-COLLISION` — the process strip, summary band or footer note
+  overlaps after final rendering.
+
+## 9. Preserve icon presence and semantic identity exactly
+
+Treat icon presence as part of the source contract. Do not add a trailing icon
+to a text row merely to balance whitespace or reuse a component template when
+the source row has no icon. Inventory each source icon by parent component,
+semantic role and source bbox; final icon count and parent binding must match.
+
+Use the source meaning, not visual similarity, when choosing a replacement.
+Calendar, approval document, location pin, shield alert, person, circulation
+arrows and customer-care symbols are not interchangeable. Prefer one coherent
+outline family for sibling rows, then compare stroke weight, painted size and
+optical center in the full rendered component.
+
+Use `VIS-ICON-PRESENCE-MISMATCH` for invented or missing icons and
+`VIS-ICON-SEMANTIC-MISMATCH` when an icon exists but communicates the wrong
+function. Both defects require repair before visual closeout.
